@@ -60,7 +60,9 @@ There are many benefits to pure functions, they are:
 
 Here there is a bit of talk about currying and how it helps with fp.
 
-## Curry
+## Crucial concepts
+
+### Curry
 
 Curry implementation
 
@@ -100,7 +102,7 @@ var words = function(str) {
 var words = split(" ");
 ```
 
-## Compose
+### Compose
 
 Function can meld aka compose
 Simple compose example
@@ -149,3 +151,96 @@ Look how easily I can now calculate the average
 ```javascript
 var avg = fork(_.divide, _.sum, _.size);
 ```
+
+### Point free
+
+Points means arguments, to be a point free means to omit arguments (passed implicitly)
+
+Example
+
+```javascript
+// this code is NOT point free, look how many times we've repeated 'error'
+// error is a "glue" variable
+function onError(function(error) {
+  console.log(error.message)
+})
+// this is a point free implementation, look how beautiful it looks :)
+onError(compose(log, get('message')))
+```
+
+Begin point free can help us with one of the hardest things in programming: Naming functions / variables.
+
+### In review
+
+- make all function inputs explicit as arguments
+- these arguments can be provided over time, not just all at once
+- try not to modify outside things
+- compose without "glue" variables
+
+## Objects (the functional way)
+
+- containers / wrappers for values
+- no methods
+- not nouns
+
+### Container convention
+
+```javascript
+var _Container = function(val) {
+  this.val = val;
+};
+
+var Container = function(x) {
+  return new _Container(x);
+};
+
+Container(3); // _Container {val: 3}
+```
+
+So now we have some kind of container 'convention'. Lets try to use our super-composable functions with it!
+
+```javascript
+capitalize("flamethrower"); // Flamethrower
+
+capitalize(Container("flamethrower"));
+// => [object Object]
+```
+
+Well this did not end up well. How we can solve this problem ?
+Lets add some methods to `_Container.prototype`
+
+```javascript
+var _Container.prototype.map = function(f) {
+  return Container(f(this.val))
+}
+
+Container('flamethrower').map(function(s) {
+  return capitalize(s)
+})
+// Container("Flamethrower")
+```
+
+So still this seems kinda meh but at least we can use our super-composable functions on the `Container` for now.
+
+For now think about the container as a singleton array (array with one value)
+
+Container allows us to change types,
+for example:
+
+```javascript
+Container([1, 2, 3])
+  .map(reverse)
+  .map(first); // Container(3)
+
+Container("flamethrower")
+  .map(length)
+  .map(add(1)); // Container(13)
+```
+
+### Functors
+
+Functor is an object or data structure you can map over
+
+#### Pesky null values
+
+So far we've been really optimistic with our functions. We did not check any edge cases or apply any null checks. But how to handle them the functional-way?
