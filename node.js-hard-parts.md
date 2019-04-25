@@ -97,3 +97,61 @@ Good example of such function is `end function`. Whatever we pass to that functi
 
 These 2 objects will be passed to your callback. In our previous snipped we called them `incomingData` and `functionsToSetOutgoingData`.
 It's important to understand that these can be called anyway we want. **The so-familiar `req` and `res` is just a convention**
+
+### HTTP format
+
+Three parts of _http message_ (then sending .get)
+
+1. **Request line** (in this case GET with url)
+2. **Headers**, metadata about senders browser, pc etc.. (used to know what to send back)
+3. **Body** (in this case it's empty, we are sending GET request)
+
+#### Example and walkthrough
+
+```javascript
+const tweets = [...]
+function doOnIncoming(incomingData, functionsToSetOutgoingData) {
+  // reading tweet number from url
+  const tweetNeeded = incomingData.url.slice(8)-1;
+  functionsToSetOutgoingData.end(tweets[tweetNeeded])
+}
+const server = http.createServer(doOnIncoming);
+server.listen(80)
+```
+
+`http.createServer()` does 3 things, 2 in node, one in `JavaScript`
+
+- setups up `http` feature in node which basically opens a network channel (in computers internals) known as **socket**
+- store callback to auto-run when _incoming message_ comes
+- returns (in `JavaScript` land) an object which holds bunch of functions. These functions enable you to edit the background `c++/Node.js http` feature
+
+`server.listen` has an effect in `Node.js` land. It sets the port which in turns opens an entry point to our computer
+
+`libUV` library is used to talk to computer network features by node.
+
+_incoming message_ is brought into `Node.js` word using `libUV`, `Node.js` auto-creates another _message_, this time this message will be used as response to the _incoming message_
+
+In this stage `Node.js` also auto-creates 2 objects (we talked about them before), **they are passed to callback function as an arguments**
+
+In our case these two would look something like this
+
+```javascript
+// first one known as request
+var obj1 = {
+  url: '..',
+  method: 'GET'
+}
+
+// second object allows us to control the auto-generated response
+var obj2 = {
+  // basically a lot of 'labels'
+  end: () => ...,
+  write: () => ...,
+}
+```
+
+`Node.js` is going to invoke our callback with these objects as parameters.
+
+By using `.end` we are telling `Node.js` that we are done editing the auto-created message and then `Node.js` sends it back as a response.
+
+_Response a.k.a return back message_ is also in http format.
