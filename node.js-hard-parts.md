@@ -203,3 +203,82 @@ function useImportedTweets(errorData, data) {
 // node is going to firstly look up the folder in which you switched node on in
 fs.readFile("./tweets.json", useImportedTweets);
 ```
+
+`libUV` also helps with file-system access. It's much more involved actually. When talking about http `libUV` does not create a thread to focus on listening to incoming messages. In case of file system access `libUV` sets up a thread manually (it's done because there is too much variety in how different OS handles files)
+
+```javascript
+// this is called error-first pattern
+function useImportedTweets(errorData, data) {}
+```
+
+### Streams
+
+Reading & cleaning data in batches.
+Node is using `event pattern` for batching stuff.
+Now we can do two things at the same time (pulling data and cleaning).
+
+```javascript
+let cleanedTweets = "";
+function cleanTweets(tweetsToClean) {
+  //..
+}
+function doOnNewBatch(data) {
+  cleanedTweets += cleanTweets(data);
+}
+const accessTweetsArchive = fs.createReadStream("./tweetsArchive.json");
+accessTweetsArchive.on("data", doOnNewBatch);
+```
+
+Invoking `createReadStream` is like telling `libUV` to setup a dedicated thread to go and get the desired data and start pulling it.
+
+File is divided in chunks by `Node.js`. Every 64 (you can change that, but 64 is by default) bytes `Node.js` is going to dispatch an `data` event.
+
+But what if the doOnNewBatch takes a lot of time and we have new `data` event dispatched? How do we ensure the correct order of execution?
+
+#### Callback queue
+
+`Node` introduces callback queue. If the call-stack is empty `Node` is going to check the callback queue periodically. That checking is done by something also present in browsers, mainly `event loop`. Here it's `libUV` that implements that.
+
+So the logic now is simple. We put `doOnNewBatch` on the callback queue. When call-stack is empty we are putting that callback on the call-stack and running it
+
+#### Many different queues
+
+```javascript
+function useImportedTweets(errorData, data) {
+  // parsing
+  console.log(tweets.tweet1);
+}
+function immediately() {
+  console.log("run me last");
+}
+function printHello() {
+  console.log("hello");
+}
+function blockFor500ms() {
+  // BLOCK JS thread DIRECTLY for 500ms
+}
+// remember this is not Web-API, Node has his own implementation
+setTimeout(printHello, 0);
+fs.readFile(".file", useImportedTweets);
+blockFor500ms();
+console.log("meFirst");
+// setImmediate is another Node feature
+setImmediate(immediately);
+```
+
+- `setTimeout(printHello,0)` goes to _timer queue_
+- evaluating `fs.readFile`, nothing added nowhere yet
+- `blockFor500ms` goes to call-stack
+- 200ms in, `useImportedTweets` gets called (data comes back),
+  `useImportedTweets` goes to _I/O callback queue_ (the one you saw earlier)
+- blocking code finishes, but there is still more global code to run
+- `console.log` gets added to call-stack and runs
+- `setImmediate` callback fn gets added to _check queue_
+
+You want to hear a joke?
+Lets consider `setImmediate`. The name implies that it will be run, well, immediately. But behold `Node.js` logic. _Check queue_ has the least priority of all the queues so it will most certain run as the last one :D
+
+#### Queue priority
+
+**Excluding microtask queue and close queue**
+_timer queue_ > _I/O callback queue_ > _check queue_
