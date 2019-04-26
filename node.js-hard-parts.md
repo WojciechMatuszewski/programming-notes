@@ -98,7 +98,7 @@ Good example of such function is `end function`. Whatever we pass to that functi
 These 2 objects will be passed to your callback. In our previous snipped we called them `incomingData` and `functionsToSetOutgoingData`.
 It's important to understand that these can be called anyway we want. **The so-familiar `req` and `res` is just a convention**
 
-### HTTP format
+## HTTP format
 
 Three parts of _http message_ (then sending .get)
 
@@ -106,7 +106,7 @@ Three parts of _http message_ (then sending .get)
 2. **Headers**, metadata about senders browser, pc etc.. (used to know what to send back)
 3. **Body** (in this case it's empty, we are sending GET request)
 
-#### Example and walkthrough
+### Example and walkthrough
 
 ```javascript
 const tweets = [...]
@@ -155,3 +155,51 @@ var obj2 = {
 By using `.end` we are telling `Node.js` that we are done editing the auto-created message and then `Node.js` sends it back as a response.
 
 _Response a.k.a return back message_ is also in http format.
+
+## Handling errors
+
+Errors are inevitable, how do we handle these ?
+To handle them correctly we need a deeper understanding how does the background `http Node.js feature` work.
+
+### How does `http.createServer` really work
+
+It turns out when the new request comes in `Node.js` does not really run our function passed to `createServer` automatically. It gets run when `request` event is emitted within `Node.js`
+
+Since this is an event, we can attach listeners to `object returned by http.createServer()`.
+
+```javascript
+function doOnIncoming(...) {}
+// infoOnError is a parameter !!!!!
+function doOnError(infoOnError, rawAccessToSocket) {
+  console.error(infoOnError)
+}
+const server = http.createServer();
+server.listen(80);
+
+// attaching listeners
+server.on("request", doOnIncoming);
+server.on("clientError", doOnError);
+```
+
+When `clientError` event gets dispatched, `Node.js` creates another object, it's called `Error`. It contains information's about there does the error originate from etc..
+
+That object is going to be the input to our `doOnError` function
+
+Another input to our `doOnError` function is a raw socket (**that raw socket is NOT in http format**). Not that very useful since it's not in a http format
+
+## `Node.js` file system
+
+### Using fs module
+
+```javascript
+function cleanTweets(tweetsToClean) {}
+function useImportedTweets(errorData, data) {
+  const cleanedTweetsJson = cleanTweets(data);
+  const tweetsObj = JSON.parse(cleanedTweetsJson);
+  console.log(tweetsObj.tweet2);
+}
+
+// dot represents current location in file system
+// node is going to firstly look up the folder in which you switched node on in
+fs.readFile("./tweets.json", useImportedTweets);
+```
