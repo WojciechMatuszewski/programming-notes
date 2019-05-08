@@ -117,7 +117,7 @@ So what are a **side effects** really (not a complete list) ?
 As you can see a program without **side effects** could not exist.
 We sometimes have to do **side effects**. But with doing so we should **make them obvious for the reader of the code**.
 
-### Pure Functions
+## Pure Functions
 
 _Pure Function_ is a function that obey the previously stated terms,
 and **has no side effects**.
@@ -172,3 +172,239 @@ That's how we should increase readability and confidence in our programs.
 What about predictability ?
 
 - **pure function should always return the same output given the same input**
+
+### Extracting Impurity
+
+Sometimes we cannot avoid impurity. We should **extract impurity** to make tem more obvious.
+
+```javascript
+function addComment(userId, comment) {
+  var record = {
+    // side effect
+    id: uniqueID(),
+    ...
+  }
+  var elem = buildCommentElement(record);
+  // side effect
+  commentsList.appendChild(elem);
+}
+// impure call
+addComment(42, "...")
+```
+
+Is it possible to extract impurity of the above snippet?
+
+```javascript
+function newComment(userID, commentID, comment) {
+  var record = {
+    id: commentID,
+    ...
+  }
+  return buildCommentElement(record);
+}
+
+var commentID = uniqueID();
+var elem = newComment(....)
+commentsList.appendChild(elem);
+```
+
+We extracted impurity but it's not really a great solution.
+We polluted global scope with impurity.
+We should **contain impurity** along with extracting it.
+
+### Containing Impurity
+
+#### Wrapping side effects inside other functions
+
+```javascript
+var SomeAPI = {
+  threshold: 13,
+  isBelowThreshold(x) {
+    return x <= this.threshold;
+  }
+};
+
+var numbers = [];
+
+function insertSortedDesc(v) {
+  SomeAPI.threshold = v;
+  ...
+  idx = ...
+  ...
+  // mutate array
+  // this side effect affects global scope
+  numbers.splice(idx, 0, v);
+}
+```
+
+And the _contained_ version
+
+```javascript
+var SomeAPI = ....
+var numbers = [];
+
+// containing side effect inside this function
+function getSortedNums(nums,v) {
+  // create a copy of an array
+  var numbers = nums.slice();
+  insertSortedDesc(v);
+  return numbers;
+
+  function insertSortedDesc(v) {/* same as above */}
+}
+```
+
+Now we contained side effect inside `getSortedNums`. This does not occur very frequently but it's a good technique to know.
+
+But still we are still modifying `SomeAPI.threshold` inside `getSortedNums`
+
+There is one technique we can use as an escape hatch. It's not pretty but it's better than nothing.
+
+```javascript
+var SomeAPI = ....
+var numbers = [];
+function insertSortedDesc(v) {
+  /* same as above */
+}
+function getSortedNums(nums,v) {
+  // make a copy of 'current state'
+  var [originalNumbers, originalThreshold] = [numbers, SomeAPI.threshold];
+  numbers = nums.slice();
+  // side effects occur here!
+  insertSortedDesc(v);
+  // 'capture' new changed state
+  nums = numbers;
+  // restore state to it's original values
+  [numbers, SomeAPI.threshold] = [originalNumbers, originalThreshold];
+  return nums;
+}
+```
+
+This is not pretty, you should not really do this. I would advise doing it as last resort.
+
+## Arguments
+
+- **parameter is the thing inside the function definition**
+
+```javascript
+// x,y are parameters
+function addNumber(x,y) {
+  ...
+}
+```
+
+- **argument is the thing that is passed to function parameters when calling given function**
+
+```javascript
+// 3,4 are the arguments
+addNumber(3, 4);
+```
+
+### Unrary & Binary
+
+There is a notion of a _shape_ when talking about functions.
+
+We can define _shape_ of a given function as:
+
+- the number and a kinds of things you pass into it
+- the number and a kinds of things that come out of it
+
+### Unrary shape
+
+Unrary function takes a single value
+
+```javascript
+function increment(x) {
+  return x + 1;
+}
+```
+
+### Binary shape
+
+Binary shape takes 2 parameters
+
+```javascript
+function sum(x,y){...}
+```
+
+## Higher order functions
+
+_higher order function_ is a function which
+
+- either receives as inputs one or more functions and / or returns one or more functions
+
+```javascript
+function unary(fn) {
+  return function one(arg) {
+    return fn(arg);
+  };
+}
+```
+
+## Point-Free
+
+This is a _style_ of writing functions.
+What does that even mean?
+
+- defining a function without the need to define it's inputs (points)
+
+```javascript
+// person parameter here is the 'point'
+getPerson(function onePerson(person) {
+  return renderPerson(person);
+});
+
+// so instead we can do
+getPerson(renderPerson);
+```
+
+### Using Point-Free style with Higher Order Functions
+
+```javascript
+function isOdd(v) {
+  return v % 2 == 1;
+}
+function isEven(v) {
+  return !isOdd(v);
+}
+
+// but we can improve this solution with
+function not(fn) {
+  return function negated(...args) {
+    return !fn(...args);
+  };
+}
+
+var isEven = not(isOdd);
+```
+
+### Advanced Point-Free
+
+```javascript
+function mod(y) {
+  return function forX(x) {
+    return x % y;
+  };
+}
+
+function eq(y) {
+  return function forX(x) {
+    return x === y;
+  };
+}
+
+/// How would we defined isOdd using point-free
+var mod2 = mod(2);
+var eq1 = eq(1);
+
+// 1 step
+function isOdd(x) {
+  return eq1(mod2(x));
+}
+
+// to make it completely point-free we can use composition
+var isOdd = compose(
+  eq1,
+  mod2
+);
+```
