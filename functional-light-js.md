@@ -408,3 +408,213 @@ var isOdd = compose(
   mod2
 );
 ```
+
+## Closure
+
+> Closure is when a function "remembers" the variables around it even when that function is executed elsewhere
+
+Example
+
+```javascript
+function makeCounter() {
+  var counter = 0;
+  // increment is closed over counter variable
+  return function increment() {
+    return ++counter;
+  };
+}
+var c = makeCounter();
+// these are NOT pure function calls!
+c();
+c();
+c();
+```
+
+### Lazy vs Eager
+
+#### Lazy Computation
+
+Given below snippet, when does the actual work of constructing the string occurs?
+
+```javascript
+function repeater(count) {
+  return function allTheAs() {
+    return "".padStart(count, "A");
+  };
+}
+
+var A = repeater(10);
+A(); // "AAAAAAAAAA"
+A();
+```
+
+Is it on line `7` or line `9`?
+Its on line `9`.
+We deferred the work from line `7` to line `9`. That is called `lazy computation`
+
+#### Eager Computation
+
+```javascript
+function repeater(count) {
+  var str = "".padStart(count, "A");
+  // allTheAs is closing over str variable
+  return function allTheAs() {
+    return str;
+  };
+}
+var A = repeater(10);
+A();
+A();
+```
+
+Now we moved all the work to line `2` Now works occurs on line `8`. We are doing the work only once.
+
+#### Combining Eager and Lazy
+
+What if we could combine the best of both words?
+
+```javascript
+function repeater(count) {
+  var str;
+  return function allTheAs() {
+    if (str == undefined) {
+      str = "".padStart(count, "A");
+    }
+    return str;
+  };
+}
+
+var A = repeater(10);
+// we deferred work
+A(); // we are doing the work only here
+A(); // now we are pulling for existing variable
+```
+
+Before we said that to be functionally pure when using closure we **should not close over the thing that changes**.
+`A` is a pure function call, but the code is not obvious.
+
+#### Using memoization
+
+```javascript
+function repeater(count) {
+  return memoize(function allTheAs() {
+    return "".padStart(count, "A");
+  });
+}
+var A = repeater(10);
+A();
+A();
+```
+
+This style of code is very obvious for the reader.
+
+## Pure function the complete definition (function call)
+
+> If you could take the return value of that function call and replace the function call with the returned value and not affect the rest of the program you have **pure function call**.
+
+In other ways the function call is pure when it has **referential transparency**.
+
+## Generalized to Specialized
+
+```javascript
+function ajax(url, data, cb) {...}
+// we are passing a lot of arguments here
+ajax(CUSTOMER_API, {id: 42}, renderCustomer)
+```
+
+Lets consider some intermediately steps.
+
+```javascript
+function ajax(url, data,cb) {...}
+ajax(CUSTOMER_API, {id:32}, renderCustomer)
+
+function getCustomer(data, cb) {
+  return ajax(CUSTOMER_API, data,cb);
+}
+// this function is much better than the ajax function
+getCustomer({id:32}, renderCustomer)
+```
+
+We just split generalized function to more specialized sub-function.
+This technique allows for better semantics and code readability.
+
+Can we somehow made the specialized versions more _point-free_?
+
+### Partial Application
+
+```javascript
+function ajax(url, data, cb) {...}
+// pre-set functions
+var getCustomer = partial(ajax, CUSTOMER_API);
+var getCurrentUser = partial(getCustomer, {id: 42});
+// much better right ?
+getCustomer({id:42}, renderCustomer);
+getCurrentUser(renderCustomer);
+```
+
+### Currying
+
+Much more common form of specialization.
+_currying_ and _partial application_ both accomplish the same goal, they both specialize a generalized function. But they do it differently
+
+```javascript
+// manual curry
+function ajax(url) {
+  return function getData(data) {
+    return function getCB(cb){..}
+  }
+}
+ajax(CUSTOMER_API)({id: 42})(renderCustomer);
+var getCustomer = ajax(CUSTOMER_API);
+var getCurrentUser = getCustomer({id: 42});
+```
+
+#### ES6 curry
+
+```javascript
+function curry(fn) {
+  return function curried(...args) {
+    if (fn.length <= args.length) {
+      return fn.apply(null, args)
+    }
+    return function curried.bind(null, ...args)
+  }
+}
+```
+
+#### ES5 curry
+
+This one is a bit harder since we cannot use spread and gather
+
+```javascript
+function curry(fn) {
+  return function curried() {
+    var args = Array.prototype.slice.call(arguments);
+    if (fn.length <= args.length) {
+      return fn.apply(null, args);
+    }
+    // here we are appending previous arguments to currently passed ones
+    // we basically did this with .bind before
+    return function partiallyApplyCurriedArguments() {
+      return curried.apply(
+        null,
+        args.concat(Array.prototype.slice.call(arguments))
+      );
+      // You could also if you really want use push here
+      // make a copy so not to mutate args variable
+      var argsToApply = args.slice();
+      Array.prototype.push.apply(
+        argsToApply,
+        Array.prototype.slice.call(arguments)
+      );
+      return curries.apply(null, argsToApply);
+    };
+  };
+}
+```
+
+### Partial Application vs Currying (strict)
+
+- both are specialization techniques
+- _partial application_ presets some arguments now, receives the rest on the next call
+- _currying_ does not preset any arguments, receives each argument one at a time.
