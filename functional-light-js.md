@@ -618,3 +618,92 @@ function curry(fn) {
 - both are specialization techniques
 - _partial application_ presets some arguments now, receives the rest on the next call
 - _currying_ does not preset any arguments, receives each argument one at a time.
+
+## Composition
+
+Composition is when one function takes other function output as input.
+Lets consider this not very functional example:
+
+```javascript
+function minus2(x) {
+  return x - 2;
+}
+function triple(x) {
+  return x * 3;
+}
+function increment(x) {
+  return x + 1;
+}
+
+var tmp = increment(4);
+tmp = triple(tmp);
+totalCost = basePrice + minus2(tmp);
+```
+
+How we can make it more functional?
+
+Lets just get rid of `tmp` variable. That should help right?
+
+```javascript
+... functions from above ...
+totalCost = basePrice + minus2(triple(increment(4)));
+```
+
+Technically this is called `composition` but still looks ugly (and hard to read).
+Soo maybe let's abstract the ugly part to a function?
+
+```javascript
+... functions from above ...
+function shippingRate(x) {
+  return minus2(triple(increment(4)));
+}
+totalCost = basePRice + shippingRate(4)
+```
+
+This solution is like putting all your dirty clothes into a closet, not good (I know people who do such things 😂)
+
+We can make a function which makes us a function composed of different functions. Let's try that!
+
+```javascript
+function composeThree(fn3, fn2, fn1) {
+  return function composed(v) {
+    return fn3(fn2(fn1(v)));
+  };
+}
+```
+
+Now we can define as many shipping rates as we want.
+
+```javascript
+... functions from above ...
+// also look! point free function
+var shippingRate = composeThree(minus2, triple, increment);
+// other shipping rates can be easily defined
+totalCost = basePRice + shippingRate(4)
+```
+
+**composition is RIGHT TO LEFT!!**
+**pipe is LEFT TO RIGHT!!**
+
+### Combining Currying with Composition
+
+We only should compose unary functions, otherwise it would be very hard to make all the functions compatible shape-wise
+
+```javascript
+function sum(x, y) {
+  return x + y;
+}
+function triple(x) {
+  return x * 3;
+}
+function divBy(y, x) {
+  return x / y;
+}
+
+divBy(2, triple(sum(3, 5))); // 12
+// lets use curry to solve this problem
+sum = curry(2, sum);
+divBy = curry(2, divBy);
+composeThree(divBy(2), triple, sum(3))(5); // 12
+// much better & cleaner 👌
+```
