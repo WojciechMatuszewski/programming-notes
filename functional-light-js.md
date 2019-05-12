@@ -707,3 +707,136 @@ divBy = curry(2, divBy);
 composeThree(divBy(2), triple, sum(3))(5); // 12
 // much better & cleaner 👌
 ```
+
+## Lists (data structures)
+
+### Map: transformation
+
+- does not mutate original data structure
+- values are _projected_ onto new values
+- amount of values stays the same, data structure also stays the same
+
+Simple implementation
+(There is also built-in implementation on `Array.prototype`)
+
+```js
+function map(mapper, arr) {
+  var newList = [];
+  for (let value of arr) {
+    newList.push(mapper(value));
+  }
+  return newList;
+}
+```
+
+### Filter: exclusion (or maybe actually inclusion?)
+
+- does not mutate original data structure
+- return `true` if you want to keep a value and `false` if not
+- amount of values can change, data structure stays the same
+
+Simple implementation
+(There is also built-in implementation on `Array.prototype`)
+
+```js
+function filter(predicate, arr) {
+  var newList = [];
+  for (let value of arr) {
+    if (predicate(elem)) {
+      newList.push(elem);
+    }
+  }
+  return newList;
+}
+```
+
+### Reduce: combining
+
+- you can implement `.filter` or/and `.map` with reduce (used with transducing)
+- data structure can change
+- amount of values can change
+- starts with initial value
+- be very careful not to mutate stuff
+
+Built-in implementation has many different overloads (much more complex than this)
+
+```js
+function reduce(reducer, initialVal, arr) {
+  var ret = initialVal;
+  for (let elem of arr) {
+    ret = reducer(ret, elem);
+  }
+  return ret;
+}
+```
+
+**`.reduce` goes left to right, `.reduceRight` goes right to left**
+
+### Composition Revisited
+
+How can we use `.reduce` to implement `compose` better?
+
+```js
+// this has the same shape as reducer!
+function composeTwo(fn2, f1) {
+  return function composed(v) {
+    return fn2(fn1(v));
+  };
+}
+// look how sexy it is 😻
+var f = [div3, mul2, add1].reduce(composeTwo);
+```
+
+Composition allows us to _combine operations_ (instead of traversing array multiple times we can do it only once)
+
+## Composing with different shapes (transducing)
+
+It's all nice and easy when function's has the same shape. But what about about combining map & filter & reduce together?
+
+Transducing is a _composition of reducers_
+
+High-level API example
+
+```js
+var transducer = compose(
+  // these functions might look scary but they are not that hard to write
+  mapReducer(add1),
+  filterReducer(isOdd)
+);
+transduce(transducer, sum, 0, [1, 2, 3, 4]);
+// or
+into(transducer, 0, [1, 2, 3, 4]);
+```
+
+### Deriving transduction
+
+Writing `mapReducer` and `filterReducer`
+
+```js
+var mapReducer = curry(2, function mapReducer(mappingFn, combineFn) {
+  return function reducer(currentAccumulatorValue, v) {
+    return combineFn(currentAccumulatorValue, mappingFn(v));
+  };
+});
+
+var filterReducer = curry(2, function filterReducer(predicateFn, combineFn) {
+  return function reducer(currentAccumulatorValue, v) {
+    if (predicateFn(v)) return combineFn(currentAccumulatorValue, v);
+    return list;
+  };
+});
+
+var transducer = compose(
+  mapReducer(add1),
+  filterReducer(isOdd)
+);
+// now we can use 1 reduce
+
+list.reduce(transducer(sum), 0);
+```
+
+- `sum` combiner goes to filterReducer
+- it creates a reducer which can call sum if it matches `predicateFn`
+- then that reducer goes into `mapReducer` as `combineFn`
+
+So when we are calling `combineFn` inside `mapReducer` we are, in reality, calling `filterReducer` with `combineFn` set to `sum`!
