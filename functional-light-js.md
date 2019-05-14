@@ -840,3 +840,110 @@ list.reduce(transducer(sum), 0);
 - then that reducer goes into `mapReducer` as `combineFn`
 
 So when we are calling `combineFn` inside `mapReducer` we are, in reality, calling `filterReducer` with `combineFn` set to `sum`!
+
+## FP data structures
+
+Any value that we can map-over is a `functor`
+
+### Monad
+
+Monad is a pattern for pairing data with a set of predictable behaviors that ley it interact with other data + behavior pairings (monads). There is a lot of different ways to code a `monad data structure` in JS. You probably you want to use library for this.
+
+Calling `.map` on a `monad` will give you back a `monad`
+
+#### Just - wrapper around a single value
+
+That value can be array or object or anything pretty much.
+Very basic implementation of `Just monad`:
+
+```js
+function Just(val) {
+  return { map, chain, ap };
+
+  function map(fn) {
+    return Just(fn(val));
+  }
+
+  // aka: bind, flatMap
+  function chain(fn) {
+    return fn(val);
+  }
+
+  function ap(anotherMonad) {
+    return anotherMonad.map(val);
+  }
+}
+```
+
+Example operations
+
+```js
+var fortyOne = Just(41);
+var fortyTwo = fortyOne.map(function inc(v) {
+  return v + 1;
+});
+
+function identity(v) {
+  return v;
+}
+
+// very loose implementation, normally you should not return value from chain
+// once it's in the monad it has to stay there
+fortyOne.chain(identity); // 41
+fortyOne.chain(identity); // 42
+```
+
+`.ap` function
+
+```js
+var user1 = Just("kyle");
+var user2 = Just("susan");
+var tuple = curry(2, function tuple(x, y) {
+  return [x, y];
+});
+var users = user1.map(tuple).ap(user2);
+
+users.chain(identity); // [kyle, susan]
+```
+
+Monad we've made with `user1.map(tuple)` is a monad which value is a **function** which waits for another argument (in this case _y_)
+
+Result of `.ap(user2)` is a monad with a value returned from `tuple` function
+
+#### Maybe - safe operations
+
+```js
+var someObj = { something: { else: { entirely: 42 } } };
+```
+
+Works great but what if `someObj.something` was `undefined` or `null`?
+(or any other prop on that object for that matter).
+
+```js
+// black hole of monads. Every method returns Nothing
+function Nothing() {
+  return { map: Nothing, chain: Nothing, ap: Nothing };
+}
+
+var Maybe = { Just, Nothing, of: Just };
+
+function fromNullable(val) {
+  if (val == null) return Maybe.Nothing();
+  else return Maybe.of(val);
+}
+
+var prop = curry(2, function prop(prop, obj) {
+  return fromNullable(obj[prop]);
+});
+```
+
+Armed with above code we can make safe property access function
+
+```js
+Maybe.of(someObj)
+  // prop('something') returns a function which will return Just or Nothing
+  // chain prevents Monads from nesting
+  .chain(prop("something"))
+  .chain(prop("else"))
+  .chain(prop("entirely"));
+```
