@@ -947,3 +947,25 @@ Maybe.of(someObj)
   .chain(prop("else"))
   .chain(prop("entirely"));
 ```
+
+There are many more monads. Kyle showed only basic ones.
+
+## Async (observables)
+
+This is a very brief mention.
+
+```js
+var a = new Rx.Subject();
+
+setInterval(function everySecond() {
+  a.next(Math.random());
+}, 1000);
+
+var b = a.map(function double(v) {
+  return v * 2;
+});
+
+b.subscribe(function onValue(v) {
+  console.log(v);
+});
+```
