@@ -261,3 +261,52 @@ _FastDOM_ can help you with batching and stuff when optimizing for layout trashi
 #### Frameworks and Layout Trashing
 
 Frameworks carry a bag of performance issues on their own, but they can optimize stuff using the latest and greatest techniques and algorithms (many smart people work on them). Just important to **measure using production build**.
+
+### Painting
+
+Anytime you change something other than opacity or a CSS transform you **are going to trigger a paint**
+
+Every layout it's going to cause a paint but not every paint is going to cause layout.
+
+Chrome has a great tool to check if you are painting. Go to rendering tab when debugging (turn on paint flashing)
+
+### Compositor Thread
+
+For simplicity sake we are going to assume that browser has 3 threads
+
+- **UI thread**: The browser itself
+- **Render thread**: actually called main thread. This is where all the JS, parsing, HTML stuff happens (1 per tab) - the fun land is here :)
+- **Compositor thread**: draws bitmaps to the screen via GPU
+
+Main thread is **CPU Intensive**
+The Compositor Thread is **GPU Intensive**
+
+### Managing Layers
+
+There is this thing called _layers_. Layers 'slide' on the webpage (not repainting over different pixels).
+
+Compositing itself is kid of a hack. No spec defines it. We can give some suggestions to browser to move different stuff to their own layer.
+
+#### Suggesting the browser to put stuff into separate layer
+
+You can 'affect' browsers decision by using `will-change` css property
+
+```css
+.sidebar {
+  will-change: any_prop_that_changes;
+}
+```
+
+You can use `will-change: prop_that_does_not_change` but it's not recommended.
+**You should be using `will-change` when you anticipate user interaction. Not for every element that might animate or do different things**
+You should not overdo it though. Managing layers can be expensive for browser.
+
+```js
+element.addEventListener("mouseenter", function() {
+  element.style.willChange = "transform";
+});
+// cleanup!
+element.addEventListener("animationEnd", function() {
+  element.style.willChange = "auto";
+});
+```
