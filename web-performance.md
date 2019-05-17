@@ -191,3 +191,73 @@ Turns out we have this thing called _function inlining_. Optimization compiler c
 > - The easiest way to reduce parse, compile, and execution times is to ship less code.
 > - Use the **User Timing API** to figure out where the biggest amount of hurt is.
 > - Use type system if you can to help with hidden classes and optimizations
+
+## Rendering performance
+
+Browser sends request for a (lets say HTML now) to a server with a _GET_ request.
+Server responds with a HTML file (which probably has also styles and js files).
+
+- HTML gets parsed do a DOM (**D**ocument **O**bject **M**odel)
+- CSS gets parsed to a CSSOM (**CSS** **O**bject **M**odel)
+- JS gets parsed to **AST** tree (see sections above)
+
+Parts what will actually show up on the page are turned into **Render Tree**
+
+###### Style calculation
+
+Browser figures out all of the styles that will be applied to a given element.
+
+As a rule of thumb stick to simple class names whenever possible. **Consider using BEM** (this one is huge, I have to familiarize myself with it one day)
+
+### Rendering Pipeline
+
+![rendering-pipeline](./assets/rendering-pipeline.png)
+You do not always have to go through all of those steps. You can skip some of the parts (for example animating transform or opacity).
+
+### Layouts and reflows
+
+- Reflow: things have changed, I need to update Layout
+
+Layout (reflows) **are really really expensive**
+
+> Whenever the geometry of an element changes, the browser has to reflow the page.
+
+#### About reflow
+
+- reflow is a block operation
+- consumes a decent amount of CPU
+- will be noticeable by the user
+- a reflow of an element causes a reflow of it's parent and children ☠️
+
+Generally speaking **a reflow is followed bt a repaint**. Repaint is **the most expensive operation**
+
+#### Layout thrashing
+
+> Layout thrashing occurs when JS violently writes, then reads, from the DOM, multiple times causing document reflows
+
+Lets say we have 10 elements which we want to double in width.
+We can try this naive implementation:
+
+```js
+for (let element of elements) {
+  let width = element.offsetWidth;
+  element.offsetWidth = width * 2;
+}
+```
+
+The snipped above will cause _Layout thrashing_. We are reading and writing multiple times.
+
+Much better implementation would be **reading all the widths first then making elements wider.** This way browser can batch operations and optimize stuff.
+
+```js
+const widths = elements.map(element => element.offsetWidth);
+for (i = 0; i < widths.length; i++) {
+  elements[i].offsetWidth = widths[i] * 2;
+}
+```
+
+_FastDOM_ can help you with batching and stuff when optimizing for layout trashing
+
+#### Frameworks and Layout Trashing
+
+Frameworks carry a bag of performance issues on their own, but they can optimize stuff using the latest and greatest techniques and algorithms (many smart people work on them). Just important to **measure using production build**.
