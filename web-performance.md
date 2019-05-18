@@ -310,3 +310,35 @@ element.addEventListener("animationEnd", function() {
   element.style.willChange = "auto";
 });
 ```
+
+## Load Performance
+
+Initial TCP packet size is 14kb. If you can fit your app in that budged you are golden.
+
+### Caching
+
+You can cache based on HTTP calls (cache response headers).
+You can only cache "safe" HTTP methods:
+
+- GET
+- OPTIONS
+- HEAD
+
+#### Three over-simplified possibilities
+
+- Cache Missing: there is no local copy in the cache
+- Stale: Do a Conditional GET. The browser has a copy but it's outdated
+- Valid: We have a thing in cache and it's good (do not even bother talking to a server)
+
+#### Service workers
+
+Instead of asking a server for things you go through service worker first. Service worker is kind of like a middleware in redux-app. It can change how you get the browser gets the assets and such.
+More on them soon in a another file :)
+
+### Lazy loading
+
+You can split your bundle and initially ship only the required parts (and load other parts when CPU is free in the background or when user requests it).
+
+### HTTP/2
+
+HTTP2 can send multiple files at the same time. This difference is huge.
