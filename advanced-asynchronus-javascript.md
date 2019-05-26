@@ -191,3 +191,43 @@ function filter(predicateFn) {
   };
 }
 ```
+
+## "Animations Allowed" Problem
+
+Let's say you want to disable animations on very low-end devices when there is a lot of things going on in the background.
+How would we tackle this problem?
+
+First thing first let's refresh our memory on when it comes to basic `RxJs` operators
+
+**`Observable.of(value)`**
+It creates an observable which calls `next(value)` and then completes
+
+```js
+Observable.of(5); // => 5
+```
+
+**`Observable.concat(...[observables])`**
+Concatenates observables just like you can concatenate a string. It waits till current completes and subscribes to the next one.
+
+**`Observable.distinctUntilChanged()`**
+Very useful when creating typeahead. Basically diffs the prev value with current. Emits only when they are different.
+
+**`Observable.scan((acc, current) => acc + current)`**
+Scan is similar to reduce but it gives you all the intermediate values as well
+
+```js
+// RxJS v6+
+import { of } from "rxjs";
+import { scan } from "rxjs/operators";
+
+const source = of(1, 2, 3);
+// basic scan example, sum over time starting with zero
+const example = source.pipe(scan((acc, curr) => acc + curr, 0));
+// log accumulated values
+// output: 1,3,6
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### Solution
+
+Solution is actually so brilliant that **you should watch it yourself becasue this guy is amazing**
