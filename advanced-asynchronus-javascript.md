@@ -230,4 +230,78 @@ const subscribe = example.subscribe(val => console.log(val));
 
 ### Solution
 
-Solution is actually so brilliant that **you should watch it yourself becasue this guy is amazing**
+Solution is actually so brilliant that \*_you should watch it yourself because this guy is amazing_
+
+## Catching errors
+
+Catching errors is quite important. There are various ways to do so in RxJs.
+
+### `catchError`
+
+`catchError` basically catches the error in the chain. **You have to return new Observable from this operator**.
+
+### `retry`
+
+This operator allows you to retry some operation X number of times.
+Simple implementation:
+
+(I'm assuming this is a method on a class called _Observable_)
+
+```js
+  retry(num) {
+    return new Observable(observer => {
+      let currentSub = null;
+      function processRequest(currentAttemptNumber) {
+        currentSub = this.subscribe({
+          next: v => observer.next(v),
+          complete: () => observer.complete(),
+          error: err => {
+            if (currentAttemptNumber == 0) {
+              observer.error(err);
+            } else {
+              processRequest(currentAttemptNumber - 1);
+            }
+          }
+        });
+      }
+      processRequest(num);
+      return {
+        unsubscribe: currentSub.unsubscribe
+      };
+    });
+  }
+```
+
+## Image preload
+
+We can use RxJs to implement our own image preload function.
+
+Maybe we could implement it like so :
+
+```js
+function preloadImage(src) {
+  const img = new Image();
+  const success = fromEvent(img, "load").pipe(map(() => src));
+  const failure = fromEvent(img, "error").pipe(map(() => LOADING_ERROR_URL);
+  img.src = src;
+  return merge(success, failure);
+}
+```
+
+Where is one big gotcha in this implementation. We are doing work **before** someone might subscribe to that observable. There is a possibility that **image loads before someone calls .subscribe**.
+
+Much better implementation would use `defer` operator.
+
+```js
+function preloadImage(src) {
+  return defer(() => {
+    const img = new Image();
+    const success = fromEvent(img, "load").pipe(map(() => src));
+    const failure = fromEvent(img, "error").pipe(map(() => LOADING_ERROR_URL));
+    img.src = src;
+    return merge(success, failure);
+  });
+}
+```
+
+`defer` operator make it so that the work begins only when someone actually subscribes, creating _lazy observable_. `defer` basically is an **observable factory**
