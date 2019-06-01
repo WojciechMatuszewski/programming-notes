@@ -304,4 +304,4 @@ function preloadImage(src) {
 }
 ```
 
-`defer` operator make it so that the work begins only when someone actually subscribes, creating _lazy observable_. `defer` basically is an **observable factory**
+`defer` operator make it so that the work begins only when someone actually subscribes, creating _lazy observable_. `defer` basically is an **observable factory**.
