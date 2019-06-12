@@ -100,3 +100,93 @@ Container factory.
 - **Injector**
 - **Enhancer**
 - **Injector and Enhancer**
+
+No correctly type HOCS you probably should use `utility-types` package, it's great!.
+Also, there are great overall guides and cheatsheets
+
+[Guide One](https://github.com/piotrwitek/react-redux-typescript-guide#higher-order-components)
+[Second Guide](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet)
+
+### Render Props
+
+Beloved render props.
+
+- you can be using `render` or `children` or any other name for that matter.
+
+### Flux pattern
+
+Nowadays you would probably use context for the problems this pattern is trying to solve but i think it's good to know it either way.
+
+Very simple implementation of flux-like store
+
+```typescript
+import { EventEmitter } from "events";
+import { users } from "../default-state.json";
+
+export default class UserStore extends EventEmitter {
+  users = users;
+
+  createUser = ({ name, email }) => {
+    const user = {
+      id: Date.now().toString(),
+      name,
+      email
+    };
+    this.users = [...this.users, user];
+    this.emit("change", this.users);
+  };
+
+  updateUser = updatedUser => {
+    this.users = users.map((user: any) => {
+      return user.id === updatedUser.id ? updatedUser : user;
+    });
+    this.emit("change", this.users);
+  };
+}
+```
+
+Then you could be using this inside a component like this:
+
+```jsx
+React.useEffect(() => {
+  const listener = users => setState({ users });
+  UserStore.on("change", listener);
+  return () => void UserStore.removeListener("change", listener);
+}, []);
+```
+
+### Context API
+
+> Context provides a way to pass data through the component tree without having to pass props down manually at every level.
+
+> All consumers that are descendants of a Provider will re-render whenever the Provider's value prop changes. **The propagation from Provider ot it's descendant consumers is not subject to the shouldComponentUpdate method, so the consumer is updated even when an ancestor component bails out of the update.**
+
+That's why you probably should wrap your `Provider.value` with `useMemo`
+
+```js
+const ProviderValue = React.useMemo(
+  () => ({
+    users: state.users,
+    onCreateUser: createUser,
+    onUpdateUser: updateUser
+  }),
+  [state.users]
+);
+```
+
+## Redux
+
+### Bind Action Creators
+
+I've actually never used this one. It's used to shorten the `dispatch(action_here)` notation
+
+```js
+const createAddAction = amount => {
+  return { type: "add", payload: { amount } };
+};
+const dispatchAdd = bindActionCreators(createAddAction, store.dispatch);
+// now you can call
+dispatchAdd(4);
+// instead of
+store.dispatch(createAddAction(4));
+```
