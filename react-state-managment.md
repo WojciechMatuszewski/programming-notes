@@ -190,3 +190,39 @@ dispatchAdd(4);
 // instead of
 store.dispatch(createAddAction(4));
 ```
+
+### Normalizing Data
+
+Not much to say here. Use `normalizr`
+
+### Structure
+
+Steve went for `components/containes` structure. It's quite ok actually. He also separates `reducers` and `actions` to their own folders
+
+### Automatically bind action creators
+
+Remember that redux has the ability to automatically bind action creators
+
+```js
+
+const CREATE_CARD = 'CREATE_CARD';
+
+function createCard(cardData, cardId) {
+  return {
+    type: CREATE_CARD,
+    payload{ cardData, cardId}
+  }
+}
+
+// somewhere else
+
+connect(
+  null,
+  {createCard} // => great huh ?
+)(component)
+
+```
+
+### Performance
+
+Use `reselect`. To learn this properly you probably should write yourn own app. It's similar to Angular (ngrx) selectors.
