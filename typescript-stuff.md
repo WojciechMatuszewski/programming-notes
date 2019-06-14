@@ -156,3 +156,192 @@ function arrayMixed(x: [1, "a", {}]) {}
 type t1 = GetFunctionArgumentTypes<typeof numberArg>; // number
 type t2 = GetFunctionArgumentTypes<typeof arrayMixed>; // [1, 'a', {}]
 ```
+
+## Mapped And Lookup Types
+
+You can use `in` and `keyof` to transform interfaces and type-objects
+
+```typescript
+type MyPartial<Type> = { [Key in keyof Type]+?: Type[Key] };
+
+interface Something {
+  id: number;
+  name: string;
+  property?: string;
+}
+type MyPartial<Type> = { [Key in keyof Type]+?: Type[Key] };
+
+type Test = MyPartial<Something>;
+/*
+  {
+    id?: number | undefined
+    ...
+  }
+*/
+```
+
+### Keyof and `[keyof]`
+
+Differences are quite big
+
+```typescript
+type Test1 = keyof Something; // "id" | "name" | "property"
+type Test2 = Something[keyof Something]; // string | number | undefined
+```
+
+It's very similar to accessing object values and `Object.keys` in JS.
+**It's just that the value is the type itself**
+
+```js
+var someObj = {
+  prop1: 1,
+  prop2: 2,
+  prop3: "someString"
+};
+
+Object.keys(someObj); // 'prop1' , 'prop2' ...
+someObj["prop1"]; // 1
+```
+
+### Caution warning
+
+Sometimes typescript is very strange.
+It seems that `prop?: number` is not the same as `prop: number |undefined`?.
+Let's consider the following
+
+```typescript
+interface Something {
+  id: number;
+  name: string;
+  property?: string;
+}
+
+type UndefinedAsNever<Type> = {
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Type[Key]
+};
+
+type Test1 = UndefinedAsNever<Something>;
+/*
+WTF ???
+{
+    id: number;
+    name: string;
+    property?: undefined;
+}
+*/
+// you can merge interfaces btw :)
+interface Something {
+  id: number;
+  name: string;
+  // changed this
+  property: string | undefined;
+}
+type Test1 = UndefinedAsNever<Something>;
+/*
+WEIRD STUFF HUH?
+{
+    id: number;
+    name: string;
+    property: never;
+}
+*/
+```
+
+### Plucking nullable (also undefined) keys
+
+Let's say you have an interface
+
+```typescript
+interface Something {
+  id: number;
+  name: string;
+  // we want to remove this \/
+  property: string | undefined | null;
+  // can also be written like this
+  property?: string;
+}
+```
+
+First thing first we probably should _mark_ `property` somehow so that we know that we want to _pluck_ this prop.
+
+Remember our `[keyof Something]` notation?
+
+```typescript
+interface Something {
+  id: number;
+  name: string;
+  property?: string;
+}
+
+type RemoveUndefinableKeys<Type> = {
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+}[keyof Type];
+
+type Test1 = RemoveUndefinableKeys<Something>; //"id" | "name" | undefined
+```
+
+How does `RemoveUndefinableKeys` work?
+
+```typescript
+type RemoveUndefinableKeys<Type> = {
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+};
+// would return
+/*
+  {
+    id: "id",
+    name: "name",
+    property: undefined
+  }
+*/
+```
+
+Now we _marked_ `property` as the one to be deleted (by undefined type)
+
+Let's add `[keyof Something]` notation (we will basically get only the values from the interface).
+
+```typescript
+type RemoveUndefinableKeys<Type> = {
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+}[keyof Type];
+// would return "id" | "name" | undefined
+```
+
+See ? no `property` prop.
+
+We can also do this
+
+```typescript
+interface Something {
+  name: string;
+  age: number;
+}
+
+type Identity = { [Key in "name" | "age"]: Something[Key] };
+// would return the same Something type
+```
+
+So by marking `property` as `undefined` we basically _plucked_ it from the interface.
+
+No we just need to make `Identity` type generic and name it somehow.
+
+```typescript
+type RemoveUndefinableKeys<Type> = {
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+}[keyof Type];
+
+type RemoveUndefinable<Type> = {
+  // this is the same as Key in "id" | "name" | undefined
+  // undefined will be omitted
+  [Key in RemoveUndefinableKeys<Type>]: Type[Key]
+};
+
+type Test = RemoveUndefinable<Something>;
+/*
+would return
+{
+  id: number;
+  name: string;
+}
+*/
+```
