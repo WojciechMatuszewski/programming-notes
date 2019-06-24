@@ -144,3 +144,99 @@ console.log('meFirst');
 
 Js has additional queue. It's called **Microtask(job) Queue**.
 **Event Loop prioritizes stuff inside Microtask Queue**.
+
+## Iterators
+
+What if we wanted to create a _stream_ of data which we can control? Like asking for another item in that stream?
+
+> _Iterators_ automate the accessing of each element - so we can focus on what to do to each element and make it available to us in a smooth way
+
+### Tracking current element
+
+To start things out let's write a simple function that tracks current element and is able to return to us the next element in _the stream of data_
+
+```js
+function createFunction(array) {
+  var currentIndex = 0;
+  // closure
+  function inner() {
+    var element = array[currentIndex];
+    currentIndex++;
+    return element;
+  }
+  return inner;
+}
+
+const returnNextElement = createFunction([1, 2, 3, 4, 5]);
+returnNextElement(); // 1
+returnNextElement(); // 2
+// ...
+```
+
+Implementation is quite simple but it shows how **powerful closure can really be**.
+
+This _backpack_ that you can put stuff into (when creating closure) has a **very serious sounding name: _closed over variable environment_**.
+
+### Manually creating iterators
+
+When creating _iterators_ using _generators_ returned object has `.next` method on it. Let's do that manually (we have omitted `{value, done}` for simplicity reasons).
+
+```js
+function createFlow(array) {
+  var i = 0;
+  return {
+    next: function nextFn() {
+      var element = array[i];
+      i++;
+      return element;
+    }
+  };
+}
+const returnNextElement = createFlow([4, 5, 6]);
+const element1 = returnNextElement.next(); // 4
+```
+
+## Generators
+
+Generators create iterators.
+
+```js
+function* createFlow() {
+  yield 4;
+  yield 5;
+  yield 6;
+}
+const returnNextElement = createFlow();
+const element1 = returnNextElement.next(); // {value: 4, done: false}
+```
+
+But how we are able to get that next value?
+
+### Power of `yield`
+
+`yield` keyword can be interpreted as return statement but it's so much more!
+
+> `yield` pauses generator function execution and the value of the expression following the yield is returned to the generator's caller
+
+#### Dynamically setting what data flows to us
+
+This is very nice. Check it out:
+
+```js
+function* createFlow() {
+  const num = 10;
+  // return 10
+  // this expression never had a chance to assign anything to newNum
+  // since the execution context got 'paused' when we yielded
+  const newNum = yield num;
+  yield 5 + newNum;
+  yield 6;
+}
+const returnNextElement = createFlow();
+const element1 = returnNextElement.next(); // 10
+
+// this line is pure magic
+// so we 'paused' execution context on line newNum = yield num
+// now, whatever we pass as an argument will be the result of that assignment
+const element2 = returnNextElement.next(2); // 7 = 5 + 2
+```
