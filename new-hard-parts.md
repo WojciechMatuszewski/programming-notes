@@ -240,3 +240,60 @@ const element1 = returnNextElement.next(); // 10
 // now, whatever we pass as an argument will be the result of that assignment
 const element2 = returnNextElement.next(2); // 7 = 5 + 2
 ```
+
+This sentence sums it up pretty well.
+
+> the previous yield is replaced with arguments passed in the next function
+
+So it seems that we can never assign in 'current `yield`'
+
+Another example to better understand this concept **which is kinda crucial**
+
+```js
+function* createGen(i) {
+  var j = 5 * (yield i * 10);
+  var k = yield j / 4;
+}
+const it = createGen(10);
+it.next(20); // value: 100, 20 is ignored since we never had 'previous' yield call to assign to
+it.next(20); // value: 25 since j become 20 now (passed as arg to this call)
+```
+
+### Pseudo-async generators
+
+With the power of yield we can mimic how `async/await` works
+
+```js
+function* createFlow() {
+  // yield out fetch, never had the ability to assign to data
+  // after the second .next we've received result of this fetch as data
+  var data = yield fetch('...');
+  // fetch response
+  console.log(data);
+}
+const iterator = createFlow();
+// future data is a promise
+const futureData = iterator.next();
+// come back to createFlow execution context
+futureData.then(iterator.next);
+```
+
+## Async / await
+
+With `async / await` we do not have to trigger 'going back' to `createFlow` _execution context_ (we did that by using `.then(iterator.next)`)
+
+```js
+async function createFlow() {
+  console.log('me first');
+  const data = await fetch('...');
+  console.log(data);
+}
+createFlow();
+console.log('me second');
+
+// me first
+// me second
+// data
+```
+
+`await` throws us out of the execution context just like `yield` does but it automatically makes us come back to it when the `fetch` is resolved. This is huge!
