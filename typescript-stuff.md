@@ -15,7 +15,7 @@ interface User {
   password: string;
 }
 
-type OnlyName = Pick<User, "name">; // {name: string}
+type OnlyName = Pick<User, 'name'>; // {name: string}
 ```
 
 ### Exclude<T, U>
@@ -32,10 +32,10 @@ interface User {
 }
 
 // remember, we are diffing 2 types, code below will not do what we want it to do
-type WithoutName = Exclude<User, "name">; // User, because T is not extending U so Exclude returns User
+type WithoutName = Exclude<User, 'name'>; // User, because T is not extending U so Exclude returns User
 
 // now we are talking, we are diffing each key with 'name'
-type WithoutName = Exclude<keyof User, "name">; // 'email' | 'password'
+type WithoutName = Exclude<keyof User, 'name'>; // 'email' | 'password'
 ```
 
 ## Combining Exclude And Pick
@@ -56,7 +56,7 @@ type Omit<Root, PropsToOmit> = Pick<
 What happens if `PropsToOmit` is a single value, let's say `string`. Well then bad things will happen. `keyof string` will actually look at it's prototype chain.
 
 ```typescript
-type Test = keyof "something"; // "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf"
+type Test = keyof 'something'; // "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf"
 ```
 
 ## Return Type
@@ -76,7 +76,7 @@ type SomeType = ReturnType<typeof add>; // number
 - you have to cast directly if you want to get _value_ as the type
 
 ```typescript
-const None = "None";
+const None = 'None';
 function something() {
   return { x: None };
 }
@@ -124,9 +124,9 @@ interface Obj {
   age: number;
 }
 
-type t1 = SomeType<"ala">; // 'ala'
-type t2 = SomeType<Obj["name"]>; // string
-type t3 = SomeType<Obj["age"]>; // never
+type t1 = SomeType<'ala'>; // 'ala'
+type t2 = SomeType<Obj['name']>; // string
+type t3 = SomeType<Obj['age']>; // never
 ```
 
 Using this feature you can create (most of them already ship by default) types
@@ -151,7 +151,7 @@ type GetFunctionArgumentTypes<F> = F extends (...args: Array<infer U>) => void
 
 function numberArg(x: number) {}
 
-function arrayMixed(x: [1, "a", {}]) {}
+function arrayMixed(x: [1, 'a', {}]) {}
 
 type t1 = GetFunctionArgumentTypes<typeof numberArg>; // number
 type t2 = GetFunctionArgumentTypes<typeof arrayMixed>; // [1, 'a', {}]
@@ -196,11 +196,11 @@ It's very similar to accessing object values and `Object.keys` in JS.
 var someObj = {
   prop1: 1,
   prop2: 2,
-  prop3: "someString"
+  prop3: 'someString'
 };
 
 Object.keys(someObj); // 'prop1' , 'prop2' ...
-someObj["prop1"]; // 1
+someObj['prop1']; // 1
 ```
 
 ### Caution warning
@@ -317,7 +317,7 @@ interface Something {
   age: number;
 }
 
-type Identity = { [Key in "name" | "age"]: Something[Key] };
+type Identity = { [Key in 'name' | 'age']: Something[Key] };
 // would return the same Something type
 ```
 
@@ -344,4 +344,187 @@ would return
   name: string;
 }
 */
+```
+
+### Record
+
+Remember typing dictionaries awkwardly like:
+
+```typescript
+type Dict = { [key: string]: number };
+```
+
+Ahh... sad times.
+As you want to be _the cool kid_ you probably should use this _leet hackrzz_ `Record` stuff :
+
+```typescript
+type Dict = Record<string, number>;
+```
+
+**Remember that in Javascript all keys are `string`'s !!**
+
+## This keyword
+
+When using strictest possible typescript settings (as you always should) you might night to type `this` keyword. Let's see how this can be done:
+
+```typescript
+interface SomeObj {
+  someFn: (num: number) => number;
+  numberToAdd: number;
+}
+
+const someObj: SomeObj = {
+  someFn,
+  numberToAdd: 4
+};
+
+function someFn(num: number) {
+  return num + this.numberToAdd; // might cause an error
+  // typescript sometimes has problems with inferring the right this
+}
+
+// much better implementation would be
+function someFn(this: SomeObj, num: number) {
+  return num + this.numberToAdd; // much better, we even get autocomplete
+}
+```
+
+This may look weird, it may seem like `someFn` now takes 2 arguments but that's not the case. First argument (`this` typing) will get compiled away.
+
+## Typeof
+
+Here there is distinct difference between Javascript world and Typescript world.
+
+When using Javascript `typeof` will return underlying type as in the type that you can create in vanilla Javascript. This is familiar territory
+
+```js
+typeof []; // "object"
+typeof 'something'; // "string"
+typeof 3; // "number"
+```
+
+But in Typescript `typeof` behaves a little bit differently.
+Instead of returning underlying vanilla JS types it will return us the Typescript type.
+
+```typescript
+const person = {
+  age: 22,
+  name: 'Wojtek'
+};
+
+type Person = typeof person; // {age: number, name: string}
+```
+
+This is very powerful especially with `ReturnType`.
+
+## Type Guards
+
+Using a _Type Guard_ you can tell Typescript which type something is.
+
+### Typeof Type Guard
+
+This is very simple guard. Check this out:
+
+```typescript
+function someFn(arg: number | string) {
+  if (typeof arg == 'number') {
+    // typescript knows we are dealing with a number here
+    return arg.toExponential(); // ok
+  }
+  // typescript knows we are dealing with a string here
+  // BUT BEWARE!
+  // if we did not return above type would be number | string here
+  arg.toLowerCase(); // ok
+}
+```
+
+### `instanceof` Type Guard
+
+#### In vanilla JS
+
+> it tests if a `.prototype` property of a constructor exists somewhere in another object
+
+Example:
+
+```js
+class Foo {
+  bar() {}
+}
+
+const foo = new Foo();
+
+// we all know this is true
+Object.getPrototypeOf(foo) == Foo.prototype)
+// above is essentially the same as:
+foo instanceof Foo
+```
+
+#### In Typescript
+
+This works basically the same as `typeof`. Rarely used (used mainly with classes, brr)
+
+### User Defined Type Guard
+
+Now we are talking. Check it out:
+
+```typescript
+interface Response {
+  result: any;
+  doSmth: any;
+}
+
+interface OkResponse extends Response {
+  status: 'OK';
+}
+interface BadResponse extends Response {
+  status: 'NOT_OK';
+}
+
+// now whenever we use this function typescript is going to set that variable as OkResponse
+// if this function returns true, otherwise it will be BadResponse
+function isGoodResponse(response: OkResponse | BadResponse) response is OkResponse {
+  return response.status == 'OK'
+}
+
+```
+
+### `in` Type Guards
+
+You can also use `in` operator as a _boolean checks_ just like you sometimes want to check if some browser feature is available.
+
+```typescript
+interface Athlete {
+  speed: 99;
+  age: 30;
+}
+interface NormalPerson {
+  age: 30;
+}
+function isAthlete(subject: Athlete | NormalPerson): subject is Athlete {
+  return 'speed' in subject;
+}
+```
+
+## Intersection Types
+
+Instead of `extend`ing interfaces you can use `&` to _merge_ them.
+
+```typescript
+interface Order {
+  amount: number;
+}
+interface Stripe {
+  cvc: string;
+  card: string;
+}
+interface PayPal {
+  email: string;
+}
+
+// i think this is much better than interface Stripe extends Order {}
+type OrderWithStripe = Order & Stripe;
+type OrderWithPayPal = Order & PayPal;
+
+// typescript is great at inferring as well!
+const stripeOrder = Object.assign({}, order, stripeData); // OrderWithStripe
 ```
