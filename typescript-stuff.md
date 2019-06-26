@@ -528,3 +528,113 @@ type OrderWithPayPal = Order & PayPal;
 // typescript is great at inferring as well!
 const stripeOrder = Object.assign({}, order, stripeData); // OrderWithStripe
 ```
+
+## Discriminant union
+
+Ever used reducer? You probably used `action.type` or similar property to distinguish between different actions.
+
+To 'gather' all actions you probably did this:
+
+```typescript
+type Actions = ADD | DELETE | SOME_ACTION;
+```
+
+Thats the _union_ part. Now the _discriminant_ is the **thing that enables typescript (and you) to distinguish between different actions**
+
+```typescript
+  reducer(state, action) {
+    // type is a common property
+    // that lives on all of the actions
+    switch(action.type) {
+      case DELETE:
+      // type inference works because of discriminant unions!
+    }
+  }
+```
+
+## Interface vs Type
+
+- You cannot use `extend` keyword with types but you can use `&` instead
+
+```typescript
+interface Item {
+  name: string;
+}
+
+interface Artist extends Item {
+  songs: number;
+}
+
+type Artist2 = {
+  songs: number;
+} & Item;
+```
+
+- You can merge declarations with interfaces (you cannot have two types with the same name)
+
+```typescript
+interface Artist {
+  name: string;
+}
+interface Artist {
+  songs: number;
+}
+// /\ merged together
+
+// now interface Artist contains name and songs
+```
+
+## Function Overloads
+
+You can provide different implementations based on the arguments that we supply. It makes stuff more readable
+
+```typescript
+// these are virtual, they will get compiled away
+function reverse(dataToReverse: string): string;
+function reverse<T>(dataToReverse: T[]): T[];
+// real implementation
+function reverse<T>(dataToReverse: string | T[]): string | T[] {
+  if (typeof dataToReverse == 'string') {
+    return dataToReverse
+      .split('')
+      .reverse()
+      .join('');
+  }
+  return dataToReverse.slice().reverse();
+}
+```
+
+## Enums
+
+Enums are quite popular with _Ngrx_.
+They are not all sunshine and rainbows though.
+
+- they are typescript only concept
+- can cause bundle bloat
+
+```typescript
+enum Something {}
+// you just introduced this to your bundle
+'use strict';
+var Something;
+(function(Something) {})(Something || (Something = {}));
+```
+
+Not looking to hot right? Well, there is a solution. A very simple one. Use `const` before `enum`. That way the whole `enum` construct will get compiled away and only picked properties will stay as normal variables. Enum props _get inlined_
+
+```typescript
+const enum Something {
+  yes = 'Yes',
+  no = 'No'
+}
+let selected = Something.no;
+
+// gets compiled to
+'use strict';
+let selected = 'No' /* no */;
+```
+
+Much better now!
+
+**BUT BEWARE**
+Enums cannot be used with _plugin-transform-typescript_ which you are probably using.
