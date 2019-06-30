@@ -182,3 +182,67 @@ element: matches(#home, .someClass, [title]);
 ```
 
 Pretty neat huh? This one is almost like `querySelectorAll`. Of course this would be too good to be true. **Support for this is quite meh**.
+
+## Pseudo elements
+
+### `::first-letter`
+
+You can target the first letter of any element that has text inside. This way you can create _book-like_ text
+
+```css
+p::first-letter {
+  font-size: 40px;
+  color: red;
+}
+```
+
+### `::selection`
+
+You can actually style the behavior of selected (as in mouse selected) stuff. This is pretty neat!.
+
+```css
+/*
+  all selected paragraphs will have red color
+*/
+p::selection {
+  color: red;
+}
+```
+
+### `::before` and `::after`
+
+These **has to have `content` property**. That content is actually not part of the DOM, you cannot highlight it.
+
+```css
+p::before,
+p::after {
+  /*required!!!*/
+  content: '';
+  display: block;
+  width: 50px;
+  height: 50px;
+}
+```
+
+One of the less known features is that if you do not want to show any content at all you can be a _pro leet hackorz_ and use `none`
+
+```css
+p::before {
+  content: none;
+}
+```
+
+You can also do citations with quotes, kinda nice
+
+```css
+p::after {
+  content: close-quote;
+}
+p::before {
+  content: open-quote;
+}
+```
+
+### `::placeholder`
+
+Self explanatory. You can style placeholders 🤷‍
