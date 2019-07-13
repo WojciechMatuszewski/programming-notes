@@ -23,6 +23,12 @@
 
 So you have your lambda in the cloud. AWS **spins your lambdas** in containers. These containers gets discarded (it's like 5-20 mins of inactivity). If AWS decided to discard container your lambda was in it's in a _cold state_. When called **a new container must be created** resulting in slow response speed.
 
+### Lambda@Edge
+
+> Instead of going to the origin server request will go to the nearest node available.
+
+What's more exciting is that you can do computations there now. Previously it was not possible.
+
 ## AWS Cognito
 
 This service is used for authentication but there are 2 variations:
