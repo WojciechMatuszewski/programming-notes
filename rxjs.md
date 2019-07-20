@@ -47,3 +47,50 @@ source$.pipe(
 There, no magic, no weird copy-paste from stack. That's all.
 
 _Reference: [this great article](https://medium.com/city-pantry/handling-errors-in-ngrx-effects-a95d918490d9)_
+
+## Recipes
+
+### Pooling
+
+When you want to update stuff every X seconds
+
+```js
+const timer$ = timer(0, 5000);
+
+timer$.pipe(
+  exhaustMap(() => /* your http call */)
+)
+```
+
+`exhaustMap` will not fire another request till previous request in-flight is not finished. If you want to drop that request and start another one you probably need `switchMap`.
+
+### Drag and Drop
+
+```js
+const element = querySelector('element');
+
+const mouseDown$ = fromEvent(element, 'mousedown');
+const mouseUp$ = fromEvent(element, 'mouseup');
+const mouseLeave$ = fromEvent(element, 'mouseleave');
+const mouseMove$ = fromEvent(element, 'mousemove');
+
+const stop$ = merge(mouseLeave$, mouseUp$);
+
+const dragAndDrop$ = mouseDown$.pipe(
+  exhaustMap(() => mouseMove$.pipe(takeUntil($stop)))
+);
+```
+
+### Prevent double click
+
+This is very useful :).
+[A **very basic** implementation could be found here.](https://codesandbox.io/s/old-feather-rz6xm)
+
+```js
+const button = querySelector('element');
+const buttonClick$ = fromEvent(button, 'click');
+
+const preventDoubleSubmit$ = buttonClick$.pipe(
+  exhaustMap(() => http.post(/* something */))
+);
+```

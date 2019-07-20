@@ -638,3 +638,33 @@ Much better now!
 
 **BUT BEWARE**
 Enums cannot be used with _plugin-transform-typescript_ which you are probably using.
+
+## Mocking with Typescript
+
+When testing sometimes you have to mock stuff. It's pretty common procedure, but typescript sometimes makes it difficult.
+
+```typescript
+import { Link as MockLink } from 'react-router-dom';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  Link: ({ children }: { children: React.ReactNode }) => children
+}));
+
+test(/* some test name */, () => {
+  // TypeError: !
+  MockLink.mockImplementationOnce(() => {/* ... */})
+})
+```
+
+It is frustrating , we have to help typescript a little bit by casting to a `mock type`
+
+```typescript
+import { Link as LinkDep } from 'react-router-dom';
+
+const MockLink = LinkDep as jest.Mock<LinkDep>;
+
+// now you can test in peace
+```
+
+Same technique applies to _global mocks_.
