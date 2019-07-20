@@ -668,3 +668,145 @@ const MockLink = LinkDep as jest.Mock<LinkDep>;
 ```
 
 Same technique applies to _global mocks_.
+
+## Typing `get` function
+
+Typing such functions is a nightmare. But we can make our lives easier with a couple of tricks.
+
+[### All credit goes to this article](https://medium.com/@jamesscottmcnamara/type-yoga-typing-flexible-functions-with-typescripts-advanced-features-b5a282878b74)
+
+And btw, we are going all in when it comes to functional programming so our `get` function will be fp ready :)
+
+### HasKey
+
+Turns out you can create object types out of thin air.
+Check this out:
+
+```typescript
+type HasKey<K extends string, V> = { [_ in K]: V };
+type Testing = HasKey<'wojtek', number>;
+/*
+  {
+    wojtek: number
+  }
+*/
+```
+
+This is just mind bending stuff. Very clever usage of the `in` keyword.
+How does it work?
+
+- We are extending `string` because generic will be type literal (like `wojtek` or `ala`)
+
+- `{[_ in K]: V}` means an object with keys in K with value V
+
+Lets say you use `|` then typing `K` what will happen?
+Well you will get 2 props on an object with value: `any` (or any value you passed to generic).
+
+Again, very clever stuff
+
+### Basic Implementation
+
+With `HasKey` we can start our basic implementation.
+
+```typescript
+declare function get<K extends string>(
+  key: K
+): <Obj extends HasKey<K>>(obj: Obj) => Obj[K];
+```
+
+Our function could be used as such
+
+```ts
+get('name')({ name: 'wojtek' }); // all ok
+get('name')({ someprop: 'someprop' }); // Typescript is not happy, error!
+```
+
+### KeyAt
+
+You might think that we achieved what we wanted:
+
+> You just have to declare more overloads right?
+
+Not really, sadly this function is far from complete. The inferring system might have problems with more complex types.
+
+To fix this we introduce another type: `KeyAt`
+
+```typescript
+type KeyAt<Obj, K extends string> = Obj extends HasKey<K> ? Obj[K] : never;
+interface SomeInterface {
+  wojtek: 'ala 123'
+}
+KeyAt<SomeInterface, 'wojtek'> // 'ala 123', literal type!
+```
+
+This allows us to _pluck a given type_ out of object.
+This makes sure that return our function has return value correctly typed.
+
+```ts
+declare function get<K extends string>(
+  key: K
+): <Obj extends HasKey<K>>(obj: Obj) => KeyAt<Obj, K>;
+```
+
+Personally i would name this type `TypeAt` but I'm going to roll with this name paying an homage to original author :).
+
+### Traversals
+
+Our function can also filter stuff. We basically want to work _lenses-like_.
+
+Example:
+
+```ts
+get(matching(friend => friend.friends > 5), 'name')(obj.friends);
+```
+
+With our current implementation this operation is impossible. How would we enable such functionality?
+
+Let's type `matching` first:
+
+```ts
+interface Traversal<Item> {}
+
+declare function matching<A>(
+  filteringFunction: (a: A) => boolean
+): Traversal<A>;
+```
+
+We have to change our implementation a bit to introduce `matching`.
+
+```ts
+declare function get<Item, K extends string>(
+  traversal: Traversal<Item>,
+  key: K
+): <Obj extends Array<HasKey<K>>>(obj: Obj) => Array<KeyAt<Obj, K>>;
+
+const popularFriends = get(
+  matching((user: User) => user.friends.length > 5),
+  'name'
+)(user.friends);
+```
+
+But there is a problem. Our `popularFriends` are typed as `never[]`.
+
+Going back to our declaration of `KeyAt` we typed it so that `Obj` has to be `HasKey<>` not `Array` of that type.
+
+That is easily fixable. Just change `obj: Obj` to `obj: Obj[]`.
+
+### Unpacking
+
+Very useful stuff for our function (which we want to be able to accept multiple containers) and overall (I really wonder why they would not put it inside TS utility types already).
+
+```ts
+// power of conditionals and infer baby!
+export type Unpack<F> = F extends Array<infer Item>
+  ? Item
+  : F extends Set<infer Item>
+  ? Item
+  : F extends Map<any, Item>
+  ? Item
+  : F extends { [n: string]: infer Item }
+  ? Item
+  : F extends { [n: number]: infer Item }
+  ? Item
+  : never;
+```
