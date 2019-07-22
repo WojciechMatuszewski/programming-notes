@@ -94,3 +94,67 @@ const preventDoubleSubmit$ = buttonClick$.pipe(
   exhaustMap(() => http.post(/* something */))
 );
 ```
+
+## Uncommon Types
+
+### Notification
+
+Aside from all the `Subject`-y related types there is also notification.
+
+`Notification` **does not create an observer**. It wraps it annotating it with additional metadata.
+
+Example:
+
+```js
+of(1)
+  .pipe(mapTo(new Notification('E')))
+  .subscribe(console.log);
+/*
+    Notification {kind: "E", value: undefined, error: undefined, hasValue: false, constructor: Object}
+    kind: "E"
+    value: undefined
+    error: undefined
+    hasValue: false
+    <constructor>: "Notification"
+*/
+```
+
+As you see it can swallow original values. Notification can be of a different type (type corresponds to observable life cycle).
+
+## Uncommon Operators
+
+### Materialize / dematerialize
+
+So you know about `Notification` type. It's all good and great but you probably wonder how you could use it.
+
+Lets say you have a source that can error out. Sure, that could happen but when that does happen, **error bubbles up and ignores every operator that is yet to come**. This might be a problem.
+
+To prevent this you might want to turn the error into `Notification` using `materialize` operator. If a given source errors out you can check if `Notification` is of type error and act accordingly without skipping operators.
+
+Example:
+
+```js
+// sample stream
+interval(500)
+  .pipe(
+    mapTo('normal value'),
+    // sometimes value, sometimes throw
+    map(v => {
+      if (randomInt() > 50) {
+        throw new Error('boom!');
+      } else return v;
+    }),
+    materialize(),
+    // turns Observable<T> into Notification<Observable<T>>
+    // so we can delay or use other operators.
+    delay(500),
+    // Notification of value (error message)
+    map(n => (n.hasValue ? n : new Notification('N', n.error.message, null))),
+    // back to normal
+    dematerialize()
+  )
+  // now it never throw so in console we will have
+  // `normal value` or `boom!` but all as... normal values (next() emission)
+  // and delay() works as expected
+  .subscribe(v => console.log(v));
+```
