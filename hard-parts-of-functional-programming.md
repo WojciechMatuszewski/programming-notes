@@ -64,11 +64,25 @@ As an alternative (in my opinion much better one) to chaining we can compose fun
 
 Reduce is very versatile, in fact its the most versatile function in fp.
 
-This type of composition is still not a _true composition_ as in it does not build the one meta function from the functions but instead it steps through every function passing down the result.
+Below style of composition is still **not** a _true composition_ as in it does not build the one meta function from the functions but instead it steps through every function passing down the result.
 
 ```js
 const multiplyBy3 = x => x * 2;
 const add3 = x => x + 3;
 const reducer = (input, fn) => fn(input);
 [multiplyBy3, add3].reduce(reducer, 11);
+```
+
+To reap every benefit of composition and lazy evaluation we have would have to glue functions together then run the final "glued" function against values.
+
+```js
+function compose(...fns) {
+  // 'glue' functions together
+  return fns.reduce((f, g) => (...args) => f(g(...arg)));
+}
+compose(
+  fn1,
+  fn2,
+  fn3
+)(/*some value*/);
 ```
