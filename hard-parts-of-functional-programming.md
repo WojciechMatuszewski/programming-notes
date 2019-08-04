@@ -86,3 +86,40 @@ compose(
   fn3
 )(/*some value*/);
 ```
+
+## Closure
+
+Closure is the ability of the function to _remember its surroundings_ or you could also say that _functions carry a backpack which they can pack stuff into_.
+Closure has been described previously in many of the notes, just a quick reminder.
+
+```js
+function adder(x) {
+  // x is declared as local variable in this execution context
+  return function(y) {
+    // "remembering surroundings"
+    return x + y;
+  };
+}
+```
+
+That backpack is named `[[scope]]`. Because we are using closure it is a true private property.
+
+That is interesting is that `[[scope]]` is optimized for reference. So let's say your backpack contains A LOT of things. But your returned function only can possibly, ever,reference one of the things. JavaScript engine will automatically garbage collect other things from our backpack and leave out the things you really can access. It is like a mom taking away sweats from your backpack because you should not eat those.
+
+Example:
+
+```js
+function outer() {
+  // these will get garbage collected
+  let something;
+  let otherSomething;
+  //
+  let counter = 0;
+  return function inner() {
+    counter++;
+    return counter;
+  };
+}
+
+const adder = outer();
+```
