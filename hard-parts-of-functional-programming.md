@@ -123,3 +123,58 @@ function outer() {
 
 const adder = outer();
 ```
+
+## Function Decoration
+
+_Function decoration_ allows us to sort of 'edit' previously declared functions.
+To achieve this we take full advantage of closure.
+
+A note though, these paradigm is pretty similar to decorators, in fact decorators are just higher order functions.
+
+```js
+function once(originalFn) {
+  let counter = 0;
+  // closure
+  return function runOnlyOnce(...args) {
+    if (counter < 1) {
+      counter++;
+      return originalFn(...args);
+    }
+    return null;
+  };
+}
+const multiplyBy2 = num => num * 2;
+// decorating original function
+const onceMulti = once(multiplyBy2);
+```
+
+Notion of `function decoration` allows us to implement currying and/or `partial application`.
+
+## Partial Application & Currying
+
+This is an answer for not compatible arity between functions. To fully understand this concept you probably should know the difference between those two.
+
+Im assuming that by `currying` we mean strict `currying`
+
+- partial application -> supply **SOME** of the parameters up front
+- currying -> supply **ONE** parameter at a time.
+
+Of course the lines can be a little blurry, since usually we are using partial application and calling it currying.
+
+Lets see an example of `strict curry` implementation. This is much harder to understand than `loose currying or partial application` (in my opinion).
+
+```js
+function strictCurry(fn) {
+  return (function nextCurried(prevArgs) {
+    return function curried(nextArg) {
+      const args = [...prevArgs, nextArg];
+      if (args.length < fn.length) {
+        return nextCurried(args);
+      }
+      return fn.apply(null, args);
+    };
+  })([]);
+}
+```
+
+This implementation is very smart. It utilizes IFFIE to not pollute the scope with unnecessary variables (like args array in the closure)
