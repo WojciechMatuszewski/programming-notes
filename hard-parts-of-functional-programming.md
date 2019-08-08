@@ -178,3 +178,23 @@ function strictCurry(fn) {
 ```
 
 This implementation is very smart. It utilizes IFFIE to not pollute the scope with unnecessary variables (like args array in the closure)
+
+Implementation of `partial application` or `non-strict currying`, imo, is much more straight forward
+
+```js
+function partiallyApply(fn) {
+  return function partiallyApplied(...args) {
+    return fn.length > args.length
+      ? partiallyApplied.bind(null, ...args)
+      : fn.apply(null, args);
+  };
+}
+
+function addThree(x, y, z) {
+  return x + y + z;
+}
+
+const test = partiallyApply(addThree);
+
+console.log(test(1, 2)(3)); // 6
+```
