@@ -40,7 +40,8 @@ type WithoutName = Exclude<keyof User, 'name'>; // 'email' | 'password'
 
 ## Combining Exclude And Pick
 
-With combine power of `Exclude` and `Pick` we can do some nice stuff (especially with HOC's). Let's say we want to remove a prop from something in a generic way.
+With combine power of `Exclude` and `Pick` we can do some nice stuff (especially
+with HOC's). Let's say we want to remove a prop from something in a generic way.
 
 ```typescript
 // from Root Pick...
@@ -53,7 +54,9 @@ type Omit<Root, PropsToOmit> = Pick<
 
 ### Caution warning
 
-What happens if `PropsToOmit` is a single value, let's say `string`. Well then bad things will happen. `keyof string` will actually look at it's prototype chain.
+What happens if `PropsToOmit` is a single value, let's say `string`. Well then
+bad things will happen. `keyof string` will actually look at it's prototype
+chain.
 
 ```typescript
 type Test = keyof 'something'; // "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf"
@@ -99,7 +102,8 @@ function identity<T>(prop: T): T {
 type SomeType = ReturnType<typeof identity>; // unknown
 ```
 
-Now with helpers (we are creating those because `ReturnType` does not take second argument)
+Now with helpers (we are creating those because `ReturnType` does not take
+second argument)
 
 ```typescript
 type Callable<T> = (...args: any[]) => T;
@@ -139,9 +143,11 @@ type t1 = NonNullableMy<null>; // never
 
 ### Inferring the type
 
-This feature is very useful. Basically you can `pluck` a type from generic using conditional types.
+This feature is very useful. Basically you can `pluck` a type from generic using
+conditional types.
 
-**We can place the infer keyword at the position where we want the type to be inferred.**
+**We can place the infer keyword at the position where we want the type to be
+inferred.**
 
 ```typescript
 // you could also do args: infer U
@@ -189,8 +195,8 @@ type Test1 = keyof Something; // "id" | "name" | "property"
 type Test2 = Something[keyof Something]; // string | number | undefined
 ```
 
-It's very similar to accessing object values and `Object.keys` in JS.
-**It's just that the value is the type itself**
+It's very similar to accessing object values and `Object.keys` in JS. **It's
+just that the value is the type itself**
 
 ```js
 var someObj = {
@@ -205,9 +211,8 @@ someObj['prop1']; // 1
 
 ### Caution warning
 
-Sometimes typescript is very strange.
-It seems that `prop?: number` is not the same as `prop: number |undefined`?.
-Let's consider the following
+Sometimes typescript is very strange. It seems that `prop?: number` is not the
+same as `prop: number | undefined`?. Let's consider the following
 
 ```typescript
 interface Something {
@@ -262,7 +267,8 @@ interface Something {
 }
 ```
 
-First thing first we probably should _mark_ `property` somehow so that we know that we want to _pluck_ this prop.
+First thing first we probably should _mark_ `property` somehow so that we know
+that we want to _pluck_ this prop.
 
 Remember our `[keyof Something]` notation?
 
@@ -298,7 +304,8 @@ type RemoveUndefinableKeys<Type> = {
 
 Now we _marked_ `property` as the one to be deleted (by undefined type)
 
-Let's add `[keyof Something]` notation (we will basically get only the values from the interface).
+Let's add `[keyof Something]` notation (we will basically get only the values
+from the interface).
 
 ```typescript
 type RemoveUndefinableKeys<Type> = {
@@ -321,7 +328,8 @@ type Identity = { [Key in 'name' | 'age']: Something[Key] };
 // would return the same Something type
 ```
 
-So by marking `property` as `undefined` we basically _plucked_ it from the interface.
+So by marking `property` as `undefined` we basically _plucked_ it from the
+interface.
 
 No we just need to make `Identity` type generic and name it somehow.
 
@@ -354,8 +362,8 @@ Remember typing dictionaries awkwardly like:
 type Dict = { [key: string]: number };
 ```
 
-Ahh... sad times.
-As you want to be _the cool kid_ you probably should use this _leet hackrzz_ `Record` stuff :
+Ahh... sad times. As you want to be _the cool kid_ you probably should use this
+_leet hackrzz_ `Record` stuff :
 
 ```typescript
 type Dict = Record<string, number>;
@@ -365,7 +373,8 @@ type Dict = Record<string, number>;
 
 ## This keyword
 
-When using strictest possible typescript settings (as you always should) you might night to type `this` keyword. Let's see how this can be done:
+When using strictest possible typescript settings (as you always should) you
+might night to type `this` keyword. Let's see how this can be done:
 
 ```typescript
 interface SomeObj {
@@ -389,13 +398,15 @@ function someFn(this: SomeObj, num: number) {
 }
 ```
 
-This may look weird, it may seem like `someFn` now takes 2 arguments but that's not the case. First argument (`this` typing) will get compiled away.
+This may look weird, it may seem like `someFn` now takes 2 arguments but that's
+not the case. First argument (`this` typing) will get compiled away.
 
 ## Typeof
 
 Here there is distinct difference between Javascript world and Typescript world.
 
-When using Javascript `typeof` will return underlying type as in the type that you can create in vanilla Javascript. This is familiar territory
+When using Javascript `typeof` will return underlying type as in the type that
+you can create in vanilla Javascript. This is familiar territory
 
 ```js
 typeof []; // "object"
@@ -403,8 +414,8 @@ typeof 'something'; // "string"
 typeof 3; // "number"
 ```
 
-But in Typescript `typeof` behaves a little bit differently.
-Instead of returning underlying vanilla JS types it will return us the Typescript type.
+But in Typescript `typeof` behaves a little bit differently. Instead of
+returning underlying vanilla JS types it will return us the Typescript type.
 
 ```typescript
 const person = {
@@ -442,7 +453,8 @@ function someFn(arg: number | string) {
 
 #### In vanilla JS
 
-> it tests if a `.prototype` property of a constructor exists somewhere in another object
+> it tests if a `.prototype` property of a constructor exists somewhere in
+> another object
 
 Example:
 
@@ -461,7 +473,8 @@ foo instanceof Foo
 
 #### In Typescript
 
-This works basically the same as `typeof`. Rarely used (used mainly with classes, brr)
+This works basically the same as `typeof`. Rarely used (used mainly with
+classes, brr)
 
 ### User Defined Type Guard
 
@@ -490,7 +503,8 @@ function isGoodResponse(response: OkResponse | BadResponse) response is OkRespon
 
 ### `in` Type Guards
 
-You can also use `in` operator as a _boolean checks_ just like you sometimes want to check if some browser feature is available.
+You can also use `in` operator as a _boolean checks_ just like you sometimes
+want to check if some browser feature is available.
 
 ```typescript
 interface Athlete {
@@ -531,7 +545,8 @@ const stripeOrder = Object.assign({}, order, stripeData); // OrderWithStripe
 
 ## Discriminant union
 
-Ever used reducer? You probably used `action.type` or similar property to distinguish between different actions.
+Ever used reducer? You probably used `action.type` or similar property to
+distinguish between different actions.
 
 To 'gather' all actions you probably did this:
 
@@ -539,7 +554,8 @@ To 'gather' all actions you probably did this:
 type Actions = ADD | DELETE | SOME_ACTION;
 ```
 
-Thats the _union_ part. Now the _discriminant_ is the **thing that enables typescript (and you) to distinguish between different actions**
+Thats the _union_ part. Now the _discriminant_ is the **thing that enables
+typescript (and you) to distinguish between different actions**
 
 ```typescript
   reducer(state, action) {
@@ -570,7 +586,8 @@ type Artist2 = {
 } & Item;
 ```
 
-- You can merge declarations with interfaces (you cannot have two types with the same name)
+- You can merge declarations with interfaces (you cannot have two types with the
+  same name)
 
 ```typescript
 interface Artist {
@@ -586,7 +603,8 @@ interface Artist {
 
 ## Function Overloads
 
-You can provide different implementations based on the arguments that we supply. It makes stuff more readable
+You can provide different implementations based on the arguments that we supply.
+It makes stuff more readable
 
 ```typescript
 // these are virtual, they will get compiled away
@@ -604,10 +622,30 @@ function reverse<T>(dataToReverse: string | T[]): string | T[] {
 }
 ```
 
+## Declare keyword
+
+This keyword is used for telling typescript that a **javascript construct**
+(like a function, variable etc) has already been defined elsewhere. (as a part
+of runtime environment)
+
+```ts
+declare function add(x: number, y: number): number;
+
+// somewhere in js file for example
+
+function add(x, y) {
+  return x + y;
+}
+```
+
+This allows you to have JS codebase covered with types that are separate. Users
+who use typescript can benefit from type completion while users using vanilla
+still have access to your library.
+
 ## Enums
 
-Enums are quite popular with _Ngrx_.
-They are not all sunshine and rainbows though.
+Enums are quite popular with _Ngrx_. They are not all sunshine and rainbows
+though.
 
 - they are typescript only concept
 - can cause bundle bloat
@@ -620,7 +658,10 @@ var Something;
 (function(Something) {})(Something || (Something = {}));
 ```
 
-Not looking to hot right? Well, there is a solution. A very simple one. Use `const` before `enum`. That way the whole `enum` construct will get compiled away and only picked properties will stay as normal variables. Enum props _get inlined_
+Not looking to hot right? Well, there is a solution. A very simple one. Use
+`const` before `enum`. That way the whole `enum` construct will get compiled
+away and only picked properties will stay as normal variables. Enum props _get
+inlined_
 
 ```typescript
 const enum Something {
@@ -636,12 +677,13 @@ let selected = 'No' /* no */;
 
 Much better now!
 
-**BUT BEWARE**
-Enums cannot be used with _plugin-transform-typescript_ which you are probably using.
+**BUT BEWARE** Enums cannot be used with _plugin-transform-typescript_ which you
+are probably using.
 
 ## Mocking with Typescript
 
-When testing sometimes you have to mock stuff. It's pretty common procedure, but typescript sometimes makes it difficult.
+When testing sometimes you have to mock stuff. It's pretty common procedure, but
+typescript sometimes makes it difficult.
 
 ```typescript
 import { Link as MockLink } from 'react-router-dom';
@@ -657,7 +699,8 @@ test(/* some test name */, () => {
 })
 ```
 
-It is frustrating , we have to help typescript a little bit by casting to a `mock type`
+It is frustrating , we have to help typescript a little bit by casting to a
+`mock type`
 
 ```typescript
 import { Link as LinkDep } from 'react-router-dom';
@@ -671,16 +714,17 @@ Same technique applies to _global mocks_.
 
 ## Typing `get` function
 
-Typing such functions is a nightmare. But we can make our lives easier with a couple of tricks.
+Typing such functions is a nightmare. But we can make our lives easier with a
+couple of tricks.
 
 [### All credit goes to this article](https://medium.com/@jamesscottmcnamara/type-yoga-typing-flexible-functions-with-typescripts-advanced-features-b5a282878b74)
 
-And btw, we are going all in when it comes to functional programming so our `get` function will be fp ready :)
+And btw, we are going all in when it comes to functional programming so our
+`get` function will be fp ready :)
 
 ### HasKey
 
-Turns out you can create object types out of thin air.
-Check this out:
+Turns out you can create object types out of thin air. Check this out:
 
 ```typescript
 type HasKey<K extends string, V> = { [_ in K]: V };
@@ -692,15 +736,16 @@ type Testing = HasKey<'wojtek', number>;
 */
 ```
 
-This is just mind bending stuff. Very clever usage of the `in` keyword.
-How does it work?
+This is just mind bending stuff. Very clever usage of the `in` keyword. How does
+it work?
 
-- We are extending `string` because generic will be type literal (like `wojtek` or `ala`)
+- We are extending `string` because generic will be type literal (like `wojtek`
+  or `ala`)
 
 - `{[_ in K]: V}` means an object with keys in K with value V
 
-Lets say you use `|` then typing `K` what will happen?
-Well you will get 2 props on an object with value: `any` (or any value you passed to generic).
+Lets say you use `|` then typing `K` what will happen? Well you will get 2 props
+on an object with value: `any` (or any value you passed to generic).
 
 Again, very clever stuff
 
@@ -727,7 +772,8 @@ You might think that we achieved what we wanted:
 
 > You just have to declare more overloads right?
 
-Not really, sadly this function is far from complete. The inferring system might have problems with more complex types.
+Not really, sadly this function is far from complete. The inferring system might
+have problems with more complex types.
 
 To fix this we introduce another type: `KeyAt`
 
@@ -739,8 +785,8 @@ interface SomeInterface {
 KeyAt<SomeInterface, 'wojtek'> // 'ala 123', literal type!
 ```
 
-This allows us to _pluck a given type_ out of object.
-This makes sure that return our function has return value correctly typed.
+This allows us to _pluck a given type_ out of object. This makes sure that
+return our function has return value correctly typed.
 
 ```ts
 declare function get<K extends string>(
@@ -748,7 +794,8 @@ declare function get<K extends string>(
 ): <Obj extends HasKey<K>>(obj: Obj) => KeyAt<Obj, K>;
 ```
 
-Personally i would name this type `TypeAt` but I'm going to roll with this name paying an homage to original author :).
+Personally i would name this type `TypeAt` but I'm going to roll with this name
+paying an homage to original author :).
 
 ### Traversals
 
@@ -760,7 +807,8 @@ Example:
 get(matching(friend => friend.friends > 5), 'name')(obj.friends);
 ```
 
-With our current implementation this operation is impossible. How would we enable such functionality?
+With our current implementation this operation is impossible. How would we
+enable such functionality?
 
 Let's type `matching` first:
 
@@ -788,13 +836,16 @@ const popularFriends = get(
 
 But there is a problem. Our `popularFriends` are typed as `never[]`.
 
-Going back to our declaration of `KeyAt` we typed it so that `Obj` has to be `HasKey<>` not `Array` of that type.
+Going back to our declaration of `KeyAt` we typed it so that `Obj` has to be
+`HasKey<>` not `Array` of that type.
 
 That is easily fixable. Just change `obj: Obj` to `obj: Obj[]`.
 
 ### Unpacking
 
-Very useful stuff for our function (which we want to be able to accept multiple containers) and overall (I really wonder why they would not put it inside TS utility types already).
+Very useful stuff for our function (which we want to be able to accept multiple
+containers) and overall (I really wonder why they would not put it inside TS
+utility types already).
 
 ```ts
 // power of conditionals and infer baby!
@@ -810,3 +861,127 @@ export type Unpack<F> = F extends Array<infer Item>
   ? Item
   : never;
 ```
+
+## Tuples and Currying
+
+This is going to be wild ride so strap on.
+
+### Head
+
+This type will let us pluck off the head of the `tuple Type`. Will come in handy
+later
+
+```ts
+type Head<A extends any[]> = A extends [infer First, ...any[]] ? First : never;
+type Test = Head<[1, 2, 3, 4]>; // 1
+```
+
+This type is using `infer` to get the correct type.
+
+### Tail
+
+We implemented `Head` it's time for `Tail` now. As of writing this we cannot
+just get the last type out of the tuple.
+
+Lets try the naive approach
+
+```ts
+// NOT WORKING
+type Tail<A extends any[]> = A extends [any, ...infer tail] ...
+```
+
+Sadly we cannot use spread and `infer` together. To implement this type we can
+use _function types_. We are going to work on function parameters where we can
+directly _infer_ from the rest of arguments.
+
+```ts
+type Tail<A extends any[]> = ((...t: A) => any) extends ((
+  _: any,
+  ...tail: infer TailType
+) => any)
+  ? TailType
+  : never;
+
+type Test = Tail<[1, 2, 3, 4]>; // [2,3,4]
+```
+
+We are sort of creating a _virtual type-only function_ that will allow us to
+work with parameters which we can type and infer from freely (we cannot do that
+using arrays).
+
+### HasTail
+
+Since classical curried functions are taking one argument at a time we have to
+know when we should stop and return the return type. `HasTail` type will allows
+us to do so
+
+```ts
+type HasTail<A extends any[]> = A extends ([] | [any]) ? false : true;
+type Test = HasTail<[]>; // false
+type Test2 = HasTail<[1, 2]>; // true
+```
+
+Pretty straight forward right? Unless our tuple is empty or only has 1 element
+left we can keep going with currying.
+
+### CurryV0
+
+With those simple types we can define our **strict curry** type
+
+```ts
+type CurryV0<Parameters extends any[], ReturnType> = (
+  arg: Head<Parameters>
+) => HasTail<Parameters> extends true
+  ? CurryV0<Tail<Parameters>, ReturnType>
+  : ReturnType;
+
+declare function curry<P extends any[], R>(f: (...args: P) => R): CurryV0<P, R>;
+
+function addTwo(x: number, y: number) {
+  return x + y;
+}
+
+const curried = curry(addTwo);
+
+curried(1)(2); // works like a charm!
+```
+
+I specifically am very verbose with names to make this type clear. This type is
+using recursion to gradually (with each call) pluck off one parameter at a time.
+
+### Last
+
+Our curry implementation is great! But, we can always improve on things right?.
+So what if we want to support _loose curry_ ? (like partial application). This
+would prove to be very difficult using our current tools.
+
+One type that might help us reach that goal of partial application is the `Last`
+type.
+
+Instead of plucking off tail from tuple we will only pluck the last type.
+
+```ts
+type Last<P extends any[]> = {
+  0: Last<Tail<P>>;
+  1: Head<P>;
+}[HasTail<P> extends true ? 1 : 0];
+type Test = Last<[1, 2, 3, 4]>; // 4
+```
+
+So this might be hard to digest but stay with me. This type is using recursion
+
+- if there is a tail, pass that tail recursively to `Last`
+- if there is no tail use that value, stop recursion
+
+The picking if we need to stop the recursion happens in `[]`. This is what's
+called `indexed type accessor`.
+
+You might think we can do the type using normal turnery like :
+
+```ts
+type Last2<P extends any[]> = HasTail<P> ? Last2<Tail<P>> : Head<P>
+```
+
+This restriction stems from TS itself, you can though reference a type from
+within an object type just like we are doing with our first `Last`
+implementation.
