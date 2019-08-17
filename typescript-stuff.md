@@ -985,3 +985,70 @@ type Last2<P extends any[]> = HasTail<P> ? Last2<Tail<P>> : Head<P>
 This restriction stems from TS itself, you can though reference a type from
 within an object type just like we are doing with our first `Last`
 implementation.
+
+### Length
+
+This type will allow us to have basic information about arguments that are
+passed in and such. This, in terms, will allows us to implement partial
+application.
+
+```ts
+type Length<T extends any[]> = T['length'];
+
+type Test = Length<[1, 2, 3, 4]>; // 4
+```
+
+`Length` type will work as a pseudo-counter.
+
+### Prepend
+
+This will allow us to prepend a type to a tuple type, which will allow us to
+know which parameters has already been supplied. To implement this type we will,
+again, make us of `function types` trick.
+
+```ts
+type Prepend<TypeToPrepend, Tuple extends any[]> = ((
+  head: TypeToPrepend,
+  ...tail: Tuple
+) => any) extends ((...args: infer U) => any)
+  ? U
+  : never;
+
+type Test = Prepend<number, [1, 2, 3]>; // [number, 1,2,3]
+```
+
+Just to make sure you know how this is working. As mentioned before, we cannot
+use array destructuring (or spread for that matter) to assign types or use
+`infer` keyword.
+
+To circumvent this restrictions we have to operate on functions parameters.
+
+In this type we are basically checking if `Function == Function` (which will
+always be the case) but in the act of checking we can merge `TypeToPrepend` and
+`TupleType` using `infer U` on the second function.
+
+### Drop
+
+Just like we can `Prepend` type to a tuple type we are also in need of the
+ability to remove a number of arguments from the tuple type.
+
+To achieve such functionality we will use **recursive indexed types** (already
+seen before)
+
+```ts
+type Drop<
+  ElementsToDrop extends Number,
+  TupleToDropFrom extends any[],
+  Iterator extends any[] = []
+> = {
+  0: Drop<ElementsToDrop, Tail<TupleToDropFrom>, Prepend<Iterator, any>>;
+  1: TupleToDropFrom;
+}[Length<Iterator> extends ElementsToDrop ? 1 : 0];
+
+type Test = Drop<2, [1, 2, 3, 4]>; // [3,4]
+```
+
+One might be curious about that `any` type passed to `Prepend`. Well this
+`Iterator` type only accts as to-be-thrown-away accumulator, one might say:
+recursion stop predicate. Since we do not care about the type passed to iterator
+we default to `any`.
