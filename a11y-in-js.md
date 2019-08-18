@@ -59,3 +59,17 @@ Notes from FrontendMasters workshop.
 
 - **DO NOT SET `outline:0`**
 - use css to customize behavior (like `:focus-visible`)
+
+## Live Regions
+
+- used to announce something (like combobox filtering result)
+- can be `polite` (non-interrupting) and `assertive` (interrupts previous
+  announcement)
+- live regions can be useful when dealing with forms and alerts about validity
+- also about informing use that an error occurred or that something was saved
+
+## `prefers-reduced-motion`
+
+- you can use it with media queries (media query reacts on hardware level, eg.
+  user preferences inside system settings)
+- should be used to soften or turn off given animation
