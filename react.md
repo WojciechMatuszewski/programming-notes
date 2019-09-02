@@ -4,9 +4,11 @@
 
 ### Moving away from `.defaultProps`
 
-Looking at the discussions on git about React 16.9 there is a proposal to move away from `.defaultProps`, at lest on functional components.
+Looking at the discussions on git about React 16.9 there is a proposal to move
+away from `.defaultProps`, at lest on functional components.
 
-The reason is pretty justified in my opinion, just look at the code snippet here:
+The reason is pretty justified in my opinion, just look at the code snippet
+here:
 
 ```js
 export function createElement(type, config, children) {
@@ -36,19 +38,26 @@ export function createElement(type, config, children) {
 }
 ```
 
-The problem is that _resolving default props_ happens on every `React.createElement` call. This may seem insignificant but image how many times this function gets invoked.
+The problem is that _resolving default props_ happens on every
+`React.createElement` call. This may seem insignificant but image how many times
+this function gets invoked.
 
-The answer for this problem would be to use default properties available in ES6, but the are also problems with that solution.
+The answer for this problem would be to use default properties available in ES6,
+but the are also problems with that solution.
 
-Bundle size bloating may occur when using destructuring and default values (especially object ones) when transpiling to other versions.
+Bundle size bloating may occur when using destructuring and default values
+(especially object ones) when transpiling to other versions.
 
-React team still have to asses different choices but one is almost certain that `.defaultProps` will go out of favour very soon.
+React team still have to asses different choices but one is almost certain that
+`.defaultProps` will go out of favour very soon.
 
 ## Patterns
 
 ### Value/Dispatch Provider Pattern
 
-Sometimes the thing you want to update is complex and you decide to use reducer. Additionally you want to control the scope of changes to a given value (maybe state) by other components.
+Sometimes the thing you want to update is complex and you decide to use reducer.
+Additionally you want to control the scope of changes to a given value (maybe
+state) by other components.
 
 This is where **Value/Dispatch Provider Pattern** shines.
 
@@ -73,7 +82,8 @@ return function Provider({ children }) {
 };
 ```
 
-Splitting these two makes it possible to skip `useMemo` because the values are always the same.
+Splitting these two makes it possible to skip `useMemo` because the values are
+always the same.
 
 #### What would happen if I did not split these two
 
@@ -92,14 +102,17 @@ Now, with every render, `value` **is different** (as in Object.is notion).
 
 Why is a big deal?
 
-> The propagation from Provider to its descendant consumers is not subject to the `shouldComponentUpdate` method.
-> Changes are determined by comparing the new and old values using the same algorithm as `Object.is`
+> The propagation from Provider to its descendant consumers is not subject to
+> the `shouldComponentUpdate` method. Changes are determined by comparing the
+> new and old values using the same algorithm as `Object.is`
 
-Without `useMemo` every time `Provider` rerenders, all of its consumers rerender.
+Without `useMemo` every time `Provider` rerenders, all of its consumers
+rerender.
 
 ### Safe Function Call Pattern
 
-Sometimes you have some side-effect you do not want to call on **unmounted** component.
+Sometimes you have some side-effect you do not want to call on **unmounted**
+component.
 
 We can leverage `useRef` to make sure we are safe from memory leaks.
 
@@ -119,17 +132,21 @@ React.useEffect(() => () => (canDispatch.current = false), []);
 
 Why would I use `useCallback` here?
 
-From the docs we know that `dispatch` never changes (as in Object.is never changes).
+From the docs we know that `dispatch` never changes (as in Object.is never
+changes).
 
-This means that if your component takes only `dispatch` as a prop you do not need to wrap it in `React.memo` (or use `PureComponent`).
+This means that if your component takes only `dispatch` as a prop you do not
+need to wrap it in `React.memo` (or use `PureComponent`).
 
-We want to replicate this behavior so we are using `useCallback` to make sure that `safeDispatch` never changes (as in Object.is never changes).
+We want to replicate this behavior so we are using `useCallback` to make sure
+that `safeDispatch` never changes (as in Object.is never changes).
 
 ### Compound Components
 
 #### Non-flexible Compound Components
 
-So basically you want to pass down the necessary props using `React.Children` and `React.cloneElement` combo.
+So basically you want to pass down the necessary props using `React.Children`
+and `React.cloneElement` combo.
 
 ```jsx
 function Counter({ children }) {
@@ -140,7 +157,8 @@ function Counter({ children }) {
 }
 ```
 
-This will make it so props are passed but **unless you have some `displayName` convention, they are passed to every child**.
+This will make it so props are passed but **unless you have some `displayName`
+convention, they are passed to every child**.
 
 #### Flexible Compound Components
 
@@ -182,13 +200,15 @@ class Counter {
 
 ##### Using hooks
 
-This works basically the same as the class variant but you update classes to functional components and use hooks. Of course you cannot use static properties.
+This works basically the same as the class variant but you update classes to
+functional components and use hooks. Of course you cannot use static properties.
 
 ### Prop Collections and Getters
 
 This pattern was widely used with `render props` now migrated to custom hooks.
 
-The premise is simple, supply custom props in one obj so that consumer can just spread those without worrying about missing some props.
+The premise is simple, supply custom props in one obj so that consumer can just
+spread those without worrying about missing some props.
 
 This can be really helpful (looking at you `react-virtualized` 😉)
 
@@ -219,8 +239,10 @@ function Component() {
 
 #### Prop Getters
 
-So the `Prop Collections` are great but they are not flexible.
-What would happen if user wanted to provide their own `onChange` on top of ours (this would also allow the user to pluck off necessary props and implement sort of inversion of control)?
+So the `Prop Collections` are great but they are not flexible. What would happen
+if user wanted to provide their own `onChange` on top of ours (this would also
+allow the user to pluck off necessary props and implement sort of inversion of
+control)?
 
 Lets change an rigid object to a function which can tackle this dilemma.
 
@@ -272,7 +294,8 @@ function Component() {
 
 ### State Reducer
 
-This pattern enables us to implement _inversion of control_. You are allowing the consumer to pluck into your internal logic.
+This pattern enables us to implement _inversion of control_. You are allowing
+the consumer to pluck into your internal logic.
 
 ```jsx
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
@@ -343,3 +366,75 @@ function Usage() {
   // other code
 }
 ```
+
+## Undocumented features
+
+### Contexts' bits
+
+So there is undocumented feature in `Context` API. From the docs you probably
+know that when `Context` changes every component that is under that uses that
+`Context` will re-render.
+
+That's why it is so important to make sure you are `memoizing` your context
+value.
+
+But there is a hidden feature that allows you to **hand pick components that you
+want to be rerendered**
+
+Lets create simple context
+
+```jsx
+const initialState = { firstName: 'Harry', familyName: 'Potter' };
+const PersonContext = React.createContext(null);
+
+function PersonProvider({ children }) {
+  const [person, setPerson] = React.useState(initialState);
+
+  return (
+    <PersonContext.Provider value={[person, setPerson]}>
+      {children}
+    </PersonContext.Provider>
+  );
+}
+```
+
+Now lets say we have 2 components that display `firstName` and `familyName`
+
+```jsx
+function DisplayFirstName() {
+  return (
+    <PersonContext.Consumer unstable_observedBits={0b1}>
+      {([person]) => <div>{person.firstName}</div>}
+    </PersonContext.Consumer>
+  );
+}
+function DisplayFamilyName() {
+  return (
+    <PersonContext.Consumer unstable_observedBits={0b10}>
+      {([person]) => <div>{person.familyName}</div>}
+    </PersonContext.Consumer>
+  );
+}
+```
+
+We've added this mysterious `unstable_observedBits`. This is kind of
+_identificatior_ for given consumer.
+
+Now how do we distinguish between those to skip on some re-rendering?
+
+```jsx
+function calculateChangedBits(
+  [{familyName}],
+  [{familyName: newFamilyName}]
+) {
+  return familyName != newFamilyName ? 0b10 : 0b1
+}
+const PersonContext(null, calculateChangedBits)
+```
+
+This magical `calculateChangedBits` function is like `shouldComponentUpdate` or
+diffing function inside `React.memo`. Instead of returning true or false you are
+returning bits, basically creating so-called **bitmask**
+
+This is the mechanism used by redux and mobx to make sure they are only
+re-rendering something that changed!
