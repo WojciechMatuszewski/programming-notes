@@ -10,7 +10,8 @@ Specificity is based on column-like structure (0-0-0).
 - 0-1-0 for `.`
 - 0-0-1 for `element`
 
-Whichever column has the bigger number in the left-most column wins. **If selectors are identical the bottom most wins (cascading styles)**
+Whichever column has the bigger number in the left-most column wins. **If
+selectors are identical the bottom most wins (cascading styles)**
 
 ### Relational Selectors
 
@@ -86,7 +87,8 @@ element[alt='some image description'] {
 }
 ```
 
-- value begins with something, **it ignores any dashes that come after it**. Mostly used on languages attributes.
+- value begins with something, **it ignores any dashes that come after it**.
+  Mostly used on languages attributes.
 
 ```css
 /*
@@ -100,7 +102,8 @@ element[alt|='some'] {
 }
 ```
 
-- you can query by value which starts with (`^`) ends or (`$`) or has (`*`) some query
+- you can query by value which starts with (`^`) ends or (`$`) or has (`*`) some
+  query
 
 ```css
 element[alt$='some'],
@@ -109,8 +112,9 @@ element[alt^='some'] {
 }
 ```
 
-- you can also force case insensitivity using `i`
-  When using `element[alt="some"]` that query inside quotes will match using case sensitivity by default. You can change that behavior
+- you can also force case insensitivity using `i` When using
+  `element[alt="some"]` that query inside quotes will match using case
+  sensitivity by default. You can change that behavior
 
 ```css
 element[alt="some" i]
@@ -157,7 +161,8 @@ Matches the root element. In HTML its the `<html>` tag.
 
 #### `:empty`
 
-Matches element that has no content, is self closing or contains only a comment. **It cannot have any whitespace**.
+Matches element that has no content, is self closing or contains only a comment.
+**It cannot have any whitespace**.
 
 #### `:blank`
 
@@ -165,7 +170,8 @@ Not really supported. Works like `:empty` but can contain whitespace.
 
 ### `:not`
 
-Well supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators and spaces.
+Well supported. The gotcha is that the **selector inside parenthesis must be
+simple**. By simple we mean no combinators and spaces.
 
 ```css
 element: not(img); /*ok*/
@@ -181,13 +187,15 @@ This one is wild. Look at the syntax
 element: matches(#home, .someClass, [title]);
 ```
 
-Pretty neat huh? This one is almost like `querySelectorAll`. Of course this would be too good to be true. **Support for this is quite meh**.
+Pretty neat huh? This one is almost like `querySelectorAll`. Of course this
+would be too good to be true. **Support for this is quite meh**.
 
 ## Pseudo elements
 
 ### `::first-letter`
 
-You can target the first letter of any element that has text inside. This way you can create _book-like_ text
+You can target the first letter of any element that has text inside. This way
+you can create _book-like_ text
 
 ```css
 p::first-letter {
@@ -198,7 +206,8 @@ p::first-letter {
 
 ### `::selection`
 
-You can actually style the behavior of selected (as in mouse selected) stuff. This is pretty neat!.
+You can actually style the behavior of selected (as in mouse selected) stuff.
+This is pretty neat!.
 
 ```css
 /*
@@ -211,7 +220,8 @@ p::selection {
 
 ### `::before` and `::after`
 
-These **has to have `content` property**. That content is actually not part of the DOM, you cannot highlight it.
+These **has to have `content` property**. That content is actually not part of
+the DOM, you cannot highlight it.
 
 ```css
 p::before,
@@ -224,7 +234,8 @@ p::after {
 }
 ```
 
-One of the less known features is that if you do not want to show any content at all you can be a _pro leet hackorz_ and use `none`
+One of the less known features is that if you do not want to show any content at
+all you can be a _pro leet hackorz_ and use `none`
 
 ```css
 p::before {
@@ -246,3 +257,22 @@ p::before {
 ### `::placeholder`
 
 Self explanatory. You can style placeholders 🤷‍
+
+## Progressive enhancement
+
+Lets say you want to use CSS grid where possible and for older browsers some
+simple, other, layout.
+
+How would we go about detecting if we can use grid ?
+
+Well it turns out there is are so called **CSS Feature Queries**.
+
+These can be use to detect if a CSS feature is available on given browser.
+
+```css
+@supports (display: grid) {
+  // you code here
+}
+```
+
+Pretty cool stuff!.
