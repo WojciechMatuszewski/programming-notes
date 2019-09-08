@@ -222,7 +222,7 @@ interface Something {
 }
 
 type UndefinedAsNever<Type> = {
-  [Key in keyof Type]: undefined extends Type[Key] ? never : Type[Key]
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Type[Key];
 };
 
 type Test1 = UndefinedAsNever<Something>;
@@ -280,7 +280,7 @@ interface Something {
 }
 
 type RemoveUndefinableKeys<Type> = {
-  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
 }[keyof Type];
 
 type Test1 = RemoveUndefinableKeys<Something>; //"id" | "name" | undefined
@@ -290,7 +290,7 @@ How does `RemoveUndefinableKeys` work?
 
 ```typescript
 type RemoveUndefinableKeys<Type> = {
-  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
 };
 // would return
 /*
@@ -309,7 +309,7 @@ from the interface).
 
 ```typescript
 type RemoveUndefinableKeys<Type> = {
-  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
 }[keyof Type];
 // would return "id" | "name" | undefined
 ```
@@ -335,13 +335,13 @@ No we just need to make `Identity` type generic and name it somehow.
 
 ```typescript
 type RemoveUndefinableKeys<Type> = {
-  [Key in keyof Type]: undefined extends Type[Key] ? never : Key
+  [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
 }[keyof Type];
 
 type RemoveUndefinable<Type> = {
   // this is the same as Key in "id" | "name" | undefined
   // undefined will be omitted
-  [Key in RemoveUndefinableKeys<Type>]: Type[Key]
+  [Key in RemoveUndefinableKeys<Type>]: Type[Key];
 };
 
 type Test = RemoveUndefinable<Something>;
@@ -1052,3 +1052,50 @@ One might be curious about that `any` type passed to `Prepend`. Well this
 `Iterator` type only accts as to-be-thrown-away accumulator, one might say:
 recursion stop predicate. Since we do not care about the type passed to iterator
 we default to `any`.
+
+## Matching exact shape
+
+> TypeScript is a structural type system. This means as long as your data
+> structure satisfies a contract, TypeScript will allow it. Even if you have too
+> many keys declared.
+
+This definitely can be a problem. Example
+
+```typescript
+type Person = {
+  first: string;
+  last: string;
+};
+
+const tooFew = { first: 'Stefan' };
+const tooMany = { first: 'Stefan', last: 'Joe', other: 'something' };
+
+declare function savePerson(person: Person): void;
+
+savePerson(tooFew); // Error!
+savePerson(tooMany); // OK -> WTF ;C
+```
+
+We can use clever generic type along with `Exclude` to make sure our params are
+the exact shape of given `type / interface`
+
+```ts
+type ValidateShape<T, Shape> = T extends Shape
+  ? Exclude<keyof T, keyof Shape> extends never
+    ? T
+    : never
+  : never;
+```
+
+- check if T is _`Shape`-compatible_ with `extends`
+- see if there is 1:1 match between `T` and `Shape` when it comes to properties.
+- otherwise return never
+
+Pretty neat stuff!. With this we can re-write our example to:
+
+```ts
+declare function savePerson<T>(person: ValidateShape<T, Person>): void;
+
+savePerson(tooFew); // Error -> returns never
+savePerson(tooMany); // Error -> returns never
+```

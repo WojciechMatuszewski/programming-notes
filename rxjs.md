@@ -2,8 +2,12 @@
 
 ## Properly handling errors using `catchError`
 
-So you've been using `catchError` just treating it like `.catch` in a promise-base API and it all seemed all good and sweet. But sometimes you encountered a bug where a stream would not be called again after an error. _But you caught the error with `catchError` and returned a new stream_, what could go wrong?🤔. Well just know that:
-**`catchError` replaces whole stream, WHOLE STREAM**. Now lets see an example:
+So you've been using `catchError` just treating it like `.catch` in a
+promise-base API and it all seemed all good and sweet. But sometimes you
+encountered a bug where a stream would not be called again after an error. _But
+you caught the error with `catchError` and returned a new stream_, what could go
+wrong?🤔. Well just know that: **`catchError` replaces whole stream, WHOLE
+STREAM**. Now lets see an example:
 
 ```typescript
 source$.pipe(
@@ -26,11 +30,16 @@ source$.pipe(
 );
 ```
 
-So, error is propagated and is caught by `catchError`, that's all and good. But again **CATCH ERROR REPLACES WHOLE STREAM!**(and we are returning an empty Observable). That means, **after an error, that operator is just an empty Observable**.
+So, error is propagated and is caught by `catchError`, that's all and good. But
+again **CATCH ERROR REPLACES WHOLE STREAM!**(and we are returning an empty
+Observable). That means, **after an error, that operator is just an empty
+Observable**.
 
 ### Solution
 
-Solution would be... well reading the docs and such (and actually understanding what code you are writing). To solve this problem we just need to move `catchError` **inside switchMap**.
+Solution would be... well reading the docs and such (and actually understanding
+what code you are writing). To solve this problem we just need to move
+`catchError` **inside switchMap**.
 
 ```typescript
 source$.pipe(
@@ -46,7 +55,33 @@ source$.pipe(
 
 There, no magic, no weird copy-paste from stack. That's all.
 
-_Reference: [this great article](https://medium.com/city-pantry/handling-errors-in-ngrx-effects-a95d918490d9)_
+_Reference:
+[this great article](https://medium.com/city-pantry/handling-errors-in-ngrx-effects-a95d918490d9)_
+
+## Operators
+
+### `fromFetch` and `ajax`
+
+You do not have to use `from(fetch...)` to get obs. back anymore. RxJs ships
+with 2 operators that do the fetching for you and produce observable. There is
+one catch though.
+
+**`fromFetch` will automatically setup abort controller**. Which is great news!
+But... it may cause errors while working on older versions of browsers, like
+IE 11.
+
+`fromFetch` is lazy. It will only fire when you subscribe.
+
+```js
+const data$ = from(fetch('')); // fired right away
+
+const data2$ = defer(() => from(fetch(''))); // fired when subscribed to
+
+const data3$ = fromFetch(''); // fired when subscribed to
+```
+
+The fact that `from(fetch)` fires right away is huge. I wonder how many bugs
+that caused in my applications 🤔
 
 ## Recipes
 
@@ -62,7 +97,9 @@ timer$.pipe(
 )
 ```
 
-`exhaustMap` will not fire another request till previous request in-flight is not finished. If you want to drop that request and start another one you probably need `switchMap`.
+`exhaustMap` will not fire another request till previous request in-flight is
+not finished. If you want to drop that request and start another one you
+probably need `switchMap`.
 
 ### Drag and Drop
 
@@ -101,7 +138,8 @@ const preventDoubleSubmit$ = buttonClick$.pipe(
 
 Aside from all the `Subject`-y related types there is also notification.
 
-`Notification` **does not create an observer**. It wraps it annotating it with additional metadata.
+`Notification` **does not create an observer**. It wraps it annotating it with
+additional metadata.
 
 Example:
 
@@ -119,17 +157,23 @@ of(1)
 */
 ```
 
-As you see it can swallow original values. Notification can be of a different type (type corresponds to observable life cycle).
+As you see it can swallow original values. Notification can be of a different
+type (type corresponds to observable life cycle).
 
 ## Uncommon Operators
 
 ### Materialize / dematerialize
 
-So you know about `Notification` type. It's all good and great but you probably wonder how you could use it.
+So you know about `Notification` type. It's all good and great but you probably
+wonder how you could use it.
 
-Lets say you have a source that can error out. Sure, that could happen but when that does happen, **error bubbles up and ignores every operator that is yet to come**. This might be a problem.
+Lets say you have a source that can error out. Sure, that could happen but when
+that does happen, **error bubbles up and ignores every operator that is yet to
+come**. This might be a problem.
 
-To prevent this you might want to turn the error into `Notification` using `materialize` operator. If a given source errors out you can check if `Notification` is of type error and act accordingly without skipping operators.
+To prevent this you might want to turn the error into `Notification` using
+`materialize` operator. If a given source errors out you can check if
+`Notification` is of type error and act accordingly without skipping operators.
 
 Example:
 
