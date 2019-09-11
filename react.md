@@ -438,3 +438,32 @@ returning bits, basically creating so-called **bitmask**
 
 This is the mechanism used by redux and mobx to make sure they are only
 re-rendering something that changed!
+
+### BatchUpdates
+
+So by now you probably know that React batches updates (calls like `setState` or
+`setWhatever`[hooks])
+
+The question is when is React doing that? Well, certainly not on every call
+because that would cause a lot of overhead.
+
+So React does that only in well knows methods like `componentDidUpdate` (and
+probably other life-cycle methods) and events callbacks (like `onClick`)
+
+But the more important thing is that **React does not batch state updates in
+async callbacks**. So anything in `setTimeout` or a `Promise` wont batch.
+
+There is a reliable way to batch state update though that method is marked as
+`_unstable`.
+
+`unstable_batchUpdates` is that method. Usage:
+
+```javascript
+ReactDOM.unstable_batchedUpdates(() => {
+  setState(/**/);
+  setState(/**/);
+  setState(/**/);
+});
+```
+
+This will make it so only one `setState` will fire.
