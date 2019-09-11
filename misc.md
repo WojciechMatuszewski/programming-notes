@@ -128,3 +128,50 @@ works_ when reducing promises should be pretty easy for us to understand.
 Here, just like before we are returning a `Promise` from within a `Promise`.
 Flattening kicks in and we wait for the deepest `.then` resolution (being
 called) and proceed with another one.
+
+## CORS
+
+CORS is the mechanism which enables one webapp (like your localhost) to share
+some resource with another webapp (like your endpoint API).
+
+If those 2 apps have **the same origin** they can easily share those resources
+with no hassle at all.
+
+Problems begin when they are on different origins.
+
+So what does _different origin_ mean?
+
+- different domain like `google.com` and `twitter.com`
+- different subdomains like `localhost:3000` and `localhost:3000.api/v1`
+- different ports like `:3000` and `:4000`
+- different protocols like `http` and `https`
+
+To make it work you have to follow the CORS standard.
+
+So how does it work?
+
+Suppose we have 2 apps: A and B. They want to share resources. App A makes a
+POST request to app B:
+
+- `preflight` request is made (before the actual request) **also known as
+  OPTIONS call**
+- app B now have the responsibility of verifying either this request is valid or
+  not.
+- app B sets some additional headers to that request and sends it back.
+- now browser knows if the request is valid or not. The actual `POST` request is
+  made
+
+### Simple Request vs Preflight Request
+
+So we've seen how the preflight mechanism works. But the next question on your
+mind probably is: is this happening every time I send a request?
+
+Well, no.
+
+Some request are marked as `simple` by the browser and the preflight (`OPTIONS`)
+request is not send.
+
+### Caching
+
+Browsers can actually cache preflight responses. You usually specify that in a
+header.
