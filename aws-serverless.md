@@ -100,3 +100,54 @@ So long the era of costly private servers. With EC2 you can rent a virtual
 machine (of different kind, optimized for different things or general use) for
 cheap and play with that. You can control the exposition to the internet by
 defining ports and such.
+
+## S3 (Simple Storage Service)
+
+- safe place to store your files
+- data is spread between multiple devices and facilities
+- unlimited storage
+- files are store in something called **buckets**
+
+### Glacier and Glacier Deep Archive
+
+These are used for storing archive data. Something you do not need to get right
+away. It is very cost effective.
+
+## EBS (Elastic Block Store)
+
+> persistent block storage volumes for use with with EC2.
+
+So this is basically virtual hard disk in the cloud. Aws provides a variety of
+disks, from SSDs to normal Magnetic drives.
+
+## CloudWatch
+
+CloudWatch is used for monitoring (mostly performance). You can check your
+lambdas logs there and other stuff.
+
+## CloudTrail
+
+Do not confuse with `CloudWatch`. Think of this as a camera looking at you and
+records what you are doing.
+
+> Every time you create S3 bucket or make an API call to AWS it records that.
+
+You can later identify which users did what.
+
+## Databases
+
+Amazon has a plethora of different databases available. From traditional, SQL
+(relational) databases to Key-Vale ones (DynamoDB)
+
+### RDS
+
+RDS is the name for relational data bases. They have 2 key features:
+
+- Multi-AZ for disaster recovery, this is basically means that when your
+  database fails, Amazon will dynamically update EC2 DNS to point to the other
+  database.
+- Read-Replicas for performance. One database is connected to the other one.
+  That second one holds copies of your writes to the first one. In case of
+  failure Amazon **will not** handle it automatically here.
+
+### NoSql/JSON
