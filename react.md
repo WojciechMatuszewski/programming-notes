@@ -81,6 +81,65 @@ Bundle size bloating may occur when using destructuring and default values
 React team still have to asses different choices but one is almost certain that
 `.defaultProps` will go out of favour very soon.
 
+### Safe refs with Concurrent Mode
+
+So you already know the difference with `Rendering`, `Committing` and
+`Reconciliation`.
+
+The deal is that when `Concurrent Mode` is active React might call your function
+(or your render method) multiple times.
+
+This is all and good but might cause some problems with mutable objects like
+`refs`
+
+Contrived Example
+
+```jsx
+function ComponentWithRef() {
+  const counter = React.useRef(0);
+
+  counter.current++;
+
+  return null;
+}
+
+function App() {
+  const [_, setState] = React.useState(0);
+
+  return (
+    <React.Fragment>
+      <ComponentWithRef />
+      {/* set new object as state*/}
+      <button onClick={() => setState({})}>Click me</button>
+    </React.Fragment>
+  );
+}
+```
+
+Ok, so now, whenever you click the button the component will rerender. Whenever
+you rerender the `counter.current` will increment. With 'normal' mode it works
+fine. But the problem occurs when you are using `Concurrent Mode` and React
+renders multiple times before committing.
+
+Then, instead of seeing your counter incremented once, you will probably see
+different number.
+
+So the trick is to place it inside `useEffect` without any dependencies, like
+so:
+
+```js
+React.useEffect(() => {
+  counter.current++;
+});
+```
+
+Some rules to make your life easier
+
+- **DO NOT mutate refs current value in render if they rely oon the previous
+  ref's value**
+
+Easy as that.
+
 ## Patterns
 
 ### Value/Dispatch Provider Pattern
