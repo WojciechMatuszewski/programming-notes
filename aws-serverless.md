@@ -170,3 +170,10 @@ Amazon's answer for data warehousing, doing online analytics processing with ver
 #### Elastic Cache
 
 Sits between your website and database. Basically cache as a service. Basically is a Redis (or Memcached) managed by AWS.
+
+## DNS (Route 53)
+
+### What is DNS?
+
+-   phone-book metaphor
+-   used to convert human friendly names (like site names `google.com`) to IPv4 addresses
