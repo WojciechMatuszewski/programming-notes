@@ -11,14 +11,14 @@
 
 > You call a lambda and you are waiting for the response to come back.
 
-- client waiting for the response.
+-   client waiting for the response.
 
 #### Async mode
 
 > You fire it and forget about it.
 
-- send me an email in the background.
-- update dynamoDB (like a scheduled job).
+-   send me an email in the background.
+-   update dynamoDB (like a scheduled job).
 
 ### Cold State
 
@@ -39,8 +39,8 @@ was not possible.
 
 This service is used for authentication but there are 2 variations:
 
-- user pools
-- federated identities
+-   user pools
+-   federated identities
 
 What's the difference between those two?
 
@@ -48,10 +48,10 @@ What's the difference between those two?
 
 **This service is used for authentication (adding one to your application)**.
 
-- sign-in
-- sign-up
-- password policies
-- social-login with Facebook or Google.
+-   sign-in
+-   sign-up
+-   password policies
+-   social-login with Facebook or Google.
 
 Using this service enables you to grant users access to your application
 (previously mentioned auth flow) **and also grant access to AWS Cognito
@@ -103,10 +103,10 @@ defining ports and such.
 
 ## S3 (Simple Storage Service)
 
-- safe place to store your files
-- data is spread between multiple devices and facilities
-- unlimited storage
-- files are store in something called **buckets**
+-   safe place to store your files
+-   data is spread between multiple devices and facilities
+-   unlimited storage
+-   files are store in something called **buckets**
 
 ### Glacier and Glacier Deep Archive
 
@@ -143,11 +143,30 @@ Amazon has a plethora of different databases available. From traditional, SQL
 
 RDS is the name for relational data bases. They have 2 key features:
 
-- Multi-AZ for disaster recovery, this is basically means that when your
-  database fails, Amazon will dynamically update EC2 DNS to point to the other
-  database.
-- Read-Replicas for performance. One database is connected to the other one.
-  That second one holds copies of your writes to the first one. In case of
-  failure Amazon **will not** handle it automatically here.
+-   Multi-AZ for disaster recovery, this is basically means that when your
+    database fails, Amazon will dynamically update EC2 DNS to point to the other
+    database.
+-   Read-Replicas for performance. One database is connected to the other one.
+    That second one holds copies of your writes to the first one. In case of
+    failure Amazon **will not** handle it automatically here.
 
 ### NoSql/JSON
+
+Mainly `dynamoDB`.
+
+### Aurora
+
+-   AWS solution for Relational-Database
+-   Much faster than eg. `MySQL`
+-   Costs much less than traditional relational database
+-   Compatible with existing relational databases
+
+### Misc
+
+#### RedShift
+
+Amazon's answer for data warehousing, doing online analytics processing with very complex queries.
+
+#### Elastic Cache
+
+Sits between your website and database. Basically cache as a service. Basically is a Redis (or Memcached) managed by AWS.
