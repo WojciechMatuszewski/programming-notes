@@ -1,5 +1,46 @@
 # Typescript Stuff
 
+## Assert Signatures
+
+Finally, FINALLY we do not have to make type-guards everywhere and have our code
+littered with one line functions because `Typescript` cannot `infer` correct
+types.
+
+```ts
+function assert(input:any) asserts input {
+    if (!input) throw Error('Not a truthy value')
+}
+```
+
+So this is less strict than type-guards where you have to `narrow-down` the type
+(most of the times). But i like it kinda better (granted both methods have their
+use-cases)
+
+## Null Coalescing
+
+This is more of a JavaScript thingy but hey, we are all probably writing only
+TypeScript now :)
+
+So, do you remember the deal with `&&` and `||` ?
+
+- with `&&` you guard the right value with left value (checking _truthiness_)
+
+- with `||` you either will get left or right value depending on their
+  _truthiness_
+
+And _truthiness_ is the key-word here.
+
+So the deal with `Null Coalescing` is that it only checks for `null` and
+`undefined`
+
+```js
+console.log(0 || 'something'); // something
+console.log(0 ?? 'something'); // 0
+```
+
+This can help in cases where you have valid non-truthy values as your _guardian
+values_ but you still want to check for `null` and `undefined`
+
 ## Pick and Exclude
 
 ### Pick<T,K>

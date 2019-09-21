@@ -85,6 +85,64 @@ that caused in my applications 🤔
 
 ## Recipes
 
+### Subscription Sink
+
+There are various ways to handle `cleanup a.k.a unsubscribing` with `RxJS`.
+
+- using _async pipe_ in _Angular_
+- using plain old `unsubscribe`
+- using `takeUntil` watcher pattern
+- using **`subscription sink`**
+
+So what is this `subscription sink` ?
+
+Well, it turns out you can add multiple subscribers to one _meta_ subscription
+and unsubscribe only from this one giant _met_ subscription.
+
+```js
+    const subSink = /* some cone that produces Subscription */
+    const anotherSubscription = /* some cone that produces Subscription */
+
+    subSink.add(anotherSubscription)
+
+    subSink.unsubscribe()
+```
+
+Actually you can even create standalone `subscription` using `new` keyword.
+
+```js
+const subSink = new Subscription();
+```
+
+Pretty neat stuff!
+
+### Teardown with `takeUntil`
+
+`takeUntil` is really great when working with DOM and events. You want to drop
+`Observable` completely when something happens, eg. a _touchend_ event or smth.
+
+This is all and good but did you know that you can actually place operators
+**AFTER** `takeUntil`?.
+
+```js
+const touchStart$ = fromEvent(element, 'touchstart');
+const touchMove$ = fromEvent(element, 'touchmove');
+const touchEnd$ = fromEvent(element, 'touchend');
+
+const drag$ = touchStart.pipe(
+  switchMap(() =>
+    touchMove$.pipe(
+      takeUntil(touchEnd$),
+      concat(/*some observable*/)
+    )
+  )
+);
+```
+
+This pattern is really powerful when combined with `defer`. (Remember that
+whatever you put into `concat` will be run at _define_ time !!. That is why you
+usually want to use `defer`)
+
 ### Pooling
 
 When you want to update stuff every X seconds
