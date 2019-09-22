@@ -32,6 +32,27 @@ getting new DOM (which can be the same as previous one)
 
 ## Future
 
+### Concurrent React
+
+The biggest thing is that **concurrent react** can **partially render** a tree
+without committing to the DOM. And o boi this is huge.
+
+#### Time-Slicing
+
+So whats the what are we _slicing_ ?
+
+> Time-Slicing means that React has the ability to split work into chunks and
+> spread it's execution over time.
+
+Imagine a huge `render` method. It takes a lot of time to process. When writing
+this react is fully sync, that means that when you have a sync task running no
+other _user inputs_ can be processed until that `render` task is done.
+
+This is kinda a bummer.
+
+With `Time-Slicing` React will be able to _slice_ the main `render` task and
+insert that _user input_ inbetween.
+
 ### Moving away from `.defaultProps`
 
 Looking at the discussions on git about React 16.9 there is a proposal to move
