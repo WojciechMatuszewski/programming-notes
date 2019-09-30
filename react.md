@@ -1,5 +1,40 @@
 # React Stuff
 
+## Events Listeners and Hooks
+
+While using `useEffect` you have to remember about deps array, that is pretty
+obvious. But have you ever wondered how reference capture work with event
+`callbacks` functions.
+
+Usually I defined event `callbacks` following way:
+
+```js
+React.useEffect(() => {
+  function listener() {}
+
+  window.addEventListener('scroll', listener);
+  return () => window.removeEventListener('scroll', listener);
+}, []);
+```
+
+Reasoning behind this is to make sure that we are holding the same reference to
+the function when adding and removing that listener.
+
+It turns out you can actually define `event listeners` outside `useEffect`.
+
+```js
+function SomeComponent() {
+  function listener() {}
+  React.useEffect(() => {
+    window.addEventListener('scroll', listener);
+    return () => window.removeEventListener('scroll', listener);
+  }, []);
+}
+```
+
+`useEffect` will close-over `listener` and hold it's reference event when props
+change!. You do not have to pass it inside deps array.
+
 ## Rendering, Commits, Reconciliation
 
 Many people say
