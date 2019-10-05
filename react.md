@@ -1,5 +1,50 @@
 # React Stuff
 
+## Stale Closure
+
+You are most likely familiar with this issue, when using hooks sometimes values gets lock inside a closure and become _stale_ after a while (eg. state change causes them to become stale).
+
+Usually you should just listen to hooks linter and write your code normally. But there is also an escape hatch you can use (but probably sparingly).
+
+Let's look at `Formik`s piece of code:
+
+```ts
+function useEventCallback<T extends (args: ...any[]) => any>(callback: T): T {
+  const callbackRef = React.useRef(callback);
+  React.useLayoutEffect(() => {
+    callbackRef.current = callback
+  })
+  return React.useCallback((...args: any[]) => callback.current.apply(void 0, args), []) as T;
+}
+```
+
+So what does this piece of code do?
+
+- save ref to callback
+- which each component call save fresh `callback` (with new variables it uses because of re-render)
+- return memoized callback that closes over fresh `callback` (this eliminates stale closure problem)
+
+One crucial piece of code from this snippet is the following:
+
+```ts
+return React.useCallback(
+  (...args: any[]) => callback.current.apply(void 0, args),
+  []
+) as T;
+```
+
+Lets try to return the `callback` with _point-free_ style.
+
+```ts
+return React.useCallback(callback.current, []) as T;
+```
+
+Would this work? **Nope**.
+
+> but if you attempt to overwrite the reference it will not affect the copy of the reference held by the caller - i.e. the reference itself is passed by value
+
+And this is the key to why it will not work. Here we are trying to overwrite the reference (passed as `callback.current`). And since reference itself is passed by value it will not change and always be stale.
+
 ## Events Listeners and Hooks
 
 While using `useEffect` you have to remember about deps array, that is pretty
