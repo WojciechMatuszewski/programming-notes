@@ -1,5 +1,71 @@
 # RxJS
 
+## Basics
+
+### Hot and Cold
+
+With `RxJs` there is a notion of `hot` and `cold` observables.
+
+- with `cold` observables value-producer is created when `subscribing`. Making a
+  `http` call is a good example (in _Angular_).
+- with `hot` observables value-producer is closed over by a given `observable`.
+  Listening to a `scroll` event with `fromEvent` is a good example
+
+So, the notion of `hot` and `cold` carries with itself some gotchas.
+
+```js
+const obs$ = of(1).pipe(from(() => fetch('something')));
+```
+
+So a network request will be made **whenever you subscribe to `obs$`** since
+`obs$` is a `cold` observable... and this CAN be a problem.
+
+### Multicast vs Unicast
+
+So this concept goes along with `hot` and `cold` observables.
+
+- **multicast** means that all subscribers **get the data from the same
+  producer** (they share the source)
+
+- **unicast** means that each subscriber **gets the data from different
+  producer**
+
+Again, this is pretty obvious when we look on _natively-hot_ observables like
+`fromEvent` streams.
+
+### Making cold hot
+
+There are a couple of ways to do this.
+
+#### Multicast operator
+
+This operator is used to take control over the whole process of making an `cold`
+observable hot. You have to pass the `subject` as new _provider_, since subjects
+are `multicast` (and hot) by default.
+
+```js
+this.user$ = this.http.get(`api/user/1`).pipe(multicast(new Subject()));
+
+this.users$.connect();
+```
+
+One big drawback of this approach is that you have to manually call `.connect`
+on a given _source_. It also does not take care of counting existing subscribers
+which can introduce memory leaks and such.
+
+#### Other Multicast-like operators
+
+`RxJs` provides a lot of ways to achieve `hot` observable without you having to
+worry about counting subscribers and such:
+
+- `publish`
+- `share` ... and many more (with different subjects passed into `multicast`,
+  etc..)
+
+https://medium.com/@benlesh/hot-vs-cold-observables-f8094ed53339
+
+https://itnext.io/the-magic-of-rxjs-sharing-operators-and-their-differences-3a03d699d255
+
 ## Properly handling errors using `catchError`
 
 So you've been using `catchError` just treating it like `.catch` in a
