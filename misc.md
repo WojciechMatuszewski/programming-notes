@@ -175,3 +175,30 @@ request is not send.
 
 Browsers can actually cache preflight responses. You usually specify that in a
 header.
+
+## Observers API
+
+You probably know of `intersectionObserver`. An API to check if given object is
+visible at the screen currently.
+
+But there are other _observers_ too:
+
+- `mutationObserver`: used to watch for `DOM` _mutations_.
+
+* `resizeObserver`: a new kid on the block. Tries to achieve the holy grail of
+  being notified when **given element** resizes to given width/height.
+
+There is actually very interesting article on `resizeObserver` by Philip Walton
+[Link to article](https://philipwalton.com/articles/responsive-components-a-solution-to-the-container-queries-problem/)
+
+## Check for Idle period
+
+This would be nice would not it? Having a way to know when browser is finished
+doing stuff so that we can fire off some kind of computation.
+
+There is an API for that: `requestIdleCallback`, but sadly is not all green when
+it comes to browsers.
+
+That said, you can actually do very interesting stuff with this API, described
+on Philip Walton's blog
+[Link to article](https://philipwalton.com/articles/idle-until-urgent/)

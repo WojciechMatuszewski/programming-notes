@@ -1140,3 +1140,30 @@ declare function savePerson<T>(person: ValidateShape<T, Person>): void;
 savePerson(tooFew); // Error -> returns never
 savePerson(tooMany); // Error -> returns never
 ```
+
+## Optional Chaining && Null Coalescing
+
+As of writing this, these count as _future_.
+
+### Optional Chaining
+
+If you ever worked with Angular you are probably familiar with optional
+chaining. It is very interesting that Angular had that from the version 2
+onwards and Typescript is getting them now 🤔.
+
+So an example:
+
+```js
+const someObj = {
+  prop1: {
+    prop2: undefined
+  }
+};
+
+const value = someObj.prop1 && someObj.prop1.prop2 & //...
+const value = someObj?.prop1?.prop2 // ..
+```
+
+Syntax with `?` is much cleaner, especially with nested objects and properties.
+You no longer have to worry about checks with `&&`. `?` operator takes care that
+for you.
