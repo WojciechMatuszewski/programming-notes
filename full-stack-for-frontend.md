@@ -111,3 +111,36 @@ There is also limit of requests per connection.
 ## HTTP/3
 
 So all previous iterators of HTTP run over _TCP_.
+
+## Orchestration vs Dockerization
+
+So there are these 2 layers:
+
+- Orchestration layer
+- Dockerization layer
+
+### Dockerization
+
+You are probably familiar with `Docker`. This tool is used to run given code in
+the same environment for each developer / server so that there are no difference
+in OS behavior and such. `Docker` lays inside the _dockerization layer_.
+
+### Orchestration
+
+Rolling our software sometimes can be similar to an orchestra playing. Each part
+has to work so that the final product works.
+
+One main piece of software that is responsible for said rolling our is called
+`Kubernetes` (`K8s` in short). `Kubernetes` controls the process of rolling out
+of all these containers you have.
+
+## Load balancers
+
+- Routes traffic to appropriate server cluster.
+
+Normally you do not really have that much control over traffic to your servers.
+Presumably your users will get routed to a given region and there are your
+servers but still there is a problem which server to pick right?
+
+Load balancers job is to **choose the most optimal server for given connection
+for particular time to route to by a given connection**.
