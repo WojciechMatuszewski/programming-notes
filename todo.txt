@@ -1,0 +1,2 @@
+https://medium.com/hackernoon/testing-types-an-introduction-to-dtslint-b178f9b18ac8
+https://reacttraining.com/blog/when-to-use-functions-in-hooks-dependency-array/?utm_campaign=Week%20of%20React&utm_medium=email&utm_source=Revue%20newsletter

@@ -1,12 +1,44 @@
 # React Stuff
 
+## Memoization and semantic guarantee
+
+You are probably using hooks by now. That's great. Also you probably know about
+`useMemo` and `useCallback` hooks which help you _stabilize_ or _memoize_
+(basically the same meaning, you would just use different terms in different
+contexts) stuff.
+
+Yet, there is a hidden caveat that comes with them. According to React docs:
+
+> You may rely on useMemo as a performance optimization, not as a semantic
+> guarantee. In the future, React may choose to “forget” some previously
+> memoized values and recalculate them on next render...
+
+This information is **huge**.
+
+You may be thinking to yourself:
+
+> But docs only mention `useMemo` right?
+
+Well we are out of luck on this one too, `useCallback` can be implemented using
+`useMemo`:
+
+```jsx
+const useCallback = (fn, deps) => React.useMemo(() => fn, deps);
+```
+
+There is raging discussion about this on git. Many popular libraries relay on
+the fact that React does not _forget_ previously memoized values. That would be
+kind meh. Wonder what `React.Suspense` will bring to the table when it comes to
+that...
+
 ## Profiling
 
-React has it's great _profiler_ as an browser extension.
-That tool is really good. But what if you want to send profiling data to your server?.
+React has it's great _profiler_ as an browser extension. That tool is really
+good. But what if you want to send profiling data to your server?.
 
-Well, _React_ has this `React.Profiler` component, which I never heard of.
-You can wrap any piece of your tree with it and it gives you various info about _render-related_ timings.
+Well, _React_ has this `React.Profiler` component, which I never heard of. You
+can wrap any piece of your tree with it and it gives you various info about
+_render-related_ timings.
 
 ```jsx
 <React.Profiler id="counter" onRender={reportProfile}>
@@ -16,16 +48,21 @@ You can wrap any piece of your tree with it and it gives you various info about 
 
 `reportProfile` usually would be a queue sending data to server each X seconds.
 
-**BEWARE**
-It cannot be all sunshine and rainbows. **By default react does not include this API in production bundle**. You have to opt in yourself. This is achieved through _webpack aliases_. The impact itself is minimal, but still worth considering.
+**BEWARE** It cannot be all sunshine and rainbows. **By default react does not
+include this API in production bundle**. You have to opt in yourself. This is
+achieved through _webpack aliases_. The impact itself is minimal, but still
+worth considering.
 
 [Consult the docs for more info](https://gist.github.com/bvaughn/25e6233aeb1b4f0cdb8d8366e54a3977)
 
 ## Stale Closure
 
-You are most likely familiar with this issue, when using hooks sometimes values gets lock inside a closure and become _stale_ after a while (eg. state change causes them to become stale).
+You are most likely familiar with this issue, when using hooks sometimes values
+gets lock inside a closure and become _stale_ after a while (eg. state change
+causes them to become stale).
 
-Usually you should just listen to hooks linter and write your code normally. But there is also an escape hatch you can use (but probably sparingly).
+Usually you should just listen to hooks linter and write your code normally. But
+there is also an escape hatch you can use (but probably sparingly).
 
 Let's look at `Formik`s piece of code:
 
@@ -42,8 +79,10 @@ function useEventCallback<T extends (args: ...any[]) => any>(callback: T): T {
 So what does this piece of code do?
 
 - save ref to callback
-- which each component call save fresh `callback` (with new variables it uses because of re-render)
-- return memoized callback that closes over fresh `callback` (this eliminates stale closure problem)
+- which each component call save fresh `callback` (with new variables it uses
+  because of re-render)
+- return memoized callback that closes over fresh `callback` (this eliminates
+  stale closure problem)
 
 One crucial piece of code from this snippet is the following:
 
@@ -62,9 +101,13 @@ return React.useCallback(callback.current, []) as T;
 
 Would this work? **Nope**.
 
-> but if you attempt to overwrite the reference it will not affect the copy of the reference held by the caller - i.e. the reference itself is passed by value
+> but if you attempt to overwrite the reference it will not affect the copy of
+> the reference held by the caller - i.e. the reference itself is passed by
+> value
 
-And this is the key to why it will not work. Here we are trying to overwrite the reference (passed as `callback.current`). And since reference itself is passed by value it will not change and always be stale.
+And this is the key to why it will not work. Here we are trying to overwrite the
+reference (passed as `callback.current`). And since reference itself is passed
+by value it will not change and always be stale.
 
 ## Events Listeners and Hooks
 
