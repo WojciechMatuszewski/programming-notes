@@ -202,3 +202,28 @@ it comes to browsers.
 That said, you can actually do very interesting stuff with this API, described
 on Philip Walton's blog
 [Link to article](https://philipwalton.com/articles/idle-until-urgent/)
+
+## Magic Webpack Comments
+
+There soon may be deprecated due to `webpack 5` releasing but did you know that you can use multiple of them? like
+
+```js
+const Tilt = React.lazy(() =>
+  import(/* webpackChunkName: "tilt", webpackPrefetch: true */ '../tilt')
+);
+```
+
+This works !
+
+## Web workers with webpack
+
+So web workers are great. They enable you to offload the work on different thread. Nice!.
+
+But did you know that there is an webpack plugin which enables you to turn any js file into _web worker_?. That plugin is called `workerize-loader`.
+Let's say you have a module called `expensive.js` and you want to import that module as _web worker_.
+
+```js
+import expensiveWorkerized from 'workerize-loader!./expensive';
+```
+
+**BOOM!**. Thats all. Granted now methods exposed by `expensiveWorkerized` are _async_ but that should not be a problem.
