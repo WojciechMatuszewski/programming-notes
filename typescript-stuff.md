@@ -1,20 +1,102 @@
 # Typescript Stuff
 
-## Assert Signatures
+## Testing
 
-Finally, FINALLY we do not have to make type-guards everywhere and have our code
-littered with one line functions because `Typescript` cannot `infer` correct
-types.
+What can we test in the realm of TypeScript? Code ? sure, but what about the
+Types.
+
+Is it possible to write units for TypeScript Types? Well indeed it is possible.
+
+There are number of libraries that check types, either with special _generic
+type_ or a comment inside the code.
+
+The strategy is as follows:
+
+- write a test for type declaration -> this just means using that function on a
+  very simple data (but that data has to check type-implementation)
+- run `tsc` on test files
+
+### dtslint
+
+This tool was built by Microsoft. A sample test:
 
 ```ts
-function assert(input:any) asserts input {
-    if (!input) throw Error('Not a truthy value')
+var stooges = [
+  { name: 'moe', age: 40 },
+  { name: 'larry', age: 50 },
+  { name: 'curly', age: 60 }
+];
+_.pluck(stooges, 'name'); // $ExpectType string[]
+```
+
+In this example we are using a special comment that ensures that this is the
+return type.
+
+You can even test with different versions of TS:
+
+```ts
+// TypeScript Version: 2.1
+export function pluck<K extends keyof T, T>(array: T[], key: K): Array<T[K]>;
+```
+
+[More on this topic](https://medium.com/hackernoon/testing-types-an-introduction-to-dtslint-b178f9b18ac8)
+
+## Assert Signatures
+
+So with `type guards` you are returning `true` or `false`. This then determines
+the outcome of the type.
+
+But `assert signatures` **are quite different**
+
+### Different schematics
+
+Type Guard:
+
+```ts
+function isDefined<T>(x: T): x is NonNullable<T> {
+  return x != undefined;
 }
 ```
 
-So this is less strict than type-guards where you have to `narrow-down` the type
-(most of the times). But i like it kinda better (granted both methods have their
-use-cases)
+Assert Signature:
+
+```ts
+function isDefined<T>(x: T): asserts x is NonNullable<T> {
+    if(x == undefined) {
+        throw AssertionError('Not defined!')
+    }
+}
+```
+
+The signature differs greatly and there is actually more to the
+`assert signatures` signature than presented here.
+
+### Two types of Assert Signatures
+
+There are actually 2 variants
+
+- for checking a condition
+- for telling TypeScript that specific variable or property has a different type
+
+So it all basically boils down to that `Assert Signatures` does not return
+anything, they throw this `AssertionError` whenever something is wrong.
+
+`Type Guards` on the other hand return `true` or `false` based on they inputs.
+
+The signature `asserts something` or `asserts x is something` tells the reader
+of the code that **that function will only return if the assertion holds**
+
+```ts
+function checkIfString(input:any) asserts input is string {
+    if (typeof input != 'string') throw Error('must be a string')
+}
+
+function doSomething(val: number | string) {
+    checkIfString(val)
+    val // string here!
+}
+
+```
 
 ## Null Coalescing
 
