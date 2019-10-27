@@ -1,5 +1,14 @@
 # React Stuff
 
+## Resetting Component State with key property
+
+`key` is used to help React track changes and basically be able to tell whats
+changed in between renders.
+
+This may seem trivial but you can actually control this behavior right? Since
+you can pass a key to every component / jsx stuff we can manually re-instantiate
+a given component / node.
+
 ## Memoization and semantic guarantee
 
 You are probably using hooks by now. That's great. Also you probably know about
@@ -180,6 +189,112 @@ getting new DOM (which can be the same as previous one)
 
 The biggest thing is that **concurrent react** can **partially render** a tree
 without committing to the DOM. And o boi this is huge.
+
+### Suspense and data fetching
+
+So, when writing this, there is a trick you can use to leverage `Suspense` for
+your data fetching. That is to `throw` given promise.
+
+(this example does not really work it's just for demonstration)
+
+```jsx
+function Component() {
+    throw aPromise
+    return <p>Works</p>
+}
+function App() {
+    return (
+        <React.Suspense>
+            <Component/>
+        <React.Suspense>
+    )
+}
+```
+
+Ok so whats the deal?
+
+- `Suspense` is catching that promise
+- **Seems to be calling your component again on `.then` of that promise** (?)
+
+The second part is very important to understand. This is where this notion of
+`not safe` for `Suspense` comes from.
+
+#### Breaking-down code sandbox `wrap promise`
+
+So it's React Conf 2019 and examples are flying everywhere. Where is this one
+particularly interesting function called `wrapPromise` that seems to do all the
+magic.
+
+```js
+function wrapPromise(promise) {
+  let status = 'pending';
+  let result;
+  // ...
+}
+```
+
+So
+
+- `status` is needed here. `Suspense` will **call our render function more than
+  once!**. This variable decides if we should return results or to `suspend`
+- `result`: well this is the result of our `promise`
+
+```js
+// ..
+let suspender = promise.then(
+  r => {
+    status = 'success';
+    result = r;
+  },
+  e => {
+    status = 'error';
+    result = e;
+  }
+);
+// ..
+```
+
+This is the very important part. `suspender` is the thing we are going to throw.
+Notice it has, sort of, pretended the _promise resolution_ call before
+`Suspense` can do anything with it.
+
+```js
+// ..
+return {
+  read() {
+    if (status === 'pending') {
+      throw suspender;
+    } else if (status == 'error') {
+      throw result;
+    } else if (status == 'success') {
+      return result;
+    }
+  }
+};
+```
+
+And the return statement. Inside our _component_ we are performing
+`resource.read()` call. This of course can, literally, have any other name but i
+think React team is doing the naming on purpose here to get us familiar with
+actual `createResource` API from React.
+
+#### Step By Step
+
+So lets follow what happens step by step
+
+- `wrapPromise` 'prepends' a callback when `promise` gets resolved. This is
+  crucial to understand that there is a closure in play here.
+
+- initially we throw the `promise`. **Now Suspense takes over**.
+
+- `Suspense` waits for the promise to resolve, maybe with `.then` call, i do not
+  actually know. **That `.then` call happens AFTER our 'pretended' `.then` call
+  inside `wrapPromise`**.
+- `Suspense` calls our _component_ again, the _component_ calls `.read()` again.
+
+- now inside `read` data is already set by `.then` call created on `promise`,
+  the one that happened before `Suspense` called our _component_ again. `status`
+  is either `error` or `success` by now so we have our data in our _component_.
 
 #### Time-Slicing
 
