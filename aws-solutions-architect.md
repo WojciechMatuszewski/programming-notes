@@ -2,7 +2,16 @@
 
 Just me trying to learn for an exam 🤷‍♀
 
-## Acloud.guru
+## Acloudguru & Linux Academy
+
+### AWS and SA Fundamentals
+
+#### Access Management
+
+- **Principal** is a person or application that can make authenticated or anonymous request to perform an action on a system. **Often seen in-code in lambda authorizers**
+
+- Security **in the cloud** is **your job**
+- Security **of the cloud** is the **AWS job**
 
 ### Basics
 
@@ -109,14 +118,38 @@ Just me trying to learn for an exam 🤷‍♀
 
 ### CloudFront
 
-- CloudFront is a **CDN**
+- CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to caches.
+
+* These caches are located to your customers as close as possible.
 
 - Origin is the name given for the thing from which content **originates from**,
-  can be an S3 bucket
+  can be an S3 bucket, web-server or other AWS services.
+
+* Origin has to be accessible to the internet
+
 - Edge locations **cache content** (TTL)
-- Distribution is basically the **collection of Edge Locations**
+
+* Distribution is basically the **collection of Edge Locations**
+
 - You **can** invalidate cache content
 
-- There are **2 types of distributions**.
+* There are **2 types of distributions**.
   - Web
   - RTMP (used for video streaming and such)
+
+- When you deploy CloudFront distribution your content is automatically deployed to edge location. You can specify which ones (limited to a country). If you are rich you can deploy to all edge locations
+
+* **Cache hit** means that when an user requested a resource (like a webpage), an edge location had that available
+
+- **Regional cache** is like a meta edge location. Basically second level cache, fallback when there is **no cache hit**. If it does not have a copy of a given content it **falls back to the origin** (origin fetch).
+
+* **By default** every CloudFront distribution **comes with a default domain name**. That domain of course works for HTTP and HTTPS. You can register domain and replace it.
+
+- You can restrict the access on two levels (**You can** restrict an access to S3 only but it's no the topic of CloudFront):
+
+  - on a CloudFront level, your bucket is still accessible though
+  - on a S3 and CloudFront level, you can only access the website using signed urls.
+
+- Restricting your CloudFront & S3 combo is done by creating **OAI**.
+
+* **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
