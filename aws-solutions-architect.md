@@ -10,7 +10,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **Principal** is a person or application that can make authenticated or anonymous request to perform an action on a system. **Often seen in-code in lambda authorizers**
 
-- Security **in the cloud** is **your job**
+* Security **in the cloud** is **your job**
+
 - Security **of the cloud** is the **AWS job**
 
 ### Basics
@@ -18,13 +19,13 @@ Just me trying to learn for an exam 🤷‍♀
 - **AZ (Availability Zone)** is a distinct location within an AWS Region. Each
   Region comprises at least two AZs
 
-- **AWS Region** is a geographical area divided into AZs. Each region counts as
+* **AWS Region** is a geographical area divided into AZs. Each region counts as
   **separate** geographical area.
 
 - **Virtual Private Cloud (VPC)** is a virtual network dedicated to a single AWS
   account. It's logically isolated from other virtual networks in the AWS cloud
 
-- **EFS and S3** are popular storage options
+* **EFS and S3** are popular storage options
 
 - **Cloudfront** is a CDN
 
@@ -36,17 +37,17 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **IAM** is universal, does not apply to regions
 
-- **Identity Federation** allows your users to login into AWS Console using 3rd
+* **Identity Federation** allows your users to login into AWS Console using 3rd
   party providers like Google etc..
 
 - Supports **PCI DSS** framework. This is some kind of standard for security
 
-- **Policies = Permissions**, written in JSON
+* **Policies = Permissions**, written in JSON
 
 - **Roles** enable one AWS service do something / interact with another. For
   example virtual machine (EC2) interacting with AWS storage.
 
-- **Root Account**: email address you first sign up to AWS with. This account
+* **Root Account**: email address you first sign up to AWS with. This account
   basically has a godmode and can do everything in the console. That's why you
   pretty much never want someone to login on root account, just like in Linux.
 
@@ -54,7 +55,7 @@ Just me trying to learn for an exam 🤷‍♀
   you to pass access key and secret key so that you can interact with developer
   tools
 
-- Users **can be added to groups**. These groups **can have policies** assigned
+* Users **can be added to groups**. These groups **can have policies** assigned
   to them.
 
 - Policies have **different types**. Like `Job function` or `AWS managed`.
@@ -65,14 +66,16 @@ Just me trying to learn for an exam 🤷‍♀
 
 - S3 is an **object storage**, it allows you to upload files.
 
-- Data is spread between multiple devices and facilities
+* Data is spread between multiple devices and facilities
 
 - There is **unlimited** storage. Maximum file-size is 5 TB though.
+
+* By **default** uploaded objects **are NOT public**. You have to set them as public manually
 
 - S3 has an **universal namespace**. That means that Bucket names has to be
   unique globally.
 
-- Object consists of:
+* Object consists of:
 
   - Key: simply the name of the object
   - Value: data (bytes)
@@ -89,14 +92,15 @@ Just me trying to learn for an exam 🤷‍♀
     delete something or override it, it takes a second or two for you changes to
     propagate and take an effect.
 
-- Buckets can be **replicated to another account or to a different bucket
+* Buckets can be **replicated to another account or to a different bucket
   (region needs to differ)**.
+
 - S3 can be `accelerated`. There is something called **S3 Transfer
   Acceleration** where users upload to **edge locations** instead directly to
   the Bucket. Then that uploaded object is **transferred automatically to your
   bucket**.
 
-- S3 is a **tiered** storage
+* S3 is a **tiered** storage
 
   - S3 Standard, stored across multiple devices and multiple facilities
 
@@ -106,6 +110,35 @@ Just me trying to learn for an exam 🤷‍♀
   - S3 Glacier / Glacier Deep Archive: used for data archiving, where you would
     keep files for a loooong time. Retrieval time is configurable (**Deep
     Archive is locked on 12hr retrieval time though**)
+
+##### Versioning
+
+- S3 have the notion of versioning: **stores all versions of an object including all writes even if you delete it!**
+
+* After **enabling** versioning, it **cannot be disabled**, only suspended
+
+- Remember that with versioning your previous versions persists on the bucket. This can lead to exponential growth of size when editing big files.
+
+* When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on that object (thus creating a new version). Your **previous versions are still there!**.
+
+- You can restore your deleted objects by **deleting a delete marker**.
+
+##### Life-cycle rules
+
+- can be used to **transition objects to different TIER of storage after X amount of time**, this can be placed on current and previous versions.
+
+* With life-cycle there is notion of expiration. Basically your objects can be **expired after X amount of time**. Object can be in a _expired state_ where it will wait to be permanently deleted.
+
+- Can be used with **conjunction with versioning**.
+
+##### Storage Gateway
+
+- Physical/virtual device which **will replicate your data to AWS**.
+
+* There are 3 flavours of Storage Gateway
+  - **File Gateway** : used for storing files as object in S3.
+  - **Volume Gateway**: used for storing copies of hard-disk drives in S3.
+  - **Tape Gateway**: used to get rid of tapes.
 
 ### Snowball
 
