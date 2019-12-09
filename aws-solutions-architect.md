@@ -196,3 +196,30 @@ Just me trying to learn for an exam 🤷‍♀
     -   **reserved**: capacity reservation, contract with AWS
     -   **spot**: like a market, but for instances, when AWS has free capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
     -   **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
+
+#### Security Groups
+
+-   **changes** to security group **are instant**
+
+*   security groups **are stateful**. That means when you **create an inbound rule, outbound rule is created** automatically.
+
+-   there are **no deny rules**. Security groups can only **specify allow rules**.
+
+*   EC2 can have more than 1 security group attached to it, also you can have multiple EC2s assigned to 1 security group.
+
+-   **All inbound traffic is blocked by default**
+
+#### EBS (Elastic Block Store)
+
+-   basically **virtual harddisk in the cloud**
+
+*   persistent storage
+
+-   **automatically replicated** within it's own AZ
+
+*   Different versions:
+
+    -   **Provisioned IOPS** - the most io operations you can get (databases), most expensive
+    -   **Cold HDD** - lowest cost, less frequently accessed workloads (file servers)
+    -   **EBS Magnetic**- previous generation HDD, infrequent access
+    -   **General Purpose**
