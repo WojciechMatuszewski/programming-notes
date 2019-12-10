@@ -9,6 +9,102 @@ This may seem trivial but you can actually control this behavior right? Since
 you can pass a key to every component / jsx stuff we can manually re-instantiate
 a given component / node.
 
+## Components as Functions Gotcha
+
+We are now in `React.useSomething` era (_React Hooks_) so you probably are writing functional components. There is one gotcha you might encounter that will result in serious bugs.
+
+### Rules of Hooks
+
+There are some internal rules of usage when it comes to _React Hooks_. One of them being that you cannot use them conditionally. Another one is that hooks have to be called in the same order every _call cycle_. This one actually comes into play in this gotcha.
+
+### The Gotcha
+
+Lets say you have this setup
+
+Some kind of list component
+
+```jsx
+function CountersList() {
+	const [items, setItems] = React.useState([]);
+	const addCounter = () => setItems(prev => [...prev, { id: prev.length }]);
+	return (
+		<div>
+			<button onClick={addCounter}>Add Counter</button>
+			{items.map(Counter)}
+		</div>
+	);
+}
+```
+
+And the counter:
+
+```jsx
+function Counter() {
+	const [_, setCount] = React.useState(0);
+	const incrementCount = () => setCount(prev => prev + 1);
+	return <button onClick={incrementCount}> Increment </button>;
+}
+```
+
+Pay very close attention to the `CountersList`:
+
+```jsx
+<div>
+	<button onClick={addCounter}>Add Counter</button>
+	{items.map(Counter)}
+</div>
+```
+
+It seems like we are mapping over items and calling `Counter`, which is a function which returns `JSX`. So everything should work right?
+
+Well, not quite. When you click on the button you will get an error saying:
+
+> React has detected a change in the order of Hooks called by CountersList.
+
+To understand this message lets follow the render cycle:
+
+1. Initial render to `CountersList` sets `items` to an empty array, nothing to _map over_.
+
+2. You click on the button, `addCounter` fires, updating `items`. Now array is not empty, map calls `Counter`. `Counter` calls initial `setState`.
+
+There does not seem to be a change in the order of Hooks right? In the first cycle `CountersList` items were set once, in the second also only once.
+
+### Associating Hooks with Components
+
+It turns out that React **cannot associate a hook with a given component when that component is called as a function**.
+
+Normally such syntax:
+
+```jsx
+return <Counter />;
+```
+
+would create underlying `React.Element`. When created that way, React is able to associate hooks used inside `Counter` to `React.Element`.
+
+But when you are trying to invoke the `Counter` directly:
+
+```js
+Counter();
+```
+
+There is no `React.Element` created, thus nothing to associate hooks with.
+Using the form from above is basically the same as doing
+
+```jsx
+  {items.map(() => {
+    const [_, setCount] = React.useState(0)
+    // rest of Counter code
+  }}
+```
+
+Which is not _rules of hooks_ compliant.
+
+### Takeaways
+
+So basically to avoid such errors, **which will probably cause unexpected bugs**
+
+-   never call functional components directly when they are using hooks
+
 ## Memoization and semantic guarantee
 
 You are probably using hooks by now. That's great. Also you probably know about
@@ -51,7 +147,7 @@ _render-related_ timings.
 
 ```jsx
 <React.Profiler id="counter" onRender={reportProfile}>
-  <Counter />
+	<Counter />
 </React.Profiler>
 ```
 
@@ -87,18 +183,18 @@ function useEventCallback<T extends (args: ...any[]) => any>(callback: T): T {
 
 So what does this piece of code do?
 
-- save ref to callback
-- which each component call save fresh `callback` (with new variables it uses
-  because of re-render)
-- return memoized callback that closes over fresh `callback` (this eliminates
-  stale closure problem)
+-   save ref to callback
+-   which each component call save fresh `callback` (with new variables it uses
+    because of re-render)
+-   return memoized callback that closes over fresh `callback` (this eliminates
+    stale closure problem)
 
 One crucial piece of code from this snippet is the following:
 
 ```ts
 return React.useCallback(
-  (...args: any[]) => callback.current.apply(void 0, args),
-  []
+	(...args: any[]) => callback.current.apply(void 0, args),
+	[]
 ) as T;
 ```
 
@@ -128,10 +224,10 @@ Usually I defined event `callbacks` following way:
 
 ```js
 React.useEffect(() => {
-  function listener() {}
+	function listener() {}
 
-  window.addEventListener('scroll', listener);
-  return () => window.removeEventListener('scroll', listener);
+	window.addEventListener("scroll", listener);
+	return () => window.removeEventListener("scroll", listener);
 }, []);
 ```
 
@@ -142,11 +238,11 @@ It turns out you can actually define `event listeners` outside `useEffect`.
 
 ```js
 function SomeComponent() {
-  function listener() {}
-  React.useEffect(() => {
-    window.addEventListener('scroll', listener);
-    return () => window.removeEventListener('scroll', listener);
-  }, []);
+	function listener() {}
+	React.useEffect(() => {
+		window.addEventListener("scroll", listener);
+		return () => window.removeEventListener("scroll", listener);
+	}, []);
 }
 ```
 
@@ -163,14 +259,14 @@ Many people say
 
 While true, do they really understand what `to rerender` mean?
 
-- `render` is React calling your `render` function or the `FC` itself. It gets
-  the DOM that way (as we know React operates on Virtual DOM and diffs previous
-  DOM with next one)
+-   `render` is React calling your `render` function or the `FC` itself. It gets
+    the DOM that way (as we know React operates on Virtual DOM and diffs previous
+    DOM with next one)
 
-- `reconciliation` is the phase of diffing the newly acquired DOM with Virtual
-  one.
+-   `reconciliation` is the phase of diffing the newly acquired DOM with Virtual
+    one.
 
-- `commit` is the phase of react actually updating the DOM.
+-   `commit` is the phase of react actually updating the DOM.
 
 So when people say that
 
@@ -213,8 +309,8 @@ function App() {
 
 Ok so whats the deal?
 
-- `Suspense` is catching that promise
-- **Seems to be calling your component again on `.then` of that promise** (?)
+-   `Suspense` is catching that promise
+-   **Seems to be calling your component again on `.then` of that promise** (?)
 
 The second part is very important to understand. This is where this notion of
 `not safe` for `Suspense` comes from.
@@ -227,29 +323,29 @@ magic.
 
 ```js
 function wrapPromise(promise) {
-  let status = 'pending';
-  let result;
-  // ...
+	let status = "pending";
+	let result;
+	// ...
 }
 ```
 
 So
 
-- `status` is needed here. `Suspense` will **call our render function more than
-  once!**. This variable decides if we should return results or to `suspend`
-- `result`: well this is the result of our `promise`
+-   `status` is needed here. `Suspense` will **call our render function more than
+    once!**. This variable decides if we should return results or to `suspend`
+-   `result`: well this is the result of our `promise`
 
 ```js
 // ..
 let suspender = promise.then(
-  r => {
-    status = 'success';
-    result = r;
-  },
-  e => {
-    status = 'error';
-    result = e;
-  }
+	r => {
+		status = "success";
+		result = r;
+	},
+	e => {
+		status = "error";
+		result = e;
+	}
 );
 // ..
 ```
@@ -261,15 +357,15 @@ Notice it has, sort of, pretended the _promise resolution_ call before
 ```js
 // ..
 return {
-  read() {
-    if (status === 'pending') {
-      throw suspender;
-    } else if (status == 'error') {
-      throw result;
-    } else if (status == 'success') {
-      return result;
-    }
-  }
+	read() {
+		if (status === "pending") {
+			throw suspender;
+		} else if (status == "error") {
+			throw result;
+		} else if (status == "success") {
+			return result;
+		}
+	}
 };
 ```
 
@@ -282,19 +378,19 @@ actual `createResource` API from React.
 
 So lets follow what happens step by step
 
-- `wrapPromise` 'prepends' a callback when `promise` gets resolved. This is
-  crucial to understand that there is a closure in play here.
+-   `wrapPromise` 'prepends' a callback when `promise` gets resolved. This is
+    crucial to understand that there is a closure in play here.
 
-- initially we throw the `promise`. **Now Suspense takes over**.
+-   initially we throw the `promise`. **Now Suspense takes over**.
 
-- `Suspense` waits for the promise to resolve, maybe with `.then` call, i do not
-  actually know. **That `.then` call happens AFTER our 'pretended' `.then` call
-  inside `wrapPromise`**.
-- `Suspense` calls our _component_ again, the _component_ calls `.read()` again.
+-   `Suspense` waits for the promise to resolve, maybe with `.then` call, i do not
+    actually know. **That `.then` call happens AFTER our 'pretended' `.then` call
+    inside `wrapPromise`**.
+-   `Suspense` calls our _component_ again, the _component_ calls `.read()` again.
 
-- now inside `read` data is already set by `.then` call created on `promise`,
-  the one that happened before `Suspense` called our _component_ again. `status`
-  is either `error` or `success` by now so we have our data in our _component_.
+-   now inside `read` data is already set by `.then` call created on `promise`,
+    the one that happened before `Suspense` called our _component_ again. `status`
+    is either `error` or `success` by now so we have our data in our _component_.
 
 #### Time-Slicing
 
@@ -322,29 +418,29 @@ here:
 
 ```js
 export function createElement(type, config, children) {
-  let propName;
+	let propName;
 
-  // Reserved names are extracted
-  const props = {};
+	// Reserved names are extracted
+	const props = {};
 
-  if (config != null) {
-    // Handling ref and keys
-    // Assign props to prop object
-  }
+	if (config != null) {
+		// Handling ref and keys
+		// Assign props to prop object
+	}
 
-  // Transfer children to newly allocated props object
+	// Transfer children to newly allocated props object
 
-  // Resolve default props
-  if (type && type.defaultProps) {
-    const defaultProps = type.defaultProps;
-    for (propName in defaultProps) {
-      if (props[propName] === undefined) {
-        props[propName] = defaultProps[propName];
-      }
-    }
-  }
+	// Resolve default props
+	if (type && type.defaultProps) {
+		const defaultProps = type.defaultProps;
+		for (propName in defaultProps) {
+			if (props[propName] === undefined) {
+				props[propName] = defaultProps[propName];
+			}
+		}
+	}
 
-  return ReactElement(/*stuff*/);
+	return ReactElement(/*stuff*/);
 }
 ```
 
@@ -376,23 +472,23 @@ Contrived Example
 
 ```jsx
 function ComponentWithRef() {
-  const counter = React.useRef(0);
+	const counter = React.useRef(0);
 
-  counter.current++;
+	counter.current++;
 
-  return null;
+	return null;
 }
 
 function App() {
-  const [_, setState] = React.useState(0);
+	const [_, setState] = React.useState(0);
 
-  return (
-    <React.Fragment>
-      <ComponentWithRef />
-      {/* set new object as state*/}
-      <button onClick={() => setState({})}>Click me</button>
-    </React.Fragment>
-  );
+	return (
+		<React.Fragment>
+			<ComponentWithRef />
+			{/* set new object as state*/}
+			<button onClick={() => setState({})}>Click me</button>
+		</React.Fragment>
+	);
 }
 ```
 
@@ -409,14 +505,14 @@ so:
 
 ```js
 React.useEffect(() => {
-  counter.current++;
+	counter.current++;
 });
 ```
 
 Some rules to make your life easier
 
-- **DO NOT mutate refs current value in render if they rely oon the previous
-  ref's value**
+-   **DO NOT mutate refs current value in render if they rely oon the previous
+    ref's value**
 
 Easy as that.
 
@@ -436,18 +532,18 @@ This is where **Value/Dispatch Provider Pattern** shines.
 const StateContext = React.createContext();
 const DispatchContext = React.createContext();
 function reducer() {
-  // your reducer
+	// your reducer
 }
 
 return function Provider({ children }) {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  return (
-    <StateContext.Provider value={state}>
-      <DispatchContext.Provider value={dispatch}>
-        {children}
-      </DispatchContext.Provider>
-    </StateContext.Provider>
-  );
+	const [state, dispatch] = React.useReducer(reducer, initialState);
+	return (
+		<StateContext.Provider value={state}>
+			<DispatchContext.Provider value={dispatch}>
+				{children}
+			</DispatchContext.Provider>
+		</StateContext.Provider>
+	);
 };
 ```
 
@@ -459,11 +555,13 @@ always the same.
 ```jsx
 // previous code
 function Provider({ children }) {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  let value = { state, dispatch };
-  // Creating inline object here would be the same
-  // as creating a new variable like shown above.
-  return <SomeContext.Provider value={value}>{children}</SomeContext.Provider>;
+	const [state, dispatch] = React.useReducer(reducer, initialState);
+	let value = { state, dispatch };
+	// Creating inline object here would be the same
+	// as creating a new variable like shown above.
+	return (
+		<SomeContext.Provider value={value}>{children}</SomeContext.Provider>
+	);
 }
 ```
 
@@ -490,8 +588,8 @@ Let's use previous pattern to implement `safeDispatch`
 ```jsx
 const canDispatch = React.useRef(true);
 const safeDispatch = React.useCallback(
-  (...args) => canDispatch.current && dispatch(...args),
-  []
+	(...args) => canDispatch.current && dispatch(...args),
+	[]
 );
 
 React.useEffect(() => () => (canDispatch.current = false), []);
@@ -519,10 +617,10 @@ and `React.cloneElement` combo.
 
 ```jsx
 function Counter({ children }) {
-  const [count, setCount] = React.useState(0);
-  return React.Children.map(children, child =>
-    React.cloneElement(child, { count })
-  );
+	const [count, setCount] = React.useState(0);
+	return React.Children.map(children, child =>
+		React.cloneElement(child, { count })
+	);
 }
 ```
 
@@ -538,10 +636,10 @@ This can be used for styling purposes
 ```js
 const CardHeading = styled.div``;
 class Card {
-  static Heading = ({ children }) => <CardHeading>{children}</CardHeading>;
-  render() {
-    return this.props.children;
-  }
+	static Heading = ({ children }) => <CardHeading>{children}</CardHeading>;
+	render() {
+		return this.props.children;
+	}
 }
 ```
 
@@ -585,24 +683,24 @@ This can be really helpful (looking at you `react-virtualized` 😉)
 
 ```jsx
 function useInput(initialValue = undefined) {
-  const [value, setValue] = React.useState(initialValue);
-  function onChange(e) {
-    setValue(e.currentTarget.value);
-  }
-  function resetValue() {
-    setValue(initialValue);
-  }
-  return {
-    // this is prop collection
-    inputProps: { value, onChange: setValue },
-    reset
-  };
+	const [value, setValue] = React.useState(initialValue);
+	function onChange(e) {
+		setValue(e.currentTarget.value);
+	}
+	function resetValue() {
+		setValue(initialValue);
+	}
+	return {
+		// this is prop collection
+		inputProps: { value, onChange: setValue },
+		reset
+	};
 }
 
 function Component() {
-  const { inputProps } = useInput();
-  // now as a consumer I do not have to worry about forgetting a prop
-  return <input type="text" {...inputProps} />;
+	const { inputProps } = useInput();
+	// now as a consumer I do not have to worry about forgetting a prop
+	return <input type="text" {...inputProps} />;
 }
 ```
 
@@ -617,47 +715,47 @@ Lets change an rigid object to a function which can tackle this dilemma.
 
 ```jsx
 function callAll(...fns) {
-  return function allCalledWith(...args) {
-    fns.forEach(fn => fn && fn(...args));
-  };
+	return function allCalledWith(...args) {
+		fns.forEach(fn => fn && fn(...args));
+	};
 }
 
 function useInput(initialValue = undefined) {
-  const [value, setValue] = React.useState(initialValue);
+	const [value, setValue] = React.useState(initialValue);
 
-  function onChange(e) {
-    setValue(e.currentTarget.value);
-  }
-  function resetValue() {
-    setValue(initialValue);
-  }
+	function onChange(e) {
+		setValue(e.currentTarget.value);
+	}
+	function resetValue() {
+		setValue(initialValue);
+	}
 
-  function getInputProps({ onChange: suppliedOnChange, ...rest } = {}) {
-    return {
-      onChange: callAll(suppliedOnChange, onChange),
-      value,
-      ...rest
-    };
-  }
+	function getInputProps({ onChange: suppliedOnChange, ...rest } = {}) {
+		return {
+			onChange: callAll(suppliedOnChange, onChange),
+			value,
+			...rest
+		};
+	}
 
-  return {
-    // this is prop collection
-    inputProps: { value, onChange: setValue },
-    // prop getter
-    getInputProps,
-    reset
-  };
+	return {
+		// this is prop collection
+		inputProps: { value, onChange: setValue },
+		// prop getter
+		getInputProps,
+		reset
+	};
 }
 
 function Component() {
-  const { getInputProps } = useInput();
-  return (
-    <input
-      type="text"
-      // much more flexible solution!
-      {...getInputProps({ onChange: () => console.log('changed') })}
-    />
-  );
+	const { getInputProps } = useInput();
+	return (
+		<input
+			type="text"
+			// much more flexible solution!
+			{...getInputProps({ onChange: () => console.log("changed") })}
+		/>
+	);
 }
 ```
 
@@ -670,69 +768,69 @@ the consumer to pluck into your internal logic.
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
 
 function toggleReducer(state, { type, initialState }) {
-  switch (type) {
-    case useToggle.types.toggle: {
-      return { on: !state.on };
-    }
-    case useToggle.types.reset: {
-      return initialState;
-    }
-    default: {
-      throw new Error(`Unsupported type: ${type}`);
-    }
-  }
+	switch (type) {
+		case useToggle.types.toggle: {
+			return { on: !state.on };
+		}
+		case useToggle.types.reset: {
+			return initialState;
+		}
+		default: {
+			throw new Error(`Unsupported type: ${type}`);
+		}
+	}
 }
 
 function useToggle({ initialOn = false, reducer = toggleReducer } = {}) {
-  const { current: initialState } = React.useRef({ on: initialOn });
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { on } = state;
+	const { current: initialState } = React.useRef({ on: initialOn });
+	const [state, dispatch] = React.useReducer(reducer, initialState);
+	const { on } = state;
 
-  const toggle = () => dispatch({ type: useToggle.types.toggle });
-  const reset = () => dispatch({ type: useToggle.types.reset, initialState });
-  function getTogglerProps({ onClick, ...props } = {}) {
-    return {
-      'aria-pressed': on,
-      onClick: callAll(onClick, toggle),
-      ...props
-    };
-  }
+	const toggle = () => dispatch({ type: useToggle.types.toggle });
+	const reset = () => dispatch({ type: useToggle.types.reset, initialState });
+	function getTogglerProps({ onClick, ...props } = {}) {
+		return {
+			"aria-pressed": on,
+			onClick: callAll(onClick, toggle),
+			...props
+		};
+	}
 
-  function getResetterProps({ onClick, ...props } = {}) {
-    return {
-      onClick: callAll(onClick, reset),
-      ...props
-    };
-  }
+	function getResetterProps({ onClick, ...props } = {}) {
+		return {
+			onClick: callAll(onClick, reset),
+			...props
+		};
+	}
 
-  return {
-    on,
-    reset,
-    toggle,
-    getTogglerProps,
-    getResetterProps
-  };
+	return {
+		on,
+		reset,
+		toggle,
+		getTogglerProps,
+		getResetterProps
+	};
 }
 // this will be very helpful
 useToggle.reducer = toggleReducer;
 // this is also quality of life improvement
 useToggle.types = {
-  toggle: 'toggle',
-  reset: 'reset'
+	toggle: "toggle",
+	reset: "reset"
 };
 
 function Usage() {
-  // So here we can manipulate external logic by ourselves
-  function toggleStateReducer(state, action) {
-    if (action.type === useToggle.types.toggle && timesClicked >= 4) {
-      return { on: state.on };
-    }
-    return useToggle.reducer(state, action);
-  }
-  const { on, getTogglerProps, getResetterProps } = useToggle({
-    reducer: toggleStateReducer
-  });
-  // other code
+	// So here we can manipulate external logic by ourselves
+	function toggleStateReducer(state, action) {
+		if (action.type === useToggle.types.toggle && timesClicked >= 4) {
+			return { on: state.on };
+		}
+		return useToggle.reducer(state, action);
+	}
+	const { on, getTogglerProps, getResetterProps } = useToggle({
+		reducer: toggleStateReducer
+	});
+	// other code
 }
 ```
 
@@ -753,17 +851,17 @@ want to be rerendered**
 Lets create simple context
 
 ```jsx
-const initialState = { firstName: 'Harry', familyName: 'Potter' };
+const initialState = { firstName: "Harry", familyName: "Potter" };
 const PersonContext = React.createContext(null);
 
 function PersonProvider({ children }) {
-  const [person, setPerson] = React.useState(initialState);
+	const [person, setPerson] = React.useState(initialState);
 
-  return (
-    <PersonContext.Provider value={[person, setPerson]}>
-      {children}
-    </PersonContext.Provider>
-  );
+	return (
+		<PersonContext.Provider value={[person, setPerson]}>
+			{children}
+		</PersonContext.Provider>
+	);
 }
 ```
 
@@ -771,18 +869,18 @@ Now lets say we have 2 components that display `firstName` and `familyName`
 
 ```jsx
 function DisplayFirstName() {
-  return (
-    <PersonContext.Consumer unstable_observedBits={0b1}>
-      {([person]) => <div>{person.firstName}</div>}
-    </PersonContext.Consumer>
-  );
+	return (
+		<PersonContext.Consumer unstable_observedBits={0b1}>
+			{([person]) => <div>{person.firstName}</div>}
+		</PersonContext.Consumer>
+	);
 }
 function DisplayFamilyName() {
-  return (
-    <PersonContext.Consumer unstable_observedBits={0b10}>
-      {([person]) => <div>{person.familyName}</div>}
-    </PersonContext.Consumer>
-  );
+	return (
+		<PersonContext.Consumer unstable_observedBits={0b10}>
+			{([person]) => <div>{person.familyName}</div>}
+		</PersonContext.Consumer>
+	);
 }
 ```
 
@@ -829,9 +927,9 @@ There is a reliable way to batch state update though that method is marked as
 
 ```javascript
 ReactDOM.unstable_batchedUpdates(() => {
-  setState(/**/);
-  setState(/**/);
-  setState(/**/);
+	setState(/**/);
+	setState(/**/);
+	setState(/**/);
 });
 ```
 

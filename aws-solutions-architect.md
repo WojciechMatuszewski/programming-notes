@@ -197,6 +197,16 @@ Just me trying to learn for an exam 🤷‍♀
     -   **spot**: like a market, but for instances, when AWS has free capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
     -   **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
 
+-   There are different _health checks_:
+
+    -   **System Status Check**: this checks the underlying hyperviser (virtualization tool)
+
+    -   **Instance Status Check**: checking the EC2 instance itself
+
+*   **I**nput **O**put **P**er **S**econd (IOPS): basically how fast the drive is
+
+-   Termination protection is turned off by default
+
 #### Security Groups
 
 -   **changes** to security group **are instant**
@@ -215,11 +225,21 @@ Just me trying to learn for an exam 🤷‍♀
 
 *   persistent storage
 
--   **automatically replicated** within it's own AZ
+-   **EBS root volume CAN be encrypted**
 
-*   Different versions:
+*   **automatically replicated** within it's own AZ
+
+-   Different versions:
 
     -   **Provisioned IOPS** - the most io operations you can get (databases), most expensive
     -   **Cold HDD** - lowest cost, less frequently accessed workloads (file servers)
     -   **EBS Magnetic**- previous generation HDD, infrequent access
     -   **General Purpose**
+
+#### EBS vs Instance Store
+
+-   Instance Store a.k.a **Ephemeral storage**. The data lives on a rack where your virtual machine is booted. **If you reboot it, there is HIGH CHANCE that you will loose that data**. It's not 100% guaranteed though. Your EC2 can always be assigned to the same rack, but that is unlikely.
+
+-   Instance Store is not really persistent, whereas EBS is a persistent, multi AZ storage option.
+
+### CloudWatch
