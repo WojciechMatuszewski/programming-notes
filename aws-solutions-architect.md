@@ -60,6 +60,14 @@ Just me trying to learn for an exam 🤷‍♀
 
 -   Policies have **different types**. Like `Job function` or `AWS managed`.
 
+#### Roles
+
+-   you should **prefer attaching roles** instead of using aws credentials
+
+*   roles can be attached to many services
+
+-   roles can be used **in any region**, they are universal
+
 #### S3 Basics
 
 > S3 stands for **Simple Storage Service**
@@ -207,6 +215,14 @@ Just me trying to learn for an exam 🤷‍♀
 
 -   Termination protection is turned off by default
 
+*   you can create a **bootstrap script**
+
+-   EC2 instance has **metadata**. There are a lot of useful information there.
+
+*   **To get the metadata info CURL 169.254.169.254/latest/...**
+    -   `/userdata`: your bootstrap script etc
+    -   `/metadata/`: has **many options**, IP etc..
+
 #### Security Groups
 
 -   **changes** to security group **are instant**
@@ -242,4 +258,47 @@ Just me trying to learn for an exam 🤷‍♀
 
 -   Instance Store is not really persistent, whereas EBS is a persistent, multi AZ storage option.
 
+#### EFS
+
+-   **E**lastic **F**ile **S**ystem (EFS)
+
+*   **Similar to EBS**, but there is one **BIG DIFFERENCE**. EFS instance can be used by multiple EC2 instances, EBS volume can only be used by one EC2 instance.
+
+-   think of it as multiple EC2 instances having the same disk
+
+*   **automatically scales storage capacity**, when deleting shrinks, when adding resizes
+
+-   **CAN ONLY BE USED BY EC2** instances
+
+*   just like s3 there are different tiers:
+
+    -   infrequent access
+
+-   data **can be encrypted** at rest.
+
+#### Placement Groups
+
+-   ways of _placing_ your EC2 instances
+
+*   **clustered**, **spread**, **partitioned**
+    -   **clustered**: placing EC2 very close with each other, in a single AZ.
+    -   **spread**: opposite idea, each instance is placed in **separate racks**. Can be in different AZ but the **same region**. **Limitation of 7 instances per AZ**
+    -   **partitioned**: similar to spread and clustered, basically you have a **groups of clustered EC2 on separate racks**
+
 ### CloudWatch
+
+-   **monitoring service** for applications, services, **monitors performance**
+
+-   can monitor:
+    -   **CPU**
+    -   **Network**
+    -   **Disk**
+    -   **Status check**
+
+*   **Cloud Trail IS NOT THE SAME AS CloudWatch**
+    -   **CloudWatch** - performance
+    -   **Cloud Trail** - CCTV camera, **monitors AWS API calls**
+
+-   you can create dashboards from metrics
+
+*   there is notion of **events**, which basically provides **near instant stream of system events**
