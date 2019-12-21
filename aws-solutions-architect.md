@@ -302,3 +302,80 @@ Just me trying to learn for an exam 🤷‍♀
 -   you can create dashboards from metrics
 
 *   there is notion of **events**, which basically provides **near instant stream of system events**
+
+### Analytics
+
+#### Athena
+
+* **completely serverless product**
+
+- interactive **query service**
+
+* data lives on s3, it **never changes**
+
+- **schema on read** a.k.a you define what the data YOU would like to look like.
+
+* **schema is not persistent**, schema is only used when you read data (perform queries)
+
+- reduces admin overhead, **no INITIAL data manipulation**
+
+* you only pay for the data you query and the storage on s3 (your source data probably already exist on s3)
+
+- think of **schema as a lens to look through at data**
+
+* mostly used for **ad-hoc queries**, because you only pay for what you use.
+
+#### EMR (Elastic Map Reduce)
+
+- allows you to perform **analysis on large-scaled, semi-structured or unstructured data**
+
+* think **big data** data sets
+
+- there are **nodes**, the **master node splits the work between nodes**
+
+* uses **shared file system through nodes**
+
+- It can use 2 types of storage to perform operations:
+    - HDFS: s3 is used to read and write the final data to
+    - EMR FS: s3 is used as primary data store to carry out all operations
+
+* **use for on-demand, ad-hoc, short-term tasks**
+
+- **Athena does not manipulate the data, EMR CAN MANIPULATE THE DATA**
+
+#### Kinesis
+
+- **fully managed**
+
+* ingest big amounts of data in real-time
+
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for $$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+
+* stream can scale almost indefinitely, using **kinesis shards**
+
+- **NOT A QUEUING SYSTEM**
+
+* **consumers can work on the data independently**
+
+
+#### Kinesis Data Firehose
+
+- allows you to **store data from kinesis stream on persistent storage**
+
+* you can make queries and such with it on the data that is accepted by firehose (a.k.a read by it)
+
+- **serverless product**
+
+#### Redshift
+
+- **column-based database**
+
+* **you would store data here after the transactions (changes) has been made**, a good example is kinesis => firehose => redshift
+
+- data should not change, column-based dbs are quite bad at handling changes
+
+* you would use it for lets say find pattern in ages querying on HUGE amount of people data.
+
+- **scales automatically**
+
+* think of Redshift as **end-state repository**

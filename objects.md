@@ -27,13 +27,13 @@ otherClass(); // Suzy, Why
 
 ```javascript
 var workshop = {
-    teacher:"Kyle"
+    teacher:"Kyle",
     ask(question) {
         // because of a call site this keyword will end up
         // pointing to the teacher object key
         console.log(this.teacher, question)
     }
-}
+};
 // calling ask on workshop so the context is implicitly workshop
 workshop.ask("...")
 ```
