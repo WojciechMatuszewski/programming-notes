@@ -148,6 +148,14 @@ Just me trying to learn for an exam 🤷‍♀
   - **Volume Gateway**: used for storing copies of hard-disk drives in S3.
   - **Tape Gateway**: used to get rid of tapes.
 
+##### Security
+
+- **by default only the account that created the bucket can do stuff with it**
+
+* when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
+
+- **ACLs are legacy!**. They are attached to bucket or an object.
+
 ### Snowball
 
 - Big briefcase, **up to 100TB** of storage. Used to move data from one point to
@@ -281,9 +289,28 @@ Just me trying to learn for an exam 🤷‍♀
 - ways of _placing_ your EC2 instances
 
 * **clustered**, **spread**, **partitioned**
+
   - **clustered**: placing EC2 very close with each other, in a single AZ.
   - **spread**: opposite idea, each instance is placed in **separate racks**. Can be in different AZ but the **same region**. **Limitation of 7 instances per AZ**
   - **partitioned**: similar to spread and clustered, basically you have a **groups of clustered EC2 on separate racks**
+
+#### Enhanced Networking
+
+- EC2 **must** be launched from **HVM AMI**
+
+* EC2 **must** be launched **inside VPC**
+
+#### ENI (Elastic Network Interface)
+
+- **by default, eth0 is created**
+
+* has allocated IP address from the range of subnet
+
+- has **interface ID**
+
+* can have ip addresses changed (multiple private addresses), **the number of ip pools are dependant on EC2 instance size / type**
+
+- EC2 **can have multiple ENI's**. When instance is terminated **ONLY default eth0 is deleted BY DEFAULT**.
 
 ### CloudWatch
 
@@ -349,7 +376,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -412,3 +439,43 @@ Just me trying to learn for an exam 🤷‍♀
 * **IS NOT HIGHLY AVAILABLE BY DEFAULT**. It is placed in a single subnet in a signel AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
 
 - session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+
+### Caching
+
+#### DAX (in-memory cache for DynamoDB)
+
+- runs inside VPC
+
+* uses **cluster architecture**
+
+- works as any cache you expect to work. You get stuff, it's placed in cache, when you get it again you get it from the cache.
+
+* **read-heavy workloads or very low latency**
+
+- two caches, **query cache** and **getItem/batchGetItem cache**
+
+* any reads through DAX are **eventually consistent**
+
+#### ElastiCache
+
+- operates with **products that are NOT dynamoDB**
+
+* supports **Redis** or **Memcached**
+
+- offloading databases: **caches reads just like DAX**
+
+* storing session data of users
+
+- there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
+
+### Random
+
+#### AWS Workspaces
+
+- desktop as a service
+
+* basically you can provision windows or linux desktop to your employers
+
+- you do not have to manage hardware
+
+#### AWS Ops Work
