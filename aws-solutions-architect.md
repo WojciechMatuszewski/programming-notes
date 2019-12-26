@@ -203,6 +203,26 @@ Just me trying to learn for an exam 🤷‍♀
 
 * **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
 
+### Load Balancers
+
+- different types:
+  - **classic load balancer: LEGACY!**
+  - **application load balancer** for HTTP/HTTPS stuff
+  - **network load balancer** for **connections that are NOT HTTP/HTTPS**
+
+* allocated to **specific VPC** and **AZ inside that VPC**
+
+- **can operate inside multiple AZs**
+
+* can have security groups attached
+
+- **can even invoke lambda functions ;o**
+
+* **can perform health checks**
+
+- there is a notion of **Target Groups**. This basically allows you to specify multiple EC2 instances without having to specify them explicitly.
+  **In the context of EC2 Target Group usually points to a Auto Scaling Group**.
+
 ### EC2 (Elastic Compute Cloud)
 
 - resizable compute capacity in the cloud, **virtual machines in the cloud**
@@ -231,6 +251,25 @@ Just me trying to learn for an exam 🤷‍♀
   - `/userdata`: your bootstrap script etc
   - `/metadata/`: has **many options**, IP etc..
 
+#### Auto Scaling Groups
+
+- launching EC2 based on criteria as a service
+
+* **uses launch templates** to **configure how EC2 is launched**. AMI, Instance Type, KeyPairs, Network stuff, Security Groups etc..
+
+- controls scaling, where instances are launched, etc
+
+* **can work with instances in multiple subnets**
+
+- instances inside auto scaling group can be monitored as an one entity. By default _Cloud Watch_ is monitoring every instance individually
+
+* you can control the number of instances by manipulating three metrics:
+  - **Desired Capacity**: this is the number **ASG will try to maintain**
+  - **Min**
+  - **Max**
+
+- there is a notion of **scaling policies**. These are **rules, things you want to happen when something regarding EC2 instances happen**, eg.
+
 #### Security Groups
 
 - **changes** to security group **are instant**
@@ -242,6 +281,8 @@ Just me trying to learn for an exam 🤷‍♀
 * EC2 can have more than 1 security group attached to it, also you can have multiple EC2s assigned to 1 security group.
 
 - **All inbound traffic is blocked by default**
+
+* **security group can have other security groups as sources!**
 
 #### EBS (Elastic Block Store)
 
@@ -376,7 +417,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -407,6 +448,10 @@ Just me trying to learn for an exam 🤷‍♀
 * think of Redshift as **end-state repository**
 
 ### Networking (VPC)
+
+- **CAN SPAN MULTIPLE AZs**
+
+* **SUBNET CANNOT SPAN MULTIPLE AZs**
 
 #### Elastic IP
 
