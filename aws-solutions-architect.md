@@ -159,7 +159,7 @@ Just me trying to learn for an exam 🤷‍♀
 ### Snowball
 
 - Big briefcase, **up to 100TB** of storage. Used to move data from one point to
-  another fast
+  another, fast
 
 ### Snowmobile (not joking)
 
@@ -220,8 +220,16 @@ Just me trying to learn for an exam 🤷‍♀
 
 * **can perform health checks**
 
-- there is a notion of **Target Groups**. This basically allows you to specify multiple EC2 instances without having to specify them explicitly.
+- there is a notion of **Target Groups (up to 1000 targets)**. This basically allows you to specify multiple EC2 instances without having to specify them explicitly.
   **In the context of EC2 Target Group usually points to a Auto Scaling Group**.
+
+* **target groups can be containers, EC2 instances or IP addresses**
+
+- load balancers **can balance** between **multiple target groups**
+
+* load balancer have **listeners (up to 10)**. This **enables** you to **authenticate using social providers through those listeners**.
+
+- **listeners** can have **roles**. This makes **content-based balancing possible**
 
 ### EC2 (Elastic Compute Cloud)
 
@@ -249,6 +257,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 * **To get the metadata info CURL 169.254.169.254/latest/...**
   - `/userdata`: your bootstrap script etc
+  - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
   - `/metadata/`: has **many options**, IP etc..
 
 #### Auto Scaling Groups
@@ -269,6 +278,8 @@ Just me trying to learn for an exam 🤷‍♀
   - **Max**
 
 - there is a notion of **scaling policies**. These are **rules, things you want to happen when something regarding EC2 instances happen**, eg.
+
+* **REMEMBER THAT YOU HAVE TO LIST AZs YOU WANT YOU INSTANCES TO BE DEPLOYED INTO!!**
 
 #### Security Groups
 
@@ -292,6 +303,10 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **EBS root volume CAN be encrypted**
 
+* **encryption** works **at rest** and **in transit between the volume and the instance**
+
+- **volumes from encrypted snapshots are also encrypted**
+
 * **automatically replicated** within it's own AZ
 
 - Different versions:
@@ -300,6 +315,14 @@ Just me trying to learn for an exam 🤷‍♀
   - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers)
   - **EBS Magnetic**- previous generation HDD, infrequent access
   - **General Purpose**
+
+* you can take **EBS snapshots**
+
+- **during** the operation of **creating a snapshot** you can **use** your volume **normally**
+
+* **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you want to make sure your data is secure.
+
+> If you make periodic snapshots of a volume, the snapshots are incremental. This means that only the blocks on the device that have changed after your last snapshot are saved in the new snapshot. Even though snapshots are saved incrementally, the snapshot deletion process is designed so that you need to retain only the most recent snapshot in order to restore the volume.
 
 #### EBS vs Instance Store
 
@@ -417,7 +440,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -513,6 +536,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 - there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
 
+### Communication Between Services, Queues
+
 ### Random
 
 #### AWS Workspaces
@@ -524,3 +549,11 @@ Just me trying to learn for an exam 🤷‍♀
 - you do not have to manage hardware
 
 #### AWS Ops Work
+
+#### WAF (Web Application Firewall)
+
+- allows for monitoring of requests.
+
+* will either accept or deny given request
+
+- looks for CSS or SQL-injection stuff
