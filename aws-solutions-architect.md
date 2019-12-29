@@ -103,14 +103,15 @@ Just me trying to learn for an exam 🤷‍♀
 * Buckets can be **replicated to another account or to a different bucket
   (region needs to differ)**.
 
-- S3 can be `accelerated`. There is something called **S3 Transfer
-  Acceleration** where users upload to **edge locations** instead directly to
+- s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled to be able to enable CRR**
+
+* S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
   the Bucket. Then that uploaded object is **transferred automatically to your
   bucket**.
 
-* S3 is a **tiered** storage
+- S3 is a **tiered** storage
 
-  - S3 Standard, stored across multiple devices and multiple facilities
+  - S3 Standard, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
   - S3-IA/S3 One Zone-IA (**Infrequent Access**): for data that is accessed less
     frequently but requires rapid access when needed
@@ -253,6 +254,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 * **ALB can balance** between **different ports**. This is done by **specifying listeners rules**
 
+- ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
+
 ### EC2 (Elastic Compute Cloud)
 
 - resizable compute capacity in the cloud, **virtual machines in the cloud**
@@ -260,7 +263,9 @@ Just me trying to learn for an exam 🤷‍♀
 * different pricing models:
   - **on demand**: pay per time use (per-hour, per-second)
   - **reserved**: capacity reservation, contract with AWS
-  - **spot**: like a market, but for instances, when AWS has free capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
+  - **spot**: like a market, but for instances, when AWS has free
+  - **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
+    capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
   - **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
 
 - There are different _health checks_:
@@ -466,7 +471,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
