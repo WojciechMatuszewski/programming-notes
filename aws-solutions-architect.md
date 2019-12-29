@@ -165,6 +165,26 @@ Just me trying to learn for an exam 🤷‍♀
 
 - A truck with a container that carries snowballs.
 
+### RDS (Relational Database Service)
+
+- AWS service for relational databases
+
+* multiple providers such as: `mysql` or `Oracle`
+
+- **RDS AUTO SCALING in terms of compute does not exist**. You have to provision an EC2 instance and **pay regardless of the db usage**. What is possible is **RDS storage auto scaling**
+
+* RDS **can be in multi AZ configuration**
+
+- there are **read replicas available**.
+
+* when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
+
+### DynamoDB
+
+- **more effective for read heavy workloads**
+
+* **data automatically replicated `synchronously` between 3 AZs!**
+
 ### CloudFront
 
 - CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to caches.
@@ -231,6 +251,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **listeners** can have **roles**. This makes **content-based balancing possible**
 
+* **ALB can balance** between **different ports**. This is done by **specifying listeners rules**
+
 ### EC2 (Elastic Compute Cloud)
 
 - resizable compute capacity in the cloud, **virtual machines in the cloud**
@@ -281,6 +303,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 * **REMEMBER THAT YOU HAVE TO LIST AZs YOU WANT YOU INSTANCES TO BE DEPLOYED INTO!!**
 
+- there is a notion of **health check grace period**. This is the **time** it takes to **spin up new instance**. This time of course is dependant on **bootstrap script** and **how much application code is in the AMI**.
+
 #### Security Groups
 
 - **changes** to security group **are instant**
@@ -291,9 +315,11 @@ Just me trying to learn for an exam 🤷‍♀
 
 * EC2 can have more than 1 security group attached to it, also you can have multiple EC2s assigned to 1 security group.
 
+- **Security Groups DO NOT APPLY TO s3 BUCKETS, WE ARE IN EC2 VPC SPACE NOW!**
+
 - **All inbound traffic is blocked by default**
 
-* **security group can have other security groups as sources!**
+* **security group can have other security groups as sources!**. This does not mean that we are _merging_ the rules. **Having other security group as source means that we are allowing traffic from instances ENI which are associated with that group!!!!!!!**
 
 #### EBS (Elastic Block Store)
 
@@ -440,7 +466,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -452,7 +478,13 @@ Just me trying to learn for an exam 🤷‍♀
 
 - allows you to **store data from kinesis stream on persistent storage**
 
-* you can make queries and such with it on the data that is accepted by firehose (a.k.a read by it)
+* it can modify the data before storing it
+
+#### Kinesis Data Analytics
+
+- allows you to make **sql queries against data in the stream**
+
+* can ingest from **kinesis stream and kinesis firehose**
 
 - **serverless product**
 
@@ -468,7 +500,13 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **scales automatically**
 
-* think of Redshift as **end-state repository**
+* **USED FOR OLAP style data**
+
+- think of Redshift as **end-state repository**
+
+* **always keeps `three` copies of your data**
+
+- provides **incremental/continuos backups** just like EBS.
 
 ### Networking (VPC)
 
@@ -557,3 +595,15 @@ Just me trying to learn for an exam 🤷‍♀
 * will either accept or deny given request
 
 - looks for CSS or SQL-injection stuff
+
+### Patterns
+
+#### Restricting Access to s3 resources
+
+Use `pre-signed` `s3` urls.
+If you are distributing through `CloudFront` create `IAO` and associate that `IAO` with your distribution. Then modify permissions on `s3` to only allow OAI to access those files.
+
+#### EBS and encrypting a volume on a running instance
+
+So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to create **a new volume**, enable encryption (if it's not enabled by default) and copy the data.
+Then you can either swap the volumes or restore volume from newly created snapshot.
