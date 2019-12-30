@@ -4,17 +4,13 @@ Just me trying to learn for an exam 🤷‍♀
 
 ## Acloudguru & Linux Academy
 
-### AWS and SA Fundamentals
-
-#### Access Management
+### Basics
 
 - **Principal** is a person or application that can make authenticated or anonymous request to perform an action on a system. **Often seen in-code in lambda authorizers**
 
 * Security **in the cloud** is **your job**
 
 - Security **of the cloud** is the **AWS job**
-
-### Basics
 
 - **AZ (Availability Zone)** is a distinct location within an AWS Region. Each
   Region comprises at least two AZs
@@ -29,9 +25,13 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **Cloudfront** is a CDN
 
-### Identity Access Management & S3
+### Lambda
 
-#### IAM Basics
+- **LAMBDA IS HA by default! MULTI-AZ!**
+
+* **scales automatically** (can run functions concurrently)
+
+### IAM
 
 > IAM allows you to manage users and their level of access to the AWS Console
 
@@ -68,7 +68,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 - roles can be used **in any region**, they are universal
 
-#### S3 Basics
+### S3
 
 > S3 stands for **Simple Storage Service**
 
@@ -120,7 +120,7 @@ Just me trying to learn for an exam 🤷‍♀
     keep files for a loooong time. Retrieval time is configurable (**Deep
     Archive is locked on 12hr retrieval time though**)
 
-##### Versioning
+#### Versioning
 
 - S3 have the notion of versioning: **stores all versions of an object including all writes even if you delete it!**
 
@@ -132,7 +132,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 - You can restore your deleted objects by **deleting a delete marker**.
 
-##### Life-cycle rules
+#### Life-cycle rules
 
 - can be used to **transition objects to different TIER of storage after X amount of time**, this can be placed on current and previous versions.
 
@@ -140,7 +140,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 - Can be used with **conjunction with versioning**.
 
-##### Storage Gateway
+#### Storage Gateway
 
 - Physical/virtual device which **will replicate your data to AWS**.
 
@@ -149,13 +149,25 @@ Just me trying to learn for an exam 🤷‍♀
   - **Volume Gateway**: used for storing copies of hard-disk drives in S3.
   - **Tape Gateway**: used to get rid of tapes.
 
-##### Security
+#### Security
 
 - **by default only the account that created the bucket can do stuff with it**
 
 * when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
 
 - **ACLs are legacy!**. They are attached to bucket or an object.
+
+* you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
+
+- using **resource policy** you can **control access** to s3 resources, works on **identities you DO NOT control. THIS ALSO MEANS ANY IDENTITY**. When resource policy is used **specifically with s3**, it is known as **bucket policy**
+
+So when to use what?
+
+- _identity policy_
+  - when **you control the identity**
+
+* _bucket policy_ (resource policy)
+  - when **you DO NOT control the identity**
 
 ### Snowball
 
@@ -179,6 +191,12 @@ Just me trying to learn for an exam 🤷‍♀
 - there are **read replicas available**.
 
 * when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
+
+### CloudFormation
+
+- **infra from json**
+
+* is free, **the service itself does not cost anything**. Only the stuff you deploy with it will cost you money (if you provision stuff which is not free)
 
 ### DynamoDB
 
@@ -261,12 +279,15 @@ Just me trying to learn for an exam 🤷‍♀
 - resizable compute capacity in the cloud, **virtual machines in the cloud**
 
 * different pricing models:
+
   - **on demand**: pay per time use (per-hour, per-second)
   - **reserved**: capacity reservation, contract with AWS
   - **spot**: like a market, but for instances, when AWS has free
   - **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
     capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
   - **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
+
+* there are also **Spot blocks**. This allows you to have an instance for a **specific X amount of time** using the spot pricing model.
 
 - There are different _health checks_:
 
@@ -286,6 +307,13 @@ Just me trying to learn for an exam 🤷‍♀
   - `/userdata`: your bootstrap script etc
   - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
   - `/metadata/`: has **many options**, IP etc..
+
+- **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have dedicated tenancy model on that instance.
+
+* **Tenancy model**. This is something **somewhat different than ec2 pricing models**.
+  - **shared**: multiple costumers share the same piece of hardware (same rack, etc)
+  - **dedicated**: hardware your EC2 runs on is only yours, but you have to pay more
+  - **dedicated host**: you can actually pick the server your EC2 will be deployed into
 
 #### Auto Scaling Groups
 
@@ -465,13 +493,15 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **Athena does not manipulate the data, EMR CAN MANIPULATE THE DATA**
 
+* **master node can** be **sshed into**
+
 #### Kinesis
 
 - **fully managed**
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -523,6 +553,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **publicly accessible**, static IP address. Usually used with _NAT-Gateways_
 
+* **FREE OF CHARGE AS LONG AS YOU ARE USING IT**
+
 #### Route tables
 
 - they allow routing to happen within your VPC or make requests to outside your VPC possible
@@ -550,6 +582,26 @@ Just me trying to learn for an exam 🤷‍♀
 * **IS NOT HIGHLY AVAILABLE BY DEFAULT**. It is placed in a single subnet in a signel AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
 
 - session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+
+#### NACL
+
+- **CAN ONLY DENY RULES**
+
+* is stateless, that means **it does not _remember_ the relation between incoming and outgoing traffic**.
+
+- **cannot block traffic to a given hostname**
+
+* **WORKS ON A SUBNET LEVEL**
+
+#### Security Group
+
+- **CAN ONLY ALLOW RULES**
+
+* there is an **default explicit deny on everything**
+
+- **remembers the relation between incoming and outgoing traffic**. If you ping and instance with security group attached it will be able to ping you back without having to specify outgoing allow.
+
+* **WORKS ON INSTANCE LEVEL**
 
 ### Caching
 
@@ -612,3 +664,7 @@ If you are distributing through `CloudFront` create `IAO` and associate that `IA
 
 So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to create **a new volume**, enable encryption (if it's not enabled by default) and copy the data.
 Then you can either swap the volumes or restore volume from newly created snapshot.
+
+TODO:
+
+- bucket policies
