@@ -190,7 +190,23 @@ So when to use what?
 
 - there are **read replicas available**.
 
-* when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
+* data is **replicated synchronously across multiple AZ with read replicas**
+
+- when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
+
+* you **can connect to** the underlying **EC2 instance that hosts the database**. Use SSH or different means.
+
+- you **DO NOT** have **access to the underlying OS, the DB is running on**.
+
+#### Encryption
+
+- you **can only choose to encrypt your DB during creation phase**
+
+* data **in transit** between **source and read replicas** is **encrypted by default**
+
+- you **cannot encrypt existing DB**. You have to **create an snapshot and encrypt it** and build DB from that snapshot.
+
+* **read replicas** have to be encrypted with the **same key as source**
 
 ### CloudFormation
 
@@ -303,6 +319,11 @@ So when to use what?
 
 - EC2 instance has **metadata**. There are a lot of useful information there.
 
+* using **SPOT** instances there are different **behaviors you can configure** when your instance is about to get interrupted:
+
+  - **stop**
+  - **hibernate**
+
 * **To get the metadata info CURL 169.254.169.254/latest/...**
   - `/userdata`: your bootstrap script etc
   - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
@@ -314,6 +335,8 @@ So when to use what?
   - **shared**: multiple costumers share the same piece of hardware (same rack, etc)
   - **dedicated**: hardware your EC2 runs on is only yours, but you have to pay more
   - **dedicated host**: you can actually pick the server your EC2 will be deployed into
+
+- **EC2 instance can only have ONE IAM ROLE**
 
 #### Auto Scaling Groups
 
@@ -337,6 +360,8 @@ So when to use what?
 * **REMEMBER THAT YOU HAVE TO LIST AZs YOU WANT YOU INSTANCES TO BE DEPLOYED INTO!!**
 
 - there is a notion of **health check grace period**. This is the **time** it takes to **spin up new instance**. This time of course is dependant on **bootstrap script** and **how much application code is in the AMI**.
+
+* **individual instances can be protected from scale events**. This is useful when you have a master node that cannot be terminated.
 
 #### Security Groups
 
@@ -453,6 +478,8 @@ So when to use what?
 
 * there is notion of **events**, which basically provides **near instant stream of system events**
 
+- for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
+
 ### Analytics
 
 #### Athena
@@ -501,7 +528,7 @@ So when to use what?
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -543,6 +570,8 @@ So when to use what?
 
 - provides **incremental/continuos backups** just like EBS.
 
+* **automatically caches repeated queries**
+
 ### Networking (VPC)
 
 - **CAN SPAN MULTIPLE AZs**
@@ -554,6 +583,10 @@ So when to use what?
 - **publicly accessible**, static IP address. Usually used with _NAT-Gateways_
 
 * **FREE OF CHARGE AS LONG AS YOU ARE USING IT**
+
+#### Internet Gateway
+
+- used for **connecting** your **VPC to the internet**.
 
 #### Route tables
 
@@ -602,6 +635,54 @@ So when to use what?
 - **remembers the relation between incoming and outgoing traffic**. If you ping and instance with security group attached it will be able to ping you back without having to specify outgoing allow.
 
 * **WORKS ON INSTANCE LEVEL**
+
+#### Peering
+
+- **linking TWO!! VPCs together** (in a scalable way)
+
+* when VPCs are peered, services inside those VPCS can **communicate** with each other using **private IP addresses**
+
+- can **span accounts, regions**
+
+* VPCs are joined using **Network Gateway**
+
+- **CIDR** blocks **cannot overlap**
+
+* **VPC peer has to be accepted by the other side**
+
+- you will probably have to **check SG, NACL** to make sure it works. **Enabling peering DOES NOT MEAN that the connection is made**.
+
+* VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
+
+#### VPC Endpoints
+
+- there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
+
+* there are **two different types** of VPC Endpoints
+  - **Gateway Endpoints**: for **DynamoDB and S3**
+  - **Interface Endpoints**: for **everything else**
+
+- **Gateway Endpoints** are **highly available**
+
+* **Gateway Endpoints** use **routing, dns is NOT INVOLVED**
+
+- With **Interface Endpoints** you have to **manually select AZs** to make it **highly available**
+
+* **Interface Endpoints** use **DNS, routing is NOT INVOLVED**
+
+#### IPV6
+
+- **not enabled by default**
+
+* **have to be enabled for the whole VPC**
+
+- **all** IPV6 addresses are **publicly accessible by default**
+
+#### Egress-only Internet Gateway
+
+- **allow only OUTBOUND traffic from IPV6 associated instance**.
+
+* **engress-only** means that it **only allows outbound IPV6 connections**. It's **stateful!**. Which means that it **allows elements in your VPC** to **receive the response back**.
 
 ### Caching
 
@@ -665,6 +746,17 @@ If you are distributing through `CloudFront` create `IAO` and associate that `IA
 So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to create **a new volume**, enable encryption (if it's not enabled by default) and copy the data.
 Then you can either swap the volumes or restore volume from newly created snapshot.
 
+#### Adding Encryption to an RDS db
+
+**You cannot add encryption to an existing RDS db**. What you have to do is to **create db snapshot and encrypt it**. From that snapshot you can create a copy of your DB.
+
+#### Custom metrics on EC2
+
+**By default** CloudWatch monitors **CPU, Disk and Network**. If you need RAM metrics for example you can **install CloudWatch agent on a EC2** which will **push data to custom CloudWatch metrics**.
+
 TODO:
 
-- bucket policies
+- aws private link
+- ecs
+- beanstalk
+- chaning schema on dynamodb is easly because dynamo is nosql
