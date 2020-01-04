@@ -120,6 +120,8 @@ Just me trying to learn for an exam 🤷‍♀
     keep files for a loooong time. Retrieval time is configurable (**Deep
     Archive is locked on 12hr retrieval time though**)
 
+* **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
+
 #### Versioning
 
 - S3 have the notion of versioning: **stores all versions of an object including all writes even if you delete it!**
@@ -269,26 +271,34 @@ So when to use what?
 
 - **can operate inside multiple AZs**
 
-* can have security groups attached
+* you probably want to enable **cross zone balancing when balancing between multiple AZs**. **Without** this setting enabled, traffic is **distributed between the nodes in the AZ the load balancer resides**.
 
-- **can even invoke lambda functions ;o**
+- can have security groups attached
 
-* **can perform health checks**
+* **can even invoke lambda functions ;o**
 
-- there is a notion of **Target Groups (up to 1000 targets)**. This basically allows you to specify multiple EC2 instances without having to specify them explicitly.
+- **can perform health checks**
+
+* there is a notion of **Target Groups (up to 1000 targets)**. This basically allows you to specify multiple EC2 instances without having to specify them explicitly.
   **In the context of EC2 Target Group usually points to a Auto Scaling Group**.
 
-* **target groups can be containers, EC2 instances or IP addresses**
+- **target groups can be containers, EC2 instances or IP addresses**
 
-- load balancers **can balance** between **multiple target groups**
+* load balancers **can balance** between **multiple target groups**
 
-* load balancer have **listeners (up to 10)**. This **enables** you to **authenticate using social providers through those listeners**.
+- load balancer have **listeners (up to 10)**. This **enables** you to **authenticate using social providers through those listeners**.
 
-- **listeners** can have **roles**. This makes **content-based balancing possible**
+* **listeners** can have **roles**. This makes **content-based balancing possible**
 
-* **ALB can balance** between **different ports**. This is done by **specifying listeners rules**
+- **ALB can balance** between **different ports**. This is done by **specifying listeners rules**
 
-- ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
+* ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
+
+#### Monitoring
+
+- **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
+
+* if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3**. These allow you to get information about **individual requests** like IP address of the client, latencies etc..
 
 ### EC2 (Elastic Compute Cloud)
 
@@ -338,11 +348,15 @@ So when to use what?
 
 - **EC2 instance can only have ONE IAM ROLE**
 
+* to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some configuration** for an EC2 like **security groups, AMI ids and such** .
+
 #### Auto Scaling Groups
 
 - launching EC2 based on criteria as a service
 
 * **uses launch templates** to **configure how EC2 is launched**. AMI, Instance Type, KeyPairs, Network stuff, Security Groups etc..
+
+* **DO NOT mistake launch templates with launch configurations**. **Launch templates are used with ASG, launch configuration is something EC2 specific!**.
 
 - controls scaling, where instances are launched, etc
 
@@ -362,6 +376,20 @@ So when to use what?
 - there is a notion of **health check grace period**. This is the **time** it takes to **spin up new instance**. This time of course is dependant on **bootstrap script** and **how much application code is in the AMI**.
 
 * **individual instances can be protected from scale events**. This is useful when you have a master node that cannot be terminated.
+
+##### Default termination policy
+
+There are number of factors that are taken into consideration while picking which instance to terminate.
+
+- **look at the type of the instance if the allocation strategy is specified**
+
+* if instance uses **old launch template** terminate that instance. **that launch template has to be the oldest. if there are more instances with the same old launch templates, skip this step**
+
+- terminate based on **how close an instance is to next billing hour**. Again **if there are multiple of such instances, skip this step**.
+
+* pick **random instance**
+
+Regardless of these steps, default termination policy will try to terminate instances **in the AZ that has the most amount of instances**.
 
 #### Security Groups
 
@@ -460,6 +488,11 @@ So when to use what?
 
 - EC2 **can have multiple ENI's**. When instance is terminated **ONLY default eth0 is deleted BY DEFAULT**.
 
+* ENI can be **attached** in **different stage of life-cycle of EC2**.
+  - **hot attached**: when instance is running
+  - **warm attached**: when instance is stopped
+  - **cold attached**: when instance is launched
+
 ### CloudWatch
 
 - **monitoring service** for applications, services, **monitors performance**
@@ -528,7 +561,7 @@ So when to use what?
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -596,7 +629,9 @@ So when to use what?
 
 - often used to redirect requests to _Internet-Gateway_
 
-#### NAT-Gateway
+* **new subnets are associated with main route table by default**
+
+#### NAT Gateway
 
 - **lives in a public subnet**
 
@@ -612,9 +647,11 @@ So when to use what?
 
 - scale automatically
 
-* **IS NOT HIGHLY AVAILABLE BY DEFAULT**. It is placed in a single subnet in a signel AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
+* **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
 
 - session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+
+* **CANNOT HAVE Security Groups ATTACHED!**
 
 #### NACL
 
@@ -754,9 +791,28 @@ Then you can either swap the volumes or restore volume from newly created snapsh
 
 **By default** CloudWatch monitors **CPU, Disk and Network**. If you need RAM metrics for example you can **install CloudWatch agent on a EC2** which will **push data to custom CloudWatch metrics**.
 
+#### Troubleshooting EC2 instances in ASG
+
+First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that are in standby state**
+
+#### Changing instance type inside ASG
+
+**YOU CANNOT EDIT EXISTING LAUNCH CONFIGURATION**. You have to create a **new launch configuration with new instance type**. To make sure that all of your instances are using this new launch configuration **terminate old instances**. New one will get added using new launch configuration.
+
+**Instead of creating new launch configuration** you **can** also **suspend the scaling process** and **restart existing instances after specificizing new instance type**. This is also a solution but seems pretty meh tbh.
+
+#### ELB and Route53
+
+#### Different IAM roles per instance on ECS or Fargate
+
 TODO:
 
 - aws private link
 - ecs
 - beanstalk
 - chaning schema on dynamodb is easly because dynamo is nosql
+
+- iam query API for programmatic access
+- swf
+- NAT Gateway cannot have SecurityGroups ? (https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-comparison.html)
+- you can attach iam policies to iam groups
