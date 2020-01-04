@@ -300,6 +300,32 @@ So when to use what?
 
 * if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3**. These allow you to get information about **individual requests** like IP address of the client, latencies etc..
 
+### ECS (Elastic Container Service)
+
+- allows you to run **docker containers on EC2 instances** in a **managed way**.
+
+* those **EC2 container instances are launched inside a VPC**
+
+- you can put **docker images** inside **elastic container registry (ECR)**
+
+* ECR is integrated with IAM
+
+- **ALB can balance container instances**
+
+* **cluster** part comes from the fact that you will usually have **multiple ec2 instances running your containers**
+
+- to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They are **logical group of containers running on your instance**
+
+* with **tasks definitions** you can specify the **image, way of logging and resource caps**
+
+- **each container instance belongs to only one cluster at given time**
+
+#### Fargate
+
+- **a bit more expensive than ECS itself since AWS is literally managing everything expect tasks for you**
+
+So with **ECS you have to have EC2 instances running**. But with **Fargate you really only care about the containers themselves**. You can wave deploying ASG goodbye. **Fargate is basically container as a service, you only define tasks and that is it**.
+
 ### EC2 (Elastic Compute Cloud)
 
 - resizable compute capacity in the cloud, **virtual machines in the cloud**
@@ -561,7 +587,7 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * ingest big amounts of data in real-time
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -633,25 +659,27 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 #### NAT Gateway
 
-- **lives in a public subnet**
+- **CANNOT HAVE SECURITY GROUP ATTACHED TO IT!**
 
-* has **elastic static IP address**
+* **lives in a public subnet**
 
-- **converts SOURCES` private ip address** to its ip address
+- has **elastic static IP address**
 
-* sends its traffic to **internet gateway**. Internet gateway will convert the **private static ip to public ip** and send it to the internet
+* **converts SOURCES` private ip address** to its ip address
 
-- basically it **allows** resources in your VPC which **do not have public IP** to **communicate with the internet, ONLY ONE WAY**
+- sends its traffic to **internet gateway**. Internet gateway will convert the **private static ip to public ip** and send it to the internet
 
-* multiple **resources** inside VPC **share the same IP assigned to NAT-Gateway**
+* basically it **allows** resources in your VPC which **do not have public IP** to **communicate with the internet, ONLY ONE WAY**
 
-- scale automatically
+- multiple **resources** inside VPC **share the same IP assigned to NAT-Gateway**
 
-* **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
+* scale automatically
 
-- session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+- **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
 
-* **CANNOT HAVE Security Groups ATTACHED!**
+* session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+
+- **CANNOT HAVE Security Groups ATTACHED!**
 
 #### NACL
 
@@ -803,16 +831,15 @@ First thing you need to do is to **place the instance in a standby state**. When
 
 #### ELB and Route53
 
-#### Different IAM roles per instance on ECS or Fargate
+#### Different IAM roles per container on ECS or Fargate
+
+Since **task definitions allow you to specify IAM roles** you should edit those and setup the IAM roles correctly. The launch type does not matter in this case as **either EC2 or Fargate launch type** support that option.
 
 TODO:
 
 - aws private link
-- ecs
 - beanstalk
 - chaning schema on dynamodb is easly because dynamo is nosql
-
 - iam query API for programmatic access
 - swf
-- NAT Gateway cannot have SecurityGroups ? (https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-comparison.html)
 - you can attach iam policies to iam groups
