@@ -319,6 +319,50 @@ So when to use what?
 
 * if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3**. These allow you to get information about **individual requests** like IP address of the client, latencies etc..
 
+### DNS
+
+- domain names are stored in multiple dbs
+
+* there is **DNS resolver** which takes the query (domain-name) and resolve it to ip address.
+
+- there are **Root Servers** which your device trust when trying to resolve given address to an ip.
+
+* **naked domain**: **does not list format (www, ftp ...)**
+
+- **DNS query can be recursive**. One name server will give you back another name server address and so on.
+
+#### Records
+
+- **A/AAAA**: maps a **host, so a www...** into **ipv4(A) or ipv6(AAAA)**
+
+* **CNAME**: allows you to create **aliases (NOT THE SAME AS ALIAS RECORD)** to given **A/AAAA records**. **DOES NOT WORK ON NAKED DOMAINS (google.com vs www.google.com)**
+
+- **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**
+
+#### Route53
+
+- allows you to register domain (priced per domain name)
+
+* there are **public** and **private** **hosted zones**
+
+- **public zone is created by default when you create or migrate a domain to route53**
+
+* **public zone** is **accessed globally (public internet or VPC)**
+
+- **private zone** has to be **created explicitly**
+
+* **private zones** are **associated with a given VPC**
+
+- there is a notion of **split view**. This basically means **creating the same names in both private and public zones**. **Inside a VPC, private zone always overrides public one**
+
+#### Route53 Health Checks
+
+- aws has machines that perform health checks to route53 resources you provide.
+
+* **route53 health check can check CloudWatch alarms**
+
+- **route53 health checks can be used to check non-aws resources**
+
 ### ECS (Elastic Container Service)
 
 - allows you to run **docker containers on EC2 instances** in a **managed way**.
