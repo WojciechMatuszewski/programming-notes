@@ -31,6 +31,12 @@ Just me trying to learn for an exam 🤷‍♀
 
 * **scales automatically** (can run functions concurrently)
 
+### Step Functions
+
+- **state machines as a service**
+
+* for **orchestrating serverless workflows**
+
 ### IAM
 
 > IAM allows you to manage users and their level of access to the AWS Console
@@ -192,7 +198,15 @@ So when to use what?
 
 - there are **read replicas available**.
 
-* data is **replicated synchronously across multiple AZ with read replicas**
+* when choosing **read replicas** data is **replicated asynchronously**
+
+- with **read replicas** you **CAN SPECIFY to which az to deploy**
+
+* when choosing **multi-az deployment** data is **replicated synchronously**
+
+- when choosing **multi-az deployment** you **CANNOT specify which AZ it will be deployed into**
+
+* **with multi-az deployments standby db only comes into play when your primary failed**
 
 - when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
 
@@ -240,8 +254,11 @@ So when to use what?
 - You **can** invalidate cache content
 
 * There are **2 types of distributions**.
+
   - Web
   - RTMP (used for video streaming and such)
+
+* when using **RTMP distribution your data has to live on s3**
 
 - When you deploy CloudFront distribution your content is automatically deployed to edge location. You can specify which ones (limited to a country). If you are rich you can deploy to all edge locations
 
@@ -293,6 +310,8 @@ So when to use what?
 - **ALB can balance** between **different ports**. This is done by **specifying listeners rules**
 
 * ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
+
+- **ALB can authenticate users using Cognito with social providers**
 
 #### Monitoring
 
@@ -363,7 +382,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * **To get the metadata info CURL 169.254.169.254/latest/...**
   - `/userdata`: your bootstrap script etc
   - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
-  - `/metadata/`: has **many options**, IP etc..
+  - `/meta-data/`: has **many options**, IP etc..
 
 - **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have dedicated tenancy model on that instance.
 
@@ -519,6 +538,12 @@ Regardless of these steps, default termination policy will try to terminate inst
   - **warm attached**: when instance is stopped
   - **cold attached**: when instance is launched
 
+### Elastic Beanstalk
+
+- **platform as a service**
+
+* aws will literally do everything for you, but you have **full control of underlying resources created**
+
 ### CloudWatch
 
 - **monitoring service** for applications, services, **monitors performance**
@@ -538,6 +563,14 @@ Regardless of these steps, default termination policy will try to terminate inst
 * there is notion of **events**, which basically provides **near instant stream of system events**
 
 - for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
+
+### Cloud Trial
+
+- **monitors AWS API calls**
+
+* different events can be logged:
+  - **data events**: **resource operations** performed **on or within the resource**
+  - **management events**:
 
 ### Analytics
 
@@ -595,11 +628,15 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * **consumers can work on the data independently**
 
+- **you have to estimate the number of shards you will be using, you can change the amount later**
+
 #### Kinesis Data Firehose
 
 - allows you to **store data from kinesis stream on persistent storage**
 
 * it can modify the data before storing it
+
+- **you do not have to specify capacity upfront**
 
 #### Kinesis Data Analytics
 
@@ -779,6 +816,12 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 ### Communication Between Services, Queues
 
+#### SNS
+
+- notification service, **think of fan-out pattern**
+
+* supports **email/json or HTTPS**
+
 ### Random
 
 #### AWS Workspaces
@@ -843,3 +886,8 @@ TODO:
 - iam query API for programmatic access
 - swf
 - you can attach iam policies to iam groups
+- load balancer can be used for authentication
+  https://www.exampleloadbalancer.com/auth_demo.html
+- RTMP Distributions cloud front
+- RDS scaling https://aws.amazon.com/rds/faqs/#replication
+- dynamodb best pratices
