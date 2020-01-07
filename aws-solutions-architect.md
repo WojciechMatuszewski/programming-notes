@@ -277,6 +277,12 @@ So when to use what?
 
 * **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
 
+- you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
+
+* **signed cookies** are used to **provide access to multiple restricted files**
+
+- **signed urls** are used to **provide access to individual files, RTMP distributions**
+
 ### Load Balancers
 
 - different types:
@@ -453,12 +459,20 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - instances inside auto scaling group can be monitored as an one entity. By default _Cloud Watch_ is monitoring every instance individually
 
+- there are multiple versions of **ASG monitoring**
+  - **basic**: **5 minute granularity**, by default enabled by **creating ASG from a launch template or from the console**
+  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
+
 * you can control the number of instances by manipulating three metrics:
   - **Desired Capacity**: this is the number **ASG will try to maintain**
   - **Min**
   - **Max**
 
 - there is a notion of **scaling policies**. These are **rules, things you want to happen when something regarding EC2 instances happen**, eg.
+
+* there are **multiple types of scaling policies: step, simple and custom**
+
+- the deal with **step scaling policies** is that you can create **multiple predicates for a given policy**. For example: **add 2 capacity unit when CPU hits 80% , add 2 capacity units when CPU hits 60%**.
 
 * **REMEMBER THAT YOU HAVE TO LIST AZs YOU WANT YOU INSTANCES TO BE DEPLOYED INTO!!**
 
@@ -638,6 +652,10 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - mostly used for **ad-hoc queries**, because you only pay for what you use.
 
+* **query results performed by Athena area automatically written to s3**
+
+- Athena **can read data and write query results given encrypted data by KMS**
+
 #### EMR (Elastic Map Reduce)
 
 - allows you to perform **analysis on large-scaled, semi-structured or unstructured data**
@@ -657,6 +675,22 @@ Regardless of these steps, default termination policy will try to terminate inst
 - **Athena does not manipulate the data, EMR CAN MANIPULATE THE DATA**
 
 * **master node can** be **sshed into**
+
+#### Data Pipeline
+
+- allows you to easily **transform and move data**
+
+* can be set to **run on given schedule**
+
+- **can integrate with on-premise resources**
+
+* **does not work with streaming data such as Kinesis**
+
+- **integrates with EMR**
+
+* basically it allows you to **simplify ETL jobs**, but if the thing that you want to do is not supported it **may seem limited**.
+
+- **job is relaying on EC2, AWS GLUE does not have this limitation**. It manages the lifecycle of EC2
 
 #### Kinesis
 
@@ -886,6 +920,18 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - looks for CSS or SQL-injection stuff
 
+#### CloudFormation Stack Set
+
+Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
+
+#### AWS Glue
+
+- **serverless, fully managed EXTRACT TRANSFORM AND LOAD (ETL) service**
+
+* automatically provides resources for you
+
+- automatically generates scripts to transform the data and load it to the data store (probably db)
+
 ### Patterns
 
 #### Restricting Access to s3 resources
@@ -895,7 +941,7 @@ If you are distributing through `CloudFront` create `IAO` and associate that `IA
 
 #### EBS and encrypting a volume on a running instance
 
-So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to create **a new volume**, enable encryption (if it's not enabled by default) and copy the data.
+So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to **either create an encrypted volume and copy data to it or take a snapshot, encrypt it, and create a new encrypted volume from the snapshot**,
 Then you can either swap the volumes or restore volume from newly created snapshot.
 
 #### Adding Encryption to an RDS db
@@ -935,3 +981,5 @@ TODO:
 - RTMP Distributions cloud front
 - RDS scaling https://aws.amazon.com/rds/faqs/#replication
 - dynamodb best pratices
+- copying AMI between regions
+- dynamic port mapping alb https://aws.amazon.com/premiumsupport/knowledge-center/dynamic-port-mapping-ecs/
