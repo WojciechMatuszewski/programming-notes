@@ -461,7 +461,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - there are multiple versions of **ASG monitoring**
   - **basic**: **5 minute granularity**, by default enabled by **creating ASG from a launch template or from the console**
-  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
+  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
 
 * you can control the number of instances by manipulating three metrics:
   - **Desired Capacity**: this is the number **ASG will try to maintain**
@@ -806,6 +806,10 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * **WORKS ON A SUBNET LEVEL**
 
+- **ephemeral ports** play a huge role here. These are **randomly selected ports to return traffic for a request**. This means that if I **send a HTTP request (port 80)** as an inbound rule I have to **specify ephemeral port rage on inbound rule**. Also remember that it's not only about communication with the internet. Since NACL are subnet level thingy it may be the case that you have to setup ephermal ports in multiple NACLs when talking between subnets.
+
+* **they CANNOT REFERENCE Logical Resources**
+
 #### Security Group
 
 - **CAN ONLY ALLOW RULES**
@@ -864,6 +868,22 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * **engress-only** means that it **only allows outbound IPV6 connections**. It's **stateful!**. Which means that it **allows elements in your VPC** to **receive the response back**.
 
+#### Private Link
+
+- **THIS IS NOT THE SAME AS VPC PEERING**.
+
+* VPC private link gets **created automatically when you create VPC Interface Endpoint**
+
+- **highly available**
+
+* private link allows you to **share a service that YOU created, not only a AWS resource which is the case with Gateway/Interface endpoints**
+
+- **YOU HAVE TO HAVE NLB IN FRONT OF YOUR SERVICE FOR EVERYTHING TO WORK**
+
+* uses **DNS underneath just like interface endpoints**
+
+- **can be combined with DirectConnect** to **slowly migrate from on-premise**
+
 ### Caching
 
 #### DAX (in-memory cache for DynamoDB)
@@ -900,9 +920,7 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * supports **email/json or HTTPS**
 
-### Random
-
-#### AWS Workspaces
+### AWS Workspaces
 
 - desktop as a service
 
@@ -910,9 +928,9 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - you do not have to manage hardware
 
-#### AWS Ops Work
+### AWS Ops Work
 
-#### WAF (Web Application Firewall)
+### WAF (Web Application Firewall)
 
 - allows for monitoring of requests.
 
@@ -920,11 +938,11 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - looks for CSS or SQL-injection stuff
 
-#### CloudFormation Stack Set
+### CloudFormation Stack Set
 
 Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
 
-#### AWS Glue
+### AWS Glue
 
 - **serverless, fully managed EXTRACT TRANSFORM AND LOAD (ETL) service**
 
@@ -956,6 +974,8 @@ Then you can either swap the volumes or restore volume from newly created snapsh
 
 First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that are in standby state**
 
+### Enabling SSH with SG and NACL
+
 #### Changing instance type inside ASG
 
 **YOU CANNOT EDIT EXISTING LAUNCH CONFIGURATION**. You have to create a **new launch configuration with new instance type**. To make sure that all of your instances are using this new launch configuration **terminate old instances**. New one will get added using new launch configuration.
@@ -970,15 +990,12 @@ Since **task definitions allow you to specify IAM roles** you should edit those 
 
 TODO:
 
-- aws private link
 - beanstalk
 - chaning schema on dynamodb is easly because dynamo is nosql
+- flow logs
 - iam query API for programmatic access
 - swf
 - you can attach iam policies to iam groups
-- load balancer can be used for authentication
-  https://www.exampleloadbalancer.com/auth_demo.html
-- RTMP Distributions cloud front
 - RDS scaling https://aws.amazon.com/rds/faqs/#replication
 - dynamodb best pratices
 - copying AMI between regions
