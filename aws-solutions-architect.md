@@ -283,6 +283,8 @@ So when to use what?
 
 - **signed urls** are used to **provide access to individual files, RTMP distributions**
 
+* **CLOUD FRONT IS NOT ONLY FOR WEB STUFF**. You can create **APIG CloudFront distribution**,
+
 ### Load Balancers
 
 - different types:
@@ -461,7 +463,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - there are multiple versions of **ASG monitoring**
   - **basic**: **5 minute granularity**, by default enabled by **creating ASG from a launch template or from the console**
-  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
+  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
 
 * you can control the number of instances by manipulating three metrics:
   - **Desired Capacity**: this is the number **ASG will try to maintain**
@@ -600,7 +602,11 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - **platform as a service**
 
-* aws will literally do everything for you, but you have **full control of underlying resources created**
+* aws will literally do everything for you, but **you have full control of underlying resources created**
+
+- will automatically scale your app
+
+* **no additional charge, you only pay for the resources which were provisioned**
 
 ### CloudWatch
 
@@ -761,6 +767,22 @@ Regardless of these steps, default termination policy will try to terminate inst
 #### Internet Gateway
 
 - used for **connecting** your **VPC to the internet**.
+
+#### Flow Logs
+
+- capture **metadata** about **the traffic flowing in and out of networking interfaces within VPC**
+
+* **FLOW LOGS ARE NOT FOR SNIFFING OR GETTING THE CONTENTS OF THE TRAFFIC**
+
+- can be **attached** to **VPC** or **subnet** or **an network interface**
+
+* **you can filter which data you want to see**
+
+- **stored inside CloudWatch or S3**
+
+* **has to have permissions to write to the destination (IAM role)**
+
+- **DOES NOT monitor every traffic**
 
 #### Route tables
 
@@ -940,7 +962,16 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 ### CloudFormation Stack Set
 
+ń
 Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
+
+### CloudFormation Change Set
+
+**Change sets** allows you to **preview changes you made to your template before deploying the template for realz**.
+
+- AWS will basically tell you: this will be modified, this will be deleted, this will be created...
+
+* when you are ready **you can execute given change set to introduce the changes**
 
 ### AWS Glue
 
@@ -990,13 +1021,10 @@ Since **task definitions allow you to specify IAM roles** you should edit those 
 
 TODO:
 
-- beanstalk
-- chaning schema on dynamodb is easly because dynamo is nosql
-- flow logs
-- iam query API for programmatic access
+- review test 5
+- trusted advisor
 - swf
 - you can attach iam policies to iam groups
-- RDS scaling https://aws.amazon.com/rds/faqs/#replication
 - dynamodb best pratices
 - copying AMI between regions
 - dynamic port mapping alb https://aws.amazon.com/premiumsupport/knowledge-center/dynamic-port-mapping-ecs/
