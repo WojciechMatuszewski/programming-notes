@@ -198,6 +198,10 @@ So when to use what?
 
 - there are **read replicas available**.
 
+* you can have **read replicas of read replicas**
+
+- **up to 4 instances** can be associated with the **replication chain**
+
 * when choosing **read replicas** data is **replicated asynchronously**
 
 - with **read replicas** you **CAN SPECIFY to which az to deploy**
@@ -235,6 +239,12 @@ So when to use what?
 - **more effective for read heavy workloads**
 
 * **data automatically replicated `synchronously` between 3 AZs!**
+
+- store **items which weigh more than 400kb in s3** and use **pointers**
+
+* **compress large attribute values**
+
+- **separate hot and cold data**. This will help you with RCU provisioning.
 
 ### CloudFront
 
@@ -321,6 +331,8 @@ So when to use what?
 
 - **ALB can authenticate users using Cognito with social providers**
 
+* **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
+
 #### Monitoring
 
 - **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
@@ -370,6 +382,72 @@ So when to use what?
 * **route53 health check can check CloudWatch alarms**
 
 - **route53 health checks can be used to check non-aws resources**
+
+- **fast: 10secs** or **default: 30 secs** interval
+
+### Route53 routing
+
+#### Simple Routing Policy
+
+- single record
+
+* **multiple values for a record, returned at random**
+
+- **somewhat even spread of requests**
+
+* this is **NOT LOAD BALANCING**. **DNS request can be cached**. This will cause the **same IP to be hit**
+
+- **no performance control**
+
+* **cannot have multiple records with the same name**
+
+#### Failover
+
+- allows you to **define additional records with the same name**
+
+* **can be associated with a health check**
+
+- there are **two record types**
+  - **primary**: the main record, for example webserver running on EC2. You probably want to create health check for that record
+  - **secondary**: the one that will take over if the health check on primary fails. This could be an s3 bucket for example. **Bucket name has to have the same name as the record name**
+
+* if **primary record fails** traffic will be **resolved to secondary record**. The **name stays the same**
+
+- you **can only create SINGLE record FOR PRIMARY and SECONDARY**
+
+#### Weighted
+
+- you **specify weight for a given record name, (you can have multiple records with the same name)**
+
+* **route53** will **calculate the sum of the weights for the records with the same name**
+
+- the **weights** are **used to calculate the percentage of the time these records are returned to the customer**
+
+* **it does not replace load balancing, USING WEIGHTED AS A MEANS OF LOAD BALANCING IS AN ANTI PATTERN!**
+
+- **used** for **testing new application features**
+
+#### Latency
+
+- **can have multiple records with the same name**
+
+* you **specify given region** and **a resource that you want to route to if that region is selected**
+
+- **records are selected per latency basis**
+
+* **BASED PURELY ON NETWORK CONDITIONS, NOT GEOGRAPHY!**
+
+#### Geolocation
+
+- **DNS resolver now only returns the records that match the name AND location**
+
+* this mean that you can **have a case** where **you specify a record but `nslookup` returns no results**. That is because **the location does not match**.
+
+- **location** can be **a country , a region or default**. **Default matches everything**.
+
+* **most specific location** is always **returned first**
+
+- this means you can **present different application with the same DNS name, based on location**
 
 ### ECS (Elastic Container Service)
 
@@ -463,7 +541,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - there are multiple versions of **ASG monitoring**
   - **basic**: **5 minute granularity**, by default enabled by **creating ASG from a launch template or from the console**
-  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
+  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
 
 * you can control the number of instances by manipulating three metrics:
   - **Desired Capacity**: this is the number **ASG will try to maintain**
@@ -942,6 +1020,8 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * supports **email/json or HTTPS**
 
+- can be used to provide **fully manager messaging service**
+
 ### AWS Workspaces
 
 - desktop as a service
@@ -973,6 +1053,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * when you are ready **you can execute given change set to introduce the changes**
 
+### System Manager
+
+- gives you **visibility and control over the infrastructure**
+
+* you can **automate operational tasks** with it
+
+- **CLOUD FORMATION IS STILL THE PREFERRED WAY FOR MAINTAINING THE STATE OF INFRA.**
+
 ### AWS Glue
 
 - **serverless, fully managed EXTRACT TRANSFORM AND LOAD (ETL) service**
@@ -980,6 +1068,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * automatically provides resources for you
 
 - automatically generates scripts to transform the data and load it to the data store (probably db)
+
+### AWS Trusted Advisor
+
+- **helps** you to **optimize running costs**
+
+* **checks security-related stuff** and **lists potential problems**
+
+- **shows you** when given service is **using more than a service limit**
 
 ### Patterns
 
@@ -1022,7 +1118,7 @@ Since **task definitions allow you to specify IAM roles** you should edit those 
 TODO:
 
 - review test 5
-- trusted advisor
+- virtual private gateway
 - swf
 - you can attach iam policies to iam groups
 - dynamodb best pratices
