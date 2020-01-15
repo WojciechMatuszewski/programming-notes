@@ -157,6 +157,8 @@ Just me trying to learn for an exam 🤷‍♀
   - **Volume Gateway**: used for storing copies of hard-disk drives in S3.
   - **Tape Gateway**: used to get rid of tapes.
 
+- With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+
 #### Security
 
 - **by default only the account that created the bucket can do stuff with it**
@@ -185,6 +187,10 @@ So when to use what?
 ### Snowmobile (not joking)
 
 - A truck with a container that carries snowballs.
+
+### Snowball Edge
+
+- In **addition to storage** it also offers **computing capabilities**.
 
 ### RDS (Relational Database Service)
 
@@ -541,7 +547,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - there are multiple versions of **ASG monitoring**
   - **basic**: **5 minute granularity**, by default enabled by **creating ASG from a launch template or from the console**
-  - **detailed**: **1 minute granularity, cost additional \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\$\$**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
+  - **detailed**: **1 minute granularity, cost additional**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
 
 * you can control the number of instances by manipulating three metrics:
   - **Desired Capacity**: this is the number **ASG will try to maintain**
@@ -550,7 +556,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - there is a notion of **scaling policies**. These are **rules, things you want to happen when something regarding EC2 instances happen**, eg.
 
-* there are **multiple types of scaling policies: step, simple and custom**
+* there are **multiple types of scaling policies: step, simple, custom and target tracking**
 
 - the deal with **step scaling policies** is that you can create **multiple predicates for a given policy**. For example: **add 2 capacity unit when CPU hits 80% , add 2 capacity units when CPU hits 60%**.
 
@@ -984,6 +990,20 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - **can be combined with DirectConnect** to **slowly migrate from on-premise**
 
+### Identity Federation
+
+- **keys obtained** with the **help of STS or Cognito**
+
+* **SAML 2.0 => Active Directory**
+
+- **Web Identity** means getting the **initial key from FB, Google...** and **exchanging it** for **temporary credentials** within AWS. A **role is assumed after successful token verification**.
+
+#### When to use Federation
+
+- when you are **within enterprise**. Big **companies** usually have their **own identity provider (Google, OKTA)...**.
+
+* you have an **app that uses AWS**. With **Cognito you can create identity for users, even guest role!**
+
 ### Caching
 
 #### DAX (in-memory cache for DynamoDB)
@@ -1117,10 +1137,12 @@ Since **task definitions allow you to specify IAM roles** you should edit those 
 
 TODO:
 
-- review test 5
 - virtual private gateway
 - swf
 - you can attach iam policies to iam groups
 - dynamodb best pratices
 - copying AMI between regions
 - dynamic port mapping alb https://aws.amazon.com/premiumsupport/knowledge-center/dynamic-port-mapping-ecs/
+- target tracking scale policy
+- VPN OMFG PLEASE READ ABOUT THAT
+- examine: Hybrid and Scaling exam
