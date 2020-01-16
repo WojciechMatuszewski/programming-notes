@@ -74,6 +74,13 @@ Just me trying to learn for an exam 🤷‍♀
 
 - roles can be used **in any region**, they are universal
 
+#### Organizations and Service control policies.
+
+#### Assuming Roles
+
+#### Resource Based Policies
+
+
 ### S3
 
 > S3 stands for **Simple Storage Service**
@@ -346,6 +353,10 @@ So when to use what?
 - **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
 
 * if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3**. These allow you to get information about **individual requests** like IP address of the client, latencies etc..
+
+#### Health Checks
+
+- **ALB cannot use UDP to carry out a check of the health of the instance**
 
 ### DNS
 
