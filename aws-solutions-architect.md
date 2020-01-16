@@ -720,6 +720,10 @@ Regardless of these steps, default termination policy will try to terminate inst
   - **data events**: **resource operations** performed **on or within the resource**
   - **management events**:
 
+- **enabled by default for all new accounts**
+
+* **logs** can be **stored on S3 or can be pushed to CloudWatch**
+
 ### Analytics
 
 #### Athena
@@ -990,6 +994,64 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - **can be combined with DirectConnect** to **slowly migrate from on-premise**
 
+#### VPN
+
+- **software** based **connection** between **your on premises and AWS VPC**
+
+* **quick to setup and cheap**
+
+- **per hour cost**
+
+* **data cost that goes out**
+
+- **performance limited** by your connection and hardware of your router
+
+* **uses public internet to exchange data**
+
+- **data is encrypted on transit**
+
+##### Customer Gateway
+
+- **represents physical router on customer side**
+
+* **you have to tell AWS the IP of your router**
+
+- you can also specify **dynamic IP**. This will allow for **better communication in terms of IP discovery between your router and AWS VPC**. This is used mostly **when you have multiple Customer Gateway routers**
+
+##### Virtual Private Gateway
+
+- this is **similar to NAT Gateway**.
+
+* **you have to attach it to specific VPC**
+
+- **used to connect to Customer Gateways**
+
+##### Site-to-site Connection
+
+- this is **logical entity that connects Customer Gateway and Virtual Private Gateway**
+
+* **sometimes refereed to as Tunnel Endpoint**
+
+#### Direct Connect
+
+- **psychical connection between AWS and your network**
+
+* you are connecting to **DX (Direct Connect) Locations (psychically!) or Direct Connect Partner**.
+
+- **port speed is very specific**. If you are **ordering from AWS directly, you can pick 1 Gbps or 10Gbps**. If you **need something slower, reach out to Direct Connect Partners**
+
+- **used** when you **need FAST speed and low-latency connections**
+
+* **takes a lot of time to setup**
+
+- **BY DEFAULT THE CONNECTION IS NOT ENCRYPTED (the transit)**. **DIRECT CONNECT BY ITSELF DOES NOT ENCRYPT THE DATA**
+
+##### VIFs (Virtual Interfaces)
+
+- **public VIFs** allow you **to connect to any public AWS services directly**. Like **S3 or Dynamo**
+
+* **private VIFs** will **connect you to a specific VPC**. You **still need Virtual Private Gateway**
+
 ### Identity Federation
 
 - **keys obtained** with the **help of STS or Cognito**
@@ -1137,10 +1199,9 @@ Since **task definitions allow you to specify IAM roles** you should edit those 
 
 TODO:
 
-- virtual private gateway
 - swf
 - you can attach iam policies to iam groups
-- dynamodb best pratices
+- dynamodb best practices
 - copying AMI between regions
 - dynamic port mapping alb https://aws.amazon.com/premiumsupport/knowledge-center/dynamic-port-mapping-ecs/
 - target tracking scale policy
