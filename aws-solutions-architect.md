@@ -339,6 +339,8 @@ So when to use what?
 
 * **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
 
+- there is a notion of **dynamic port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
+
 #### Monitoring
 
 - **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
@@ -558,6 +560,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * there are **multiple types of scaling policies: step, simple, custom and target tracking**
 
+- with **target tracking policy** you **specify a scaling metric and a target value**. Think **scaling policy to keep the average CPU utilization of ASG at 40% or something like that**. It **uses CloudWatch alarms and metrics to take actions**.
+
 - the deal with **step scaling policies** is that you can create **multiple predicates for a given policy**. For example: **add 2 capacity unit when CPU hits 80% , add 2 capacity units when CPU hits 60%**.
 
 * **REMEMBER THAT YOU HAVE TO LIST AZs YOU WANT YOU INSTANCES TO BE DEPLOYED INTO!!**
@@ -681,6 +685,14 @@ Regardless of these steps, default termination policy will try to terminate inst
   - **hot attached**: when instance is running
   - **warm attached**: when instance is stopped
   - **cold attached**: when instance is launched
+
+### SWF (Simple Workflow Service)
+
+- **manage workflow state, similarly to Step Functions**
+
+* **you** as a user **have to manage the infrastructure that runs the workflow logic and tasks**
+
+- **kinda retired by AWS**.
 
 ### Elastic Beanstalk
 
@@ -1161,6 +1173,10 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 ### Patterns
 
+#### Copying AMI between regions
+
+You **can copy both EBS-backed or instance-store-backed AMIs**. **AMIs with encrypted snapshot can also be copied**. **IAM RELATED STUFF IS NOT COPIED**.
+
 #### Restricting Access to s3 resources
 
 Use `pre-signed` `s3` urls.
@@ -1199,11 +1215,6 @@ Since **task definitions allow you to specify IAM roles** you should edit those 
 
 TODO:
 
-- swf
 - you can attach iam policies to iam groups
 - dynamodb best practices
-- copying AMI between regions
-- dynamic port mapping alb https://aws.amazon.com/premiumsupport/knowledge-center/dynamic-port-mapping-ecs/
-- target tracking scale policy
-- VPN OMFG PLEASE READ ABOUT THAT
 - examine: Hybrid and Scaling exam
