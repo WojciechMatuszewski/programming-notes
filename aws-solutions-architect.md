@@ -74,12 +74,15 @@ Just me trying to learn for an exam 🤷‍♀
 
 - roles can be used **in any region**, they are universal
 
+#### Groups
+
+- **CANNOT BE NESTED**
+
 #### Organizations and Service control policies.
 
 #### Assuming Roles
 
 #### Resource Based Policies
-
 
 ### S3
 
@@ -550,8 +553,6 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * **uses launch templates** to **configure how EC2 is launched**. AMI, Instance Type, KeyPairs, Network stuff, Security Groups etc..
 
-* **DO NOT mistake launch templates with launch configurations**. **Launch templates are used with ASG, launch configuration is something EC2 specific!**.
-
 - controls scaling, where instances are launched, etc
 
 * **can work with instances in multiple subnets**
@@ -645,6 +646,10 @@ Regardless of these steps, default termination policy will try to terminate inst
 - Instance Store a.k.a **Ephemeral storage**. The data lives on a rack where your virtual machine is booted. **If you reboot it, there is HIGH CHANCE that you will loose that data**. It's not 100% guaranteed though. Your EC2 can always be assigned to the same rack, but that is unlikely.
 
 - Instance Store is not really persistent, whereas EBS is a persistent, multi AZ storage option.
+
+#### LifeCycle Manager for EBS
+
+Creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
 
 #### EFS
 
