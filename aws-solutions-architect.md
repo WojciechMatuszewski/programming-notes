@@ -244,6 +244,36 @@ So when to use what?
 
 * **read replicas** have to be encrypted with the **same key as source**
 
+#### Replication (Read Replicas)
+
+- **read replica can be cross region**
+
+* you can have **up to 5 read replicas from a master instance**
+
+- you can have **read replicas of read replicas**
+
+* data **synchronized asynchronously**
+
+- **master has to have backups enabled to be able to use read replicas**
+
+#### Backups and Restore
+
+- you can perform **manual database storage-level snapshots**. These **will NOT be destroyed when you terminate db, YOU have to delete it manually when you want**.
+
+* **automatic backups are also an option**. These have **retention period UP to 35 days**. You have to **specify backup window, backup window has a duration**.
+
+- **backups are incremental and they BACKUP THE DATA THAT IS ACTUALLY CONSUMED (existing within your db)**
+
+* **automatic backups** will **be deleted after the retention window, deleting db DOES NOT automatically delete backups**
+
+- you can perform **point-in time recovery**. **RDS automatically performs transaction backups every 5 mins, stored on s3**.
+
+* when you **restore a RDS DB, you will actually be creating a brand new DB instance**. You basically have to setup it again, but this time you have data from a snapshot present. **Restored DB has it own CNAME, you have to remember about specifying the correct security group**
+
+- **db manual snapshots can be copied between regions**
+
+* **snapshots from encrypted DBs are encrypted**
+
 ### CloudFormation
 
 - **infra from json**
@@ -884,6 +914,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - used for **connecting** your **VPC to the internet**.
 
+* **attached to a default VPC at start**
+
 #### Flow Logs
 
 - capture **metadata** about **the traffic flowing in and out of networking interfaces within VPC**
@@ -1098,7 +1130,7 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### DAX (in-memory cache for DynamoDB)
 
-- runs inside VPC
+- runs **inside VPC**
 
 * uses **cluster architecture**
 
