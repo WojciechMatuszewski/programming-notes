@@ -119,7 +119,7 @@ Just me trying to learn for an exam 🤷‍♀
 * Buckets can be **replicated to another account or to a different bucket
   (region needs to differ)**.
 
-- s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled to be able to enable CRR**
+- s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled ON THE ORIGIN AND THE TARGET BUCKET to be able to enable CRR**
 
 * S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
   the Bucket. Then that uploaded object is **transferred automatically to your
@@ -146,7 +146,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 - Remember that with versioning your previous versions persists on the bucket. This can lead to exponential growth of size when editing big files.
 
-* When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on that object (thus creating a new version). Your **previous versions are still there!**.
+* When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on that object (thus creating a new version). Your **previous versions are still there!, you can view them within versions tab!**.
 
 - You can restore your deleted objects by **deleting a delete marker**.
 
@@ -332,6 +332,8 @@ So when to use what?
 - Restricting your CloudFront & S3 combo is done by creating **OAI**.
 
 * **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
+
+- **OAI can be applied** to **S3, CloudFront, bucket policies**
 
 - you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
 
@@ -903,6 +905,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - **CAN SPAN MULTIPLE AZs**
 
 * **SUBNET CANNOT SPAN MULTIPLE AZs**
+
+- **maximum subnet mask is /16**
 
 #### Elastic IP
 
