@@ -679,6 +679,10 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - Instance Store is not really persistent, whereas EBS is a persistent, multi AZ storage option.
 
+#### Restoring from an EBS
+
+When restoring from an EBS volume, **new volume will not immediately have maximum performance**. This is due to the fact that **not all data is copied instantly to a new volume**. The data is **copied lazily, when you attempt to read from a given resource**. This is why **sometimes, sys admins perform recursive lookup of all files on the volume, this will 'prime' them for real read operation**.
+
 #### LifeCycle Manager for EBS
 
 Creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
@@ -978,11 +982,17 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **cannot block traffic to a given hostname**
 
+* **can** be **associated with multiple subnets**
+
 * **WORKS ON A SUBNET LEVEL**
 
 - **ephemeral ports** play a huge role here. These are **randomly selected ports to return traffic for a request**. This means that if I **send a HTTP request (port 80)** as an inbound rule I have to **specify ephemeral port rage on inbound rule**. Also remember that it's not only about communication with the internet. Since NACL are subnet level thingy it may be the case that you have to setup ephermal ports in multiple NACLs when talking between subnets.
 
 * **they CANNOT REFERENCE Logical Resources**
+
+- **rule prioritization just like in SG**. **Lowest number wins**
+
+* **default** rule is an **asterix, which is an implicit deny** and **100 rule to allow all traffic**
 
 #### Security Group
 
