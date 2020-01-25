@@ -31,6 +31,10 @@ Just me trying to learn for an exam 🤷‍♀
 
 * **scales automatically** (can run functions concurrently)
 
+- **YOU CAN ATTACH SECURITY GROUP TO A LAMBDA**
+
+* **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. You can even make the lambda completely private
+
 ### Step Functions
 
 - **state machines as a service**
@@ -74,9 +78,25 @@ Just me trying to learn for an exam 🤷‍♀
 
 - roles can be used **in any region**, they are universal
 
+##### Policies
+
+- **applied** to a **Role or a Resource**
+
+* have a **Sid**. This is **basically just a description** of the policy.
+
 #### Groups
 
 - **CANNOT BE NESTED**
+
+* they are **not a true identities**. A **virtual construct** to **help** you **manage your users**.
+
+- you **can attach policies to them**
+
+* you **CANNOT attach RESOURCE policies to them since they are not a true identity**.
+
+#### Users
+
+- **UP TO 5000 IAM Users**
 
 #### Organizations and Service control policies.
 
@@ -273,6 +293,16 @@ So when to use what?
 - **db manual snapshots can be copied between regions**
 
 * **snapshots from encrypted DBs are encrypted**
+
+### Aurora
+
+- SQL compatible
+
+- **storage layer lives outside of the database itself**
+
+* **automatically replicates the storage between 3AZs**
+
+- **can** have **multi-az enabled on the database layer (the instance)**
 
 ### CloudFormation
 
@@ -672,6 +702,12 @@ Regardless of these steps, default termination policy will try to terminate inst
 * **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you want to make sure your data is secure.
 
 > If you make periodic snapshots of a volume, the snapshots are incremental. This means that only the blocks on the device that have changed after your last snapshot are saved in the new snapshot. Even though snapshots are saved incrementally, the snapshot deletion process is designed so that you need to retain only the most recent snapshot in order to restore the volume.
+
+- **EBS snapshots are automatically stored on S3**. These are **inaccessible to you inside S3 console, you can see then through EBS menu in EC2**.
+
+* **by default root EBS volume will be deleted when instance terminates**
+
+- **by default ATTACHED EBS volume will NOT be deleted when instance terminates**
 
 #### EBS vs Instance Store
 
@@ -1261,7 +1297,7 @@ Then you can either swap the volumes or restore volume from newly created snapsh
 
 First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that are in standby state**
 
-### Enabling SSH with SG and NACL
+#### Enabling SSH with SG and NACL
 
 #### Changing instance type inside ASG
 
@@ -1275,8 +1311,28 @@ First thing you need to do is to **place the instance in a standby state**. When
 
 Since **task definitions allow you to specify IAM roles** you should edit those and setup the IAM roles correctly. The launch type does not matter in this case as **either EC2 or Fargate launch type** support that option.
 
+#### EC2 immediately going from pending to terminated on restart
+
+This may be due to these 4 reasons:
+
+- you've **reached your EBS volume limit**
+- **EBS snapshot is corrupt**
+- root **EBS is encrypted** and you **do not have permissions to access KMS key**
+- **AMI is missing some required parts**
+
+### Other
+
+#### Proxy
+
+You can think of a `man-in-the-middle` when someone is talking about proxies. Sometimes `proxy` will speak on your behalf, sometimes it will just handle the initial connection. Proxy types:
+
+- **Half Proxy**: this type handles the initial setup. It initializes the connection to the backend, proxy passes that to the client. After that it just forwards the traffic, it may do some NAT work but nothing more sophisticated going on here. It's usually useful for discovery purposes, like checking at the connection state where to route the client, then letting the requests pass.
+
+- **Full Proxy**: this type is the `mediator` between the backend and the client. It establishes a connection with a backend and any client requests stop on the proxy, they do not go directly to the backend (or through proxy to the backend). This pattern usually means that the `proxy` is doing some sophisticated work. This is where **ALB and NLB** are. They are full proxies.
+
 TODO:
 
-- you can attach iam policies to iam groups
 - dynamodb best practices
-- examine: Hybrid and Scaling exam
+- data lake
+- more about aurora https://aws.amazon.com/rds/aurora/faqs/
+- ipsec vpn
