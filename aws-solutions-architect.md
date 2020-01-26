@@ -296,13 +296,75 @@ So when to use what?
 
 ### Aurora
 
-- SQL compatible
+- **SQL and PostgreSQ** compatible
 
 - **storage layer lives outside of the database itself**
 
-* **automatically replicates the storage between 3AZs**
+* **automatically replicates the storage between 3AZs (6 replicas of storage)**
 
 - **can** have **multi-az enabled on the database layer (the instance)**
+
+* there a notion of **cluster which has shared storage (up to 64tb)**
+
+- you **pay for the storage you are consuming / consumed**.
+
+* **writes COME from a SINGLE NODE**. That node **can be scalled UP**
+
+- uses **subnet groups**. This is basically telling aurora to **which subnet to deploy to**.
+
+#### Writers
+
+- **primary node of a cluster**
+
+* **only** instance **used to write to the cluster**
+
+#### Readers
+
+- **only** for **making reads to the db cluster**
+
+* **they use the same storage** so the **replication is synchronous**.
+
+- **you can target them for reads**. They **operate on between the realm of standby and Read-Replica in RDS**. You can create **up to 15 Readers**.
+
+* **can be very easily added**
+
+- **can be used for failover**
+
+* you can have **readers in different AZs**
+
+#### Failover (tiers)
+
+- this is to help aurora decide on which instance to failover
+
+* there are **15 tiers**
+
+- **failover will be automatically performed to other reader instances**. This will be **done much faster than the multi-az failover on other RDS types**
+
+#### Scaling
+
+- **scaling for writes** means **increasing the size of the primary instance (the master) => scaling up**
+
+* **scaling for reads** means **increasing the number of reader nodes => scaling out**
+
+#### Endpoints
+
+- endpoints **correspond to the reader and writer instances**
+
+* **automatically extended if you add more readers**
+
+#### Backups
+
+- when using **standard RDS, the only option is to restore from backup**
+
+* just **like RDS you can specify the backup window and the retention period (35 days)**
+
+#### Backtrack
+
+- **causes DB outage**
+
+* **rolls back the shared storage**
+
+- **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
 
 ### CloudFormation
 
