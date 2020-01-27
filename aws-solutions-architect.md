@@ -78,9 +78,13 @@ Just me trying to learn for an exam 🤷‍♀
 
 - roles can be used **in any region**, they are universal
 
+* **roles have underlying policies, which have the notion of the Effect (allow/deny)**
+
+- **policies** are **associated with roles**
+
 ##### Policies
 
-- **applied** to a **Role or a Resource**
+- **applied** to a **IAM Role or a Resource**
 
 * have a **Sid**. This is **basically just a description** of the policy.
 
@@ -94,6 +98,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 * you **CANNOT attach RESOURCE policies to them since they are not a true identity**.
 
+- they are **not allowed to assume IAM Roles**
+
 #### Users
 
 - **UP TO 5000 IAM Users**
@@ -102,7 +108,15 @@ Just me trying to learn for an exam 🤷‍♀
 
 #### Assuming Roles
 
+- assuming a role means **being a completely different identity, defined by assumed role**
+
+* under the hood **assuming a role means using completely new, temporary, credentials created with sts which are associated with the assumed role**
+
+- **all roles that could be assumed are automatically assumed**
+
 #### Resource Based Policies
+
+- these are **special subset of policies** which are **attached to AWS Services**
 
 ### S3
 
