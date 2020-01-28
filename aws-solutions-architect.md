@@ -380,6 +380,14 @@ So when to use what?
 
 - **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
 
+#### Cross Region Replication
+
+- you can **create cross-region clusters that act as cross-region replicas**
+
+* you can create **readers** within that **cross-region cluster**
+
+- you can **failover onto cross-region cluster**
+
 ### CloudFormation
 
 - **infra from json**
@@ -488,6 +496,8 @@ So when to use what?
 * **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
 
 - there is a notion of **dynamic port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
+
+* **network load balancer exposes fixed IP**. **ALB exposes fixed DNS address**. Remember, these live on different layers (NLB - 4, ALB - 7)
 
 #### Monitoring
 
@@ -1410,5 +1420,5 @@ TODO:
 
 - dynamodb best practices
 - data lake
-- more about aurora https://aws.amazon.com/rds/aurora/faqs/
 - ipsec vpn
+- http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
