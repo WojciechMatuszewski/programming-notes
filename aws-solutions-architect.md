@@ -82,7 +82,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **policies** are **associated with roles**
 
-##### Policies
+#### Policies
 
 - **applied** to a **IAM Role or a Resource**
 
@@ -487,17 +487,31 @@ So when to use what?
 
 * **listeners** can have **roles**. This makes **content-based balancing possible**
 
-- **ALB can balance** between **different ports**. This is done by **specifying listeners rules**
-
-* ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
-
-- **ALB can authenticate users using Cognito with social providers**
+- ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
 
 * **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
 
-- there is a notion of **dynamic port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
+- there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
 
-* **network load balancer exposes fixed IP**. **ALB exposes fixed DNS address**. Remember, these live on different layers (NLB - 4, ALB - 7)
+#### ALB
+
+- work in **layer 7**. That means that they are **HTTP/HTTPS aware**
+
+* can have **multiple TSL/SSL Certs** using **SNI**
+
+- **ALB can authenticate users using Cognito with social providers**
+
+* **ALB can balance** between **different ports**. This is done by **specifying listeners rules**
+
+- **exposes a DNS address**
+
+#### NLB
+
+- **network load balancer exposes fixed IP**.
+
+* work in **layer 4**.
+
+- they **do not modify incoming network packets in any shape of form**
 
 #### Monitoring
 
@@ -639,6 +653,8 @@ So when to use what?
 
 - **each container instance belongs to only one cluster at given time**
 
+* **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
+
 #### Fargate
 
 - **a bit more expensive than ECS itself since AWS is literally managing everything expect tasks for you**
@@ -695,6 +711,22 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some configuration** for an EC2 like **security groups, AMI ids and such** .
 
+#### Instance Profiles / Roles
+
+- you **cannot directly connect IAM role with an instance**
+
+* to do that **you create instance profile** which **acts like a container for IAM roles for a given instance**
+
+- **when** you **deploy EC2 instance** the **creation of instance profile IS HIDDEN from you**. It **happens behind the scenes**.
+
+#### AMI
+
+- **WHEN CREATING ON EBS-based EC2** **automatically** creates **EBS snapshots**.
+
+* can be **private or public**
+
+- you can **whitelist aws accounts when the AMI is private**
+
 #### Auto Scaling Groups
 
 - launching EC2 based on criteria as a service
@@ -730,7 +762,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * **individual instances can be protected from scale events**. This is useful when you have a master node that cannot be terminated.
 
-##### Default termination policy
+#### Default termination policy
 
 There are number of factors that are taken into consideration while picking which instance to terminate.
 
@@ -837,6 +869,10 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
   - **spread**: opposite idea, each instance is placed in **separate racks**. Can be in different AZ but the **same region**. **Limitation of 7 instances per AZ**
   - **partitioned**: similar to spread and clustered, basically you have a **groups of clustered EC2 on separate racks**
 
+- **spread** is usually used **for small deployments**
+
+* **partitioned** is usually used **for larger deployments.**
+
 #### Enhanced Networking
 
 - EC2 **must** be launched from **HVM AMI**
@@ -847,7 +883,7 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **by default, eth0 is created**
 
-* has allocated IP address from the range of subnet
+* has **allocated IP address** from the range of subnet. That **allocated IP is A PRIVATE ONE!**
 
 - has **interface ID**
 
@@ -930,11 +966,15 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * think of **schema as a lens to look through at data**
 
-- mostly used for **ad-hoc queries**, because you only pay for what you use.
+- mostly used for **ad-hoc queries**, because you only pay for what you use. **It's designed for large-scale queries**
 
 * **query results performed by Athena area automatically written to s3**
 
 - Athena **can read data and write query results given encrypted data by KMS**
+
+* can **query data from CloudWatch, ELB logs, CloudTrail logs, Flow logs**
+
+- is very **flexible** when it comes to **data which it needs to process while querying**. It can be **structured / semi-structured / unstructured**
 
 #### EMR (Elastic Map Reduce)
 
@@ -955,6 +995,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - **Athena does not manipulate the data, EMR CAN MANIPULATE THE DATA**
 
 * **master node can** be **sshed into**
+
+- usually has to do with **Spark** jobs.
 
 #### Data Pipeline
 
@@ -987,6 +1029,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * **consumers can work on the data independently**
 
 - **you have to estimate the number of shards you will be using, you can change the amount later**
+
+* there is a notion of **kinesis partition key**. When sending events you can specify such key. This key is **used to sometimes guarantee the order of events**, but **mainly it acts as a `spreader` of things on the shards**
 
 #### Kinesis Data Firehose
 
@@ -1034,11 +1078,19 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **maximum subnet mask is /16**
 
+#### Default VPC
+
+- **you probably should keep it**. Some services need default VPC to exist.
+
+* with default VPC **you get: SG, DHCP, Public Subnet, Attached IGWN, NACL**
+
 #### Elastic IP
 
 - **publicly accessible**, static IP address. Usually used with _NAT-Gateways_
 
 * **FREE OF CHARGE AS LONG AS YOU ARE USING IT**
+
+- **elastic IP persists** even through **stopping and restarting an instance**. This is **not the case with 'auto-assign' public ip option**.
 
 #### Internet Gateway
 
@@ -1094,6 +1146,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
 
+- it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use one NAT Gateway per subnet**
+
 - **CANNOT HAVE Security Groups ATTACHED!**
 
 #### NACL
@@ -1144,6 +1198,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
 
+- works in **LAYER 3** of OSI model
+
 #### VPC Endpoints
 
 - there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
@@ -1167,6 +1223,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * **have to be enabled for the whole VPC**
 
 - **all** IPV6 addresses are **publicly accessible by default**
+
+* when enabled **is attached to the operating system**
 
 #### Egress-only Internet Gateway
 
@@ -1300,6 +1358,36 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - can be used to provide **fully manager messaging service**
 
+* messages can be **up to 256KB in size**
+
+- **basic entity** is the **topic**
+
+* multiple **publishers** can **send messages to a topic**
+
+- **resilient across ALL AZs within a region**
+
+* **messages** can be **encrypted at rest and in-flight**
+
+- can have **resource policies** applied
+
+* **subscribers** can have **filters applied on the SNS topic**. The filtering itself is something named **filter policy**.
+
+#### SQS
+
+- **nearly unlimited throughput FOR STANDARD QUEUES (not FIFO)**
+
+* **up to 256KB payload**
+
+- there is a notion of **pooling**.
+  - **short pooling**: up to **10 messages** at once. You **constantly have to check the queue**
+  - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **avoid empty API calls**
+
+* when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
+
+- **by default** your **standard queue** **DOES NOT PRESERVE THE ORDER**. You can also **have duplicates (sometimes)**.
+
+* **FIFO queues** allow for **ordering** but have **limited capacity**.
+
 ### AWS Workspaces
 
 - desktop as a service
@@ -1418,7 +1506,6 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- dynamodb best practices
 - data lake
 - ipsec vpn
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
