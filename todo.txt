@@ -1,2 +1,0 @@
-https://github.com/goldbergyoni/javascript-testing-best-practices#section-2%EF%B8%8F%E2%83%A3-backend-testing
-https://blog.angular.io/the-angular-team-angularconnect-2019-b23be3762ccb
