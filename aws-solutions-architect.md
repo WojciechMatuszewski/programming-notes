@@ -153,30 +153,30 @@ Just me trying to learn for an exam 🤷‍♀
 * Buckets can be **replicated to another account or to a different bucket
   (region needs to differ)**.
 
-- s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled ON THE ORIGIN AND THE TARGET BUCKET to be able to enable CRR**
-
-* S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
+- S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
   the Bucket. Then that uploaded object is **transferred automatically to your
   bucket**.
 
-- S3 is a **tiered** storage
+* S3 is a **tiered** storage
 
-  - S3 Standard, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
+  - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
-  - S3-IA/S3 One Zone-IA (**Infrequent Access**): for data that is accessed less
+  - **S3-IA/S3 One Zone-IA** (**Infrequent Access**): for data that is accessed less
     frequently but requires rapid access when needed
 
-  - S3 Glacier / Glacier Deep Archive: used for data archiving, where you would
+  - **S3 Glacier / Glacier Deep Archive**: used for data archiving, where you would
     keep files for a loooong time. Retrieval time is configurable (**Deep
     Archive is locked on 12hr retrieval time though**)
 
-* **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
+  - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
+
+- **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
 
 #### Versioning
 
 - S3 have the notion of versioning: **stores all versions of an object including all writes even if you delete it!**
 
-* After **enabling** versioning, it **cannot be disabled**, only suspended
+* After **enabling** versioning, it **cannot be disabled**, only **suspended**
 
 - Remember that with versioning your previous versions persists on the bucket. This can lead to exponential growth of size when editing big files.
 
@@ -191,6 +191,10 @@ Just me trying to learn for an exam 🤷‍♀
 * With life-cycle there is notion of expiration. Basically your objects can be **expired after X amount of time**. Object can be in a _expired state_ where it will wait to be permanently deleted.
 
 - Can be used with **conjunction with versioning**.
+
+* **once placed in a tier, life-cycle rules will not be able to place the item back a tier (where it was)**
+
+- they **apply** to **buckets, prefixes, tags and current or previous versions of the object**.
 
 #### Storage Gateway
 
@@ -218,10 +222,38 @@ Just me trying to learn for an exam 🤷‍♀
 So when to use what?
 
 - _identity policy_
-  - when **you control the identity**
+  - when **you control the identity**. That means **identities within your account**.
 
 * _bucket policy_ (resource policy)
   - when **you DO NOT control the identity**
+
+- **pre-signed urls** work **per object level**
+
+* **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **made useless sometimes, when the permissions of signing identity changed**
+
+#### Encryption
+
+- **PER OBJECT** basis
+
+* there are multiple options:
+  - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**
+  - **SSE-KMS**: **keys** are **managed by KMS service**. It **allows for role separation** since **keys are stored in accounts KMS**
+
+- **no additional cost** for enabling encryption
+
+#### Replication
+
+- s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled ON THE ORIGIN AND THE TARGET BUCKET to be able to enable CRR**
+
+* you **can** also **enable same region replication**
+
+- **does not support SSE-C**. The replication **process is purely server-side**
+
+* when using replication **SOME THINGS DO NOT CARRY OVER to the CRR destination**:
+  - **lifecycle rules**
+  - any **existing objects before replication was enabled**
+
+- **it is possible** for an **object to change storage class and object permissions while in the process of CRR**
 
 ### Snowball
 
@@ -380,6 +412,8 @@ So when to use what?
 
 - **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
 
+* you can backtrack **up to 72hrs in time**
+
 #### Cross Region Replication
 
 - you can **create cross-region clusters that act as cross-region replicas**
@@ -387,6 +421,18 @@ So when to use what?
 * you can create **readers** within that **cross-region cluster**
 
 - you can **failover onto cross-region cluster**
+
+#### Aurora Serverless
+
+- uses **ACUs** which is a **unit of measurement for processing(compute) and memory in Aurora Serverless**
+
+* **charged** based on the **resources used per second**
+
+- used **for unpredictable loads and random surges of traffic**.
+
+* can **rapidly scale**. Behind the db **there are multiple warm instances ready to go**. Because it **uses shared storage component just like normal Aurora** these instances can be used for scaling quickly.
+
+- **EXIST ONLY IN A SINGLE AZ**
 
 ### CloudFormation
 
@@ -859,6 +905,10 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - data **can be encrypted** at rest.
 
+* there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
+
+- **can be accessed between multiple AZs**
+
 #### Placement Groups
 
 - ways of _placing_ your EC2 instances
@@ -914,7 +964,9 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * **no additional charge, you only pay for the resources which were provisioned**
 
-### CloudWatch
+### Monitoring Services
+
+#### CloudWatch
 
 - **monitoring service** for applications, services, **monitors performance**
 
@@ -945,6 +997,18 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - **enabled by default for all new accounts**
 
 * **logs** can be **stored on S3 or can be pushed to CloudWatch**
+
+- **event history** persists **up to 90 days**
+
+#### Flow Logs
+
+- monitors **metadata of the IP traffic to/from network interfaces within a VPC**
+
+* create **log stream for EVERY interface monitored**
+
+- **logs can** be **stored on S3 or CloudWatch**
+
+* **IT HAS TO DO WITH METADATA NOT THE ACTUAL CONTENTS OF THE IP**
 
 ### Analytics
 
