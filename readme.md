@@ -1,1 +1,1 @@
-# WebDev notes
+# Just programming notes
