@@ -33,3 +33,59 @@ Properties:
 ```
 
 Now you can simulate your API fully without using `apex/gateway` or similar tools.
+
+## Patterns
+
+### Functional options
+
+While working with `go` you might write and API that looks similar to this one:
+
+```go
+type Server struct {
+  addr string
+  timeout time.Duration
+  // .. some other config prop
+}
+
+func NewServer(addr string, timeout time.Duration, /*... more props */) *Server {
+  return &Server{
+    addr: addr,
+    timeout: timeout,
+  }
+}
+```
+
+We passing of arguments might get out of hand, and what if we want to make some properties optional ?
+Well you might try `config structs` or different methods like `NewServerWithTimeout` or `NewServerWithSomething` but this approach can be hard to maintain.
+
+Enter `functional options`.
+
+```go
+// exported type mainly used for documentation
+type Option func(s *Server)
+
+
+func Timeout(timeout time.Duration) Option {
+  return func(s *Server) {
+    s.timeout = timeout
+  }
+}
+
+type Server struct {
+  addr string
+  // default: no timeout
+  timeout time.Duration
+}
+
+func NewServer(addr string, ...opts Option) *Server {
+  server := Server{addr: addr}
+
+  for _, opt := range opts {
+    opt(&server)
+  }
+
+  return &server
+}
+```
+
+Now, `NewServer` is a `variadic` function which takes multiple config options. We can specify defaults when creating a server then mutate the server with config applied through `Option` type.

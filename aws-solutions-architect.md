@@ -452,6 +452,16 @@ So when to use what?
 
 - **separate hot and cold data**. This will help you with RCU provisioning.
 
+* **LSI** gets **the same WCU/RCU and partition key** as the **primary table**
+
+- **to enable backups** you have to have **streams enabled**
+
+* one **WCU** is equal to **1KB**
+
+- one **RCU** is equal to **4KB**. That is **one strongly consistent read OR 2 eventually consistent reads**
+
+* dynamo **streams** **hold** data for **24 hrs**
+
 ### CloudFront
 
 - CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to caches.
@@ -1451,6 +1461,11 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - **by default** your **standard queue** **DOES NOT PRESERVE THE ORDER**. You can also **have duplicates (sometimes)**.
 
 * **FIFO queues** allow for **ordering** but have **limited capacity**.
+
+- can have **resource policies**
+
+* you can have ASG react to number of messages inside the queue
+
 
 ### AWS Workspaces
 
