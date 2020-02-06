@@ -1,5 +1,22 @@
 # React Stuff
 
+## Testing
+
+- You can use `debug` with a `DOM` node.
+
+```js
+const elem = getElementBy...
+debug(elem)
+```
+
+- Use `user` from `@testing-library/user-event` for more general events. `fireEvent` only fires a singular event which might not be representative enough.
+
+* Use `jest-axe` for a11y assertions
+
+- considering spying on `console.error` when testing something that can throw. **Remember to restore**, probably using `error.mockRestore()`
+
+* there is something called `toMatchInlineSnapshot`. It basically creates snapshots automatically but the `snapshot` itself is within a test code, not a separate file.
+
 ## Resetting Component State with key property
 
 `key` is used to help React track changes and basically be able to tell whats
