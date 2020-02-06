@@ -172,6 +172,12 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
 
+* **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
+
+- **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
+
+* **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer requre random prefixes for performance gains
+
 #### Versioning
 
 - S3 have the notion of versioning: **stores all versions of an object including all writes even if you delete it!**
@@ -549,6 +555,12 @@ So when to use what?
 
 - there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
 
+#### ELB
+
+- general term for **ALB or NLB or Classic Load**
+
+* to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
+
 #### ALB
 
 - work in **layer 7**. That means that they are **HTTP/HTTPS aware**
@@ -561,6 +573,10 @@ So when to use what?
 
 - **exposes a DNS address**
 
+* is **cheaper** than **CLB**
+
+- great for **separating traffic based on their needs**
+
 #### NLB
 
 - **network load balancer exposes fixed IP**.
@@ -568,6 +584,8 @@ So when to use what?
 * work in **layer 4**.
 
 - they **do not modify incoming network packets in any shape of form**
+
+* **can balance** on **UDP**
 
 #### Monitoring
 
@@ -577,7 +595,7 @@ So when to use what?
 
 #### Health Checks
 
-- **ALB cannot use UDP to carry out a check of the health of the instance**
+- load balancer health check **can be carried on HTTP, SSL, HTTPS, TCP** protocols
 
 ### DNS
 
@@ -710,6 +728,8 @@ So when to use what?
 - **each container instance belongs to only one cluster at given time**
 
 * **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
+
+- you can enable **ECS Auto Scaling**. It creates ASG automatically.
 
 #### Fargate
 
@@ -865,7 +885,7 @@ Regardless of these steps, default termination policy will try to terminate inst
 - Different versions:
 
   - **Provisioned IOPS** - the most io operations you can get (databases), most expensive
-  - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers)
+  - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers).
   - **EBS Magnetic**- previous generation HDD, infrequent access
   - **General Purpose**
 
@@ -1144,6 +1164,10 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * **automatically caches repeated queries**
 
+- **ONLY SINGLE AZ**. There are **no multiple az deployments**. When you want to have your cluster multi-az **use Redshift snapshots and enable CRR on them**
+
+* you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **Usually** created **along with VPC endpoint gateway**
+
 ### Networking (VPC)
 
 - **CAN SPAN MULTIPLE AZs**
@@ -1197,6 +1221,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - often used to redirect requests to _Internet-Gateway_
 
 * **new subnets are associated with main route table by default**
+
+- **local rules** have the **highest priority**
 
 #### NAT Gateway
 
@@ -1465,7 +1491,6 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - can have **resource policies**
 
 * you can have ASG react to number of messages inside the queue
-
 
 ### AWS Workspaces
 
