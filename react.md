@@ -122,6 +122,26 @@ So basically to avoid such errors, **which will probably cause unexpected bugs**
 
 - never call functional components directly when they are using hooks
 
+## SSR
+
+SSR is getting quite popular nowadays. While developing your SSR solutions you might encounter a problem where `React` seem to be behaving weirdly, almost bug-like, when your SSR HTML structure is not aligning with the one on the server.
+
+This is mostly due to the fact that **React is only diffing on HTML Tags level and will not try to patch up inconsistencies for you**.
+
+This is one case I encountered at work. Suppose you have a function witch renders a `a HTML tag` using a config.
+
+```jsx
+function renderLink({to, ...restOfConfig}) {
+  return <a href={to} {...restOfConfig}>
+}
+```
+
+Now, what happens if the `to` prop is different on the server than on the client?. This might be the case due to eg. servers inability to pick up locale data. `config` is enriched with that data on the client.
+
+In such case you will get a warning that HTML structure is different on the client and the server. **You might think that since it's a prop change React will just re-render that tag with a correct, newest prop. But that is not the case**.
+
+What will happen is that the `prop` becomes stale, and your functionality will not work. Like I said before, React will not try to patch up inconsistencies, **its up to you to make sure that the HTML structure and props are the same on the server and on the client**
+
 ## Memoization and semantic guarantee
 
 You are probably using hooks by now. That's great. Also you probably know about

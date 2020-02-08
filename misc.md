@@ -96,7 +96,7 @@ event test this theory using _fake promise_.
 function fakePromise() {
   return {
     then: function() {
-      console.log('IM CALLED');
+      console.log("IM CALLED");
     }
   };
 }
@@ -209,7 +209,7 @@ There soon may be deprecated due to `webpack 5` releasing but did you know that 
 
 ```js
 const Tilt = React.lazy(() =>
-  import(/* webpackChunkName: "tilt", webpackPrefetch: true */ '../tilt')
+  import(/* webpackChunkName: "tilt", webpackPrefetch: true */ "../tilt")
 );
 ```
 
@@ -223,7 +223,28 @@ But did you know that there is an webpack plugin which enables you to turn any j
 Let's say you have a module called `expensive.js` and you want to import that module as _web worker_.
 
 ```js
-import expensiveWorkerized from 'workerize-loader!./expensive';
+import expensiveWorkerized from "workerize-loader!./expensive";
 ```
 
 **BOOM!**. Thats all. Granted now methods exposed by `expensiveWorkerized` are _async_ but that should not be a problem.
+
+## Modern Event Listeners
+
+You can actually pass either a `boolean` value or an config `object` as a 3rd argument to `addEventListener`.
+
+### `Boolean` value
+
+The boolean value (by default `false`) has to do with `capturing` phase of a event life cycle. Specifying it as `true` will fire the event listener within a capture phase. **Capture phase is the phase there events bubble to target element**. This article explains it:
+https://javascript.info/bubbling-and-capturing
+
+### The config `object`
+
+Now, this is quite useful. You can specify 3 properties:
+
+- capture
+- once
+- passive
+
+`once` means that the **event listener will automatically remove itself after the first time it fires**. This is soo useful, you do not have to keep the reference anymore.
+
+`passive` is for performance gains. Granted these are probably insignificant, but, nevertheless you can specify those. With `passive` you tell the browser that you will not use `event.preventDefault`, in return you get those aforementioned performance optimizations.
