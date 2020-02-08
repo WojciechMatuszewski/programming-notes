@@ -420,13 +420,27 @@ So when to use what?
 
 * you can backtrack **up to 72hrs in time**
 
-#### Cross Region Replication
+#### Replication / High Availability
+
+##### Cross Region Replication
 
 - you can **create cross-region clusters that act as cross-region replicas**
+
+- this is **logical / binlog replication**. It uses **network for the replication part** so there **might be some lag involved**.
 
 * you can create **readers** within that **cross-region cluster**
 
 - you can **failover onto cross-region cluster**
+
+* the **FAILOWER onto cross-region cluster takes FEW MINUTES**
+
+##### Global Database
+
+- it uses **psychical replication: dedicated hardware to do the replication part**.
+
+* the **replication is much faster than CRR read-replica**
+
+- **failover is much faster than CRR read-replica**
 
 #### Aurora Serverless
 
@@ -511,13 +525,21 @@ So when to use what?
 
 - **OAI can be applied** to **S3, CloudFront, bucket policies**
 
-- you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
-
 * **signed cookies** are used to **provide access to multiple restricted files**
 
 - **signed urls** are used to **provide access to individual files, RTMP distributions**
 
-* **CLOUD FRONT IS NOT ONLY FOR WEB STUFF**. You can create **APIG CloudFront distribution**,
+* **CLOUD FRONT IS NOT ONLY FOR WEB STUFF**. You can create **APIG CloudFront distribution**
+
+#### Restricting access to CloudFront distribution
+
+- you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
+
+* The **mechanism is similar to that of s3**, but there is difference **who can manage the underlying key**. With CloudFront **you can protect custom origins, APIGW and static files**.
+
+- Whats more **you can restrict access to a specific IP** using **WAF ACL and CloudFront**
+
+- You can also use **Geo Restriction**.
 
 ### Load Balancers
 
@@ -587,6 +609,8 @@ So when to use what?
 
 * **can balance** on **UDP**
 
+- **exposes FIXED IP Address**
+
 #### Monitoring
 
 - **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
@@ -644,6 +668,8 @@ So when to use what?
 - **fast: 10secs** or **default: 30 secs** interval
 
 ### Route53 routing
+
+- just remember that **TTL can bite YOUR ASS!**. **Whenever** you are **considering offloading the balancing to Route53** keep in mind the **TTL**. Since you **cannot attach ASG to Route53** there might be a **case where your instance is no longer there BUT TTL still routes to that IP**.
 
 #### Simple Routing Policy
 
@@ -838,6 +864,10 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * **individual instances can be protected from scale events**. This is useful when you have a master node that cannot be terminated.
 
+- there is notion of **connection draining**. This is **done by ALB OR NLB**. When **terminating an instance ALB/NLB will wait for that period to pass**.
+
+* **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that instance**. **ASG does not `listen` for ELB commands to terminate stuff**. ASG has its own checks and based on them, and only them it decides which instance to terminate.
+
 #### Default termination policy
 
 There are number of factors that are taken into consideration while picking which instance to terminate.
@@ -897,15 +927,19 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 > If you make periodic snapshots of a volume, the snapshots are incremental. This means that only the blocks on the device that have changed after your last snapshot are saved in the new snapshot. Even though snapshots are saved incrementally, the snapshot deletion process is designed so that you need to retain only the most recent snapshot in order to restore the volume.
 
-- **EBS snapshots are automatically stored on S3**. These are **inaccessible to you inside S3 console, you can see then through EBS menu in EC2**.
+- **snapshots** are created **in a given availability zone**. They are **replicated across multiple AZs automatically**. When you want to **restore from snapshot in a different AZ** you have to **copy the existing snapshot to a different AZ**. **When creating a snapshot** you can **pick the `root AZ per say**.
 
-* **by default root EBS volume will be deleted when instance terminates**
+* **EBS snapshots are automatically stored on S3**. These are **inaccessible to you inside S3 console, you can see then through EBS menu in EC2**.
 
-- **by default ATTACHED EBS volume will NOT be deleted when instance terminates**
+- **by default root EBS volume will be deleted when instance terminates**
+
+* **by default ATTACHED EBS volume will NOT be deleted when instance terminates**
 
 #### EBS vs Instance Store
 
-- Instance Store a.k.a **Ephemeral storage**. The data lives on a rack where your virtual machine is booted. **If you reboot it, there is HIGH CHANCE that you will loose that data**. It's not 100% guaranteed though. Your EC2 can always be assigned to the same rack, but that is unlikely.
+- Instance Store a.k.a **Ephemeral storage**. The data lives on a rack where your virtual machine is booted. **If you reboot it, you WILL NOT loose the data**.
+
+* when you **Stop/Start an instance** **instance store data will be lost**.
 
 - Instance Store is not really persistent, whereas EBS is a persistent, multi AZ storage option.
 
@@ -1015,6 +1049,12 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * there is notion of **events**, which basically provides **near instant stream of system events**
 
 - for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
+
+* **by default** CloudWatch **pushes logs every 5 mins**. You can **enable Detailed Monitoring** which will enable **logging in 1 min intervals** but that solution **is a paid feature, per instance**
+
+- You can create **custom CloudWatch metrics**. This will enable you to **eg. monitor RAM on EC2**. With **custom CloudWatch metrics** you can setup **High Resolution metrics** which **will log up to 1 second intervals (the fastest possible)**.
+
+* with **High Res metrics** alarms **will trigger in 10 secs intervals**. Image it triggering every second 😂
 
 ### Cloud Trial
 
@@ -1142,6 +1182,12 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **serverless product**
 
+#### Kinesis Data Streams
+
+- allow you for **automatic analytics** for your **stream data**.
+
+* **processing** data **in near real-time**
+
 #### Redshift
 
 - **column-based database**
@@ -1176,6 +1222,13 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **maximum subnet mask is /16**
 
+* there are **5 reserved IPS**.
+  - network
+  - VPC router
+  - DNS
+  - Future
+  - Broadcast
+
 #### Default VPC
 
 - **you probably should keep it**. Some services need default VPC to exist.
@@ -1195,6 +1248,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - used for **connecting** your **VPC to the internet**.
 
 * **attached to a default VPC at start**
+
+- **NO BANDWIDTH LIMITS**
 
 #### Flow Logs
 
@@ -1299,6 +1354,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
 
 - works in **LAYER 3** of OSI model
+
+* **VPC can be in a different region**.
 
 #### VPC Endpoints
 
@@ -1492,6 +1549,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * you can have ASG react to number of messages inside the queue
 
+- you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
+
 ### AWS Workspaces
 
 - desktop as a service
@@ -1509,6 +1568,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * will either accept or deny given request
 
 - looks for CSS or SQL-injection stuff
+
+* with WAF you can create **IP restrictions** on a given **CloudFront** distribution
 
 ### CloudFormation Stack Set
 
@@ -1546,6 +1607,16 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * **checks security-related stuff** and **lists potential problems**
 
 - **shows you** when given service is **using more than a service limit**
+
+### KMS/STS and Encryption
+
+- various ways of encryption, but mainly **Server-Side, Client-Side** encryption.
+
+* with **Server-Side encryption** the **decryption also happens on the Server**. This is pretty logical since we would not know how to decrypt something.
+
+- With **KMS** you **can create User Keys** but that process is not necessary. **Depending on the encryption model** you could use **AWS Managed Service Keys in KMS**.
+
+* **STS** is the thing that **creates temporary credentials** for **assuming a role** stuff.
 
 ### Patterns
 

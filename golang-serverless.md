@@ -89,3 +89,10 @@ func NewServer(addr string, ...opts Option) *Server {
 ```
 
 Now, `NewServer` is a `variadic` function which takes multiple config options. We can specify defaults when creating a server then mutate the server with config applied through `Option` type.
+
+## Language
+
+### `bytes.Buffer` vs `Bufio`
+
+`bytes.Buffer` is just a simple `in-memory` buffer. It will expose `Read` and `Write` methods.
+`Bufio` is used for **wrapping** underlying `writers/readers`. This is mainly used for performance. Wrapping with `Bufio` will reduce the amount of calls to `write/read`. This can be useful for files for example, when you DO NOT want every `read/write` call to hit the disc.
