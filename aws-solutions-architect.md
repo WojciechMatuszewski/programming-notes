@@ -306,6 +306,12 @@ So when to use what?
 
 - you **DO NOT** have **access to the underlying OS, the DB is running on**.
 
+#### Maintenance
+
+- **with multi AZ enabled** any kind of **maintenance, security patching** is **performed** first on the **standby**. When multi AZ is not specified, this process will take DB offline.
+
+* takes place **during maintenance window, specified when creating a RDS db**
+
 #### Encryption
 
 - you **can only choose to encrypt your DB during creation phase**
@@ -314,7 +320,7 @@ So when to use what?
 
 - you **cannot encrypt existing DB**. You have to **create an snapshot and encrypt it** and build DB from that snapshot.
 
-* **read replicas** have to be encrypted with the **same key as source**
+* **read replicas** have to be encrypted with the **same key as source AS LONG AS THE Source and ReadReplica ARE IN THE SAME REGION**
 
 #### Replication (Read Replicas)
 
@@ -540,6 +546,10 @@ So when to use what?
 - Whats more **you can restrict access to a specific IP** using **WAF ACL and CloudFront**
 
 - You can also use **Geo Restriction**.
+
+### API Gateway
+
+- **throttling** can be **configured at multiple levels** including Global and Service Call
 
 ### Load Balancers
 
@@ -813,6 +823,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some configuration** for an EC2 like **security groups, AMI ids and such** .
 
+- you **can add/change** existing **IAM instance role** on a **running instance**
+
 #### Instance Profiles / Roles
 
 - you **cannot directly connect IAM role with an instance**
@@ -916,8 +928,12 @@ Regardless of these steps, default termination policy will try to terminate inst
 
   - **Provisioned IOPS** - the most io operations you can get (databases), most expensive
   - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers).
-  - **EBS Magnetic**- previous generation HDD, infrequent access
+  - **EBS Magnetic** - previous generation HDD, infrequent access
   - **General Purpose**
+
+So the costs are **usually** **Provisioned > General Purpose > Throughput Optimized HDD > Cold HDD**.
+
+- **Cold HDD cannot** be used as **boot volume**
 
 * you can take **EBS snapshots**
 
@@ -1032,23 +1048,7 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### CloudWatch
 
-- **monitoring service** for applications, services, **monitors performance**
-
-- can monitor:
-  - **CPU**
-  - **Network**
-  - **Disk**
-  - **Status check**
-
-* **Cloud Trail IS NOT THE SAME AS CloudWatch**
-  - **CloudWatch** - performance
-  - **Cloud Trail** - CCTV camera, **monitors AWS API calls**
-
-- you can create dashboards from metrics
-
-* there is notion of **events**, which basically provides **near instant stream of system events**
-
-- for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
+- **monitoring service** for applications, services, **monitors performance / what is happening WITH resources**
 
 * **by default** CloudWatch **pushes logs every 5 mins**. You can **enable Detailed Monitoring** which will enable **logging in 1 min intervals** but that solution **is a paid feature, per instance**
 
@@ -1056,7 +1056,32 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * with **High Res metrics** alarms **will trigger in 10 secs intervals**. Image it triggering every second 😂
 
-### Cloud Trial
+- you can create dashboards from metrics
+
+* **CloudTrail IS NOT THE SAME AS CloudWatch**
+  - **CloudWatch** - performance
+  - **CloudTrail** - CCTV camera, **monitors AWS API calls**
+
+##### CloudWatch Logs
+
+- can monitor:
+
+  - **CPU**
+  - **Network**
+  - **Disk**
+  - **Status check**
+
+* for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
+
+- you would use **CloudWatch Logs** for creating **application-level alarms**. This could be number of errors and such.
+
+##### CloudWatch Events
+
+- there is notion of **events**, which basically provides **near instant stream of system events**
+
+* **events** have to do more with **what is happening on the instance (resource) level**. This could be **EC2 instance changed the state from pending to running** and such.
+
+### CloudTrial
 
 - **monitors AWS API calls**
 
@@ -1069,6 +1094,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * **logs** can be **stored on S3 or can be pushed to CloudWatch**
 
 - **event history** persists **up to 90 days**
+
+* you can create **one trial** and **apply it to multiple regions**
 
 #### Flow Logs
 
@@ -1214,6 +1241,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **Usually** created **along with VPC endpoint gateway**
 
+- **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
+
 ### Networking (VPC)
 
 - **CAN SPAN MULTIPLE AZs**
@@ -1281,29 +1310,29 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### NAT Gateway
 
-- **CANNOT HAVE SECURITY GROUP ATTACHED TO IT!**
+- **NOT compatible** with **IPv6**. Use **egress-only IGW for that**
 
-* **lives in a public subnet**
+* **CANNOT HAVE SECURITY GROUP ATTACHED TO IT!**
 
-- has **elastic static IP address**
+- **lives in a public subnet**
 
-* **converts SOURCES` private ip address** to its ip address
+* has **elastic static IP address**
 
-- sends its traffic to **internet gateway**. Internet gateway will convert the **private static ip to public ip** and send it to the internet
+- **converts SOURCES` private ip address** to its ip address
 
-* basically it **allows** resources in your VPC which **do not have public IP** to **communicate with the internet, ONLY ONE WAY**
+* sends its traffic to **internet gateway**. Internet gateway will convert the **private static ip to public ip** and send it to the internet
 
-- multiple **resources** inside VPC **share the same IP assigned to NAT-Gateway**
+- basically it **allows** resources in your VPC which **do not have public IP** to **communicate with the internet, ONLY ONE WAY**
 
-* scale automatically
+* multiple **resources** inside VPC **share the same IP assigned to NAT-Gateway**
 
-- **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
+- scale automatically
 
-* session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+* **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
 
-- it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use one NAT Gateway per subnet**
+- session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
 
-- **CANNOT HAVE Security Groups ATTACHED!**
+* it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use one NAT Gateway per subnet**
 
 #### NACL
 
@@ -1617,6 +1646,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - With **KMS** you **can create User Keys** but that process is not necessary. **Depending on the encryption model** you could use **AWS Managed Service Keys in KMS**.
 
 * **STS** is the thing that **creates temporary credentials** for **assuming a role** stuff.
+
+- the **keys** are **region-locked**. You can **copy keys across regions though**.
 
 ### Patterns
 
