@@ -234,8 +234,8 @@ You can actually pass either a `boolean` value or an config `object` as a 3rd ar
 
 ### `Boolean` value
 
-The boolean value (by default `false`) has to do with `capturing` phase of a event life cycle. Specifying it as `true` will fire the event listener within a capture phase. **Capture phase is the phase there events bubble to target element**. This article explains it:
-https://javascript.info/bubbling-and-capturing
+The boolean value (by default `false`) has to do with `capturing` phase of a event life cycle. Specifying it as `true` will fire the event listener within a capture phase. **Capture phase is the phase there events bubble to target element**.
+This article explains it: https://javascript.info/bubbling-and-capturing
 
 ### The config `object`
 
