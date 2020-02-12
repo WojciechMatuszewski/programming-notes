@@ -289,3 +289,13 @@ You can also use `literal initialization` for initializing maps.
 - there is an `delete` operator for maps to delete given key.
 
 **Not everything can be a key to a map**. This is expected, you would not want to use `slices` as keys of your map, that would not make sense.
+
+## Composition
+
+### Grouping Types
+
+- There is **no sub-classing** in Go!
+
+* Avoid something called **type pollution**. This is where you define a type only to be extended somewhere else (probably embedded). A little of copy-pasting will not kill you. With **embedding you CAN create a coupling problem**. Of course that is not the case with every situation where you need / want to use embedding.
+
+- Stop thinking about what things are and **start thinking about that things DO**. Always **favour behaviors (interfaces) not structs (what things are)**

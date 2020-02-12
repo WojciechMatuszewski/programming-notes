@@ -33,7 +33,9 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **YOU CAN ATTACH SECURITY GROUP TO A LAMBDA**
 
-* **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. You can even make the lambda completely private
+* **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. The **subnet HAS TO BE PRIVATE though**. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because lambdas have ENI assigned that never gets public IP.
+
+- lambdas **inbound connections are blocked**. When it comes to outbound, **outbound TCP/IP and UDP/IP sockets are supported**.
 
 ### Step Functions
 
@@ -114,6 +116,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **all roles that could be assumed are automatically assumed**
 
+* **by default** newly created User has **implicit DENY** on all services. **You should assign roles to lift the implicit deny**
+
 #### Resource Based Policies
 
 - these are **special subset of policies** which are **attached to AWS Services**
@@ -176,7 +180,13 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
 
-* **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer requre random prefixes for performance gains
+* **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer require random prefixes for performance gains
+
+- with **Glacier/Deep Archive** you can use **Vault lock** feature. This is mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing deletes and such**
+
+* **Glacier/Deep Archive** have something called **expedited retrieval**. This allows you to **get the data from glacier and not wait Days/hours/Months**. There is a catch though. The **expedited retrieval** is **using resources from shared pool of resources**. There might a case there those resources are unavailable. This is where **provisioned glacier capacity** is used. This **ensures that your expedited retrieval request will not be rejected**. But you have to **pay more (additionally for it)**
+
+- you can use \*\*S3 Net
 
 #### Versioning
 
@@ -305,6 +315,8 @@ So when to use what?
 * you **can connect to** the underlying **EC2 instance that hosts the database**. Use SSH or different means.
 
 - you **DO NOT** have **access to the underlying OS, the DB is running on**.
+
+* you **can target read replica** but you **CAN NOT target second-master (multi-az)**
 
 #### Maintenance
 
@@ -488,6 +500,8 @@ So when to use what?
 
 * dynamo **streams** **hold** data for **24 hrs**
 
+- **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+
 ### CloudFront
 
 - CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to caches.
@@ -609,6 +623,8 @@ So when to use what?
 
 - great for **separating traffic based on their needs**
 
+* **CAN** have **SecurityGroup attached**
+
 #### NLB
 
 - **network load balancer exposes fixed IP**.
@@ -620,6 +636,8 @@ So when to use what?
 * **can balance** on **UDP**
 
 - **exposes FIXED IP Address**
+
+* **cannot** have **SecurityGroup attached to it**
 
 #### Monitoring
 
@@ -880,6 +898,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that instance**. **ASG does not `listen` for ELB commands to terminate stuff**. ASG has its own checks and based on them, and only them it decides which instance to terminate.
 
+- you can have **custom CloudWatch metrics trigger scale events**
+
 #### Default termination policy
 
 There are number of factors that are taken into consideration while picking which instance to terminate.
@@ -951,6 +971,8 @@ So the costs are **usually** **Provisioned > General Purpose > Throughput Optimi
 
 * **by default ATTACHED EBS volume will NOT be deleted when instance terminates**
 
+- the **volumes themselves NOT SNAPSHOTS** are **replicated within SINGLE AZ**. If that AZ goes down, the volume is not available.
+
 #### EBS vs Instance Store
 
 - Instance Store a.k.a **Ephemeral storage**. The data lives on a rack where your virtual machine is booted. **If you reboot it, you WILL NOT loose the data**.
@@ -988,6 +1010,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
 
 - **can be accessed between multiple AZs**
+
+* you **cannot** point **route53 alias to EFS**
 
 #### Placement Groups
 
@@ -1524,15 +1548,17 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### ElastiCache
 
-- operates with **products that are NOT dynamoDB**
+- you **cannot point** route53 **alias record to ElastiCache cluster**
 
-* supports **Redis** or **Memcached**
+* operates with **products that are NOT dynamoDB**
 
-- offloading databases: **caches reads just like DAX**
+- supports **Redis** or **Memcached**
 
-* storing session data of users
+* offloading databases: **caches reads just like DAX**
 
-- there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
+- storing session data of users
+
+* there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
 
 ### Communication Between Services, Queues
 
@@ -1648,6 +1674,10 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * **STS** is the thing that **creates temporary credentials** for **assuming a role** stuff.
 
 - the **keys** are **region-locked**. You can **copy keys across regions though**.
+
+### TCO
+
+- this tool is used to **compare** the **cost of running in premise vs running in the AWS**
 
 ### Patterns
 
