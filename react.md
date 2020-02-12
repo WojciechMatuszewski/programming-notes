@@ -17,6 +17,32 @@ debug(elem)
 
 * there is something called `toMatchInlineSnapshot`. It basically creates snapshots automatically but the `snapshot` itself is within a test code, not a separate file.
 
+- you should not use `.toHaveBeenCalledTimes` on `mock functions` which are _rendered_ (looking at you `renderProps`). Normally for API calls that is ok, but other than that just use `toHaveBeenCalledTimes`
+
+* asserting on dates is hard. You should create a delta between 2 dates.
+
+```js
+const preDate = new Date();
+
+// code doing stuff
+
+const postDate = new Date();
+
+// here you should assert on mockCalls date probably
+
+const dateFromMockCalls = ...mock.calls[0]..
+
+expect(dateFromMockCalls.getTime()).toBeGreaterOrEqual(preDate.getTime())
+
+expect(dateFromMockCalls.getTime()).toBeLessOrEqual(post.getTime())
+```
+
+- for generating test data you can you `test-data-bot` library. With that you can communicate clearly whats important in your tests and whats not by creating random fake data and specific strings that stand out, specifically created by you, not by `test-data-bot`
+
+## Getting all elements of form from `event`
+
+Use `event.target.elements` to get all form elements. **You have to add name prop to the form elements**
+
 ## Resetting Component State with key property
 
 `key` is used to help React track changes and basically be able to tell whats
