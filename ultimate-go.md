@@ -299,3 +299,103 @@ You can also use `literal initialization` for initializing maps.
 * Avoid something called **type pollution**. This is where you define a type only to be extended somewhere else (probably embedded). A little of copy-pasting will not kill you. With **embedding you CAN create a coupling problem**. Of course that is not the case with every situation where you need / want to use embedding.
 
 - Stop thinking about what things are and **start thinking about that things DO**. Always **favour behaviors (interfaces) not structs (what things are)**
+
+### Decoupling
+
+- start with the concrete, avoid creating interfaces first
+
+* use **layered approach**:
+  - **primitive**: knows how to do 1 thing only. This code has to be testable!
+  - **lower-level**: sits on top of **primitive**. This code has to be testable!
+  - **high level API**: ease of use for developer, this layer may require integration tests.
+
+- **ONLY focus at the problem at hand**. Get stuff into prod then decouple to make it better.
+
+* **optimize for correctness**. Always, always **focus on the simplest solution!**. Until you have problems with performance you do not have to min-max for it!.
+
+- lower level-api usually consist of things that are not exported
+
+* whe designing an API, **try starting with functions, not methods**. Methods sometimes might not be transparent enough. With **functions, the consumer always knows the required arguments / data**. With methods that is not the case. An example:
+
+```go
+type User struct {
+ name string
+ email string
+}
+func (u *User) SendEmail() {}
+```
+
+This code seem like a good idea **but in reality this piece of code is horribly designed**. There is **zero information to the consumer of what NEEDS to be present on the User `struct` for `SendEmail` to succeed**. Maybe we need only `name`? or maybe we need both `name` and `email`. This is where production bugs are introduced!.
+
+Much better would be writing a plain function. But **even writing a function might lead to bugs**. Lets consider the following function:
+
+```go
+func SendEmail(u *User) {}
+```
+
+Above function is just a method. A method in disguise which is not really helping. `SendEmail` should look as follows:
+
+```go
+func SendEmail(name string, email string) {}
+```
+
+Now we are **focusing on concrete data** and **are transparent to the consumer**.
+
+- **concrete implementation** will **provide you will behavior**. That is why you should **always work with concrete first**.
+
+* use **composition of interfaces**. This is very prevalent while working with standard lib eg. `ReadCloser` and such.
+
+- always **refactor from the lowest level**
+
+* keep in mind that **interfaces are valueless**. They do not really exist. What exists is a concrete data that obeys the interface.
+
+Lets say I have `pull` and `store` functions
+
+```go
+type Puller interface {
+	Pull(d *Data) error
+}
+func pull(p Puller, data []Data) (int, error) {
+}
+
+
+type Storer interface {
+	Store(d *Data) error
+}
+func store(s Storer, data []Data) (int, error) {
+}
+```
+
+Pretty simple code. Now lets say we have `Copy` function which takes `PullerStorer` - composition of interfaces.
+
+```go
+type PullStorer interface {
+	Puller
+	Storer
+}
+func Copy(ps PullStorer, batch int) error {
+    data := make([]Data, batch)
+
+    store(ps, data)
+    pull(ps, data)
+}
+```
+
+You may be thinking that we are passing `PullerStorer` to `store` and `pull` but that is NOT the case. What we are passing is **stored** inside`ps`. Again, interfaces do not really exist!
+
+- to fully use composition you can **embed interfaces inside structs**. This is so powerful!
+
+* **readability review** is very important. Consistency is the key to make sure your code reads well!.
+
+Going back to our `Copy` method. As you might have noticed, **it is hiding the cost of initialization**. It does not prevent fraud and misuse. It's the same thing as with `SendEmail`, we can improve it:\
+
+```go
+func Copy(p Puller, s Storer, batch int) error {
+	data := make([]Data, batch)
+
+    store(s, data)
+    pull(p, data)
+}
+```
+
+Much cleaner. Usually this sorts of things will come up during _readability review_ of your code.

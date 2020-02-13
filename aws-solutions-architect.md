@@ -214,14 +214,18 @@ Just me trying to learn for an exam 🤷‍♀
 
 #### Storage Gateway
 
-- Physical/virtual device which **will replicate your data to AWS**.
+- **SOMETHING YOU DOWNLOAD**
 
-* There are 3 flavours of Storage Gateway
+* Physical/virtual device which **will replicate your data to AWS**.
+
+- There are 3 flavours of Storage Gateway
   - **File Gateway** : used for storing files as object in S3.
   - **Volume Gateway**: used for storing copies of hard-disk drives in S3.
   - **Tape Gateway**: used to get rid of tapes.
 
-- With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+* With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+
+- if you see **ISCSI** that is **probably Volume Gateway**.
 
 #### Security
 
