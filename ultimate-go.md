@@ -399,3 +399,249 @@ func Copy(p Puller, s Storer, batch int) error {
 ```
 
 Much cleaner. Usually this sorts of things will come up during _readability review_ of your code.
+
+### Conversion and Assertions
+
+- remember that to make interface hold concrete data, that data has to obey interface shape
+
+```go
+type Mover interface {
+    Move()
+}
+type Locker interface {
+    Lock()
+}
+
+type MoveLocker interface {
+    Mover
+    Locker
+}
+
+// has `move` and `lock` behaviors
+type bike struct {}
+
+func main() {
+    var ml MoveLocker
+    var m Mover
+
+    // works!
+    ml = bike{}
+
+    // does not work. There is a mismatch between the shapes
+    m = ml
+}
+```
+
+- **type assertions happen at runtime!**. This is quite important since it may lead to panics and bugs while your software is running.
+
+* type assertions can be used to override a default behavior within your API.
+
+This is usually done with **assertions on concrete data**, lets consider how you would override a `fmt.Stringer` implementation
+
+```go
+type User struct {
+    name string
+    email string
+}
+
+// implementing fmt.Stringer
+func (u *User) String() {
+    return fmt.Sprintf("My name is %q and my email is %q", u.name, u.email)
+}
+
+func main() {
+    u := user{
+        name: "Wojtek",
+        email: "email@email.pl"
+    }
+
+    fmt.Println(u)
+    fmt.Println(&u)
+}
+```
+
+Now, remember that the behavior _sticks_ to the type. We only overridden a pointer-schematics stringer of `User`. Under the hood, `fmt` package actually performs a _type conversion_:
+
+```go
+switch v := p.arg.(type) {
+ case Stringer:
+  handled = true
+  defer p.catchPanic(p.arg, verb, "String")
+  p.fmtString(v.String(), verb)
+  return
+ }
+```
+
+### Interface Pollution
+
+- normally the **result of starting with interfaces and NOT concrete implementation**
+
+* factory functions should return the concrete values, it should be left up to the caller to decouple if needed.
+
+- you should really think about using `interface` only for mocking purposes. Favor your local env. for eg. a database.
+
+* interfaces should enable users to provide an implementation detail.
+
+### Mocking
+
+This is a very important topic. **YOU DO NOT HAVE TO CREATE INTERFACES FOR EVERYTHING THAT IS REUSABLE**.
+
+Lets consider a `PubSub` system package:
+
+```go
+type PubSub struct {
+
+}
+
+func New() *PubSub {
+    return &PubSub{}
+}
+
+func (ps *PubSub) Publish() {}
+func (ps *PubSub) Subscribe() {}
+```
+
+First of all, to test it, you should use `Docker` or whatever and test the REAL system.
+Mocking here does not make any sense.
+
+What if I want to test other parts of the system that depend on this package. I should be able to assume it works right?. To do that I need a mock of `PubSub`. **If I need a mock I'm going to create it locally!**
+
+```go
+type publisher interface {
+	Publish(key string, v interface{}) error
+	Subscribe(key string) error
+}
+
+// mock is a concrete type to help support the mocking of the pubsub package.
+type mock struct{}
+func (m *mock) Publish(key string, v interface{}) error {
+
+	// ADD YOUR MOCK FOR THE PUBLISH CALL.
+	return nil
+}
+
+// Subscribe implements the publisher interface for the mock.
+func (m *mock) Subscribe(key string) error {
+
+	// ADD YOUR MOCK FOR THE SUBSCRIBE CALL.
+	return nil
+}
+```
+
+The consumer created mock for themselves and we as package creators did not have to include `interfaces` within our package. **We did not create interfaces because we were assured that the system only hold 1 implementation of PubSub**. If there were multiple systems / possible implementations we would probably include the mock.
+
+## Error Handling
+
+- if you really want to shut down your program due to **integrity issues**:
+  - choose panic if you need a stack trace
+  - use `os.Exit`
+
+* stay away from `else` statement. It introduces more code to read through and may make it less clear to the reader.
+
+- use `naked switch` / `switch` statement for `if/else` logic
+
+```go
+
+switch {
+    case 1 == 1:
+    case 2 == 2:
+    // you know the deal
+}
+```
+
+- construct `ErrorVariables` when your API can return multiple error types.
+
+```go
+
+var (
+    ErrPageNotFound = errors.New("Page not found")
+    ErrPageMoved = errors.New("Page moved")
+)
+```
+
+In the code, the consumer then can `switch` over the error
+
+```go
+switch err {
+    case ErrPageNotFound:
+    //
+    case ErrPageMoved:
+}
+```
+
+The naming itself is very important. **Start with Err** then the description of the error.
+
+- favour the built-in `error` type unless you cannot provide sufficient context to the caller.
+
+With custom error types you probably will have to do a `type switch` to check which error you got. A good example for custom error types is the `json` package (`Marshal/Unmarshal`)
+
+```go
+err := json.Unmarshal([]byte(), nil)
+if err != nil {
+    switch e := err.(type)
+    // code
+}
+```
+
+The `type` within the `err.(type)` expression is a language feature.
+
+- there is also notion of _Behavior as Context_. Instead of asserting on types, we are going to assert of the behavior itself. This can result in less code.
+
+Lets consider the `net` package. That package exposes a lot of custom error types
+
+```go
+
+switch e := err.(type) {
+    case *net.OpError:
+        if !e.Temporary() {}
+    case *net.AddrError:
+        if !e.Temporary() {}
+    // and so on
+}
+```
+
+All we really care about is the information that `Temporary` gives us. It tells us if the system has just lost it's integrity.
+
+We can reduce the amount of code by creating an `interface` which has the desired behavior
+
+```go
+type temporary interface {
+    Temporary()
+}
+
+switch e := err.(type){
+    case temporary:
+        if !e.Temporary()
+}
+```
+
+Much better right?
+
+- **always prefer pointer schematics when creating custom error types**. Not following this rule might lead to subtle bugs.
+
+Remember, when comparing values, go is going to compare the concrete value.
+
+```go
+// errorString implements the `Error` stuff
+func New(text string) error {
+	return errorString{text}
+}
+
+var Test = New("Bad Request")
+
+func main() {
+	if err := webCall(); err == nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Life is good")
+}
+
+// webCall performs a web operation.
+func webCall() error {
+	return New("Bad Request")
+}
+```
+
+Guess what is the output of the program? `Bad Request`. Why? because we are comparing the concrete values. If we change the implementation of `New` to return pointer of `errorString` that equality will never occur, because we are comparing Addresses!

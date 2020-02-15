@@ -442,6 +442,12 @@ So when to use what?
 
 * you can backtrack **up to 72hrs in time**
 
+#### Monitoring
+
+- usually **using CloudWatch**.
+
+* you can **see the RAM usage without the need to install CloudWatch agent**. This **applies to RDS in general**
+
 #### Replication / High Availability
 
 ##### Cross Region Replication
@@ -888,7 +894,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * there are **multiple types of scaling policies: step, simple, custom and target tracking**
 
-- with **target tracking policy** you **specify a scaling metric and a target value**. Think **scaling policy to keep the average CPU utilization of ASG at 40% or something like that**. It **uses CloudWatch alarms and metrics to take actions**.
+- with **target tracking policy (also sometimes refereed as dynamic scaling)** you **specify a scaling metric and a target value**. Think **scaling policy to keep the average CPU utilization of ASG at 40% or something like that**. It **uses CloudWatch alarms and metrics to take actions**.
 
 - the deal with **step scaling policies** is that you can create **multiple predicates for a given policy**. For example: **add 2 capacity unit when CPU hits 80% , add 2 capacity units when CPU hits 60%**.
 
@@ -1336,6 +1342,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **local rules** have the **highest priority**
 
+* **local default rules cannot be edited!**. That means that unless you explicitly create a route table for a given subnet, the global route table will associate CIDR blocks with given subnets inside your VPC
+
 #### NAT Gateway
 
 - **NOT compatible** with **IPv6**. Use **egress-only IGW for that**
@@ -1344,7 +1352,7 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **lives in a public subnet**
 
-* has **elastic static IP address**
+* has **elastic static IP address**. That Ip has to be assigned.
 
 - **converts SOURCES` private ip address** to its ip address
 
@@ -1361,6 +1369,10 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
 
 * it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use one NAT Gateway per subnet**
+
+- **CANNOT SEND TRAFFIC OVER VPC ENDPOINTS**
+
+* remember that NAT Gateway is only used to allow traffic to the internet (and back). You cannot connect with a specific instance yourself since the instances themselves do not have an ip address (assuming they live inside private subnet).
 
 #### NACL
 
@@ -1394,25 +1406,27 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### Peering
 
-- **linking TWO!! VPCs together** (in a scalable way)
+- you **cannot use** **anothers VPC NAT Gateway**. So the setup where you have peered VPCs and one is trying to connect to the internet using others NAT Gateway will not work.
 
-* when VPCs are peered, services inside those VPCS can **communicate** with each other using **private IP addresses**
+* **linking TWO!! VPCs together** (in a scalable way)
 
-- can **span accounts, regions**
+- when VPCs are peered, services inside those VPCS can **communicate** with each other using **private IP addresses**
 
-* VPCs are joined using **Network Gateway**
+* can **span accounts, regions**
 
-- **CIDR** blocks **cannot overlap**
+- VPCs are joined using **Network Gateway**
 
-* **VPC peer has to be accepted by the other side**
+* **CIDR** blocks **cannot overlap**
 
-- you will probably have to **check SG, NACL** to make sure it works. **Enabling peering DOES NOT MEAN that the connection is made**.
+- **VPC peer has to be accepted by the other side**
 
-* VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
+* you will probably have to **check SG, NACL** to make sure it works. **Enabling peering DOES NOT MEAN that the connection is made**.
 
-- works in **LAYER 3** of OSI model
+- VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
 
-* **VPC can be in a different region**.
+* works in **LAYER 3** of OSI model
+
+- **VPC can be in a different region**.
 
 #### VPC Endpoints
 
@@ -1429,6 +1443,10 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - With **Interface Endpoints** you have to **manually select AZs** to make it **highly available**
 
 * **Interface Endpoints** use **DNS, routing is NOT INVOLVED**
+
+- can have **VPC endpoint policies** attached. This allows you to control the access from the endpoint to the resource. It does not override IAM roles / IAM user policies or service-specific policies.
+
+* **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct Connect and such!
 
 #### IPV6
 
@@ -1493,6 +1511,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * **you have to attach it to specific VPC**
 
 - **used to connect to Customer Gateways**
+
+* **HA by design**
 
 ##### Site-to-site Connection
 
@@ -1711,6 +1731,10 @@ Then you can either swap the volumes or restore volume from newly created snapsh
 
 First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that are in standby state**
 
+#### Accessing VPC Endpoints
+
+Remember that **VPC Endpoints can only be accessed inside the VPC**. That means that if you have a VPN connection or Direct Connect to your VPC you have to use some kind of proxy. Usually you would use **EC2 to be a proxy for your s3 requests**
+
 #### Enabling SSH with SG and NACL
 
 #### Changing instance type inside ASG
@@ -1746,6 +1770,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- IAM groups vs Organizations https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-L9mkcPg9kljD_hGH9MJ/What%20is%20the%20difference%20between%20IAM%20groups%20and%20OUs%20in%20AWS%20organizations%3F
 - data lake
 - ipsec vpn
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
