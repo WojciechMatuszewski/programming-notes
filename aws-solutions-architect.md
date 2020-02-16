@@ -25,6 +25,12 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **Cloudfront** is a CDN
 
+### Throughput vs IOPS
+
+- **throughput** is a measurement of a **number of bits written / read per second**
+
+* **IOPS** is a measurement of a **number of read / write operations per second**
+
 ### Lambda
 
 - **LAMBDA IS HA by default! MULTI-AZ!**
@@ -227,6 +233,8 @@ Just me trying to learn for an exam 🤷‍♀
 
 - if you see **ISCSI** that is **probably Volume Gateway**.
 
+* remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because with cached volume only your primary data is written to s3.
+
 #### Security
 
 - **by default only the account that created the bucket can do stuff with it**
@@ -386,6 +394,8 @@ So when to use what?
 
 - uses **subnet groups**. This is basically telling aurora to **which subnet to deploy to**.
 
+* **supports schema changes** through **fast DDL** (DDL are the operations that have to do with the tables and the structure)
+
 #### Writers
 
 - **primary node of a cluster**
@@ -511,6 +521,8 @@ So when to use what?
 * dynamo **streams** **hold** data for **24 hrs**
 
 - **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+
+* **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
 
 ### CloudFront
 
@@ -910,6 +922,16 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can have **custom CloudWatch metrics trigger scale events**
 
+#### Lifecycle hooks
+
+- ASG exposes **lifecycle hooks**.
+
+* this allows your instance to **pause** before **initialization / termination**.
+
+- **when is paused** state you can **do your stuff** like **perform a backup or save some data**.
+
+* this is usually used when your instance is stateful
+
 #### Default termination policy
 
 There are number of factors that are taken into consideration while picking which instance to terminate.
@@ -956,7 +978,7 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - Different versions:
 
-  - **Provisioned IOPS** - the most io operations you can get (databases), most expensive
+  - **Provisioned IOPS** - the most io operations you can get (databases), most expensive. Recommended **when you need more than 16k IOPS**
   - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers).
   - **EBS Magnetic** - previous generation HDD, infrequent access
   - **General Purpose**
@@ -1078,6 +1100,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * **no additional charge, you only pay for the resources which were provisioned**
 
+- usually used for **web application deployments (with RDS eg.)** or **capacity provisioning and load balancing of a website**
+
 ### Monitoring Services
 
 #### CloudWatch
@@ -1140,6 +1164,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - **logs can** be **stored on S3 or CloudWatch**
 
 * **IT HAS TO DO WITH METADATA NOT THE ACTUAL CONTENTS OF THE IP**
+
+- by default **it exposes the ip of the person who is connecting**
 
 ### Analytics
 
@@ -1271,11 +1297,13 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * **automatically caches repeated queries**
 
-- **ONLY SINGLE AZ**. There are **no multiple az deployments**. When you want to have your cluster multi-az **use Redshift snapshots and enable CRR on them**
+- **ONLY SINGLE AZ**. There are **no multiple az deployments**.
 
 * you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **Usually** created **along with VPC endpoint gateway**
 
 - **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
+
+- you can use **Redshift Snapshots with S3 CRR** or **enable Cross-Region snapshots for the cluster** for **HA**.
 
 ### Networking (VPC)
 
@@ -1650,18 +1678,26 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * with WAF you can create **IP restrictions** on a given **CloudFront** distribution
 
-### CloudFormation Stack Set
+### Cloud Formation
+
+#### CloudFormation Stack Set
 
 ń
 Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
 
-### CloudFormation Change Set
+#### CloudFormation Change Set
 
 **Change sets** allows you to **preview changes you made to your template before deploying the template for realz**.
 
 - AWS will basically tell you: this will be modified, this will be deleted, this will be created...
 
 * when you are ready **you can execute given change set to introduce the changes**
+
+#### Drift Detection
+
+- allows you to detect changes compared to your reference template
+
+* this is useful when you want to see which department has modified resources created by your template (which should not happen)
 
 ### System Manager
 
