@@ -1785,6 +1785,16 @@ First thing you need to do is to **place the instance in a standby state**. When
 
 Remember that **VPC Endpoints can only be accessed inside the VPC**. That means that if you have a VPN connection or Direct Connect to your VPC you have to use some kind of proxy. Usually you would use **EC2 to be a proxy for your s3 requests**
 
+#### EC2 reports unhealthy but no ASG event takes place
+
+First of all remember that ASG determines the health of the instance using various factors:
+
+- status checks provided by EC2 itself (default way of checking)
+- health checks provided by ELB
+- custom health checks
+
+Now, there is a notion of **grace period on ASG**. This is the time it takes for your instances to boot up basically. **There may be point of time where health checks finish before the grace period**. This will mark your instance as unhealthy BUT **ASG will take no action until the grace period is over**.
+
 #### Enabling SSH with SG and NACL
 
 #### Changing instance type inside ASG
