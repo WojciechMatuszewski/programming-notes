@@ -247,6 +247,10 @@ Just me trying to learn for an exam 🤷‍♀
 
 - using **resource policy** you can **control access** to s3 resources, works on **identities you DO NOT control. THIS ALSO MEANS ANY IDENTITY**. When resource policy is used **specifically with s3**, it is known as **bucket policy**
 
+* you can enable **Server access logs** for S3. This will **provide you with detailed records for the requests made to the bucket**
+
+- with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group permissions to write to dest. bucket!**.
+
 So when to use what?
 
 - _identity policy_
@@ -715,7 +719,11 @@ So when to use what?
 
 - **route53 health checks can be used to check non-aws resources**
 
-- **fast: 10secs** or **default: 30 secs** interval
+* the health check **CANNOT CHECK EC2 INSTANCES!**
+
+- the health check **CAN CHECK OTHER HEALTH CHECKS**
+
+* **fast: 10secs** or **default: 30 secs** interval
 
 ### Route53 routing
 
@@ -1037,13 +1045,19 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
   - infrequent access
 
-- data **can be encrypted** at rest.
+- data **can be encrypted** at rest. If you want your volume to be encrypted **you have to specify it at creation time**. Otherwise **you will have to create new EFS volume and copy the data**
 
 * there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
 
 - **can be accessed between multiple AZs**
 
 * you **cannot** point **route53 alias to EFS**
+
+- can be accessed by instances **spread across multiple VPCs using VPC peering**
+
+* **mount targets can have security groups associated with them**
+
+- **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
 
 #### Placement Groups
 
@@ -1780,6 +1794,8 @@ Remember that **VPC Endpoints can only be accessed inside the VPC**. That means 
 **Instead of creating new launch configuration** you **can** also **suspend the scaling process** and **restart existing instances after specificizing new instance type**. This is also a solution but seems pretty meh tbh.
 
 #### ELB and Route53
+
+You should use simple `ipv4` and alias.
 
 #### Different IAM roles per container on ECS or Fargate
 
