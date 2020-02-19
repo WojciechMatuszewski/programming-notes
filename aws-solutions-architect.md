@@ -805,15 +805,27 @@ So when to use what?
 
 * **cluster** part comes from the fact that you will usually have **multiple ec2 instances running your containers**
 
+#### Task Definition
+
 - to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They are **logical group of containers running on your instance**
 
 * with **tasks definitions** you can specify the **image, way of logging and resource caps**
 
+- task definition also acts as sort of a bootstrap, **you can specify which command container should run when launched**
+
+#### Service Definition
+
+- this is the **how will my infra look like which will be running containers** configuration.
+
+* you specify **load balancers, task definitions (arn) and cluster (ec2 instances)** here.
+
 - **each container instance belongs to only one cluster at given time**
 
-* **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
+#### Auto Scaling
 
 - you can enable **ECS Auto Scaling**. It creates ASG automatically.
+
+* **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
 
 #### Fargate
 
@@ -976,15 +988,9 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * persistent storage
 
-- **EBS root volume CAN be encrypted**
+- **automatically replicated** within it's own AZ
 
-* **encryption** works **at rest** and **in transit between the volume and the instance**
-
-- **volumes from encrypted snapshots are also encrypted**
-
-* **automatically replicated** within it's own AZ
-
-- Different versions:
+* Different versions:
 
   - **Provisioned IOPS** - the most io operations you can get (databases), most expensive. Recommended **when you need more than 16k IOPS**
   - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers).
@@ -993,13 +999,19 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 So the costs are **usually** **Provisioned > General Purpose > Throughput Optimized HDD > Cold HDD**.
 
-- **Cold HDD cannot** be used as **boot volume**
+- **I/O grows proportionally to the size of GP ssd**
+
+* **Cold HDD cannot** be used as **boot volume**
+
+- you **can modify the size of an existing mounted volume**.
 
 * you can take **EBS snapshots**
 
 - **during** the operation of **creating a snapshot** you can **use** your volume **normally**
 
-* **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you want to make sure your data is secure.
+#### Snapshots
+
+- **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you want to make sure your data is secure.
 
 > If you make periodic snapshots of a volume, the snapshots are incremental. This means that only the blocks on the device that have changed after your last snapshot are saved in the new snapshot. Even though snapshots are saved incrementally, the snapshot deletion process is designed so that you need to retain only the most recent snapshot in order to restore the volume.
 
@@ -1007,11 +1019,33 @@ So the costs are **usually** **Provisioned > General Purpose > Throughput Optimi
 
 * **EBS snapshots are automatically stored on S3**. These are **inaccessible to you inside S3 console, you can see then through EBS menu in EC2**.
 
+- the **volumes themselves NOT SNAPSHOTS** are **replicated within SINGLE AZ**. If that AZ goes down, the volume is not available.
+
+#### Termination
+
 - **by default root EBS volume will be deleted when instance terminates**
 
 * **by default ATTACHED EBS volume will NOT be deleted when instance terminates**
 
-- the **volumes themselves NOT SNAPSHOTS** are **replicated within SINGLE AZ**. If that AZ goes down, the volume is not available.
+#### Encryption
+
+- you need **specific instance type** to be able to **enable encryption of volumes**. **Not all** instances **support encrypted volumes**.
+
+* **EBS root volume CAN be encrypted**
+
+- **encryption** works **at rest** and **in transit between the volume and the instance**
+
+* **volumes from encrypted snapshots are also encrypted**
+
+- you **cannot remove encryption** from **an encrypted volume**.
+
+* you can only **change the encryption state** while **copying unencrypted snapshot of an unencrypted snapshot**. Note the **COPY** word. This is very important.
+
+- you **can change the KMS logistic (keys)** only when **copying encrypted snapshot of an encrypted snapshot**.
+
+#### EBS Optimized
+
+This setting is within **advanced settings** and basically makes it so that **you volume has more IO available to it**
 
 #### EBS vs Instance Store
 
