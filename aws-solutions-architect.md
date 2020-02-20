@@ -43,6 +43,18 @@ Just me trying to learn for an exam 🤷‍♀
 
 - lambdas **inbound connections are blocked**. When it comes to outbound, **outbound TCP/IP and UDP/IP sockets are supported**.
 
+- by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
+
+#### Execution Role
+
+- this the **role assumed by lambda when invoked**
+
+#### Resource Role
+
+- **lambda** is **treated as a resource** so you can grant **resource-based policy to it**.
+
+* this is **especially useful** when **wanting to grant other account permissions to invoke your function**
+
 ### Step Functions
 
 - **state machines as a service**
@@ -522,11 +534,15 @@ So when to use what?
 
 - one **RCU** is equal to **4KB**. That is **one strongly consistent read OR 2 eventually consistent reads**
 
-* dynamo **streams** **hold** data for **24 hrs**
+* **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
 
-- **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+- **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
 
-* **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
+#### Dynamo Streams
+
+- dynamo **streams** **hold** data for **24 hrs**
+
+* the streams are **considered poll based events**
 
 ### CloudFront
 
@@ -590,6 +606,14 @@ So when to use what?
 ### API Gateway
 
 - **throttling** can be **configured at multiple levels** including Global and Service Call
+
+* you **can** setup **on premise integration**. You need to use **NLB and VPC link** to make it work. You would setup NLB within your VPC and connect to on prem through VPN or Direct Connect. Then that NLB would hit your on prem, APIGW would hit the NLB through VPC link
+
+- you **can** setup **integration with public-facing internet (non-aws) endpoints**
+
+* by default **AWS provides DDOS protection**
+
+- you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not CloudTrail!**. Remember, CloudTrial is about service calls made by identity within your AWS account.
 
 ### Load Balancers
 
@@ -1705,6 +1729,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * you can have ASG react to number of messages inside the queue
 
 - you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
+
+- **FIFO queues are not supported for lambda integration**. Also, **with Lambda, max batch size = 10!**
 
 ### AWS Workspaces
 
