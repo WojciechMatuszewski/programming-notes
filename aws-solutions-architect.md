@@ -657,6 +657,8 @@ So when to use what?
 
 * to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
 
+- when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
+
 #### ALB
 
 - work in **layer 7**. That means that they are **HTTP/HTTPS aware**
@@ -1808,6 +1810,10 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * **STS** is the thing that **creates temporary credentials** for **assuming a role** stuff.
 
 - the **keys** are **region-locked**. You can **copy keys across regions though**.
+
+### Server Migration Service (SMS)
+
+- used to **migrate on prem VMware stuff**
 
 ### TCO
 
