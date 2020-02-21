@@ -927,6 +927,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can **whitelist aws accounts when the AMI is private**
 
+* ami **does not contain instance type informations**. Remember that the AMI also contains the AMI permissions.
+
+#### Networking (IPs and DNS)
+
+- when **restarting (stop / start)** **private DNS / IPs stay the same**. The **private DNS** has a shape of **ip-X-X-X-X.ec2.internal**
+
+* when **restarting without elastic IP assigned** **public IPs / DNS is reassigned (dynamic properties)**
+
 #### Auto Scaling Groups
 
 - launching EC2 based on criteria as a service
@@ -1742,6 +1750,16 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - you do not have to manage hardware
 
+### AWS Organizations
+
+- **all accounts under organization** can **consolidate their bills** so that you have one **master bill, sum of all small bills**
+
+* there can only be **one master account within organization**. The master account **CANNOT be restricted**
+
+- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is ROOT node**.
+
+* the **root NODE** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs
+
 ### AWS Ops Work
 
 ### WAF (Web Application Firewall)
@@ -1814,6 +1832,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 ### Server Migration Service (SMS)
 
 - used to **migrate on prem VMware stuff**
+
+* **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
 
 ### TCO
 
