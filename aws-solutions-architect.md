@@ -285,6 +285,12 @@ So when to use what?
 
 - **no additional cost** for enabling encryption
 
+* there is something called **default encryption**. This will ensure that every object you put into a bucket will get encrypted. **You can use AES-256 or KMS**.
+
+- remember that **encryption only applies to objects uploaded AFTER the encryption was turned on**. Existing objects are NOT encrypted.
+
+* you can **override the default encryption PER object basis when uploading**.
+
 #### Replication
 
 - s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled ON THE ORIGIN AND THE TARGET BUCKET to be able to enable CRR**
@@ -538,6 +544,16 @@ So when to use what?
 
 - **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
 
+#### Scaling
+
+There are a few approaches when it comes to scaling with dynamoDB
+
+- **adaptive scaling**: where dynamo automatically allocate RCU/WCU to a given partition from the provisioned RCU/WCU pool of all partitions
+
+* **auto scaling**: you specify the **upper and lower bounds of RCU/WCU**
+
+- **on demand scaling**: where you **do not have to set any limits / bounds for RCU/WCU**. DynamoDB will take care of provisioning those dynamically and adjusting to the
+
 #### Dynamo Streams
 
 - dynamo **streams** **hold** data for **24 hrs**
@@ -647,17 +663,17 @@ So when to use what?
 
 - ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
 
-* **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
-
-- there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
+* there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
 
 #### ELB
 
-- general term for **ALB or NLB or Classic Load**
+- **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
 
-* to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
+* general term for **ALB or NLB or Classic Load**
 
-- when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
+- to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
+
+* when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
 
 #### ALB
 
@@ -1357,6 +1373,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * **processing** data **in near real-time**
 
+- you can use **Kinesis Scaling Utility** to **modify the number of shards**. While quite useful **this is not THAT cost effective**
+
 #### Redshift
 
 - **column-based database**
@@ -1537,6 +1555,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * works in **LAYER 3** of OSI model
 
 - **VPC can be in a different region**.
+
+* the **traffic** is **not over the internet**. It uses the aws global network.
 
 #### VPC Endpoints
 
@@ -1760,6 +1780,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * the **root NODE** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs
 
+- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
+
 ### AWS Ops Work
 
 ### WAF (Web Application Firewall)
@@ -1776,7 +1798,6 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### CloudFormation Stack Set
 
-ń
 Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
 
 #### CloudFormation Change Set
@@ -1839,6 +1860,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - this tool is used to **compare** the **cost of running in premise vs running in the AWS**
 
+### AWS Config
+
+- so CloudTrail monitors API calls to AWS services (made by your account). AWS Config **monitors your AWS resources configurations**.
+
+* with AWS Config you can have **history of given resource configurations**
+
 ### Patterns
 
 #### Copying AMI between regions
@@ -1854,6 +1881,10 @@ If you are distributing through `CloudFront` create `IAO` and associate that `IA
 
 So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to **either create an encrypted volume and copy data to it or take a snapshot, encrypt it, and create a new encrypted volume from the snapshot**,
 Then you can either swap the volumes or restore volume from newly created snapshot.
+
+#### EBS and Volume termination
+
+There is a **DeleteOnTermination** attribute. **By default root EBS volume will be deleted on instance termination**. This can be **changed using DeleteOnTermination attribute**. Other **non-root volumes will not be deleted by default**. Again **this can be changed by changing the DeleteOnTermination attribute**.
 
 #### Adding Encryption to an RDS db
 
