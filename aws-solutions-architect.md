@@ -1583,6 +1583,18 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * the **traffic** is **not over the internet**. It uses the aws global network.
 
+#### Transit Gateway
+
+Vpc peering is fine for a small scale, you know the deal with non-overlapping CIDR ranges can get a bit hard to achieve with multiple VPCs. This is where Transit Gateway come in.
+
+- **you can link multiple VPC using Transit Gateway**
+
+* **CIDRS cannot overlap**, but you make much less connections between VPCs in general
+
+- **works** with **direct connect and VPNs**
+
+* you can create **route tables on transit gateway to control the visibility of each VPC**
+
 #### VPC Endpoints
 
 - there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
@@ -1891,6 +1903,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * with AWS Config you can have **history of given resource configurations**
 
+### Data Lake
+
+- **a lot of data from a different services brought into one - usually s3**
+
+* this is due to having to perform analytics on different sources of data - this is quite cumbersome
+
+- aws integrates **Data-lake formation** which can help you with the creation of data-lakes.
+
 ### Patterns
 
 #### Copying AMI between regions
@@ -1989,5 +2009,4 @@ TODO:
 
 - IAM groups vs Organizations https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-L9mkcPg9kljD_hGH9MJ/What%20is%20the%20difference%20between%20IAM%20groups%20and%20OUs%20in%20AWS%20organizations%3F
 - data lake
-- ipsec vpn
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
