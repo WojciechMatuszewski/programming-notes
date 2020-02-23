@@ -630,7 +630,7 @@ func New(text string) error {
 var Test = New("Bad Request")
 
 func main() {
-	if err := webCall(); err == nil {
+	if err := webCall(); err == Test {
 		fmt.Println(err)
 		return
 	}
@@ -645,3 +645,21 @@ func webCall() error {
 ```
 
 Guess what is the output of the program? `Bad Request`. Why? because we are comparing the concrete values. If we change the implementation of `New` to return pointer of `errorString` that equality will never occur, because we are comparing Addresses!
+
+### Wrapping Errors
+
+- logging as insurance policy, this can cause too much noise when it comes to logging.
+
+* balance signal to noise ration when it comes to logs
+
+- make sure to include enough context within a log (tracing and error body)
+
+* if you decide to pass the error froward, **wrap the error with the context**. You should prefer handling errors as low as possible, but in general it's the developers choice.
+
+- use `%v` to get the user context of an error, the one you defined while wrapping. Use `+%v` to get both user context and the stack trace.
+
+## Packaging
+
+- avoid packages of type `utils` or `helpers` or `models` or similar. Package has to have specific purpose.
+
+* make sure your **packages can only import down!**. This is quite important, makes your codebase consistent.

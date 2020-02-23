@@ -55,6 +55,14 @@ Just me trying to learn for an exam 🤷‍♀
 
 * this is **especially useful** when **wanting to grant other account permissions to invoke your function**
 
+#### Lambda @ Edge
+
+- **CloudFront will invoke your function when given event happens**. These are **events that has to do with request life-cycle @ CloudFront like origin request or smth like that**.
+
+* you can use it to **perform A/B testing, since you can mutate the request send by the user**
+
+- you can also **perform some redirect logic , maybe check auth**.
+
 ### Step Functions
 
 - **state machines as a service**
@@ -192,6 +200,8 @@ Just me trying to learn for an exam 🤷‍♀
 
   - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
 
+* **tiers** apply to **object**, **not a bucket!**
+
 - **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
 
 * **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
@@ -280,8 +290,9 @@ So when to use what?
 - **PER OBJECT** basis
 
 * there are multiple options:
-  - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**
+  - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**. **You manage the AWS master key**.
   - **SSE-KMS**: **keys** are **managed by KMS service**. It **allows for role separation** since **keys are stored in accounts KMS**
+  - **SSE-S3**: The **master key is within AWS**.
 
 - **no additional cost** for enabling encryption
 
@@ -290,6 +301,20 @@ So when to use what?
 - remember that **encryption only applies to objects uploaded AFTER the encryption was turned on**. Existing objects are NOT encrypted.
 
 * you can **override the default encryption PER object basis when uploading**.
+
+##### SSE-S3
+
+- **objects encrypted by S3 using KMS on your behalf**
+
+* **keys** are **stored on the objects themselves**. If you have permission to read the object you can decrypt it
+
+##### SSE-KMS
+
+- **objects encrypted using inviditual KMS keys**
+
+* **keys are stored within S3 object**
+
+- **decryption of the objects** requires you to have **both iam permissions for the S3 operation and the KMS key permission**. That is why it allows the separation of roles.
 
 #### Replication
 
@@ -1886,6 +1911,14 @@ Then you can either swap the volumes or restore volume from newly created snapsh
 
 There is a **DeleteOnTermination** attribute. **By default root EBS volume will be deleted on instance termination**. This can be **changed using DeleteOnTermination attribute**. Other **non-root volumes will not be deleted by default**. Again **this can be changed by changing the DeleteOnTermination attribute**.
 
+#### Cross VPC EFS
+
+You can easily mount EFS on EC2 instances within a different VPC using **vpc peering or transit gateway**. Remember that you can **mount helper for encryption in transit**.
+
+#### Last resort of Scaling RDS Horizontally (Sharding)
+
+There is a couple of ways to scale the RDS. When you are out of options or it makes sense️™️ you might consider sharding. **Sharding is the process of splitting the database into smaller database and using some kind of router to route queries to specific databases**. As you can image this can be quite admin-heavy process when it comes to AWS.
+
 #### Adding Encryption to an RDS db
 
 **You cannot add encryption to an existing RDS db**. What you have to do is to **create db snapshot and encrypt it**. From that snapshot you can create a copy of your DB.
@@ -1897,6 +1930,11 @@ There is a **DeleteOnTermination** attribute. **By default root EBS volume will 
 #### Troubleshooting EC2 instances in ASG
 
 First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that are in standby state**
+
+#### ELB pass-through
+
+When you want to achieve pass-through on load balancers you usually want end-to-end encryption when it comes to traffic. Normally, traffic is decrypted at load-balancer level. But sometimes you need end-to-end encryption for compliance reasons. Then **you need to use either classic LB or NLB**. This is because these have some awareness on **layer 4**. This is important since **when you want end-to-end encryption you need to use TCP instead of HTTPS**.
+That means that **ALB is not capable of handling that traffic** since it only knows how to handle layer 7 stuff.
 
 #### Accessing VPC Endpoints
 
