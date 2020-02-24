@@ -1929,7 +1929,7 @@ Then you can either swap the volumes or restore volume from newly created snapsh
 
 #### EBS and Volume termination
 
-There is a **DeleteOnTermination** attribute. **By default root EBS volume will be deleted on instance termination**. This can be **changed using DeleteOnTermination attribute**. Other **non-root volumes will not be deleted by default**. Again **this can be changed by changing the DeleteOnTermination attribute**.
+There is a **DeleteOnTermination** attribute. **By default root EBS volume will be deleted on instance termination (they have the DeleteOnTermination protection tick on)**. This can be **changed using DeleteOnTermination attribute**. Other **non-root volumes will be NOT deleted by default**. Again **this can be changed by changing the DeleteOnTermination attribute**.
 
 #### Cross VPC EFS
 
