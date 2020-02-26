@@ -80,3 +80,59 @@ Event Notification pattern is implemented the most because it's the easiest. But
 Do not implement CQRS just because it's fancy. Think about **benefit vs effort**.
 
 You can use XRay with SQS SNS and such, nice!
+
+# Feedback for our solution
+
+## Message Processing vs Stream Processing
+
+### Message Processing
+
+- one message contains everything we need
+
+* built-in DLQ
+
+### Stream Processing
+
+- think click stream: you need A LOT of messages to get some value out of it
+
+* no DLQ
+
+## Feedback
+
+- would start with SNS and SQS and maybe Event Bridge, this would allow scalability
+
+* for ordering maybe we could try **SNS FIFO**. Currently it's on preview. With **SNS FIFO** you can push to **SQS FIFO** which would solve the problem with ordering and would allow you to drop DynamoDB.
+
+- **SQS has MessageGroupID attribute**. This is very similar to Kinesis PartitionID.
+
+* SNS and SQS solution is scalable and you pay only for what you use.
+
+- with SNS and SQS you could either send messages to another SQS queue and provide retention there (14 days) or stream the messages into S3. There is an example within serverless repo.
+
+* we can utilize batching to save on SQS costs (pay per request)
+
+- with SQS and SNS the latency would be better. Considering the Kinesis shard-subscribed limitations which would require you to create pipeline of streams (lambda to kinesis pushing to other kinesis streams) the SQS and SNS seems better.
+
+* Job Ads Stream can be replaced with SNS FIFO, that would probably be the most cost efficient solution. Again, no manual scaling.
+
+- the whole Atlas Topic and Ads Queue can be replaced with Event Bridge. But, as of now there is no ordering (planned for the future). The cost is roughly the same as SQS + SNS.
+
+* **MessageGroupID integration works different than lambda PartitionID**. There is a hidden pooling service between SQS and your lambda. This pooling service invokes your lambda function. At start there are **5 poolers** which scale by number of 60.
+
+- binlog: not just academic, not enough info, have not seen it yet. Enrichment has to be done manually, requires a lot of effort.
+
+* FIFO SQS and retries: when message is dropped to DLQ you probably have to process that message out of order
+
+- **Event Fork Pipeline** for replayability.
+
+* **Athena** can be used for pulling data from S3. Using timestamps and local jobAdID we can express the order.
+
+- when it comes to GDPR you could use Athena for extracting.
+
+## Misc
+
+- scaling control for Kinesis (concurrent invocations for a given shard?)
+
+* **serverless application lens**
+
+- there is a free **architecting serverless course**
