@@ -1,8 +1,4 @@
-# Aws Solutions Architect Stuff
-
-Just me trying to learn for an exam 🤷‍♀
-
-## Acloudguru & Linux Academy
+# AWS Stuff
 
 ### Basics
 
@@ -73,12 +69,14 @@ Just me trying to learn for an exam 🤷‍♀
 
 > IAM allows you to manage users and their level of access to the AWS Console
 
-- **IAM** is universal, does not apply to regions
+- **IAM** is universal, **is global**, does not apply to regions
 
 * **Identity Federation** allows your users to login into AWS Console using 3rd
   party providers like Google etc..
 
 - Supports **PCI DSS** framework. This is some kind of standard for security
+
+- **describe** means **to be able to view, inside the console**.
 
 * **Policies = Permissions**, written in JSON
 
@@ -97,6 +95,8 @@ Just me trying to learn for an exam 🤷‍♀
   to them.
 
 - Policies have **different types**. Like `Job function` or `AWS managed`.
+
+* **explicit deny ALWAYS overrules ALLOW**. This is very important, especially when working with groups.
 
 #### Roles
 
@@ -118,7 +118,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 #### Groups
 
-- **CANNOT BE NESTED**
+- **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **override explicit allow**. So in general the nesting should be avoided.
 
 * they are **not a true identities**. A **virtual construct** to **help** you **manage your users**.
 
@@ -147,6 +147,16 @@ Just me trying to learn for an exam 🤷‍♀
 #### Resource Based Policies
 
 - these are **special subset of policies** which are **attached to AWS Services**
+
+### Access Advisor
+
+- will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
+
+### Inline vs Managed Policies
+
+- **inline policies** can only be **used by one entity at the time**. You **cannot reuse the same inline policy for multiple identities (can be groups), you would have to create a new one, even if it's the same**.
+
+* **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
 
 ### S3
 
@@ -1083,6 +1093,18 @@ So the costs are **usually** **Provisioned > General Purpose > Throughput Optimi
 * you can take **EBS snapshots**
 
 - **during** the operation of **creating a snapshot** you can **use** your volume **normally**
+
+#### Max I/O
+
+This is quite important to know
+
+- **Provisioned IOPS**: up to **64,000 I/O** That is up to **1,000 MiB/s**
+
+- **General Purpose**: up to **16,000 I/O** That is up to **250 MiB/s per volume**
+
+- **Throughput optimized HDD**: up to **500 I/O** That is up to **500 MiB/s per volume**
+
+- **Cold HDD**: up to **250 I/O** That is up to **250 MiB/s per volume**
 
 #### Snapshots
 
