@@ -1,8 +1,4 @@
-# Aws Solutions Architect Stuff
-
-Just me trying to learn for an exam 🤷‍♀
-
-## Acloudguru & Linux Academy
+# AWS Stuff
 
 ### Basics
 
@@ -25,6 +21,12 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **Cloudfront** is a CDN
 
+### Throughput vs IOPS
+
+- **throughput** is a measurement of a **number of bits written / read per second**
+
+* **IOPS** is a measurement of a **number of read / write operations per second**
+
 ### Lambda
 
 - **LAMBDA IS HA by default! MULTI-AZ!**
@@ -33,7 +35,29 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **YOU CAN ATTACH SECURITY GROUP TO A LAMBDA**
 
-* **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. You can even make the lambda completely private
+* **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. The **subnet HAS TO BE PRIVATE though**. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because lambdas have ENI assigned that never gets public IP.
+
+- lambdas **inbound connections are blocked**. When it comes to outbound, **outbound TCP/IP and UDP/IP sockets are supported**.
+
+- by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
+
+#### Execution Role
+
+- this the **role assumed by lambda when invoked**
+
+#### Resource Role
+
+- **lambda** is **treated as a resource** so you can grant **resource-based policy to it**.
+
+* this is **especially useful** when **wanting to grant other account permissions to invoke your function**
+
+#### Lambda @ Edge
+
+- **CloudFront will invoke your function when given event happens**. These are **events that has to do with request life-cycle @ CloudFront like origin request or smth like that**.
+
+* you can use it to **perform A/B testing, since you can mutate the request send by the user**
+
+- you can also **perform some redirect logic , maybe check auth**.
 
 ### Step Functions
 
@@ -45,12 +69,14 @@ Just me trying to learn for an exam 🤷‍♀
 
 > IAM allows you to manage users and their level of access to the AWS Console
 
-- **IAM** is universal, does not apply to regions
+- **IAM** is universal, **is global**, does not apply to regions
 
 * **Identity Federation** allows your users to login into AWS Console using 3rd
   party providers like Google etc..
 
 - Supports **PCI DSS** framework. This is some kind of standard for security
+
+- **describe** means **to be able to view, inside the console**.
 
 * **Policies = Permissions**, written in JSON
 
@@ -69,6 +95,8 @@ Just me trying to learn for an exam 🤷‍♀
   to them.
 
 - Policies have **different types**. Like `Job function` or `AWS managed`.
+
+* **explicit deny ALWAYS overrules ALLOW**. This is very important, especially when working with groups.
 
 #### Roles
 
@@ -90,7 +118,7 @@ Just me trying to learn for an exam 🤷‍♀
 
 #### Groups
 
-- **CANNOT BE NESTED**
+- **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **override explicit allow**. So in general the nesting should be avoided.
 
 * they are **not a true identities**. A **virtual construct** to **help** you **manage your users**.
 
@@ -114,9 +142,21 @@ Just me trying to learn for an exam 🤷‍♀
 
 - **all roles that could be assumed are automatically assumed**
 
+* **by default** newly created User has **implicit DENY** on all services. **You should assign roles to lift the implicit deny**
+
 #### Resource Based Policies
 
 - these are **special subset of policies** which are **attached to AWS Services**
+
+### Access Advisor
+
+- will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
+
+### Inline vs Managed Policies
+
+- **inline policies** can only be **used by one entity at the time**. You **cannot reuse the same inline policy for multiple identities (can be groups), you would have to create a new one, even if it's the same**.
+
+* **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
 
 ### S3
 
@@ -170,13 +210,21 @@ Just me trying to learn for an exam 🤷‍♀
 
   - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
 
+* **tiers** apply to **object**, **not a bucket!**
+
 - **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
 
 * **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
 
 - **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
 
-* **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer requre random prefixes for performance gains
+* **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer require random prefixes for performance gains
+
+- with **Glacier/Deep Archive** you can use **Vault lock** feature. This is mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing deletes and such**
+
+* **Glacier/Deep Archive** have something called **expedited retrieval**. This allows you to **get the data from glacier and not wait Days/hours/Months**. There is a catch though. The **expedited retrieval** is **using resources from shared pool of resources**. There might a case there those resources are unavailable. This is where **provisioned glacier capacity** is used. This **ensures that your expedited retrieval request will not be rejected**. But you have to **pay more (additionally for it)**
+
+- you can use \*\*S3 Net
 
 #### Versioning
 
@@ -204,14 +252,20 @@ Just me trying to learn for an exam 🤷‍♀
 
 #### Storage Gateway
 
-- Physical/virtual device which **will replicate your data to AWS**.
+- **SOMETHING YOU DOWNLOAD**
 
-* There are 3 flavours of Storage Gateway
+* Physical/virtual device which **will replicate your data to AWS**.
+
+- There are 3 flavours of Storage Gateway
   - **File Gateway** : used for storing files as object in S3.
   - **Volume Gateway**: used for storing copies of hard-disk drives in S3.
   - **Tape Gateway**: used to get rid of tapes.
 
-- With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+* With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+
+- if you see **ISCSI** that is **probably Volume Gateway**.
+
+* remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because with cached volume only your primary data is written to s3.
 
 #### Security
 
@@ -224,6 +278,10 @@ Just me trying to learn for an exam 🤷‍♀
 * you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
 
 - using **resource policy** you can **control access** to s3 resources, works on **identities you DO NOT control. THIS ALSO MEANS ANY IDENTITY**. When resource policy is used **specifically with s3**, it is known as **bucket policy**
+
+* you can enable **Server access logs** for S3. This will **provide you with detailed records for the requests made to the bucket**
+
+- with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group permissions to write to dest. bucket!**.
 
 So when to use what?
 
@@ -242,10 +300,31 @@ So when to use what?
 - **PER OBJECT** basis
 
 * there are multiple options:
-  - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**
+  - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**. **You manage the AWS master key**.
   - **SSE-KMS**: **keys** are **managed by KMS service**. It **allows for role separation** since **keys are stored in accounts KMS**
+  - **SSE-S3**: The **master key is within AWS**.
 
 - **no additional cost** for enabling encryption
+
+* there is something called **default encryption**. This will ensure that every object you put into a bucket will get encrypted. **You can use AES-256 or KMS**.
+
+- remember that **encryption only applies to objects uploaded AFTER the encryption was turned on**. Existing objects are NOT encrypted.
+
+* you can **override the default encryption PER object basis when uploading**.
+
+##### SSE-S3
+
+- **objects encrypted by S3 using KMS on your behalf**
+
+* **keys** are **stored on the objects themselves**. If you have permission to read the object you can decrypt it
+
+##### SSE-KMS
+
+- **objects encrypted using inviditual KMS keys**
+
+* **keys are stored within S3 object**
+
+- **decryption of the objects** requires you to have **both iam permissions for the S3 operation and the KMS key permission**. That is why it allows the separation of roles.
 
 #### Replication
 
@@ -305,6 +384,8 @@ So when to use what?
 * you **can connect to** the underlying **EC2 instance that hosts the database**. Use SSH or different means.
 
 - you **DO NOT** have **access to the underlying OS, the DB is running on**.
+
+* you **can target read replica** but you **CAN NOT target second-master (multi-az)**
 
 #### Maintenance
 
@@ -370,6 +451,8 @@ So when to use what?
 
 - uses **subnet groups**. This is basically telling aurora to **which subnet to deploy to**.
 
+* **supports schema changes** through **fast DDL** (DDL are the operations that have to do with the tables and the structure)
+
 #### Writers
 
 - **primary node of a cluster**
@@ -425,6 +508,12 @@ So when to use what?
 - **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
 
 * you can backtrack **up to 72hrs in time**
+
+#### Monitoring
+
+- usually **using CloudWatch**.
+
+* you can **see the RAM usage without the need to install CloudWatch agent**. This **applies to RDS in general**
 
 #### Replication / High Availability
 
@@ -486,7 +575,25 @@ So when to use what?
 
 - one **RCU** is equal to **4KB**. That is **one strongly consistent read OR 2 eventually consistent reads**
 
-* dynamo **streams** **hold** data for **24 hrs**
+* **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+
+- **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
+
+#### Scaling
+
+There are a few approaches when it comes to scaling with dynamoDB
+
+- **adaptive scaling**: where dynamo automatically allocate RCU/WCU to a given partition from the provisioned RCU/WCU pool of all partitions
+
+* **auto scaling**: you specify the **upper and lower bounds of RCU/WCU**
+
+- **on demand scaling**: where you **do not have to set any limits / bounds for RCU/WCU**. DynamoDB will take care of provisioning those dynamically and adjusting to the
+
+#### Dynamo Streams
+
+- dynamo **streams** **hold** data for **24 hrs**
+
+* the streams are **considered poll based events**
 
 ### CloudFront
 
@@ -551,6 +658,14 @@ So when to use what?
 
 - **throttling** can be **configured at multiple levels** including Global and Service Call
 
+* you **can** setup **on premise integration**. You need to use **NLB and VPC link** to make it work. You would setup NLB within your VPC and connect to on prem through VPN or Direct Connect. Then that NLB would hit your on prem, APIGW would hit the NLB through VPC link
+
+- you **can** setup **integration with public-facing internet (non-aws) endpoints**
+
+* by default **AWS provides DDOS protection**
+
+- you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not CloudTrail!**. Remember, CloudTrial is about service calls made by identity within your AWS account.
+
 ### Load Balancers
 
 - different types:
@@ -583,15 +698,17 @@ So when to use what?
 
 - ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
 
-* **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
-
-- there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
+* there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
 
 #### ELB
 
-- general term for **ALB or NLB or Classic Load**
+- **ELB CANNOT BALANCE BETWEEN MULTIPLE SUBNETS IN THE SAME AZ**
 
-* to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
+* general term for **ALB or NLB or Classic Load**
+
+- to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
+
+* when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
 
 #### ALB
 
@@ -609,6 +726,8 @@ So when to use what?
 
 - great for **separating traffic based on their needs**
 
+* **CAN** have **SecurityGroup attached**
+
 #### NLB
 
 - **network load balancer exposes fixed IP**.
@@ -620,6 +739,8 @@ So when to use what?
 * **can balance** on **UDP**
 
 - **exposes FIXED IP Address**
+
+* **cannot** have **SecurityGroup attached to it**
 
 #### Monitoring
 
@@ -675,7 +796,11 @@ So when to use what?
 
 - **route53 health checks can be used to check non-aws resources**
 
-- **fast: 10secs** or **default: 30 secs** interval
+* the health check **CANNOT CHECK EC2 INSTANCES!**
+
+- the health check **CAN CHECK OTHER HEALTH CHECKS**
+
+* **fast: 10secs** or **default: 30 secs** interval
 
 ### Route53 routing
 
@@ -757,15 +882,27 @@ So when to use what?
 
 * **cluster** part comes from the fact that you will usually have **multiple ec2 instances running your containers**
 
+#### Task Definition
+
 - to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They are **logical group of containers running on your instance**
 
 * with **tasks definitions** you can specify the **image, way of logging and resource caps**
 
+- task definition also acts as sort of a bootstrap, **you can specify which command container should run when launched**
+
+#### Service Definition
+
+- this is the **how will my infra look like which will be running containers** configuration.
+
+* you specify **load balancers, task definitions (arn) and cluster (ec2 instances)** here.
+
 - **each container instance belongs to only one cluster at given time**
 
-* **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
+#### Auto Scaling
 
 - you can enable **ECS Auto Scaling**. It creates ASG automatically.
+
+* **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
 
 #### Fargate
 
@@ -841,6 +978,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can **whitelist aws accounts when the AMI is private**
 
+* ami **does not contain instance type informations**. Remember that the AMI also contains the AMI permissions.
+
+#### Networking (IPs and DNS)
+
+- when **restarting (stop / start)** **private DNS / IPs stay the same**. The **private DNS** has a shape of **ip-X-X-X-X.ec2.internal**
+
+* when **restarting without elastic IP assigned** **public IPs / DNS is reassigned (dynamic properties)**
+
 #### Auto Scaling Groups
 
 - launching EC2 based on criteria as a service
@@ -866,7 +1011,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * there are **multiple types of scaling policies: step, simple, custom and target tracking**
 
-- with **target tracking policy** you **specify a scaling metric and a target value**. Think **scaling policy to keep the average CPU utilization of ASG at 40% or something like that**. It **uses CloudWatch alarms and metrics to take actions**.
+- with **target tracking policy (also sometimes refereed as dynamic scaling)** you **specify a scaling metric and a target value**. Think **scaling policy to keep the average CPU utilization of ASG at 40% or something like that**. It **uses CloudWatch alarms and metrics to take actions**.
 
 - the deal with **step scaling policies** is that you can create **multiple predicates for a given policy**. For example: **add 2 capacity unit when CPU hits 80% , add 2 capacity units when CPU hits 60%**.
 
@@ -879,6 +1024,18 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - there is notion of **connection draining**. This is **done by ALB OR NLB**. When **terminating an instance ALB/NLB will wait for that period to pass**.
 
 * **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that instance**. **ASG does not `listen` for ELB commands to terminate stuff**. ASG has its own checks and based on them, and only them it decides which instance to terminate.
+
+- you can have **custom CloudWatch metrics trigger scale events**
+
+#### Lifecycle hooks
+
+- ASG exposes **lifecycle hooks**.
+
+* this allows your instance to **pause** before **initialization / termination**.
+
+- **when is paused** state you can **do your stuff** like **perform a backup or save some data**.
+
+* this is usually used when your instance is stateful
 
 #### Default termination policy
 
@@ -916,30 +1073,42 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 * persistent storage
 
-- **EBS root volume CAN be encrypted**
+- **automatically replicated** within it's own AZ
 
-* **encryption** works **at rest** and **in transit between the volume and the instance**
+* Different versions:
 
-- **volumes from encrypted snapshots are also encrypted**
-
-* **automatically replicated** within it's own AZ
-
-- Different versions:
-
-  - **Provisioned IOPS** - the most io operations you can get (databases), most expensive
+  - **Provisioned IOPS** - the most io operations you can get (databases), most expensive. Recommended **when you need more than 16k IOPS**
   - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers).
   - **EBS Magnetic** - previous generation HDD, infrequent access
   - **General Purpose**
 
 So the costs are **usually** **Provisioned > General Purpose > Throughput Optimized HDD > Cold HDD**.
 
-- **Cold HDD cannot** be used as **boot volume**
+- **I/O grows proportionally to the size of GP ssd**
+
+* **Cold HDD cannot** be used as **boot volume**
+
+- you **can modify the size of an existing mounted volume**.
 
 * you can take **EBS snapshots**
 
 - **during** the operation of **creating a snapshot** you can **use** your volume **normally**
 
-* **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you want to make sure your data is secure.
+#### Max I/O
+
+This is quite important to know
+
+- **Provisioned IOPS**: up to **64,000 I/O** That is up to **1,000 MiB/s**
+
+- **General Purpose**: up to **16,000 I/O** That is up to **250 MiB/s per volume**
+
+- **Throughput optimized HDD**: up to **500 I/O** That is up to **500 MiB/s per volume**
+
+- **Cold HDD**: up to **250 I/O** That is up to **250 MiB/s per volume**
+
+#### Snapshots
+
+- **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you want to make sure your data is secure.
 
 > If you make periodic snapshots of a volume, the snapshots are incremental. This means that only the blocks on the device that have changed after your last snapshot are saved in the new snapshot. Even though snapshots are saved incrementally, the snapshot deletion process is designed so that you need to retain only the most recent snapshot in order to restore the volume.
 
@@ -947,9 +1116,33 @@ So the costs are **usually** **Provisioned > General Purpose > Throughput Optimi
 
 * **EBS snapshots are automatically stored on S3**. These are **inaccessible to you inside S3 console, you can see then through EBS menu in EC2**.
 
+- the **volumes themselves NOT SNAPSHOTS** are **replicated within SINGLE AZ**. If that AZ goes down, the volume is not available.
+
+#### Termination
+
 - **by default root EBS volume will be deleted when instance terminates**
 
 * **by default ATTACHED EBS volume will NOT be deleted when instance terminates**
+
+#### Encryption
+
+- you need **specific instance type** to be able to **enable encryption of volumes**. **Not all** instances **support encrypted volumes**.
+
+* **EBS root volume CAN be encrypted**
+
+- **encryption** works **at rest** and **in transit between the volume and the instance**
+
+* **volumes from encrypted snapshots are also encrypted**
+
+- you **cannot remove encryption** from **an encrypted volume**.
+
+* you can only **change the encryption state** while **copying unencrypted snapshot of an unencrypted snapshot**. Note the **COPY** word. This is very important.
+
+- you **can change the KMS logistic (keys)** only when **copying encrypted snapshot of an encrypted snapshot**.
+
+#### EBS Optimized
+
+This setting is within **advanced settings** and basically makes it so that **you volume has more IO available to it**
 
 #### EBS vs Instance Store
 
@@ -983,11 +1176,19 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
   - infrequent access
 
-- data **can be encrypted** at rest.
+- data **can be encrypted** at rest. If you want your volume to be encrypted **you have to specify it at creation time**. Otherwise **you will have to create new EFS volume and copy the data**
 
 * there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
 
 - **can be accessed between multiple AZs**
+
+* you **cannot** point **route53 alias to EFS**
+
+- can be accessed by instances **spread across multiple VPCs using VPC peering**
+
+* **mount targets can have security groups associated with them**
+
+- **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
 
 #### Placement Groups
 
@@ -1043,6 +1244,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - will automatically scale your app
 
 * **no additional charge, you only pay for the resources which were provisioned**
+
+- usually used for **web application deployments (with RDS eg.)** or **capacity provisioning and load balancing of a website**
 
 ### Monitoring Services
 
@@ -1106,6 +1309,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - **logs can** be **stored on S3 or CloudWatch**
 
 * **IT HAS TO DO WITH METADATA NOT THE ACTUAL CONTENTS OF THE IP**
+
+- by default **it exposes the ip of the person who is connecting**
 
 ### Analytics
 
@@ -1215,6 +1420,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * **processing** data **in near real-time**
 
+- you can use **Kinesis Scaling Utility** to **modify the number of shards**. While quite useful **this is not THAT cost effective**
+
 #### Redshift
 
 - **column-based database**
@@ -1237,11 +1444,13 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * **automatically caches repeated queries**
 
-- **ONLY SINGLE AZ**. There are **no multiple az deployments**. When you want to have your cluster multi-az **use Redshift snapshots and enable CRR on them**
+- **ONLY SINGLE AZ**. There are **no multiple az deployments**.
 
 * you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **Usually** created **along with VPC endpoint gateway**
 
 - **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
+
+- you can use **Redshift Snapshots with S3 CRR** or **enable Cross-Region snapshots for the cluster** for **HA**.
 
 ### Networking (VPC)
 
@@ -1308,6 +1517,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **local rules** have the **highest priority**
 
+* **local default rules cannot be edited!**. That means that unless you explicitly create a route table for a given subnet, the global route table will associate CIDR blocks with given subnets inside your VPC
+
 #### NAT Gateway
 
 - **NOT compatible** with **IPv6**. Use **egress-only IGW for that**
@@ -1316,7 +1527,7 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **lives in a public subnet**
 
-* has **elastic static IP address**
+* has **elastic static IP address**. That Ip has to be assigned.
 
 - **converts SOURCES` private ip address** to its ip address
 
@@ -1333,6 +1544,10 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
 
 * it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use one NAT Gateway per subnet**
+
+- **CANNOT SEND TRAFFIC OVER VPC ENDPOINTS**
+
+* remember that NAT Gateway is only used to allow traffic to the internet (and back). You cannot connect with a specific instance yourself since the instances themselves do not have an ip address (assuming they live inside private subnet).
 
 #### NACL
 
@@ -1366,25 +1581,41 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### Peering
 
-- **linking TWO!! VPCs together** (in a scalable way)
+- you **cannot use** **anothers VPC NAT Gateway**. So the setup where you have peered VPCs and one is trying to connect to the internet using others NAT Gateway will not work.
 
-* when VPCs are peered, services inside those VPCS can **communicate** with each other using **private IP addresses**
+* **linking TWO!! VPCs together** (in a scalable way)
 
-- can **span accounts, regions**
+- when VPCs are peered, services inside those VPCS can **communicate** with each other using **private IP addresses**
 
-* VPCs are joined using **Network Gateway**
+* can **span accounts, regions**
 
-- **CIDR** blocks **cannot overlap**
+- VPCs are joined using **Network Gateway**
 
-* **VPC peer has to be accepted by the other side**
+* **CIDR** blocks **cannot overlap**
 
-- you will probably have to **check SG, NACL** to make sure it works. **Enabling peering DOES NOT MEAN that the connection is made**.
+- **VPC peer has to be accepted by the other side**
 
-* VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
+* you will probably have to **check SG, NACL** to make sure it works. **Enabling peering DOES NOT MEAN that the connection is made**.
 
-- works in **LAYER 3** of OSI model
+- VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
 
-* **VPC can be in a different region**.
+* works in **LAYER 3** of OSI model
+
+- **VPC can be in a different region**.
+
+* the **traffic** is **not over the internet**. It uses the aws global network.
+
+#### Transit Gateway
+
+Vpc peering is fine for a small scale, you know the deal with non-overlapping CIDR ranges can get a bit hard to achieve with multiple VPCs. This is where Transit Gateway come in.
+
+- **you can link multiple VPC using Transit Gateway**
+
+* **CIDRS cannot overlap**, but you make much less connections between VPCs in general
+
+- **works** with **direct connect and VPNs**
+
+* you can create **route tables on transit gateway to control the visibility of each VPC**
 
 #### VPC Endpoints
 
@@ -1401,6 +1632,10 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 - With **Interface Endpoints** you have to **manually select AZs** to make it **highly available**
 
 * **Interface Endpoints** use **DNS, routing is NOT INVOLVED**
+
+- can have **VPC endpoint policies** attached. This allows you to control the access from the endpoint to the resource. It does not override IAM roles / IAM user policies or service-specific policies.
+
+* **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct Connect and such!
 
 #### IPV6
 
@@ -1466,6 +1701,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - **used to connect to Customer Gateways**
 
+* **HA by design**
+
 ##### Site-to-site Connection
 
 - this is **logical entity that connects Customer Gateway and Virtual Private Gateway**
@@ -1524,15 +1761,17 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 #### ElastiCache
 
-- operates with **products that are NOT dynamoDB**
+- you **cannot point** route53 **alias record to ElastiCache cluster**
 
-* supports **Redis** or **Memcached**
+* operates with **products that are NOT dynamoDB**
 
-- offloading databases: **caches reads just like DAX**
+- supports **Redis** or **Memcached**
 
-* storing session data of users
+* offloading databases: **caches reads just like DAX**
 
-- there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
+- storing session data of users
+
+* there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
 
 ### Communication Between Services, Queues
 
@@ -1580,6 +1819,8 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
 
+- **FIFO queues are not supported for lambda integration**. Also, **with Lambda, max batch size = 10!**
+
 ### AWS Workspaces
 
 - desktop as a service
@@ -1587,6 +1828,18 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 * basically you can provision windows or linux desktop to your employers
 
 - you do not have to manage hardware
+
+### AWS Organizations
+
+- **all accounts under organization** can **consolidate their bills** so that you have one **master bill, sum of all small bills**
+
+* there can only be **one master account within organization**. The master account **CANNOT be restricted**
+
+- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is ROOT node**.
+
+* the **root NODE** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs
+
+- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
 
 ### AWS Ops Work
 
@@ -1600,18 +1853,25 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 * with WAF you can create **IP restrictions** on a given **CloudFront** distribution
 
-### CloudFormation Stack Set
+### Cloud Formation
 
-ń
+#### CloudFormation Stack Set
+
 Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
 
-### CloudFormation Change Set
+#### CloudFormation Change Set
 
 **Change sets** allows you to **preview changes you made to your template before deploying the template for realz**.
 
 - AWS will basically tell you: this will be modified, this will be deleted, this will be created...
 
 * when you are ready **you can execute given change set to introduce the changes**
+
+#### Drift Detection
+
+- allows you to detect changes compared to your reference template
+
+* this is useful when you want to see which department has modified resources created by your template (which should not happen)
 
 ### System Manager
 
@@ -1649,6 +1909,30 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - the **keys** are **region-locked**. You can **copy keys across regions though**.
 
+### Server Migration Service (SMS)
+
+- used to **migrate on prem VMware stuff**
+
+* **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
+
+### TCO
+
+- this tool is used to **compare** the **cost of running in premise vs running in the AWS**
+
+### AWS Config
+
+- so CloudTrail monitors API calls to AWS services (made by your account). AWS Config **monitors your AWS resources configurations**.
+
+* with AWS Config you can have **history of given resource configurations**
+
+### Data Lake
+
+- **a lot of data from a different services brought into one - usually s3**
+
+* this is due to having to perform analytics on different sources of data - this is quite cumbersome
+
+- aws integrates **Data-lake formation** which can help you with the creation of data-lakes.
+
 ### Patterns
 
 #### Copying AMI between regions
@@ -1665,6 +1949,18 @@ If you are distributing through `CloudFront` create `IAO` and associate that `IA
 So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to **either create an encrypted volume and copy data to it or take a snapshot, encrypt it, and create a new encrypted volume from the snapshot**,
 Then you can either swap the volumes or restore volume from newly created snapshot.
 
+#### EBS and Volume termination
+
+There is a **DeleteOnTermination** attribute. **By default root EBS volume will be deleted on instance termination (they have the DeleteOnTermination protection tick on)**. This can be **changed using DeleteOnTermination attribute**. Other **non-root volumes will be NOT deleted by default**. Again **this can be changed by changing the DeleteOnTermination attribute**.
+
+#### Cross VPC EFS
+
+You can easily mount EFS on EC2 instances within a different VPC using **vpc peering or transit gateway**. Remember that you can **mount helper for encryption in transit**.
+
+#### Last resort of Scaling RDS Horizontally (Sharding)
+
+There is a couple of ways to scale the RDS. When you are out of options or it makes sense️™️ you might consider sharding. **Sharding is the process of splitting the database into smaller database and using some kind of router to route queries to specific databases**. As you can image this can be quite admin-heavy process when it comes to AWS.
+
 #### Adding Encryption to an RDS db
 
 **You cannot add encryption to an existing RDS db**. What you have to do is to **create db snapshot and encrypt it**. From that snapshot you can create a copy of your DB.
@@ -1677,6 +1973,25 @@ Then you can either swap the volumes or restore volume from newly created snapsh
 
 First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that are in standby state**
 
+#### ELB pass-through
+
+When you want to achieve pass-through on load balancers you usually want end-to-end encryption when it comes to traffic. Normally, traffic is decrypted at load-balancer level. But sometimes you need end-to-end encryption for compliance reasons. Then **you need to use either classic LB or NLB**. This is because these have some awareness on **layer 4**. This is important since **when you want end-to-end encryption you need to use TCP instead of HTTPS**.
+That means that **ALB is not capable of handling that traffic** since it only knows how to handle layer 7 stuff.
+
+#### Accessing VPC Endpoints
+
+Remember that **VPC Endpoints can only be accessed inside the VPC**. That means that if you have a VPN connection or Direct Connect to your VPC you have to use some kind of proxy. Usually you would use **EC2 to be a proxy for your s3 requests**
+
+#### EC2 reports unhealthy but no ASG event takes place
+
+First of all remember that ASG determines the health of the instance using various factors:
+
+- status checks provided by EC2 itself (default way of checking)
+- health checks provided by ELB
+- custom health checks
+
+Now, there is a notion of **grace period on ASG**. This is the time it takes for your instances to boot up basically. **There may be point of time where health checks finish before the grace period**. This will mark your instance as unhealthy BUT **ASG will take no action until the grace period is over**.
+
 #### Enabling SSH with SG and NACL
 
 #### Changing instance type inside ASG
@@ -1686,6 +2001,8 @@ First thing you need to do is to **place the instance in a standby state**. When
 **Instead of creating new launch configuration** you **can** also **suspend the scaling process** and **restart existing instances after specificizing new instance type**. This is also a solution but seems pretty meh tbh.
 
 #### ELB and Route53
+
+You should use simple `ipv4` and alias.
 
 #### Different IAM roles per container on ECS or Fargate
 
@@ -1712,6 +2029,6 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- IAM groups vs Organizations https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-L9mkcPg9kljD_hGH9MJ/What%20is%20the%20difference%20between%20IAM%20groups%20and%20OUs%20in%20AWS%20organizations%3F
 - data lake
-- ipsec vpn
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/

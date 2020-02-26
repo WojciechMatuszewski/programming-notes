@@ -1,5 +1,48 @@
 # Typescript Stuff
 
+## Type-Only imports and import elision
+
+Being able to import a concrete `JavaScript` implementation and the type in the same import statement is awesome
+
+```ts
+import { doThing, OptionsType } from "./foo.js";
+```
+
+When bundling, babel (or ts) will get rid of that import, everything should be working fine. This process is working because of something called _import elision_. (That's the removal of ts-typings from the file part).
+
+But sometimes, these imports can get a bit ambiguous
+
+```ts
+import { Something } from "./module.js";
+
+export { Something };
+```
+
+Is `Something` a type or a concrete JavaScript code?. Before `TypeScript 3.8` this situation could result in bugs and wrong code being emitted (looking at you `firebase`).
+
+There was a way to guard yourself against such behavior using special `import` syntax. Lets
+
+```ts
+const Something: import("./module.js").Something;
+
+export { Something };
+```
+
+This basically tells `TypeScript` that `Something` is only a type.
+
+With `TypeScript 3.8` there is another, more streamlined way of doing this, somewhat taken from `flow`. There will be new `import type` syntax
+
+```ts
+import type {Bar, Baz} from 'module'
+```
+
+Now, there are some restrictions to it, one of which is that you cannot mix default and named exports. This is to ensure that the import statements are non-ambiguous
+
+```ts
+import type Foo, {Bar, Baz} from 'module'
+// ^ this will fail
+```
+
 ## Testing
 
 What can we test in the realm of TypeScript? Code ? sure, but what about the
@@ -22,11 +65,11 @@ This tool was built by Microsoft. A sample test:
 
 ```ts
 var stooges = [
-  { name: 'moe', age: 40 },
-  { name: 'larry', age: 50 },
-  { name: 'curly', age: 60 }
+  { name: "moe", age: 40 },
+  { name: "larry", age: 50 },
+  { name: "curly", age: 60 }
 ];
-_.pluck(stooges, 'name'); // $ExpectType string[]
+_.pluck(stooges, "name"); // $ExpectType string[]
 ```
 
 In this example we are using a special comment that ensures that this is the
@@ -62,9 +105,9 @@ Assert Signature:
 
 ```ts
 function isDefined<T>(x: T): asserts x is NonNullable<T> {
-    if(x == undefined) {
-        throw AssertionError('Not defined!')
-    }
+  if (x == undefined) {
+    throw AssertionError("Not defined!");
+  }
 }
 ```
 
@@ -116,8 +159,8 @@ So the deal with `Null Coalescing` is that it only checks for `null` and
 `undefined`
 
 ```js
-console.log(0 || 'something'); // something
-console.log(0 ?? 'something'); // 0
+console.log(0 || "something"); // something
+console.log(0 ?? "something"); // 0
 ```
 
 This can help in cases where you have valid non-truthy values as your _guardian
@@ -138,7 +181,7 @@ interface User {
   password: string;
 }
 
-type OnlyName = Pick<User, 'name'>; // {name: string}
+type OnlyName = Pick<User, "name">; // {name: string}
 ```
 
 ### Exclude<T, U>
@@ -155,10 +198,10 @@ interface User {
 }
 
 // remember, we are diffing 2 types, code below will not do what we want it to do
-type WithoutName = Exclude<User, 'name'>; // User, because T is not extending U so Exclude returns User
+type WithoutName = Exclude<User, "name">; // User, because T is not extending U so Exclude returns User
 
 // now we are talking, we are diffing each key with 'name'
-type WithoutName = Exclude<keyof User, 'name'>; // 'email' | 'password'
+type WithoutName = Exclude<keyof User, "name">; // 'email' | 'password'
 ```
 
 ## Combining Exclude And Pick
@@ -182,7 +225,7 @@ bad things will happen. `keyof string` will actually look at it's prototype
 chain.
 
 ```typescript
-type Test = keyof 'something'; // "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf"
+type Test = keyof "something"; // "toString" | "charAt" | "charCodeAt" | "concat" | "indexOf" | "lastIndexOf"
 ```
 
 ## Return Type
@@ -202,7 +245,7 @@ type SomeType = ReturnType<typeof add>; // number
 - you have to cast directly if you want to get _value_ as the type
 
 ```typescript
-const None = 'None';
+const None = "None";
 function something() {
   return { x: None };
 }
@@ -251,9 +294,9 @@ interface Obj {
   age: number;
 }
 
-type t1 = SomeType<'ala'>; // 'ala'
-type t2 = SomeType<Obj['name']>; // string
-type t3 = SomeType<Obj['age']>; // never
+type t1 = SomeType<"ala">; // 'ala'
+type t2 = SomeType<Obj["name"]>; // string
+type t3 = SomeType<Obj["age"]>; // never
 ```
 
 Using this feature you can create (most of them already ship by default) types
@@ -280,7 +323,7 @@ type GetFunctionArgumentTypes<F> = F extends (...args: Array<infer U>) => void
 
 function numberArg(x: number) {}
 
-function arrayMixed(x: [1, 'a', {}]) {}
+function arrayMixed(x: [1, "a", {}]) {}
 
 type t1 = GetFunctionArgumentTypes<typeof numberArg>; // number
 type t2 = GetFunctionArgumentTypes<typeof arrayMixed>; // [1, 'a', {}]
@@ -325,11 +368,11 @@ just that the value is the type itself**
 var someObj = {
   prop1: 1,
   prop2: 2,
-  prop3: 'someString'
+  prop3: "someString"
 };
 
 Object.keys(someObj); // 'prop1' , 'prop2' ...
-someObj['prop1']; // 1
+someObj["prop1"]; // 1
 ```
 
 ### Caution warning
@@ -447,7 +490,7 @@ interface Something {
   age: number;
 }
 
-type Identity = { [Key in 'name' | 'age']: Something[Key] };
+type Identity = { [Key in "name" | "age"]: Something[Key] };
 // would return the same Something type
 ```
 
@@ -533,7 +576,7 @@ you can create in vanilla Javascript. This is familiar territory
 
 ```js
 typeof []; // "object"
-typeof 'something'; // "string"
+typeof "something"; // "string"
 typeof 3; // "number"
 ```
 
@@ -543,7 +586,7 @@ returning underlying vanilla JS types it will return us the Typescript type.
 ```typescript
 const person = {
   age: 22,
-  name: 'Wojtek'
+  name: "Wojtek"
 };
 
 type Person = typeof person; // {age: number, name: string}
@@ -561,7 +604,7 @@ This is very simple guard. Check this out:
 
 ```typescript
 function someFn(arg: number | string) {
-  if (typeof arg == 'number') {
+  if (typeof arg == "number") {
     // typescript knows we are dealing with a number here
     return arg.toExponential(); // ok
   }
@@ -638,7 +681,7 @@ interface NormalPerson {
   age: 30;
 }
 function isAthlete(subject: Athlete | NormalPerson): subject is Athlete {
-  return 'speed' in subject;
+  return "speed" in subject;
 }
 ```
 
@@ -735,11 +778,11 @@ function reverse(dataToReverse: string): string;
 function reverse<T>(dataToReverse: T[]): T[];
 // real implementation
 function reverse<T>(dataToReverse: string | T[]): string | T[] {
-  if (typeof dataToReverse == 'string') {
+  if (typeof dataToReverse == "string") {
     return dataToReverse
-      .split('')
+      .split("")
       .reverse()
-      .join('');
+      .join("");
   }
   return dataToReverse.slice().reverse();
 }
@@ -776,7 +819,7 @@ though.
 ```typescript
 enum Something {}
 // you just introduced this to your bundle
-'use strict';
+"use strict";
 var Something;
 (function(Something) {})(Something || (Something = {}));
 ```
@@ -788,14 +831,14 @@ inlined_
 
 ```typescript
 const enum Something {
-  yes = 'Yes',
-  no = 'No'
+  yes = "Yes",
+  no = "No"
 }
 let selected = Something.no;
 
 // gets compiled to
-'use strict';
-let selected = 'No' /* no */;
+"use strict";
+let selected = "No" /* no */;
 ```
 
 Much better now!
@@ -826,7 +869,7 @@ It is frustrating , we have to help typescript a little bit by casting to a
 `mock type`
 
 ```typescript
-import { Link as LinkDep } from 'react-router-dom';
+import { Link as LinkDep } from "react-router-dom";
 
 const MockLink = LinkDep as jest.Mock<LinkDep>;
 
@@ -851,7 +894,7 @@ Turns out you can create object types out of thin air. Check this out:
 
 ```typescript
 type HasKey<K extends string, V> = { [_ in K]: V };
-type Testing = HasKey<'wojtek', number>;
+type Testing = HasKey<"wojtek", number>;
 /*
   {
     wojtek: number
@@ -885,8 +928,8 @@ declare function get<K extends string>(
 Our function could be used as such
 
 ```ts
-get('name')({ name: 'wojtek' }); // all ok
-get('name')({ someprop: 'someprop' }); // Typescript is not happy, error!
+get("name")({ name: "wojtek" }); // all ok
+get("name")({ someprop: "someprop" }); // Typescript is not happy, error!
 ```
 
 ### KeyAt
@@ -927,7 +970,10 @@ Our function can also filter stuff. We basically want to work _lenses-like_.
 Example:
 
 ```ts
-get(matching(friend => friend.friends > 5), 'name')(obj.friends);
+get(
+  matching(friend => friend.friends > 5),
+  "name"
+)(obj.friends);
 ```
 
 With our current implementation this operation is impossible. How would we
@@ -953,7 +999,7 @@ declare function get<Item, K extends string>(
 
 const popularFriends = get(
   matching((user: User) => user.friends.length > 5),
-  'name'
+  "name"
 )(user.friends);
 ```
 
@@ -1018,10 +1064,10 @@ use _function types_. We are going to work on function parameters where we can
 directly _infer_ from the rest of arguments.
 
 ```ts
-type Tail<A extends any[]> = ((...t: A) => any) extends ((
+type Tail<A extends any[]> = ((...t: A) => any) extends (
   _: any,
   ...tail: infer TailType
-) => any)
+) => any
   ? TailType
   : never;
 
@@ -1039,7 +1085,7 @@ know when we should stop and return the return type. `HasTail` type will allows
 us to do so
 
 ```ts
-type HasTail<A extends any[]> = A extends ([] | [any]) ? false : true;
+type HasTail<A extends any[]> = A extends [] | [any] ? false : true;
 type Test = HasTail<[]>; // false
 type Test2 = HasTail<[1, 2]>; // true
 ```
@@ -1116,7 +1162,7 @@ passed in and such. This, in terms, will allows us to implement partial
 application.
 
 ```ts
-type Length<T extends any[]> = T['length'];
+type Length<T extends any[]> = T["length"];
 
 type Test = Length<[1, 2, 3, 4]>; // 4
 ```
@@ -1133,7 +1179,7 @@ again, make us of `function types` trick.
 type Prepend<TypeToPrepend, Tuple extends any[]> = ((
   head: TypeToPrepend,
   ...tail: Tuple
-) => any) extends ((...args: infer U) => any)
+) => any) extends (...args: infer U) => any
   ? U
   : never;
 
@@ -1190,8 +1236,8 @@ type Person = {
   last: string;
 };
 
-const tooFew = { first: 'Stefan' };
-const tooMany = { first: 'Stefan', last: 'Joe', other: 'something' };
+const tooFew = { first: "Stefan" };
+const tooMany = { first: "Stefan", last: "Joe", other: "something" };
 
 declare function savePerson(person: Person): void;
 

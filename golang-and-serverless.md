@@ -34,6 +34,23 @@ Properties:
 
 Now you can simulate your API fully without using `apex/gateway` or similar tools.
 
+## Gotchas
+
+### Nested functions with defer
+
+`defer` is used to, well _defer_ the call. There is one gotcha though (probably there are many ;p). **Only the outer function is deferred**. So lets look at some examples:
+
+```go
+f, err := os.Open("file.txt")
+if err != nil {
+  // code
+}
+
+defer log.Printf("closed file: %v", f.Close()) // the gotcha is here
+```
+
+So the above code wont work as expected. The `f.Close()` will be called immediately and the result would be passed to the `v` formatting arg. `defer` only works directly on `log.Printf` here (in this case).
+
 ## Patterns
 
 ### Functional options
