@@ -136,3 +136,43 @@ You can use XRay with SQS SNS and such, nice!
 * **serverless application lens**
 
 - there is a free **architecting serverless course**
+
+# Day 2
+
+## Setup
+
+E-commerce, not really fancy, had to operate in several countries. On prem, monolithic. DB was Oracle. That db was a central place for a lot of domains.
+No TDD , dedicated test teams. Overall pretty bad :c
+
+## Challenges
+
+- coupling
+
+* testing
+
+- basically monolith which is not really HA
+
+## Goals
+
+Replacing the monolith, going for microservices (they used Event Carried State Transfer).
+
+### Loading Data
+
+Using VPN connection and so called _exporters_. This is basically ACL for the single source of truth.
+_Exporter_ was fetching on the basis of version for a given product (there was a versioning table). If the version changed the real query was dispatched. Then that data was exported into kinesis (multiple subscribers).
+
+There were some problems with Stock data (static and dynamic from a CRM). Decision was to create 2 topics for that, one from the DB one from the CRM (to the same subscriber).
+
+### Why Kinesis?
+
+- they did not want to go with Kafka because the infrastructure was not really event-sourcing like (no need to reply).
+
+* SQS and SNS was not considered due to ordering constrains (fifo did not exist back then).
+
+### Kinesis Insights
+
+- number of subscribers could be an issue (remember up to 5 consumers and 5 reads/s). There is enchanted fan-out for Kinesis, might be interesting to look into.
+
+### Deletion
+
+Since the events are hold in the separate dbs the decision to delete the data has to be on per consumer basis.
