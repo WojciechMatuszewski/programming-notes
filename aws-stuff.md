@@ -98,6 +98,12 @@
 
 * **explicit deny ALWAYS overrules ALLOW**. This is very important, especially when working with groups.
 
+#### Real Identities
+
+- both **user and roles** are known as real identities. They both have **ARN** and **can be referenced in other areas of AWS**
+
+* **groups ARE NOT REAL IDENTITIES**. You cannot login onto the group and such. This is such an organizational being.
+
 #### Roles
 
 - you should **prefer attaching roles** instead of using aws credentials
@@ -110,11 +116,51 @@
 
 - **policies** are **associated with roles**
 
+* allows you to set **Authentication attributes**: **Usernames, passwords, Access Keys, MFA and Password Policies**
+
+- **authentication** is the process there **you are being verified for being you, being that entity you present yourself as**
+
 #### Policies
 
 - **applied** to a **IAM Role or a Resource**
 
 * have a **Sid**. This is **basically just a description** of the policy.
+
+- **explicit deny** always **overrides explicit allow**
+
+* **inline policies** should only be applied to a single user. They **should not** be used to **applying policies to multiple identities**. You should **use managed / custom policies for that!**.
+
+##### Conditions
+
+- you can create elaborate conditional logic for a given policy
+
+An example for s3-prefix (folder)
+
+```json
+{
+  "Condition": { "StringLike": { "s3:prefix": ["testuser/*"] } }
+}
+```
+
+- you can use **variables** within IAM policies
+
+```json
+{
+  "Condition": { "StringLike": { "s3:prefix": ["${aws:username}/*"] } }
+}
+```
+
+#### Inline vs Managed Policies
+
+- **inline policies** can only be **used by one entity at the time**. You **cannot reuse the same inline policy for multiple identities (can be groups), you would have to create a new one, even if it's the same**.
+
+* **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
+
+#### Resource Based Policies
+
+- these are **special subset of policies** which are **attached to AWS Services**
+
+* they have **Principal field**. This is due to the fact that they are evaluated whenever some principal access given resource. IAM role / group policies does not have that because they are applied to principals from the beginning.
 
 #### Groups
 
@@ -144,19 +190,9 @@
 
 * **by default** newly created User has **implicit DENY** on all services. **You should assign roles to lift the implicit deny**
 
-#### Resource Based Policies
-
-- these are **special subset of policies** which are **attached to AWS Services**
-
 ### Access Advisor
 
 - will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
-
-### Inline vs Managed Policies
-
-- **inline policies** can only be **used by one entity at the time**. You **cannot reuse the same inline policy for multiple identities (can be groups), you would have to create a new one, even if it's the same**.
-
-* **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
 
 ### S3
 
