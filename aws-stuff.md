@@ -106,19 +106,50 @@
 
 #### Roles
 
-- you should **prefer attaching roles** instead of using aws credentials
+- **not something you log into**. It does not have username, password or any kind of long-term credentials.
 
-* roles can be attached to many services
+* you should **prefer attaching roles** instead of using aws credentials
 
-- roles can be used **in any region**, they are universal
+- roles can be attached to many services
 
-* **roles have underlying policies, which have the notion of the Effect (allow/deny)**
+* roles can be used **in any region**, they are universal
 
-- **policies** are **associated with roles**
+- **roles have underlying policies, which have the notion of the Effect (allow/deny)**
 
-* allows you to set **Authentication attributes**: **Usernames, passwords, Access Keys, MFA and Password Policies**
+* **policies** are **associated with roles**
 
-- **authentication** is the process there **you are being verified for being you, being that entity you present yourself as**
+- allows you to set **Authentication attributes**: **Usernames, passwords, Access Keys, MFA and Password Policies**
+
+* **authentication** is the process there **you are being verified for being you, being that entity you present yourself as**
+
+#### Assuming Roles
+
+- role which you can assume has two segments
+  - **trust policy**. This defines **who can assume a role**
+  - **policy document**. This is a standard policy
+
+* **trust relationship** is **ONLY checked** when **assuming a role** (that usually happens once or infrequently)
+
+* assuming a role means **being a completely different identity, defined by assumed role**
+
+- under the hood **assuming a role means using completely new, temporary, credentials created with sts which are associated with the assumed role**
+
+* **all roles that could be assumed are automatically assumed**
+
+- **by default** newly created User has **implicit DENY** on all services. **You should assign roles to lift the implicit deny**
+
+* **assumed credentials** are **valid until the expiration date expires**
+
+##### Revoking Sessions
+
+Since removing a policy from a role which is assumed can be destructive there is another way of removing assumed (short-term) credentials. That is **revoking a session**. This basically **ads a deny all policy for tokens granted before given date**. So you did not remove the permissions directly, only invalidated given tokens. Pretty sweat!
+
+##### Assuming cross account role
+
+##### Assuming EC2 Role
+
+You have to assign a role to a given instance. Then you can ssh into that instance and do stuff that that role allows you to do. This is possible because the `aws-cli` is able to obtain the short term credentials that the role provides. This is done by **querying an instance metadata role**.
+`http://169.254.169.254/latest/urity-credentials/NAME_OF_THE_ROLE`
 
 #### Policies
 
@@ -179,16 +210,6 @@ An example for s3-prefix (folder)
 - **UP TO 5000 IAM Users**
 
 #### Organizations and Service control policies.
-
-#### Assuming Roles
-
-- assuming a role means **being a completely different identity, defined by assumed role**
-
-* under the hood **assuming a role means using completely new, temporary, credentials created with sts which are associated with the assumed role**
-
-- **all roles that could be assumed are automatically assumed**
-
-* **by default** newly created User has **implicit DENY** on all services. **You should assign roles to lift the implicit deny**
 
 ### Access Advisor
 
