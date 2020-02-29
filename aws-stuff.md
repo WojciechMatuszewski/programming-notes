@@ -161,6 +161,12 @@ You have to assign a role to a given instance. Then you can ssh into that instan
 
 * **inline policies** should only be applied to a single user. They **should not** be used to **applying policies to multiple identities**. You should **use managed / custom policies for that!**.
 
+##### Resource Policy
+
+Now we are in the domain of a given service / resource.
+
+- **IAM is not involved here**, control is **handled by a given service / resource**
+
 ##### Conditions
 
 - you can create elaborate conditional logic for a given policy
@@ -209,7 +215,7 @@ An example for s3-prefix (folder)
 
 - **UP TO 5000 IAM Users**
 
-#### Organizations and Service control policies.
+<!-- #### Organizations and Service control policies. -->
 
 ### Access Advisor
 
@@ -225,9 +231,13 @@ An example for s3-prefix (folder)
 
 - There is **unlimited** storage. Maximum file-size is 5 TB though.
 
+* **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
+
 * By **default** uploaded objects **are NOT public**. You have to set them as public manually
 
-- S3 has an **universal namespace**. That means that Bucket names has to be
+- **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer require random prefixes for performance gains
+
+* S3 has an **universal namespace**. That means that Bucket names has to be
   unique globally.
 
 * Object consists of:
@@ -238,23 +248,14 @@ An example for s3-prefix (folder)
   - Metadata
   - Sub-resources
 
-- When it comes to consistency:
-
-  - **Read after Write** for **PUTS**. Basically you can read immediately after
-    you write to a bucket
-
-  - **Eventual Consistency** for **overwrite PUTS and DELETE**. Basically if you
-    delete something or override it, it takes a second or two for you changes to
-    propagate and take an effect.
-
-* Buckets can be **replicated to another account or to a different bucket
+- Buckets can be **replicated to another account or to a different bucket
   (region needs to differ)**.
 
-- S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
+* S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
   the Bucket. Then that uploaded object is **transferred automatically to your
   bucket**.
 
-* S3 is a **tiered** storage
+- S3 is a **tiered** storage
 
   - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
@@ -267,21 +268,48 @@ An example for s3-prefix (folder)
 
   - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
 
-* **tiers** apply to **object**, **not a bucket!**
+- **tiers** apply to **object**, **not a bucket!**
 
-- **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
+#### Glacier
 
-* **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
-
-- **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
-
-* **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer require random prefixes for performance gains
-
-- with **Glacier/Deep Archive** you can use **Vault lock** feature. This is mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing deletes and such**
+- **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
 
 * **Glacier/Deep Archive** have something called **expedited retrieval**. This allows you to **get the data from glacier and not wait Days/hours/Months**. There is a catch though. The **expedited retrieval** is **using resources from shared pool of resources**. There might a case there those resources are unavailable. This is where **provisioned glacier capacity** is used. This **ensures that your expedited retrieval request will not be rejected**. But you have to **pay more (additionally for it)**
 
-- you can use \*\*S3 Net
+- **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
+
+* **used** by **virtual tape library** (underneath)
+
+- there exists a concept of **glacier vault**. You can think of the vault as a **bucket in it's own rights**.
+
+* **glacier vault** can be given **access by using IAM roles**.
+
+- you can create **vault archives UP to 40 tb** (this is usually a .zip file).
+
+##### Vault Lock
+
+- you have **24hrs** after creation **to confirm that the lock you created meets your requirements**. If that's not the case **you can abort it** or **complete it**.
+
+* vault lock is **immutable**. You **cannot change it**. You can either **destroy it or create a new one**.
+
+- you can **attach vault lock policies to the vault** eg. nobody can delete anything out of it (or use MFA). This is mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing deletes and such**
+
+#### Consistency
+
+- **Read after Write** for **PUTS**. Basically you can read immediately after
+  you write to a bucket
+
+- **Eventual Consistency** for **overwrite PUTS and DELETE**. Basically if you
+  delete something or override it, it takes a second or two for you changes to
+  propagate and take an effect.
+
+* **updates to a single key** are **atomic**. Only one person can update given object at given point of time.
+
+#### Limits
+
+- maximum of **5TB for a single file**
+
+* maximum of **5GB for a single upload** (use **multipart upload**)
 
 #### Versioning
 
@@ -294,6 +322,8 @@ An example for s3-prefix (folder)
 * When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on that object (thus creating a new version). Your **previous versions are still there!, you can view them within versions tab!**.
 
 - You can restore your deleted objects by **deleting a delete marker**.
+
+* **you are still billed for old versions**. Event though there might a delete marker the object is not permanently deleted so you have to pay for the storage.
 
 #### Life-cycle rules
 
@@ -314,9 +344,9 @@ An example for s3-prefix (folder)
 * Physical/virtual device which **will replicate your data to AWS**.
 
 - There are 3 flavours of Storage Gateway
-  - **File Gateway** : used for storing files as object in S3.
-  - **Volume Gateway**: used for storing copies of hard-disk drives in S3.
-  - **Tape Gateway**: used to get rid of tapes.
+  - **File Gateway** : used for storing files as object in S3 - **NFS, SMB** .
+  - **Volume Gateway**: used for storing copies of hard-disk drives in S3 - **iSCSI**.
+  - **Tape Gateway**: used to get rid of tapes - **iSCSI**, for use mainly with **backup software**.
 
 * With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
 
@@ -324,13 +354,15 @@ An example for s3-prefix (folder)
 
 * remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because with cached volume only your primary data is written to s3.
 
+- **useful** when doing any kind of **cloud migrations**
+
 #### Security
 
 - **by default only the account that created the bucket can do stuff with it**
 
 * when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
 
-- **ACLs are legacy!**. They are attached to bucket or an object.
+- **ACLs are legacy!**. They are attached to bucket or an object. Mainly used for **granting log delivery**.
 
 * you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
 
@@ -340,6 +372,8 @@ An example for s3-prefix (folder)
 
 - with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group permissions to write to dest. bucket!**.
 
+* **bucket policies** and **ALC** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
+
 So when to use what?
 
 - _identity policy_
@@ -348,9 +382,11 @@ So when to use what?
 * _bucket policy_ (resource policy)
   - when **you DO NOT control the identity**
 
-- **pre-signed urls** work **per object level**
+- by **exposing a role which can be assumed** by third party you are **making sure that YOU as a bucket owner stay as the owner of a given object**. This is why you would want to use _bucket policies_ when you do not control the identity.
 
-* **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **made useless sometimes, when the permissions of signing identity changed**
+* **pre-signed urls** work **per object level**
+
+- **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **made useless sometimes, when the permissions of signing identity changed**
 
 #### Encryption
 
@@ -377,7 +413,7 @@ So when to use what?
 
 ##### SSE-KMS
 
-- **objects encrypted using inviditual KMS keys**
+- **objects encrypted using individual KMS keys**
 
 * **keys are stored within S3 object**
 
@@ -396,6 +432,14 @@ So when to use what?
   - any **existing objects before replication was enabled**
 
 - **it is possible** for an **object to change storage class and object permissions while in the process of CRR**
+
+* you can **override the owner of an object** when that object (due to CRR) is **going to another bucket**. This might be helpful to implement some kind of security measures
+
+#### Misc
+
+- there is something called **requester pays**. This is where the **person who downloads the object pays for the transfer**.
+
+* you can use **BitTorrent** to **distribute s3 content**.
 
 ### Snowball
 
@@ -635,6 +679,12 @@ So when to use what?
 * **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
 
 - **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
+
+* remember that **indexes take up space!**. This is quite important and something you have to consider while creating your 20th GSI ;p.
+
+#### ACID
+
+- DynamoDB **can be ACID compliant** using **Dynamo Transactions**.
 
 #### Scaling
 
@@ -1128,11 +1178,13 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - basically **virtual harddisk in the cloud**
 
-* persistent storage
+* remember that they are **tied to specific AZ**
 
-- **automatically replicated** within it's own AZ
+- persistent storage
 
-* Different versions:
+* **automatically replicated** within it's own AZ
+
+- Different versions:
 
   - **Provisioned IOPS** - the most io operations you can get (databases), most expensive. Recommended **when you need more than 16k IOPS**
   - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers).
@@ -1175,6 +1227,12 @@ This is quite important to know
 
 - the **volumes themselves NOT SNAPSHOTS** are **replicated within SINGLE AZ**. If that AZ goes down, the volume is not available.
 
+* you can **create snapshots** either **manually**, **using LifeCycle Manager** or through **CloudWatch jobs**.
+
+#### LifeCycle Manager for EBS
+
+Creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
+
 #### Termination
 
 - **by default root EBS volume will be deleted when instance terminates**
@@ -1213,21 +1271,17 @@ This setting is within **advanced settings** and basically makes it so that **yo
 
 When restoring from an EBS volume, **new volume will not immediately have maximum performance**. This is due to the fact that **not all data is copied instantly to a new volume**. The data is **copied lazily, when you attempt to read from a given resource**. This is why **sometimes, sys admins perform recursive lookup of all files on the volume, this will 'prime' them for real read operation**.
 
-#### LifeCycle Manager for EBS
-
-Creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
-
 #### EFS
 
-- **E**lastic **F**ile **S**ystem (EFS)
+- you **only pay for what you use**, but the EFS in itself is **3 times more expensive than EBS** and **MUCH MORE (20x) expensive than s3**
 
-* **Similar to EBS**, but there is one **BIG DIFFERENCE**. EFS instance can be used by multiple EC2 instances, EBS volume can only be used by one EC2 instance.
+* **E**lastic **F**ile **S**ystem (EFS)
 
-- think of it as multiple EC2 instances having the same disk
+- **Similar to EBS**, but there is one **BIG DIFFERENCE**. EFS instance can be used by multiple EC2 instances, EBS volume can only be used by one EC2 instance.
 
-* **automatically scales storage capacity**, when deleting shrinks, when adding resizes
+* think of it as multiple EC2 instances having the same disk
 
-- **CAN ONLY BE USED BY EC2** instances
+- **automatically scales storage capacity**, when deleting shrinks, when adding resizes
 
 * just like s3 there are different tiers:
 
@@ -1235,17 +1289,29 @@ Creating snapshots manually is ok but AWS can take care of this task for you. Wi
 
 - data **can be encrypted** at rest. If you want your volume to be encrypted **you have to specify it at creation time**. Otherwise **you will have to create new EFS volume and copy the data**
 
-* there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
+* **can be accessed between multiple AZs**
 
-- **can be accessed between multiple AZs**
+- you **cannot** point **route53 alias to EFS**
 
-* you **cannot** point **route53 alias to EFS**
+* can be accessed by instances **spread across multiple VPCs using VPC peering**
 
-- can be accessed by instances **spread across multiple VPCs using VPC peering**
+- **mount targets can have security groups associated with them**
 
-* **mount targets can have security groups associated with them**
+* **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
 
-- **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
+##### Mount Points / Targets
+
+- there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
+
+* this feature allows you to use the same **efs volume through different AZs**
+
+##### DataSync
+
+- AWS says that **in theory you can mount EFS on prem** but that **requires really good connection**. Moreover the **traffic** itself **is not encrypted** so **VPN or Direct Connect is recommended**.
+
+* what you can do is to use **AWS DataSync**. This will **sync your on premise env with the EFS volume which you use within the AWS env.**.
+
+![img](./assets/efs-datasync.png)
 
 #### Placement Groups
 
@@ -1829,6 +1895,10 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 - storing session data of users
 
 * there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
+
+#### Memcached
+
+- data there is **lost when** instance (or cluster) is **stopped**
 
 ### Communication Between Services, Queues
 
