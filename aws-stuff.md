@@ -296,7 +296,7 @@ An example for s3-prefix (folder)
 
 #### Consistency
 
-- **Read after Write** for **PUTS**. Basically you can read immediately after
+- **strong consistency Read after Write** for **PUTS**. Basically you can read immediately after
   you write to a bucket
 
 - **Eventual Consistency** for **overwrite PUTS and DELETE**. Basically if you
@@ -304,6 +304,10 @@ An example for s3-prefix (folder)
   propagate and take an effect.
 
 * **updates to a single key** are **atomic**. Only one person can update given object at given point of time.
+
+#### Consistency Gotchas
+
+- **404 get, upload, then get** will **result in eventual consistency**. This is due to **how internals of s3 work**. It seems like there is **some cache involved**.
 
 #### Limits
 
@@ -355,6 +359,10 @@ An example for s3-prefix (folder)
 * remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because with cached volume only your primary data is written to s3.
 
 - **useful** when doing any kind of **cloud migrations**
+
+##### File Gateway
+
+- **exposes itself as NFS**
 
 #### Security
 
@@ -1299,6 +1307,14 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 * **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
 
+##### Backups
+
+- EFS operates on the notion of **backups not snapshots**
+
+* you can create backups using **AWS Backup service**. This service allows you to create **incremental EFS backups**.
+
+But most important information, remember **there are no so called snapshots when it comes to EFS**.
+
 ##### Mount Points / Targets
 
 - there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
@@ -1445,6 +1461,8 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 - data lives on s3, it **never changes**
 
+* does **not support XML**
+
 * **schema on read** a.k.a you define what the data YOU would like to look like.
 
 - **schema is not persistent**, schema is only used when you read data (perform queries)
@@ -1465,6 +1483,16 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 - is very **flexible** when it comes to **data which it needs to process while querying**. It can be **structured / semi-structured / unstructured**
 
+- **if you really care about performance** consider **transforming the s3 objects** to **parquet format**. This is a special format that makes the querying much faster.
+
+##### Athena Vs Redshift Spectrum
+
+Both of these tools can be used for DataLake querying, but, and that is very important, **you would use Athena when your data mostly lives on s3 and you DO NOT have to perform joins with other data sources**. This is a **complete opposite of RedshiftSpectrum** where you would **use RedshiftSpectrum where you want to join s3 data with existing Redshift tables or create union products**.
+
+##### Athena Vs EMR
+
+**Athena is only for querying** it does **not transform the data**. **EMR has capabilities of transforming the data**.
+
 #### EMR (Elastic Map Reduce)
 
 - allows you to perform **analysis on large-scaled, semi-structured or unstructured data**
@@ -1481,11 +1509,11 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 * **use for on-demand, ad-hoc, short-term tasks**
 
-- **Athena does not manipulate the data, EMR CAN MANIPULATE THE DATA**
-
 * **master node can** be **sshed into**
 
 - usually has to do with **Spark** jobs.
+
+* **can manipulate the data**
 
 #### Data Pipeline
 
@@ -1574,6 +1602,12 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 - **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
 
 - you can use **Redshift Snapshots with S3 CRR** or **enable Cross-Region snapshots for the cluster** for **HA**.
+
+#### Spectrum
+
+- this enables you to **query directly from data files on S3**
+
+* this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
 
 ### Networking (VPC)
 
@@ -1896,9 +1930,25 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
 
+#### Redis
+
+- data **can be persistent** but this **should not be treated as persistent data store**
+
+* can be used for things as **leaderboards**
+
+- have **pub/sub** capabilities.
+
+* you can **backup existing data** and then **restore that data**
+
+- supports **in-transit and at-rest encryption**
+
 #### Memcached
 
+- can be used for **database caching** (usually the SQL ones)
+
 - data there is **lost when** instance (or cluster) is **stopped**
+
+* **DOES NOT support encryption**
 
 ### Communication Between Services, Queues
 
@@ -2156,6 +2206,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- MountTarget FQDN ?? (EFS)
 - IAM groups vs Organizations https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-L9mkcPg9kljD_hGH9MJ/What%20is%20the%20difference%20between%20IAM%20groups%20and%20OUs%20in%20AWS%20organizations%3F
 - data lake
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
