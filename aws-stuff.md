@@ -1,7 +1,5 @@
 # AWS Stuff
 
-### Basics
-
 - **Principal** is a person or application that can make authenticated or anonymous request to perform an action on a system. **Often seen in-code in lambda authorizers**
 
 * Security **in the cloud** is **your job**
@@ -247,7 +245,9 @@ An example for s3-prefix (folder)
 
 - normally, by default only **consolidated billing is `turn on` per se**. There is also **all features mode**.
 
-* this mode **enables you to create Service Control Policies (SCPs)**. These, as described above, allow you to place restrictions on given OUs, member accounts or a root container.
+* the all features mode **can be enabled on a existing organization**.
+
+- this mode **enables you to create Service Control Policies (SCPs)**. These, as described above, allow you to place restrictions on given OUs, member accounts or a root container.
 
 ### AWS Support Plans
 
@@ -278,6 +278,16 @@ An example for s3-prefix (folder)
 - you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**. With this you can for example see if someone enabled inbound port on security group which you deemed non-compliant.
 
 * keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
+
+### AWS Service Catalog
+
+- **describes** all **services you offer**. Very **much like online store** but instead of buying eg. food **someone buys products you provide**.
+
+* **region aware** service.
+
+- even if you as a user do have a readonly access to aws, you would still be able to deploy a product from a portfolio if the provider provided deploy permissions on portfolio.
+
+* since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
 
 ### Access Advisor
 
@@ -1301,7 +1311,9 @@ This is quite important to know
 
 #### LifeCycle Manager for EBS
 
-Creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
+- creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
+
+* this **can be done across different DBS** like SQL or Oracle or other.
 
 #### Termination
 
@@ -1428,6 +1440,18 @@ But most important information, remember **there are no so called snapshots when
   - **warm attached**: when instance is stopped
   - **cold attached**: when instance is launched
 
+### AWS Batch
+
+- allows you to run **processes (async) across one or more instances**
+
+* **aws will take care of scaling**
+
+- think of **bash scripts or other jobs**
+
+* **one job might depend on another**. With AWS Batch you **can make sure that jobs are done in a right order**.
+
+- **you can use SPOT EC2 instances** for maximum cost efficiency.
+
 ### SWF (Simple Workflow Service)
 
 - **manage workflow state, similarly to Step Functions**
@@ -1484,6 +1508,8 @@ But most important information, remember **there are no so called snapshots when
 - there is notion of **events**, which basically provides **near instant stream of system events**
 
 * **events** have to do more with **what is happening on the instance (resource) level**. This could be **EC2 instance changed the state from pending to running** and such.
+
+- you can configure **CloudWatch Events rules**. These allow you to run **scheduled jobs (cron)** and **invoke different targets (services like lambda)**.
 
 ### CloudTrial
 
@@ -1852,7 +1878,7 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * **Interface Endpoints** use **DNS, routing is NOT INVOLVED**
 
-- can have **VPC endpoint policies** attached. This allows you to control the access from the endpoint to the resource. It does not override IAM roles / IAM user policies or service-specific policies.
+- can have **VPC endpoint policies** attached. This allows you to control the access from the endpoint to the resource. It **does not override IAM roles / IAM user policies or service-specific policies**.
 
 * **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct Connect and such!
 
@@ -2060,6 +2086,8 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 - **FIFO queues are not supported for lambda integration**. Also, **with Lambda, max batch size = 10!**
 
+* you **cannot** **convert existing queue to FIFO**. You **have to create new one**.
+
 ### AWS Workspaces
 
 - desktop as a service
@@ -2079,6 +2107,18 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 - looks for CSS or SQL-injection stuff
 
 * with WAF you can create **IP restrictions** on a given **CloudFront** distribution
+
+### Cognito
+
+- authorization and authentication service
+
+#### User Pools
+
+#### Identity Pools
+
+- **here is where you grant permissions to users**
+
+* using identity pools you can **setup federated identities** (Google, Fb, ..)
 
 ### Cloud Formation
 
@@ -2114,7 +2154,11 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * automatically provides resources for you
 
-- automatically generates scripts to transform the data and load it to the data store (probably db)
+* has an option to deploy a **crawler**. That crawler will **discover (scan) data and populate the Data Catalog**. This **data is usually s3**.
+
+- with **Data Catalog** you can use **Athena / EMR / Redshift to query that catalog**.
+
+* **can generate ETL code** but **only for Scala or Python**.
 
 ### AWS Trusted Advisor
 
@@ -2155,6 +2199,10 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - aws integrates **Data-lake formation** which can help you with the creation of data-lakes.
 
 ### Patterns
+
+#### Migrating from MongoDB
+
+Since mongo is a nosql tech. one might choose **DocumentDB** or **DynamoDB**. It depends on the requirements and the question. Either way **not RDS!**.
 
 #### Copying AMI between regions
 
