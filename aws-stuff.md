@@ -215,7 +215,69 @@ An example for s3-prefix (folder)
 
 - **UP TO 5000 IAM Users**
 
-<!-- #### Organizations and Service control policies. -->
+#### AWS Organizations
+
+- **all accounts under organization** can **consolidate their bills** so that you have one **master bill, sum of all small bills**
+
+* there can only be **one master account within organization**. The master account **CANNOT be restricted**
+
+- there can **only be one Root container**.
+
+* the **root container** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs. **Root container / node** is the **account that has OUs underneath**.
+
+- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is root container**.
+
+* when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
+
+- you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
+
+##### SCPS
+
+- **by default** the **root account has FullAWSAccess SCP attached**
+
+* they **do not really provide access**. They **restrict what you can do when you HAVE permissions**. Think of them as **boundaries**.
+
+- can be used as **blacklist** or a **whitelist**.
+
+* the **policy evaluation process** is as follows: first you take your iam permissions then you take SCPs. You **take union of permissions from your IAM and SCP, these are the permissions you effectively have**.
+
+- you can have **multiple SCPs which apply**. In such case you take **union of every SCPs with your IAM permissions**.
+
+##### All features
+
+- normally, by default only **consolidated billing is `turn on` per se**. There is also **all features mode**.
+
+* this mode **enables you to create Service Control Policies (SCPs)**. These, as described above, allow you to place restrictions on given OUs, member accounts or a root container.
+
+### AWS Support Plans
+
+- **developer**: for testing and experimenting with AWS
+
+* **business**: small companies, actually using AWS in production
+
+- **enterprise**: for mission critical and big companies
+
+* **only business and enterprise** come with **full checks for trusted advisor**.
+
+- **business and enterprise** allow you to have **programmatic(API) access to AWS Support APIS**
+
+* **business** gives you **access to TAM - Technical Account Manager**.
+
+### AWS Config
+
+- so CloudTrail monitors API calls to AWS services (made by your account). AWS Config **monitors your AWS resources configurations**.
+
+- you have too **tick additional checkbox** to **support monitoring global services (not only in a given region)**
+
+* with AWS Config you can have **history of given resource configurations**
+
+- saves config snapshots to a bucket
+
+* you can **traverse resource configuration over time**.
+
+- you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**. With this you can for example see if someone enabled inbound port on security group which you deemed non-compliant.
+
+* keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
 
 ### Access Advisor
 
@@ -263,7 +325,7 @@ An example for s3-prefix (folder)
     frequently but requires rapid access when needed
 
   - **S3 Glacier / Glacier Deep Archive**: used for data archiving, where you would
-    keep files for a loooong time. Retrieval time is configurable (**Deep
+    keep files for a long time. Retrieval time is configurable (**Deep
     Archive is locked on 12hr retrieval time though**)
 
   - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
@@ -445,7 +507,7 @@ So when to use what?
 
 #### Misc
 
-- there is something called **requester pays**. This is where the **person who downloads the object pays for the transfer**.
+- there is something called **requester pays**. This is where the **person who downloads the object pays for the transfer**. this is **this feature can only be used with people who have an existing aws account**.
 
 * you can use **BitTorrent** to **distribute s3 content**.
 
@@ -2006,18 +2068,6 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 - you do not have to manage hardware
 
-### AWS Organizations
-
-- **all accounts under organization** can **consolidate their bills** so that you have one **master bill, sum of all small bills**
-
-* there can only be **one master account within organization**. The master account **CANNOT be restricted**
-
-- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is ROOT node**.
-
-* the **root NODE** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs
-
-- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
-
 ### AWS Ops Work
 
 ### WAF (Web Application Firewall)
@@ -2095,12 +2145,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 ### TCO
 
 - this tool is used to **compare** the **cost of running in premise vs running in the AWS**
-
-### AWS Config
-
-- so CloudTrail monitors API calls to AWS services (made by your account). AWS Config **monitors your AWS resources configurations**.
-
-* with AWS Config you can have **history of given resource configurations**
 
 ### Data Lake
 
