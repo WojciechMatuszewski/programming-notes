@@ -841,6 +841,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - You can also use **Geo Restriction**.
 
+* **SNI** is a way to present **multiple certs to a client**. Client has to **pick which cert. it wants**. Some old browsers do not support this technology.
+
 ### API Gateway
 
 - **throttling** can be **configured at multiple levels** including Global and Service Call
@@ -914,6 +916,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 - great for **separating traffic based on their needs**
 
 * **CAN** have **SecurityGroup attached**
+
+- you can enable **sticky sessions** on ALB. This feature makes it so that ALB tracks the client (for which sever it handed it off to). So it can keep **sending it back to the same server**.
 
 #### NLB
 
@@ -1055,6 +1059,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - this means you can **present different application with the same DNS name, based on location**
 
+* always **add a default rule**. This is to make sure **whenever DNS cannot pick the location** it will **fallback to the default rule**.
+
 ### ECS (Elastic Container Service)
 
 - allows you to run **docker containers on EC2 instances** in a **managed way**.
@@ -1132,9 +1138,13 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
   - **hibernate**
 
 * **To get the metadata info CURL 169.254.169.254/latest/...**
+
   - `/userdata`: your bootstrap script etc
   - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
   - `/meta-data/`: has **many options**, IP etc..
+
+* remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you have some scripts that require internet access and you forgot to configure the access properly. **There is a way to make sure user scripts run on every reboot**. This link can help:
+  https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
 
 - **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have dedicated tenancy model on that instance.
 
@@ -1405,17 +1415,35 @@ But most important information, remember **there are no so called snapshots when
 
 #### Placement Groups
 
-- ways of _placing_ your EC2 instances
+Way of grouping EC2 instances.
 
-* **clustered**, **spread**, **partitioned**
+##### Clustered
 
-  - **clustered**: placing EC2 very close with each other, in a single AZ.
-  - **spread**: opposite idea, each instance is placed in **separate racks**. Can be in different AZ but the **same region**. **Limitation of 7 instances per AZ**
-  - **partitioned**: similar to spread and clustered, basically you have a **groups of clustered EC2 on separate racks**
+- EC2 are **very close to each other, single AZ**
 
-- **spread** is usually used **for small deployments**
+* you should try to **provision all your instances up front**. There is a limited space, and there might be a problem with adding an instance later on.
 
-* **partitioned** is usually used **for larger deployments.**
+- you **should consider** using **enhanced networking** so that you take full advantage of close proximity of instances
+
+* you should consider this option for **small deployments**
+
+##### Spread
+
+- **can span multiple AZs**
+
+* **max 7 instances** running **per group per AZ**
+
+- instances **spread across underlying hardware**
+
+* you should consider this option for **medium deployments**
+
+##### Partition
+
+- **groups of clustered EC2 on separate racks**
+
+* you **cannot use dedicated host** with this option
+
+- you should consider this option for **large deployments**
 
 #### Enhanced Networking
 
@@ -1712,6 +1740,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
   - Future
   - Broadcast
 
+- you can use **custom DNS (can be on-prem)** by changing **DHCP option set**
+
 #### Default VPC
 
 - **you probably should keep it**. Some services need default VPC to exist.
@@ -1733,6 +1763,12 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * **attached to a default VPC at start**
 
 - **NO BANDWIDTH LIMITS**
+
+* if your subnet is associated with a route to IGW, it is by definition a public subnet
+
+- **DOES NOT TRANSLATE PRIVATE IPS**. It only translates the IP addresses of public IPs
+
+* **supports IPv6**. Since **IPV6 is globally public by default** there is something called **Egress Only IGW to control the privacy in IPv6 setting**.
 
 #### Flow Logs
 
@@ -1786,13 +1822,25 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
 
-- session aware, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+- **session aware**, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
 
 * it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use one NAT Gateway per subnet**
 
-- **CANNOT SEND TRAFFIC OVER VPC ENDPOINTS**
+- **CANNOT SEND TRAFFIC OVER VPC ENDPOINTS** or **VPC peering**
 
 * remember that NAT Gateway is only used to allow traffic to the internet (and back). You cannot connect with a specific instance yourself since the instances themselves do not have an ip address (assuming they live inside private subnet).
+
+#### NAT Instance
+
+- an **EC2 with a special AMI**.
+
+* has to be **supported by YOU, not AWS**
+
+- **can have SG attached since it's a normal EC2**
+
+* you **can detach ENI** since again, this is a normal EC2 instance.
+
+- can be used **for port forwarding**. This is **not the case with NAT Gateway**
 
 #### NACL
 
@@ -1866,21 +1914,31 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 - there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
 
-* there are **two different types** of VPC Endpoints
-  - **Gateway Endpoints**: for **DynamoDB and S3**
-  - **Interface Endpoints**: for **everything else**
+* **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct Connect and such!
 
-- **Gateway Endpoints** are **highly available**
+##### Gateway Endpoints
 
-* **Gateway Endpoints** use **routing, dns is NOT INVOLVED**
+- a gateway that is a **target for a specific route**
+
+* uses **list of predefined IPs** to route traffic
+
+- only **DynamoDB and S3** are supported
+
+* to control the policies you should use **VPC Endpoint Policies (they do not override IAM roles)**
+
+- the **mapping of IPs** occurs on **route table level**. Route table uses **prefix lists**.
+
+##### Interface Endpoints
+
+- **ENI with a private IP (routing not involved)**
+
+* relays on **DNS** to work
+
+- **for any service that is NOT Dynamo and S3**
+
+* you can use **Security Groups** to **control the access**
 
 - With **Interface Endpoints** you have to **manually select AZs** to make it **highly available**
-
-* **Interface Endpoints** use **DNS, routing is NOT INVOLVED**
-
-- can have **VPC endpoint policies** attached. This allows you to control the access from the endpoint to the resource. It **does not override IAM roles / IAM user policies or service-specific policies**.
-
-* **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct Connect and such!
 
 #### IPV6
 
@@ -1930,6 +1988,14 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 - **data is encrypted on transit**
 
+##### Managed VPN
+
+- **AWS managed** VPN
+
+* this is the **default offering** - the thing that you setup within the console.
+
+- connection **can be of type "on demand"**. This means that the **connection will not be established unless there is some traffic**.
+
 ##### Customer Gateway
 
 - **represents physical router on customer side**
@@ -1973,6 +2039,18 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 - **public VIFs** allow you **to connect to any public AWS services directly**. Like **S3 or Dynamo**
 
 * **private VIFs** will **connect you to a specific VPC**. You **still need Virtual Private Gateway**
+
+##### DirectConnect + VPN
+
+- this setup basically means **setting up VPN connection over DirectConnect line**
+
+* mainly used **for encryption**. What is because **Direct Connect does not encrypt** the data but **VPN does encrypt it**.
+
+### Transit VPC
+
+- **one VPC as passtrhough**
+
+* can be **used for connecting multiple cloud providers**
 
 ### Identity Federation
 
@@ -2200,6 +2278,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 ### Patterns
 
+<!-- #### Connecting on-prem with VPC -->
+
 #### Migrating from MongoDB
 
 Since mongo is a nosql tech. one might choose **DocumentDB** or **DynamoDB**. It depends on the requirements and the question. Either way **not RDS!**.
@@ -2299,6 +2379,5 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 TODO:
 
 - MountTarget FQDN ?? (EFS)
-- IAM groups vs Organizations https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-L9mkcPg9kljD_hGH9MJ/What%20is%20the%20difference%20between%20IAM%20groups%20and%20OUs%20in%20AWS%20organizations%3F
-- data lake
+- AWS Global Accelerator (and the pattern where customer uses very old firewall)
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
