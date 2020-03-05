@@ -223,11 +223,25 @@ An example for s3-prefix (folder)
 
 * the **root container** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs. **Root container / node** is the **account that has OUs underneath**.
 
-- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is root container**.
+- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
 
-* when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
+* you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
 
-- you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
+##### Invites
+
+- can be send **through the console or a CLI**.
+
+* you need to have **email or accountID**
+
+- only **one account can join one organization**
+
+* **invitation expire** after **15 days**
+
+- there is a **limit** on how many **invites you can send per day (20)**
+
+* invitations can be **created by any account** as long as **the account has correct IAM permissions**
+
+- you **cannot resend the invitation**. You have to **cancel the previous one, send the new one**
 
 ##### SCPS
 
@@ -241,13 +255,33 @@ An example for s3-prefix (folder)
 
 - you can have **multiple SCPs which apply**. In such case you take **union of every SCPs with your IAM permissions**.
 
+##### OUs
+
+- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is root container**.
+
+* can **only have one parent**
+
+- an AWS **account can only be a member of one OU**
+
+* you can **move account OUT of OU**. This is useful when wanting to delete an OU.
+
 ##### All features
 
-- normally, by default only **consolidated billing is `turn on` per se**. There is also **all features mode**.
+- this is a **free feature**.
 
-* the all features mode **can be enabled on a existing organization**.
+* normally, by default only **consolidated billing is `turn on` per se**. There is also **all features mode**.
 
-- this mode **enables you to create Service Control Policies (SCPs)**. These, as described above, allow you to place restrictions on given OUs, member accounts or a root container.
+- the all features mode **can be enabled on a existing organization**.
+
+* this mode **enables you to create Service Control Policies (SCPs)**. These, as described above, allow you to place restrictions on given OUs, member accounts or a root container.
+
+- this is **one way change**. When you enable this **you cannot switch back to only consolidated billing**.
+
+##### Organization Activity
+
+- this is where you can **see which services are used by accounts within Organization**.
+
+* **DO NOT** mistake this for AWS Config. Remember - AWS Config is for looking up different configurations on stuff and checking if they are meeting some requirements
 
 ### AWS Support Plans
 
@@ -279,6 +313,18 @@ An example for s3-prefix (folder)
 
 * keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
 
+### System Manager
+
+- helps you manage **large landscapes** like **100s of instances**
+
+* **agent installed by default on modern AMIs**, can also be **downloaded and installed on-prem**
+
+- you have **inventory** which **collects OS, application and instances metadata (about instances)**
+
+* **parameter store** where **you can store config data, connection strings etc.**. **Can be integrated** with **Secrets Manager**.
+
+- **create maintenance windows** for multiple instances. You can run scripts and such.
+
 ### AWS Service Catalog
 
 - **describes** all **services you offer**. Very **much like online store** but instead of buying eg. food **someone buys products you provide**.
@@ -292,6 +338,34 @@ An example for s3-prefix (folder)
 ### Access Advisor
 
 - will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
+
+### AWS For Enterprise
+
+#### Workspaces
+
+- gives you **access to a remote workstation**. You can ssh into a machine and do stuff.
+
+* **can be placed within a VPC**. When you restrict the outbound you have created pretty secure environment.
+
+#### AppStream
+
+- gives you **access to a single application (a program)** which usually cost much.
+
+* **can be placed within a VPC**. When you restrict the outbound you have created pretty secure environment.
+
+#### AWS Connect
+
+- basically a **call center with routing**.
+
+#### Chime
+
+- basically **the same as Google Hangouts**
+
+### Sage Maker
+
+- **analyze ML data and develop the models**
+
+* you can use **AWS managed Algorithms**
 
 ### S3
 
@@ -523,8 +597,7 @@ So when to use what?
 
 ### Snowball
 
-- Big briefcase, **up to 100TB** of storage. Used to move data from one point to
-  another, fast
+- Big briefcase, **up to 100TB** of storage.
 
 ### Snowmobile (not joking)
 
@@ -898,6 +971,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 - to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
 
 * when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
+
+- you should **always refer to ELBs by FQDN**. That is because **there are multiple nodes of ELB (per AZ)** and that **DNS can correctly resolve to correct IP**.
 
 #### ALB
 
@@ -1499,6 +1574,14 @@ Way of grouping EC2 instances.
 * **no additional charge, you only pay for the resources which were provisioned**
 
 - usually used for **web application deployments (with RDS eg.)** or **capacity provisioning and load balancing of a website**
+
+* supports **multiple environments (dev, prod ...)**
+
+- there are **multiple deployment options**
+  - All At Once
+  - Rolling
+  - Rolling With Additional Batch
+  - Blue green
 
 ### Monitoring Services
 
@@ -2186,6 +2269,24 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * with WAF you can create **IP restrictions** on a given **CloudFront** distribution
 
+### CI/CD
+
+#### Code Commit
+
+- **hosted Git Repo**
+
+#### Code Build
+
+- builds packages for deployment
+
+#### CodeDeploy
+
+- deploys packages to given services (like ElasticBeanstalk)
+
+#### CodePipeline
+
+- enables orchestration of all the above
+
 ### Cognito
 
 - authorization and authentication service
@@ -2368,6 +2469,8 @@ This may be due to these 4 reasons:
 
 ### Other
 
+- **blue / green deployment** is where you switch between one version. Used to move traffic between 2 versions of our stack (blue and green). You can freely switch between them. This is **usually conducted by Route53 weighted policy (1 and 0)**
+
 #### Proxy
 
 You can think of a `man-in-the-middle` when someone is talking about proxies. Sometimes `proxy` will speak on your behalf, sometimes it will just handle the initial connection. Proxy types:
@@ -2378,6 +2481,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
 - AWS Global Accelerator (and the pattern where customer uses very old firewall)
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
