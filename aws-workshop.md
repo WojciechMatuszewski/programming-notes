@@ -175,4 +175,4 @@ There were some problems with Stock data (static and dynamic from a CRM). Decisi
 
 ### Deletion
 
-Since the events are hold in the separate dbs the decision to delete the data has to be on per consumer basis.
+Since the events are hold in the separate dbs the decision to delete the data has to be on per co nsumer basis.
