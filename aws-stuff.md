@@ -159,6 +159,8 @@ You have to assign a role to a given instance. Then you can ssh into that instan
 
 * **inline policies** should only be applied to a single user. They **should not** be used to **applying policies to multiple identities**. You should **use managed / custom policies for that!**.
 
+- always **prefer explicit deny no matter what**. Use **conditions if necessary**.
+
 ##### Resource Policy
 
 Now we are in the domain of a given service / resource.
@@ -213,7 +215,13 @@ An example for s3-prefix (folder)
 
 - **UP TO 5000 IAM Users**
 
-#### AWS Organizations
+#### Certs
+
+- this is a **legacy way of keeping certs**, before ACM was introduced.
+
+* sadly **you cannot migrate IAM certs to ACM directly**. You would have to **download them** and then **import to ACM**.
+
+### AWS Organizations
 
 - **all accounts under organization** can **consolidate their bills** so that you have one **master bill, sum of all small bills**
 
@@ -227,7 +235,7 @@ An example for s3-prefix (folder)
 
 * you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
 
-##### Invites
+#### Invites
 
 - can be send **through the console or a CLI**.
 
@@ -243,7 +251,7 @@ An example for s3-prefix (folder)
 
 - you **cannot resend the invitation**. You have to **cancel the previous one, send the new one**
 
-##### SCPS
+#### SCPS
 
 - **by default** the **root account has FullAWSAccess SCP attached**
 
@@ -255,7 +263,7 @@ An example for s3-prefix (folder)
 
 - you can have **multiple SCPs which apply**. In such case you take **union of every SCPs with your IAM permissions**.
 
-##### OUs
+#### OUs
 
 - there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is root container**.
 
@@ -265,7 +273,7 @@ An example for s3-prefix (folder)
 
 * you can **move account OUT of OU**. This is useful when wanting to delete an OU.
 
-##### All features
+#### All features
 
 - this is a **free feature**.
 
@@ -277,11 +285,25 @@ An example for s3-prefix (folder)
 
 - this is **one way change**. When you enable this **you cannot switch back to only consolidated billing**.
 
-##### Organization Activity
+#### Organization Activity
 
 - this is where you can **see which services are used by accounts within Organization**.
 
 * **DO NOT** mistake this for AWS Config. Remember - AWS Config is for looking up different configurations on stuff and checking if they are meeting some requirements
+
+### ACM
+
+- provides **x509 certs (SSL/TSL)**
+
+* only **supported for services that are integrated**.
+
+- you are **not paying for using the certs themselves**
+
+* there are **two types of validation of the domain**. You can either **validate by DNS** or **by email**. With **DNS validation and Route53** you can easily **add DNS record through the console (not automatic)**
+
+- uses **KMS under the hood for keys**
+
+* can **automatically renew certs** BUT only **those which were not imported**.
 
 ### AWS Support Plans
 
@@ -2135,20 +2157,6 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * can be **used for connecting multiple cloud providers**
 
-### Identity Federation
-
-- **keys obtained** with the **help of STS or Cognito**
-
-* **SAML 2.0 => Active Directory**
-
-- **Web Identity** means getting the **initial key from FB, Google...** and **exchanging it** for **temporary credentials** within AWS. A **role is assumed after successful token verification**.
-
-#### When to use Federation
-
-- when you are **within enterprise**. Big **companies** usually have their **own identity provider (Google, OKTA)...**.
-
-* you have an **app that uses AWS**. With **Cognito you can create identity for users, even guest role!**
-
 ### Caching
 
 #### DAX (in-memory cache for DynamoDB)
@@ -2291,13 +2299,39 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 - authorization and authentication service
 
+#### SAML
+
+- to get SAML working you will probably need **provider Name and MetaData document**
+
+* instead of doing AssumeRoleWithWebIdentity (like with Google and Facebook) AWS performs **AssumeRoleWithSAML**
+
+- **can be used to access AWS console**. This is **not the case with Web Identity**.
+
 #### User Pools
+
+- this is **where your users live**.
+
+* you can **create groups to control permissions for multiple users**
 
 #### Identity Pools
 
 - **here is where you grant permissions to users**
 
 * using identity pools you can **setup federated identities** (Google, Fb, ..)
+
+#### Identity Federation
+
+- **keys obtained** with the **help of STS or Cognito**
+
+* **SAML 2.0 => Active Directory**
+
+- **Web Identity** means getting the **initial key from FB, Google...** and **exchanging it** for **temporary credentials** within AWS. A **role is assumed after successful token verification**.
+
+##### When to use Federation
+
+- when you are **within enterprise**. Big **companies** usually have their **own identity provider (Google, OKTA)...**.
+
+* you have an **app that uses AWS**. With **Cognito you can create identity for users, even guest role!**
 
 ### Cloud Formation
 
@@ -2481,6 +2515,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- ACM and certs within IAM
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
 - AWS Global Accelerator (and the pattern where customer uses very old firewall)
