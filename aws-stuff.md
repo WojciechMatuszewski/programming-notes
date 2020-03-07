@@ -2213,11 +2213,7 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 - supports **Redis** or **Memcached**
 
-* offloading databases: **caches reads just like DAX**
-
-- storing session data of users
-
-* there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
+* there is **no failover**. You **can run multi AZ** using so called **spread nodes mode**. **Think of this as ASG and EC2**, number of nodes can shirk and get bigger with time.
 
 #### Redis
 
@@ -2231,13 +2227,19 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 - supports **in-transit and at-rest encryption**
 
+* there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
+
+- has a **concept of read replicas just like RDS**. Similarly to Aurora **read replica can be promoted to master**. The **replication between nodes is ASYNCHRONOUS**
+
 #### Memcached
 
 - can be used for **database caching** (usually the SQL ones)
 
-- data there is **lost when** instance (or cluster) is **stopped**
+* data there is **lost when** instance (or cluster) is **stopped**
 
-* **DOES NOT support encryption**
+- **DOES NOT support encryption**
+
+* **nodes can be spread a cross multiple AZs**
 
 ### Communication Between Services, Queues
 
@@ -2473,15 +2475,17 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 #### Server Migration Service (SMS)
 
-- used to **actually migrate on prem VMware stuff**
+- you **actually need VMware system to use it**.
 
-* **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
+* used to **actually migrate on prem VMware stuff**
 
-- **replicates to an AMI** and can also **auto generate CloudFormation templates**
+- **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
 
-* when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
+* **replicates to an AMI** and can also **auto generate CloudFormation templates**
 
-- **applications can be divided into groups**. Groups can contain multiple servers.
+- when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
+
+* **applications can be divided into groups**. Groups can contain multiple servers.
 
 #### Database Migration Service
 
