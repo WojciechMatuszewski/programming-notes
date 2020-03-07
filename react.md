@@ -168,6 +168,72 @@ In such case you will get a warning that HTML structure is different on the clie
 
 What will happen is that the `prop` becomes stale, and your functionality will not work. Like I said before, React will not try to patch up inconsistencies, **its up to you to make sure that the HTML structure and props are the same on the server and on the client**
 
+### Gotcha with 2 pass render
+
+When thinking about SSR you should think about **2 pass render**. Just like in Vanilla Javascript where 2 pass happens (compilation and interpretation).
+
+As you know Reacts `renderToString` will not be able to handle dynamic parts of your APP. This is sometimes apparent on websites where user data is displayed on the navigation or other parts of the site. That is because the lifecycle hooks do not run on the server. One approach is to include SSR state within the `script` tag inside the HML and pick it up from there. I think this is a nice solution but maybe not a fit for a simple app.
+
+Other solutions involve checking for a `window`.
+
+```js
+function Component() {
+  if (window == undefined) {
+    return null;
+  }
+  return <div>Some content</div>;
+}
+```
+
+This approach might seem like a good solution but **there is a problem with this solution**. We are violating one of the React rules, where data returned from the server is different from the data React sees during rehydration process.
+
+Now, during the rehydration process, the Javascript is there, we are inside the browser environment so the output from the `Component` will look as follows:
+
+```js
+<div>Some content</div>
+```
+
+Meanwhile **the output of `renderToString` for that Component is just empty**.
+This is a recipe for a disaster. Sometimes, React will be able to handle the differences and keep the DOM structure but when there are multiple nested elements, **it will probably lead to bugs.**
+
+### Solution
+
+The solution is quite simple. It relies on the fact that **useEffect will ONLY AND ONLY be run when COMPONENT IS MOUNTED**. This mean that **useEffect DOES NOT RUN ON REHYDRATION**. This is a crucial realization when dealing with SSR.
+
+So now your component looks as follows:
+
+```js
+function Component() {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  return <div>Some content</div>;
+}
+```
+
+Now **the output from `renderToString`**:
+
+```js
+// empty
+```
+
+**During the rehydration `React` sees**:
+
+```js
+// empty
+```
+
+Again, that is because `useEffect` does not run during rehydration.
+
+When your component mounts the output becomes
+
+```html
+<div>Some content</div>
+```
+
 ## Memoization and semantic guarantee
 
 You are probably using hooks by now. That's great. Also you probably know about
@@ -198,6 +264,82 @@ There is raging discussion about this on git. Many popular libraries relay on
 the fact that React does not _forget_ previously memoized values. That would be
 kind meh. Wonder what `React.Suspense` will bring to the table when it comes to
 that...
+
+## Lazy State initialization (FC)
+
+There are 2(or 3?) ways to initialize functionals component state.
+
+First variant would be to just pass value. This sometimes results in a gotcha where state is stale when that value is coming from a prop.
+
+```jsx
+function Counter() {
+  React.useState(1);
+}
+```
+
+Nothing spectacular there, move along
+
+Second way would be to use a function. Maybe you need to compute something. I would call this **eager initialization**. This is because the function is invoked every time when the functional component is invoked.
+
+```jsx
+function eager() {
+  console.log("invoked");
+  return 42;
+}
+
+function Component() {
+  React.useState(eager());
+  return null;
+}
+```
+
+You will see `invoked` **whenever the parent of this component changes state**. This is quite important to understand.
+
+Finally, there is a third way. This is where you **declare a function as initial state**.
+
+```js
+function Component() {
+  React.useState(() => {
+    console.log("lazy");
+    return 42;
+  });
+  return null;
+}
+```
+
+**React will not invoke the function when the parent state changes**. You might see 2 logs here and there, and this is due to nature of `React` but other than that no logs should be displayed.
+
+### Eager with stale state (or is it?)
+
+Ever wondered why this setup:
+
+```js
+function Eager(v) {
+  return v;
+}
+const Component = ({ counter }) => {
+  const [count, setCount] = React.useState(Eager(counter));
+  return <pre>{count}</pre>;
+};
+```
+
+Or simply this:
+
+```js
+function Eager(v) {
+  return v;
+}
+const Component = ({ counter }) => {
+  const [count, setCount] = React.useState(counter);
+  return <pre>{count}</pre>;
+};
+```
+
+Results in so called `stale-state`?. Well if you log the value inside the `Eager` function you will see the correct value of the `counter` is passed. So the state is not `stale` per se, **the component did not rerendered**. This is where **3 phases of actually rendering** comes in. Your functional component WAS invoked and the current (correct) value WAS passed into the `useState` hook, but no updates to the dom were committed.
+
+I think this misconception mainly has to do with not knowing about `committing, diffing, and rendering` phases. Yes, the fix to this is to use `useEffect` to trigger local state change, but nevertheless it's worth knowing that.
+
+TODO: so it seems like we are updating the same state. Since the value passed to `useState` is the current one, why does using `setState(counter)` solves the issue?. Normally React ignores updates when values are the same. Does this have to do with the 2 invocations when using the same state values?.
 
 ## getSnapshotBeforeUpdate
 
