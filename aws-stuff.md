@@ -33,11 +33,9 @@
 
 - **YOU CAN ATTACH SECURITY GROUP TO A LAMBDA**
 
-* **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. The **subnet HAS TO BE PRIVATE though**. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because lambdas have ENI assigned that never gets public IP.
+* lambdas **inbound connections are blocked**. When it comes to outbound, **outbound TCP/IP and UDP/IP sockets are supported**.
 
-- lambdas **inbound connections are blocked**. When it comes to outbound, **outbound TCP/IP and UDP/IP sockets are supported**.
-
-- by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
+* by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
 
 #### Execution Role
 
@@ -48,6 +46,26 @@
 - **lambda** is **treated as a resource** so you can grant **resource-based policy to it**.
 
 * this is **especially useful** when **wanting to grant other account permissions to invoke your function**
+
+#### Provisioned Concurrency
+
+- you have to have a **function version** or an **alias that DOES NOT point to \$latest** to turn it on.
+
+* it will basically **keep concurrently X clones of your function ready** thus making cold starts obsolete.
+
+- can be **autoscalled by using Application AutoScaling**. Do not mistake this with auto scaling groups.
+
+#### Inside VPC
+
+- **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. The **subnet HAS TO BE PRIVATE though**. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because lambdas have ENI assigned that never gets public IP.
+
+#### Monitoring
+
+- **CloudWatch metrics** are **somewhat limited**. They only include **info about errors, invocations, duration etc**.
+
+* to see the **memory, checkout CloudWatch logs**. There is the **max-memory used**. This setting can help you to decide if your lambda needs more memory.
+
+- you can **use XRay for distributed tracing**.
 
 #### Lambda @ Edge
 
@@ -627,7 +645,9 @@ So when to use what?
 
 ### Snowball Edge
 
-- In **addition to storage** it also offers **computing capabilities**.
+- there are **two versions**: **compute** and **storage optimized**.
+
+* the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at remote location** and then **transferring the data**.
 
 ### RDS (Relational Database Service)
 
@@ -949,6 +969,18 @@ There are a few approaches when it comes to scaling with dynamoDB
 * by default **AWS provides DDOS protection**
 
 - you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not CloudTrail!**. Remember, CloudTrial is about service calls made by identity within your AWS account.
+
+#### Timeouts
+
+- you probably know that lambda has 15min timeout max. But that timeout only applies to async invocations (reading from the queue and such) where user is not waiting for a response. **The default APIGW timeout is 29 seconds**. This can be **configured to be between 5 seconds and 29 seconds**. All you have to do is to **un-tick the "use default timeout option**
+
+#### Responses
+
+- all done within **gateway responses tab**
+
+* you can **map the response returned from lambda to a different one**. Like **mapping 403 to 404 response**.
+
+- you can add **custom headers to the responses**.
 
 ### Load Balancers
 
@@ -2393,12 +2425,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - the **keys** are **region-locked**. You can **copy keys across regions though**.
 
-### Server Migration Service (SMS)
-
-- used to **migrate on prem VMware stuff**
-
-* **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
-
 ### TCO
 
 - this tool is used to **compare** the **cost of running in premise vs running in the AWS**
@@ -2410,6 +2436,60 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * this is due to having to perform analytics on different sources of data - this is quite cumbersome
 
 - aws integrates **Data-lake formation** which can help you with the creation of data-lakes.
+
+### Migration
+
+#### Migration Hub
+
+- this is the **hub for discovery data and tracking the migrations**.
+
+* you can **connect the discovery services to the hub** (like Discovery Service)
+
+- is for checking the statuses and such. Does not perform the migrations / discovery itself.
+
+#### Discovery Agent
+
+- you **install this on your VMs**. It needs root access.
+
+* **collects metrics data (networking, processes) etc** to help you plan the migration
+
+- it is **not supported on all operating systems versions**
+
+#### Discovery Connector
+
+- **only for VMware**. Does not work for unsupported versions of linux and such.
+
+* **when discovery agent is not supported** you can use agentless approach and get the **discovery connector to work**.
+
+- this is basically **an OVA (runs virtual machine)** and collects the data
+
+* when you cannot use Connector or Agent, **another approach would be to use import data via json template to migration hub directly**.
+
+#### Discovery Service
+
+- **contains data from connectors or agents**
+
+* has **integration with Athena**. You **do not have to create special s3 bucket for this**.
+
+#### Server Migration Service (SMS)
+
+- used to **actually migrate on prem VMware stuff**
+
+* **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
+
+- **replicates to an AMI** and can also **auto generate CloudFormation templates**
+
+* when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
+
+- **applications can be divided into groups**. Groups can contain multiple servers.
+
+#### Database Migration Service
+
+- you can **setup custom schema mappings**
+
+* uses **Schema Conversion Tool underneath**
+
+- DMS enables you to **read and write to encrypted sources**. Data is **propagated in a decrypted form** but it **uses SSL for encryption in transit**.
 
 ### Patterns
 
