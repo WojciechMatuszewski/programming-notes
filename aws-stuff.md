@@ -853,29 +853,31 @@ So when to use what?
 
 ### DynamoDB
 
-- **more effective for read heavy workloads**
+- storing data here is **more expensive than s3, remember!**.
 
-* **data automatically replicated `synchronously` between 3 AZs!**
+* **more effective for read heavy workloads**
 
-- store **items which weigh more than 400kb in s3** and use **pointers**
+- **data automatically replicated `synchronously` between 3 AZs!**
 
-* **compress large attribute values**
+* store **items which weigh more than 400kb in s3** and use **pointers**
 
-- **separate hot and cold data**. This will help you with RCU provisioning.
+- **compress large attribute values**
 
-* **LSI** gets **the same WCU/RCU and partition key** as the **primary table**
+* **separate hot and cold data**. This will help you with RCU provisioning.
 
-- **to enable backups** you have to have **streams enabled**
+- **LSI** gets **the same WCU/RCU and partition key** as the **primary table**
 
-* one **WCU** is equal to **1KB**
+* **to enable backups** you have to have **streams enabled**
 
-- one **RCU** is equal to **4KB**. That is **one strongly consistent read OR 2 eventually consistent reads**
+- one **WCU** is equal to **1KB**
 
-* **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+* one **RCU** is equal to **4KB**. That is **one strongly consistent read OR 2 eventually consistent reads**
 
-- **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
+- **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
 
-* remember that **indexes take up space!**. This is quite important and something you have to consider while creating your 20th GSI ;p.
+* **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
+
+- remember that **indexes take up space!**. This is quite important and something you have to consider while creating your 20th GSI ;p.
 
 #### ACID
 
@@ -1392,6 +1394,8 @@ Regardless of these steps, default termination policy will try to terminate inst
 - **All inbound traffic is blocked by default**
 
 * **security group can have other security groups as sources!**. This does not mean that we are _merging_ the rules. **Having other security group as source means that we are allowing traffic from instances ENI which are associated with that group!!!!!!!**
+
+- remember that **secutiy groups only look at IPS and protocols**. You **cannot use SG to filter based on url** or something similar.
 
 #### EBS (Elastic Block Store)
 
@@ -1999,6 +2003,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **default** rule is an **asterix, which is an implicit deny** and **100 rule to allow all traffic**
 
+- remember that **NACL only look at IPS and protocols**. You **cannot use SG to filter based on url** or something similar.
+
 #### Security Group
 
 - **CAN ONLY ALLOW RULES**
@@ -2124,6 +2130,8 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 * **uses public internet to exchange data**
 
 - **data is encrypted on transit**
+
+* when the initial setup is complete we have done **peer identity authentication**. You have to paste some special config within your on-prem router to make it work so the authentication is there.
 
 ##### Managed VPN
 
@@ -2303,13 +2311,51 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 ### WAF (Web Application Firewall)
 
-- allows for monitoring of requests.
+- **layer 7**.
 
-* will either accept or deny given request
+* you can **associate** WAF with **CloudFront, APIGW, ELB**
 
-- looks for CSS or SQL-injection stuff
+- **traffic** is **filtered before reaching /\ services**
 
-* with WAF you can create **IP restrictions** on a given **CloudFront** distribution
+#### WEB ACL
+
+- set of **rules** or **traffic decisions** you apply to a specific project.
+
+* there is a **default rule** for traffic that does not fall under any other condition
+
+- it **filters** the traffic **before that traffic ends up at your servies**
+
+* **not design** for **large scale thread protection**. Conditions have to be explicitly defined, it is not _smart_.
+
+#### IP Sets
+
+- you can create **IP sets**. You can **reference them within your rules**.
+
+* the created IP sets have **arn associated with them**.
+
+#### Rules
+
+- **regular** rules **match conditions** (you can use IP sets within a condition)
+
+* **rate-based** rules **match for a given frequency**.
+
+- **rate-based** rules can be used to **fight DDOS attacks**.
+
+* you can also **restrict** traffic **based on location**, **prevent SQL Injection**, all sorts of stuff.
+
+### AWS Shield
+
+- mainly for **creating protection against DDOS**.
+
+* while you could be doing this using NACL, the DDOS traffic would be dangerously close to your system (already entered your VPC). You should prefer to elivate the tread as far of your network as possible.
+
+#### Shield Advanced
+
+- gives you more **premium features** but costs **3k/month (costs of WAF included)**.
+
+* there is a concept of **cost protection**. This is where **when you incur a cost on R53, CloudFront and ELB during DDOS attack, you can get your money back**. Pretty neat.
+
+- with Shield Advanced you can **also protect Elastic IPs**.
 
 ### CI/CD
 
@@ -2495,6 +2541,16 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - DMS enables you to **read and write to encrypted sources**. Data is **propagated in a decrypted form** but it **uses SSL for encryption in transit**.
 
+#### VM Import / Export
+
+- an **alternative to SMS** which **does much less**.
+
+* with this you can either **import VM as EC2 AMIs** or **import VM envioriment as EC2 instance**.
+
+- you can also **export a VM that was previously imported**
+
+* you can **import disks as EBS snapshots**
+
 ### Patterns
 
 <!-- #### Connecting on-prem with VPC -->
@@ -2545,6 +2601,14 @@ First thing you need to do is to **place the instance in a standby state**. When
 
 When you want to achieve pass-through on load balancers you usually want end-to-end encryption when it comes to traffic. Normally, traffic is decrypted at load-balancer level. But sometimes you need end-to-end encryption for compliance reasons. Then **you need to use either classic LB or NLB**. This is because these have some awareness on **layer 4**. This is important since **when you want end-to-end encryption you need to use TCP instead of HTTPS**.
 That means that **ALB is not capable of handling that traffic** since it only knows how to handle layer 7 stuff.
+
+#### Terminating SSL certs on the webservers
+
+This one is not that popular but still might be revelant. Normally when you setup a HTTPs listener on ALB the SSL in terminated there. We do not want that.
+
+What you can do is to **setup NLB with TCP listeners** and **put webservers behind that NLB**. This will make it so that the traffic is in a passthrough mode (**as descrbied above**). The certs then can be handled at the webservers.
+
+Another approach you might take is to **use Route53 with multivalue routing**.
 
 #### Accessing VPC Endpoints
 
@@ -2599,6 +2663,8 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- WAF
+- EMR
 - ACM and certs within IAM
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
