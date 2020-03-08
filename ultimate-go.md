@@ -66,6 +66,8 @@ Go does not have constructors, they hide _the cost_.
 _Escape analysis_ is the term used to describe the mechanics of golang compiler, when deciding whenever to put stuff on stack or on heap.
 It happens when you return stuff from eg. a function, so called **sharing**.
 
+Basically whenever golang compiler cannot say with 100% certainty that the variable will not be used after the return statement (probably returned from a function), it allocates it on the heap. Heap means latency from garbage collection.
+
 Try to abstain from _pointer schematics_ during construction. This may lead to your code being difficult to read.
 
 ```go
@@ -663,3 +665,36 @@ Guess what is the output of the program? `Bad Request`. Why? because we are comp
 - avoid packages of type `utils` or `helpers` or `models` or similar. Package has to have specific purpose.
 
 * make sure your **packages can only import down!**. This is quite important, makes your codebase consistent.
+
+## Goroutines
+
+- process as a means of maintaining and managing resources for a given program.
+
+* threads as paths of executions. These can be in one of three states: _running_, _runnable_, _waiting_
+
+- when it comes to threads less is more.
+
+* **concurrency is the perception that things happen at the same time**, which usually is not the case.
+
+- **parallelism is actually doing a lot of things at the same time**.
+
+* you should **prefer WaitGroups** for handling goroutines.
+
+You can actually limit the number of cores golang uses
+
+```golang
+    runtime.GOMAXPROCS(1)
+```
+
+### WaitGroups
+
+Because you explicitly need to pass the number of `goroutines` that are going to be running you must reflect on your implementation. Nice!
+What's worth noting is that **whenever you have to specify `wg.Add(1)` somewhere randomly** you probably have **flawed design!**.
+
+- `wg.Wait` forces a context switch.
+
+* `runtime.Gosched` allows you to practice so called _chaos engineering_. **SHOULD NOT BE USED IN A PRODUCTION CODE**. But it can be useful when testing code. It says to the runtime "now I'm willing to give up my processor context and allow others to run". Keep in mind that his is only a signal, not a demand. Runtime does not have to listen.
+
+### Deadlocks
+
+Deadlock means that every single goroutine is within a _waiting state_. **Usually happens when you forgot to call `wg.Done` somewhere**.

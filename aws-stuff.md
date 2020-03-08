@@ -948,6 +948,14 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * **CLOUD FRONT IS NOT ONLY FOR WEB STUFF**. You can create **APIG CloudFront distribution**
 
+#### Cache Behaviors
+
+- by default CloudFront provides sane defaults for the cache TTL
+
+* you can specify **per path (\*.img or /dupa) rules for cache TTL**
+
+- you **can get pretty complex since CloudFront gives you a lot of settings**.
+
 #### Restricting access to CloudFront distribution
 
 - you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
@@ -959,6 +967,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 - You can also use **Geo Restriction**.
 
 * **SNI** is a way to present **multiple certs to a client**. Client has to **pick which cert. it wants**. Some old browsers do not support this technology.
+
+#### Origin Groups (Failover)
+
+- with Origin Groups you can **create failover behaviors**, remember **CloudFront can have multiple origins**.
+
+* you can **failover on a criteria of Status Codes returned from one origin**.
 
 ### API Gateway
 
@@ -2333,6 +2347,8 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * the created IP sets have **arn associated with them**.
 
+- **when creating** you have to use **IP address with CIDR range**. This allows you to block multiple IPS :)
+
 #### Rules
 
 - **regular** rules **match conditions** (you can use IP sets within a condition)
@@ -2356,6 +2372,18 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 * there is a concept of **cost protection**. This is where **when you incur a cost on R53, CloudFront and ELB during DDOS attack, you can get your money back**. Pretty neat.
 
 - with Shield Advanced you can **also protect Elastic IPs**.
+
+### CloudSearch
+
+- **AWS own solution**
+
+* fully managed by AWS
+
+- still ,**there is an underlying instance hosting the search domain**
+
+* **automatily scales VERTICALLY AND HORIZONTALLY (in that order)**. When scalling to multiple instances whe search index is partitioned into multiple instances.
+
+- you can use **multi-AZ option for HA**
 
 ### CI/CD
 
@@ -2610,6 +2638,12 @@ What you can do is to **setup NLB with TCP listeners** and **put webservers behi
 
 Another approach you might take is to **use Route53 with multivalue routing**.
 
+#### Getting Source IP with ELB
+
+With **ALB/Classic** you can use **X-Forwarded-For** header. But beware that **this only works for HTTP/HTTPs**. When you are dealing with **eg. TCP** you should enable **Proxy Protocol**. It **prepends info about clients IP before the actual data**. **Proxy Protocol cannot be added using a console. YOU HAVE TO USE CLI**
+
+Please also **keep in mind that NLB just forwards the traffic**. So **This is not a problem with NLB**.
+
 #### Accessing VPC Endpoints
 
 Remember that **VPC Endpoints can only be accessed inside the VPC**. That means that if you have a VPN connection or Direct Connect to your VPC you have to use some kind of proxy. Usually you would use **EC2 to be a proxy for your s3 requests**
@@ -2660,6 +2694,10 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 - **Half Proxy**: this type handles the initial setup. It initializes the connection to the backend, proxy passes that to the client. After that it just forwards the traffic, it may do some NAT work but nothing more sophisticated going on here. It's usually useful for discovery purposes, like checking at the connection state where to route the client, then letting the requests pass.
 
 - **Full Proxy**: this type is the `mediator` between the backend and the client. It establishes a connection with a backend and any client requests stop on the proxy, they do not go directly to the backend (or through proxy to the backend). This pattern usually means that the `proxy` is doing some sophisticated work. This is where **ALB and NLB** are. They are full proxies.
+
+#### Terminology
+
+- **resource contention** is where there is a **conflict over access to a shared resource**.
 
 TODO:
 
