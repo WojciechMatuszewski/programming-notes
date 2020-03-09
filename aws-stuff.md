@@ -659,29 +659,31 @@ So when to use what?
 
 * RDS **can be in multi AZ configuration**
 
-- there are **read replicas available**.
-
-* you can have **read replicas of read replicas**
-
-- **up to 4 instances** can be associated with the **replication chain**
-
-* when choosing **read replicas** data is **replicated asynchronously**
-
-- with **read replicas** you **CAN SPECIFY to which az to deploy**
-
-* when choosing **multi-az deployment** data is **replicated synchronously**
-
-- when choosing **multi-az deployment** you **CANNOT specify which AZ it will be deployed into**
-
-* **with multi-az deployments standby db only comes into play when your primary failed**
-
-- when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
-
 * you **can connect to** the underlying **EC2 instance that hosts the database**. Use SSH or different means.
 
 - you **DO NOT** have **access to the underlying OS, the DB is running on**.
 
-* you **can target read replica** but you **CAN NOT target second-master (multi-az)**
+#### Read Replicas
+
+- you can have **read replicas of read replicas**
+
+* **up to 4 instances** can be associated with the **replication chain**
+
+- when choosing **read replicas** data is **replicated asynchronously**
+
+* with **read replicas** you **CAN SPECIFY to which az to deploy**
+
+- you **can target read replica** but you **CAN NOT target second-master (multi-az)**
+
+#### Multi-AZ
+
+- when choosing **multi-az deployment** data is **replicated synchronously**
+
+* when choosing **multi-az deployment** you **CANNOT specify which AZ it will be deployed into**
+
+- **with multi-az deployments standby db only comes into play when your primary failed**
+
+* when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
 
 #### Maintenance
 
@@ -1655,6 +1657,8 @@ Way of grouping EC2 instances.
   - Rolling With Additional Batch
   - Blue green
 
+* **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**. You can make sure that the data is still there by **creating DB snaphost** or **creating any parts of your application that you do not want to accidentaly delete OUTSIDE Elastic Beanstalk env**.
+
 ### Monitoring Services
 
 #### CloudWatch
@@ -2569,6 +2573,10 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - DMS enables you to **read and write to encrypted sources**. Data is **propagated in a decrypted form** but it **uses SSL for encryption in transit**.
 
+#### IDS / IPS Systems
+
+These systems are used to **detect and prevent intrusions** from gettiing to your resouurces.
+
 #### VM Import / Export
 
 - an **alternative to SMS** which **does much less**.
@@ -2701,10 +2709,10 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- WAF
 - EMR
 - ACM and certs within IAM
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
+- OPS WORK
 - AWS Global Accelerator (and the pattern where customer uses very old firewall)
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
