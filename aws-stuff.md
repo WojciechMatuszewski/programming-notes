@@ -2225,6 +2225,18 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * **private VIFs** will **connect you to a specific VPC**. You **still need Virtual Private Gateway**
 
+- **transit VIF** will **connect to DirectConnect which connects to Transit Gateway**. You can have **only 1 Transit VIF per Direct Connect**
+
+* you can have **up to 50 PUBLIC + PRIVATE VIFs** on a **single DirectConnect**. This might be a problem. This is where **the usage of DirectConnect Gateway come in**
+
+##### Direct Connect Gateway
+
+- allows you to **fan-out from a single private VIF** to **up to 10 VPCs**
+
+* the **fanout from DCG** can be used **cross-region**
+
+- can be **attached to Transit Gateway(UP to 3 cross region)** with the **usage of Transit VIF**.
+
 ##### DirectConnect + VPN
 
 - this setup basically means **setting up VPN connection over DirectConnect line**
