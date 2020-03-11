@@ -309,6 +309,10 @@ An example for s3-prefix (folder)
 
 * **DO NOT** mistake this for AWS Config. Remember - AWS Config is for looking up different configurations on stuff and checking if they are meeting some requirements
 
+#### Leaving the organization
+
+- **user has to have sufficient permissions to leave the organization**. I think the most **important here are the policies regarding billing**.
+
 ### ACM
 
 - provides **x509 certs (SSL/TSL)**
@@ -1770,25 +1774,43 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### EMR (Elastic Map Reduce)
 
-- allows you to perform **analysis on large-scaled, semi-structured or unstructured data**
+- splits data into **splits**. This is the **mapping part of the EMR**. Then **nodes process the splitis**.
 
-* think **big data** data sets
+* allows you to perform **data-processing on large-scaled, semi-structured or unstructured data**
 
-- there are **nodes**, the **master node splits the work between nodes**
+- think **big data** data sets
 
-* uses **shared file system through nodes**
+* there are **nodes**, the **master node splits the work between nodes**
 
-- It can use 2 types of storage to perform operations:
+- uses **shared file system through nodes**
+
+* It can use 2 types of storage to perform operations:
   - HDFS: s3 is used to read and write the final data to
   - EMR FS: s3 is used as primary data store to carry out all operations
 
-* **use for on-demand, ad-hoc, short-term tasks**
+- **use for on-demand, ad-hoc, short-term tasks**
 
-* **master node can** be **sshed into**
+- **master node can** be **sshed into**. You can **ssh into master node** and **use Hive to perform SQL like queryies on the data**.
 
-- usually has to do with **Spark** jobs.
+* usually has to do with **Spark** jobs.
 
-* **can manipulate the data**
+- **can manipulate the data**
+
+* cluster runs on **EC2 that are inside VPC**.
+
+- **master node => core node => task node**
+
+* if **master node dies = everything is RIP**
+
+- if **core node dies** you are facing **potenal data loss**.
+
+* **master node cannot be changed**. If you want **to change underlying instance, you would need to create new cluster**.
+
+- you should **preffer creating Cluster in the same region as the data you will be retriving / storing**
+
+* **YOU have to provide an application for mapping and reducing**
+
+* **nodes** can be **monitored inside CloudWatch**
 
 #### Data Pipeline
 
@@ -2573,6 +2595,15 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - DMS enables you to **read and write to encrypted sources**. Data is **propagated in a decrypted form** but it **uses SSL for encryption in transit**.
 
+* there are **3 steps for migration**:
+  - **allocate a replication instance** which performs all the processes for the migration
+  - **specify source and a target DB**
+  - **create a task or set of task** to define **which tables and replication processess** you wan to use.
+
+- the **replication instance should be created within DMS console**
+
+* you can define **JSON transformation rules** or **Selection rules**. Basically **transforming and/or filtering** the **data when migrating**.
+
 #### IDS / IPS Systems
 
 These systems are used to **detect and prevent intrusions** from gettiing to your resouurces.
@@ -2691,6 +2722,16 @@ This may be due to these 4 reasons:
 - root **EBS is encrypted** and you **do not have permissions to access KMS key**
 - **AMI is missing some required parts**
 
+#### Migrating VPC to IPv6
+
+There are a couple of steps but always remember about key player here: **Egress-only IGW**.
+
+- route public traffic to IGW
+
+* route private traffic to Egress-only IGW, remember
+
+- add IPv6 CIDR to your subnets / VPC
+
 ### Other
 
 - **blue / green deployment** is where you switch between one version. Used to move traffic between 2 versions of our stack (blue and green). You can freely switch between them. This is **usually conducted by Route53 weighted policy (1 and 0)**
@@ -2709,7 +2750,6 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- EMR
 - ACM and certs within IAM
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
