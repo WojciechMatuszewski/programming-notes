@@ -505,7 +505,18 @@ getting new DOM (which can be the same as previous one)
 The biggest thing is that **concurrent react** can **partially render** a tree
 without committing to the DOM. And o boi this is huge.
 
-### Suspense and data fetching
+#### Tearing
+
+With great power comes... great amount of bugs. This one is definitely interesting because there are multiple parts at play.
+Imagine your component are reading from a shared state. Whey rerender when that state changes but the render can take some time right?.
+
+Now imagine your tree re-rendering and then user decides to trigger the state update again. Naturally React (with concurrent mode) will yield to a browser because user did something. That will pause the rendering of SOME parts of your tree.
+
+What is happening at that very moment? Some parts of your tree are already ready with PREVIOUS value from the state (pre-user interaction) and SOME are still to be rendered BUT the state already has a different value.
+
+This issue is called tearing, where **some parts of your tree are inconsistent with others when it comes to state**. There is a great resource about this: https://github.com/dai-shi/will-this-react-global-state-work-in-concurrent-mode#what-is-tearing
+
+#### Suspense and data fetching
 
 So, when writing this, there is a trick you can use to leverage `Suspense` for
 your data fetching. That is to `throw` given promise.
