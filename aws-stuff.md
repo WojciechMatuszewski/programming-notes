@@ -1094,6 +1094,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - load balancer health check **can be carried on HTTP, SSL, HTTPS, TCP** protocols
 
+#### Scaling Events (mainly AZRebalance)
+
+- this is where **ALB tries to rebalance spread of instances between AZs**.
+
+* this event is quite important since **ALB can exceed for a brief period of time the maximum instances within given group**. This is **due to the fact that new instances are launched first (without terminating the old ones)**.
+
 ### DNS
 
 - domain names are stored in multiple dbs
@@ -1544,6 +1550,8 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 * **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
 
+- the data is **distrubited accross multiple AZs**
+
 ##### Backups
 
 - EFS operates on the notion of **backups not snapshots**
@@ -1565,6 +1573,18 @@ But most important information, remember **there are no so called snapshots when
 * what you can do is to use **AWS DataSync**. This will **sync your on premise env with the EFS volume which you use within the AWS env.**.
 
 ![img](./assets/efs-datasync.png)
+
+##### Performance
+
+- there are **2 main performance modes**
+  - **General Purpose**
+  - **MAX I/** - this one is the faster one but there is a **tradeoff of higher latencies for file metadata operations**
+
+##### Throughput
+
+- there are **2 main throughput modes**
+  - **busting mode** uses **credits** (recommended by AWS)
+  - **provisioned mode**: this is where you have **contant high throughput (not spikes)**
 
 #### Placement Groups
 
@@ -2083,8 +2103,6 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Transit Gateway
 
-Vpc peering is fine for a small scale, you know the deal with non-overlapping CIDR ranges can get a bit hard to achieve with multiple VPCs. This is where Transit Gateway come in.
-
 - **you can link multiple VPC using Transit Gateway**
 
 * **CIDRS cannot overlap**, but you make much less connections between VPCs in general
@@ -2098,6 +2116,8 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 - there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
 
 * **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct Connect and such!
+
+- **private link is used underneath** for seamless connection to AWS services.
 
 ##### Gateway Endpoints
 
@@ -2149,11 +2169,13 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * private link allows you to **share a service that YOU created, not only a AWS resource which is the case with Gateway/Interface endpoints**
 
-- **YOU HAVE TO HAVE NLB IN FRONT OF YOUR SERVICE FOR EVERYTHING TO WORK**
+- **YOU HAVE TO HAVE NLB IN FRONT OF YOUR SERVICE FOR EVERYTHING TO WORK**. The **private link will be linking to that NLB**.
 
 * uses **DNS underneath just like interface endpoints**
 
 - **can be combined with DirectConnect** to **slowly migrate from on-premise**
+
+* **DOES not traverse the public internet**
 
 #### VPN
 
@@ -2199,6 +2221,8 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * **HA by design**
 
+* you **can** have **route table attached** to it. This is qutie useful eg. when you want to route traffic to firewall first AND THEN to your instance.
+
 ##### Site-to-site Connection
 
 - this is **logical entity that connects Customer Gateway and Virtual Private Gateway**
@@ -2243,11 +2267,17 @@ Vpc peering is fine for a small scale, you know the deal with non-overlapping CI
 
 * mainly used **for encryption**. What is because **Direct Connect does not encrypt** the data but **VPN does encrypt it**.
 
-### Transit VPC
+#### Transit VPC
 
 - **one VPC as passtrhough**
 
 * can be **used for connecting multiple cloud providers**
+
+#### Traffic Mirroring
+
+- you can **mirror packets from one instance to another**. That another instance **can monitor the packets**.
+
+* it **captures real packets**. **Not like Flow Logs**.
 
 ### Caching
 
