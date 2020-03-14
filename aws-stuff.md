@@ -81,6 +81,8 @@
 
 * for **orchestrating serverless workflows**
 
+- you can create **manual steps** with step functions. This can be **while dealing with hybrid approach** where **there is some level of human interaction needed (like clicking a link)**
+
 ### IAM
 
 > IAM allows you to manage users and their level of access to the AWS Console
@@ -312,6 +314,12 @@ An example for s3-prefix (folder)
 #### Leaving the organization
 
 - **user has to have sufficient permissions to leave the organization**. I think the most **important here are the policies regarding billing**.
+
+#### Cost Explorer
+
+- you can **generate reports**
+
+* there are **AWS generated and Customer generated tags**. There **tags** can be **used to enhance the rapports (enable filtering)**
 
 ### ACM
 
@@ -735,6 +743,12 @@ So when to use what?
 
 * **snapshots from encrypted DBs are encrypted**
 
+#### RDS on VMware
+
+- you can put RDS dbs on VMware.
+
+* aws will manage the usual stuff that aws manages with RDS. The difference is that the db lives on VMware
+
 ### Aurora
 
 - **SQL and PostgreSQ** compatible
@@ -905,6 +919,10 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * the streams are **considered poll based events**
 
+#### SDK
+
+- when using **SDK**, it **automatically retries (calls are eventually consistent) unless retry queue is too large**.
+
 ### CloudFront
 
 - CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to caches.
@@ -1049,6 +1067,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 * when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
 
 - you should **always refer to ELBs by FQDN**. That is because **there are multiple nodes of ELB (per AZ)** and that **DNS can correctly resolve to correct IP**.
+
+* you **cannot route outbound traffic through ELB**.
 
 #### ALB
 
@@ -1478,11 +1498,17 @@ This is quite important to know
 
 * you can **create snapshots** either **manually**, **using LifeCycle Manager** or through **CloudWatch jobs**.
 
+- **retention policy DOES NOT carry over when copying.**
+
 #### LifeCycle Manager for EBS
 
 - creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
 
 * this **can be done across different DBS** like SQL or Oracle or other.
+
+- the **frequency can be UP TO 24hrs**. You can pick from the list of available frequencies **but the longest one only 24hrs**.
+
+* your volumes can have **multiple tags**. This means that **all policies specified for given tags will be in effect**. That means that you can have a volume where backups are done every 12hrs and every 24hrs.
 
 #### Termination
 
@@ -1518,9 +1544,20 @@ This setting is within **advanced settings** and basically makes it so that **yo
 
 - Instance Store is not really persistent, whereas EBS is a persistent, multi AZ storage option.
 
+* you **cannot create snapshots from instance store**
+
+- you **cannot create an AMI directly**. With **instance store** you can only create ami by:
+  - **creating bundle from root volume (using EC2 cli)**
+  - **uploading** that created bundle **to s3**
+  - then that **bundle is registered as AMI (from s3)**
+
 #### Restoring from an EBS
 
 When restoring from an EBS volume, **new volume will not immediately have maximum performance**. This is due to the fact that **not all data is copied instantly to a new volume**. The data is **copied lazily, when you attempt to read from a given resource**. This is why **sometimes, sys admins perform recursive lookup of all files on the volume, this will 'prime' them for real read operation**.
+
+#### Chaning The volume
+
+- **root** volume **can be changed to gp2, io1, magnetic**
 
 #### EFS
 
@@ -1548,9 +1585,7 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 - **mount targets can have security groups associated with them**
 
-* **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
-
-- the data is **distrubited accross multiple AZs**
+* the data is **distrubited accross multiple AZs**
 
 ##### Backups
 
@@ -1573,6 +1608,16 @@ But most important information, remember **there are no so called snapshots when
 * what you can do is to use **AWS DataSync**. This will **sync your on premise env with the EFS volume which you use within the AWS env.**.
 
 ![img](./assets/efs-datasync.png)
+
+##### Encryption
+
+- **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
+
+* encryption **at rest has to be enabled before creating the file system**
+
+- **mount helper** is something that you have to **download before you can use it**. It is a **cli tool**.
+
+* to enable **encryption in transit** you have to **add `-o tls` option**
 
 ##### Performance
 
@@ -1826,27 +1871,29 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **master node cannot be changed**. If you want **to change underlying instance, you would need to create new cluster**.
 
-- you should **preffer creating Cluster in the same region as the data you will be retriving / storing**
+- you should **prefer creating Cluster in the same region as the data you will be retrieving / storing**
 
 * **YOU have to provide an application for mapping and reducing**
 
 * **nodes** can be **monitored inside CloudWatch**
 
-#### Data Pipeline
+#### Data
 
-- allows you to easily **transform and move data**
+- **serverless product**
 
-* can be set to **run on given schedule**
+* allows you to easily **transform and move data**
 
-- **can integrate with on-premise resources**
+- can be set to **run on given schedule**
 
-* **does not work with streaming data such as Kinesis**
+* **can integrate with on-premise resources**
 
-- **integrates with EMR**
+- **does not work with streaming data such as Kinesis**
 
-* basically it allows you to **simplify ETL jobs**, but if the thing that you want to do is not supported it **may seem limited**.
+* **integrates with EMR**
 
-- **job is relaying on EC2, AWS GLUE does not have this limitation**. It manages the lifecycle of EC2
+- basically it allows you to **simplify ETL jobs**, but if the thing that you want to do is not supported it **may seem limited**.
+
+* **job is relaying on EC2, AWS GLUE does not have this limitation**. It manages the lifecycle of EC2
 
 #### Kinesis
 
@@ -2305,6 +2352,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * there is **no failover**. You **can run multi AZ** using so called **spread nodes mode**. **Think of this as ASG and EC2**, number of nodes can shirk and get bigger with time.
 
+- you might have a **situation where only SOME of the requests are served by cache**. This is **probably due to the underlying instance being too small**.
+
 #### Redis
 
 - data **can be persistent** but this **should not be treated as persistent data store**
@@ -2569,6 +2618,20 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - the **keys** are **region-locked**. You can **copy keys across regions though**.
 
+### Cloud HSM
+
+- **H**ardware **S**ecrue **M**odule
+
+* can **generate keys** and **perform crypto operations**
+
+- you can **create HSM clusters**. These are **NOT HA by default**.
+
+* **KMS uses HSM under the hood**
+
+- **presented as ENI inside VPC**
+
+* if you **really need something that is dedicated ONLY to you**, the **cloud HSM will not cut it**.
+
 ### TCO
 
 - this tool is used to **compare** the **cost of running in premise vs running in the AWS**
@@ -2659,6 +2722,12 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 - you can also **export a VM that was previously imported**
 
 * you can **import disks as EBS snapshots**
+
+### AWS Media (Live and Package)
+
+- these tools are used for creatng **livestreaming**.
+
+* combined **with cloudfront you can create distribution of HLS (HTTP Live Streaming)**
 
 ### Patterns
 
@@ -2773,6 +2842,34 @@ There are a couple of steps but always remember about key player here: **Egress-
 * route private traffic to Egress-only IGW, remember
 
 - add IPv6 CIDR to your subnets / VPC
+
+#### Disaster Recovery on AWS
+
+##### RTO (Recovery time objective)
+
+This is basically the period of time your service CAN be unavailable, the downtime.
+
+##### RPO (Recovery point objective)
+
+How much data can we loose? This is the duration in-between data snapshots, backups are made.
+
+##### Backup & Resotre
+
+This is the **low-cost** solution. You mainly use S3 as a backup service and then you start new services using those backups. Nothing is on standy.
+This **technique is used mainly where RTO and RPO is measured in hours**
+
+##### Pilot Light
+
+This is **also low cost but more expensive than Backup & Restore**. This is where you have **only the most critical parts (eg. a database) of your system proviosioned somewhere**. It is running and **that part of the system WILL be scalled to support your whole load when disaster occurs**.
+This **technique used mainly where RTO and RPO is measured in 10s of minutes**
+
+##### Warm Standby
+
+This is where **your whole system is in place, just SCALLED DOWN**. Recovery is pretty similar to Pilot Light where **you scale up the standy to accomodate for prod traffic**.
+
+##### Multi-Site
+
+This is the **active-active approach (the most expensive one)**. You basically **have 2 prod envs active at all times**. With that you usually have **R53 in front, you can quickly switch the traffic**.
 
 ### Other
 
