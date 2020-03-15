@@ -158,6 +158,8 @@
 
 * **assumed credentials** are **valid until the expiration date expires**
 
+- when you are creating **cross account assume role stuff** you can **further protect the policy by adding externalId condition**. This **externalId can only be used when assuming via CLI / SDK**.
+
 ##### Revoking Sessions
 
 Since removing a policy from a role which is assumed can be destructive there is another way of removing assumed (short-term) credentials. That is **revoking a session**. This basically **ads a deny all policy for tokens granted before given date**. So you did not remove the permissions directly, only invalidated given tokens. Pretty sweat!
@@ -168,6 +170,12 @@ Since removing a policy from a role which is assumed can be destructive there is
 
 You have to assign a role to a given instance. Then you can ssh into that instance and do stuff that that role allows you to do. This is possible because the `aws-cli` is able to obtain the short term credentials that the role provides. This is done by **querying an instance metadata role**.
 `http://169.254.169.254/latest/urity-credentials/NAME_OF_THE_ROLE`
+
+##### Switching Roles
+
+- users can switch role **using SwitchRole console menu** or using an **link within an email send by administrator**.
+
+* you **cannot switch roles** when you login **as root user**.
 
 #### Policies
 
@@ -1724,6 +1732,8 @@ Way of grouping EC2 instances.
 
 * there is **no aggregate step at the end**. This is **different than EMR**.
 
+- your job might be **stuck in RUNNABLE state** when **the job does not have adequate permissions** or **you have reached EC2 limit** or **the jobs asked for more resources than the environment can provide**
+
 ### SWF (Simple Workflow Service)
 
 - **manage workflow state, similarly to Step Functions**
@@ -1793,6 +1803,8 @@ Way of grouping EC2 instances.
 
 - you can configure **CloudWatch Events rules**. These allow you to run **scheduled jobs (cron)** and **invoke different targets (services like lambda)**.
 
+* you can have **mutiple target per CloudWatch rule**
+
 ### CloudTrial
 
 - **monitors AWS API calls**
@@ -1808,6 +1820,8 @@ Way of grouping EC2 instances.
 - **event history** persists **up to 90 days**
 
 * you can create **one trial** and **apply it to multiple regions**
+
+- you **can trigger CloudWatch events usng CloudTrial events**. Pretty neat!.
 
 #### Flow Logs
 
@@ -2631,6 +2645,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - with **Data Catalog** you can use **Athena / EMR / Redshift to query that catalog**.
 
 * **can generate ETL code** but **only for Scala or Python**.
+
+- has a **central metadata repository (data catalog)**.
 
 ### AWS Trusted Advisor
 
