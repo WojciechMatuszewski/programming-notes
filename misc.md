@@ -248,3 +248,34 @@ Now, this is quite useful. You can specify 3 properties:
 `once` means that the **event listener will automatically remove itself after the first time it fires**. This is soo useful, you do not have to keep the reference anymore.
 
 `passive` is for performance gains. Granted these are probably insignificant, but, nevertheless you can specify those. With `passive` you tell the browser that you will not use `event.preventDefault`, in return you get those aforementioned performance optimizations.
+
+## HTML Stuff
+
+### Accordion (collapsible)
+
+Yea you could use the `button` & `div` and look at a11y spec but... **there is a native way of doing collapsible boxes**.
+You can use `summary` and `detail` HTML tags.
+
+```html
+<details>
+  <summary>title</summary>
+  <p>content</p>
+</details>
+```
+
+Sadly at the time of writing this, there is **no built-in way of animating the collapse state**.
+
+### Combobox
+
+Again, the same with as with `Accordion`. There is a native way of doing this by using `input` and `datalist`
+
+```html
+<input list="languages" placeholder="Choose language" />
+<datalist id="languages">
+  <option>Python</option>
+  <option>Javascript</option>
+  <option>Java</option>
+</datalist>
+```
+
+I mean how cool is that? **Every keyboard navigation event is handled for you!**.
