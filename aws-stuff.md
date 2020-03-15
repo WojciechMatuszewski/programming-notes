@@ -461,8 +461,7 @@ An example for s3-prefix (folder)
     frequently but requires rapid access when needed
 
   - **S3 Glacier / Glacier Deep Archive**: used for data archiving, where you would
-    keep files for a long time. Retrieval time is configurable (**Deep
-    Archive is locked on 12hr retrieval time though**)
+    keep files for a long time.
 
   - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
 
@@ -483,6 +482,10 @@ An example for s3-prefix (folder)
 * **glacier vault** can be given **access by using IAM roles**.
 
 - you can create **vault archives UP to 40 tb** (this is usually a .zip file).
+
+* you can **recover files from GLACIER** within **1-5 mins (expedited), 3-5 hrs (standard), 5-12hrs (bulk)**.
+
+- you can **recover files from DEEP ARCHIVE** within **12 hrs (standard) and 48hrs (bulk)**
 
 ##### Vault Lock
 
@@ -538,29 +541,6 @@ An example for s3-prefix (folder)
 * **once placed in a tier, life-cycle rules will not be able to place the item back a tier (where it was)**
 
 - they **apply** to **buckets, prefixes, tags and current or previous versions of the object**.
-
-#### Storage Gateway
-
-- **SOMETHING YOU DOWNLOAD**
-
-* Physical/virtual device which **will replicate your data to AWS**.
-
-- There are 3 flavours of Storage Gateway
-  - **File Gateway** : used for storing files as object in S3 - **NFS, SMB** .
-  - **Volume Gateway**: used for storing copies of hard-disk drives in S3 - **iSCSI**.
-  - **Tape Gateway**: used to get rid of tapes - **iSCSI**, for use mainly with **backup software**.
-
-* With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
-
-- if you see **ISCSI** that is **probably Volume Gateway**.
-
-* remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because with cached volume only your primary data is written to s3.
-
-- **useful** when doing any kind of **cloud migrations**
-
-##### File Gateway
-
-- **exposes itself as NFS**
 
 #### Security
 
@@ -646,6 +626,37 @@ So when to use what?
 - there is something called **requester pays**. This is where the **person who downloads the object pays for the transfer**. this is **this feature can only be used with people who have an existing aws account**.
 
 * you can use **BitTorrent** to **distribute s3 content**.
+
+### Storage Gateway
+
+- **SOMETHING YOU DOWNLOAD**
+
+* Physical/virtual device which **will replicate your data to AWS**.
+
+- There are 3 flavours of Storage Gateway
+  - **File Gateway** : used for storing files as object in S3 - **NFS, SMB** .
+  - **Volume Gateway**: used for storing copies of hard-disk drives in S3 - **iSCSI**.
+  - **Tape Gateway**: used to get rid of tapes - **iSCSI**, for use mainly with **backup software**.
+
+* With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+
+- if you see **ISCSI** that is **probably Volume Gateway**.
+
+* remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because **with cached volume only your primary data** is **written to s3**.
+
+- **useful** when doing any kind of **cloud migrations**
+
+* all data is **encrypted in transit**. Data **at rest** is **by default encrypted using SSE-s3**
+
+#### Volume Gateway
+
+- you **cannot directly access the data using S3 API**. You would need to **use File Gateway to have a native way of accessing your files**.
+
+* you can **create snapshots from the volume**. These can be **turned into EBS snapshots**.
+
+#### File Gateway
+
+- **exposes itself as NFS**
 
 ### Snowball
 
@@ -1000,7 +1011,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 ### API Gateway
 
-- **throttling** can be **configured at multiple levels** including Global and Service Call
+- **throttling** can be **configured at multiple levels** including **Global and Service Call**
 
 * you **can** setup **on premise integration**. You need to use **NLB and VPC link** to make it work. You would setup NLB within your VPC and connect to on prem through VPN or Direct Connect. Then that NLB would hit your on prem, APIGW would hit the NLB through VPC link
 
@@ -1009,6 +1020,14 @@ There are a few approaches when it comes to scaling with dynamoDB
 * by default **AWS provides DDOS protection**
 
 - you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not CloudTrail!**. Remember, CloudTrial is about service calls made by identity within your AWS account.
+
+* **access** to an APIGW can be **controlled using multiple means**:
+  - **resource policies** which define **access to your API methods from source IPs or VPC Endpoints**
+  * **IAM** can be **applied to entrie API or methods**
+  - **authorizers**
+  * **cognito**
+
+- you **can** actually **use VPC interface endpoint** with APIGW
 
 #### Timeouts
 
@@ -1397,7 +1416,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - there is notion of **connection draining**. This is **done by ALB OR NLB**. When **terminating an instance ALB/NLB will wait for that period to pass**.
 
-* **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that instance**. **ASG does not `listen` for ELB commands to terminate stuff**. ASG has its own checks and based on them, and only them it decides which instance to terminate.
+* **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that instance**. **ASG does not `listen` for ELB commands to terminate stuff (BY DEFAULT)**. This can be changed. **ASG CAN listen to ELB health checks if you set it up**. But always remember that it is the ASG that terminates stuff by default
 
 - you can have **custom CloudWatch metrics trigger scale events**
 
@@ -1685,6 +1704,7 @@ Way of grouping EC2 instances.
   - **hot attached**: when instance is running
   - **warm attached**: when instance is stopped
   - **cold attached**: when instance is launched
+* with **mutliple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and not on the EC2 itself.
 
 ### AWS Batch
 
@@ -1694,9 +1714,15 @@ Way of grouping EC2 instances.
 
 - think of **bash scripts or other jobs**
 
+* **jobs** as **units of work (shell scripts, Linux exec, Docker container image)**
+
 * **one job might depend on another**. With AWS Batch you **can make sure that jobs are done in a right order**.
 
+- there is a notion of **job definitions (how jobs are to be run)**
+
 - **you can use SPOT EC2 instances** for maximum cost efficiency.
+
+* there is **no aggregate step at the end**. This is **different than EMR**.
 
 ### SWF (Simple Workflow Service)
 
@@ -2418,17 +2444,25 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **by default** your **standard queue** **DOES NOT PRESERVE THE ORDER**. You can also **have duplicates (sometimes)**.
 
-* **FIFO queues** allow for **ordering** but have **limited capacity**.
-
 - can have **resource policies**
 
 * you can have ASG react to number of messages inside the queue
 
 - you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
 
-- **FIFO queues are not supported for lambda integration**. Also, **with Lambda, max batch size = 10!**
+* you **can use Message Group ID**. This can **help with ordering** but **only within a given Message Groupd ID**. Basically it **guarantess** that **items with the same Message Group ID** will **come ordered**.
 
-* you **cannot** **convert existing queue to FIFO**. You **have to create new one**.
+##### SQS FIFO
+
+- **FIFO queues** allow for **ordering** but have **limited capacity**.
+
+* **FIFO queues are not supported for lambda integration**. Also, **with Lambda, max batch size = 10!**
+
+- you **cannot** **convert existing queue to FIFO**. You **have to create new one**.
+
+* **DOES NOT SUPPORT DELAY SECONDS**
+
+- you **HAVE TO use Message Group ID**. If you do not have multiple groups just just a single static one.
 
 ### AWS Workspaces
 
