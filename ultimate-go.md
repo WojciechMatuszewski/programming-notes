@@ -698,3 +698,153 @@ What's worth noting is that **whenever you have to specify `wg.Add(1)` somewhere
 ### Deadlocks
 
 Deadlock means that every single goroutine is within a _waiting state_. **Usually happens when you forgot to call `wg.Done` somewhere**.
+
+## Data Races
+
+- **synchronization** is where a goroutine is waiting for given resource access
+
+* **data-race** is where you have 2 goroutine where one is doing a read and one is doing a write to the same memory location
+
+- data races bugs **can be very subtle**. Do you remember about context switching? **introducing context switch within badly written code CAN introduce data-race problems**.
+
+This code is a good example of such problem:
+
+```go
+// counter is a variable incremented by all goroutines.
+var counter int
+func main() {
+	// Number of goroutines to use.
+	const grs = 2
+	// wg is used to manage concurrency.
+	var wg sync.WaitGroup
+	wg.Add(grs)
+	// Create two goroutines.
+	for g := 0; g < grs; g++ {
+		go func() {
+			for i := 0; i < 2; i++ {
+				// Capture the value of Counter.
+				value := counter
+
+				// Increment our local value of Counter.
+				value++
+
+				fmt.Println(value)
+
+				// Store the value back into Counter.
+				counter = value
+			}
+
+			wg.Done()
+		}()
+	}
+	// Wait for the goroutines to finish.
+	wg.Wait()
+	fmt.Println("Final Counter:", counter)
+}
+```
+
+See that `fmt.Println`? That call introduces the data-race problem. This is because of context-switching. Those **goroutines have no idea that they have been stopped**. To fight such problems you can use two things: **Atomic Instructions** and **Mutexes**
+
+### Atomic Instructions
+
+This is where `"sync/atomic"` packages comes to help. With that package you can use **low level operations** which **are synchronized on memory address level**. To add `1` within a goroutine you would use `atomic.AddInt64(&counter, 1)`. You would **use atomic instructions if you need synchronization on 1 line of code**. In this case that line is the adding 1 to a counter.
+
+```go
+var counter int64
+
+// inside goroutine
+atomic.AddInt64(&counter, 1)
+
+```
+
+### Mutexes
+
+You would use mutexes **if you need synchronization across multiple lines of code**. Like everything **mutexes have a cost of latency**. This is where you **measure the backpressure created by mutexes**.
+
+As a side-note, just like in Javascript, **you can create separate code-blocks to better indicate the purpose of a given code**.
+
+```go
+var mu sync.Mutex
+
+// if you cannot use defer
+mu.Lock()
+{
+    // instructions that you want to make atomic
+}
+mu.Unlock()
+```
+
+Pretty neat.
+
+**Always prefer to do BARE MINIMUM within the mutex block**. This is very important since **every instruction is adding a latency overhead**. Of course, just like with everything, always measure, never optimize for problems you do not have.
+
+#### RWMutex
+
+Normal `sync.Mutex` makes sure that no other goroutine can `read` and `write` and the same time. Sometimes we perform only writes or only reads to a given structure. With that using `sync.Mutex` would be wasteful since it would introduce needles back-pressure. So you should **use `sync.RWMutex` if you want to specify which operations should be atomic within a mutex block**.
+
+```go
+var rwMutex sync.RWMutex
+
+rwMutex.RLock()
+{
+    // I can read within this block
+}
+rwMutex.RUnlock()
+
+rwMutex.Lock()
+{
+    // I can read AND write within this block
+}
+rwMutex.Unlock();
+```
+
+And of course, the **`RWMutex` is a bit slower that normal `Mutex`**.
+
+### Race Detection
+
+Golang has a built-in data race detector. **Use `-race` flag to spot data-races**.
+
+## Channels
+
+- there are **two types** of channels: **buffered** and **non-buffered**.
+
+* once you close channel it cannot be opened again.
+
+### Wait for Task Pattern
+
+This one is quite simple but **introduces unknown latency**.
+
+```go
+
+func main() {
+    ch := make(chan string)
+
+    go func() {
+        p := <-ch
+        fmt.Println("employee : recv'd signal :", p)
+    }()
+
+    ch <- "paper"
+	fmt.Println("manager : sent signal")
+}
+```
+
+Always remember, **the only atomic operation here is of the channel**. **Other operations might appear out of order (fmt.Println)**. This is why you **should not rely on print statements to debug concurrency**.
+
+### Wait for result
+
+This is where we inverse the responsibility. The main goroutine is going to wait.
+
+```go
+func main() {
+    ch := make(chan string)
+
+    go func() {
+        ch <- "pepper"
+    }()
+
+    p := <- ch
+
+    fmt.Println(p)
+}
+```
