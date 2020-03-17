@@ -2892,7 +2892,7 @@ Another approach you might take is to **use Route53 with multivalue routing**.
 
 #### Getting Source IP with ELB
 
-With **ALB/Classic** you can use **X-Forwarded-For** header. But beware that **this only works for HTTP/HTTPs**. When you are dealing with **eg. TCP** you should enable **Proxy Protocol**. It **prepends info about clients IP before the actual data**. **Proxy Protocol cannot be added using a console. YOU HAVE TO USE CLI**
+With **ALB/Classic** you can use **X-Forwarded-For** header. But beware that **this only works for HTTP/HTTPs**. When you are dealing with **eg. TCP** you should **enable Proxy Protocol if you are using Classic ELB (NLB uses proxy protocol by default)**. It **prepends info about clients IP before the actual data**. **Proxy Protocol cannot be added using a console. YOU HAVE TO USE CLI**
 
 Please also **keep in mind that NLB just forwards the traffic**. So **This is not a problem with NLB**.
 
