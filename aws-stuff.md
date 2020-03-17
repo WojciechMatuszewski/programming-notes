@@ -325,9 +325,13 @@ An example for s3-prefix (folder)
 
 #### Cost Explorer
 
-- you can **generate reports**
+- you can **generate reports**. These reports are a **.csv** file.
 
 * there are **AWS generated and Customer generated tags**. There **tags** can be **used to enhance the rapports (enable filtering)**
+
+- reports **can be generated up to three times a day**
+
+* they are **delivered to s3 bucket**. That **bucket has to be owned by master account**.
 
 ### ACM
 
@@ -538,6 +542,8 @@ An example for s3-prefix (folder)
 
 * **you are still billed for old versions**. Event though there might a delete marker the object is not permanently deleted so you have to pay for the storage.
 
+- remember that **elements will be versioned from the moment you enable versioning**. **Previously uploaded elements WILL NOT be versioned (versionID of null)**
+
 #### Life-cycle rules
 
 - can be used to **transition objects to different TIER of storage after X amount of time**, this can be placed on current and previous versions.
@@ -581,6 +587,8 @@ So when to use what?
 * **pre-signed urls** work **per object level**
 
 - **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **made useless sometimes, when the permissions of signing identity changed**
+
+* you can use **referrer IAM condition** to **allow request from specific web pages**.
 
 #### Encryption
 
@@ -1307,6 +1315,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 So with **ECS you have to have EC2 instances running**. But with **Fargate you really only care about the containers themselves**. You can wave deploying ASG goodbye. **Fargate is basically container as a service, you only define tasks and that is it**.
 
+### EKS
+
+- you can **pull images** from **various sources, not only ECR**
+
+* remember that **EKS service role** needs **permissions to create AWS resources** (just like ECS)
+
 ### EC2 (Elastic Compute Cloud)
 
 - resizable compute capacity in the cloud, **virtual machines in the cloud**
@@ -1582,9 +1596,17 @@ This setting is within **advanced settings** and basically makes it so that **yo
 
 When restoring from an EBS volume, **new volume will not immediately have maximum performance**. This is due to the fact that **not all data is copied instantly to a new volume**. The data is **copied lazily, when you attempt to read from a given resource**. This is why **sometimes, sys admins perform recursive lookup of all files on the volume, this will 'prime' them for real read operation**.
 
-#### Chaning The volume
+#### Changing The volume
 
 - **root** volume **can be changed to gp2, io1, magnetic**
+
+#### Raid Configurations
+
+- use **RAID 0 for maximum performance**.
+
+* use **RAID 1 for maximum fault tolerance**. This is where your **data is mirrored between 2 volumes**
+
+- **DO NOT use RAID 5, 6**
 
 #### EFS
 
@@ -2006,6 +2028,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
 
 - you can use **Redshift Snapshots with S3 CRR** or **enable Cross-Region snapshots for the cluster** for **HA**.
+
+* **minimal storage size** is **2 nodes each 160 GB SSD**
 
 #### Spectrum
 
@@ -2456,6 +2480,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
 
+* you can **change visibility timeout PER ITEM BASIS**. This might come in handy when you know some messages can take longer than usuall. This is **usually done by tagging such message using some kind of JSON header**.
+
 - **by default** your **standard queue** **DOES NOT PRESERVE THE ORDER**. You can also **have duplicates (sometimes)**.
 
 - can have **resource policies**
@@ -2487,6 +2513,26 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - you do not have to manage hardware
 
 ### AWS Ops Work
+
+- **in between Elastic Beanstalk** and **manual deployment**.
+
+* it **trades SOME of the configurability** for automation
+
+- **stack** as **top level construct**. Type of system like dev, prod, test or a specific application.
+
+* **layers** represent **individual pieces of functionallity** within a stack, something like ECS Cluster, RDS, or OpsWork Layer
+
+#### AutoHealing of instances
+
+- this is **like automatic healthchecks with autoscalling (but fixed)**
+
+* you **only have to tick 1 box to make it work**
+
+#### Instances
+
+- here you can create **time-based** or **load-based** instances
+
+* there is a **simple wizard to create scalling scenarios**
 
 ### WAF (Web Application Firewall)
 
@@ -2619,6 +2665,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - AWS will basically tell you: this will be modified, this will be deleted, this will be created...
 
 * when you are ready **you can execute given change set to introduce the changes**
+
+#### Deletion Policy
+
+- you can use **Snapshot** to **create a snapshot of data for services that support snapshots**
+
+* you can use **retain** or also **delete**.
 
 #### Drift Detection
 
@@ -2939,6 +2991,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- OPS WORK
 - ACM and certs within IAM
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
