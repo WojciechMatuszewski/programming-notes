@@ -848,3 +848,52 @@ func main() {
     fmt.Println(p)
 }
 ```
+
+### Wait for finished (signaling without data)
+
+You would usually use `waitGroup` for this. Empty `struct` is used for semantic reasons here, to indicate that there will be no data passed.
+
+```go
+func main() {
+    ch := make(chan struct{})
+
+    go func() {
+        close(chn)
+    }()
+
+    // block
+    <- ch
+}
+```
+
+You can also get information about the state of the channel (if it was closed or not).
+
+```go
+    data, isClosedOrData <- ch
+```
+
+### Pooling pattern
+
+You **can use `range` over `channel`**. This is also blocking operation.
+
+```go
+func main() {
+    ch := make(chan string);
+
+
+    threads := 2
+    for thread := 0; thread < threads; thread++ {
+        go func(thread int) {
+            for p := range ch {
+                // do some work
+            }
+        }(thread)
+    }
+}
+```
+
+You can create a `pooling workers`. The runtime is smart enough to pick given goroutine within the `thread` loop to do conduct the unit of work.
+
+Notice that I'm using `range` over `channel` which is un-buffered. This is like creating multiple concurrent `receivers` of work. As mentioned earlier this is a blocking operation.
+
+### Fan Out Pattern

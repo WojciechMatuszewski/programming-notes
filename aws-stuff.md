@@ -243,6 +243,8 @@ An example for s3-prefix (folder)
 
 - **UP TO 5000 IAM Users**
 
+* remember that **IAM users are global!**
+
 #### Certs
 
 - this is a **legacy way of keeping certs**, before ACM was introduced.
@@ -2306,6 +2308,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * when the initial setup is complete we have done **peer identity authentication**. You have to paste some special config within your on-prem router to make it work so the authentication is there.
 
+- to **make things work** you will need **BGP and ASN (only if the routing type is dynamic) AND static routable IP for the customer gateway**
+
 ##### Managed VPN
 
 - **AWS managed** VPN
@@ -2377,6 +2381,20 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - this setup basically means **setting up VPN connection over DirectConnect line**
 
 * mainly used **for encryption**. What is because **Direct Connect does not encrypt** the data but **VPN does encrypt it**.
+
+##### Combining Direct Connects
+
+- you **can actually combine direct connect connections**
+
+* you have to use something called **LAG - link aggregation group**
+
+- **all connections within a LAG have to have the same bandwidth**
+
+* you can **add existing or new connections to LAG**
+
+- this solution **will increase the overall bandwith**
+
+* you can have **maximum of 4 connections within a LAG**
 
 #### Transit VPC
 
@@ -2991,7 +3009,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- OPS WORK
+- CloudFormation Wait conditions
 - ACM and certs within IAM
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
