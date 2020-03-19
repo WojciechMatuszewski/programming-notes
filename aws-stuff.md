@@ -2224,6 +2224,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * you can create **route tables on transit gateway to control the visibility of each VPC**
 
+- there is a **static monthly cost** and also **data transfer cost**.
+
 #### VPC Endpoints
 
 - there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
@@ -2344,6 +2346,12 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **sometimes refereed to as Tunnel Endpoint**
 
+##### HA
+
+- it's the **customer gateway that is the point of failure**
+
+* you should probably **provide 2 or more customer gateways** so that when one fails you can switch to the other one.
+
 #### Direct Connect
 
 - **psychical connection between AWS and your network**
@@ -2401,6 +2409,10 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - **one VPC as passtrhough**
 
 * can be **used for connecting multiple cloud providers**
+
+- this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **VPN (Virtual Private Gateway and BGP on the transit gateway side)**
+
+* the **connection IS NOT IPsec (vpc peering)**. This is due to routing issues.
 
 #### Traffic Mirroring
 
@@ -2849,6 +2861,26 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 * combined **with cloudfront you can create distribution of HLS (HTTP Live Streaming)**
 
+### AWS Global Accelerator
+
+- this like **global pseudo-dns with a sparkle of load balancer which allways returns 2 IPS for your costumers**. This is so that then user device caches the IP and disaster occurs it does not route to the service that is not working. The **returned IP is the same** but **the routing logic is within Global Accelerator**
+
+* gives you **2 anycast IPS**
+
+- it will always
+
+* **allows** you to create **sticky sessions (client affinity)**
+
+- you **can** configure **health checks**. Health checks **can be PER endpoint (eg. ELB)**
+
+* you can **configure endpoint weights (this is PER ELB basis for example)**
+
+- you can configure **regional traffic dials** which enable you to route **based on weight you set for a global region**
+
+* there is a notion of **endpoint groups**. This are **NLB/ALB/EC2 services OR static IP**
+
+- GA **can use exisiting health checks that exist on ELB**
+
 ### Patterns
 
 <!-- #### Connecting on-prem with VPC -->
@@ -2971,7 +3003,7 @@ This is basically the period of time your service CAN be unavailable, the downti
 
 ##### RPO (Recovery point objective)
 
-How much data can we loose? This is the duration in-between data snapshots, backups are made.
+How much data can we lose? This is the duration in-between data snapshots, backups are made.
 
 ##### Backup & Resotre
 
@@ -3009,10 +3041,9 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
 - CloudFormation Wait conditions
-- ACM and certs within IAM
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
-- OPS WORK
 - AWS Global Accelerator (and the pattern where customer uses very old firewall)
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
