@@ -897,3 +897,123 @@ You can create a `pooling workers`. The runtime is smart enough to pick given go
 Notice that I'm using `range` over `channel` which is un-buffered. This is like creating multiple concurrent `receivers` of work. As mentioned earlier this is a blocking operation.
 
 ### Fan Out Pattern
+
+- **can be dangerous with long running applications**. Especially with web servers where there is a goroutine per request (usually).
+
+With this pattern you have buffered `channel` where the buffer size is not some kind of magic number but a well defined one.
+
+```go
+func main(){
+    workers = 20
+    ch := make(chan string, workers)
+
+    for w := 0; w <= workers; w++ {
+        go func() {
+            ch <- "work"
+        }()
+    }
+
+    for workers > 0 {
+        res <- ch
+        workers--;
+    }
+}
+```
+
+This pattern is usually for short lived programs where you do not have to create any kind of connections to underlying services (like databases)
+
+### Fan Out Sem
+
+This is where you create a pool of workers but you want to limit how many workers can be active at once, usually using `runtime.NumCPU()`.
+
+```go
+func main() {
+    workers := 2000
+    workCh := make(chan string, workers)
+
+    g := runtime.NumCPU()
+    semCh := make(chan bool, g)
+
+    for worker := 0; worker < workers; worker ++ {
+        go func() {
+            semCh <- true
+            {
+                // perform the work
+                workCh <- "pepper"
+            }
+            // pull data back from sem. this will enable other goroutines to start working
+            <- semCh
+        }()
+    }
+
+    for workers > 0 {
+        unitOfWork <- workCh
+        workers--;
+    }
+}
+```
+
+Keep in mind that **you can only send to a `channel` if buffer is not full**. Otherwise **then the buffer is full, it is a blocking operation (waiting for space)**.
+
+This basically means that `semCh <- true` is blocking unless there is a space within a buffer.
+
+### Drop Pattern
+
+Drop pattern is like cancellation but instead of canceling you just drop the work. There is also some pooling aspects to it.
+
+```go
+func main(){
+    bufSize := 5
+    workCh := make(chan string, bufSize)
+
+    go func() {
+        // pooling for work (one unit at a given time)
+        for work := range workCh {
+            // perform work
+        }
+    }()
+
+    unitsOfWork := 2000
+    for unit := 0; unit <= unitsOfWork; unit ++ {
+        select{
+        case workCh <- "pepper":
+            fmt.Println("unit of work send")
+            // this is where the dropping happens
+        default:
+            fmt.Println("unit of work dropped - buffer full!")
+        }
+    }
+}
+```
+
+So basically the worker `pools` using `for range` semantics. If the producer cannot send the unit of work, it drops that unit.
+
+### Cancellation
+
+This is where `context` package shines.
+
+```go
+func main() {
+    duration := time.Millisecond * 150;
+    ctx, cancel := context.WithTimeout(context.Background(), duration)
+    // always cancel, not canceling leads to a memory leak
+    defer cancel()
+
+    // channel HAS TO BE BUFFERED. Otherwise the worker goroutine might be blocked forever since noone will be listening for receive (when timeout happens)
+    workCh := make(chan string, 1)
+
+    go func() {
+        time.Sleep(time.Duration(rand.Intn(200)) * time.Millisecond)
+        workCh <- "pepper"
+    }()
+
+    select {
+    case unit := <- workCh:
+        fmt.Println("work is done")
+    case <- ctx.Done():
+        fmt.Println("too bad!")
+    }
+}
+```
+
+It is **very, very important to have buffered `channel` here**.
