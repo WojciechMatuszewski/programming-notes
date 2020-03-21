@@ -1017,3 +1017,17 @@ func main() {
 ```
 
 It is **very, very important to have buffered `channel` here**.
+
+## Garbage collector
+
+- **by default** first garbage collection runs at **4 Meg at the Heap**
+
+* there are **2 Stop the World events during one GC cycle**. GC really wants to keep this cycle under 200 micro seconds.
+
+- to optimize you can **reduce your allocation to the HEAP**
+
+* you can **manually control when GC starts (the size)**. It can be configured **up to 40 meg**. Use **runtime package (alloc_space)** for that.
+
+- **sometimes** it's worth to **adjust the GC Heap size**. But this is **mainly useful for pooling algorithms, YOU SHOULD PROBABLY NEVER USE IT FOR WEB SERVERS**
+
+* you can **trace GC**. This is done by **setting GODEBUG=gctrace=1** and then running your app.

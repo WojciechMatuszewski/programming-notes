@@ -261,9 +261,11 @@ An example for s3-prefix (folder)
 
 * the **root container** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs. **Root container / node** is the **account that has OUs underneath**.
 
-- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
-
 * you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
+
+#### Discounts
+
+- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
 
 #### Invites
 
@@ -292,6 +294,8 @@ An example for s3-prefix (folder)
 * the **policy evaluation process** is as follows: first you take your iam permissions then you take SCPs. You **take union of permissions from your IAM and SCP, these are the permissions you effectively have**.
 
 - you can have **multiple SCPs which apply**. In such case you take **union of every SCPs with your IAM permissions**.
+
+* remember that **SCP only apply to the accounts that are within given OU**. SCPs **do not apply to outside users (other accounts)**
 
 #### OUs
 
@@ -1107,6 +1111,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * you **cannot route outbound traffic through ELB**.
 
+#### Client Affinity (Sticky sessions)
+
+- you can enable **sticky sessions** on **ELB**. This feature makes it so that ALB tracks the client (for which sever it handed it off to). So it can keep **sending it back to the same server**.
+
+* this is usually done by **setting a special cookie** or **tracing IP details (NLB)**
+
 #### ALB
 
 - work in **layer 7**. That means that they are **HTTP/HTTPS aware**
@@ -1124,8 +1134,6 @@ There are a few approaches when it comes to scaling with dynamoDB
 - great for **separating traffic based on their needs**
 
 * **CAN** have **SecurityGroup attached**
-
-- you can enable **sticky sessions** on ALB. This feature makes it so that ALB tracks the client (for which sever it handed it off to). So it can keep **sending it back to the same server**.
 
 #### NLB
 
@@ -1238,6 +1246,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 * if **primary record fails** traffic will be **resolved to secondary record**. The **name stays the same**
 
 - you **can only create SINGLE record FOR PRIMARY and SECONDARY**
+
+#### Routing (general)
+
+- you can **nest routing strategies**. This is to create complex routing infrastrucure
+
+* an good **example** would be the need to create **latency based tree where leafs are based on weight**
 
 #### Weighted
 
@@ -1443,6 +1457,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that instance**. **ASG does not `listen` for ELB commands to terminate stuff (BY DEFAULT)**. This can be changed. **ASG CAN listen to ELB health checks if you set it up**. But always remember that it is the ASG that terminates stuff by default
 
 - you can have **custom CloudWatch metrics trigger scale events**
+
+* you can **suspend Auto Scalling**. This is **useful** while **debugging**.
 
 #### Lifecycle hooks
 
@@ -1716,9 +1732,17 @@ Way of grouping EC2 instances.
 
 #### Enhanced Networking
 
+- mean of **optimizing the network interface** rather than the volume itself.
+
+* uses **SR-IOV to squieze maximum I/O performance**
+
 - EC2 **must** be launched from **HVM AMI**
 
 * EC2 **must** be launched **inside VPC**
+
+- there is **no additional charge**
+
+* available **only on specific instances**
 
 #### ENI (Elastic Network Interface)
 
@@ -1941,7 +1965,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **nodes** can be **monitored inside CloudWatch**
 
-#### Data
+#### AWS Data Pipeline
 
 - **serverless product**
 
@@ -2284,13 +2308,15 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * private link allows you to **share a service that YOU created, not only a AWS resource which is the case with Gateway/Interface endpoints**
 
-- **YOU HAVE TO HAVE NLB IN FRONT OF YOUR SERVICE FOR EVERYTHING TO WORK**. The **private link will be linking to that NLB**.
+- **provider exposes NLB** and the **customer links VPC endpoint network interface to that NLB**
 
-* uses **DNS underneath just like interface endpoints**
+<!-- - **YOU HAVE TO HAVE NLB IN FRONT OF YOUR SERVICE FOR EVERYTHING TO WORK**. The **private link will be linking to that NLB**. -->
 
-- **can be combined with DirectConnect** to **slowly migrate from on-premise**
+- uses **DNS underneath just like interface endpoints**
 
-* **DOES not traverse the public internet**
+* **can be combined with DirectConnect** to **slowly migrate from on-premise**
+
+- **DOES not traverse the public internet**
 
 #### VPN
 
@@ -2420,6 +2446,20 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * it **captures real packets**. **Not like Flow Logs**.
 
+### AWS Backup
+
+- operates on a notion of **backup plans**. This is where you specify **how often you want to run the backup**, **whats the retention** and so on.
+
+* you **can create backup plans from JSON files**
+
+- there are also some **options to configure lifecycle, like moving backups to cold storage after X time after creation**.
+
+* there are also **backup rules, backup plan can have multiple rules**.
+
+- you can **assign multiple resources to the backup plan**. AWS Backup can work with **RDS (except Aurora), DynamoDB tables, efS, Storage Gateway volumes**.
+
+* you can create **on demand backups**.
+
 ### Caching
 
 #### DAX (in-memory cache for DynamoDB)
@@ -2504,10 +2544,6 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **up to 256KB payload**
 
-- there is a notion of **pooling**.
-  - **short pooling**: up to **10 messages** at once. You **constantly have to check the queue**
-  - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **avoid empty API calls**
-
 * when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
 
 * you can **change visibility timeout PER ITEM BASIS**. This might come in handy when you know some messages can take longer than usuall. This is **usually done by tagging such message using some kind of JSON header**.
@@ -2522,6 +2558,18 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * you **can use Message Group ID**. This can **help with ordering** but **only within a given Message Groupd ID**. Basically it **guarantess** that **items with the same Message Group ID** will **come ordered**.
 
+##### Pooling
+
+- there is a notion of **pooling**.
+  - **short pooling**: up to **10 messages** at once. You **constantly have to check the queue**
+  - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **avoid empty API calls**
+
+Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection** is **always open**, it just waits for ANY message to be visible.
+
+##### HA
+
+- every **message** is stored on **3 hosts across MIN 2 AZs**
+
 ##### SQS FIFO
 
 - **FIFO queues** allow for **ordering** but have **limited capacity**.
@@ -2533,6 +2581,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * **DOES NOT SUPPORT DELAY SECONDS**
 
 - you **HAVE TO use Message Group ID**. If you do not have multiple groups just just a single static one.
+
+#### DLQ
+
+- this is a **special queue which usually takes the events which were processed unsucessfuly**.
+
+* normally each message has something called **`recieveCount`**. Whenerver you get message delivered that count is incremented
+
+- you can **set that message will be transported to DQL whenever `recieveCount` is greated than ...**
 
 ### AWS Workspaces
 
@@ -2563,6 +2619,10 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - here you can create **time-based** or **load-based** instances
 
 * there is a **simple wizard to create scalling scenarios**
+
+- **updates** are **applied at the time of launching given instance**. There is **no automatic update process in place, you have to update your instances later on**. You can do that **in 2 ways**:
+  - **create and start new instances** to **replace your current ones**.
+  - **on Linux-based instances** you can **run `Update Dependencies stack command`**.
 
 ### WAF (Web Application Firewall)
 
@@ -2863,7 +2923,7 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### AWS Global Accelerator
 
-- this like **global pseudo-dns with a sparkle of load balancer which allways returns 2 IPS for your costumers**. This is so that then user device caches the IP and disaster occurs it does not route to the service that is not working. The **returned IP is the same** but **the routing logic is within Global Accelerator**
+- this like **global pseudo-route53 with a sparkle of load balancer which allways returns 2 IPS for your costumers**. This is so that then user device caches the IP and disaster occurs it does not route to the service that is not working. The **returned IP is the same** but **the routing logic is within Global Accelerator**
 
 * gives you **2 anycast IPS**
 
