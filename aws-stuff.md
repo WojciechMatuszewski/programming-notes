@@ -383,17 +383,39 @@ An example for s3-prefix (folder)
 
 * keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
 
-### System Manager
+### Systems Manager (SSM)
 
 - helps you manage **large landscapes** like **100s of instances**
 
 * **agent installed by default on modern AMIs**, can also be **downloaded and installed on-prem**
 
-- you have **inventory** which **collects OS, application and instances metadata (about instances)**
+- you have **inventory** which **collects OS, application and instances metadata (about instances)**. You can **send inventory data to S3** and query it with **Athena** or **QuickSight**
 
 * **parameter store** where **you can store config data, connection strings etc.**. **Can be integrated** with **Secrets Manager**.
 
-- **create maintenance windows** for multiple instances. You can run scripts and such.
+- there is a concept of a **patch manager**. This tool enables you to **discover missing updates, update multiple or single instances**.
+
+* can be used for **both Windows and Linux machines**
+
+- there is an **agent (baked into modern Windows or Linux AMIs)** which you can install. That means that **you can manage on-prem instances aswell!**.
+
+* it is quite important to remember that **SSM is public space endpoint (can be a interface endpoint)**. This means that your **EC2 instances have to have internet connectivity / interface endpoint within a vpc**.
+
+- to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**
+
+* there are **documents** which are basically **scripts (actions) that SSM can use to do stuff**.
+
+#### Parameter Store
+
+- **secure storage** for **configuration data and secrets**
+
+* the data is **structural**. You declare **paths to given values like an url: /dupa/dupa1**
+
+- **keys can be encrypted (secure string)** using **KMS**. This is an **ideal solution for passwords for DB for smth**
+
+* **scallable** and **serverless**
+
+- very useful for **distributing config inside ASG**
 
 ### AWS Service Catalog
 
@@ -971,7 +993,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * Distribution is basically the **collection of Edge Locations**
 
-- You **can** invalidate cache content
+- You **can invalidate cache** content
 
 * There are **2 types of distributions**.
 
@@ -1183,7 +1205,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * **CNAME**: allows you to create **aliases (NOT THE SAME AS ALIAS RECORD)** to given **A/AAAA records**. **DOES NOT WORK ON NAKED DOMAINS (google.com vs www.google.com)**
 
-- **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**
+- **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**. You **can use** on **apex zone (naked) records**
 
 #### Route53
 
@@ -1392,6 +1414,15 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some configuration** for an EC2 like **security groups, AMI ids and such** .
 
 - you **can add/change** existing **IAM instance role** on a **running instance**
+
+#### Hibernation
+
+- you can hibernate an instance. The **hibernation process is moving RAM data to EBS**. There are requirements for this to work
+  1. Your instance cannot be a part of ASG or ECS. You can always suspend ASG or move given instance into maintance mode.
+  2. Your **root volume has to be EBS**
+  3. The **EBS volume has to be large enough**
+
+* you **cannot enable hibernation on a existing instance**. You have to tick a box during the creation.
 
 #### Instance Profiles / Roles
 
@@ -1938,7 +1969,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - uses **shared file system through nodes**
 
 * It can use 2 types of storage to perform operations:
-  - HDFS: s3 is used to read and write the final data to
+  - HDFS: s3 is used to read and write the final data to **(supports both in-transit and and rest encryption)**
   - EMR FS: s3 is used as primary data store to carry out all operations
 
 - **use for on-demand, ad-hoc, short-term tasks**
@@ -2137,6 +2168,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - **local rules** have the **highest priority**
 
 * **local default rules cannot be edited!**. That means that unless you explicitly create a route table for a given subnet, the global route table will associate CIDR blocks with given subnets inside your VPC
+
+- **one route table** can be **associated with multiple subnets**. **One subnet** can **have only 1 route table**
 
 #### NAT Gateway
 
@@ -2883,6 +2916,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
 
 * **applications can be divided into groups**. Groups can contain multiple servers.
+
+- this service is **free of charge**. Remember that the snapshots, and the underlying created resources will probably cost you some \$\$.
 
 #### Database Migration Service
 

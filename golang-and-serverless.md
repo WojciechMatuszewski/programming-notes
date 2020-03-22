@@ -107,9 +107,31 @@ func NewServer(addr string, ...opts Option) *Server {
 
 Now, `NewServer` is a `variadic` function which takes multiple config options. We can specify defaults when creating a server then mutate the server with config applied through `Option` type.
 
+## DynamoDB
+
+### `dynamodbav`
+
+It turns out `DynamoDB` has it's own custom `JSON` tag. This tag is used to control how the value will be `unmarshalled`.
+
+One notable tag is `unixtime`, but there is a catch, the underlying type has to be `time.Time`. So
+
+```go
+type MyStruct struct {
+  createdAt time.Time `dynamodbav:"unixtime"`
+}
+```
+
+Notice that **I did not specify the `json` tag**. This is explained within `dynamodbattribute/encode.go`. The documentation states that **`dynamodbav` will be favoured whenever possible**. This means that you do not have to specify the `json` tag.
+
+Is this a good idea? You will probably end up specifying both `json` and `dynamodbav` for clarity sake, but I really like the idea. `unixtime` brings a lot of convenience :)
+
 ## Language
 
 ### `bytes.Buffer` vs `Bufio`
 
 `bytes.Buffer` is just a simple `in-memory` buffer. It will expose `Read` and `Write` methods.
 `Bufio` is used for **wrapping** underlying `writers/readers`. This is mainly used for performance. Wrapping with `Bufio` will reduce the amount of calls to `write/read`. This can be useful for files for example, when you DO NOT want every `read/write` call to hit the disc.
+
+```
+
+```

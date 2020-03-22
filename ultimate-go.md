@@ -1031,3 +1031,71 @@ It is **very, very important to have buffered `channel` here**.
 - **sometimes** it's worth to **adjust the GC Heap size**. But this is **mainly useful for pooling algorithms, YOU SHOULD PROBABLY NEVER USE IT FOR WEB SERVERS**
 
 * you can **trace GC**. This is done by **setting GODEBUG=gctrace=1** and then running your app.
+
+## Concurrency Patterns
+
+### Context Package
+
+- your functions should take `context.Context` as first parameter if you are dealing with I/O
+
+* `context` package uses **value semantics**. When you create a `context` (from `context.Background` or `context.TODO`) you get a new `context`.
+
+### Value Bag
+
+You can keep stuff within the `context`. This might come in quite handy for tracing and stuff (`X-Ray` uses that).
+
+The API has a particular shape and the usage of it might be a bit surprising.
+
+```go
+    ctx := context.WithValue(context.Background(), "key" , 1)
+```
+
+You might be thinking that we just stored value `1` and that value is reachable under key `key`.
+You see, the key of the context should be **type alias**. Something like this:
+
+```go
+type MyKeyType string
+const key MyKeyType = "key"
+
+ctx := context.WithValue(context.Background(), MyKeyType, 1)
+```
+
+Why should you do that? **Using your own type aliases ensures that only you and ONLY you can interfere with the value on a given key**. Someone can define the same key and use different value, but **as long as the underlying key type is different, the keys are considered different**.
+
+### Cancellation
+
+`context` has multiple API for cancelling stuff, but the one main highlighting is `context.WithTimeout`.
+
+```go
+ctx, cancel := context.WithTimeout(context.Background(), 150 * time.Millisecond)
+defer cancel()
+```
+
+Remember to **always defer cancel, not doing so can lead to memory leaks**.
+
+You might be wondering, from which point of time the timer which ticks off (the timeout) starts. The **timer for the timeout starts as soon as you declare `WithTimeout`**. This can sometimes take you off guard when you do not create the `WithTimeout` context as close as possible where it will be used.
+
+```go
+duration := 150 * time.Millisecond;
+ctx, cancel := context.WithTimeout(context.Background(), duration)
+
+// some computation
+
+// end of computation
+workQueue := make(chan string, 1)
+go func() {
+
+}()
+
+select {
+    case result := <- workQueue:
+    fmt.Println("work is done")
+    case <- ctx.Done():
+    fmt.Println("cancelled")
+}
+
+```
+
+What will happen if the "some computation" block will take more than lets say `150 Milliseconds`? Well, you will see `cancelled` printed instantly. The `goroutine` will not have the time to report (most likely).
+
+### Failure Detection
