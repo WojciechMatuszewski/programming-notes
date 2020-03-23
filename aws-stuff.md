@@ -742,6 +742,8 @@ So when to use what?
 
 - you **can target read replica** but you **CAN NOT target second-master (multi-az)**
 
+* you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
+
 #### Multi-AZ
 
 - when choosing **multi-az deployment** data is **replicated synchronously**
@@ -1176,6 +1178,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 - **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
 
 * if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3**. These allow you to get information about **individual requests** like IP address of the client, latencies etc..
+
+- **access logs are not the same as error logs**.
 
 #### Health Checks
 
@@ -1751,7 +1755,7 @@ Way of grouping EC2 instances.
 
 - instances **spread across underlying hardware**
 
-* you should consider this option for **medium deployments**
+* you should consider this option for **medium / small deployments**
 
 ##### Partition
 
@@ -1760,6 +1764,10 @@ Way of grouping EC2 instances.
 * you **cannot use dedicated host** with this option
 
 - you should consider this option for **large deployments**
+
+* ideal for **HDFS, HBase clusters**
+
+- **can be MultiAZ, but has to be the same region**
 
 #### Enhanced Networking
 
@@ -2777,6 +2785,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 ### Cloud Formation
 
+- **Resources section is mandatory**
+
 #### CloudFormation Stack Set
 
 Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
@@ -3140,5 +3150,5 @@ TODO:
 - CloudFormation Wait conditions
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
-- AWS Global Accelerator (and the pattern where customer uses very old firewall)
+- Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
