@@ -125,13 +125,23 @@ Notice that **I did not specify the `json` tag**. This is explained within `dyna
 
 Is this a good idea? You will probably end up specifying both `json` and `dynamodbav` for clarity sake, but I really like the idea. `unixtime` brings a lot of convenience :)
 
+## X-Ray madness
+
+This is **pure BS**. Only after my second try getting X-Ray to work I finally got to the bottom why it did not work for the first time.
+
+See, there is `github.com/aws/aws-lambda-go` library. Then you use `go get` you will , at the time of writing this, get `v1.15.0` version. Now lets switch to `X-ray` sdk : `0.9x` when you use `go get`.
+
+Now, this would be completely ok BUT **these 2 sdks are tied together!**. **You have to have specific `X-ray` sdk version to make it work with the lambda sdk**. And here comes the BS part:
+
+- then you update the `X-Ray` sdk to `v1.0.0-rc.1` the call will not panic, but guess what? **Your subsegments will not be there**. Frankly I think there last number of sdk versions has to be in-sync.
+
+- **only, and only when you have the same number at the end they will work!**. So the **lambda `sdk` has to have `v1.15.0` version and the `X-Ray sdk` has to have `v1.0.0-rc.15` version**. Well that would be ok IF it was specified within the documentation. But NOPE!.
+
+**GO FIGURE LOL!**
+
 ## Language
 
 ### `bytes.Buffer` vs `Bufio`
 
 `bytes.Buffer` is just a simple `in-memory` buffer. It will expose `Read` and `Write` methods.
 `Bufio` is used for **wrapping** underlying `writers/readers`. This is mainly used for performance. Wrapping with `Bufio` will reduce the amount of calls to `write/read`. This can be useful for files for example, when you DO NOT want every `read/write` call to hit the disc.
-
-```
-
-```
