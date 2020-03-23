@@ -930,33 +930,51 @@ So when to use what?
 
 ### DynamoDB
 
-- storing data here is **more expensive than s3, remember!**.
+- **regional** service.
 
-* **more effective for read heavy workloads**
+* storing data here is **more expensive than s3, remember!**.
 
-- **data automatically replicated `synchronously` between 3 AZs!**
+- **more effective for read heavy workloads**
 
-* store **items which weigh more than 400kb in s3** and use **pointers**
+* **data automatically replicated `synchronously` between 3 AZs!**
 
-- **compress large attribute values**
+- store **items which weigh more than 400kb in s3** and use **pointers**
 
-* **separate hot and cold data**. This will help you with RCU provisioning.
+* **compress large attribute values**
 
 - **LSI** gets **the same WCU/RCU and partition key** as the **primary table**
 
 * **to enable backups** you have to have **streams enabled**
 
-- one **WCU** is equal to **1KB**
+#### Reading
+
+- the **least ammount of RCU** you **can consume is 1**. It **does not matter if you specify Projection Expression**.
 
 * one **RCU** is equal to **4KB**. That is **one strongly consistent read OR 2 eventually consistent reads**
 
-- **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+- **separate hot and cold data**. This will help you with RCU provisioning.
 
-* **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
+* you can **save some bandwith** with **projection expression**. Remember **entire row is pulled, but then data extracted @Dynamo**
 
-- remember that **indexes take up space!**. This is quite important and something you have to consider while creating your 20th GSI ;p.
+#### Writing
+
+- one **WCU** is equal to **1KB**. **1 WCU is THE MINIMUM you consume**
+
+#### Filtering
+
+- filtering **does not reduce the RCU consumed**. Similarly to Projection Expressions, **every table with given index is pulled, then it is filtered @Dynamodb**
+
+#### Cost
+
+- you are billed on **overall storage** and **RCU/WCU**
+
+#### GSI
+
+- make sure to **project attributes that you use as an index**. Otherwise the **retrival will be costly!**
 
 #### ACID
+
+- **NOT ACID compliant**. This is due to the fact that you can have different number of attributes for a table row.
 
 - DynamoDB **can be ACID compliant** using **Dynamo Transactions**.
 
@@ -976,9 +994,57 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * the streams are **considered poll based events**
 
+##### Triggers
+
+- this is just a lambda function that is invoked whenever a stream event happens
+
+#### TTL
+
+- **attribute** which tells DynamoDB **when given item should be considered as `expired`**.
+
+* DynamoDB will **delete expired items**
+
+- this **value has to be EPOCH time**
+
+#### Partitions
+
+- **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+
+- remember that **indexes take up space!**. This is quite important and something you have to consider while creating your 20th GSI ;p.
+
 #### SDK
 
 - when using **SDK**, it **automatically retries (calls are eventually consistent) unless retry queue is too large**.
+
+#### Backups
+
+- you can **backup tables to s3**
+
+* the saved **backup contains table data + RCU/WCU units**
+
+- you can **restore to a different region**
+
+* you can also enable **point-in-time recovery (35 days retention)**
+
+#### Global Tables
+
+- you **need to have streams enabled (new and old)**
+
+* this is a **master-master setup**. This means that you can use the table in other region as your new master. **all `global` tables replicate to each other**
+
+- **removing** the **table from `global-tables` view DOES NOT delete the data**. If you really want to delete the data, you should remove it manually or just remove the table manually.
+
+#### Encryption
+
+- tables can be encrypted
+
+* either **KMS(AWS Managed)** or **KMS (AWS owned)**
+
+#### IAM
+
+- you can really setup **fine-grained control** when it comes to Dynamo
+
+* you can have **policies that allow only access to specific attributes or items**
 
 ### CloudFront
 
