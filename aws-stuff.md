@@ -497,6 +497,8 @@ An example for s3-prefix (folder)
 
   - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
+    - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redunantly on s3 standard**
+
   - **S3-IA/S3 One Zone-IA** (**Infrequent Access**): for data that is accessed less
     frequently but requires rapid access when needed
 
@@ -1052,14 +1054,17 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * These caches are located to your customers as close as possible.
 
-- Origin is the name given for the thing from which content **originates from**,
-  can be an S3 bucket, web-server or other AWS services.
+- Distribution is basically the **collection of Edge Locations**
 
-* Origin has to be accessible to the internet
+#### Origins
 
-- Edge locations **cache content** (TTL)
+- Origin is the name given for the thing from which content **originates from**.
 
-* Distribution is basically the **collection of Edge Locations**
+* can be **s3 bucket**, **web-server (ec2)**, **Amazon MediaStore**, **APIGW** or **other CloudFront distribution**
+
+- **Origin has to be accessible to the internet**
+
+#### Distributions
 
 - You **can invalidate cache** content
 
@@ -1072,28 +1077,32 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - When you deploy CloudFront distribution your content is automatically deployed to edge location. You can specify which ones (limited to a country). If you are rich you can deploy to all edge locations
 
+#### Cache
+
+- Edge locations **cache content** (TTL)
+
 * **Cache hit** means that when an user requested a resource (like a webpage), an edge location had that available
 
 - **Regional cache** is like a meta edge location. Basically second level cache, fallback when there is **no cache hit**. If it does not have a copy of a given content it **falls back to the origin** (origin fetch).
 
-* **By default** every CloudFront distribution **comes with a default domain name**. That domain of course works for HTTP and HTTPS. You can register domain and replace it.
+#### Protecting Content
 
-- You can restrict the access on two levels (**You can** restrict an access to S3 only but it's no the topic of CloudFront):
+- **By default** every CloudFront distribution **comes with a default domain name**. That domain of course works for HTTP and HTTPS. You can register domain and replace it.
+
+* You can restrict the access on two levels (**You can** restrict an access to S3 only but it's no the topic of CloudFront):
 
   - on a CloudFront level, your bucket is still accessible though
   - on a S3 and CloudFront level, you can only access the website using signed urls.
 
-- Restricting your CloudFront & S3 combo is done by creating **OAI**.
+* Restricting your CloudFront & S3 combo is done by creating **OAI**.
 
-* **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
+- **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
 
-- **OAI can be applied** to **S3, CloudFront, bucket policies**
+* **OAI can be applied** to **S3, CloudFront, bucket policies**
 
-* **signed cookies** are used to **provide access to multiple restricted files**
+- **signed cookies** are used to **provide access to multiple restricted files**
 
-- **signed urls** are used to **provide access to individual files, RTMP distributions**
-
-* **CLOUD FRONT IS NOT ONLY FOR WEB STUFF**. You can create **APIG CloudFront distribution**
+* **signed urls** are used to **provide access to individual files, RTMP distributions**
 
 #### Cache Behaviors
 
@@ -1231,13 +1240,15 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * work in **layer 4**.
 
-- they **do not modify incoming network packets in any shape of form**
+- they **do not modify incoming network packets in any shape of form**, so you **do not have to use proxy-protocol**
 
 * **can balance** on **UDP**
 
 - **exposes FIXED IP Address**
 
 * **cannot** have **SecurityGroup attached to it**
+
+- has **cross-zone load balancing disabled by default**
 
 #### Monitoring
 
@@ -1380,6 +1391,16 @@ There are a few approaches when it comes to scaling with dynamoDB
 - this means you can **present different application with the same DNS name, based on location**
 
 * always **add a default rule**. This is to make sure **whenever DNS cannot pick the location** it will **fallback to the default rule**.
+
+#### Route53 resolver
+
+- **managed DNS resolver**. By default, your VPC comes with Amazon Provided DNS Server
+
+* allows you to **perform DNS lookups across DX or VPN and the other way around (bi-directional)**
+
+- this basically allows you to **create a hybrid cloud env.** where **some of your stuff is within VPC and some on-prem**. You might need to resolve DNS for some of the parts of your application to the stuff on-prem. Before all that you had to roll out your own dns resolver (probably within VPC) to be an intermedietarry between the AWS managed one and the one on premises.
+
+* it is an **endpoint made of 1 or more ENI within a given VPC**. It **works for every VPC within a region (even if the VPC are not peered)**.
 
 ### ECS (Elastic Container Service)
 
@@ -3014,7 +3035,9 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 #### IDS / IPS Systems
 
-These systems are used to **detect and prevent intrusions** from gettiing to your resouurces.
+These systems are used to **detect and prevent intrusions** from gettiing to your resources.
+
+- usually **implemented** by **installing IDS agent on every instance within your VPC** or by creating a **reverse proxy layer** which **has IDP agents installed**.
 
 #### VM Import / Export
 
@@ -3115,7 +3138,16 @@ Another approach you might take is to **use Route53 with multivalue routing**.
 
 With **ALB/Classic** you can use **X-Forwarded-For** header. But beware that **this only works for HTTP/HTTPs**. When you are dealing with **eg. TCP** you should **enable Proxy Protocol if you are using Classic ELB (NLB uses proxy protocol by default)**. It **prepends info about clients IP before the actual data**. **Proxy Protocol cannot be added using a console. YOU HAVE TO USE CLI**
 
-Please also **keep in mind that NLB just forwards the traffic**. So **This is not a problem with NLB**.
+Please also **keep in mind that NLB just forwards the traffic**. So **This is not a problem with NLB**. There is a good article on how to make it HA.
+https://aws.amazon.com/blogs/security/how-to-add-dns-filtering-to-your-nat-instance-with-squid/
+
+#### Egress HTTP URL rules (DNS Filtering)
+
+Within the AWS there are multiple tools to control egress traffic. You have route tables, security groups, NACLs, Ingress only IGW and so on.
+But what happens when you want to control the HTTP URL traffic? Well to do so you should implement a **proxy server**. This server would be reponsible for
+for **dns filtering**.
+
+For the implementation, the **aws does not provide such tool out of the box**. You probably should **look into Squid (open source)**. You can **install Squid on NAT Instance** but be aware that **this solution is not HA by default**.
 
 #### Accessing VPC Endpoints
 
