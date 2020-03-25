@@ -261,7 +261,9 @@ An example for s3-prefix (folder)
 
 * the **root container** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs. **Root container / node** is the **account that has OUs underneath**.
 
-* you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
+- you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
+
+* when using AWS organizations, the **master account does not have any kind of power over the child accounts**. You have to **create cross account roles within child accounts granting full access to the master**
 
 #### Discounts
 
