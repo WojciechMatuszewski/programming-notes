@@ -385,6 +385,18 @@ An example for s3-prefix (folder)
 
 * keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
 
+### License Manager
+
+- enables you to keep your **licenses in a centralized place**
+
+* you can **create alerts for violations**
+
+- you can define **license limits** eg. **do you want to count vCPUs? or maybe websocket connections?**
+
+* **integrates BUT IS NOT PART OF Systems Manager**.
+
+- you can **track licenses on-prem**
+
 ### Systems Manager (SSM)
 
 - helps you manage **large landscapes** like **100s of instances**
@@ -1940,6 +1952,14 @@ Way of grouping EC2 instances.
 
 * **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**. You can make sure that the data is still there by **creating DB snaphost** or **creating any parts of your application that you do not want to accidentaly delete OUTSIDE Elastic Beanstalk env**.
 
+#### Unsupported Platforms
+
+Sometimes it can happen that your runtime is not supported by ElasticBeanstalk by default. But you can still use it!
+
+- you can create **custom AMI** which will be **used to run your application**
+
+* you can create **custom a custom platform**. This is much more involving. It uses **Packer instead of Docker**.
+
 ### Monitoring Services
 
 #### CloudWatch
@@ -2207,6 +2227,18 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
   - Broadcast
 
 - you can use **custom DNS (can be on-prem)** by changing **DHCP option set**
+
+#### Scalling VPCs
+
+- previously you **had to overprovision (still good practice though)** on your CIDR range to make sure that there is some room left for expansion
+
+* in late 2017 an option was added to **add secondary IPv4 address ranges (CIDRs) to VPC**. This allows you to expand your VPC
+
+- note that **your CIDRS CANNOT OVERLAP**.
+
+* you **cannot delete the pimary CIDR range, you can only delete the secondaries**
+
+- when expanding an **new entry to default route is added**.
 
 #### Default VPC
 
@@ -2576,6 +2608,12 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * it **captures real packets**. **Not like Flow Logs**.
 
+### AWS Rekognition
+
+- allows you to **recognize faces from images**
+
+* allows you to **create Video Stream processors** which parse the video **consumed from Kinesis and output to other Kinesis stream**.
+
 ### AWS Backup
 
 - operates on a notion of **backup plans**. This is where you specify **how often you want to run the backup**, **whats the retention** and so on.
@@ -2838,6 +2876,18 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - authorization and authentication service
 
+#### User Pools
+
+- user pool is responsible for **authenticating the users**. It returns the tokens, these tokens can be exchanged for AWS credentials using Identity Pools.
+
+* user pool also **manages the overhead** of **handling SAML/Social sign in provider tokens**
+
+- you **do not have to exchange the tokens using Identity Pool for AWS credentials**. You **might want to control access to your backend resources using those credentials**. (eg. APIGW authorizers)
+
+#### Identity Pools
+
+- identity pool is **responsible for exchaning user pool tokens for AWS credentials**
+
 #### SAML
 
 - to get SAML working you will probably need **provider Name and MetaData document**
@@ -2865,6 +2915,16 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * **SAML 2.0 => Active Directory**
 
 - **Web Identity** means getting the **initial key from FB, Google...** and **exchanging it** for **temporary credentials** within AWS. A **role is assumed after successful token verification**.
+
+##### Active Directory
+
+- you can **either deploy manually on ec2** or use **aws managed AD**
+
+* with **aws managed** you will get **nightly directory snapshots**
+
+- you would use **AD Connector** for **authorization from on-prem (federation) only!**
+
+* use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**
 
 ##### When to use Federation
 
@@ -3034,6 +3094,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - the **replication instance should be created within DMS console**
 
 * you can define **JSON transformation rules** or **Selection rules**. Basically **transforming and/or filtering** the **data when migrating**.
+
+- you **do not have to create replication instance**. DMS **will do that for you (task)**
 
 #### IDS / IPS Systems
 
