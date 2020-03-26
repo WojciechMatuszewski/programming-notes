@@ -1416,6 +1416,20 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * it is an **endpoint made of 1 or more ENI within a given VPC**. It **works for every VPC within a region (even if the VPC are not peered)**.
 
+#### Inbond Endpoint
+
+- this endpoint allows you to query **from your network / VPC to another VPC**
+
+#### Outbound Endpoint
+
+- this endpoint allows you to query **from your VPC to another network / VPC**
+
+* allows you to **forward DNS queries to other resolvers**. This can be useful for **forwarding DNS queries to your on-prem DNS resolvers**.
+
+#### Inbound & Outbound
+
+- **bidirectional** queries
+
 ### ECS (Elastic Container Service)
 
 - allows you to run **docker containers on EC2 instances** in a **managed way**.
@@ -2211,7 +2225,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
 
-### Networking (VPC)
+### Virtual Private Cloud (VPC)
 
 - **CAN SPAN MULTIPLE AZs**
 
@@ -2373,6 +2387,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - **remembers the relation between incoming and outgoing traffic**. If you ping and instance with security group attached it will be able to ping you back without having to specify outgoing allow.
 
 * **WORKS ON INSTANCE LEVEL**
+
+#### DNS in a VPC
+
+#### Resolution
+
+- the **DNS name of an instance** will **resolve to the public IP when reaching in public internet** and to the **private IP, when resolving within a VPC**
+
+* this **can be a problem** while **resolving from on-prem**. **Instead of going through a eg. VPN** you **will resolve to public interface**. (**unless using route53 resolver**)
+
+- you can use **private hosted zones** to **override public DNS endpoints**.
 
 #### Peering
 

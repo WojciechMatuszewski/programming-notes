@@ -1098,4 +1098,10 @@ select {
 
 What will happen if the "some computation" block will take more than lets say `150 Milliseconds`? Well, you will see `cancelled` printed instantly. The `goroutine` will not have the time to report (most likely).
 
-### Failure Detection
+## Benchmarking
+
+- it uses `testing.B`
+
+* the most important is a loop created with `b.N`
+
+- be very careful while running benchmarks in parallel.
