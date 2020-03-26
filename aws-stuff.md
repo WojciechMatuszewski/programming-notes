@@ -3121,6 +3121,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - you **do not have to create replication instance**. DMS **will do that for you (task)**
 
+* **by default** DMS **encrypts your data at rest**
+
 #### IDS / IPS Systems
 
 These systems are used to **detect and prevent intrusions** from gettiing to your resources.
