@@ -2912,6 +2912,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - identity pool is **responsible for exchaning user pool tokens for AWS credentials**
 
+* here you can **enable unathenticated access**. This is quite logical that this option is here since remember that Identity Pool is responsible for STS tokens.
+
 #### SAML
 
 - to get SAML working you will probably need **provider Name and MetaData document**
