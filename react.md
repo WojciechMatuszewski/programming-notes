@@ -52,6 +52,69 @@ This may seem trivial but you can actually control this behavior right? Since
 you can pass a key to every component / jsx stuff we can manually re-instantiate
 a given component / node.
 
+## Lesser known hooks
+
+### `useDebugValue`
+
+This hook is tightly integrated with the React dev extension.
+The idea is to have more information about given hook when using that extension.
+
+The syntax is pretty simple
+
+```
+React.useDebugValue(_value, _transformFn)
+```
+
+What it does it displays that value as additional label near given hook. Please note that **this hook is only fired whenever dev tools are open**.
+
+### `useImperativeHandle`
+
+This one allows you to control how what `ref` can do.
+
+You are probably familiar with `React.forwardRef` right? The one that allows you to use `ref`s for you functional components as they were HTML elements themselves.
+
+Now, you might want to do something different than just place that `ref` on the underlying HTML element within the component like so:
+
+```jsx
+const Component = React.forwardRef((props, ref) => {
+  return <div ref={ref}>Hi there</div>;
+});
+```
+
+With `useImperativeHandle` it gives you control over how the ref is used and what capabilities it exposes. Let's say you only want your users to be able to `focus` on a particular input within your element using ref.
+
+```jsx
+const Component = React.forwardRef((props, ref) => {
+  const inputRef = React.useRef()
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => inputRef.current.focus();
+    }),
+    []
+  );
+
+  return (
+    <div>
+      <input />
+      <input ref = {inputRef}/>
+    </div>
+  );
+});
+```
+
+Whenever someone decides to use `ref` on your `Component` the only method he will see will be the `focus` method.
+
+```jsx
+function Other() {
+  // ref can only do .focus now
+  const ref = React.useRef();
+  return <Component ref={ref} />;
+}
+```
+
+I think this hook is not that useful in day-to-day work, but there are probably some use cases where if you do not use it, you might have a hard time doing something.
+
 ## Components as Functions Gotcha
 
 We are now in `React.useSomething` era (_React Hooks_) so you probably are writing functional components. There is one gotcha you might encounter that will result in serious bugs.
