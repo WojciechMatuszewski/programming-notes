@@ -331,6 +331,12 @@ An example for s3-prefix (folder)
 
 - **user has to have sufficient permissions to leave the organization**. I think the most **important here are the policies regarding billing**.
 
+#### Moving account between origanizations
+
+- if you want to move an account between organizations you will need to
+  - have that **account leave the original organization (remember about the ROLES!)**
+  - **invite that account** to **new organization**
+
 #### Cost Explorer
 
 - you can **generate reports**. These reports are a **.csv** file.
@@ -340,6 +346,12 @@ An example for s3-prefix (folder)
 - reports **can be generated up to three times a day**
 
 * they are **delivered to s3 bucket**. That **bucket has to be owned by master account**.
+
+#### RAM (Resource Access Manager)
+
+- allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use all-features**
+
+* you can share **a lot of stuff**. Most **notable are subnets**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
 
 ### ACM
 
@@ -2506,23 +2518,39 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### VPN
 
-- **software** based **connection** between **your on premises and AWS VPC**
+- quick to setup and relatively cheap. It's **billed hourly**
 
-* **quick to setup and cheap**
+* **virtual private gateway** is **HA by default**
 
-- **per hour cost**
+* **tunnels are encrypted end-to-end**
 
-* **data cost that goes out**
+- uses **internet for transit**
 
-- **performance limited** by your connection and hardware of your router
+##### Between VPCS
 
-* **uses public internet to exchange data**
+- you can use **software 3rd party solution** between **2 vpcs**
 
-- **data is encrypted on transit**
+* you can use **AWs managed (private virtual gateway)** to **software managed**
 
-* when the initial setup is complete we have done **peer identity authentication**. You have to paste some special config within your on-prem router to make it work so the authentication is there.
+##### Site-to-site (on-prem => aws)
 
-- to **make things work** you will need **BGP and ASN (only if the routing type is dynamic) AND static routable IP for the customer gateway**
+- allows for **on-prem to VPC** and **VPC to on-prem** connectivity.
+
+* **routing** can be either **static** or **dynamic**.
+
+- if you specify **dynamic routing** the connection will use **BGP**.
+
+* if you specify **dynamic routing** both sides **can exchange routing information**. You **do not have to provide such informations youself, like in a static routing solution**
+
+- the **connection** occurs between **customer gateway** and **virtual private gateway (attached to VPC)**
+
+* you can **create multiple tunnels** to achieve **HA on AWS site**
+
+- you can create **multiple customer gateways** and **multiple tunnels** for **full HA**. This architecture **requires BGP**
+
+* when you setup the connection the **peer indentity authentication is established**
+
+- it **uses public internet** to exchange data.
 
 ##### Managed VPN
 
@@ -3336,8 +3364,11 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- SFX
+- SG regional? how to copy them?
 - so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
 - CloudFormation Wait conditions
+- AWS IOT
 - Stack Policy and updating via CLI
 - MountTarget FQDN ?? (EFS)
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
