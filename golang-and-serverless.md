@@ -145,3 +145,174 @@ Now, this would be completely ok BUT **these 2 sdks are tied together!**. **You 
 
 `bytes.Buffer` is just a simple `in-memory` buffer. It will expose `Read` and `Write` methods.
 `Bufio` is used for **wrapping** underlying `writers/readers`. This is mainly used for performance. Wrapping with `Bufio` will reduce the amount of calls to `write/read`. This can be useful for files for example, when you DO NOT want every `read/write` call to hit the disc.
+
+
+### Custom `marshal` for dealing with APIs
+
+While working with APIs you might need to provide different representations of values what your `marhal/unmarshal` function is providing.
+This is the ideal case for implementing those methods on structures you are maintaining within the codebase.
+
+#### `time.Time` example
+
+I think a good exaple of this would be `time.Time` type. Most APIs expect you to pass `unix` time and not `RFC` whatever.
+Problem is that when you `marshal` `time.Time` you get `RFC-xxx` representation of that value.
+Let's create our own `time` type which will override that behavior.
+
+```go
+package main
+import (
+
+"encoding/json"
+"fmt"
+"time"
+)
+
+type Time struct{
+    time.Time
+}
+
+func (t Time) MarshalJSON() ([]byte, error) {
+    return json.Marshal(t.Unix())   
+}
+
+func (t *Time) UnmarshalJSON(data []byte) error {
+    var i int64
+    err := json.Unmarshal(data, &i)
+    if err != nil {
+        return err
+   }
+   
+    t.Time = time.Unix(i, 0)
+    return nil
+}
+
+func main() {
+    t := Time{time.Now()}
+    b, _ := json.Marshal(t)
+    
+    // timestamp
+    fmt.Println(string(b))
+    
+    var t2 Time
+    json.Unmarshal(b, &t2)
+    
+    // RFC-xxx time
+    fmt.Println(t2)    
+}
+```
+
+Notice the **type embedding**. With this technique we even get the other time-related methods on our type (inherited from `time.Time`)
+
+
+#### Generic structures 
+
+What happens when your API returns 2 different things for the same endpoint? This is quite common for webhooks. 
+I personally had such case but at that time I did not know much about golang to begin with so I could not deal with it.
+
+So, let's imagine that your API is returning 2 different JSON responses.
+
+```json
+{
+  "data": {
+    "object": "bank_account",
+    "id": "ba_123",
+    "routing_number": "110000000"
+  }
+}
+```
+
+And this one
+
+```json
+{
+  "data": {
+    "object": "card",
+    "id": "card_123",
+    "last4": "4242"
+  }
+}
+```
+
+These structures represent completely different things. How do we deal with this?
+
+Start with defining `struct` for each of these structures
+
+```go
+package main
+type BankAccount struct {
+    Object string `json:"object"`
+    ID string `json:"id"`
+    RoutingNumber string `json:"routing_number"`
+}
+
+type Card struct {
+    Object string `json:"card"`
+    ID string `json:"id"`
+    Last4 string `json:"last4"`
+}
+```
+
+Now we are going to embed these into 1 data structure. This data structure will be used for `marshalling` and `unmarshalling`.
+
+```go
+package main
+type Data struct{
+	*BankAccount
+    *Card
+}
+```
+
+Notice the pointers. These will be used for checking with which structure we are dealing with (eg. `Data.BankAccount == nil ? `)
+Now for the parsing methods.
+
+```go
+package main
+import (
+
+"encoding/json"
+"errors"
+)
+type Data struct {
+// previous stuff
+}
+
+func (d *Data) UnmarshalJSON(data []byte) error {
+	temp := struct {
+		Object string `json:"object"`
+	}{}
+
+	err := json.Unmarshal(data, &temp)
+	if err != nil {
+		return err
+	}
+
+	if temp.Object == "card" {
+		var c Card
+		err = json.Unmarshal(data, &c)
+		if err != nil {
+			return err
+		}
+
+		d.Card = &c
+		d.BankAccount = nil
+		return nil
+	}
+
+	if temp.Object == "bank_account" {
+		var b BankAccount
+		err = json.Unmarshal(data, &b)
+		if err != nil {
+			return err
+		}
+
+		d.Card = nil
+		d.BankAccount = &b
+		return nil
+	}
+
+	return errors.New("unknown type")
+}
+```
+
+Notice the `temp` struct. This one is there to determine which underlying struct should be used for the `unmarshal` method.
+With only 2 cases this is pretty straight forward. My hope is that with generics such cases will be much easier to handle :).
