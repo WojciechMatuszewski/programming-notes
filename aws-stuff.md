@@ -413,25 +413,27 @@ An example for s3-prefix (folder)
 
 - helps you manage **large landscapes** like **100s of instances**
 
-* **agent installed by default on modern AMIs**, can also be **downloaded and installed on-prem**
-
 - you have **inventory** which **collects OS, application and instances metadata (about instances)**. You can **send inventory data to S3** and query it with **Athena** or **QuickSight**
-
-* **parameter store** where **you can store config data, connection strings etc.**. **Can be integrated** with **Secrets Manager**.
-
-- there is a concept of a **patch manager**. This tool enables you to **discover missing updates, update multiple or single instances**.
 
 * can be used for **both Windows and Linux machines**
 
 - there is an **agent (baked into modern Windows or Linux AMIs)** which you can install. That means that **you can manage on-prem instances aswell!**.
 
-* it is quite important to remember that **SSM is public space endpoint (can be a interface endpoint)**. This means that your **EC2 instances have to have internet connectivity / interface endpoint within a vpc**.
-
 - to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**
 
-* there are **documents** which are basically **scripts (actions) that SSM can use to do stuff**.
+- there are **documents** which are basically **scripts (actions) that SSM can use to do stuff**.
+
+* **agent installed by default on modern AMIs**, can also be **downloaded and installed on-prem**
+
+#### Patch Manager
+
+- there is a concept of a **patch manager**. This tool enables you to **discover missing updates, update multiple or single instances**.
+
+* there are multiple **patching strategies available**
 
 #### Parameter Store
+
+- it is quite important to remember that **SSM is public space endpoint (can be a interface endpoint)**. This means that your **EC2 instances have to have internet connectivity / interface endpoint within a vpc**.
 
 - **secure storage** for **configuration data and secrets**
 
@@ -701,24 +703,26 @@ So when to use what?
 
 ### Storage Gateway
 
-- **SOMETHING YOU DOWNLOAD**
+- does not have SLA
 
-* Physical/virtual device which **will replicate your data to AWS**.
+* **SOMETHING YOU DOWNLOAD**
 
-- There are 3 flavours of Storage Gateway
+- Physical/virtual device which **will replicate your data to AWS**.
+
+* There are 3 flavours of Storage Gateway
   - **File Gateway** : used for storing files as object in S3 - **NFS, SMB** .
   - **Volume Gateway**: used for storing copies of hard-disk drives in S3 - **iSCSI**.
   - **Tape Gateway**: used to get rid of tapes - **iSCSI**, for use mainly with **backup software**.
 
-* With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+- With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
 
-- if you see **ISCSI** that is **probably Volume Gateway**.
+* if you see **ISCSI** that is **probably Volume Gateway**.
 
-* remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because **with cached volume only your primary data** is **written to s3**.
+- remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because **with cached volume only your primary data** is **written to s3**.
 
-- **useful** when doing any kind of **cloud migrations**
+* **useful** when doing any kind of **cloud migrations**
 
-* all data is **encrypted in transit**. Data **at rest** is **by default encrypted using SSE-s3**
+- all data is **encrypted in transit**. Data **at rest** is **by default encrypted using SSE-s3**
 
 #### Volume Gateway
 
@@ -1294,6 +1298,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * this event is quite important since **ALB can exceed for a brief period of time the maximum instances within given group**. This is **due to the fact that new instances are launched first (without terminating the old ones)**.
 
+#### Target Groups
+
+- can be either **group of ec2 instances (usually accompanied with ASG)** or **lists of IPS**.
+
+* with target groups you can **load balance resources within VPC with resources on on-prem**. To make it work you have to use **private-ip only target group** and have **Direct Connect to on-prem**.
+
 ### DNS
 
 - domain names are stored in multiple dbs
@@ -1816,6 +1826,10 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 * the data is **distrubited accross multiple AZs**
 
+##### Compatibility
+
+- EFS is **only supported on Linux instances**
+
 ##### Backups
 
 - EFS operates on the notion of **backups not snapshots**
@@ -2056,6 +2070,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 * **IT HAS TO DO WITH METADATA NOT THE ACTUAL CONTENTS OF THE IP**
 
 - by default **it exposes the ip of the person who is connecting**
+
+* you filter which traffic you want to log. It can be either rejected, accepted or both.
 
 ### Analytics
 
@@ -2356,6 +2372,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * remember that NAT Gateway is only used to allow traffic to the internet (and back). You cannot connect with a specific instance yourself since the instances themselves do not have an ip address (assuming they live inside private subnet).
 
+##### Billing
+
+- NAT Gateway are quite costly
+
+* they are **billed for just running**
+
+- they are **billed** based on **data transfer rates**
+
 #### NAT Instance
 
 - an **EC2 with a special AMI**.
@@ -2467,6 +2491,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * to control the policies you should use **VPC Endpoint Policies (they do not override IAM roles)**
 
 - the **mapping of IPs** occurs on **route table level**. Route table uses **prefix lists**.
+
+* remember that Gateway Endpoint can connec to **multiple s3 buckets** and **multiple dynamodb tables**
 
 ##### Interface Endpoints
 
@@ -2758,6 +2784,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **subscribers** can have **filters applied on the SNS topic**. The filtering itself is something named **filter policy**.
 
+##### Non-Lambda integration
+
+- SNS can be integrated with lambda without much hussle, but there is more work to be done when you are not running your code within lambda.
+
+* your application has to be ready to **receive POST calls from SNS**. This means **doing things when SNS requires you to confirm the subscription**.
+
+- you **have to response to a message within 15second window**, otherwise SNS will consider that request a failed attempt.
+
+* you should **read x-amz-sns-message-type header** to get necessary information with what you are dealing with. It could be either subscription confirmation request or a message.
+
 #### SQS
 
 - **nearly unlimited throughput FOR STANDARD QUEUES (not FIFO)**
@@ -3036,6 +3072,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - has a **central metadata repository (data catalog)**.
 
+* **ETL code** can be written using **Python or Scala**
+
 ### AWS Trusted Advisor
 
 - **helps** you to **optimize running costs**
@@ -3116,6 +3154,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * has **integration with Athena**. You **do not have to create special s3 bucket for this**.
 
+- either **agetnless (VMware IS REQUIRED!)** or **agent**
+
 #### Server Migration Service (SMS)
 
 - you **actually need VMware system to use it**.
@@ -3194,6 +3234,12 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 * there is a notion of **endpoint groups**. This are **NLB/ALB/EC2 services OR static IP**
 
 - GA **can use exisiting health checks that exist on ELB**
+
+### AWS Guard Duty
+
+- ingest from FlowLogs, R53, CloudTrial, AI Thread detection etc to centralized place
+
+* you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **indest from those invited accounts** (**if they accept**).
 
 ### Patterns
 
@@ -3364,6 +3410,12 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- AWS Connect And Lex (chatbot??)
+- AI features and video streaming (AWS Elemental MediaLive, AWS Transcribe, Elemental Media Package)
+- Just a tiny bit about Amazon Alexa
+- Firewall Manager
+- Disk Manager
+- ReceiveMessageWaitTimeSeconds (sqs)
 - SFX
 - SG regional? how to copy them?
 - so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
@@ -3373,3 +3425,10 @@ TODO:
 - MountTarget FQDN ?? (EFS)
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
+
+```
+https://acloud.guru/exam-simulator/review?attemptId=7d0702cf-dcb7-48b4-8d6a-4c9907a1e720&examId=b920da8c-831d-48b3-b099-04550bfd37e5&courseId=aws-csa-pro-2019
+```
+
+Question 15
+Design for New Solutions
