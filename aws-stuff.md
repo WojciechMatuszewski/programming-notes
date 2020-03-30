@@ -353,6 +353,10 @@ An example for s3-prefix (folder)
 
 * you can share **a lot of stuff**. Most **notable are subnets**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
 
+### AWS Budgets
+
+- allows you to **setup alarms** when **costs or usage is exceeded**.
+
 ### ACM
 
 - provides **x509 certs (SSL/TSL)**
@@ -776,6 +780,8 @@ So when to use what?
 
 * you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
 
+- to have read replicas with RDS you **have to have backups enabled**.
+
 #### Multi-AZ
 
 - when choosing **multi-az deployment** data is **replicated synchronously**
@@ -906,13 +912,15 @@ So when to use what?
 
 #### Backtrack
 
-- **causes DB outage**
+- has some cost associated with it, **you have to pay for storing the changes**
 
-* **rolls back the shared storage**
+* **causes DB outage**
 
-- **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
+- **rolls back the shared storage**
 
-* you can backtrack **up to 72hrs in time**
+* **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
+
+- you can backtrack **up to 72hrs in time**
 
 #### Monitoring
 
@@ -1180,6 +1188,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you **can** actually **use VPC interface endpoint** with APIGW
 
+#### Response Codes
+
+- usually **any throttling on the APIGW level** will **result in 4xx** status code
+
+* **when your lambda is invoked** and **throttling happens** such situation will **usually result in 5xx** status code. There is an **exception** and that **exception has to do with AUTHORIZER error codes** which **are 500 status** codes.
+
 #### Timeouts
 
 - you probably know that lambda has 15min timeout max. But that timeout only applies to async invocations (reading from the queue and such) where user is not waiting for a response. **The default APIGW timeout is 29 seconds**. This can be **configured to be between 5 seconds and 29 seconds**. All you have to do is to **un-tick the "use default timeout option**
@@ -1339,6 +1353,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 * **private zones** are **associated with a given VPC**
 
 - there is a notion of **split view**. This basically means **creating the same names in both private and public zones**. **Inside a VPC, private zone always overrides public one**
+
+* you are **charged monthly** for **hosted zones** and also for **resolver queries**.
 
 #### Route53 Health Checks
 
@@ -1798,6 +1814,12 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 - **DO NOT use RAID 5, 6**
 
+#### Attaching
+
+- you **can only** attach **volumes with instances that are in the same AZ**
+
+* you **can have volumes attached to multiple instance**
+
 #### EFS
 
 - you **only pay for what you use**, but the EFS in itself is **3 times more expensive than EBS** and **MUCH MORE (20x) expensive than s3**
@@ -1813,8 +1835,6 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 * just like s3 there are different tiers:
 
   - infrequent access
-
-- data **can be encrypted** at rest. If you want your volume to be encrypted **you have to specify it at creation time**. Otherwise **you will have to create new EFS volume and copy the data**
 
 * **can be accessed between multiple AZs**
 
@@ -1854,13 +1874,15 @@ But most important information, remember **there are no so called snapshots when
 
 ##### Encryption
 
-- **by default** data is **not encrypted in transit**. AWS allows you to enable such encryption using **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
+- **by default** data is **not encrypted in transit /rest**.
+
+* to enable **encryption in transit** add a **special flag** when **mounting a volume**. This flag is **-o tls**. It uses TLS so no CMK required.
+
+- to eanble **encryption at rest** use **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
 
 * encryption **at rest has to be enabled before creating the file system**
 
 - **mount helper** is something that you have to **download before you can use it**. It is a **cli tool**.
-
-* to enable **encryption in transit** you have to **add `-o tls` option**
 
 ##### Performance
 
@@ -3329,6 +3351,12 @@ First of all remember that ASG determines the health of the instance using vario
 
 Now, there is a notion of **grace period on ASG**. This is the time it takes for your instances to boot up basically. **There may be point of time where health checks finish before the grace period**. This will mark your instance as unhealthy BUT **ASG will take no action until the grace period is over**.
 
+#### I lost my SSH Key, what now.
+
+There are 2 ways you can tackle this problem. First is using **Systems Manager Automation** with the **AWSSupport-ResetAccess document** to create a **new SSH key**.
+
+The **other one** requires you to **stop the instance**, **detach the root volume** and **modify `authorized_keys file**.
+
 #### Enabling SSH with SG and NACL
 
 #### Changing instance type inside ASG
@@ -3425,10 +3453,3 @@ TODO:
 - MountTarget FQDN ?? (EFS)
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
-
-```
-https://acloud.guru/exam-simulator/review?attemptId=7d0702cf-dcb7-48b4-8d6a-4c9907a1e720&examId=b920da8c-831d-48b3-b099-04550bfd37e5&courseId=aws-csa-pro-2019
-```
-
-Question 15
-Design for New Solutions
