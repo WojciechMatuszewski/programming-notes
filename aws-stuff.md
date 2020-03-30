@@ -449,6 +449,24 @@ An example for s3-prefix (folder)
 
 - very useful for **distributing config inside ASG**
 
+### AWS Firewall Manager
+
+- this a **regional service**
+
+* this service **wraps WAF**.
+
+- allows you to create **WAF rules** that are **cross accounts** and **span multiple resources**
+
+* it **integrates with Organizations**. You can create policies there for all accounts (newly joined inherit those)
+
+- it **integrates with AWS Config**. So **whenever a new resource is created** Firewall Manager can **apply rules to that resource**
+
+#### Uses
+
+- applying consistent WAF rules accros all accounts resources inside Organization
+
+* notifying you when AWS Config resource is not-compliant and fixing that for you.
+
 ### AWS Service Catalog
 
 - **describes** all **services you offer**. Very **much like online store** but instead of buying eg. food **someone buys products you provide**.
@@ -481,15 +499,37 @@ An example for s3-prefix (folder)
 
 - basically a **call center with routing**.
 
+* provides **interactive voice responder**
+
+- **integrates** with **AWS Lex**
+
 #### Chime
 
 - basically **the same as Google Hangouts**
+
+### AWS Lex
+
+- to building applications that **listen and respond** with either **text or voice**
+
+* it is used in **Alexa** and **AWS Connect**
 
 ### Sage Maker
 
 - **analyze ML data and develop the models**
 
 * you can use **AWS managed Algorithms**
+
+### AWS Elemental
+
+- familiy of tools that have to do with live-streaming or video
+
+* **Media Package** creates **video streams for multiple resolutions**
+
+- **Media Store** is a **media-optimized origin store**. Cuts video latency
+
+* **Media Tailor** is for **placing ads inside a video**. This is **done BEFORE media delivery**. Also provides **metrics for those ads**
+
+- **Media Package** is just a **package of these tools**
 
 ### S3
 
@@ -3072,14 +3112,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * this is useful when you want to see which department has modified resources created by your template (which should not happen)
 
-### System Manager
-
-- gives you **visibility and control over the infrastructure**
-
-* you can **automate operational tasks** with it
-
-- **CLOUD FORMATION IS STILL THE PREFERRED WAY FOR MAINTAINING THE STATE OF INFRA.**
-
 ### AWS Glue
 
 - **serverless, fully managed EXTRACT TRANSFORM AND LOAD (ETL) service**
@@ -3438,10 +3470,6 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- AWS Connect And Lex (chatbot??)
-- AI features and video streaming (AWS Elemental MediaLive, AWS Transcribe, Elemental Media Package)
-- Just a tiny bit about Amazon Alexa
-- Firewall Manager
 - Disk Manager
 - ReceiveMessageWaitTimeSeconds (sqs)
 - SFX
