@@ -778,6 +778,36 @@ So when to use what?
 
 - **exposes itself as NFS**
 
+### FSx
+
+#### FSx for Windows Server
+
+- actually **can also be used with Linux 🤔** (but NFS is still much more preffered for Linux)
+
+* exposes **SMB** or **NFS** file share
+
+- you can **connect** to it **via DNS name**
+
+* **integrates** very well with **AD**
+
+- **DOES NOT** have **caching capabilities**
+
+* **can** be **accessed via DX or VPN from on-prem**
+
+* just **like EFS** it **automatically scales**
+
+#### FSx for Lustre
+
+- this is a **very high performance file storage**
+
+* used for AI stuff
+
+- just like FSx and EFS **it automatically scales**
+
+* **integrated** with **S3**
+
+#### Snow Producs
+
 ### Snowball
 
 - Big briefcase, **up to 100TB** of storage.
@@ -1904,6 +1934,16 @@ But most important information, remember **there are no so called snapshots when
 
 * this feature allows you to use the same **efs volume through different AZs**
 
+##### Mounting
+
+- **EFS actually gets a DNS name**
+
+* you can mount it by using **DNS resolution** but there are some **additional requirements**.
+
+- remember that during mounting you also control the encryption (in-transit).
+
+* because EFS gets a DNS name, you sometimes may hear a term: _mounting using FQDN_. This is nothing but just mounting using this DNS name.
+
 ##### DataSync
 
 - AWS says that **in theory you can mount EFS on prem** but that **requires really good connection**. Moreover the **traffic** itself **is not encrypted** so **VPN or Direct Connect is recommended**.
@@ -2331,6 +2371,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
   - Broadcast
 
 - you can use **custom DNS (can be on-prem)** by changing **DHCP option set**
+
+* VPC **cannot span multiple regions**.
 
 #### Scalling VPCs
 
@@ -2883,6 +2925,10 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
   - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **avoid empty API calls**
 
 Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection** is **always open**, it just waits for ANY message to be visible.
+
+- you can **control how long the long pooling takes** by **specifying ReceiveMessageWaitTimeSeconds attribute**
+
+> The length of time, in seconds, for which a ReceiveMessage action waits for a message to arrive
 
 ##### HA
 
@@ -3470,14 +3516,9 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- Disk Manager
-- ReceiveMessageWaitTimeSeconds (sqs)
-- SFX
-- SG regional? how to copy them?
 - so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
 - CloudFormation Wait conditions
 - AWS IOT
 - Stack Policy and updating via CLI
-- MountTarget FQDN ?? (EFS)
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
