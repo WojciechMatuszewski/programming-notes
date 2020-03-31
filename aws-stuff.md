@@ -423,11 +423,13 @@ An example for s3-prefix (folder)
 
 - there is an **agent (baked into modern Windows or Linux AMIs)** which you can install. That means that **you can manage on-prem instances aswell!**.
 
-- to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**
+* to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**
 
 - there are **documents** which are basically **scripts (actions) that SSM can use to do stuff**.
 
 * **agent installed by default on modern AMIs**, can also be **downloaded and installed on-prem**
+
+- you **do not have to have SSH ports open**. You also **do not need SSH keys**.
 
 #### Patch Manager
 
@@ -1121,6 +1123,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 - **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
 
 - remember that **indexes take up space!**. This is quite important and something you have to consider while creating your 20th GSI ;p.
+
+* **the more data** is within the database **the more partitions there are**.
 
 #### SDK
 
@@ -3030,6 +3034,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * while you could be doing this using NACL, the DDOS traffic would be dangerously close to your system (already entered your VPC). You should prefer to elivate the tread as far of your network as possible.
 
+- **offered for free for all AWS accounts automatically**. This is to keep base security level of all accounts within aws.
+
 #### Shield Advanced
 
 - gives you more **premium features** but costs **3k/month (costs of WAF included)**.
@@ -3178,9 +3184,11 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - **helps** you to **optimize running costs**
 
-* **checks security-related stuff** and **lists potential problems**
+* **checks security-related stuf (IAM)f** and **lists potential problems**
 
 - **shows you** when given service is **using more than a service limit**
+
+* what is very important is that **Trusted Advisor is more about accounts and IAM**. This is something completely different than AWS Inspector which has to deal with EC2 instances mostly.
 
 ### KMS/STS and Encryption
 
@@ -3340,6 +3348,16 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 - ingest from FlowLogs, R53, CloudTrial, AI Thread detection etc to centralized place
 
 * you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **indest from those invited accounts** (**if they accept**).
+
+- it's usually **preffered for instances that have access to the internet**
+
+### Amazon Inspector
+
+- used for **security monitoring of EC2 instances**
+
+* scans for **vulnarabilities and not IAM issues**
+
+- watches out for lack of best practices
 
 ### Patterns
 
@@ -3522,3 +3540,4 @@ TODO:
 - Stack Policy and updating via CLI
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
+- redrive policy SQS
