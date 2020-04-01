@@ -67,6 +67,10 @@
 
 - you can **use XRay for distributed tracing**.
 
+* remeber that **X-Ray collects data of INCOMMING requests. Not only those made within / outside our service**
+
+- **X-Ray works in real-time**. Can be used for real-time monitoring.
+
 #### Lambda @ Edge
 
 - **CloudFront will invoke your function when given event happens**. These are **events that has to do with request life-cycle @ CloudFront like origin request or smth like that**.
@@ -1354,19 +1358,19 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### NLB
 
-- **network load balancer exposes fixed IP**.
+- work in **layer 4**.
 
-* work in **layer 4**.
+* they **do not modify incoming network packets in any shape of form**, so you **do not have to use proxy-protocol**
 
-- they **do not modify incoming network packets in any shape of form**, so you **do not have to use proxy-protocol**
+- **can balance** on **UDP**
 
-* **can balance** on **UDP**
+* **exposes FIXED IP Address / DNS name**
 
-- **exposes FIXED IP Address**
+- **cannot** have **SecurityGroup attached to it**
 
-* **cannot** have **SecurityGroup attached to it**
+* has **cross-zone load balancing disabled by default**
 
-- has **cross-zone load balancing disabled by default**
+- when you register instances VIA Instance ID, the underlying (incomming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incomming IP address will be of the nlb nodes (private ip).
 
 #### Monitoring
 
@@ -2048,6 +2052,14 @@ Way of grouping EC2 instances.
   - **cold attached**: when instance is launched
 * with **mutliple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and not on the EC2 itself.
 
+### CloudWatch
+
+- remember that you can **create rules NOT EVENTS! to schedule some actions**
+
+* you can even **make some actions based on events comming from different services**.
+
+* you can create a rule which has multiple targets.
+
 ### AWS Batch
 
 - allows you to run **processes (async) across one or more instances**
@@ -2580,6 +2592,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - there is a **static monthly cost** and also **data transfer cost**.
 
+#### Transit VPC
+
+- **one VPC as passtrhough**
+
+* can be **used for connecting multiple cloud providers**
+
+- this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **VPN (Virtual Private Gateway and BGP on the transit gateway side)**
+
+* the **connection IS NOT IPsec (vpc peering)**. This is due to routing issues.
+
 #### VPC Endpoints
 
 - there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
@@ -2752,7 +2774,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ##### Direct Connect Gateway
 
-- allows you to **fan-out from a single private VIF** to **up to 10 VPCs**
+- allows you to **fan-out from a single private VIF** to **up to 10 VPCs**. This is super nice since **before that** **private VIF was region locked**.
 
 * the **fanout from DCG** can be used **cross-region**
 
@@ -2777,16 +2799,6 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - this solution **will increase the overall bandwith**
 
 * you can have **maximum of 4 connections within a LAG**
-
-#### Transit VPC
-
-- **one VPC as passtrhough**
-
-* can be **used for connecting multiple cloud providers**
-
-- this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **VPN (Virtual Private Gateway and BGP on the transit gateway side)**
-
-* the **connection IS NOT IPsec (vpc peering)**. This is due to routing issues.
 
 #### Traffic Mirroring
 
@@ -2921,6 +2933,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
 
 * you **can use Message Group ID**. This can **help with ordering** but **only within a given Message Groupd ID**. Basically it **guarantess** that **items with the same Message Group ID** will **come ordered**.
+
+- **Message Group ID** also allows for **parallel consumption of batches**. If you need to preserve order within a given group, but those groups are independend, using message group ID **that is unique PER group of objects** can greatly speed up the processing time.
 
 ##### Pooling
 
