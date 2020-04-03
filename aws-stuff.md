@@ -568,8 +568,7 @@ An example for s3-prefix (folder)
   (region needs to differ)**.
 
 * S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
-  the Bucket. Then that uploaded object is **transferred automatically to your
-  bucket**.
+  the Bucket. Then that uploaded object is **transferred automatically to your bucket**.
 
 - S3 is a **tiered** storage
 
@@ -919,6 +918,8 @@ So when to use what?
 - you can put RDS dbs on VMware.
 
 * aws will manage the usual stuff that aws manages with RDS. The difference is that the db lives on VMware
+
+- this service does what normal RDS does so **patching, availability protection, and so on**.
 
 ### Aurora
 
@@ -1388,7 +1389,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - this is where **ALB tries to rebalance spread of instances between AZs**.
 
-* this event is quite important since **ALB can exceed for a brief period of time the maximum instances within given group**. This is **due to the fact that new instances are launched first (without terminating the old ones)**.
+* this event is quite important since **ALB can exceed, for a brief period of time, the maximum instances count within given group**. This is **due to the fact that new instances are launched first (without terminating the old ones)**.
 
 #### Target Groups
 
@@ -1593,6 +1594,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - you can **pull images** from **various sources, not only ECR**
 
 * remember that **EKS service role** needs **permissions to create AWS resources** (just like ECS)
+
+- you will also need **a VPC and a security group for the cluster**. There is a template available within AWS docs.
 
 ### EC2 (Elastic Compute Cloud)
 
@@ -1886,7 +1889,7 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 #### Raid Configurations
 
-- use **RAID 0 for maximum performance**.
+- use **RAID 0 for maximum performance**. Remember that with **RAID 0 preserves all capacity (n \* size of drives) but when you loose 1 drive you loose all the data**.
 
 * use **RAID 1 for maximum fault tolerance**. This is where your **data is mirrored between 2 volumes**
 
@@ -2415,6 +2418,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * **FREE OF CHARGE AS LONG AS YOU ARE USING IT**
 
 - **elastic IP persists** even through **stopping and restarting an instance**. This is **not the case with 'auto-assign' public ip option**.
+
+* elastic IP allows you to **mask instance failure**. This is possible because **EIP is assigned to a given istance** so **when instance fails, you can re-map it to other instance**.
 
 #### Internet Gateway
 
