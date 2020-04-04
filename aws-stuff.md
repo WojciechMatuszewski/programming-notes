@@ -1771,6 +1771,14 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - remember that **secutiy groups only look at IPS and protocols**. You **cannot use SG to filter based on url** or something similar.
 
+##### Migration
+
+- remember that **secuirty groups are regional**
+
+* you can **copy a security group within a given region**
+
+- you can **export security group config** to a **new region VIA CLI!**
+
 #### EBS (Elastic Block Store)
 
 - basically **virtual harddisk in the cloud**
@@ -2055,14 +2063,6 @@ Way of grouping EC2 instances.
   - **cold attached**: when instance is launched
 * with **mutliple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and not on the EC2 itself.
 
-### CloudWatch
-
-- remember that you can **create rules NOT EVENTS! to schedule some actions**
-
-* you can even **make some actions based on events comming from different services**.
-
-* you can create a rule which has multiple targets.
-
 ### AWS Batch
 
 - allows you to run **processes (async) across one or more instances**
@@ -2136,23 +2136,40 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can create dashboards from metrics
 
 * **CloudTrail IS NOT THE SAME AS CloudWatch**
+
   - **CloudWatch** - performance
   - **CloudTrail** - CCTV camera, **monitors AWS API calls**
 
-##### CloudWatch Logs
+- the more frequently you publish metrics data the less they stay at that resolution. CloudWatch will after some time aggregate points to a metric with lower resolution eg. 60 secs => 5 mins and so on.
 
-- can monitor:
+* **namespace groups related metrics**
+
+##### Alarams
+
+- they **react to given metric**
+
+* alarms can **take actions**, like **trigger ASG action / send SNS notification**.
+
+##### Logs
+
+- **log group is a container for a log streams** which have the same specifications (retention etc...)
+
+* **log stream is a representation of logs for a single thing**, like ENI (with Flow Logs) or particular EC2.
+
+- you can **filter logs streams** to **create metrics on found items (like log which contains error string)**
+
+* can monitor:
 
   - **CPU**
   - **Network**
   - **Disk**
   - **Status check**
 
-* for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
+- for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
 
-- you would use **CloudWatch Logs** for creating **application-level alarms**. This could be number of errors and such.
+* you would use **CloudWatch Logs** for creating **application-level alarms**. This could be number of errors and such.
 
-##### CloudWatch Events
+##### Events
 
 - there is notion of **events**, which basically provides **near instant stream of system events**
 
@@ -2162,7 +2179,15 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * you can have **mutiple target per CloudWatch rule**
 
-### CloudTrial
+##### Rules
+
+- remember that you can **create rules NOT EVENTS! to schedule some actions**
+
+* you can even **make some actions based on events comming from different services**.
+
+- you can create a rule which has multiple targets.
+
+#### CloudTrial
 
 - **monitors AWS API calls**
 
@@ -2179,6 +2204,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 * you can create **one trial** and **apply it to multiple regions**
 
 - you **can trigger CloudWatch events usng CloudTrial events**. Pretty neat!.
+
+##### Data Events
+
+- by **default** CloudTrial **does not log S3 put/get events** and **lambda invocations**
+
+* you can **enable data events** to **have those events logged**.
+
+- logging **can be enabled per bucket and per function**
 
 #### Flow Logs
 
@@ -2785,6 +2818,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can be **attached to Transit Gateway(UP to 3 cross region)** with the **usage of Transit VIF**.
 
+* inside your VPC you should have **virtual private gateway**
+
 ##### DirectConnect + VPN
 
 - this setup basically means **setting up VPN connection over DirectConnect line**
@@ -3221,6 +3256,22 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - the **keys** are **region-locked**. You can **copy keys across regions though**.
 
+### AWS IOT
+
+- **regional** service
+
+* devices described as _things_
+
+- IOT devices have to be **registered** and then **can communicate with Device Gateway**
+
+* **Device Gateway** creates **device shadows**. This is a **logcal representation of a device (it's state)**. Other **application can communicate with shadows**.
+
+- IOT devices can also **read from their shadow**. This is quite useful when **an application want to send data TO a given device** eg. update it's state.
+
+* **Device Gateway publishes to MQTT topic**. You can subscribe to this topic and create **IOT Rules**. Rules just like CloudWatch rules can have triggers and do stuff like **pushing to kinesis, adding to dynamodb etc..**
+
+- to lower the cost you can use **Basic Indest**. This allows **your IOT device to skip going through the Topic and publish directly to a rule instead**.
+
 ### Cloud HSM
 
 - **H**ardware **S**ecrue **M**odule
@@ -3507,6 +3558,12 @@ There are a couple of steps but always remember about key player here: **Egress-
 
 - add IPv6 CIDR to your subnets / VPC
 
+#### Exposing your dockerized microservices through APIGW
+
+APIGW is great. It allows for caching, throttling, rate limiting etc. You would not want to implement these features all over again within your ECS / EKS cluseters. You can expose your microservices using APIGW and ALB or NLB (depending on the requirements).
+
+All you have to do is put APIGW in front of the load balancer and set the **integration as HTTP proxy**. (this is the default serverless framework method). With PROXY integration you can set endpoint URL as the ALB dns name.
+
 #### Disaster Recovery on AWS
 
 ##### RTO (Recovery time objective)
@@ -3553,9 +3610,11 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- CloudFront security (supposedly you should combine R53, WAF with CloudFront for maxium security)
+- APIGW in front of ALB (WHAT?)
 - so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
 - CloudFormation Wait conditions
-- AWS IOT
+
 - Stack Policy and updating via CLI
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
