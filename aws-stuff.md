@@ -483,6 +483,8 @@ An example for s3-prefix (folder)
 
 * since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
 
+- there is a notion of **launch constraint**. These are **permissions needed by the underlying project**.
+
 ### Access Advisor
 
 - will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
@@ -1215,7 +1217,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
 
-* **OAI can be applied** to **S3, CloudFront, bucket policies**
+* **OAI can be applied** to **S3, CloudFront, bucket policies**. **OAI origin cannot be a website address of s3 bucket (static website hosting)**.
 
 - **signed cookies** are used to **provide access to multiple restricted files**
 
@@ -1601,16 +1603,58 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - resizable compute capacity in the cloud, **virtual machines in the cloud**
 
-* different pricing models:
+* Termination protection is turned off by default
 
-  - **on demand**: pay per time use (per-hour, per-second)
-  - **reserved**: capacity reservation, contract with AWS
-  - **spot**: like a market, but for instances, when AWS has free
-  - **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
-    capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
-  - **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
+- you can create a **bootstrap script**
 
-* there are also **Spot blocks**. This allows you to have an instance for a **specific X amount of time** using the spot pricing model.
+* EC2 instance has **metadata**. There are a lot of useful information there.
+
+- using **SPOT** instances there are different **behaviors you can configure** when your instance is about to get interrupted:
+
+  - **stop**
+  - **hibernate**
+
+- **To get the metadata info CURL 169.254.169.254/latest/...**
+
+  - `/userdata`: your bootstrap script etc
+  - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
+  - `/meta-data/`: has **many options**, IP etc..
+
+- remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you have some scripts that require internet access and you forgot to configure the access properly. **There is a way to make sure user scripts run on every reboot**. This link can help:
+  https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
+
+* **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have dedicated tenancy model on that instance.
+
+- **EC2 instance can only have ONE IAM ROLE**
+
+* to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some configuration** for an EC2 like **security groups, AMI ids and such** .
+
+- you **can add/change** existing **IAM instance role** on a **running instance**
+
+#### Pricing models
+
+- **on demand**: pay per time use (per-hour, per-second)
+
+* **reserved**: capacity reservation, contract with AWS
+
+- **spot**: like a market, but for instances, when AWS has free
+
+* **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
+
+- there are also **Spot blocks**. This allows you to have an instance for a **specific X amount of time** using the spot pricing model.
+
+#### Reservations
+
+- sometimes there is not enough capacity for on-demand instances to be initialized within given region / AZ. This can be annoying whenever you are running ASG. Reservations enable you to make sure you can spin new instances whenerver you want (by purchasing reservations).
+
+* **zonal, regional reserved instances**. These are **bought up-front**, this is a **long term availability guarantee**
+
+- **on-demand capacity reservation**. This is useful for a **short term availibility guarantee**.
+
+* **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
+  capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
+
+#### Health checks
 
 - There are different _health checks_:
 
@@ -1618,40 +1662,13 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
   - **Instance Status Check**: checking the EC2 instance itself
 
-* **I**nput **O**put **P**er **S**econd (IOPS): basically how fast the drive is
+#### Tenancy
 
-- Termination protection is turned off by default
+- **Tenancy model**. This is something **somewhat different than ec2 pricing models**.
 
-* you can create a **bootstrap script**
-
-- EC2 instance has **metadata**. There are a lot of useful information there.
-
-* using **SPOT** instances there are different **behaviors you can configure** when your instance is about to get interrupted:
-
-  - **stop**
-  - **hibernate**
-
-* **To get the metadata info CURL 169.254.169.254/latest/...**
-
-  - `/userdata`: your bootstrap script etc
-  - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
-  - `/meta-data/`: has **many options**, IP etc..
-
-* remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you have some scripts that require internet access and you forgot to configure the access properly. **There is a way to make sure user scripts run on every reboot**. This link can help:
-  https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
-
-- **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have dedicated tenancy model on that instance.
-
-* **Tenancy model**. This is something **somewhat different than ec2 pricing models**.
   - **shared**: multiple costumers share the same piece of hardware (same rack, etc)
   - **dedicated**: hardware your EC2 runs on is only yours, but you have to pay more. No other instance from other customer run on this host. **Underlying hardware can change when you stop/start an instance**
   - **dedicated host**: this is basically like **dedicated but extra**. **Even if you stop/start your instance the underlying hardware stays the same**. You are not jumping between racks. You can pick on which underlying hardware you want to run!
-
-- **EC2 instance can only have ONE IAM ROLE**
-
-* to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some configuration** for an EC2 like **security groups, AMI ids and such** .
-
-- you **can add/change** existing **IAM instance role** on a **running instance**
 
 #### Hibernation
 
@@ -2168,6 +2185,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
 
 * you would use **CloudWatch Logs** for creating **application-level alarms**. This could be number of errors and such.
+
+- you can **stream logs to lambda or Elasticsearch**
 
 ##### Events
 
@@ -3429,6 +3448,36 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - watches out for lack of best practices
 
+### AWS WorkLink
+
+- **AWS Managed VPN app but for mobile**
+
+* WorkLink **makes sure** that the **data is never cached / stored on the real device**. This is great when you are worried that something might leak.
+
+- you can **use your existing browser** but **the pages are rendered on AWS** and **send to you as SVG** 😲
+
+### AWS AppStream
+
+- gives you the ability to **deliver desktop aps by browser** or **installable client**
+
+* can be use to **sassify your product without worrying about piracy**
+
+- you **can have old pc but still run instensive apps**. Everything is **proccessed by a fleet of instancess on AWS**
+
+* you can have admins manage the app stream as it is a centralized service
+
+- **users will always get the newest version of an app**.
+
+### AWS Macie
+
+- service **similar to AWS Inspector but for S3**.
+
+* using **ML and CloudTrail logs it can notify you when something is wrong with your S3 bucket (or data inside that bucket)**
+
+- it can also **tell you how is accessing sensible files most often**.
+
+* very **useful for GDPR**
+
 ### Patterns
 
 <!-- #### Connecting on-prem with VPC -->
@@ -3610,11 +3659,11 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- AWS DeepLens (maching customer faces)
 - CloudFront security (supposedly you should combine R53, WAF with CloudFront for maxium security)
-- APIGW in front of ALB (WHAT?)
 - so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
 - CloudFormation Wait conditions
-
+- AWS Macie
 - Stack Policy and updating via CLI
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
