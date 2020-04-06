@@ -923,6 +923,12 @@ So when to use what?
 
 - this service does what normal RDS does so **patching, availability protection, and so on**.
 
+#### Security Groups
+
+- your DB **can have security group associated with it**
+
+* this is especially useful to know whenever you want to **acces your DB within VPC**. Not using correct rules on the secuirt groups **can lead to connection issues**.
+
 ### Aurora
 
 - **SQL and PostgreSQ** compatible
@@ -2000,6 +2006,8 @@ But most important information, remember **there are no so called snapshots when
 
 - **mount helper** is something that you have to **download before you can use it**. It is a **cli tool**.
 
+* you **do not have to have special SG rule for encrypted EFS**
+
 ##### Performance
 
 - there are **2 main performance modes**
@@ -2082,7 +2090,7 @@ Way of grouping EC2 instances.
 
 ### AWS Batch
 
-- allows you to run **processes (async) across one or more instances**
+- allows you to run **processes (async) across one or more instances or ETL jobs**
 
 * **aws will take care of scaling**
 
@@ -2330,9 +2338,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### AWS Data Pipeline
 
-- **serverless product**
+- **serverless product**. It allows for **orchestration within ETL but mainly for moving data**
 
-* allows you to easily **transform and move data**
+* allows you to easily **transform (ETL) and move data**
 
 - can be set to **run on given schedule**
 
@@ -2345,6 +2353,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - basically it allows you to **simplify ETL jobs**, but if the thing that you want to do is not supported it **may seem limited**.
 
 * **job is relaying on EC2, AWS GLUE does not have this limitation**. It manages the lifecycle of EC2
+
+- in terms of overhead and managment it is like **Elastic Beanstalk of ETL services**
 
 #### Kinesis
 
@@ -3389,6 +3399,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - you **do not have to create replication instance**. DMS **will do that for you (task)**
 
 * **by default** DMS **encrypts your data at rest**
+
+- you can **migrate multiple sources to one and vice versa**
 
 #### IDS / IPS Systems
 

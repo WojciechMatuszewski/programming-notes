@@ -69,3 +69,35 @@
 - use **weighted distribution with alias** to make sure you do not loose provisioned concurrency executions when updating versions
 
 - use **scheduled auto scaling** for spikes of traffic you know ahead of time.
+
+## Enabling HTTP keep-alive
+
+This used to be the case where sdks for lambdas were not using `keep-alive` by default. This would result in having to establish a handshake with every request.
+
+**That is no longer the case** and **both js and golang sdk have keep alive enabled by default**.
+
+## Fan-out
+
+You have `ventilator` that spits out work to multiple workers. Since lambda scales horizontally , it's an ideal candidate for a worker pool.
+
+- for **low traffic** use **SQS / SNS / EventBridge**
+
+- for **high traffic** use **Kinesis**
+
+It's also important to understand how concurrency scales in regard to messages per second.
+
+- `SNS` and `EventBridge` scale concurrency linearly, that means there is **no batching**
+
+- `SQS` **has batching** which means that the scaling for more gradual
+
+- `Kinesis` scales more aggressively than `SQS` since your can have batching on `ShardID` level, but still not as aggressively as `SNS` or `EventBridge`
+
+## Controlling Concurrency
+
+This concept is quite important since having no control over concurrency can be a problem to your downstream system.
+
+- with `Kinesis` the flood of messages can be amortized by the ability to hold messages for up to 7 days.
+
+- `SNS / EventBridge` can be a bit problematic. There are retry mechanism in place, but what if they fail?. Remember that `SNS` wait for the acknowledge message for 15s, otherwise will consider given message as a failure in delivery. You can always rely on `dead-letter queue`
+
+There might a problem with `Kinesis` where one _poison message_ can really screw you up, being delivered over and over to your lambda function. You can control this behavior though using `on-failure destination` and `maximum age of record`.

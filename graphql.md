@@ -81,3 +81,17 @@ While fetching data you can specify fragments on each
         }
     }
 ```
+
+## Persisted Queries
+
+Query strings can get big. You might never though about this before but sometimes your queries can weight a lot, and I mean a lot.
+
+With persisted Queries, your server will have a hash for a given query. You only send that hash and variables, no Query string needed.
+
+This approach allows for more security and limits potential malicious attacks. Sending very large Query in hops of overloading the server wont work since it does not know anything about that query.
+
+This approach works for **static Queries**.
+
+## Static Queries / Mutations
+
+Static Queries / Mutation are queries / mutations that has the same string, no matter the variables you pass. This means that they are created using variables, not computed at run-time using interpolation.
