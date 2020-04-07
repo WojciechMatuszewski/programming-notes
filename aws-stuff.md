@@ -351,6 +351,8 @@ An example for s3-prefix (folder)
 
 * they are **delivered to s3 bucket**. That **bucket has to be owned by master account**.
 
+- to **have user-defined tags within cost allocation report** you have to make sure to **active given tags before generating a raport**.
+
 #### RAM (Resource Access Manager)
 
 - allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use all-features**
@@ -2179,6 +2181,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - **log group is a container for a log streams** which have the same specifications (retention etc...)
 
+- you can **subscribe to a log group using lambda / ES**.
+
 * **log stream is a representation of logs for a single thing**, like ENI (with Flow Logs) or particular EC2.
 
 - you can **filter logs streams** to **create metrics on found items (like log which contains error string)**
@@ -2609,7 +2613,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **remembers the relation between incoming and outgoing traffic**. If you ping and instance with security group attached it will be able to ping you back without having to specify outgoing allow.
 
-* **WORKS ON INSTANCE LEVEL**
+* is **attached to an ENI**. This means that **if your instance has multiple ENIs** you can have **multiple security groups on 1 instance**.
 
 #### DNS in a VPC
 
@@ -3033,6 +3037,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you **HAVE TO use Message Group ID**. If you do not have multiple groups just just a single static one.
 
+* you can use **Message deduplication ID** to **ignore (5 mins period) messages that have been send to the queue multiple times**. This is only available for SQS FIFO.
+
 #### DLQ
 
 - this is a **special queue which usually takes the events which were processed unsucessfuly**.
@@ -3315,10 +3321,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * if you **really need something that is dedicated ONLY to you**, the **cloud HSM will not cut it**.
 
-### TCO
-
-- this tool is used to **compare** the **cost of running in premise vs running in the AWS**
-
 ### Data Lake
 
 - **a lot of data from a different services brought into one - usually s3**
@@ -3489,6 +3491,10 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 - it can also **tell you how is accessing sensible files most often**.
 
 * very **useful for GDPR**
+
+### TCO
+
+- this tool is used to **compare** the **cost of running in premise vs running in the AWS**
 
 ### Patterns
 
