@@ -785,6 +785,8 @@ So when to use what?
 
 * you can **create snapshots from the volume**. These can be **turned into EBS snapshots**.
 
+- you can **create mountable ISCSI devices** which you can **mount on prem**.
+
 #### File Gateway
 
 - **exposes itself as NFS**
@@ -1344,6 +1346,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 - you should **always refer to ELBs by FQDN**. That is because **there are multiple nodes of ELB (per AZ)** and that **DNS can correctly resolve to correct IP**.
 
 * you **cannot route outbound traffic through ELB**.
+
+- you are **charged based on running time and traffic**. That means that even if there are no instances which ELB manage, it is still incurring costs.
 
 #### Client Affinity (Sticky sessions)
 
@@ -3052,6 +3056,46 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * normally each message has something called **`recieveCount`**. Whenerver you get message delivered that count is incremented
 
 - you can **set that message will be transported to DQL whenever `recieveCount` is greated than ...**
+
+### EventBridge
+
+- SNS and SQS combined (more or less)
+
+* can be **integrated with much more services than SQS or SNS (natively, without pooling)**. What's more important that you can **integrate natively with 3rd party AWS service providers** or webhooks. Since these are going through APIGW the integration could also be done using SQS or SNS.
+
+- does **not support FIFO ordering**
+
+* **NOT for high ammounts of events per second**. You are billted per send event. For case where you have a lot of events look into Kinesis.
+
+#### Schema Registry
+
+- source of truth for events that flow through the EventBridge
+
+* you can generate code bindings
+
+- this is a free service
+
+##### Schema Discovery
+
+- is responsible for putting discovered schemas to schema registry
+
+* you literally just have to click 1 button on a given event bus and the service is on
+
+- can be an source of events. Whenever it discovers the schema it will publish to a default EventBus
+
+#### vs SQS
+
+- **EventBridge** has **more integrations**
+
+* **SQS** has much **longer retention period (up to 14 days)** whereas **EventBridge** will **hold messages up to 24hrs**.
+
+#### vs SNS
+
+- **EventBridge** has **bigger number of targets** compared to SNS.
+
+* **EventBridge** has **better filtering capabilities** compared to SNS.
+
+- **SNS** has **much higher througput** than EventBridge.
 
 ### AWS Workspaces
 
