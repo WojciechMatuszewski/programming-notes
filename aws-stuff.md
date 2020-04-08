@@ -193,6 +193,8 @@ You have to assign a role to a given instance. Then you can ssh into that instan
 
 - always **prefer explicit deny no matter what**. Use **conditions if necessary**.
 
+* you can **leverage tags** to create access control lists based on tags.
+
 ##### Resource Policy
 
 Now we are in the domain of a given service / resource.
@@ -1695,6 +1697,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - **when** you **deploy EC2 instance** the **creation of instance profile IS HIDDEN from you**. It **happens behind the scenes**.
 
+#### Fleets
+
+- allows you to **mix and match instance types and sizes**.
+
+* it's **amazon who launches your instances**
+
+> With a single API call, now you can provision capacity across EC2 instance types and across purchase models to achieve desired scale, performance and cost.
+
 #### AMI
 
 - **WHEN CREATING ON EBS-based EC2** **automatically** creates **EBS snapshots**.
@@ -1777,24 +1787,6 @@ There are number of factors that are taken into consideration while picking whic
 * pick **random instance**
 
 Regardless of these steps, default termination policy will try to terminate instances **in the AZ that has the most amount of instances**.
-
-#### Security Groups
-
-- **changes** to security group **are instant**
-
-* security groups **are stateful**. That means when you **create an inbound rule, outbound rule is created** automatically.
-
-- there are **no deny rules**. Security groups can only **specify allow rules**.
-
-* EC2 can have more than 1 security group attached to it, also you can have multiple EC2s assigned to 1 security group.
-
-- **Security Groups DO NOT APPLY TO s3 BUCKETS, WE ARE IN EC2 VPC SPACE NOW!**
-
-- **All inbound traffic is blocked by default**
-
-* **security group can have other security groups as sources!**. This does not mean that we are _merging_ the rules. **Having other security group as source means that we are allowing traffic from instances ENI which are associated with that group!!!!!!!**
-
-- remember that **secutiy groups only look at IPS and protocols**. You **cannot use SG to filter based on url** or something similar.
 
 ##### Migration
 
@@ -2614,6 +2606,20 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - **remembers the relation between incoming and outgoing traffic**. If you ping and instance with security group attached it will be able to ping you back without having to specify outgoing allow.
 
 * is **attached to an ENI**. This means that **if your instance has multiple ENIs** you can have **multiple security groups on 1 instance**.
+
+- **changes** to security group **are instant**
+
+* security groups **are stateful**. That means when you **create an inbound rule, outbound rule is created** automatically.
+
+- there are **no deny rules**. Security groups can only **specify allow rules**.
+
+- **Security Groups DO NOT APPLY TO s3 BUCKETS, WE ARE IN EC2 VPC SPACE NOW!**
+
+- **All inbound traffic is blocked by default**
+
+* **security group can have other security groups as sources!**. This does not mean that we are _merging_ the rules. **Having other security group as source means that we are allowing traffic from instances ENI which are associated with that group!!!!!!!**
+
+- remember that **secutiy groups only look at IPS and protocols**. You **cannot use SG to filter based on url** or something similar.
 
 #### DNS in a VPC
 
@@ -3686,3 +3692,4 @@ TODO:
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
 - redrive policy SQS
+- resource groups https://docs.aws.amazon.com/ARG/latest/userguide/welcome.html
