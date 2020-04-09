@@ -401,13 +401,25 @@ An example for s3-prefix (folder)
 
 * with AWS Config you can have **history of given resource configurations**
 
-- saves config snapshots to a bucket
+- saves config snapshots to a bucket.
 
 * you can **traverse resource configuration over time**.
 
 - you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**. With this you can for example see if someone enabled inbound port on security group which you deemed non-compliant.
 
 * keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
+
+- it **exposes SNS topic** so that you can **react to compliance events**. This way you can do something with the resources yourself.
+
+#### Multi-account
+
+- you can get a **multi-account, multi-region view of configuration and compliance**.
+
+* integrated with AWS Organizations
+
+- does not cost anything for existing Config consumers.
+
+* uses the notion of **aggregator**. This aggregator is responsible for discovery and aggregation of compliance data.
 
 ### License Manager
 
