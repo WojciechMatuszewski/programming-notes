@@ -799,9 +799,17 @@ So when to use what?
 
 - you can **create mountable ISCSI devices** which you can **mount on prem**.
 
+* this is a **low-latency solution** for **either cached or non-cached gateway**.
+
 #### File Gateway
 
 - **exposes itself as NFS**
+
+* the **latency might be higher than volume** if you **are not using cached gateway**
+
+#### Tape Gateway
+
+- used to **either store the tapes within amazon** or **for achriving purposes eg. migrating to glacier**
 
 ### FSx
 
@@ -2951,19 +2959,23 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Redis
 
-- data **can be persistent** but this **should not be treated as persistent data store**
+- **by default** **data** in a Redis node **resides only in memory and is not persistent**.
 
 * can be used for things as **leaderboards**
 
 - have **pub/sub** capabilities.
 
-* you can **backup existing data** and then **restore that data**
+* you can **backup existing data** and then **restore that data**. You could also **use AOF (append only file) and resotre from that file**.
 
 - supports **in-transit and at-rest encryption**
 
 * there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
 
 - has a **concept of read replicas just like RDS**. Similarly to Aurora **read replica can be promoted to master**. The **replication between nodes is ASYNCHRONOUS**
+
+##### HA
+
+- Redis **supports multi-az with automatic failover**
 
 #### Memcached
 
@@ -3739,6 +3751,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- analyze test on udemy
 - AWS DeepLens (maching customer faces)
 - CloudFront security (supposedly you should combine R53, WAF with CloudFront for maxium security)
 - so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
