@@ -175,6 +175,10 @@ Since removing a policy from a role which is assumed can be destructive there is
 You have to assign a role to a given instance. Then you can ssh into that instance and do stuff that that role allows you to do. This is possible because the `aws-cli` is able to obtain the short term credentials that the role provides. This is done by **querying an instance metadata role**.
 `http://169.254.169.254/latest/urity-credentials/NAME_OF_THE_ROLE`
 
+##### Assuming EC2 Role on premises
+
+First thing first **you will need a role that will be shared along all your on prem instances**. Assuming you've done that, you should be using `AWS CodeDeploy` along with `aws-codedeploy-session-helper` to safely fetch credentials to your machines. This is mainly because `CodeDeploy` allows you to tag your instances, track deployments and does a lot of things for you. This approach **involves a cron job**.
+
 ##### Switching Roles
 
 - users can switch role **using SwitchRole console menu** or using an **link within an email send by administrator**.
@@ -274,6 +278,8 @@ An example for s3-prefix (folder)
 #### Discounts
 
 - when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
+
+* the **master account** can **turn off RI sharing** for **particular account or whole the whole organization**. There is no privte mode or smth.
 
 #### Invites
 
