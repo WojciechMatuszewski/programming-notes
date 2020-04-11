@@ -673,7 +673,7 @@ An example for s3-prefix (folder)
 
 * **you are still billed for old versions**. Event though there might a delete marker the object is not permanently deleted so you have to pay for the storage.
 
-- remember that **elements will be versioned from the moment you enable versioning**. **Previously uploaded elements WILL NOT be versioned (versionID of null)**
+- remember that **elements will be versioned from the moment you enable versioning**. **Any exisiting object will get the initial version of null**.
 
 #### Life-cycle rules
 
@@ -849,7 +849,7 @@ So when to use what?
 
 ### Snowball
 
-- Big briefcase, **up to 100TB** of storage.
+- Big briefcase, **up to 72TB** of **usable storage** storage.
 
 ### Snowmobile (not joking)
 
@@ -857,9 +857,11 @@ So when to use what?
 
 ### Snowball Edge
 
-- there are **two versions**: **compute** and **storage optimized**.
+- - big briefcase, **up to 80 TB** os **usable storage**.
 
-* the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at remote location** and then **transferring the data**.
+* there are **three versions**: **compute**, **storage optimized**, **compute optimized with GPU**.
+
+- the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at remote location** and then **transferring the data**.
 
 ### RDS (Relational Database Service)
 
@@ -1619,7 +1621,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **each container instance belongs to only one cluster at given time**
 
-#### Auto Scaling
+#### Auto Scaling (aka Service Auto Scaling)
 
 - you can enable **ECS Auto Scaling**. It creates ASG automatically.
 
@@ -2240,6 +2242,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - you can create a rule which has multiple targets.
 
+##### Dashboards
+
+- you can create custom dashboards with given metrics from CloudWatch
+
+* these **dashboards can be cross accounts and cross region**.
+  - if you want to make it work **cross account** you have to enable **sharing on each account that will make data available on the monitoring account**
+  - if you want to make it work **cross region with a single account** you **do not have to do nothing**. It's **already built-in**.
+
 #### CloudTrial
 
 - **monitors AWS API calls**
@@ -2461,6 +2471,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - this enables you to **query directly from data files on S3**
 
 * this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
+
+#### Workload Managment Groups
+
+- with WML you can create a query queues based on priorities. This means that you can have a system **where short-queries do not get stuck before long-running queries**.
+
+#### Read Replicas
+
+- **REDSHIFT DOES NOT HAVE READ REPLICAS!**
 
 ### Virtual Private Cloud (VPC)
 
@@ -3411,6 +3429,20 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 ### Migration
 
+#### Migration Strategies
+
+- **rehost (lift and shift)**: usually done using SMS for large legacy applications. Usually quick. After the migration part you might look into re-architecting the solution. This is due to the fact that re-architecting is usually easier within the cloud environment.
+
+- **replatform (lift, tinker and shift)**: this is where you make a few optimizations (easy ones), like migrating your service to managed one like elastic beanstalk
+
+- **repurchase (drop and shop)**: this is a decision to move to a different product
+
+- **refactor / re-architect**: most expensive solution and quite dangerous one. Usually driven by a strong business need.
+
+- **retire**
+
+- **retain**
+
 #### Migration Hub
 
 - this is the **hub for discovery data and tracking the migrations**.
@@ -3484,12 +3516,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - you can **migrate multiple sources to one and vice versa**
 
-#### IDS / IPS Systems
-
-These systems are used to **detect and prevent intrusions** from gettiing to your resources.
-
-- usually **implemented** by **installing IDS agent on every instance within your VPC** or by creating a **reverse proxy layer** which **has IDP agents installed**.
-
 #### VM Import / Export
 
 - an **alternative to SMS** which **does much less**.
@@ -3499,6 +3525,12 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 - you can also **export a VM that was previously imported**
 
 * you can **import disks as EBS snapshots**
+
+### IDS / IPS Systems
+
+These systems are used to **detect and prevent intrusions** from gettiing to your resources.
+
+- usually **implemented** by **installing IDS agent on every instance within your VPC** or by creating a **reverse proxy layer** which **has IDP agents installed**.
 
 ### AWS Media (Live and Package)
 

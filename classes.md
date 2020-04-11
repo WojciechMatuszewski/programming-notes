@@ -2,6 +2,8 @@
 
 ##### ES6 class example
 
+
+
 ```javascript
 class Workshop {
     // constructor is optional
