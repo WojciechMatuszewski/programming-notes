@@ -225,11 +225,15 @@ An example for s3-prefix (folder)
 }
 ```
 
+#### Managed Policies
+
+- **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
+
+* there are 2 notable managed policies: **AdministratorAccess** and **PowerUserAccess (this is for developers)**
+
 #### Inline vs Managed Policies
 
 - **inline policies** can only be **used by one entity at the time**. You **cannot reuse the same inline policy for multiple identities (can be groups), you would have to create a new one, even if it's the same**.
-
-* **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
 
 #### Resource Based Policies
 
@@ -415,7 +419,7 @@ An example for s3-prefix (folder)
 
 * keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
 
-- it **exposes SNS topic** so that you can **react to compliance events**. This way you can do something with the resources yourself.
+- it **exposes SNS topic (you can also run lambda on changes)** so that you can **react to compliance events**. This way you can do something with the resources yourself.
 
 #### Multi-account
 
@@ -506,6 +510,8 @@ An example for s3-prefix (folder)
 * since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
 
 - there is a notion of **launch constraint**. These are **permissions needed by the underlying project**.
+
+* _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**
 
 ### Access Advisor
 
@@ -2156,13 +2162,25 @@ Way of grouping EC2 instances.
 
 * supports **multiple environments (dev, prod ...)**
 
-- there are **multiple deployment options**
+<!-- - there are **multiple deployment options**
   - All At Once
   - Rolling
   - Rolling With Additional Batch
-  - Blue green
+  - Blue green -->
 
-* **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**. You can make sure that the data is still there by **creating DB snaphost** or **creating any parts of your application that you do not want to accidentaly delete OUTSIDE Elastic Beanstalk env**.
+- **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**. You can make sure that the data is still there by **creating DB snaphost** or **creating any parts of your application that you do not want to accidentaly delete OUTSIDE Elastic Beanstalk env**.
+
+#### Deployments
+
+- there are several deployment options
+
+* **all at once**: **default** configuration.
+
+- **rolling**: _Elastic Beanstalk_ splits instances into batches and deploys new verion into them, batch by batch. You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**
+
+* **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in a SEPARATE (temporary ASG)**.
+
+- **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**
 
 #### Unsupported Platforms
 
@@ -2875,17 +2893,19 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Direct Connect
 
-- **psychical connection between AWS and your network**
+- you have to have **BGP and BGP MD5 enabled** device
 
-* you are connecting to **DX (Direct Connect) Locations (psychically!) or Direct Connect Partner**.
+* **psychical connection between AWS and your network**
 
-- **port speed is very specific**. If you are **ordering from AWS directly, you can pick 1 Gbps or 10Gbps**. If you **need something slower, reach out to Direct Connect Partners**
+- you are connecting to **DX (Direct Connect) Locations (psychically!) or Direct Connect Partner**.
 
-- **used** when you **need FAST speed and low-latency connections**
+* **port speed is very specific**. If you are **ordering from AWS directly, you can pick 1 Gbps or 10Gbps**. If you **need something slower, reach out to Direct Connect Partners**
 
-* **takes a lot of time to setup**
+* **used** when you **need FAST speed and low-latency connections**
 
-- **BY DEFAULT THE CONNECTION IS NOT ENCRYPTED (the transit)**. **DIRECT CONNECT BY ITSELF DOES NOT ENCRYPT THE DATA**
+- **takes a lot of time to setup**
+
+* **BY DEFAULT THE CONNECTION IS NOT ENCRYPTED (the transit)**. **DIRECT CONNECT BY ITSELF DOES NOT ENCRYPT THE DATA**
 
 ##### VIFs (Virtual Interfaces)
 
@@ -3286,6 +3306,15 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * instead of doing AssumeRoleWithWebIdentity (like with Google and Facebook) AWS performs **AssumeRoleWithSAML**
 
 - **can be used to access AWS console**. This is **not the case with Web Identity**.
+
+#### Identity Brokers
+
+- sometimes your identity store might **not be compatible with SAML 2.0**. Then you will need to **create your own identity broker**
+
+* this usually works as follows
+  - identity broker check if user is already authenticated to your internal system
+  - calls *sts:AssumeRole* or *sts:GetFederationToken* to get the credentials
+  - passes those credentials to users (remember these are temporary credentials)
 
 #### User Pools
 
