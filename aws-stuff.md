@@ -983,11 +983,13 @@ So when to use what?
 
 - you **pay for the storage you are consuming / consumed**.
 
-* **writes COME from a SINGLE NODE**. That node **can be scalled UP**
-
 - uses **subnet groups**. This is basically telling aurora to **which subnet to deploy to**.
 
 * **supports schema changes** through **fast DDL** (DDL are the operations that have to do with the tables and the structure)
+
+#### Security
+
+- you have to **specify SG, which is applied to the DB**
 
 #### Writers
 
@@ -995,11 +997,13 @@ So when to use what?
 
 * **only** instance **used to write to the cluster**
 
+- can be scalled up
+
 #### Readers
 
 - **only** for **making reads to the db cluster**
 
-* **they use the same storage** so the **replication is synchronous**.
+* **they use the same storage**, so the **replication is synchronous**.
 
 - **you can target them for reads**. They **operate on between the realm of standby and Read-Replica in RDS**. You can create **up to 15 Readers**.
 
@@ -1008,6 +1012,24 @@ So when to use what?
 - **can be used for failover**
 
 * you can have **readers in different AZs**
+
+##### Reader Endpoint
+
+- this endpoint **maps to every reader within an instance (1 url)**. This is quite different than RDS since with RDS you can only target 1 read replica at one time (there is no 1 url that maps to every read replica).
+
+* you can also target an individual instance using special instance ID endpoint.
+
+#### Multi-Master
+
+- you can have multiple **master instances**. That means that you have multiple instances which can **read and write**.
+
+* this means that, **not like using RDS** where **you cannot scale writes**, here **using aurora you can scale writes** using **multi-master configuration**.
+
+#### Paralel Query
+
+- massive **performance benefits** for **long running queries**
+
+* you have to manually select this option.
 
 #### Failover (tiers)
 
@@ -1019,9 +1041,11 @@ So when to use what?
 
 #### Scaling
 
-- **scaling for writes** means **increasing the size of the primary instance (the master) => scaling up**
+- **scaling for writes** means **increasing the size of the primary instance (the master) => scaling up** or **using multi-master**
 
 * **scaling for reads** means **increasing the number of reader nodes => scaling out**
+
+- you can enable **auto-scaling for readers/writers**.
 
 #### Endpoints
 
@@ -1037,6 +1061,9 @@ So when to use what?
 
 #### Backtrack
 
+* this somewhat compares with RDS and restoring from backup. With RDS new DB instance is created, no downtime occurs but you have to switch connection strings.
+With Aurora, there is an DB outage but no new instance is created. Saves you some time in a long run.
+
 - has some cost associated with it, **you have to pay for storing the changes**
 
 * **causes DB outage**
@@ -1046,6 +1073,16 @@ So when to use what?
 * **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
 
 - you can backtrack **up to 72hrs in time**
+
+* can be used to **get rid of data corruption**
+
+#### Cloning 
+
+- is made from data snapshot
+
+* instances are different but it the cloning itself is much faster.
+
+- you are **only paying for the differences in data** **between** the **clone and the origin**.
 
 #### Monitoring
 
@@ -1085,7 +1122,62 @@ So when to use what?
 
 * can **rapidly scale**. Behind the db **there are multiple warm instances ready to go**. Because it **uses shared storage component just like normal Aurora** these instances can be used for scaling quickly.
 
-- **EXIST ONLY IN A SINGLE AZ**
+- the **instance itself exist within a single AZ**. In the event of failure, *Aurora Serverless* will provision new instance in another AZ.
+Failover time will be longer than normal Aurora. 
+
+* you can still **utilize normal endpoint just like using regular Aurora**. This might be useful when providing backwards compatibility.
+
+* operates within a VPCs
+
+- instead of initializing a connection you connect to a **DATA API (shared proxy)**. This is quite **similar to RDS Proxy**.
+
+### Neptune
+
+- NoSQL **Graph database**.
+
+* usually used for social-network like websites, think facebook.
+
+- highly available by default
+
+* data is replicated by default, spread across 3 AZs
+
+### QLDB (Quantum Ledger Database)
+
+- database for tracking pre and post states of data. This is very useful for **banking, payroll, finance, even voting**
+
+* think bitcoin
+
+- **ACID database, which enables you to use SQL queries**.
+
+* fully **serverless**
+
+### DocumentDB (with MongoDB Compatibility)
+
+- cluster lives on instances within a VPC
+
+* you can encrypt at REST using KMS
+
+- supports **point in time recovery** with retention period (just like in RDS, up to 35 days)
+
+#### Scaling
+
+- just like with RDS you have **1 master instance (read/write)** and **up to 15 read replicas (per cluster)**
+
+* you can **scale UP primary for writes**
+
+#### Storage
+
+- uses **shared storage layer, just like Aurora**.
+
+- because of this replication is synchronous.
+
+#### Restoration
+
+- just like with RDS you **are restoring to a separate cluster, there is no backtract**
+
+#### Failover
+
+- **you can failover to read replicas**, just like with Aurora.
 
 ### CloudFormation
 
@@ -2318,7 +2410,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - data lives on s3, it **never changes**
 
-* does **not support XML**
+* you can query data without doing any kind of ETL. You are operating on a raw data that lives on s3.
 
 * **schema on read** a.k.a you define what the data YOU would like to look like.
 
@@ -2338,9 +2430,13 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * can **query data from CloudWatch, ELB logs, CloudTrail logs, Flow logs**
 
-- is very **flexible** when it comes to **data which it needs to process while querying**. It can be **structured / semi-structured / unstructured**
+- is very **flexible** when it comes to **data, which it needs to process while querying**. It can be **structured / semi-structured / unstructured**
 
 - **if you really care about performance** consider **transforming the s3 objects** to **parquet format**. This is a special format that makes the querying much faster.
+
+##### Integration with Glue
+
+- you can create the *table* (so the **lens which you will look through**) **manually** or **using AWS Glue**
 
 ##### Athena Vs Redshift Spectrum
 
@@ -3313,7 +3409,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * this usually works as follows
   - identity broker check if user is already authenticated to your internal system
-  - calls *sts:AssumeRole* or *sts:GetFederationToken* to get the credentials
+  - calls _sts:AssumeRole_ or _sts:GetFederationToken_ to get the credentials
   - passes those credentials to users (remember these are temporary credentials)
 
 #### User Pools

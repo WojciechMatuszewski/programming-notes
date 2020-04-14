@@ -56,6 +56,8 @@ Example with List:
 - **1 capacity unit = 1 request/sec**
 - used to control read/write throughput
 
+
+
 ## Table Design
 
 - while building your data model rely on user stories
@@ -77,19 +79,18 @@ Example with List:
 
 #### Local Secondary Indexes
 
-They are called local because they are tied with partition key (hash key). Partition key is responsible for putting things in the same buckets and secondary indexes allow to do querying operations inside those buckets.
-
+They are called local because they are tied with partition key (hash key). 
+Partition key is responsible for putting things in the same buckets and secondary indexes allow to do querying operations inside those buckets.
 Since we are only doing operations inside _buckets_ it's pretty fast.
 
 #### Global Secondary Indexes
 
-These do not have to be tied with partition key.
+These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key.
 They work _outside the buckets_. Global secondary indexes are **stored on their own partitions** (separate from the table).
 
 #### Sort Key
 
 Sort key enables _rich query capabilities_. **If you provided sort key (also called range key) your partition key (hash key) does not have to be unique**.
-
 You can think about it like putting things that have the same partition key in the bucket and sorting (_quering_) them by sort key.
 
 ### Spare Indexes
@@ -111,6 +112,13 @@ Carefully picking HASH key is very important with this approach.
 - sometimes called **partition overloading**
 
 - whats more important is that **attributes can be sort keys for GSI**
+
+## Projections
+
+While creating **GSI (HASH / HASH + RANGE)** you can **project other attributes on those keys**. This is an important concept because **keys store data, they have some `weight`**.
+By default, when you have GSI, you only have access to attributes that are your keys. To use other attributes, you should use projections.
+
+You could also project everything, but that is kind of inefficient. **There is an underlying storage cost that comes with every index!**
 
 ## Modeling
 
