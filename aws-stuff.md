@@ -1061,22 +1061,22 @@ So when to use what?
 
 #### Backtrack
 
-* this somewhat compares with RDS and restoring from backup. With RDS new DB instance is created, no downtime occurs but you have to switch connection strings.
-With Aurora, there is an DB outage but no new instance is created. Saves you some time in a long run.
+- this somewhat compares with RDS and restoring from backup. With RDS new DB instance is created, no downtime occurs but you have to switch connection strings.
+  With Aurora, there is an DB outage but no new instance is created. Saves you some time in a long run.
 
-- has some cost associated with it, **you have to pay for storing the changes**
+* has some cost associated with it, **you have to pay for storing the changes**
 
-* **causes DB outage**
+- **causes DB outage**
 
-- **rolls back the shared storage**
+* **rolls back the shared storage**
 
-* **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
+- **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
 
-- you can backtrack **up to 72hrs in time**
+* you can backtrack **up to 72hrs in time**
 
-* can be used to **get rid of data corruption**
+- can be used to **get rid of data corruption**
 
-#### Cloning 
+#### Cloning
 
 - is made from data snapshot
 
@@ -1122,8 +1122,8 @@ With Aurora, there is an DB outage but no new instance is created. Saves you som
 
 * can **rapidly scale**. Behind the db **there are multiple warm instances ready to go**. Because it **uses shared storage component just like normal Aurora** these instances can be used for scaling quickly.
 
-- the **instance itself exist within a single AZ**. In the event of failure, *Aurora Serverless* will provision new instance in another AZ.
-Failover time will be longer than normal Aurora. 
+- the **instance itself exist within a single AZ**. In the event of failure, _Aurora Serverless_ will provision new instance in another AZ.
+  Failover time will be longer than normal Aurora.
 
 * you can still **utilize normal endpoint just like using regular Aurora**. This might be useful when providing backwards compatibility.
 
@@ -2017,7 +2017,9 @@ This is quite important to know
 
 #### EBS Optimized
 
-This setting is within **advanced settings** and basically makes it so that **you volume has more IO available to it**
+- this setting is within **advanced settings** and basically makes it so that **you volume has more IO available to it**
+
+* it creates a dedicated connection between your instance and the EBS volume. Please keep in mind that you cannot scale infinitely with Raid 0. You will probably hit a throughput limit on your instance.
 
 #### EBS vs Instance Store
 
@@ -2436,7 +2438,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 ##### Integration with Glue
 
-- you can create the *table* (so the **lens which you will look through**) **manually** or **using AWS Glue**
+- you can create the _table_ (so the **lens which you will look through**) **manually** or **using AWS Glue**
 
 ##### Athena Vs Redshift Spectrum
 
@@ -2902,8 +2904,6 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * private link allows you to **share a service that YOU created, not only a AWS resource which is the case with Gateway/Interface endpoints**
 
 - **provider exposes NLB** and the **customer links VPC endpoint network interface to that NLB**
-
-<!-- - **YOU HAVE TO HAVE NLB IN FRONT OF YOUR SERVICE FOR EVERYTHING TO WORK**. The **private link will be linking to that NLB**. -->
 
 - uses **DNS underneath just like interface endpoints**
 
@@ -3669,8 +3669,6 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 * gives you **2 anycast IPS**
 
-- it will always
-
 * **allows** you to create **sticky sessions (client affinity)**
 
 - you **can** configure **health checks**. Health checks **can be PER endpoint (eg. ELB)**
@@ -3682,6 +3680,20 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 * there is a notion of **endpoint groups**. This are **NLB/ALB/EC2 services OR static IP**
 
 - GA **can use exisiting health checks that exist on ELB**
+
+#### VS Route53
+
+- **GA** has **multi-region failover** which **does not rely on DNS**. This is huge since **you do not have to worry about DNS cache**
+
+* **GA** also **uses AWS backbone network**. This is the same technology as CloudFront. R53 does not work on that layer.
+
+- **GA** is **a bit more expensive than R53** when it comes to **static costs**
+
+#### CloudFront
+
+- **GA** is **does not cache responses**. This is where CloudFront has clear advantage.
+
+* **GA** does **not support Lambda @Edge**. Again, this is where CloudFront has clear advantage.
 
 ### AWS Guard Duty
 
@@ -3914,8 +3926,6 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- analyze test on udemy
-- AWS DeepLens (maching customer faces)
 - CloudFront security (supposedly you should combine R53, WAF with CloudFront for maxium security)
 - so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
 - CloudFormation Wait conditions
