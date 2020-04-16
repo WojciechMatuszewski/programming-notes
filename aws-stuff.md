@@ -3269,7 +3269,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you do not have to manage hardware
 
-### AWS Ops Work
+### AWS OpsWork
 
 - **in between Elastic Beanstalk** and **manual deployment**.
 
@@ -3290,6 +3290,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - here you can create **time-based** or **load-based** instances
 
 * there is a **simple wizard to create scalling scenarios**
+
+#### Updating instances
 
 - **updates** are **applied at the time of launching given instance**. There is **no automatic update process in place, you have to update your instances later on**. You can do that **in 2 ways**:
   - **create and start new instances** to **replace your current ones**.
