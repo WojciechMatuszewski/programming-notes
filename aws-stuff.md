@@ -461,6 +461,14 @@ An example for s3-prefix (folder)
 
 - you **do not have to have SSH ports open**. You also **do not need SSH keys**.
 
+#### Running commands on instances
+
+- this **can be** done **without using SSH** for both **Windows** and **Linux** instances
+
+* remember that you **have to have newest SSM agent installed**
+
+- you **instance** **has to have IAM role** that **enables SSM API on that instance**
+
 #### Patch Manager
 
 - there is a concept of a **patch manager**. This tool enables you to **discover missing updates, update multiple or single instances**.
@@ -480,6 +488,21 @@ An example for s3-prefix (folder)
 * **scallable** and **serverless**
 
 - very useful for **distributing config inside ASG**
+
+##### Advanced Parameters
+
+- you can switch any standart parameter to advanced at any time. **You cannot go back from standart to advanced**
+
+* with advanced parameters your parameter can have **up to 8KB of size**. This is **twice the size of a regular one**.
+
+- with advanced parameters you can get **really granual per parameter policies**.
+
+#### Billing
+
+- **SSM itself is free** but there are various services that have some cost:
+  - **on prem instance managment** is NOT free
+  - **advanced parameter store** is NOT free.
+  - **SSM automation** is NOT free.
 
 ### AWS Firewall Manager
 
@@ -1342,6 +1365,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **Regional cache** is like a meta edge location. Basically second level cache, fallback when there is **no cache hit**. If it does not have a copy of a given content it **falls back to the origin** (origin fetch).
 
+* setting up **TTL 0** **does not mean NO caching**. It means that **CF will revalidate each viewer request with the origin**. That basically means that **CF will make a GET to an origin with a special header**. Then **origin signals CF if the origin changed or not**.
+
 #### Protecting Content
 
 - **By default** every CloudFront distribution **comes with a default domain name**. That domain of course works for HTTP and HTTPS. You can register domain and replace it.
@@ -1812,12 +1837,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 #### Hibernation
 
-- you can hibernate an instance. The **hibernation process is moving RAM data to EBS**. There are requirements for this to work
-  1. Your instance cannot be a part of ASG or ECS. You can always suspend ASG or move given instance into maintance mode.
+- to enable hibernation your instance **must based on HVM AMI**.
+
+* you can hibernate an instance. The **hibernation process is moving RAM data to EBS**. There are requirements for this to work
+  1. Your instance **cannot be a part of ASG or ECS**. You can always suspend ASG or move given instance into maintance mode.
   2. Your **root volume has to be EBS**
   3. The **EBS volume has to be large enough**
 
-* you **cannot enable hibernation on a existing instance**. You have to tick a box during the creation.
+- you **cannot enable hibernation on a existing instance**. You have to tick a box during the creation.
 
 #### Instance Profiles / Roles
 
@@ -2533,6 +2560,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * it can modify the data before storing it
 
 - **you do not have to specify capacity upfront**
+
+* **data** can be **send to S3, Redshift, AWS ES, Splunk**
 
 #### Kinesis Data Analytics
 
