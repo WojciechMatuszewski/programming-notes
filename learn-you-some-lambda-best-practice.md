@@ -4,11 +4,11 @@
 
 - the more memory your lambda has and the longer is runs it will cost you more
 
-- memory allocation also controls CPU allocation
+* memory allocation also controls CPU allocation
 
 - use **aws lambda power tuning tool** to see memory vs cost for your function
 
-- use **lumigo-cli** to make your life easier. This tool is a collection of utility tools for AWS and also includes the aforementioned _power tuning tool_
+* use **lumigo-cli** to make your life easier. This tool is a collection of utility tools for AWS and also includes the aforementioned _power tuning tool_
 
 - within **lumigo-cli** you can set different profiles and visualize results, for example:
 
@@ -18,7 +18,7 @@
 
 - there are 2 factors that pay a role when it comes to cold starts: **duration** and **frequency**. You should mainly **focus on duration** since **frequency is usually out of your control**.
 
-- look for **init duration** within **cloud watch logs** or an **initialization segment** within **XRay**.
+* look for **init duration** within **cloud watch logs** or an **initialization segment** within **XRay**.
 
 - previous methods were only for a single function on a single invocation resolution. **Use lumigo-cli to see cold starts for all your functions on all your invocations**.
   > lumigo-cli analyze-cold-starts
@@ -29,7 +29,7 @@
 
 - it's **always faster** to load **dependencies from a layer**
 
-- **unused dependencies** are **irreverent when it comes to initialization**
+* **unused dependencies** are **irreverent when it comes to initialization**
 
 - only require what explicitly need
 
@@ -37,7 +37,7 @@
 
 - you can simply invoke your function
 
-- to **force cold start** you can just **change / add env variable**
+* to **force cold start** you can just **change / add env variable**
 
 - use **lumigo-cli** to **measure particular lambda cold starts**
   > lumigo-cli measure-lambda-cold-starts -r eu-central-1 -n io-bound-example -i 100
@@ -45,30 +45,36 @@
 ### Improving cold starts with Node.js
 
 - put stuff into `dev-dependencies`. This is quite dangerous since the version can change. As an alternative **publish lambda-sdk as lambda layer**.
-- only require what you need
+
+* only require what you need
+
 - use `webpack` to bundle your dependencies
 
 ## Provisioned Concurrency
 
 - you cannot use it on `$Latest`
-- makes it so there are X containers within your function, warm, ready for execution
+
+* makes it so there are X containers within your function, warm, ready for execution
+
 - this means that you can have functions which are not handled by provisioned concurrency.
 
-- there is one **gotcha that might throw you off**. When you invoke your function **it will still report old `Init Duration`**. This is due to the fact that **the reported `Init Duration` happens at the time the concurrency is provisioned**.
+* there is one **gotcha that might throw you off**. When you invoke your function **it will still report old `Init Duration`**. This is due to the fact that **the reported `Init Duration` happens at the time the concurrency is provisioned**.
 
 - you can have **alias pointing to version which has provisioned concurrency enabled**, but always remember that **provisioned concurrency is always assigned to version**
 
 ### When to use Provisioned Concurrency
 
 - for really strict latency requirements
-- for spikes of traffic
+
+* for spikes of traffic
+
 - when cold starts stack up (multiple sync lambda calls)
 
 ### Tips
 
 - use **weighted distribution with alias** to make sure you do not loose provisioned concurrency executions when updating versions
 
-- use **scheduled auto scaling** for spikes of traffic you know ahead of time.
+* use **scheduled auto scaling** for spikes of traffic you know ahead of time.
 
 ## Enabling HTTP keep-alive
 
@@ -98,6 +104,48 @@ This concept is quite important since having no control over concurrency can be 
 
 - with `Kinesis` the flood of messages can be amortized by the ability to hold messages for up to 7 days.
 
-- `SNS / EventBridge` can be a bit problematic. There are retry mechanism in place, but what if they fail?. Remember that `SNS` wait for the acknowledge message for 15s, otherwise will consider given message as a failure in delivery. You can always rely on `dead-letter queue`
+* `SNS / EventBridge` can be a bit problematic. There are retry mechanism in place, but what if they fail?. Remember that `SNS` wait for the acknowledge message for 15s, otherwise will consider given message as a failure in delivery. You can always rely on `dead-letter queue`
 
 There might a problem with `Kinesis` where one _poison message_ can really screw you up, being delivered over and over to your lambda function. You can control this behavior though using `on-failure destination` and `maximum age of record`.
+
+## Service Proxy
+
+This is where you bypass compute layer (your lambda) and go directly to a service. The example here would be going to eg. DynamoDB directly.
+
+You **should consider** using **service proxies** when you are **concerned about cold start overhead or a burst limit of lambda**.
+
+This solution is not without downsites though:
+
+- you loose exponential backoff and retries (SDK is doing that for you)
+
+* you loose logging
+
+- you loose the ability to use 3rd party tracing tools
+
+* you loose the ability for having custom error handling logic
+
+- **VTL is hard to test / write**
+
+## Load testing
+
+- model your load test to resamble the actual traffic. Do not create artificially steep concurrency curve.
+
+* use user stories for testing. Do not hammer specific endpoint. By doing that you are testing the AWS and not your service.
+
+- artillery.io can be helpful. As an alternative you should look into `serverless-artillery`
+
+## Handling RDS connections
+
+- default config for RDS is just bad for lambda.
+
+* use **RDS Proxy**.
+
+## Lambda Destinations
+
+- works only for **async / stream based invocations**. So SQS, SNS, Kinesis, DynamoDB streams ...
+
+* gives you much more information than DLQ, even provides you the stack trace.
+
+- prefer Lambda Destinations when you can.
+
+* remember that Lambda Destinations are not only about failure. **There is also `onSuccess` event you can configure**. You would use it when you have `one hop` situation. Other than that **prefer step functions**.
