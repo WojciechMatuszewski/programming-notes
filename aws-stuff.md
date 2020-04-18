@@ -443,6 +443,8 @@ An example for s3-prefix (folder)
 
 - you can **track licenses on-prem**
 
+* can be **integrated** with **Service Catalog** for **grantular access to given list of products**.
+
 ### Systems Manager (SSM)
 
 - helps you manage **large landscapes** like **100s of instances**
@@ -536,6 +538,8 @@ An example for s3-prefix (folder)
 
 * _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**
 
+- can have **triggers** for different events like product deployment etc.
+
 ### Access Advisor
 
 - will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
@@ -571,6 +575,12 @@ An example for s3-prefix (folder)
 - to building applications that **listen and respond** with either **text or voice**
 
 * it is used in **Alexa** and **AWS Connect**
+
+### AWS Polly
+
+- used for text-to-speach conversion
+
+* Lex can integrate with Polly to create a chat and speach bot
 
 ### Sage Maker
 
@@ -1343,6 +1353,14 @@ There are a few approaches when it comes to scaling with dynamoDB
 * can be **s3 bucket**, **web-server (ec2)**, **Amazon MediaStore**, **APIGW** or **other CloudFront distribution**
 
 - **Origin has to be accessible to the internet**
+
+##### S3 website endpoint vs S3 bucket as origin
+
+- you can use both s3 webstite endpoints (you have to have static website hosting enabled) or plain old s3 endpoint (the bucket itself)
+
+* when you are using **s3 website endpoint** as **origin** you **cannot create OAI**.
+
+- if you want to **restrict access when using s3 website endpoint** you should use **custom header which CF injects**, then **setup bucket policy which looks at that header**.
 
 #### Distributions
 
@@ -2371,8 +2389,6 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - you can configure **CloudWatch Events rules**. These allow you to run **scheduled jobs (cron)** and **invoke different targets (services like lambda)**.
 
-* you can have **mutiple target per CloudWatch rule**
-
 ##### Rules
 
 - remember that you can **create rules NOT EVENTS! to schedule some actions**
@@ -2868,7 +2884,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * can be **used for connecting multiple cloud providers**
 
-- this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **VPN (Virtual Private Gateway and BGP on the transit gateway side)**
+- this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **using VPN (Virtual Private Gateway and BGP on the transit gateway side)**
 
 * the **connection IS NOT IPsec (vpc peering)**. This is due to routing issues.
 
@@ -3084,6 +3100,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * allows you to **create Video Stream processors** which parse the video **consumed from Kinesis and output to other Kinesis stream**.
 
+- **DOES NOT RETURN IMAGE METADATA**
+
 ### AWS Backup
 
 - operates on a notion of **backup plans**. This is where you specify **how often you want to run the backup**, **whats the retention** and so on.
@@ -3249,6 +3267,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * normally each message has something called **`recieveCount`**. Whenerver you get message delivered that count is incremented
 
 - you can **set that message will be transported to DQL whenever `recieveCount` is greated than ...**
+
+#### Redrive Policy
+
+- this is the **policy used to determine when to move given msg to DLQ**
+
+* very often used with `ReceiveCount` attribute, like **specifying `maxReceiveCount`**.
 
 ### EventBridge
 
@@ -3631,7 +3655,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * has **integration with Athena**. You **do not have to create special s3 bucket for this**.
 
-- either **agetnless (VMware IS REQUIRED!)** or **agent**
+- either **agetnless (VMware IS REQUIRED!)** or **agent (does not have to be VMware)**
 
 #### Server Migration Service (SMS)
 
@@ -3687,6 +3711,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 These systems are used to **detect and prevent intrusions** from gettiing to your resources.
 
 - usually **implemented** by **installing IDS agent on every instance within your VPC** or by creating a **reverse proxy layer** which **has IDP agents installed**.
+
+### AWS Artifact
+
+- provides **on demand access to AWS' compliance documentation**
+
+* might be useful when your company is conducting an audit
 
 ### AWS Media (Live and Package)
 
@@ -3957,12 +3987,11 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- CloudFront security (supposedly you should combine R53, WAF with CloudFront for maxium security)
-- so ALB is a layer 7 load balancer. How come Global Accelerator can have TCP listener which corresponds to ALB
+- AWS Polly
 - CloudFormation Wait conditions
-- AWS Macie
 - Stack Policy and updating via CLI
 - Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
-- redrive policy SQS
 - resource groups https://docs.aws.amazon.com/ARG/latest/userguide/welcome.html
+
+https://acloud.guru/exam-simulator/review?attemptId=0f476030-3f9b-45b2-8429-e2f07857c30a&examId=a42306e2-0ea6-4983-9030-e7ee48e6854b&courseId=aws-csa-pro-2019

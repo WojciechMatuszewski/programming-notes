@@ -56,8 +56,6 @@ Example with List:
 - **1 capacity unit = 1 request/sec**
 - used to control read/write throughput
 
-
-
 ## Table Design
 
 - while building your data model rely on user stories
@@ -79,7 +77,7 @@ Example with List:
 
 #### Local Secondary Indexes
 
-They are called local because they are tied with partition key (hash key). 
+They are called local because they are tied with partition key (hash key).
 Partition key is responsible for putting things in the same buckets and secondary indexes allow to do querying operations inside those buckets.
 Since we are only doing operations inside _buckets_ it's pretty fast.
 
@@ -165,6 +163,14 @@ candidateB_2
 ...
 candidateB_N (N is the shard number)
 ```
+
+### Time Series Data
+
+This is where you have a row describing some time-based entry, maybe a measurement of a thermometer or smth. You want to get all the measurements from a given day so, most likely, your PK will be the date. You are probably not going to be quering measurements from X days before so why have them in the same table with the same WCU / RCU as your _main_ data set.
+
+In this pattern you have **separate tables** for **current, previous and much older sets**. This way you can allocate appropriate RCU / WCU values to given tables.
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-time-series.html
 
 ### Aggregation
 
