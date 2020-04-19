@@ -149,3 +149,11 @@ This solution is not without downsites though:
 - prefer Lambda Destinations when you can.
 
 * remember that Lambda Destinations are not only about failure. **There is also `onSuccess` event you can configure**. You would use it when you have `one hop` situation. Other than that **prefer step functions**.
+
+## Async with Lambda
+
+- Lambda async invoke: buffer is managed for you
+
+* SQS event source to Lambda: you manage the buffer and DQL
+
+- Stream event source to Lambda: you manage the bufffer, each shard is like a FIFO queue. With Stream data there is a concept of **poison pill**. This is where you cannot, for some reason, process batch of requests and due to this, you cannot make any progress.

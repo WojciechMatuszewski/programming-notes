@@ -477,6 +477,14 @@ An example for s3-prefix (folder)
 
 * there are multiple **patching strategies available**
 
+#### State Manager
+
+- tool to control **how and when configurations are applied**
+
+* you could use it to update anti-malware definitions files, turn off / on ssh, RDP all that stuff
+
+- this is basically to make sure your instance is in a desired state. And if something happens to make it go back to that desired state
+
 #### Parameter Store
 
 - it is quite important to remember that **SSM is public space endpoint (can be a interface endpoint)**. This means that your **EC2 instances have to have internet connectivity / interface endpoint within a vpc**.
@@ -1820,7 +1828,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * **reserved**: capacity reservation, contract with AWS
 
-- **spot**: like a market, but for instances, when AWS has free
+- **spot**: like a market, but for instances. Instances come for the reserve pool of instances AWS currently is sitting on.
 
 * **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
 
@@ -1879,6 +1887,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * it's **amazon who launches your instances**
 
 > With a single API call, now you can provision capacity across EC2 instance types and across purchase models to achieve desired scale, performance and cost.
+
+- when using SPOT instances you should diversify across instance pools to avoid widespread interruptions. This makes it so that even when there is a demand on particular instance type your SPOT fleet will still live on.
 
 #### AMI
 
@@ -2300,12 +2310,6 @@ Way of grouping EC2 instances.
 - usually used for **web application deployments (with RDS eg.)** or **capacity provisioning and load balancing of a website**
 
 * supports **multiple environments (dev, prod ...)**
-
-<!-- - there are **multiple deployment options**
-  - All At Once
-  - Rolling
-  - Rolling With Additional Batch
-  - Blue green -->
 
 - **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**. You can make sure that the data is still there by **creating DB snaphost** or **creating any parts of your application that you do not want to accidentaly delete OUTSIDE Elastic Beanstalk env**.
 
