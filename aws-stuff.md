@@ -1558,7 +1558,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **can balance** on **UDP**
 
-* **exposes FIXED IP Address / DNS name**
+* **exposes DNS name**
 
 - **cannot** have **SecurityGroup attached to it**
 
@@ -1650,7 +1650,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - single record
 
-* **multiple values for a record, returned at random**
+* **multiple values for a record, returned at random**. You can specify up to 8 IPs.
 
 - **somewhat even spread of requests**
 
@@ -1833,6 +1833,12 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
 
 - there are also **Spot blocks**. This allows you to have an instance for a **specific X amount of time** using the spot pricing model.
+
+#### Windows instances
+
+- there is a notion of **EC2Config** on Windows instances
+
+* this tool (included within a Windows AMI) is used eg. mapping EBS to correct drive letter.
 
 #### Reservations
 
@@ -3561,7 +3567,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * what is very important is that **Trusted Advisor is more about accounts and IAM**. This is something completely different than AWS Inspector which has to deal with EC2 instances mostly.
 
-### KMS/STS and Encryption
+### KMS
 
 - various ways of encryption, but mainly **Server-Side, Client-Side** encryption.
 
@@ -3569,9 +3575,27 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - With **KMS** you **can create User Keys** but that process is not necessary. **Depending on the encryption model** you could use **AWS Managed Service Keys in KMS**.
 
-* **STS** is the thing that **creates temporary credentials** for **assuming a role** stuff.
+#### CMK
 
-- the **keys** are **region-locked**. You can **copy keys across regions though**.
+- **CMK** is the **root object used for any encryption within KMS**. CMK has an ARN.
+
+* CMK **never leaves the service**. That means that CMKS **never leave the region**.
+
+- if you have appropriate persmissions - **resource policy on the CMK**, you can request KMS to encrypt and decrypt data using CMK.
+
+* you can create **regional CMK alias** that points to given key.
+
+- this key **usually not used for the encryption directly**. This is due to **size limit of 4kb that you want to encrypt**. For the encryption itself you should use **data encryption keys**.
+
+#### Data encryption Keys
+
+- created based on a **request to KMS based on a SPECIFIC CMK**.
+
+* you get **2 versions of this key**. One is **encrypted** and one is in a **plain text** format. You should **encrypt with plain text (discard after)**
+
+<!-- * **STS** is the thing that **creates temporary credentials** for **assuming a role** stuff.
+
+- the **keys** are **region-locked**. You can **copy keys across regions though**. -->
 
 ### AWS IOT
 
