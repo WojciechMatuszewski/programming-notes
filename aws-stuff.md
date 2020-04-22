@@ -2625,11 +2625,17 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Kinesis Data Streams
 
-- allow you for **automatic analytics** for your **stream data**.
+- **processing** data **in near real-time**
 
-* **processing** data **in near real-time**
+* you can use **Kinesis Scaling Utility** to **modify the number of shards**. While quite useful **this is not THAT cost effective**
 
-- you can use **Kinesis Scaling Utility** to **modify the number of shards**. While quite useful **this is not THAT cost effective**
+##### Enchanced fanout
+
+// todo
+
+#### Metrics
+
+- you can configure **shard level metrics**. This bring extra cost and **needs to be enabled manually**.
 
 #### Redshift
 
@@ -3592,6 +3598,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - allows you to detect changes compared to your reference template
 
 * this is useful when you want to see which department has modified resources created by your template (which should not happen)
+
+#### Custom Resources
+
+- CF rather can creating a specific resource will **send event data to either lambda function or SNS topic**.
+
+* CF expects that the remote entity **responds with a correct response**.
 
 ### AWS Glue
 
