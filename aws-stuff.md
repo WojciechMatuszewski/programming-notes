@@ -1226,6 +1226,32 @@ So when to use what?
 
 * is free, **the service itself does not cost anything**. Only the stuff you deploy with it will cost you money (if you provision stuff which is not free)
 
+#### Cross Stack references
+
+- **regional**
+
+* allows you to refference resources from another stack. Imagine having network stack and services stack.
+
+- **within outputs** you define **the `Export` block**. Then within the other CF template you should use `!ImportValue`.
+
+#### Nested Stacks
+
+The `Cross Stack reference` was for refferencing resources from transactional stacks - the stack which change often and should be encapsulated.
+
+`Nested stacks` are similiar and different at the same time.
+
+- there is **no refference going on**. You **literally are creating a stack as a resource within another stack**. The nested stack are also presented as separate stacks.
+
+* `stack nesting` is used to **re-using templates not stacks**.
+
+#### StackSets
+
+- allows you to deploy **stacks from one admin account to other target accounts(can be cross region)**
+
+* needs 2 roles to happen. One at the admin account level and another on the target accounts
+
+- there are pre-made stacksets prepared by AWS.
+
 ### DynamoDB
 
 - **regional** service.
@@ -3517,6 +3543,24 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **Resources section is mandatory**
 
+#### Stack Updates
+
+- based of template diffing
+
+* there are 3 levels of update behaviors: **with no interruption**, **with some interruption** and **replacement**.
+
+- when using CloudFormation documentation, look for `update requirements` for a given property.
+
+##### Change Set
+
+- proposed change for a specific stack. Others can be notified by SNS that such change set was setup.
+
+* it clearly lists the changes that are to be executed (also shows update behavior) when change set is executed.
+
+- you can either `execute` or `delete` it.
+
+* you can have granular permissions - junior members proposing changes , senior members deleting / executing them.
+
 #### CloudFormation Stack Set
 
 Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
@@ -3528,6 +3572,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - AWS will basically tell you: this will be modified, this will be deleted, this will be created...
 
 * when you are ready **you can execute given change set to introduce the changes**
+
+#### Stack Roles
+
+- **identity** who is creating given stack **needs permissions for the stack creation itself and any underlying resources that that stack creates**.
+
+* you can also create a specific **stack role**. That role will be **used by CF while creating resources**. In such case the underlying identity needs only permissions to create the stack itself, not the resources that that stack might create.
+
+- this allows for **separation of roles**. This works on the similarly to `change sets`. You can enable junior memebers to interact with the stack, modify some of the resources, but full managment of the stack can be off limits to them.
 
 #### Deletion Policy
 
@@ -3586,6 +3638,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * you can create **regional CMK alias** that points to given key.
 
 - this key **usually not used for the encryption directly**. This is due to **size limit of 4kb that you want to encrypt**. For the encryption itself you should use **data encryption keys**.
+
+#### Key Material
+
+- aka **Backing Keys**. They are used for creating CMK.
+
+* you can **import your own key material**.
+
+- they can be **rotated**. The **period** of the rotation **depends if it's AWS Managed (3 years) or Customer Manager (1 year)**
 
 #### Data encryption Keys
 
