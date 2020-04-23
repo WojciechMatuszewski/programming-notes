@@ -2615,6 +2615,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **data** can be **send to S3, Redshift, AWS ES, Splunk**
 
+- very useful for **replayability and disaster recovery**. You can replay your events from s3 directly.
+
 #### Kinesis Data Analytics
 
 - allows you to make **sql queries against data in the stream**
@@ -2629,9 +2631,15 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * you can use **Kinesis Scaling Utility** to **modify the number of shards**. While quite useful **this is not THAT cost effective**
 
+- your targets can be **Kinesis Firehose** and **Kinesis Data Analytics** and even **Data Stream itself**. This enables you to create 0 code infrastructure.
+
 ##### Enchanced fanout
 
-// todo
+- this is something that **applies on a consumer level**
+
+* you can have **up to 5 enchanced fanout consumers per shard level**
+
+- Kinesis **pushes** data **to the enchanced fanout consumer** therefore that consumer does not have to pool the data.
 
 #### Metrics
 
@@ -4087,6 +4095,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- https://theburningmonk.com/2017/04/aws-lambda-3-pro-tips-for-working-with-kinesis-streams/
 - AWS Polly
 - CloudFormation Wait conditions
 - Stack Policy and updating via CLI
