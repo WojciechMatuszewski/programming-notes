@@ -826,6 +826,27 @@ But this is pretty bad. In such situations you such probably **reach for second 
 
 ## Patterns
 
+### `isMounted` and functional components
+
+While reading github issues I've noticed a that even Dan himself proposes this pattern:
+
+```js
+  useEffect(() => {
+    let cancelled = false;
+    async function() {
+      await somethingAsync();
+      if (!cancelled) {
+        setState({/*state*/})
+      }
+    }
+    return () => cancelled = true;
+  }, [])
+```
+
+But is not it the famouse `isMounted` pattern? Pretty weird right?.
+
+Either way, in such cases you should probably use **`AbortController` API**. **It is now widely supported, go and see for yourself**.
+
 ### Value/Dispatch Provider Pattern
 
 Sometimes the thing you want to update is complex and you decide to use reducer.
