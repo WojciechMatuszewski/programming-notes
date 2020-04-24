@@ -520,9 +520,9 @@ An example for s3-prefix (folder)
 
 * this service **wraps WAF**.
 
-- allows you to create **WAF rules** that are **cross accounts** and **span multiple resources**
+- allows you to create **WAF rules** that are **cross accounts** and **span multiple resources**.
 
-* it **integrates with Organizations**. You can create policies there for all accounts (newly joined inherit those)
+* it **requires you accounts to be within Organization**. You can create policies there for all accounts (newly joined inherit those)
 
 - it **integrates with AWS Config**. So **whenever a new resource is created** Firewall Manager can **apply rules to that resource**
 
@@ -546,7 +546,7 @@ An example for s3-prefix (folder)
 
 * _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**
 
-- can have **triggers** for different events like product deployment etc.
+- can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
 
 ### Access Advisor
 
@@ -2070,6 +2070,8 @@ This is quite important to know
 
 - **retention policy DOES NOT carry over when copying.**
 
+* you **should not take use RAID and take snapshots**. This is due to the fact that snapshots are volume based. If multiple volumes are in-sync (by using RAID configuration) the snapshots would most likely be corrupted or have stale data.
+
 #### LifeCycle Manager for EBS
 
 - creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
@@ -2633,13 +2635,25 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - your targets can be **Kinesis Firehose** and **Kinesis Data Analytics** and even **Data Stream itself**. This enables you to create 0 code infrastructure.
 
-##### Enchanced fanout
+* normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
+
+##### Enhanced fanout
 
 - this is something that **applies on a consumer level**
 
-* you can have **up to 5 enchanced fanout consumers per shard level**
+* you can have **up to 5 enhanced fanout consumers per shard level**
 
-- Kinesis **pushes** data **to the enchanced fanout consumer** therefore that consumer does not have to pool the data.
+- Kinesis **pushes (instead of pooling operation done by the regular consumer)** data **to the enhanced fanout consumer** therefore that consumer does not have to pool the data.
+
+* enhanced fanout consumer costs more (can be much more) than the regular consumers.
+
+##### Shards
+
+- unit of scale within Kinesis Data Streams
+
+* **getRecords** can **only be called 5 times per second per shard**.
+
+- data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool data once per 200ms**.
 
 #### Metrics
 
@@ -3659,6 +3673,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - this key **usually not used for the encryption directly**. This is due to **size limit of 4kb that you want to encrypt**. For the encryption itself you should use **data encryption keys**.
 
+* can be created based on imported `Key Material`. Once created, underlying `Key Material` cannot be changed, you would have to create a new key.
+
 #### Key Material
 
 - aka **Backing Keys**. They are used for creating CMK.
@@ -3672,10 +3688,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - created based on a **request to KMS based on a SPECIFIC CMK**.
 
 * you get **2 versions of this key**. One is **encrypted** and one is in a **plain text** format. You should **encrypt with plain text (discard after)**
-
-<!-- * **STS** is the thing that **creates temporary credentials** for **assuming a role** stuff.
-
-- the **keys** are **region-locked**. You can **copy keys across regions though**. -->
 
 ### AWS IOT
 
