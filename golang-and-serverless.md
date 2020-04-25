@@ -51,6 +51,19 @@ defer log.Printf("closed file: %v", f.Close()) // the gotcha is here
 
 So the above code wont work as expected. The `f.Close()` will be called immediately and the result would be passed to the `v` formatting arg. `defer` only works directly on `log.Printf` here (in this case).
 
+### Stale resource policy on APIGW
+
+You might have a problem where you defined a resource policy on `API Gateway` and it seem to be not working.
+
+There are a couple of steps you can take to make sure that policy is really applied:
+
+- first thing first, **make sure the newest version of your api is deployed**. Sadly `APIGW REST API` does not have `auto-deploy` feature (unlike `HTTP API`).
+
+* this **might be a cashing issue**. To make sure **check using incognito**.
+
+- the resource propagation takes a while.
+  > It does take a 30-60 seconds for the change to be reflected after deploying the API. Make sure you’re using incognito mode or curl to avoid any browser caching.
+
 ## Patterns
 
 ### Functional options
@@ -146,7 +159,6 @@ Now, this would be completely ok BUT **these 2 sdks are tied together!**. **You 
 `bytes.Buffer` is just a simple `in-memory` buffer. It will expose `Read` and `Write` methods.
 `Bufio` is used for **wrapping** underlying `writers/readers`. This is mainly used for performance. Wrapping with `Bufio` will reduce the amount of calls to `write/read`. This can be useful for files for example, when you DO NOT want every `read/write` call to hit the disc.
 
-
 ### Custom `marshal` for dealing with APIs
 
 While working with APIs you might need to provide different representations of values what your `marhal/unmarshal` function is providing.
@@ -172,7 +184,7 @@ type Time struct{
 }
 
 func (t Time) MarshalJSON() ([]byte, error) {
-    return json.Marshal(t.Unix())   
+    return json.Marshal(t.Unix())
 }
 
 func (t *Time) UnmarshalJSON(data []byte) error {
@@ -181,7 +193,7 @@ func (t *Time) UnmarshalJSON(data []byte) error {
     if err != nil {
         return err
    }
-   
+
     t.Time = time.Unix(i, 0)
     return nil
 }
@@ -189,24 +201,23 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 func main() {
     t := Time{time.Now()}
     b, _ := json.Marshal(t)
-    
+
     // timestamp
     fmt.Println(string(b))
-    
+
     var t2 Time
     json.Unmarshal(b, &t2)
-    
+
     // RFC-xxx time
-    fmt.Println(t2)    
+    fmt.Println(t2)
 }
 ```
 
 Notice the **type embedding**. With this technique we even get the other time-related methods on our type (inherited from `time.Time`)
 
+#### Generic structures
 
-#### Generic structures 
-
-What happens when your API returns 2 different things for the same endpoint? This is quite common for webhooks. 
+What happens when your API returns 2 different things for the same endpoint? This is quite common for webhooks.
 I personally had such case but at that time I did not know much about golang to begin with so I could not deal with it.
 
 So, let's imagine that your API is returning 2 different JSON responses.
@@ -262,7 +273,7 @@ type Data struct{
 }
 ```
 
-Notice the pointers. These will be used for checking with which structure we are dealing with (eg. `Data.BankAccount == nil ? `)
+Notice the pointers. These will be used for checking with which structure we are dealing with (eg. `Data.BankAccount == nil ?`)
 Now for the parsing methods.
 
 ```go
