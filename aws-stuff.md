@@ -974,6 +974,8 @@ So when to use what?
 
 * takes place **during maintenance window, specified when creating a RDS db**
 
+- you can **defer** updates. Updates **marked as `required` cannot be deffered indefinetely.**. Updates **marked as `available` CAN be deffered indefinetely**.
+
 #### Encryption
 
 - you **can only choose to encrypt your DB during creation phase**
@@ -1406,6 +1408,14 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **Origin has to be accessible to the internet**
 
+##### Protocol Policy
+
+- you can enforce **rules on the viewer and the origin**.
+
+* available policies are **`HTTP ONLY`, `Match Viewer`, `HTTP/HTTPS` , `Redirect to HTTPS`**.
+
+- please remember that not every origin supports HTTPs - look at the s3 static website hosting example.
+
 ##### S3 website endpoint vs S3 bucket as origin
 
 - you can use both s3 webstite endpoints (you have to have static website hosting enabled) or plain old s3 endpoint (the bucket itself)
@@ -1413,6 +1423,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 * when you are using **s3 website endpoint** as **origin** you **cannot create OAI**.
 
 - if you want to **restrict access when using s3 website endpoint** you should use **custom header which CF injects**, then **setup bucket policy which looks at that header**.
+
+* **s3 static hosting DOES NOT SUPPORT HTTPS**. That means that you **cannot set `HTTP ONLY` as Origin Protocol Policy**.
 
 #### Distributions
 
@@ -1612,7 +1624,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Monitoring
 
-- **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
+- **logs send to CloudWatch in 60sec interval IF there are reqests flowing through the load balancer**
 
 * if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3**. These allow you to get information about **individual requests** like IP address of the client, latencies etc..
 
@@ -1965,6 +1977,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - you can **whitelist aws accounts when the AMI is private**
 
 * ami **does not contain instance type informations**. Remember that the AMI also contains the AMI permissions.
+
+- you can have **an AMI based off instance store**. Instead of creating EBS snapshots, you have **files on s3 that gets referenced**.
 
 #### Networking (IPs and DNS)
 
@@ -3712,6 +3726,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - this key **usually not used for the encryption directly**. This is due to **size limit of 4kb that you want to encrypt**. For the encryption itself you should use **data encryption keys**.
 
 * can be created based on imported `Key Material`. Once created, underlying `Key Material` cannot be changed, you would have to create a new key.
+
+#### CMK Grants
+
+- allow you to **programatically delegate** the **use of CMK to other principals**. This is much better way of handling dynamic permissions than IAM.
+
+* this action is only for **allowance**. Grants **cannot be used to explicitly deny access**.
+
+- grants can be **easly revoked when neeeded**.
 
 #### Key Material
 
