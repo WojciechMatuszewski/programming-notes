@@ -365,15 +365,31 @@ An example for s3-prefix (folder)
 
 - to **have user-defined tags within cost allocation report** you have to make sure to **active given tags before generating a raport**.
 
+##### Cost & Usage Report
+
+- this is where you can view **the most detailed information when it comes to costs**.
+
+* is **part of cost explorer**
+
+- used for **generating reports**. These **reports have to be generated manually**.
+
+* **reports** are **saved into s3**.
+
+### AWS Budgets
+
+- allows you to **setup alarms** when **costs or usage is exceeded**.
+
+* you can think of this as **billing allarms on steroids**.
+
+- can be very useful when you want to set **alarms for RI utilization and coverage**.
+
+* mainly for setting up alarams and notifications if you go above certain threashold.
+
 #### RAM (Resource Access Manager)
 
 - allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use all-features**
 
 * you can share **a lot of stuff**. Most **notable are subnets**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
-
-### AWS Budgets
-
-- allows you to **setup alarms** when **costs or usage is exceeded**.
 
 ### ACM
 
@@ -538,15 +554,17 @@ An example for s3-prefix (folder)
 
 * **region aware** service.
 
-- even if you as a user do have a readonly access to aws, you would still be able to deploy a product from a portfolio if the provider provided deploy permissions on portfolio.
+- _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**
+
+* can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
+
+#### Constraints
+
+- even if you as a **user do have a readonly access to aws**, you would still be **able to deploy a product from a portfolio** if the **provider provided deploy permissions on portfolio**.
+
+* it is **possible** to have **portfolio without launch constrains**. This means that **user IAM persmissions will be used to deploy the product**.
 
 * since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
-
-- there is a notion of **launch constraint**. These are **permissions needed by the underlying project**.
-
-* _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**
-
-- can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
 
 ### Access Advisor
 
@@ -645,7 +663,7 @@ An example for s3-prefix (folder)
 
   - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
-    - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redunantly on s3 standard**
+    - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redunantly on s3 standard**. You would use this for **data that can be replaced / replayed**.
 
   - **S3-IA/S3 One Zone-IA** (**Infrequent Access**): for data that is accessed less
     frequently but requires rapid access when needed
@@ -914,7 +932,7 @@ So when to use what?
 
 - AWS service for relational databases
 
-* multiple providers such as: `mysql` or `Oracle`
+* multiple providers such as: `mysql` or `Oracle`. Please note that **RDS does not support Oracle RAC**.
 
 - **RDS AUTO SCALING in terms of compute does not exist**. You have to provision an EC2 instance and **pay regardless of the db usage**. What is possible is **RDS storage auto scaling**
 
@@ -1672,19 +1690,33 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - just remember that **TTL can bite YOUR ASS!**. **Whenever** you are **considering offloading the balancing to Route53** keep in mind the **TTL**. Since you **cannot attach ASG to Route53** there might be a **case where your instance is no longer there BUT TTL still routes to that IP**.
 
+* you can **nest routing strategies**. This is to create complex routing infrastrucure
+
+- an good **example** would be the need to create **latency based tree where leafs are based on weight**
+
 #### Simple Routing Policy
 
-- single record
+- **single record** which routes to a **single resource**.
 
-* **multiple values for a record, returned at random**. You can specify up to 8 IPs.
+* do not mistake this with multivalue. This is for a single record, you cannot have multiple records with the same name with this routing strategy.
 
-- **somewhat even spread of requests**
+- that single record **can hold up to 8 IPs**.
 
 * this is **NOT LOAD BALANCING**. **DNS request can be cached**. This will cause the **same IP to be hit**
 
 - **no performance control**
 
-* **cannot have multiple records with the same name**
+- you **cannot attach healthchecks** to a simple routing policy.
+
+#### Multivalue answer
+
+- this routing strategy is for **multiple records (same name)** which routes to **multiple resources**. The **record have to be of the same type**.
+
+* you can have **healthchecks** on **individual record**.
+
+- **when queried** (DNS query) the routing strategy will **return up to 8 healthy records selected at random**.
+
+* this **should not be used for load balancing**.
 
 #### Failover
 
@@ -1699,12 +1731,6 @@ There are a few approaches when it comes to scaling with dynamoDB
 * if **primary record fails** traffic will be **resolved to secondary record**. The **name stays the same**
 
 - you **can only create SINGLE record FOR PRIMARY and SECONDARY**
-
-#### Routing (general)
-
-- you can **nest routing strategies**. This is to create complex routing infrastrucure
-
-* an good **example** would be the need to create **latency based tree where leafs are based on weight**
 
 #### Weighted
 
@@ -1765,6 +1791,14 @@ There are a few approaches when it comes to scaling with dynamoDB
 #### Inbound & Outbound
 
 - **bidirectional** queries
+
+#### Transfering domains to R53
+
+- there is a **fee** for transfering the domain.
+
+* you cannot transfer every domain to R53. **There is a list of domains you can transfer**.
+
+- you **can** still use **auto-renew** on **transferred domains**.
 
 ### ECS (Elastic Container Service)
 
@@ -3557,9 +3591,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * with **aws managed** you will get **nightly directory snapshots**
 
-- you would use **AD Connector** for **authorization from on-prem (federation) only!**
+- you would use **AD Connector** for **authorization from on-prem (federation) only!**. This solutions **supports up to 5k users!**.
 
 * use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**
+
+- you can also use **managed AD with trust relationship** with the on-prem AD. You would **use this if you have more than 5k users**.
 
 ##### When to use Federation
 
@@ -3642,6 +3678,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - has a **central metadata repository (data catalog)**.
 
 * **ETL code** can be written using **Python or Scala**
+
+- as the Load step of the ETL, you can load data to **Redshift, RDS, S3**
 
 ### AWS Trusted Advisor
 
@@ -3825,6 +3863,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - you can also **export a VM that was previously imported**
 
 * you can **import disks as EBS snapshots**
+
+### VMware on AWS
+
+- this enabled you to have **VMware stack on AWS infrastructure**.
+
+* **can results** in a **networking complexicity**.
 
 ### IDS / IPS Systems
 
@@ -4111,8 +4155,5 @@ TODO:
 - AWS Polly
 - CloudFormation Wait conditions
 - Stack Policy and updating via CLI
-- Taking snapshot of standby reduces RDS Multi-az latency? Is that because the I/O is suspended?
 - http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
 - resource groups https://docs.aws.amazon.com/ARG/latest/userguide/welcome.html
-
-https://acloud.guru/exam-simulator/review?attemptId=0f476030-3f9b-45b2-8429-e2f07857c30a&examId=a42306e2-0ea6-4983-9030-e7ee48e6854b&courseId=aws-csa-pro-2019
