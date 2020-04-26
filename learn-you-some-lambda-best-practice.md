@@ -157,3 +157,54 @@ This solution is not without downsites though:
 * SQS event source to Lambda: you manage the buffer and DQL
 
 - Stream event source to Lambda: you manage the bufffer, each shard is like a FIFO queue. With Stream data there is a concept of **poison pill**. This is where you cannot, for some reason, process batch of requests and due to this, you cannot make any progress.
+
+
+## Secret Management
+
+### Storage
+
+- there are 2 services which you should look at: `SSM Parameters Store` and `Secrets Manager`.
+
+* `SSM Parameter Store` is mostly free, unless you want to use `advanced parameters` (larger payload).
+
+- remember that `Secrets Manager` can **rotate credentials**. That is **applicable even for RDS credentials**.
+
+### Distribution
+
+- remember to **never store secrets as env variables within your function**.
+
+* you should **fetch secrets at runtime**, cache and invalidate the cache every few minutes.
+
+- if you are writting JS lambda, consider using `middy`. It is a great tool - easy to use, gets the job done!.
+
+## APIGW Throttling gotcha
+
+If you create your API with a default settings, each stage has the default `10k` req/s throttling limit. This is an **region wide limit!**.
+This means that I as an attacker only need to **attack your 1 endpoint to take down all your APIS within a given region**.
+
+Pretty bad huh?
+
+- always use custom throttling limits
+
+* consider using `serverless-api-gateway-throttling` plugin if you are working with `serverless-framework`.
+   
+- if you are using `AWS SAM` you can set the desired throttling on the `AWS::Serverless::Api` type.
+
+Read more [here](https://theburningmonk.com/2019/10/the-api-gateway-security-flaw-you-need-to-pay-attention-to/)
+
+## Multi-region
+
+- you can create SNS topics in multiple regions and have 1 SQS subscribe to these topics. This can cause duplication though, watch out!
+
+* there is a term `static stability`. This is where a system would continue to work even if a region failed.
+
+![image](./assets/sns-multi-region.png)
+
+## Partial Failures
+
+- by default `Kinesis` will **retry until success**. This is no good. Luckily AWS introduced payload splitting and DLQ.
+
+* SQS **fails the whole batch**. This is probably not what you want. You could:
+    - set `batchSize:1`. This is bad for throughput.
+    - have idempotent workflow so that you can process multiple messages multiple times
+    - call `deleteMessage` yourself for the successful messages. This way they will not get retried. After that, you can safely return an error.

@@ -815,7 +815,8 @@ So when to use what?
 * there are multiple options:
   - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**. **You manage the AWS master key**.
   - **SSE-KMS**: **keys** are **managed by KMS service**. It **allows for role separation** since **keys are stored in accounts KMS**
-  - **SSE-S3**: The **master key is within AWS**.
+  - **SSE-S3**: The **master key is within AWS**. Be careful with this one though. Since S3 has the key, when you make your bucket public, s3 will automatically decrypt the contents.
+    This is why you should **prefer SSE-KMS** whenever possible.
 
 - **no additional cost** for enabling encryption
 
@@ -4230,8 +4231,6 @@ TODO:
 - can AWS Config monitor Organizations?
 - more about aws RAM
 - mobile Hub
-- attached service-linked
-- AWS Solutions Architect Professional Practice Test 1 - Results
 - https://theburningmonk.com/2017/04/aws-lambda-3-pro-tips-for-working-with-kinesis-streams/
 - AWS Polly
 - CloudFormation Wait conditions
