@@ -144,6 +144,14 @@
 
 * **authentication** is the process there **you are being verified for being you, being that entity you present yourself as**
 
+##### Service-linked Role
+
+- this is the **role assumed by a service**
+
+* it **allows** given **service to do stuff on your behalf**.
+
+- think of **assigning role to CF, to deploy stuff in sls framework**.
+
 #### Assuming Roles
 
 - role which you can assume has two segments
@@ -353,6 +361,18 @@ An example for s3-prefix (folder)
   - have that **account leave the original organization (remember about the ROLES!)**
   - **invite that account** to **new organization**
 
+#### Trusted Access
+
+- you **enable AWS services to perform actions on your belahf within an Organization**.
+
+* this is how you would do **CF stack sets within Organization**.
+
+#### RAM (Resource Access Manager)
+
+- allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use all-features**
+
+* you can share **a lot of stuff**. Most **notable are subnets**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
+
 #### Cost Explorer
 
 - you can **generate reports**. These reports are a **.csv** file.
@@ -385,12 +405,6 @@ An example for s3-prefix (folder)
 
 * mainly for setting up alarams and notifications if you go above certain threashold.
 
-#### RAM (Resource Access Manager)
-
-- allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use all-features**
-
-* you can share **a lot of stuff**. Most **notable are subnets**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
-
 ### ACM
 
 - provides **x509 certs (SSL/TSL)**
@@ -404,6 +418,14 @@ An example for s3-prefix (folder)
 - uses **KMS under the hood for keys**
 
 * can **automatically renew certs** BUT only **those which were not imported**.
+
+#### Multi-region certs
+
+- you **can use** the **same SSL certificate from ACM in more than one region** but it **depends** on wheter you are using **ELB or CloudFront**.
+
+* with **ELB** you have to **request a new cert for each region**.
+
+- with **CloudFront** you have to **request cert in n.virginia**. ACM certs within that region can be used for global cloudfront distributions.
 
 ### AWS Support Plans
 
@@ -841,26 +863,28 @@ So when to use what?
 
 ### Storage Gateway
 
-- does not have SLA
+- prefer if you have any kind of integration with `on-prem`.
 
-* **SOMETHING YOU DOWNLOAD**
+* does not have SLA
 
-- Physical/virtual device which **will replicate your data to AWS**.
+- **SOMETHING YOU DOWNLOAD**
 
-* There are 3 flavours of Storage Gateway
+* Physical/virtual device which **will replicate your data to AWS**.
+
+- There are 3 flavours of Storage Gateway
   - **File Gateway** : used for storing files as object in S3 - **NFS, SMB** .
   - **Volume Gateway**: used for storing copies of hard-disk drives in S3 - **iSCSI**.
   - **Tape Gateway**: used to get rid of tapes - **iSCSI**, for use mainly with **backup software**.
 
-- With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
+* With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
 
-* if you see **ISCSI** that is **probably Volume Gateway**.
+- if you see **ISCSI** that is **probably Volume Gateway**.
 
-- remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because **with cached volume only your primary data** is **written to s3**.
+* remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because **with cached volume only your primary data** is **written to s3**.
 
-* **useful** when doing any kind of **cloud migrations**
+- **useful** when doing any kind of **cloud migrations**
 
-- all data is **encrypted in transit**. Data **at rest** is **by default encrypted using SSE-s3**
+* all data is **encrypted in transit**. Data **at rest** is **by default encrypted using SSE-s3**
 
 #### Volume Gateway
 
@@ -877,6 +901,8 @@ So when to use what?
 - **exposes itself as NFS**
 
 * the **latency might be higher than volume** if you **are not using cached gateway**
+
+- when you have **tapes** `on-prem` **you can still use `File Gateway`**. The usage **depends on the need** (you might not want to archive but work with the data).
 
 #### Tape Gateway
 
@@ -1484,7 +1510,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - Whats more **you can restrict access to a specific IP** using **WAF ACL and CloudFront**
 
-- You can also use **Geo Restriction**.
+- You can also use **Geo Restriction**. This is **similar** to **R53 geolocation** but you get the **benefit of CDN (speed)**.
 
 * **SNI** is a way to present **multiple certs to a client**. Client has to **pick which cert. it wants**. Some old browsers do not support this technology.
 
@@ -1834,6 +1860,14 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - task definition also acts as sort of a bootstrap, **you can specify which command container should run when launched**
 
+* you can **assign IAM role to the task**. This is the role that will be used by the underlying container.
+
+##### Network Modes
+
+- there are multiple network modes available: **none, bridge, awsvpc, host**. The **default is the bridge mode**.
+
+* if you want to assign **private & public IP (ENI)** use **awsvpc mode**. This will also enable you to assign SG to a specific task if needed.
+
 #### Service Definition
 
 - this is the **how will my infra look like which will be running containers** configuration.
@@ -1979,6 +2013,12 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * ami **does not contain instance type informations**. Remember that the AMI also contains the AMI permissions.
 
 - you can have **an AMI based off instance store**. Instead of creating EBS snapshots, you have **files on s3 that gets referenced**.
+
+#### Key pairs
+
+- based on **public/private key** cryptography
+
+* when **migrating AMIs** you **do not have to import any kind of key**. You can **still use your downloaded `key-pair`** since it's the private part of the key.
 
 #### Networking (IPs and DNS)
 
@@ -3482,6 +3522,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **traffic** is **filtered before reaching /\ services**
 
+* use **AWS Shield for DDOS protection, not WAF!**.
+
 #### WEB ACL
 
 - set of **rules** or **traffic decisions** you apply to a specific project.
@@ -4185,6 +4227,11 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- can AWS Config monitor Organizations?
+- more about aws RAM
+- mobile Hub
+- attached service-linked
+- AWS Solutions Architect Professional Practice Test 1 - Results
 - https://theburningmonk.com/2017/04/aws-lambda-3-pro-tips-for-working-with-kinesis-streams/
 - AWS Polly
 - CloudFormation Wait conditions
