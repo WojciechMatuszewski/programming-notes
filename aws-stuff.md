@@ -2655,11 +2655,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * there is a notion of **kinesis partition key**. When sending events you can specify such key. This key is **used to sometimes guarantee the order of events**, but **mainly it acts as a `spreader` of things on the shards**
 
-#### Kinesis Data Firehose
+##### Kinesis Data Firehose
 
 - allows you to **store data from kinesis stream on persistent storage**
 
-* it can modify the data before storing it
+* it can **modify the data before storing it**. You should probably **transform the data to parqet format**.
 
 - **you do not have to specify capacity upfront**
 
@@ -2667,7 +2667,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - very useful for **replayability and disaster recovery**. You can replay your events from s3 directly.
 
-#### Kinesis Data Analytics
+##### Kinesis Data Analytics
 
 - allows you to make **sql queries against data in the stream**
 
@@ -2675,7 +2675,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **serverless product**
 
-#### Kinesis Data Streams
+##### Kinesis Data Streams
 
 - **processing** data **in near real-time**
 
@@ -2685,7 +2685,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
 
-##### Enhanced fanout
+###### Enhanced fanout
 
 - this is something that **applies on a consumer level**
 
@@ -2695,7 +2695,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * enhanced fanout consumer costs more (can be much more) than the regular consumers.
 
-##### Shards
+###### Shards
 
 - unit of scale within Kinesis Data Streams
 
@@ -2703,7 +2703,19 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool data once per 200ms**.
 
-#### Metrics
+###### AWS Kinesis library
+
+- use it. It has automatic batching, proto-buffers and so on build-in. It will save you some money
+
+* **can be used on prem**.
+
+##### Retries & Error handling
+
+- you can configure **`on-failure` destination**. This can be either **SNS or SQS**
+
+* you can **split batch on error**. This is quite useful for finding the **poision pill**.
+
+##### Metrics
 
 - you can configure **shard level metrics**. This bring extra cost and **needs to be enabled manually**.
 
