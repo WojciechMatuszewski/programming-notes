@@ -2827,7 +2827,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Scalling VPCs
 
-- previously you **had to overprovision (still good practice though)** on your CIDR range to make sure that there is some room left for expansion
+- previously you **had to over provision (still good practice though)** on your CIDR range to make sure that there is some room left for expansion
 
 * in late 2017 an option was added to **add secondary IPv4 address ranges (CIDRs) to VPC**. This allows you to expand your VPC
 
@@ -2875,7 +2875,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can be **attached** to **VPC** or **subnet** or **an network interface**
 
-* **you can filter which data you want to see**
+* **you can filter, which data you want to see**
 
 - **stored inside CloudWatch or S3**
 
@@ -3045,13 +3045,15 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Transit VPC
 
-- **one VPC as passtrhough**
+- **one VPC as pass through**
 
 * can be **used for connecting multiple cloud providers**
 
 - this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **using VPN (Virtual Private Gateway and BGP on the transit gateway side)**
 
 * the **connection IS NOT IPsec (vpc peering)**. This is due to routing issues.
+
+![](./assets/transit-vpc.png)
 
 #### VPC Endpoints
 
@@ -3141,11 +3143,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - allows for **on-prem to VPC** and **VPC to on-prem** connectivity.
 
-* **routing** can be either **static** or **dynamic**.
+* **routing** can either be **static** or **dynamic**.
 
 - if you specify **dynamic routing** the connection will use **BGP**.
 
-* if you specify **dynamic routing** both sides **can exchange routing information**. You **do not have to provide such informations youself, like in a static routing solution**
+* if you specify **dynamic routing** both sides **can exchange routing information**. You **do not have to provide such information yourself, like in a static routing solution**
 
 - the **connection** occurs between **customer gateway** and **virtual private gateway (attached to VPC)**
 
@@ -3153,9 +3155,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can create **multiple customer gateways** and **multiple tunnels** for **full HA**. This architecture **requires BGP**
 
-* when you setup the connection the **peer indentity authentication is established**
+* when you setup the connection the **peer identity authentication is established**
 
-- it **uses public internet** to exchange data.
+- it **uses the public internet** to exchange data.
 
 ##### Managed VPN
 
@@ -3165,9 +3167,25 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - connection **can be of type "on demand"**. This means that the **connection will not be established unless there is some traffic**.
 
+##### Client VPN
+
+- establishing connection using OpenVPN client.
+
+* your entry point is the **Client VPN endpoint**. This is a **regional construct**.
+
+- this allows you to **connect an user to a subnet WITHOUT any router appliance**.
+
+* you can **attach security groups** to **Client VPN endpoint**.
+
+##### VPN CloudHub
+
+- this is just one `Virtual Private Gateway` to multiple `Customer Gateways`
+
+* creates so called `Hub and Spoke` model. **VPC is the Hub** and **each on-prem location is the Spoke**.
+
 ##### Customer Gateway
 
-- **represents physical router on customer side**
+- **represents a physical router on customer side**
 
 * **you have to tell AWS the IP of your router**
 
@@ -3219,7 +3237,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **private VIFs** will **connect you to a specific VPC**. You **still need Virtual Private Gateway**
 
-- **transit VIF** will **connect to DirectConnect which connects to Transit Gateway**. You can have **only 1 Transit VIF per Direct Connect**
+- **transit VIF** will **connect to DirectConnect, which connects to Transit Gateway**. You can have **only 1 Transit VIF per Direct Connect**
 
 * you can have **up to 50 PUBLIC + PRIVATE VIFs** on a **single DirectConnect**. This might be a problem. This is where **the usage of DirectConnect Gateway come in**
 
@@ -3231,7 +3249,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can be **attached to Transit Gateway(UP to 3 cross region)** with the **usage of Transit VIF**.
 
-* inside your VPC you should have **virtual private gateway**
+* within your VPC you should have **virtual private gateway**
 
 ##### DirectConnect + VPN
 
@@ -3662,7 +3680,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you would use **AD Connector** for **authorization from on-prem (federation) only!**. This solutions **supports up to 5k users!**.
 
-* use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**
+* use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**. It **does not support MFA!**.
 
 - you can also use **managed AD with trust relationship** with the on-prem AD. You would **use this if you have more than 5k users**.
 

@@ -128,9 +128,9 @@ This solution is not without downsites though:
 
 ## Load testing
 
-- model your load test to resamble the actual traffic. Do not create artificially steep concurrency curve.
+- model your load test to resemble the actual traffic. Do not create artificially steep concurrency curve.
 
-* use user stories for testing. Do not hammer specific endpoint. By doing that you are testing the AWS and not your service.
+* use user stories for testing. Do not hammer a specific endpoint. By doing that you are testing the AWS and not your service.
 
 - artillery.io can be helpful. As an alternative you should look into `serverless-artillery`
 
@@ -157,7 +157,6 @@ This solution is not without downsites though:
 * SQS event source to Lambda: you manage the buffer and DQL
 
 - Stream event source to Lambda: you manage the bufffer, each shard is like a FIFO queue. With Stream data there is a concept of **poison pill**. This is where you cannot, for some reason, process batch of requests and due to this, you cannot make any progress.
-
 
 ## Secret Management
 
