@@ -1491,9 +1491,29 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * **OAI can be applied** to **S3, CloudFront, bucket policies**. **OAI origin cannot be a website address of s3 bucket (static website hosting)**.
 
-- **signed cookies** are used to **provide access to multiple restricted files**
+##### Signed URLS & Signed Cookies
 
-* **signed urls** are used to **provide access to individual files, RTMP distributions**
+- **configured on BEHAVIOUR LEVEL**
+
+* there is a notion of **trusted signers**. These are **AWS Accounts** which can
+
+###### Signed URLs
+
+- very similar mechanism to S3, you generate signed URL using your permissions.
+
+* enables the holder of the signed URL to access (read/write) object.
+
+- that is important is that **signed url allows access for only 1 object**.
+
+###### Signed Cookies
+
+- cookies **extend the signed urls functionality** by giving you the ability to **grant permissions to groups of objects**
+
+##### Field Level encryption
+
+- your distribution have public-private key associated with it
+
+* the traffic between **origin location and destination** is **encrypted (on top of HTTPS) using that key pair**.
 
 #### Cache Behaviors
 
@@ -4246,6 +4266,7 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
+- cloudFront signed urls / behaviors with signed urls
 - can AWS Config monitor Organizations?
 - more about aws RAM
 - mobile Hub
