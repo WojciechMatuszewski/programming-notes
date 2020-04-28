@@ -937,7 +937,7 @@ So when to use what?
 
 * **integrated** with **S3**
 
-#### Snow Producs
+#### AWS Import / Export
 
 ### Snowball
 
@@ -955,6 +955,12 @@ So when to use what?
 
 - the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at remote location** and then **transferring the data**.
 
+### AWS Import / Export disk
+
+- you **mail** a **psychical drive to AWS**. They make either an AMI, upload to s3, or EBS snapshot out of it.
+
+* you should **always prefer snow**. The I/E Disk you have to encrypt the drive manually, worry about the transporation etc...
+
 ### RDS (Relational Database Service)
 
 - AWS service for relational databases
@@ -971,19 +977,23 @@ So when to use what?
 
 #### Read Replicas
 
-- you can have **read replicas of read replicas**
+- **up to 4 instances** can be associated with the **replication chain**
 
-* **up to 4 instances** can be associated with the **replication chain**
+- with **read replicas** you **CAN SPECIFY to which az to deploy**
 
-- when choosing **read replicas** data is **replicated asynchronously**
+* you **can target read replica** but you **CAN NOT target second-master (multi-az)**
 
-* with **read replicas** you **CAN SPECIFY to which az to deploy**
+- you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
 
-- you **can target read replica** but you **CAN NOT target second-master (multi-az)**
+* **read replica can be cross region**
 
-* you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
+- you can have **up to 5 read replicas from a master instance**
 
-- to have read replicas with RDS you **have to have backups enabled**.
+* you can have **read replicas of read replicas**
+
+- data **synchronized asynchronously**
+
+* **master has to have backups enabled to be able to use read replicas**
 
 #### Multi-AZ
 
@@ -1012,18 +1022,6 @@ So when to use what?
 - you **cannot encrypt existing DB**. You have to **create an snapshot and encrypt it** and build DB from that snapshot.
 
 * **read replicas** have to be encrypted with the **same key as source AS LONG AS THE Source and ReadReplica ARE IN THE SAME REGION**
-
-#### Replication (Read Replicas)
-
-- **read replica can be cross region**
-
-* you can have **up to 5 read replicas from a master instance**
-
-- you can have **read replicas of read replicas**
-
-* data **synchronized asynchronously**
-
-- **master has to have backups enabled to be able to use read replicas**
 
 #### Backups and Restore
 
@@ -1495,7 +1493,9 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **configured on BEHAVIOUR LEVEL**
 
-* there is a notion of **trusted signers**. These are **AWS Accounts** which can
+* there is a notion of **trusted signers**. These are **AWS Accounts** which hold **CloudFront key pairs** and are used to **sign urls**.
+
+- the account that created the distribution will be, most likely, the trusted signer.
 
 ###### Signed URLs
 
@@ -1669,6 +1669,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - when you register instances VIA Instance ID, the underlying (incomming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incomming IP address will be of the nlb nodes (private ip).
 
+* you **can asssign EIP** to NLB.
+
 #### Monitoring
 
 - **logs send to CloudWatch in 60sec interval IF there are reqests flowing through the load balancer**
@@ -1689,7 +1691,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Target Groups
 
-- can be either **group of ec2 instances (usually accompanied with ASG)** or **lists of IPS**.
+- can be either **group of ec2 instances (usually accompanied with ASG)** or **lists of IPS**. This means that **by using IPS you can load balance with on-prem**.
 
 * with target groups you can **load balance resources within VPC with resources on on-prem**. To make it work you have to use **private-ip only target group** and have **Direct Connect to on-prem**.
 
@@ -2089,6 +2091,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - you can have **custom CloudWatch metrics trigger scale events**
 
 * you can **suspend Auto Scalling**. This is **useful** while **debugging**.
+
+- if you want to make requests through API (regarding Auto Scaling), you have to sign them using HMACK-SHA1
 
 #### Lifecycle hooks
 
@@ -3632,6 +3636,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 #### CodeDeploy
 
 - deploys packages to given services (like ElasticBeanstalk)
+
+* you can have **blue green deployments** as well as **gruadual traffic shifts**. This works well with lambda and ECS.
 
 #### CodePipeline
 
