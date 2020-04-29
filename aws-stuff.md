@@ -3151,11 +3151,13 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - quick to setup and relatively cheap. It's **billed hourly**
 
-* **virtual private gateway** is **HA by default**
+- **virtual private gateway** is **HA by default**
 
 * **tunnels are encrypted end-to-end**
 
 - uses **internet for transit**
+
+* you do not need IGW for VPN to work.
 
 ##### Between VPCS
 
