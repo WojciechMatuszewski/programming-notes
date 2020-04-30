@@ -686,6 +686,7 @@ An example for s3-prefix (folder)
   - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
     - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redunantly on s3 standard**. You would use this for **data that can be replaced / replayed**.
+      While using this might seem like a good option, this **is not the cheapest solution, when it comes to storage, it is the chepest when it comes to the API usage though**.
 
   - **S3-IA/S3 One Zone-IA** (**Infrequent Access**): for data that is accessed less
     frequently but requires rapid access when needed
@@ -1717,21 +1718,23 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Route53
 
-- allows you to register domain (priced per domain name)
+- **global service**. When creating blue/green in another region you do not have to re-create record sets.
 
-* there are **public** and **private** **hosted zones**
+* allows you to register domain (priced per domain name)
 
-- **public zone is created by default when you create or migrate a domain to route53**
+- there are **public** and **private** **hosted zones**
 
-* **public zone** is **accessed globally (public internet or VPC)**
+* **public zone is created by default when you create or migrate a domain to route53**
 
-- **private zone** has to be **created explicitly**
+- **public zone** is **accessed globally (public internet or VPC)**
 
-* **private zones** are **associated with a given VPC**
+* **private zone** has to be **created explicitly**
 
-- there is a notion of **split view**. This basically means **creating the same names in both private and public zones**. **Inside a VPC, private zone always overrides public one**
+- **private zones** are **associated with a given VPC**
 
-* you are **charged monthly** for **hosted zones** and also for **resolver queries**.
+* there is a notion of **split view**. This basically means **creating the same names in both private and public zones**. **Inside a VPC, private zone always overrides public one**
+
+- you are **charged monthly** for **hosted zones** and also for **resolver queries**.
 
 #### Route53 Health Checks
 
