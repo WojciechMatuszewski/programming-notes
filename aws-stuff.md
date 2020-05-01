@@ -315,7 +315,7 @@ An example for s3-prefix (folder)
 
 * they **do not really provide access**. They **restrict what you can do when you HAVE permissions**. Think of them as **boundaries**.
 
-- can be used as **blacklist** or a **whitelist**.
+- can be used as **blacklist** or a **whitelist**. The syntax is basically the same as IAM policies.
 
 * the **policy evaluation process** is as follows: first you take your iam permissions then you take SCPs. You **take union of permissions from your IAM and SCP, these are the permissions you effectively have**.
 
@@ -515,6 +515,14 @@ An example for s3-prefix (folder)
 
 * there are multiple **patching strategies available**
 
+#### Maintenance windows
+
+- can be used for **task automation on schedule**
+
+* has a notion of **tasks** and **targets (EC2) instances**
+
+- you can use **CRON expressions**.
+
 #### State Manager
 
 - tool to control **how and when configurations are applied**
@@ -522,6 +530,8 @@ An example for s3-prefix (folder)
 * you could use it to update anti-malware definitions files, turn off / on ssh, RDP all that stuff
 
 - this is basically to make sure your instance is in a desired state. And if something happens to make it go back to that desired state
+
+* can also be used to for **task automation on schedule**. This is done by creating an **association**.
 
 #### Parameter Store
 
@@ -1265,38 +1275,6 @@ So when to use what?
 #### Failover
 
 - **you can failover to read replicas**, just like with Aurora.
-
-### CloudFormation
-
-- **infra from json**
-
-* is free, **the service itself does not cost anything**. Only the stuff you deploy with it will cost you money (if you provision stuff which is not free)
-
-#### Cross Stack references
-
-- **regional**
-
-* allows you to refference resources from another stack. Imagine having network stack and services stack.
-
-- **within outputs** you define **the `Export` block**. Then within the other CF template you should use `!ImportValue`.
-
-#### Nested Stacks
-
-The `Cross Stack reference` was for refferencing resources from transactional stacks - the stack which change often and should be encapsulated.
-
-`Nested stacks` are similiar and different at the same time.
-
-- there is **no refference going on**. You **literally are creating a stack as a resource within another stack**. The nested stack are also presented as separate stacks.
-
-* `stack nesting` is used to **re-using templates not stacks**.
-
-#### StackSets
-
-- allows you to deploy **stacks from one admin account to other target accounts(can be cross region)**
-
-* needs 2 roles to happen. One at the admin account level and another on the target accounts
-
-- there are pre-made stacksets prepared by AWS.
 
 ### DynamoDB
 
@@ -2559,7 +2537,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
   - if you want to make it work **cross account** you have to enable **sharing on each account that will make data available on the monitoring account**
   - if you want to make it work **cross region with a single account** you **do not have to do nothing**. It's **already built-in**.
 
-#### CloudTrial
+#### CloudTrail
 
 - **monitors AWS API calls**
 
@@ -2598,6 +2576,10 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - by default **it exposes the ip of the person who is connecting**
 
 * you filter which traffic you want to log. It can be either rejected, accepted or both.
+
+#### With `CloudWatch`
+
+You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combination since you could create alarms for given metrics and have like a _pseudo_ analytics workflow where you are notified when something happens.
 
 ### Analytics
 
@@ -3721,9 +3703,17 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you have an **app that uses AWS**. With **Cognito you can create identity for users, even guest role!**
 
-### Cloud Formation
+### CloudFormation
 
 - **Resources section is mandatory**
+
+#### Intrinsic Functions
+
+- these can **only be used within specific parts of template**. These are:
+  - resource properties
+  - outputs
+  - metadata attributes
+  - update policy attributes
 
 #### Stack Updates
 
@@ -3780,6 +3770,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - CF rather can creating a specific resource will **send event data to either lambda function or SNS topic**.
 
 * CF expects that the remote entity **responds with a correct response**.
+
+#### Wait Conditions
+
+- coordinate stack resource creation with something that is external to your stack
+
+* you could also track configuration process
+
+- used internally when using **creation policies**. The `creation-policy` is the preffered way of using `wait conditions`.
 
 ### AWS Glue
 
@@ -4277,7 +4275,6 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 TODO:
 
-- cloudFront signed urls / behaviors with signed urls
 - can AWS Config monitor Organizations?
 - more about aws RAM
 - mobile Hub
