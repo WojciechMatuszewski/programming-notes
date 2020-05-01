@@ -1872,6 +1872,10 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * if you want to assign **private & public IP (ENI)** use **awsvpc mode**. This will also enable you to assign SG to a specific task if needed.
 
+- **hosts map directly to the host networking**. That means that you cannot use this if you want to run multiple apache instances on the same host, since each instance needs PORT 80.
+
+* **awsvpc** is the **only networking mode available for Fargate**. Be wary though, **instances have limits of ENI that could be attached to them**.
+
 #### Service Definition
 
 - this is the **how will my infra look like which will be running containers** configuration.
@@ -1892,6 +1896,16 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 So with **ECS you have to have EC2 instances running**. But with **Fargate you really only care about the containers themselves**. You can wave deploying ASG goodbye. **Fargate is basically container as a service, you only define tasks and that is it**.
 
+#### Security
+
+- with **awsvpc** network mode you can **attach security groups to ENIs**.
+
+* there is an **instance (ec2) role** that gives permissions to ECS agent to talk to ECS. This should be the first place where you look when ECS agents are not functioning correctly.
+
+- you can also **attach IAM role to a specific task definition - task role**. This basically is a role attached to a specific container.
+
+* you can also **attach task execution role**. This is the role **used by ECS itself to pull images, publish logs, basically do stuff in your behalf**.
+
 ### EKS
 
 - you can **pull images** from **various sources, not only ECR**
@@ -1899,6 +1913,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * remember that **EKS service role** needs **permissions to create AWS resources** (just like ECS)
 
 - you will also need **a VPC and a security group for the cluster**. There is a template available within AWS docs.
+
+* there is a **fargate launch type for EKS**.
 
 ### EC2 (Elastic Compute Cloud)
 
