@@ -954,6 +954,8 @@ So when to use what?
 
 - Big briefcase, **up to 72TB** of **usable storage** storage.
 
+* only used for transferring. There is **no compute included, YOU CANNOT UPLOAD TO s3 using PLAIN SNOWBALL!**
+
 ### Snowmobile (not joking)
 
 - A truck with a container that carries snowballs.
@@ -965,6 +967,8 @@ So when to use what?
 * there are **three versions**: **compute**, **storage optimized**, **compute optimized with GPU**.
 
 - the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at remote location** and then **transferring the data**.
+
+* with the `Snowball Edge` you can **upload stuff to s3 or perform some compute on the data**.
 
 ### AWS Import / Export disk
 
@@ -996,7 +1000,7 @@ So when to use what?
 
 - you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
 
-* **read replica can be cross region**
+* **read replica can be cross region** - similarly to `Aurora`. This is very important to know!.
 
 - you can have **up to 5 read replicas from a master instance**
 
@@ -1121,6 +1125,8 @@ So when to use what?
 - you can have multiple **master instances**. That means that you have multiple instances which can **read and write**.
 
 * this means that, **not like using RDS** where **you cannot scale writes**, here **using aurora you can scale writes** using **multi-master configuration**.
+
+- **ALL NODES OF `Aurora multi-master`** have to be **in the same region**. This makes DynamoDB only database that supports multi-region multi master configuration.
 
 #### Paralel Query
 
@@ -1563,6 +1569,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 * you can **map the response returned from lambda to a different one**. Like **mapping 403 to 404 response**.
 
 - you can add **custom headers to the responses**.
+
+#### Usage Plans
+
+- enable you to create throttling / quota limits per key group. This **enables you to create a tier architecture for your API**, like `Bronze`, `Silver`, `Gold` tiers.
+
+* using **AWS Marketplace** you can **register your API** and effectively **monetize your API using usage plans**.
 
 ### Load Balancers
 
@@ -2291,9 +2303,13 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 * can be accessed by instances **spread across multiple VPCs using VPC peering**
 
+* the data is **distrubited accross multiple AZs**
+
+##### Security
+
 - **mount targets can have security groups associated with them**
 
-* the data is **distrubited accross multiple AZs**
+* you **cannot** restrict access **through ACL or IAM roles**. **USE SECURITY GROUPS** and **attach them to mount targets**.
 
 ##### Compatibility
 
@@ -3770,6 +3786,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - AWS will basically tell you: this will be modified, this will be deleted, this will be created...
 
 * when you are ready **you can execute given change set to introduce the changes**
+
+#### Nested Stacks
+
+- when you **refference a stack as CF resource**
+
+* you can **use nested stack outputs inside the root stack**
+
+- **recommended** when you want to **isolate information sharing (outputs) to a group, use nested stacks**. **Otherwise** if you want to **share information, export outputs** from a stack.
 
 #### Stack Roles
 
