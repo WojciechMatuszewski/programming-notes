@@ -4289,6 +4289,20 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 - **resource contention** is where there is a **conflict over access to a shared resource**.
 
+### Whitepapers
+
+#### AWS DDoS Resiliency
+
+First of all you should think about **minimizing the blast area**. This has to do with having most of you infrastructe within a private subnets.
+
+Next, your architecture should be able to **absorb the DDOS attack**. As weird as this might seem, with scallable architecture, you will have more time to think and adjust during the attack.
+
+- **Autoscalling and ELB**
+- **Utilize CloudFront**
+- use the **Enhanced Networking** when using EC2 instances
+
+Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
+
 TODO:
 
 - can AWS Config monitor Organizations?

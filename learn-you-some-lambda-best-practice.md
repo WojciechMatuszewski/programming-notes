@@ -186,7 +186,7 @@ Pretty bad huh?
 - always use custom throttling limits
 
 * consider using `serverless-api-gateway-throttling` plugin if you are working with `serverless-framework`.
-   
+
 - if you are using `AWS SAM` you can set the desired throttling on the `AWS::Serverless::Api` type.
 
 Read more [here](https://theburningmonk.com/2019/10/the-api-gateway-security-flaw-you-need-to-pay-attention-to/)
@@ -204,6 +204,29 @@ Read more [here](https://theburningmonk.com/2019/10/the-api-gateway-security-fla
 - by default `Kinesis` will **retry until success**. This is no good. Luckily AWS introduced payload splitting and DLQ.
 
 * SQS **fails the whole batch**. This is probably not what you want. You could:
-    - set `batchSize:1`. This is bad for throughput.
-    - have idempotent workflow so that you can process multiple messages multiple times
-    - call `deleteMessage` yourself for the successful messages. This way they will not get retried. After that, you can safely return an error.
+  - set `batchSize:1`. This is bad for throughput.
+  - have idempotent workflow so that you can process multiple messages multiple times
+  - call `deleteMessage` yourself for the successful messages. This way they will not get retried. After that, you can safely return an error.
+
+## Alarms
+
+- one alaram should monitor different failure modes
+
+* use alarams to tell if something is wrong, not what.
+
+Notable alarms are:
+
+- `concurrent exectuions`: about 80% of the regional limit
+- `IteratorAge`: for `Kinesis`.
+- `DeadLetterErrors`: for async lambda invocations. **You should have deadletter queue setup, even better use lambda destinations**.
+- `Throttles`: self explanatory
+
+## Logging
+
+- use simple `os.Stdout`. Logs are written to `CloudWatch` logs asynchronously.
+
+* there is a **cost of ingestion** when using `CloudWatch` logs.
+
+- use **sampling** to **log only a part (given %) of given log level**.
+
+* if you really need it, you can stream logs to a 3rd party service like logz.io
