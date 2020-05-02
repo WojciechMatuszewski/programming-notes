@@ -2745,6 +2745,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - very useful for **replayability and disaster recovery**. You can replay your events from s3 directly.
 
+* **there is no need to configure shards!**, this setting is automatic and completely hidden from you.
+
 ##### Kinesis Data Analytics
 
 - allows you to make **sql queries against data in the stream**

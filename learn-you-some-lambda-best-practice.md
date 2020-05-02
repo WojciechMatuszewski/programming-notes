@@ -230,3 +230,82 @@ Notable alarms are:
 - use **sampling** to **log only a part (given %) of given log level**.
 
 * if you really need it, you can stream logs to a 3rd party service like logz.io
+
+## Distributed tracing
+
+### `X-Ray`
+
+- you should strongly consider using `xray-core` only.
+
+* `X-Ray` is not that good. Your traces will be cut after publishing to `SQS` or `EventBridge`. You will have to then use different filter to find those. Weird.
+
+- `service map` view suffers from the same problem. You no longer have to jump in between filters, but still the dots are _not connected_ if you will.
+
+* some _flow arrows_ are even missing, WOW! (apigw => lambda => back to apigw).
+
+- **`ServiceLens`** gives you different view (look inside CloudWatch section). Still not great, **it does not event support most of the services**.
+
+* one huge benefit of `X-Ray` is that the traces are saved _asynchronously_.
+
+### `Lumigo`
+
+- specialized service, seems better than `X-Ray`.
+
+* no code changes required, you need to install serverless-plugin
+
+### `Epsagon`
+
+- specialized service, UI not that nice as `Lumigo`.
+
+* a bit better capturing than `Lumigo`.
+
+### `Thundra`
+
+- you need to wrap lambda handlers with the `thundra` client.
+
+* not that good reporting as `Epsagon` and `Lumigo`.
+
+## Correlation IDS
+
+- used to make sense of our logs.
+
+* are used to **keep track of a origin request, when there is a lot of services involved in the chain**.
+
+- this is very **useful with `Logs Insights`**. You can create simple filter:
+
+  ```
+   fields @timestamp, `x-correlation-id`
+  | filter `x-correlaction-id` = 'REQUEST_ID'
+  ```
+
+![correlaction-ids](./assets/correlation-ids.png)
+
+## Lambda powertools (node.js)
+
+- multiple _middlewares_ for your lambda functions
+
+* pretty nice packages, help you with `correlaction ids`.
+
+- sampling is done at _transaction_ level, not at single invocation level.
+
+## Cost
+
+- use **AWS Billing** and `tags`!
+
+* use **Cost Explorer** for very detailed graphs.
+
+- **rightsize your lambda invocations!**.
+
+* use `Step Functions` only for **core business workflows**. They are expensive!. You could also use `Express workflows`.
+
+- CloudWatch charges per dimmension!. **DO NOT USE REQUEST_ID AS DIMMENSION!**.
+
+* `NAT Gateway` can be **very expensive**.
+
+- use **sampling of logs**.
+
+* set _retention period_ on `CloudWatch logs`.
+
+- `Lambda` is likely the cheapest part of your infrastructure. use `HTTP APIs` whenever you can.
+
+* in **high thruput scenarios ALB is much cheaper than APIGW REST and HTTP APIs**.
