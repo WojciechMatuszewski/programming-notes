@@ -1520,6 +1520,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * you can **failover on a criteria of Status Codes returned from one origin**.
 
+#### Combining with R53 (multi-region)
+
+This will require 2 layers of DNS, one for the `CloudFront` itself (optional but still) and then an `latency-based` routing policy within `R53` as origin to `CloudFront` distribution.
+
+This way, CF will fetch the data from the **R53 latency-based resolved host**. This is pretty neat!.
+
 ### API Gateway
 
 - **throttling** can be **configured at multiple levels** including **Global and Service Call**
@@ -2033,6 +2039,12 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * ami **does not contain instance type informations**. Remember that the AMI also contains the AMI permissions.
 
 - you can have **an AMI based off instance store**. Instead of creating EBS snapshots, you have **files on s3 that gets referenced**.
+
+#### Traffic Mirroring
+
+- you can **mirror packets from one instance to another**. That another instance **can monitor the packets**.
+
+* it **captures real packets**. **Not like Flow Logs**.
 
 #### Key pairs
 
@@ -3280,9 +3292,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ##### DirectConnect + VPN
 
-- this setup basically means **setting up VPN connection over DirectConnect line**
+- this setup basically means **setting up VPN connection over DirectConnect public VIF**
 
 * mainly used **for encryption**. What is because **Direct Connect does not encrypt** the data but **VPN does encrypt it**.
+
+- remember that **DirectConnect routes are always favourited against VPN routes**. You can **change BGP route weight for adjustments**.
 
 ##### Combining Direct Connects
 
@@ -3297,12 +3311,6 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - this solution **will increase the overall bandwith**
 
 * you can have **maximum of 4 connections within a LAG**
-
-#### Traffic Mirroring
-
-- you can **mirror packets from one instance to another**. That another instance **can monitor the packets**.
-
-* it **captures real packets**. **Not like Flow Logs**.
 
 ### AWS Rekognition
 
