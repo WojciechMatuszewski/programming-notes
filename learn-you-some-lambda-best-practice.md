@@ -1,5 +1,8 @@
 # Lambda best practices
 
+There is a difference between `exports =` and `module.exports =`. **Always preffer `module.exports` because it's the `module.exports` that gets returned**.
+With `exports` you are mutating an `module.exports` and if there is an `exports` and `module.exports` within the same file, it's the `module.exports` that will be honoured.
+
 ## Tuning function memory
 
 - the more memory your lambda has and the longer is runs it will cost you more
@@ -49,6 +52,21 @@
 * only require what you need
 
 - use `webpack` to bundle your dependencies
+
+## Layers
+
+- use `Lambda layers` to abstract common logic.
+
+* these can be anything that you want to get into execution environment, literally, for all lambda cares it could be a binary file.
+
+- layers are versioned automatically, you can reference up to 5 layers.
+
+* when working with `node.js` you will have to set `NODE_PATH` environment variable:
+  ```yml
+  NODE_PATH: "./:/opt/node_modules"
+  ```
+  this is so that you can use both the root `node_modules` and the ones defined within your layers. A good explanation of `NODE_PATH`:
+  > NODE_PATH is like the windows path environment variable. Whenever node can't find a file, it looks through the paths in the paths stored in the NODE_PATH variable.
 
 ## Provisioned Concurrency
 
