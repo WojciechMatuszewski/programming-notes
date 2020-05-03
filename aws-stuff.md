@@ -501,13 +501,15 @@ An example for s3-prefix (folder)
 
 - you **do not have to have SSH ports open**. You also **do not need SSH keys**.
 
-#### Running commands on instances
+#### Session Manager - Running commands on instances
 
 - this **can be** done **without using SSH** for both **Windows** and **Linux** instances
 
 * remember that you **have to have newest SSM agent installed**
 
 - you **instance** **has to have IAM role** that **enables SSM API on that instance**
+
+* you can have **IAM roles** which futher enhance the security of your solution. You can restrict access to a specific instances while using `Session manager`.
 
 #### Patch Manager
 
@@ -1019,6 +1021,8 @@ So when to use what?
 - **with multi-az deployments standby db only comes into play when your primary failed**
 
 * when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
+
+- since the **failover, just like master is within a VPC** you have to **make sure that the failover subnet routing rules are the same as master**. Otherwise you might have a situation where a failover happens and you cannot connect to your instance because routing rules are not configured correctly.
 
 #### Maintenance
 
@@ -1680,6 +1684,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - load balancer health check **can be carried on HTTP, SSL, HTTPS, TCP** protocols
 
+* the **ELB type healthcheck** is often **preferred than the EC2 one**. This is due to the fact that `ELB` healthcheck actually checks the application and the `EC2` one just indicates that the instance did not crash.
+
 #### Scaling Events (mainly AZRebalance)
 
 - this is where **ALB tries to rebalance spread of instances between AZs**.
@@ -1731,6 +1737,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 * there is a notion of **split view**. This basically means **creating the same names in both private and public zones**. **Inside a VPC, private zone always overrides public one**
 
 - you are **charged monthly** for **hosted zones** and also for **resolver queries**.
+
+* you can still use R53 even if your domain is registered within a 3rd party provider. Just update the 3rd party DNS records to use R53 NS records.
 
 #### Route53 Health Checks
 
@@ -1999,7 +2007,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - There are different _health checks_:
 
-  - **System Status Check**: this checks the underlying hyperviser (virtualization tool)
+  - **System Status Check**: this checks the underlying hypervisor (virtualization tool)
 
   - **Instance Status Check**: checking the EC2 instance itself
 
@@ -2048,7 +2056,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can **whitelist aws accounts when the AMI is private**
 
-* ami **does not contain instance type informations**. Remember that the AMI also contains the AMI permissions.
+* ami **does not contain instance type information**. Remember that the AMI also contains the AMI permissions.
 
 - you can have **an AMI based off instance store**. Instead of creating EBS snapshots, you have **files on s3 that gets referenced**.
 
@@ -2141,7 +2149,7 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 ##### Migration
 
-- remember that **secuirty groups are regional**
+- remember that **security groups are regional**
 
 * you can **copy a security group within a given region**
 
@@ -2208,7 +2216,7 @@ This is quite important to know
 
 #### LifeCycle Manager for EBS
 
-- creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGED**
+- creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGGED**
 
 * this **can be done across different DBS** like SQL or Oracle or other.
 
