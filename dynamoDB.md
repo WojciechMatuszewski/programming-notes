@@ -4,6 +4,12 @@
 
 - table must have _partition key_ and **optional** _sort key_ (or range key)
 
+## Contribution Insights
+
+- you can view graphs on access patterns for your database
+
+* there is an underlying cost for activating it.
+
 ### Data types
 
 #### Scalar Types

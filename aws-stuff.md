@@ -419,6 +419,10 @@ An example for s3-prefix (folder)
 
 * can **automatically renew certs** BUT only **those which were not imported**.
 
+#### Existing certs
+
+- you can **import existing certs to ACM**. But for gods sake, remember that **imported certs cannot be auto-renewed by ACM**.
+
 #### Multi-region certs
 
 - you **can use** the **same SSL certificate from ACM in more than one region** but it **depends** on wheter you are using **ELB or CloudFront**.
@@ -563,6 +567,14 @@ An example for s3-prefix (folder)
   - **on prem instance managment** is NOT free
   - **advanced parameter store** is NOT free.
   - **SSM automation** is NOT free.
+
+#### With `CloudFormation`
+
+- you can use SSM parameters as `Parameters` within `CloudFormation` templates.
+
+* whenever parameters change, you can call `UpdateStack` API and update your stack with new parameters
+
+- might be useful for **EC2 size / AMI configuration**.
 
 ### AWS Firewall Manager
 
@@ -894,8 +906,6 @@ So when to use what?
 
 - if you see **ISCSI** that is **probably Volume Gateway**.
 
-* remember that **if the consumer wants ALL his data in S3, you should NOT use cached volume**. This is because **with cached volume only your primary data** is **written to s3**.
-
 - **useful** when doing any kind of **cloud migrations**
 
 * all data is **encrypted in transit**. Data **at rest** is **by default encrypted using SSE-s3**
@@ -909,6 +919,14 @@ So when to use what?
 - you can **create mountable ISCSI devices** which you can **mount on prem**.
 
 * this is a **low-latency solution** for **either cached or non-cached gateway**.
+
+##### Cached vs Stored
+
+The main difference is where the most of your files are stored. When we are talking about **cached volumes, most of your files are stored in s3**. There is a small cache buffer that holds the most accesed files.
+
+When using **stored volumes, all of the files are stored on prem and synced with s3 ansynchronously**.
+
+Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### File Gateway
 
@@ -1067,6 +1085,12 @@ So when to use what?
 * aws will manage the usual stuff that aws manages with RDS. The difference is that the db lives on VMware
 
 - this service does what normal RDS does so **patching, availability protection, and so on**.
+
+#### Replication on-prem
+
+- even though it's not natively supported you can replicate your RDS db to on-prem mysql db.
+
+* you will need a VPN connection and `mysql dumps`. 
 
 #### Security Groups
 
@@ -1718,7 +1742,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**. You **can use** on **apex zone (naked) records**
 
-#### Route53
+### Route53
 
 - **global service**. When creating blue/green in another region you do not have to re-create record sets.
 
@@ -1754,7 +1778,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **fast: 10secs** or **default: 30 secs** interval
 
-### Route53 routing
+#### Route53 routing
 
 - just remember that **TTL can bite YOUR ASS!**. **Whenever** you are **considering offloading the balancing to Route53** keep in mind the **TTL**. Since you **cannot attach ASG to Route53** there might be a **case where your instance is no longer there BUT TTL still routes to that IP**.
 
@@ -1762,7 +1786,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - an good **example** would be the need to create **latency based tree where leafs are based on weight**
 
-#### Simple Routing Policy
+##### Simple Routing Policy
 
 - **single record** which routes to a **single resource**.
 
@@ -1776,7 +1800,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you **cannot attach healthchecks** to a simple routing policy.
 
-#### Multivalue answer
+##### Multivalue answer
 
 - this routing strategy is for **multiple records (same name)** which routes to **multiple resources**. The **record have to be of the same type**.
 
@@ -1786,7 +1810,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * this **should not be used for load balancing**.
 
-#### Failover
+##### Failover
 
 - allows you to **define additional records with the same name**
 
@@ -1800,7 +1824,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you **can only create SINGLE record FOR PRIMARY and SECONDARY**
 
-#### Weighted
+##### Weighted
 
 - you **specify weight for a given record name, (you can have multiple records with the same name)**
 
@@ -1812,7 +1836,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **used** for **testing new application features**
 
-#### Latency
+##### Latency
 
 - **can have multiple records with the same name**
 
@@ -1822,7 +1846,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **BASED PURELY ON NETWORK CONDITIONS, NOT GEOGRAPHY!**
 
-#### Geolocation
+##### Geolocation
 
 - **DNS resolver now only returns the records that match the name AND location**
 
@@ -1867,6 +1891,10 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 * you cannot transfer every domain to R53. **There is a list of domains you can transfer**.
 
 - you **can** still use **auto-renew** on **transferred domains**.
+
+#### Logging
+
+- you can enable access logs through `CloudWatch`. `R53` will create a log group and stream logs there.
 
 ### ECS (Elastic Container Service)
 
@@ -2163,7 +2191,7 @@ Regardless of these steps, default termination policy will try to terminate inst
 
 - persistent storage
 
-* **automatically replicated** within it's own AZ
+* **automatically replicated** within it's own, **single AZ**. This is on the contrary to EFS and so taking snapshots is highly recommended.
 
 - Different versions:
 
@@ -4001,7 +4029,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - you **actually need VMware system to use it**.
 
-* used to **actually migrate on prem VMware stuff**
+* used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download, this **SMS connector is needed aswell**.
 
 - **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
 
