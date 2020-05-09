@@ -1090,7 +1090,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - even though it's not natively supported you can replicate your RDS db to on-prem mysql db.
 
-* you will need a VPN connection and `mysql dumps`. 
+* you will need a VPN connection and `mysql dumps`.
 
 #### Security Groups
 
@@ -2643,6 +2643,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - logging **can be enabled per bucket and per function**
 
+##### Global events
+
+- remember that **by default** CloudTrial **does not _listen_ to global events**, like IAM actions.
+
+* make sure to enable capturing global actions as well.
+
 #### Flow Logs
 
 - monitors **metadata of the IP traffic to/from network interfaces within a VPC**
@@ -2896,6 +2902,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 #### Read Replicas
 
 - **REDSHIFT DOES NOT HAVE READ REPLICAS!**
+
+#### Query problems
+
+- you migth be running out of memory
+
+* connection to the database timed out
+
+- there is a potential deadlock going on
 
 ### Virtual Private Cloud (VPC)
 
