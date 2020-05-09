@@ -3879,6 +3879,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - used internally when using **creation policies**. The `creation-policy` is the preffered way of using `wait conditions`.
 
+#### Mappings
+
+- this is a `key:value` structure that is designed to be used with `FindInMap` intrinsic function.
+
+* usually used in a context of AMI ids per region.
+
 ### AWS Glue
 
 - **serverless, fully managed EXTRACT TRANSFORM AND LOAD (ETL) service**
@@ -4190,6 +4196,22 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 * very **useful for GDPR**
 
+### Mobile Hub
+
+- aggregator of features tailored for mobile development
+
+* you can click through UI and create Cognito pool, Database, SNS notification channels, REST API, all of that.
+
+### Resource Groups
+
+- by default AWS organizes stuff around services, like dynamodb or lambda
+
+* you can create a resource group which organizes stuff as you want. You can have EC2 along with lambda listed within a console
+
+- mainly for overview purposes, but you can **group by tags** so you there is a possibility for more sophisticated setups.
+
+* you can attach IAM policies to resource groups.
+
 ### TCO
 
 - this tool is used to **compare** the **cost of running in premise vs running in the AWS**
@@ -4386,15 +4408,3 @@ Next, your architecture should be able to **absorb the DDOS attack**. As weird a
 - use the **Enhanced Networking** when using EC2 instances
 
 Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
-
-TODO:
-
-- can AWS Config monitor Organizations?
-- more about aws RAM
-- mobile Hub
-- https://theburningmonk.com/2017/04/aws-lambda-3-pro-tips-for-working-with-kinesis-streams/
-- AWS Polly
-- CloudFormation Wait conditions
-- Stack Policy and updating via CLI
-- http://jayendrapatil.com/aws-disaster-recovery-whitepaper/
-- resource groups https://docs.aws.amazon.com/ARG/latest/userguide/welcome.html
