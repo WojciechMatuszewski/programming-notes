@@ -309,6 +309,12 @@ An example for s3-prefix (folder)
 
 - you **cannot resend the invitation**. You have to **cancel the previous one, send the new one**
 
+##### Granting master account full access of member accounts
+
+- by default, **master account does not have full administrative access over the member account**. This is in a **contrast to a manually created accounts**.
+
+* this is done by **creating `OrganizationAccountAccessRole` role on the member account** and attaching a **trust policy** so that **master account can assume the role**.
+
 #### SCPS
 
 - **by default** the **root account has FullAWSAccess SCP attached**
@@ -322,6 +328,14 @@ An example for s3-prefix (folder)
 - you can have **multiple SCPs which apply**. In such case you take **union of every SCPs with your IAM permissions**.
 
 * remember that **SCP only apply to the accounts that are within given OU**. SCPs **do not apply to outside users (other accounts)**
+
+##### Deny List
+
+- by **default** SCPs are configured as **deny list**. This means that **everything is allowed AND IT'S UP TO US TO DENY THINGS WE WANT TO DENY**.
+
+##### Allow List
+
+- reverse of `deny list`. This is where **everything is denied** and **it's up to us to allow things**. This is **usually a bad idea, as things can get messsy**.
 
 #### OUs
 
@@ -654,6 +668,14 @@ An example for s3-prefix (folder)
 
 * Lex can integrate with Polly to create a chat and speach bot
 
+### AWS Comprehend
+
+- provides text text sentiment analysis. Intentions, is it negative or positive, all of that.
+
+### AWS Transcribe
+
+- used for translating audio to text. You will probably use it along with AWS Translate to create subtitles.
+
 ### Sage Maker
 
 - **analyze ML data and develop the models**
@@ -786,6 +808,8 @@ An example for s3-prefix (folder)
 * **you are still billed for old versions**. Event though there might a delete marker the object is not permanently deleted so you have to pay for the storage.
 
 - remember that **elements will be versioned from the moment you enable versioning**. **Any exisiting object will get the initial version of null**.
+
+* you **cannot set versioning on object level**. Versioning is **always set on the bucket level**.
 
 #### Life-cycle rules
 
@@ -1709,6 +1733,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - load balancer health check **can be carried on HTTP, SSL, HTTPS, TCP** protocols
 
 * the **ELB type healthcheck** is often **preferred than the EC2 one**. This is due to the fact that `ELB` healthcheck actually checks the application and the `EC2` one just indicates that the instance did not crash.
+
+- you can change healthcheck type to EC2 when you want to ensure that your instance will not be terminated whenever you restart given EC2 instance.
 
 #### Scaling Events (mainly AZRebalance)
 
@@ -4160,7 +4186,7 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### Amazon Inspector
 
-- used for **security monitoring of EC2 instances**
+- used for **security monitoring of EC2 instances**. Please keep in mind that it **only tackles security stuff, LEAVE STATE CHANGES TO AWS CONFIG!**
 
 * scans for **vulnarabilities and not IAM issues**
 
@@ -4408,3 +4434,9 @@ Next, your architecture should be able to **absorb the DDOS attack**. As weird a
 - use the **Enhanced Networking** when using EC2 instances
 
 Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
+
+TODO:
+
+- readshift DR (Set up a snapshot copy grant and all of that stuff)
+- systems manager IAM permissions for sshing into instances
+  https://acloud.guru/exam-simulator/review?attemptId=f576d547-b3ec-44e0-912c-c125aecac4aa&examId=0176ae30-dfc1-4137-8976-133f0f25da5e&courseId=aws-csa-pro-2019
