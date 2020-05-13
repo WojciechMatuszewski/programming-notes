@@ -1106,9 +1106,11 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - you can put RDS dbs on VMware.
 
-* aws will manage the usual stuff that aws manages with RDS. The difference is that the db lives on VMware
+* this service does what normal RDS does so **patching, availability protection**.
 
-- this service does what normal RDS does so **patching, availability protection, and so on**.
+- you can have **multi-az instances** just like on regular RDS.
+
+* **point-in-time restores** are also available.
 
 #### Replication on-prem
 
@@ -1466,7 +1468,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - Origin is the name given for the thing from which content **originates from**.
 
-* can be **s3 bucket**, **web-server (ec2)**, **Amazon MediaStore**, **APIGW** or **other CloudFront distribution**
+* can be **s3 bucket**, **web-server (ec2)**, **Amazon MediaStore**, **APIGW** or **other CloudFront distribution / www site**
 
 - **Origin has to be accessible to the internet**
 
@@ -1712,11 +1714,11 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **exposes DNS name**
 
-- **cannot** have **SecurityGroup attached to it**
+- **cannot** have **SecurityGroup attached to it**. This is because the NLB is software based. There is no underlying instances involved.
 
 * has **cross-zone load balancing disabled by default**
 
-- when you register instances VIA Instance ID, the underlying (incomming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incomming IP address will be of the nlb nodes (private ip).
+- when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
 
 * you **can asssign EIP** to NLB.
 
@@ -2353,7 +2355,7 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 * think of it as multiple EC2 instances having the same disk
 
-- **automatically scales storage capacity**, when deleting shrinks, when adding resizes
+- **automatically scales storage capacity**, when deleting shrinks, when adding resizes.
 
 * just like s3 there are different tiers:
 
@@ -2434,6 +2436,10 @@ But most important information, remember **there are no so called snapshots when
 - there are **2 main throughput modes**
   - **busting mode** uses **credits** (recommended by AWS)
   - **provisioned mode**: this is where you have **contant high throughput (not spikes)**
+
+* with **bursting mode** the **throughput of the storage grows with the storage size**. This usually is ok, but you might get throttled on unexpected spikes when the volume size is low.
+
+- with **provisioned mode**, the **throughput is independent of storage size**.
 
 #### Placement Groups
 
@@ -2797,7 +2803,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **job is relaying on EC2, AWS GLUE does not have this limitation**. It manages the lifecycle of EC2
 
-- in terms of overhead and managment it is like **Elastic Beanstalk of ETL services**
+- in terms of overhead and managment it is like **Elastic Beanstalk of ETL services**.
+
+* one common pattern is to transport data from dynamoDB to other medium, or vice-versa.
 
 #### Kinesis
 
@@ -2849,6 +2857,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
 
+##### Kinesis Video Streams
+
+- used for **ingestion and storage** of video / audio but also **can be** used as a **live video / audio source**.
+
+* you can view the live video using either **HLS** or **HTTP** but the **HLS option is preffered since it gives your direct URL, much easier**.
+
+- with **HLS** the live video format is **called archived video**. Pretty weird, no idea why.
+
 ###### Enhanced fanout
 
 - this is something that **applies on a consumer level**
@@ -2883,43 +2899,51 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can configure **shard level metrics**. This bring extra cost and **needs to be enabled manually**.
 
-#### Redshift
+### Redshift
 
 - **column-based database**
 
-* **you would store data here after the transactions (changes) has been made**, a good example is kinesis => firehose => redshift
+* **you would store data here after the transactions (changes) has been made**, a good example is kinesis => firehose => redshift. Think of Redshift as **end-state repository**
 
 - data should not change, column-based dbs are quite bad at handling changes
-
-* you would use it for lets say find pattern in ages querying on HUGE amount of people data.
 
 - **scales automatically**
 
 * **USED FOR OLAP style data**
 
-- think of Redshift as **end-state repository**
-
-* **always keeps `three` copies of your data**
-
-- provides **incremental/continuos backups** just like EBS.
+- **always keeps `three` copies of your data**
 
 * **automatically caches repeated queries**
 
+- you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **Usually** created **along with VPC endpoint gateway**
+
+* **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
+
+#### Distaster Recovery and HA
+
 - **ONLY SINGLE AZ**. There are **no multiple az deployments**.
-
-* you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **Usually** created **along with VPC endpoint gateway**
-
-- **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
 
 - you can use **Redshift Snapshots with S3 CRR** or **enable Cross-Region snapshots for the cluster** for **HA**.
 
-* **minimal storage size** is **2 nodes each 160 GB SSD**
+* provides **incremental/continuos backups** just like EBS.
 
-#### Spectrum
+- you can restore given table or restore the whole cluster.
 
-- this enables you to **query directly from data files on S3**
+* you can have **cross region snapshots**.
 
-* this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
+#### Architecture
+
+- consists of **multiple nodes**. There is a **leader node** an a **compute node**.
+
+* compute nodes do the work, leader node does the loading of the data
+
+- **minimal storage size** is **2 nodes each 160 GB SSD**
+
+#### Costs
+
+- you can purchase `reserved instances` for underlying nodes.
+
+* you can resize the cluster.
 
 #### Workload Managment Groups
 
@@ -2936,6 +2960,12 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * connection to the database timed out
 
 - there is a potential deadlock going on
+
+#### Spectrum
+
+- this enables you to **query directly from data files on S3**
+
+* this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
 
 ### Virtual Private Cloud (VPC)
 
