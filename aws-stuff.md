@@ -3508,13 +3508,19 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Memcached
 
-- can be used for **database caching** (usually the SQL ones)
+- can be used for **database caching** (usually the SQL ones).
 
-* data there is **lost when** instance (or cluster) is **stopped**
+* data there is **lost when** instance (or cluster) is **stopped**.
 
-- **DOES NOT support encryption**
+- **DOES NOT support encryption**.
 
-* **nodes can be spread a cross multiple AZs**
+* **nodes can be spread a cross multiple AZs**, but there is no failover.
+
+- is **designed** to take **advantage of multiple CPU cors**.
+
+* **nodes** can be **discovered** by using **auto discovery** feature of Memcached.
+
+- can be scaled vertically and horizontally, but when you **scale horizontally** you have to **create new cluster**.
 
 ### Communication Between Services, Queues
 
