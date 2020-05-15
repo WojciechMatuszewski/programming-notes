@@ -387,6 +387,8 @@ An example for s3-prefix (folder)
 
 * you can share **a lot of stuff**. Most **notable are subnets**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
 
+- when you are working with RAM the key keyword is **trusted access**.
+
 #### Cost Explorer
 
 - you can **generate reports**. These reports are a **.csv** file.
@@ -3165,6 +3167,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * this **can be a problem** while **resolving from on-prem**. **Instead of going through a eg. VPN** you **will resolve to public interface**. (**unless using route53 resolver**)
 
 - you can use **private hosted zones** to **override public DNS endpoints**.
+
+* to make sure that the DNS is working within your VPC, **enable `enableDnsHostnames` and `enableDnsSupport`**. They are both set to **true by default**.
 
 #### Peering
 
