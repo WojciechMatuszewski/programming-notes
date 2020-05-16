@@ -213,6 +213,12 @@ Now we are in the domain of a given service / resource.
 
 - **IAM is not involved here**, control is **handled by a given service / resource**
 
+###### Cross account
+
+- you can setup **cross account resource policies**.
+
+* this is useful when you **want user to not give up his trusted account roles**.
+
 ##### Conditions
 
 - you can create elaborate conditional logic for a given policy
@@ -501,7 +507,7 @@ An example for s3-prefix (folder)
 
 - you can **track licenses on-prem**
 
-* can be **integrated** with **Service Catalog** for **grantular access to given list of products**.
+* can be **integrated** with **Service Catalog** for **granular access to given list of products**.
 
 ### Systems Manager (SSM)
 
@@ -616,7 +622,7 @@ An example for s3-prefix (folder)
 
 * **region aware** service.
 
-- _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**
+- _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**.
 
 * can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
 
@@ -624,7 +630,7 @@ An example for s3-prefix (folder)
 
 - even if you as a **user do have a readonly access to aws**, you would still be **able to deploy a product from a portfolio** if the **provider provided deploy permissions on portfolio**.
 
-* it is **possible** to have **portfolio without launch constrains**. This means that **user IAM persmissions will be used to deploy the product**.
+* it is **possible** to have **portfolio without launch constrains**. This means that **user IAM permissions will be used to deploy the product**.
 
 * since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
 
@@ -809,9 +815,11 @@ An example for s3-prefix (folder)
 
 * **you are still billed for old versions**. Event though there might a delete marker the object is not permanently deleted so you have to pay for the storage.
 
-- remember that **elements will be versioned from the moment you enable versioning**. **Any exisiting object will get the initial version of null**.
+- remember that **elements will be versioned from the moment you enable versioning**. **Any existing object will get the initial version of null**.
 
 * you **cannot set versioning on object level**. Versioning is **always set on the bucket level**.
+
+- versioning has **no impact on signed urls**. They will work as before.
 
 #### Life-cycle rules
 
@@ -1618,6 +1626,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you probably know that lambda has 15min timeout max. But that timeout only applies to async invocations (reading from the queue and such) where user is not waiting for a response. **The default APIGW timeout is 29 seconds**. This can be **configured to be between 5 seconds and 29 seconds**. All you have to do is to **un-tick the "use default timeout option**
 
+* when timeout happens on APIGW level, the **error code will be 504**.
+
 #### Responses
 
 - all done within **gateway responses tab**
@@ -1954,7 +1964,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - there are multiple network modes available: **none, bridge, awsvpc, host**. The **default is the bridge mode**.
 
-* if you want to assign **private & public IP (ENI)** use **awsvpc mode**. This will also enable you to assign SG to a specific task if needed.
+* if you want to assign **private & public IP (ENI)** use **awsvpc mode**. This will also **enable you to assign SG to a specific task if needed**.
 
 - **hosts map directly to the host networking**. That means that you cannot use this if you want to run multiple apache instances on the same host, since each instance needs PORT 80.
 
@@ -2957,11 +2967,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Query problems
 
-- you migth be running out of memory
+- you migth be running out of memory.
 
 * connection to the database timed out
 
-- there is a potential deadlock going on
+- there is a potential deadlock going on.
+
+* when it comes to potential solutions, you should look for:
+  - **reducing MTU**. MTU is the size of a packet that can be transferred.
+  - **viewing STV_LOCKS and STL_TR_CONFLICT system tables**. This is done to see if there are any update conflicts.
+  - **using PG_CANCEL_BACKEND** to cancel any conflicting queries.
 
 #### Spectrum
 
@@ -3384,7 +3399,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Direct Connect
 
-- you have to have **BGP and BGP MD5 enabled** device
+- you have to have **BGP and BGP MD5 enabled** device.
 
 * **psychical connection between AWS and your network**
 
