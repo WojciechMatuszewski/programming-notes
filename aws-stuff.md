@@ -1412,9 +1412,11 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Dynamo Streams
 
-- dynamo **streams** **hold** data for **24 hrs**
+- dynamo **streams** **hold** data for **24 hrs**.
 
-* the streams are **considered poll based events**
+* the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
+
+- you **can use multiple lambda functions for dynamoDB stream** but it's **not adivisble**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
 
 ##### Triggers
 
@@ -1916,7 +1918,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * allows you to **perform DNS lookups across DX or VPN and the other way around (bi-directional)**
 
-- this basically allows you to **create a hybrid cloud env.** where **some of your stuff is within VPC and some on-prem**. You might need to resolve DNS for some of the parts of your application to the stuff on-prem. Before all that you had to roll out your own dns resolver (probably within VPC) to be an intermedietarry between the AWS managed one and the one on premises.
+- this basically allows you to **create a hybrid cloud env.** where **some of your stuff is within VPC and some on-prem**. You might need to resolve DNS for some of the parts of your application to the stuff on-prem. Before all that you had to roll out your own dns resolver (probably within VPC) to be an intermediary between the AWS managed one and the one on premises.
 
 * it is an **endpoint made of 1 or more ENI within a given VPC**. It **works for every VPC within a region (even if the VPC are not peered)**.
 
@@ -1993,6 +1995,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - you can enable **ECS Auto Scaling**. It creates ASG automatically.
 
 * **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
+
+- this works on the basis of `CloudWatch`. Note that `ECS` will **not automatically create ELB for you**.
 
 #### Fargate
 
@@ -4507,3 +4511,4 @@ TODO:
 - readshift DR (Set up a snapshot copy grant and all of that stuff)
 - systems manager IAM permissions for sshing into instances
   https://acloud.guru/exam-simulator/review?attemptId=f576d547-b3ec-44e0-912c-c125aecac4aa&examId=0176ae30-dfc1-4137-8976-133f0f25da5e&courseId=aws-csa-pro-2019
+- aws organizations and iam roles, can i grant access to OU ? is OU an identity

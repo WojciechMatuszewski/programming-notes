@@ -95,3 +95,62 @@ This approach works for **static Queries**.
 ## Static Queries / Mutations
 
 Static Queries / Mutation are queries / mutations that has the same string, no matter the variables you pass. This means that they are created using variables, not computed at run-time using interpolation.
+
+## Anemic Types
+
+These are types that you should avoid. The term `anemic` means something without strong reason for being defined. A good example would be an class where all (or most) of it's methods are simple `getters` and `setters`. There is no value in that.
+
+These types can be used within `mutations` and `queries`. An example:
+
+```graphql
+  updateCheckout(input: UpdateCheckoutInput!): UpdateCheckoutPayload
+
+  input UpdateCheckoutInput {
+    email: Email
+    address: Address
+    creditCard: CreditCard
+  }
+```
+
+Notice that all of the fields are `optional`. This design goes against what true strength of `GraphQL` really is - **it's type system and enforcing required fields**.
+
+The `UpdateCheckoutInput` is very `data-driven` instead of focusing on **behaviors**. Prefer types that have less nullable fields and do one thing and one thing well.
+
+## Fragments and data-driven components
+
+You probably heard of [Relay](https://relay.dev/docs/en/introduction-to-relay). It's a well known `GraphQL` client framework. While working with `Relay` you will be treating your component and the data it needs as one.
+
+While you cannot practice this methodology using `apollo-client` that much, you still can reap the benefits of at least trying to imitate it.
+
+An example:
+
+```js
+const PARENT_QUERY = gql`
+  ${CHIlD_FRAGMENT}
+  query ParentQuery {
+    # stuff
+  }
+`;
+function Parent() {}
+
+const CHILD_FRAGMENT = gql`
+  fragment SomeFragment on SomeType {
+    # stuff
+  }
+`;
+function Child() {}
+```
+
+See how I'm colocating the data-needs within the vicinity of the `Child` using `Fragment` ?. This allows me to easily tweak it and make changes to it without touching the `Parent` query. **This is not an ideal solution** but I think it's worth considering.
+
+## Approaches for creating a schema
+
+As with almost everything within JS ecosystem, there are multiple ways you can go about when it comes to creating a schema.
+
+// TODO:
+
+### Schema first approach (SDL)
+
+### Code first approach
+
+### Using Annotations
