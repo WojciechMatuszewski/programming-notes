@@ -147,7 +147,7 @@ See how I'm colocating the data-needs within the vicinity of the `Child` using `
 
 As with almost everything within JS ecosystem, there are multiple ways you can go about when it comes to creating a schema.
 
-// TODO:
+// TODO: also write about why react can render multiple times
 
 ### Schema first approach (SDL)
 
