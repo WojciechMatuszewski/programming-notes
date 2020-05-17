@@ -299,6 +299,10 @@ An example for s3-prefix (folder)
 
 * the **master account** can **turn off RI sharing** for **particular account or whole the whole organization**. There is no privte mode or smth.
 
+- for **EC2** the **type and the AZ must be the same**
+
+* for **DB instances all of the DB attributes must be the same (also the AZ)**: engine, instance class, deployment type, license model.
+
 #### Invites
 
 - can be send **through the console or a CLI**.
@@ -1466,6 +1470,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * you can have **policies that allow only access to specific attributes or items**
 
+#### Costs
+
+- you can levrage **reserved capacity for provisioned throughput** to save some \$\$.
+
+* this works very similiarly to other offerings. You pay upfront and save in a long term.
+
 ### CloudFront
 
 - CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to caches.
@@ -2341,7 +2351,7 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 #### Changing The volume
 
-- **root** volume **can be changed to gp2, io1, magnetic**
+- **root** volume **can be changed without stopping the instance**. When it comes to which volume - it depends on the original volume itself.
 
 #### Raid Configurations
 
@@ -3837,6 +3847,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
   - identity broker check if user is already authenticated to your internal system
   - calls _sts:AssumeRole_ or _sts:GetFederationToken_ to get the credentials
   - passes those credentials to users (remember these are temporary credentials)
+
+- you **do not have to create a new user specially for this**. While working with `Identity Brokers` you should use **IAM role** that the federated user will assume.
 
 #### User Pools
 
