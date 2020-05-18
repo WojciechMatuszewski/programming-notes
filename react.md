@@ -132,7 +132,7 @@ Some kind of list component
 ```jsx
 function CountersList() {
   const [items, setItems] = React.useState([]);
-  const addCounter = () => setItems(prev => [...prev, { id: prev.length }]);
+  const addCounter = () => setItems((prev) => [...prev, { id: prev.length }]);
   return (
     <div>
       <button onClick={addCounter}>Add Counter</button>
@@ -147,7 +147,7 @@ And the counter:
 ```jsx
 function Counter() {
   const [_, setCount] = React.useState(0);
-  const incrementCount = () => setCount(prev => prev + 1);
+  const incrementCount = () => setCount((prev) => prev + 1);
   return <button onClick={incrementCount}> Increment </button>;
 }
 ```
@@ -205,11 +205,15 @@ Using the form from above is basically the same as doing
 
 Which is not _rules of hooks_ compliant.
 
-### Takeaways
+#### Takeaways
 
 So basically to avoid such errors, **which will probably cause unexpected bugs**
 
 - never call functional components directly when they are using hooks
+
+### Component gets invoked multiple times
+
+TODO: talk about `React.Strict`
 
 ## SSR
 
@@ -631,11 +635,11 @@ So
 ```js
 // ..
 let suspender = promise.then(
-  r => {
+  (r) => {
     status = "success";
     result = r;
   },
-  e => {
+  (e) => {
     status = "error";
     result = e;
   }
@@ -658,7 +662,7 @@ return {
     } else if (status == "success") {
       return result;
     }
-  }
+  },
 };
 ```
 
@@ -945,7 +949,7 @@ and `React.cloneElement` combo.
 ```jsx
 function Counter({ children }) {
   const [count, setCount] = React.useState(0);
-  return React.Children.map(children, child =>
+  return React.Children.map(children, (child) =>
     React.cloneElement(child, { count })
   );
 }
@@ -1020,7 +1024,7 @@ function useInput(initialValue = undefined) {
   return {
     // this is prop collection
     inputProps: { value, onChange: setValue },
-    reset
+    reset,
   };
 }
 
@@ -1043,7 +1047,7 @@ Lets change an rigid object to a function which can tackle this dilemma.
 ```jsx
 function callAll(...fns) {
   return function allCalledWith(...args) {
-    fns.forEach(fn => fn && fn(...args));
+    fns.forEach((fn) => fn && fn(...args));
   };
 }
 
@@ -1061,7 +1065,7 @@ function useInput(initialValue = undefined) {
     return {
       onChange: callAll(suppliedOnChange, onChange),
       value,
-      ...rest
+      ...rest,
     };
   }
 
@@ -1070,7 +1074,7 @@ function useInput(initialValue = undefined) {
     inputProps: { value, onChange: setValue },
     // prop getter
     getInputProps,
-    reset
+    reset,
   };
 }
 
@@ -1092,7 +1096,7 @@ This pattern enables us to implement _inversion of control_. You are allowing
 the consumer to pluck into your internal logic.
 
 ```jsx
-const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args));
+const callAll = (...fns) => (...args) => fns.forEach((fn) => fn && fn(...args));
 
 function toggleReducer(state, { type, initialState }) {
   switch (type) {
@@ -1119,14 +1123,14 @@ function useToggle({ initialOn = false, reducer = toggleReducer } = {}) {
     return {
       "aria-pressed": on,
       onClick: callAll(onClick, toggle),
-      ...props
+      ...props,
     };
   }
 
   function getResetterProps({ onClick, ...props } = {}) {
     return {
       onClick: callAll(onClick, reset),
-      ...props
+      ...props,
     };
   }
 
@@ -1135,7 +1139,7 @@ function useToggle({ initialOn = false, reducer = toggleReducer } = {}) {
     reset,
     toggle,
     getTogglerProps,
-    getResetterProps
+    getResetterProps,
   };
 }
 // this will be very helpful
@@ -1143,7 +1147,7 @@ useToggle.reducer = toggleReducer;
 // this is also quality of life improvement
 useToggle.types = {
   toggle: "toggle",
-  reset: "reset"
+  reset: "reset",
 };
 
 function Usage() {
@@ -1155,7 +1159,7 @@ function Usage() {
     return useToggle.reducer(state, action);
   }
   const { on, getTogglerProps, getResetterProps } = useToggle({
-    reducer: toggleStateReducer
+    reducer: toggleStateReducer,
   });
   // other code
 }

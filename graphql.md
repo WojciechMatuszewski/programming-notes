@@ -147,10 +147,22 @@ See how I'm colocating the data-needs within the vicinity of the `Child` using `
 
 As with almost everything within JS ecosystem, there are multiple ways you can go about when it comes to creating a schema.
 
-// TODO: also write about why react can render multiple times
-
 ### Schema first approach (SDL)
+
+This is where you create schema using the SDL (usually the `gql` tag).
+
+I've been using SDL approach through this document.
 
 ### Code first approach
 
+I have not used this personally, but there are a lot of benefits when it comes to creating schema this way.
+
+- you can easily create custom types, SDL is dumb and you cannot do that.
+
+- code-sharing should be easier.
+
+The **ultimate way** of creating a schema would probably be a **mix of SDL and code first approach**. This is where you design your schema using SDL, but you implement it using code-first approach.
+
 ### Using Annotations
+
+Mainly used with languages such as `Java`. There is a danger to couple `GraphQL` definitions with your implementation details since it's so close to your domain code.

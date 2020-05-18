@@ -321,7 +321,7 @@ An example for s3-prefix (folder)
 
 ##### Granting master account full access of member accounts
 
-- by default, **master account does not have full administrative access over the member account**. This is in a **contrast to a manually created accounts**.
+- by default, **master account does not have full administrative access over the member account**. This is in a **contrast to a manually created accounts by a master account**.
 
 * this is done by **creating `OrganizationAccountAccessRole` role on the member account** and attaching a **trust policy** so that **master account can assume the role**.
 
@@ -539,7 +539,7 @@ An example for s3-prefix (folder)
 
 - you **instance** **has to have IAM role** that **enables SSM API on that instance**
 
-* you can have **IAM roles** which futher enhance the security of your solution. You can restrict access to a specific instances while using `Session manager`.
+* you can have **IAM roles** which futher enhance the security of your solution. You can **restrict access to a specific instances** while using `Session manager`, the action is `ssm:StartSession`.
 
 #### Patch Manager
 
@@ -2955,7 +2955,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can restore given table or restore the whole cluster.
 
-* you can have **cross region snapshots**.
+* you can have **cross region snapshots**. If your snapshot is encrypted you will need to provide a **KMS grant** for RDS in the destination region.
 
 #### Architecture
 
@@ -3013,7 +3013,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
   - Future
   - Broadcast
 
-- you can use **custom DNS (can be on-prem)** by changing **DHCP option set**
+- you can use **custom DNS (can be on-prem)** by changing **DHCP option set**. `DHCP` option sets contain information about **DNS servers**, **NTP servers** and so on.
 
 * VPC **cannot span multiple regions**.
 
@@ -3441,11 +3441,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - allows you to **fan-out from a single private VIF** to **up to 10 VPCs**. This is super nice since **before that** **private VIF was region locked**.
 
-* the **fanout from DCG** can be used **cross-region**
+* the **fanout from DCG** can be used **cross-region**.
 
 - can be **attached to Transit Gateway(UP to 3 cross region)** with the **usage of Transit VIF**.
 
-* within your VPC you should have **virtual private gateway**
+* within your VPC you should have **virtual private gateway**.
 
 ##### DirectConnect + VPN
 
@@ -4507,8 +4507,3 @@ Next, your architecture should be able to **absorb the DDOS attack**. As weird a
 Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
 
 TODO:
-
-- readshift DR (Set up a snapshot copy grant and all of that stuff)
-- systems manager IAM permissions for sshing into instances
-  https://acloud.guru/exam-simulator/review?attemptId=f576d547-b3ec-44e0-912c-c125aecac4aa&examId=0176ae30-dfc1-4137-8976-133f0f25da5e&courseId=aws-csa-pro-2019
-- aws organizations and iam roles, can i grant access to OU ? is OU an identity
