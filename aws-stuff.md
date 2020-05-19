@@ -638,6 +638,13 @@ An example for s3-prefix (folder)
 
 * since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
 
+- there are **multiple constrains available**:
+  - Launch
+  - Notification
+  - Template: limits the options of end users when they launch a product
+  - StackSet
+  - Tag Update
+
 ### Access Advisor
 
 - will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
@@ -1712,7 +1719,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### ALB
 
-- work in **layer 7**. That means that they are **HTTP/HTTPS aware**
+- work in **layer 7**. That means that they are **HTTP/HTTPS aware**. You can create rules based on url path and also based on the hostname itself (website1.site.com and website2.site.com).
 
 * can have **multiple TSL/SSL Certs** using **SNI**
 
@@ -1730,21 +1737,19 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### NLB
 
-- work in **layer 4**.
+- work in **layer 4**. They are **software based**. This is the reason behind the extreme performance.
 
 * they **do not modify incoming network packets in any shape of form**, so you **do not have to use proxy-protocol**
 
-- **can balance** on **UDP**
+- **can balance** on **UDP**. Remember that with **ALB there are 2 connections, one to ALB and one to target**. **NLB forwards the requests straight to instances**.
 
-* **exposes DNS name**
+* **exposes DNS name**, but you **can assign static IP to it (EIP)**.
 
-- **cannot** have **SecurityGroup attached to it**. This is because the NLB is software based. There is no underlying instances involved.
+- **cannot** have **SecurityGroup attached to it**. Again, this is because it's software based and you are assigning SGs to underlying network interfaces.
 
-* has **cross-zone load balancing disabled by default**
+* has **cross-zone load balancing disabled by default**.
 
 - when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
-
-* you **can asssign EIP** to NLB.
 
 #### Monitoring
 
@@ -2164,7 +2169,9 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - launching EC2 based on criteria as a service
 
-* **uses launch templates** to **configure how EC2 is launched**. AMI, Instance Type, KeyPairs, Network stuff, Security Groups etc..
+* you can launch underlying instances using 2 types of "templates", **launch templates** and **launch configurations**:
+  - both are immutable, but you can create **versions of launch template**
+  - **launch template is newer and recommmended by AWS**.
 
 - controls scaling, where instances are launched, etc
 
@@ -3097,9 +3104,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * **CANNOT HAVE SECURITY GROUP ATTACHED TO IT!**
 
-- **lives in a public subnet**
+- **lives in a public subnet**.
 
-* has **elastic static IP address**. That Ip has to be assigned.
+* has **elastic static IP address**. That Ip has to be assigned. This means that NAT gateway is an ideal solution where your IP needs to be whitelisted.
 
 - **converts SOURCES` private ip address** to its ip address
 
@@ -3797,6 +3804,24 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can use **multi-AZ option for HA**
 
+### Elasticsearch Service
+
+- it's **AWS implementation** of **ELK Stack**
+
+* scales **vertically** and **horizontally**.
+
+- for production workloads, ES can use **Multi-AZ**.
+
+#### ELK stack
+
+- **E** is for **ingestion and (optionally transform)**: Logstash or Beats
+
+* **L** is for **Elasticsearch**
+
+- **K** is for **visualization**: Kibana. This is mainly used for **anything that is NOT analytics data**. For **analytics data** use `QuickSight`.
+
+* **Kibana** also allows you to **share dashboards**.
+
 ### CI/CD
 
 #### Code Commit
@@ -4070,6 +4095,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - to lower the cost you can use **Basic Indest**. This allows **your IOT device to skip going through the Topic and publish directly to a rule instead**.
 
+#### IOT Analytics
+
+- ingegrates with `Quicksight`.
+
+* it has **different use-cases that Kinesis Analytics**. **Kinesis should be used for real-time or near real time stuff, that also applies to analytics**. With `IOT Analytics` data is stored long term.
+
 ### Cloud HSM
 
 - **H**ardware **S**ecrue **M**odule
@@ -4180,6 +4211,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * **by default** DMS **encrypts your data at rest**
 
 - you can **migrate multiple sources to one and vice versa**
+
+* DMS is fast, and there might be a problem with your service throttling the migration by DMS (Good example would be Amazon ES).
 
 #### VM Import / Export
 
