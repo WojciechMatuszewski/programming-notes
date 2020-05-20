@@ -765,23 +765,27 @@ An example for s3-prefix (folder)
 
 #### Glacier
 
-- **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
+- actually separate from S3 but AWS is integrating it within S3 heavily.
 
-* **Glacier/Deep Archive** have something called **expedited retrieval**. This allows you to **get the data from glacier and not wait Days/hours/Months**. There is a catch though. The **expedited retrieval** is **using resources from shared pool of resources**. There might a case there those resources are unavailable. This is where **provisioned glacier capacity** is used. This **ensures that your expedited retrieval request will not be rejected**. But you have to **pay more (additionally for it)**
+* **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
 
-- **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
+- **Glacier/Deep Archive** have something called **expedited retrieval**. This allows you to **get the data from glacier and not wait Days/hours/Months**. There is a catch though. The **expedited retrieval** is **using resources from shared pool of resources**. There might a case there those resources are unavailable. This is where **provisioned glacier capacity** is used. This **ensures that your expedited retrieval request will not be rejected**. But you have to **pay more (additionally for it)**
 
-* **used** by **virtual tape library** (underneath)
+* **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
 
-- there exists a concept of **glacier vault**. You can think of the vault as a **bucket in it's own rights**.
+- **used** by **virtual tape library** (underneath)
 
-* **glacier vault** can be given **access by using IAM roles**.
+* there exists a concept of **glacier vault**. You can think of the vault as a **bucket in it's own rights**.
 
-- you can create **vault archives UP to 40 tb** (this is usually a .zip file).
+- **glacier vault** can be given **access by using IAM roles**.
 
-* you can **recover files from GLACIER** within **1-5 mins (expedited), 3-5 hrs (standard), 5-12hrs (bulk)**.
+* you can create **vault archives UP to 40 tb** (this is usually a .zip file).
 
-- you can **recover files from DEEP ARCHIVE** within **12 hrs (standard) and 48hrs (bulk)**
+- you can **recover files from GLACIER** within **1-5 mins (expedited), 3-5 hrs (standard), 5-12hrs (bulk)**.
+
+* you can **recover files from DEEP ARCHIVE** within **12 hrs (standard) and 48hrs (bulk)**
+
+- you can retrieve specific component of an archive (a single file).
 
 ##### Vault Lock
 
@@ -3702,6 +3706,18 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **SNS** has **much higher througput** than EventBridge.
 
+### Amazon MQ
+
+- occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
+
+* supports **topics** which are **comparable to SNS topics**.
+
+- supports **queues** which are **comparable to SQS queue**.
+
+* supports **virtual topics** which are basically **fanout pattern, but without using SQS and SNS at the same time**.
+
+- usually used when you have some internal requirements. This service is not well supported when it comes it IAM or CloudWatch.
+
 ### AWS Workspaces
 
 - desktop as a service
@@ -4100,6 +4116,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - ingegrates with `Quicksight`.
 
 * it has **different use-cases that Kinesis Analytics**. **Kinesis should be used for real-time or near real time stuff, that also applies to analytics**. With `IOT Analytics` data is stored long term.
+
+### QuickSight
+
+- visualisation of data, mainly used for IOT, also for **streaming data**.
+
+* you have to **sign up to it**. It's a bit separate in terms of AWS ecosystem.
+
+- integrates with **Athena, Aurora, Redshift, S3**.
 
 ### Cloud HSM
 
