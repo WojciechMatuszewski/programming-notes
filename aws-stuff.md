@@ -79,6 +79,16 @@
 
 - you can also **perform some redirect logic , maybe check auth**.
 
+#### Event Source Mapping
+
+- this mainly have to do with services that **invoke lambda functions and push events there**
+
+* this is where you have **discarded events from those services (Kinesis, DynamoDB, SQS)** send to **SQS or SNS**.
+
+- **do not confuse it** with **lambda destination**.
+
+* **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
+
 ### Step Functions
 
 - **state machines as a service**
@@ -331,13 +341,15 @@ An example for s3-prefix (folder)
 
 * they **do not really provide access**. They **restrict what you can do when you HAVE permissions**. Think of them as **boundaries**.
 
-- can be used as **blacklist** or a **whitelist**. The syntax is basically the same as IAM policies.
+- can be used as **blacklist** or a **whitelist**. The **syntax** is basically the same as IAM policies.
 
 * the **policy evaluation process** is as follows: first you take your iam permissions then you take SCPs. You **take union of permissions from your IAM and SCP, these are the permissions you effectively have**.
 
 - you can have **multiple SCPs which apply**. In such case you take **union of every SCPs with your IAM permissions**.
 
 * remember that **SCP only apply to the accounts that are within given OU**. SCPs **do not apply to outside users (other accounts)**
+
+- the SCPS can be **applied at Root, OU or Account level**. This is very important.
 
 ##### Deny List
 
@@ -1641,9 +1653,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Response Codes
 
-- usually **any throttling on the APIGW level** will **result in 4xx** status code
+- **4xx means Client erros**. This is where WAF is blocking the request (403), or throttling happens (429).
 
-* **when your lambda is invoked** and **throttling happens** such situation will **usually result in 5xx** status code. There is an **exception** and that **exception has to do with AUTHORIZER error codes** which **are 500 status** codes.
+* **5xx means Server errors**. This is APIGW or the integration failing.
+  - **502 (Bad Gateway)** usually bad request, apigw got malformed response from eg. lambda.
+  - **503** is service unavailable
+  - **504: Integration failure** is the **timeout on APIGW level** - remember that the default one is 29 seconds
 
 #### Timeouts
 
@@ -1957,6 +1972,10 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you can enable access logs through `CloudWatch`. `R53` will create a log group and stream logs there.
 
+#### Man in the middle attacks
+
+- R53 **does not support DNSSEC**, that means that you **should use 3rd party DNS** when you are worried about man in the middle attacks.
+
 ### ECS (Elastic Container Service)
 
 - allows you to run **docker containers on EC2 instances** in a **managed way**.
@@ -1990,6 +2009,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - **hosts map directly to the host networking**. That means that you cannot use this if you want to run multiple apache instances on the same host, since each instance needs PORT 80.
 
 * **awsvpc** is the **only networking mode available for Fargate**. Be wary though, **instances have limits of ENI that could be attached to them**.
+
+- **bridge** uses **Docker's built-in virtual network**, it maps the container ports to EC2 ENI directly.
 
 #### Service Definition
 
@@ -2798,7 +2819,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
   - HDFS: s3 is used to read and write the final data to **(supports both in-transit and and rest encryption)**
   - EMR FS: s3 is used as primary data store to carry out all operations
 
-- **use for on-demand, ad-hoc, short-term tasks**
+- **HDFS literally can contain any kind of file format**.
+
+* **use for on-demand, ad-hoc, short-term tasks**
 
 - **master node can** be **sshed into**. You can **ssh into master node** and **use Hive to perform SQL like queryies on the data**.
 
@@ -2919,6 +2942,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * **getRecords** can **only be called 5 times per second per shard**.
 
 - data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool data once per 200ms**.
+
+* there is a maximum of **1 MB of writes / second / shard**.
 
 ###### AWS Kinesis library
 
@@ -3852,7 +3877,13 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - deploys packages to given services (like ElasticBeanstalk)
 
-* you can have **blue green deployments** as well as **gruadual traffic shifts**. This works well with lambda and ECS.
+- allows you to perform **rolling** updates for **ec2 instances**.
+
+* when deploying with **lambda, using traffic shifts** there are **pre and post deploy hooks** you can use to validate your lambda.
+
+- it enables you to perform **blue / green deployment** with **ASG**.
+
+* when it comes to **ECS, it allows you to create blue / green (traffic shifts)** with that aswell.
 
 #### CodePipeline
 
@@ -3932,6 +3963,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - when you are **within enterprise**. Big **companies** usually have their **own identity provider (Google, OKTA)...**.
 
 * you have an **app that uses AWS**. With **Cognito you can create identity for users, even guest role!**
+
+#### AWS SSO
+
+- like Okta but AWS managed
+
+* there are multiple identity sources available for SSO - AD, IdP or SSO itself. **You can have only 1 identity source within this service**. You cannot mix and match multiple ones
 
 ### CloudFormation
 
@@ -4051,6 +4088,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * what is very important is that **Trusted Advisor is more about accounts and IAM**. This is something completely different than AWS Inspector which has to deal with EC2 instances mostly.
 
+- you can use **AWS Service Quotas** to change **service limits** that you emposed. This is **something that trusted advisor alone cannot do!**.
+
 ### KMS
 
 - various ways of encryption, but mainly **Server-Side, Client-Side** encryption.
@@ -4125,19 +4164,29 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - integrates with **Athena, Aurora, Redshift, S3**.
 
-### Cloud HSM
+### CloudHSM
 
 - **H**ardware **S**ecrue **M**odule
 
 * can **generate keys** and **perform crypto operations**
 
+- **KMS uses HSM under the hood**
+
+* **presented as ENI inside VPC**
+
+- if you **really need something that is dedicated ONLY to you**, the **cloud HSM will not cut it**.
+
+#### Permissions
+
+- since AWS only provides hardware here, it's **up to you to manage permissions**.
+
+* there are only **CRUD like IAM persmissions available**. There is **no permission** to **deny key usage**.
+
+#### HA
+
 - you can **create HSM clusters**. These are **NOT HA by default**.
 
-* **KMS uses HSM under the hood**
-
-- **presented as ENI inside VPC**
-
-* if you **really need something that is dedicated ONLY to you**, the **cloud HSM will not cut it**.
+* you can make it HA, **spread it across multiple AZs**.
 
 ### Data Lake
 
@@ -4199,19 +4248,21 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 #### Server Migration Service (SMS)
 
-- you **actually need VMware system to use it**.
+- **THE recommended service** for migrating VMs. Minimizes downtime.
 
-* used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download, this **SMS connector is needed aswell**.
+* you **actually need VMware system to use it**.
 
-- **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
+- used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download, this **SMS connector is needed aswell**.
 
-* **replicates to an AMI** and can also **auto generate CloudFormation templates**
+* **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
 
-- when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
+- **replicates to an AMI** and can also **auto generate CloudFormation templates**
 
-* **applications can be divided into groups**. Groups can contain multiple servers.
+* when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
 
-- this service is **free of charge**. Remember that the snapshots, and the underlying created resources will probably cost you some \$\$.
+- **applications can be divided into groups**. Groups can contain multiple servers.
+
+* this service is **free of charge**. Remember that the snapshots, and the underlying created resources will probably cost you some \$\$.
 
 #### Database Migration Service
 
@@ -4247,6 +4298,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - you can also **export a VM that was previously imported**
 
 * you can **import disks as EBS snapshots**
+
+- **you should consider using SMS first**.
 
 ### VMware on AWS
 
@@ -4311,6 +4364,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 * you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **indest from those invited accounts** (**if they accept**).
 
 - it's usually **preffered for instances that have access to the internet**
+
+* has **deep integration with CloudWatch**. You can use **CloudWatch events** to trigger lambda or sns when guard duty notices something.
 
 ### Amazon Inspector
 
