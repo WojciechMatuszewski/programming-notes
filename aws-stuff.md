@@ -97,6 +97,8 @@
 
 - you can create **manual steps** with step functions. This can be **while dealing with hybrid approach** where **there is some level of human interaction needed (like clicking a link)**
 
+* **does not** integrate with **Mechanical Turk**. You will need **SWF for that**.
+
 ### IAM
 
 > IAM allows you to manage users and their level of access to the AWS Console
@@ -948,6 +950,12 @@ So when to use what?
 
 * you can use **BitTorrent** to **distribute s3 content**.
 
+- using API, you can download **specific byte range** for a given object.
+
+#### Events
+
+- these can be send to **SNS, SQS or Lambda**.
+
 ### Storage Gateway
 
 - prefer if you have any kind of integration with `on-prem`.
@@ -980,6 +988,8 @@ So when to use what?
 - you can **create mountable ISCSI devices** which you can **mount on prem**.
 
 * this is a **low-latency solution** for **either cached or non-cached gateway**.
+
+- volume gateway creates **asynchronous EBS snapshots of your data to s3**.
 
 ##### Cached vs Stored
 
@@ -1412,6 +1422,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 #### Cost
 
 - you are billed on **overall storage** and **RCU/WCU**
+
+* there is **minimal capacity** which is **1 RCU/WCU per second**. Free tier is **100 MB of storage and 5RCU/WCU - per month**.
 
 #### GSI
 
@@ -2589,7 +2601,7 @@ Way of grouping EC2 instances.
 
 ### SWF (Simple Workflow Service)
 
-- **manage workflow state, similarly to Step Functions**
+- **manage workflow state, similarly to Step Functions**, but this is **not serverless, code is run on ec2**.
 
 * **you** as a user **have to manage the infrastructure that runs the workflow logic and tasks**
 
@@ -2797,7 +2809,7 @@ You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combina
 
 ##### Athena Vs Redshift Spectrum
 
-Both of these tools can be used for DataLake querying, but, and that is very important, **you would use Athena when your data mostly lives on s3 and you DO NOT have to perform joins with other data sources**. This is a **complete opposite of RedshiftSpectrum** where you would **use RedshiftSpectrum where you want to join s3 data with existing Redshift tables or create union products**.
+Both of these tools can be used for DataLake querying, but, and that is very important, **you would use Athena when your data mostly lives on s3 and you DO NOT have to perform joins with other data sources**. This is a **complete opposite of RedshiftSpectrum** where you would **use Redshift Spectrum where you want to join s3 data with existing Redshift tables or create union products**.
 
 ##### Athena Vs EMR
 
@@ -4382,6 +4394,12 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 * WorkLink **makes sure** that the **data is never cached / stored on the real device**. This is great when you are worried that something might leak.
 
 - you can **use your existing browser** but **the pages are rendered on AWS** and **send to you as SVG** 😲
+
+### Device Farm
+
+- enables you to **test your mobile application**, can **also be a website (selenium)**.
+
+* you can literally connect to a real device and use it, like iphone X.
 
 ### AWS AppStream
 
