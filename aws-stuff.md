@@ -57,7 +57,9 @@
 
 #### Inside VPC
 
-- **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. The **subnet HAS TO BE PRIVATE though**. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because lambdas have ENI assigned that never gets public IP.
+- **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. The **subnet HAS TO BE PRIVATE though**. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because **lambdas have ENI assigned that never gets public IP**.
+
+* since Lambdas needs ENI, you might hit **throttling when there are not enough ENIs for given lambda container**. The limit is **350 ENIs per region**. When that throttling happens you will se an `ec2` related throttling message.
 
 #### Monitoring
 
@@ -544,6 +546,14 @@ An example for s3-prefix (folder)
 * **agent installed by default on modern AMIs**, can also be **downloaded and installed on-prem**
 
 - you **do not have to have SSH ports open**. You also **do not need SSH keys**.
+
+#### Automation
+
+- automate tasks that have to do with EC2
+
+* you create **automation documents**
+
+- can be paired with **EC2 rescue document** to enable auto-repair for your instances.
 
 #### Session Manager - Running commands on instances
 
@@ -1060,6 +1070,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at remote location** and then **transferring the data**.
 
 * with the `Snowball Edge` you can **upload stuff to s3 or perform some compute on the data**.
+
+- integrates with **AWS Greengrass (IOT)**
 
 ### AWS Import / Export disk
 
@@ -3005,6 +3017,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * you can have **cross region snapshots**. If your snapshot is encrypted you will need to provide a **KMS grant** for RDS in the destination region.
 
+- Redshift can automatically **copy your snapshots to another region**. There is no action required from your perspective. Of course **you have to enable this feature**.
+
 #### Architecture
 
 - consists of **multiple nodes**. There is a **leader node** an a **compute node**.
@@ -3524,6 +3538,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * allows you to **create Video Stream processors** which parse the video **consumed from Kinesis and output to other Kinesis stream**.
 
 - **DOES NOT RETURN IMAGE METADATA**
+
+### AWS WorkDocs
+
+- competitor to GoogleDrive and such
+
+* you can store virtually any file there.
+
+- you **can develop rollback feature using API**
+
+* there is something called WorkDocs Content Manager.
 
 ### AWS Backup
 
@@ -4266,7 +4290,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * you **actually need VMware system to use it**.
 
-- used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download, this **SMS connector is needed aswell**.
+- used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download thus **SMS connector is needed aswell**.
 
 * **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
 
