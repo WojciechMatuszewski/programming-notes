@@ -311,11 +311,15 @@ An example for s3-prefix (folder)
 
 - when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
 
-* the **master account** can **turn off RI sharing** for **particular account or whole the whole organization**. There is no privte mode or smth.
+#### Sharing
 
-- for **EC2** the **type and the AZ must be the same**
+- the **master account** can **turn off RI sharing** for **particular account or whole the whole organization**. There is no private mode or smth.
 
-* for **DB instances all of the DB attributes must be the same (also the AZ)**: engine, instance class, deployment type, license model.
+* for **EC2** the **type and the AZ must be the same**
+
+- for **DB instances all of the DB attributes must be the same (also the AZ)**: engine, instance class, deployment type, license model.
+
+* RI sharing **has to be enabled** for **accounts that purchase the instance, as well the accounts that need the benefit**.
 
 #### Invites
 
@@ -361,7 +365,7 @@ An example for s3-prefix (folder)
 
 ##### Allow List
 
-- reverse of `deny list`. This is where **everything is denied** and **it's up to us to allow things**. This is **usually a bad idea, as things can get messsy**.
+- reverse of `deny list`. This is where **everything is denied** and **it's up to us to allow things**. This is **usually a bad idea, as things can get messy**.
 
 #### OUs
 
@@ -395,7 +399,7 @@ An example for s3-prefix (folder)
 
 - **user has to have sufficient permissions to leave the organization**. I think the most **important here are the policies regarding billing**.
 
-#### Moving account between origanizations
+#### Moving account between organizations
 
 - if you want to move an account between organizations you will need to
   - have that **account leave the original organization (remember about the ROLES!)**
@@ -403,7 +407,7 @@ An example for s3-prefix (folder)
 
 #### Trusted Access
 
-- you **enable AWS services to perform actions on your belahf within an Organization**.
+- you **enable AWS services to perform actions on your behalf within an Organization**.
 
 * this is how you would do **CF stack sets within Organization**.
 
@@ -445,7 +449,7 @@ An example for s3-prefix (folder)
 
 - can be very useful when you want to set **alarms for RI utilization and coverage**.
 
-* mainly for setting up alarams and notifications if you go above certain threashold.
+* mainly for setting up alarams and notifications if you go above certain threshold.
 
 ### ACM
 
@@ -1183,6 +1187,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * this is especially useful to know whenever you want to **acces your DB within VPC**. Not using correct rules on the secuirt groups **can lead to connection issues**.
 
+#### Storage
+
+- since RDS runs on EC2 you can change the underlying storage type.
+
+* the underlying storage can be of type **GP1, IO1, Magnetic**.
+
 ### Aurora
 
 - **SQL and PostgreSQ** compatible
@@ -1463,7 +1473,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
-- you **can use multiple lambda functions for dynamoDB stream** but it's **not adivisble**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
+- you **can use multiple lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
 
 ##### Triggers
 
@@ -1523,7 +1533,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you can levrage **reserved capacity for provisioned throughput** to save some \$\$.
 
-* this works very similiarly to other offerings. You pay upfront and save in a long term.
+* this works very similarly to other offerings. You pay upfront and save in a long term.
 
 ### CloudFront
 
@@ -1842,6 +1852,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**. You **can use** on **apex zone (naked) records**
 
+* **for some integrations** **alias record is FREE!**. You can use this technique to save costs. Remember that you can assign **www.something.com** as alias as well as the **naked domain (without www)**
+
 ### Route53
 
 - **global service**. When creating blue/green in another region you do not have to re-create record sets.
@@ -1970,7 +1982,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * it is an **endpoint made of 1 or more ENI within a given VPC**. It **works for every VPC within a region (even if the VPC are not peered)**.
 
-#### Inbond Endpoint
+#### Inbound Endpoint
 
 - this endpoint allows you to query **from your network / VPC to another VPC**
 
@@ -1999,6 +2011,10 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 #### Man in the middle attacks
 
 - R53 **does not support DNSSEC**, that means that you **should use 3rd party DNS** when you are worried about man in the middle attacks.
+
+#### DDOS
+
+- R53 is considered to be **DDOS resilient**.
 
 ### ECS (Elastic Container Service)
 
@@ -2130,11 +2146,11 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 #### Reservations
 
-- sometimes there is not enough capacity for on-demand instances to be initialized within given region / AZ. This can be annoying whenever you are running ASG. Reservations enable you to make sure you can spin new instances whenerver you want (by purchasing reservations).
+- sometimes there is not enough capacity for on-demand instances to be initialized within given region / AZ. This can be annoying whenever you are running ASG. Reservations enable you to make sure you can spin new instances whenever you want (by purchasing reservations).
 
 * **zonal, regional reserved instances**. These are **bought up-front**, this is a **long term availability guarantee**
 
-- **on-demand capacity reservation**. This is useful for a **short term availibility guarantee**.
+- **on-demand capacity reservation**. This is useful for a **short term availability guarantee**.
 
 * **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
   capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
@@ -2533,7 +2549,7 @@ Way of grouping EC2 instances.
 
 * you should try to **provision all your instances up front**. There is a limited space, and there might be a problem with adding an instance later on.
 
-- you **should consider** using **enhanced networking** so that you take full advantage of close proximity of instances
+- you **should consider** using **enhanced networking** so that you take full advantage of close proximity of instances. This is done to **speed up communication between the instances**, nothing more.
 
 * you should consider this option for **small deployments**
 
@@ -2563,7 +2579,7 @@ Way of grouping EC2 instances.
 
 - mean of **optimizing the network interface** rather than the volume itself.
 
-* uses **SR-IOV to squieze maximum I/O performance**
+* uses **SR-IOV to squieze maximum I/O NETWORKING performance**.
 
 - EC2 **must** be launched from **HVM AMI**
 
@@ -2930,6 +2946,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * can ingest from **kinesis stream and kinesis firehose**
 
 - **serverless product**
+
+* can be used for **ETL on streaming data**.
 
 ##### Kinesis Data Streams
 
