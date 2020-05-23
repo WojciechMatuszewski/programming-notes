@@ -3603,6 +3603,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can be scaled vertically and horizontally, but when you **scale horizontally** you have to **create new cluster**.
 
+* **data** is **not automatically replicated betweeen the nodes**. You have to makee sure that you are **sharding your keys to different nodes**.
+
 ### Communication Between Services, Queues
 
 #### SNS
