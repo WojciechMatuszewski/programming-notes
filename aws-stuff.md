@@ -419,6 +419,8 @@ An example for s3-prefix (folder)
 
 - when you are working with RAM the key keyword is **trusted access**.
 
+* to enable sharing you can either **use AWS Console or AWS CLI (`enable-sharing-with-aws-organization`)**.
+
 #### Cost Explorer
 
 - you can **generate reports**. These reports are a **.csv** file.
@@ -2223,6 +2225,12 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - based on **public/private key** cryptography
 
 * when **migrating AMIs** you **do not have to import any kind of key**. You can **still use your downloaded `key-pair`** since it's the private part of the key.
+
+#### Auto recovery
+
+- you can create **CloudWatch alarm** on `SstatusCheckFailed_System` metric and choose **Recover this instance** action.
+
+* the auto recovery will **preserve your instance id, IP Address, EIP, EBS attachments, all that stuff**.
 
 #### Networking (IPs and DNS)
 
