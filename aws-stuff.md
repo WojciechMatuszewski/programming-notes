@@ -569,7 +569,7 @@ An example for s3-prefix (folder)
 
 - you **instance** **has to have IAM role** that **enables SSM API on that instance**
 
-* you can have **IAM roles** which futher enhance the security of your solution. You can **restrict access to a specific instances** while using `Session manager`, the action is `ssm:StartSession`.
+* you can have **IAM policies (attached to users / roles)** which futher enhance the security of your solution. You can **restrict access to a specific instances** while using `Session manager`, the action is `ssm:StartSession`.
 
 #### Patch Manager
 
@@ -1862,7 +1862,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * allows you to register domain (priced per domain name)
 
-- there are **public** and **private** **hosted zones**
+- there are **public** and **private** **hosted zones**. There is **monthly cost for creating hosted zones**.
 
 * **public zone is created by default when you create or migrate a domain to route53**
 
@@ -2072,7 +2072,9 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Fargate
 
-- **a bit more expensive than ECS itself since AWS is literally managing everything expect tasks for you**
+- should mainly be used for **transient workloads**. You **should not use `fargate` for any kind of databases**.
+
+* **a bit more expensive than ECS itself since AWS is literally managing everything expect tasks for you**
 
 So with **ECS you have to have EC2 instances running**. But with **Fargate you really only care about the containers themselves**. You can wave deploying ASG goodbye. **Fargate is basically container as a service, you only define tasks and that is it**.
 
@@ -2150,12 +2152,16 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - sometimes there is not enough capacity for on-demand instances to be initialized within given region / AZ. This can be annoying whenever you are running ASG. Reservations enable you to make sure you can spin new instances whenever you want (by purchasing reservations).
 
-* **zonal, regional reserved instances**. These are **bought up-front**, this is a **long term availability guarantee**
+- **zonal RI** guarantee **capacity reservation** within given az
 
-- **on-demand capacity reservation**. This is useful for a **short term availability guarantee**.
+* **regional RI DOES NOT guarantee capacity within region**. These should be used for **maximizing cost efficiency**.
 
-* **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
+* **on-demand capacity reservation**. This is useful for a **short term availability guarantee**.
+
+- **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
   capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
+
+* you **cannot sell unused CONVERTABLE on the market!**.
 
 #### Health checks
 
@@ -2225,6 +2231,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - based on **public/private key** cryptography
 
 * when **migrating AMIs** you **do not have to import any kind of key**. You can **still use your downloaded `key-pair`** since it's the private part of the key.
+
+- if you want to **completely wipe the key from the instance** you should just **terminate that instance**. There is a CLI command to delete the key, but **the CLI command does not delete the key from the instance itself**.
 
 #### Auto recovery
 
@@ -4689,3 +4697,5 @@ Next, your architecture should be able to **absorb the DDOS attack**. As weird a
 Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
 
 TODO:
+
+- https://acloud.guru/exam-simulator/review?attemptId=864a7888-eae8-4f0e-bdab-6d0a9b52a0c9&examId=b6d0490f-af4a-4930-a0b6-0f74fb66869f&courseId=aws-csa-pro-2019
