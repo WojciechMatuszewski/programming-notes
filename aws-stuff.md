@@ -2064,11 +2064,13 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Auto Scaling (aka Service Auto Scaling)
 
-- you can enable **ECS Auto Scaling**. It creates ASG automatically.
+- it scales **services** which are **instances** which can have **task definitions deployed on them**.
 
-* **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
+* you can enable **ECS Auto Scaling**. It creates ASG automatically.
 
-- this works on the basis of `CloudWatch`. Note that `ECS` will **not automatically create ELB for you**.
+- **when creating** you can **specify subnet, VPC and any IAM roles** for a given instance.
+
+* this works on the basis of `CloudWatch`. Note that `ECS` will **not automatically create ELB for you**.
 
 #### Fargate
 
