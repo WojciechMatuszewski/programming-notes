@@ -1689,7 +1689,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Response Codes
 
-- **4xx means Client erros**. This is where WAF is blocking the request (403), or throttling happens (429).
+- **4xx means Client erros**. This is where WAF is blocking the request (403), or concurrency throttling happens (429).
 
 * **5xx means Server errors**. This is APIGW or the integration failing.
   - **502 (Bad Gateway)** usually bad request, apigw got malformed response from eg. lambda.
@@ -2086,7 +2086,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * there is an **instance (ec2) role** that gives permissions to ECS agent to talk to ECS. This should be the first place where you look when ECS agents are not functioning correctly.
 
-- you can also **attach IAM role to a specific task definition - task role**. This basically is a role attached to a specific container.
+- you can also **attach IAM role to a specific task definition - task role**. This basically is a role attached to a specific container. Whenever you are dealing with **ECS - prefer task role rather than EC2 role**.
 
 * you can also **attach task execution role**. This is the role **used by ECS itself to pull images, publish logs, basically do stuff in your behalf**.
 
@@ -2967,6 +2967,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * can be used for **ETL on streaming data**.
 
+- can have lambda as target (also s3, redshift, rds).
+
 ##### Kinesis Data Streams
 
 - **processing** data **in near real-time**
@@ -3090,11 +3092,17 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
   - **viewing STV_LOCKS and STL_TR_CONFLICT system tables**. This is done to see if there are any update conflicts.
   - **using PG_CANCEL_BACKEND** to cancel any conflicting queries.
 
+#### Ingestion
+
+- data can be loaded from `s3`, `Kinesis Firehose`, `dynamoDB`, `DMS`.
+
 #### Spectrum
 
-- this enables you to **query directly from data files on S3**
+- this enables you to **query directly from data files on S3**.
 
 * this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
+
+- **you need to have existing Redshift cluster to make it work!**. The **query is submitted to your cluster** but the query itself is run by AWS.
 
 ### Virtual Private Cloud (VPC)
 
@@ -3615,6 +3623,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * any reads through DAX are **eventually consistent**
 
+- **can be HA**.
+
 #### ElastiCache
 
 - you **cannot point** route53 **alias record to ElastiCache cluster**
@@ -3642,6 +3652,20 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
 
 - has a **concept of read replicas just like RDS**. Similarly to Aurora **read replica can be promoted to master**. The **replication between nodes is ASYNCHRONOUS**
+
+##### Clustered mode enabled
+
+- data is **partitioned across shards**, each **shard has 1 primary and up to 5 replicas**
+
+* failover is faster
+
+- better for fault tolerance.
+
+* better for horizontal scalling.
+
+##### Clustered mode disabled
+
+- data **resides in one primary** which can have **up to 5 replicas**.
 
 ##### HA
 
@@ -3843,7 +3867,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### Instances
 
-- here you can create **time-based** or **load-based** instances
+- there are multiple instance types:
+  - 24/7h instances
+  - load-based instances
+  - time-based instances
+    Combination of these should be used for scaling.
 
 * there is a **simple wizard to create scalling scenarios**
 
@@ -4236,7 +4264,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * you have to **sign up to it**. It's a bit separate in terms of AWS ecosystem.
 
-- integrates with **Athena, Aurora, Redshift, S3**.
+- integrates with **Athena, Aurora, Redshift, S3, IOt**.
 
 ### CloudHSM
 
@@ -4381,6 +4409,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * **can results** in a **networking complexicity**.
 
+- you can use VMware on AWS to run **Oracle RAC** and have **Oracle backups on s3**.
+
 ### IDS / IPS Systems
 
 These systems are used to **detect and prevent intrusions** from gettiing to your resources.
@@ -4516,6 +4546,10 @@ Since mongo is a nosql tech. one might choose **DocumentDB** or **DynamoDB**. It
 #### Copying AMI between regions
 
 You **can copy both EBS-backed or instance-store-backed AMIs**. **AMIs with encrypted snapshot can also be copied**. **IAM RELATED STUFF IS NOT COPIED**.
+
+#### Copying AMI in the same region
+
+This is mainly done to **encrypt root volumes**. You would create an AMI copy within the same region and encrypt the volume while doing the copying.
 
 #### Restricting Access to s3 resources
 
