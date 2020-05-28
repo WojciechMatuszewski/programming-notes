@@ -471,6 +471,10 @@ An example for s3-prefix (folder)
 
 - you can **import existing certs to ACM**. But for gods sake, remember that **imported certs cannot be auto-renewed by ACM**.
 
+#### Private certs
+
+- you can have **private certs for internal APIS**.
+
 #### Multi-region certs
 
 - you **can use** the **same SSL certificate from ACM in more than one region** but it **depends** on wheter you are using **ELB or CloudFront**.
@@ -1089,7 +1093,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - AWS service for relational databases
 
-* multiple providers such as: `mysql` or `Oracle`. Please note that **RDS does not support Oracle RAC**.
+* multiple providers such as: `mysql` or `Oracle`. Please note that **RDS does not support Oracle RAC** and has **semi-support of RMAN**.
 
 - **RDS AUTO SCALING in terms of compute does not exist**. You have to provision an EC2 instance and **pay regardless of the db usage**. What is possible is **RDS storage auto scaling**
 
@@ -2340,8 +2344,9 @@ Regardless of these steps, default termination policy will try to terminate inst
 - Different versions:
 
   - **Provisioned IOPS** - the most io operations you can get (databases), most expensive. Recommended **when you need more than 16k IOPS**
-  - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers).
+  - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers, databases).
   - **EBS Magnetic** - previous generation HDD, infrequent access
+  - **Throughput Optimized HDD** - streaming, big data, log processing. All that stuff also taking costs into consideration.
   - **General Purpose**
 
 So the costs are **usually** **Provisioned > General Purpose > Throughput Optimized HDD > Cold HDD**.
@@ -2673,13 +2678,21 @@ Way of grouping EC2 instances.
 
 - there are several deployment options
 
-* **all at once**: **default** configuration.
+* **all at once**: **default** configuration, every instance is affected at once.
 
 - **rolling**: _Elastic Beanstalk_ splits instances into batches and deploys new verion into them, batch by batch. You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**
 
 * **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in a SEPARATE (temporary ASG)**.
 
 - **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**
+
+#### Updates
+
+- similarly to deployments there are few options here:
+
+* **in-place update** is **performing updates on live instances**
+
+* **disposable** is performing a **rolling update** where **new updates are brough up by terminating old ones (batches)**.
 
 #### Unsupported Platforms
 
@@ -2701,7 +2714,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * with **High Res metrics** alarms **will trigger in 10 secs intervals**. Image it triggering every second 😂
 
-- you can create dashboards from metrics
+- you can create dashboards from metrics. These **dashboards can be shared between accounts and / or within an organization**.
 
 * **CloudTrail IS NOT THE SAME AS CloudWatch**
 
@@ -4027,6 +4040,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
   - passes those credentials to users (remember these are temporary credentials)
 
 - you **do not have to create a new user specially for this**. While working with `Identity Brokers` you should use **IAM role** that the federated user will assume.
+
+* remember that **your identity broker is talking to sts, NOT YOUR USERS!**.
 
 #### User Pools
 
