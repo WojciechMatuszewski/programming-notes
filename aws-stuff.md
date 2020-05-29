@@ -271,6 +271,24 @@ An example for s3-prefix (folder)
 
 * they have **Principal field**. This is due to the fact that they are evaluated whenever some principal access given resource. IAM role / group policies does not have that because they are applied to principals from the beginning.
 
+- what is interesting is that you can **grant access to every identity within an account using :root suffix**.
+
+  ```json
+  {
+    "Principal": { "AWS": "arn:aws:iam::1234:root" }
+  }
+  ```
+
+  or
+
+  ```json
+  {
+    "Principal": { "AWS": "1234" }
+  }
+  ```
+
+  This will make it so that every **user and role within 1234 account** have an access.
+
 #### Groups
 
 - **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **override explicit allow**. So in general the nesting should be avoided.
@@ -1206,6 +1224,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - since RDS runs on EC2 you can change the underlying storage type.
 
 * the underlying storage can be of type **GP1, IO1, Magnetic**.
+
+#### Option Groups
+
+- since RDS can run multiple engines, **option groups** allow you to **specify which options of the underlying engines you want to use**.
+
+* a good example for this would be **S3_INTEGRATION** while using **Oracle on RDS**.
 
 ### Aurora
 
@@ -4770,3 +4794,7 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 TODO:
 
 - https://acloud.guru/exam-simulator/review?attemptId=864a7888-eae8-4f0e-bdab-6d0a9b52a0c9&examId=b6d0490f-af4a-4930-a0b6-0f74fb66869f&courseId=aws-csa-pro-2019
+
+```
+
+```
