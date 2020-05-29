@@ -166,6 +166,8 @@
 
 - think of **assigning role to CF, to deploy stuff in sls framework**.
 
+* this role **cannot be restricted by SCP**.
+
 #### Assuming Roles
 
 - role which you can assume has two segments
@@ -305,8 +307,6 @@ An example for s3-prefix (folder)
 
 - you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
 
-* when using AWS organizations, the **master account does not have any kind of power over the child accounts**. You have to **create cross account roles within child accounts granting full access to the master**
-
 #### Discounts
 
 - when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
@@ -337,11 +337,19 @@ An example for s3-prefix (folder)
 
 - you **cannot resend the invitation**. You have to **cancel the previous one, send the new one**
 
-##### Granting master account full access of member accounts
+##### Accessing member accounts by using automatically created role
 
-- by default, **master account does not have full administrative access over the member account**. This is in a **contrast to a manually created accounts by a master account**.
+- when you create an account within your organization, that account have `OrganizationAccountAccessRole` created automatically
 
-* this is done by **creating `OrganizationAccountAccessRole` role on the member account** and attaching a **trust policy** so that **master account can assume the role**.
+* that `OrganizationAccountAccessRole` role allows master accounts to assume it and access the member account
+
+##### Accessing member accounts who you invited to organization
+
+- in contrast of creating accounts manually, whenever you invite an account, **`OrganizationAccountAccessRole` is NOT created automatically**.
+
+* what you should do is to **create a role within a member account with a trust relationship to a master account**.
+
+- this can be done **using stacksets** to deploy the IAM config to multiple accounts, or just manually.
 
 #### SCPS
 
@@ -4067,13 +4075,25 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can **either deploy manually on ec2** or use **aws managed AD**
 
-* with **aws managed** you will get **nightly directory snapshots**
+###### AWS Managed AD
 
-- you would use **AD Connector** for **authorization from on-prem (federation) only!**. This solutions **supports up to 5k users!**.
+- **does not replicate users with on prem**. This is quite important. Users live in 2 different directories, one on prem and one in AWS.
 
-* use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**. It **does not support MFA!**.
+* if you want to synchronize users, you should deploy **self managed AD** and use **replication between it and the on prem**. Then you would establish trust with AWS managed one.
 
-- you can also use **managed AD with trust relationship** with the on-prem AD. You would **use this if you have more than 5k users**.
+###### AWS AD Connector
+
+- there are 2 versions, **small** and **large**. It **does not have user limits** BUT it has **performance and scalling limits**.
+
+* usually recommended to small to medium companies
+
+- this is just a **proxy**, **there is no MFA**, **you do not have to establish trust relationship**.
+
+###### Simple AD
+
+- use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**. It **does not support MFA!**. It cannot serve as a proxy to your on-prem AD. It is a standalone solution.
+
+* there are **user and object limits**. Again, 2 versions: **small and large**. Basically **up to 5k users**.
 
 ##### When to use Federation
 
