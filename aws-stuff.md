@@ -2970,6 +2970,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * one common pattern is to transport data from dynamoDB to other medium, or vice-versa.
 
+- you can also perform **cross region dynamoDB copy**. You would only use this if you do not use global tables.
+
 #### Kinesis
 
 - **fully managed**
