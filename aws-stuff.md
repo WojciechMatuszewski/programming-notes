@@ -1888,9 +1888,11 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **CNAME**: allows you to create **aliases (NOT THE SAME AS ALIAS RECORD)** to given **A/AAAA records**. **DOES NOT WORK ON NAKED DOMAINS (google.com vs www.google.com)**
 
-- **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**. You **can use** on **apex zone (naked) records**
+- **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**. You **can use** on **apex zone (naked) records**.
 
 * **for some integrations** **alias record is FREE!**. You can use this technique to save costs. Remember that you can assign **www.something.com** as alias as well as the **naked domain (without www)**
+
+- when creating an alias it might show as ** A (alias)** or something like this. Do not be afraid. This is what R53 is doing under thee hood.
 
 ### Route53
 
