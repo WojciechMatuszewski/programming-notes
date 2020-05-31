@@ -749,7 +749,7 @@ An example for s3-prefix (folder)
 
 ### AWS Comprehend
 
-- provides text text sentiment analysis. Intentions, is it negative or positive, all of that.
+- provides text sentiment analysis. Intentions, is it negative or positive, all of that.
 
 ### AWS Transcribe
 
@@ -3656,7 +3656,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * there are also **backup rules, backup plan can have multiple rules**.
 
-- you can **assign multiple resources to the backup plan**. AWS Backup can work with **RDS (except Aurora), DynamoDB tables, efS, Storage Gateway volumes**.
+- you can **assign multiple resources to the backup plan**. AWS Backup can work with **RDS (except Aurora), DynamoDB tables, EFS,EBS, Storage Gateway volumes**.
 
 * you can create **on demand backups**.
 
