@@ -1047,11 +1047,13 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### File Gateway
 
-- **exposes itself as NFS**
+- **exposes itself as NFS/SMB**
 
-* the **latency might be higher than volume** if you **are not using cached gateway**
+* the **latency might be higher than volume** if you **are not using cached gateway**.
 
 - when you have **tapes** `on-prem` **you can still use `File Gateway`**. The usage **depends on the need** (you might not want to archive but work with the data).
+
+* it uses underlying cache for files so that s3 is not queried all the time.
 
 #### Tape Gateway
 
@@ -2050,7 +2052,9 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Man in the middle attacks
 
-- R53 **does not support DNSSEC**, that means that you **should use 3rd party DNS** when you are worried about man in the middle attacks.
+- R53 **support DNSSEC only for domain registration**. It **DOES NOT SUPPORT DNSSEC FOR DNS service**. If you are worried about man in the middle attacks, use different provider.
+
+* another option is to **run your own DNS server on EC2**.
 
 #### DDOS
 
@@ -4409,7 +4413,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * has **integration with Athena**. You **do not have to create special s3 bucket for this**.
 
-- either **agetnless (VMware IS REQUIRED!)** or **agent (does not have to be VMware)**
+- either **agetnless (Discovery Connector) (VMware IS REQUIRED!)** or **agent (does not have to be VMware)**
 
 #### Server Migration Service (SMS)
 
@@ -4448,11 +4452,13 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - you **do not have to create replication instance**. DMS **will do that for you (task)**
 
-* **by default** DMS **encrypts your data at rest**
+* you can **migrate multiple sources to one and vice versa**
 
-- you can **migrate multiple sources to one and vice versa**
+- DMS is fast, and there might be a problem with your service throttling the migration by DMS (Good example would be Amazon ES).
 
-* DMS is fast, and there might be a problem with your service throttling the migration by DMS (Good example would be Amazon ES).
+##### Encryption
+
+- **by default** DMS **encrypts your data at rest (replication instance)** using **KMS by default**. It can also **use CMK if you specify one**.
 
 #### VM Import / Export
 

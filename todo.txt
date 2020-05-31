@@ -2,3 +2,4 @@
 - https://ieftimov.com/post/testing-in-go-golden-files/
 - https://2ality.com/2020/01/typing-objects-typescript.html#object-with-uppercase-%E2%80%9Co%E2%80%9D%3A-instances-of-class-object
 
+https://medium.com/@anaida07/achieving-complex-queries-in-dynamodb-using-secondary-indexes-5bf426e05079

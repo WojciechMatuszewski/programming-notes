@@ -159,6 +159,90 @@ Now, this would be completely ok BUT **these 2 sdks are tied together!**. **You 
 `bytes.Buffer` is just a simple `in-memory` buffer. It will expose `Read` and `Write` methods.
 `Bufio` is used for **wrapping** underlying `writers/readers`. This is mainly used for performance. Wrapping with `Bufio` will reduce the amount of calls to `write/read`. This can be useful for files for example, when you DO NOT want every `read/write` call to hit the disc.
 
+### JSON patterns
+
+#### `DisallowUnknownFields`
+
+While working with `json` data, it may happen that you do not want to handlee any unknown (properties not declared within your `struct`) key:value pairs and return an error. This is pretty simple to do using `DisallowUnknownFields` and `json.Decoder`.
+
+```go
+type Student struct {
+  Name string `json:"name,omitempty"`
+}
+
+var jsonText = `{"name":"Wojtek", "foo":"bar"}`
+
+func main() {
+  dec := json.NewDecoder(bytes.NewReader([]byte(jsonText)))
+  dec.DisallowUnknownFields()
+
+  var s Student
+  err := dec.Decode(&s);
+  // this will result in an error
+  if err != nil {
+    fmt.Println(err.Error())
+  }
+}
+
+```
+
+#### Default values for JSON key value pairs
+
+There are 2 approaches here. How you define your underlying `struct` will dictate which is the way to go.
+
+1. Overriding default values when using `json.Unmarshal`
+
+This one is the most straightforward way.
+
+```go
+type Student struct {
+  Name string `json:"name,omitempty"`
+  // I want `grade` to be 3 by default
+  Grade int `json:"grade,omitempty"`
+}
+
+var jsonText = `{"name":"Wojtek"}`
+
+func (s *Student) UnmarshalJSON(b []byte) error {
+  type student Student
+  st := student{
+    Grade: 3
+  }
+
+  err := json.Unmarshal(b, &st)
+  if err != nil {
+    return err
+  }
+
+  *s = Student(st);
+  return nil
+}
+```
+
+Pretty straightforward right?
+
+2. Using pointers when declaring `struct` fields to be able to perform `nil` check.
+
+You will often see this using AWS golang package. There, the underlying `struct` fields are mostly defined as pointers.
+
+```go
+
+type Student struct {
+  Name string `json:"name,omitempty"`
+  Grade *int `json:"grade,omitempty"`
+}
+
+// when umarshaling
+
+if st.Grade == nil {
+  var g int = 3;
+  st.Grade = &g
+}
+
+```
+
+One concert here would be performance, but always remember to measure before you employ any kind of optimizations.
+
 ### Custom `marshal` for dealing with APIs
 
 While working with APIs you might need to provide different representations of values what your `marhal/unmarshal` function is providing.
@@ -166,7 +250,7 @@ This is the ideal case for implementing those methods on structures you are main
 
 #### `time.Time` example
 
-I think a good exaple of this would be `time.Time` type. Most APIs expect you to pass `unix` time and not `RFC` whatever.
+I think a good example of this would be `time.Time` type. Most APIs expect you to pass `unix` time and not `RFC` whatever.
 Problem is that when you `marshal` `time.Time` you get `RFC-xxx` representation of that value.
 Let's create our own `time` type which will override that behavior.
 
