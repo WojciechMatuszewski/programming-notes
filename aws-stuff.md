@@ -1233,6 +1233,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * a good example for this would be **S3_INTEGRATION** while using **Oracle on RDS**.
 
+#### Cross region failover
+
+- do not mistake this with Multi-AZ failover
+
+* use CloudWatch alarm which will trigger lambda which updates R53, multi-region read replica will be promoted.
+
 ### Aurora
 
 - **SQL and PostgreSQ** compatible
@@ -2714,15 +2720,17 @@ Way of grouping EC2 instances.
 
 #### Deployments
 
-- there are several deployment options
+- you **cannot deploy on premise!**
 
-* **all at once**: **default** configuration, every instance is affected at once.
+* there are several deployment options
 
-- **rolling**: _Elastic Beanstalk_ splits instances into batches and deploys new verion into them, batch by batch. You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**
+- **all at once**: **default** configuration, every instance is affected at once.
 
-* **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in a SEPARATE (temporary ASG)**.
+* **rolling**: _Elastic Beanstalk_ splits instances into batches and deploys new verion into them, batch by batch. You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**
 
-- **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**
+- **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in a SEPARATE (temporary ASG)**.
+
+* **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**
 
 #### Updates
 
@@ -3039,6 +3047,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * you can view the live video using either **HLS** or **HTTP** but the **HLS option is preffered since it gives your direct URL, much easier**.
 
 - with **HLS** the live video format is **called archived video**. Pretty weird, no idea why.
+
+* can be **integrated with EC2, Rekognition**. From there you could use data streams of firehose to save that data.
 
 ###### Enhanced fanout
 
@@ -4039,6 +4049,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - it enables you to perform **blue / green deployment** with **ASG**.
 
 * when it comes to **ECS, it allows you to create blue / green (traffic shifts)** with that aswell.
+
+- can **integrate with AWS Config** to make sure changes are compliant, otherwise they will not deploy.
 
 #### CodePipeline
 
