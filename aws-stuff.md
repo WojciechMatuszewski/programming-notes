@@ -65,7 +65,7 @@
 
 - **CloudWatch metrics** are **somewhat limited**. They only include **info about errors, invocations, duration etc**.
 
-* to see the **memory, checkout CloudWatch logs**. There is the **max-memory used**. This setting can help you to decide if your lambda needs more memory.
+* for **memory usage information** you can either look into **CloudWatch logs** or you can **create metrics using metric filter (not provided by default)**. The metric filter is very useful if you want to have the graph that includes **allocated memory vs used memory**.
 
 - you can **use XRay for distributed tracing**.
 
@@ -90,6 +90,12 @@
 - **do not confuse it** with **lambda destination**.
 
 * **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
+
+#### Infinite loops and lambda
+
+- with event based architecture, it may happen that you cause an infinite loop of invocations (think s3 events)
+
+* you can troubleshoot the problem by **setting concurrency limit to 0**. This will make it so your function is not invoked at all.
 
 ### Step Functions
 
@@ -4034,9 +4040,16 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **hosted Git Repo**
 
-#### Code Build
+#### CodeBuild
 
 - builds packages for deployment
+
+* remember to **get the agent from correct region!**.
+  This can happen when you are using `user data` to bootstrap the agent
+  `wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install` (look at the region!)
+
+- when working with the buildspec, **do not define any env. variables that start with `CODE_BUILD`**. This prefix is reserved for internal use.
+  Ignoring this advice might result in slower build speeds as that prefix also includes memory settings.
 
 #### CodeDeploy
 
@@ -4815,8 +4828,4 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 TODO:
 
-- https://acloud.guru/exam-simulator/review?attemptId=864a7888-eae8-4f0e-bdab-6d0a9b52a0c9&examId=b6d0490f-af4a-4930-a0b6-0f74fb66869f&courseId=aws-csa-pro-2019
-
-```
-
-```
+- https://acloud.guru/exam-simulator/review?attemptId=d5369c13-7752-4e59-94d0-8b0e9ce37561&examId=1cbafe65-4493-4599-969a-0b27baecdcb6&courseId=aws-certified-devops-engineer-professional-2019
