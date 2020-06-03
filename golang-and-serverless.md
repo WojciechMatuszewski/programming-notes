@@ -1,5 +1,27 @@
 # Golang Serverless stuff
 
+## Structure within `serverless.yml`
+
+Please keep in mind that you can extract pieces of you `serverless.yml` into different files using `{file()}` syntax.
+
+This can be done **not only on the `resources` level** but also eg. for **`functions` block level**.
+
+```yml
+functions:
+  - ${file(./functions/randomGenerator/serverless.yml)}
+  - ${file(./functions/uuidGenerator/serverless.yml)}
+```
+
+### Referencing stuff from other files
+
+The `{file}` syntax is quite powerful. You can even reference keys which are defined in given file
+
+```yml
+vpc: ...
+# in another file
+vpc: ${file(file):vpc}
+```
+
 ## Running functions locally
 
 ### Serverless Invoke

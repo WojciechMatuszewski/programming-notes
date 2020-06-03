@@ -89,4 +89,38 @@ min, max := 0, 1000
 
   That comment literally does not bring any value. You might as well delete it.
 
+## Package design
+
+- try not to leak implementation details via `types` or other means.
+
+- do **not** use **`utility` packages**. You will regret it, really. Some duplication will not kill you.
+
+- make zero value useful. A good example of this would be `sync.Mutex`
+
+  ```go
+  type MyInt struct {
+    mu sync.Mutex
+    val int
+  }
+
+  func main() {
+    var i MyInt
+
+    // usable without initialization
+    i.mu.Lock()
+    i.val++
+    i.mu.Unlock()
+  }
+  ```
+
+  or your good friend `bytes.Buffer`
+
+  ```go
+  func main() {
+    var b bytes.Buffer
+    b.WriteString("Hello")
+    io.Copy(os.Stdout, &b)
+  }
+  ```
+
 // https://youtu.be/gi7t6Pl9rxE?list=WL&t=4358
