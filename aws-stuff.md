@@ -2134,6 +2134,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 So with **ECS you have to have EC2 instances running**. But with **Fargate you really only care about the containers themselves**. You can wave deploying ASG goodbye. **Fargate is basically container as a service, you only define tasks and that is it**.
 
+- a good usage of fargate would be **load testing**, where you have **docker image of test automation framework** deployed.
+
 #### Security
 
 - with **awsvpc** network mode you can **attach security groups to ENIs**.
@@ -2732,11 +2734,17 @@ Way of grouping EC2 instances.
 
 - **all at once**: **default** configuration, every instance is affected at once.
 
-* **rolling**: _Elastic Beanstalk_ splits instances into batches and deploys new verion into them, batch by batch. You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**
+* **rolling**: _Elastic Beanstalk_ splits instances into batches and **deploys new verion into them, batch by batch**. You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**.
 
 - **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in a SEPARATE (temporary ASG)**.
 
-* **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**
+* **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**. Before the introduction of per minute/hour billing this method was considered to be not very practical.
+
+#### Other deployment types
+
+- **minimum in-service deployment**: this one is **similar to rolling** but the orchestration service is greedy and is always **trying to deploy to as many instances as possible** while **keeping the minimum healthy** (**rolling has set batches**).
+
+* **canary**: **similar to blue green** but **instead of being binary (either blue or green)** you **split traffic between green and blue**. Usually you shift this traffic using **weighted routing or lambda aliases**.
 
 #### Updates
 
@@ -3078,9 +3086,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ###### AWS Kinesis library
 
-- use it. It has automatic batching, proto-buffers and so on build-in. It will save you some money
+- use it. It has automatic batching, proto-buffers and so on build-in. It will save you some money.
 
 * **can be used on prem**.
+
+- **always prefer kinesis consumer/producer libraries to any SDks**. The kinesis library is really fast and optimized.
 
 ##### Retries & Error handling
 
@@ -4006,15 +4016,15 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 ### CloudSearch
 
-- **AWS own solution**
+- **AWS own solution**, fully managed by AWS
 
-* fully managed by AWS
+* still ,**there is an underlying instance hosting the search domain**
 
-- still ,**there is an underlying instance hosting the search domain**
+- **automatily scales VERTICALLY AND HORIZONTALLY (in that order)**. When scalling to multiple instances whe search index is partitioned into multiple instances.
 
-* **automatily scales VERTICALLY AND HORIZONTALLY (in that order)**. When scalling to multiple instances whe search index is partitioned into multiple instances.
+* you can use **multi-AZ option for HA**.
 
-- you can use **multi-AZ option for HA**
+- **integrated with IAM**.
 
 ### Elasticsearch Service
 
@@ -4023,6 +4033,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * scales **vertically** and **horizontally**.
 
 - for production workloads, ES can use **Multi-AZ**.
+
+* **integrates with IAM** for **resource, identity and IP-based policies**.
+  Identity based policies should be used to narrow down the scope to given sercices, while resource based are applied to the domain level.
 
 #### ELK stack
 
@@ -4039,6 +4052,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 #### Code Commit
 
 - **hosted Git Repo**
+
+* can have **up to 10 triggers defined**. Main use case would be to configure SNS to send updates to other developers.
+
+- you can also **use comments** just like you would on github. For the best experience **use comments feature when you are signed as IAM user** (not federated , or temp credentials).
 
 #### CodeBuild
 
@@ -4068,6 +4085,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 #### CodePipeline
 
 - enables orchestration of all the above
+
+* you can implement **manual approval step**. The **pipeline will wait 7 days** in that step, if not approved / rejected , pipeline will timeout.
 
 ### Cognito
 
@@ -4587,6 +4606,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 * you can literally connect to a real device and use it, like iphone X.
 
+- this is **not a platform to perform load testing**. You should use **device farm for user testing**.
+
 ### AWS AppStream
 
 - gives you the ability to **deliver desktop aps by browser** or **installable client**
@@ -4828,4 +4849,4 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 TODO:
 
-- https://acloud.guru/exam-simulator/review?attemptId=d5369c13-7752-4e59-94d0-8b0e9ce37561&examId=1cbafe65-4493-4599-969a-0b27baecdcb6&courseId=aws-certified-devops-engineer-professional-2019
+- https://acloud.guru/exam-simulator/review?attemptId=12d189f2-28b6-45e4-92d4-7551aff0038b&examId=a380c748-ab8b-4cc4-8239-c979a4131588&courseId=aws-certified-devops-engineer-professional-2019
