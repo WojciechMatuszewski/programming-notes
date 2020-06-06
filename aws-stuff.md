@@ -575,25 +575,21 @@ An example for s3-prefix (folder)
 
 - helps you manage **large landscapes** like **100s of instances**
 
-- you have **inventory** which **collects OS, application and instances metadata (about instances)**. You can **send inventory data to S3** and query it with **Athena** or **QuickSight**
-
 * can be used for **both Windows and Linux machines**
 
 - there is an **agent (baked into modern Windows or Linux AMIs)** which you can install. That means that **you can manage on-prem instances aswell!**.
 
-* to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**
+* to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**. Remember that **when you have instances managed on prem** they will have **`mi`(managed instance) prefix**. **AWS instances have `i` prefix attached**.
 
 - there are **documents** which are basically **scripts (actions) that SSM can use to do stuff**.
-
-* **agent installed by default on modern AMIs**, can also be **downloaded and installed on-prem**
 
 - you **do not have to have SSH ports open**. You also **do not need SSH keys**.
 
 #### Automation
 
-- automate tasks that have to do with EC2
+- automate tasks that have to do with EC2.
 
-* you create **automation documents**
+* you create **automation documents**. These can be used to **eg. create AMIs**.
 
 - can be paired with **EC2 rescue document** to enable auto-repair for your instances.
 
@@ -630,6 +626,12 @@ An example for s3-prefix (folder)
 - this is basically to make sure your instance is in a desired state. And if something happens to make it go back to that desired state
 
 * can also be used to for **task automation on schedule**. This is done by creating an **association**.
+
+#### Inventory Manager
+
+- collect data about system properties, roles, etc.
+
+* can be visualized using `QuickSigth` (**by sending data to s3 first**).
 
 #### Parameter Store
 
@@ -2310,7 +2312,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * you can launch underlying instances using 2 types of "templates", **launch templates** and **launch configurations**:
   - both are immutable, but you can create **versions of launch template**
-  - **launch template is newer and recommmended by AWS**.
+  - **launch template is newer and recommmended by AWS**. You should always **prefer launch template as it has more options**.
 
 - controls scaling, where instances are launched, etc
 
@@ -2351,7 +2353,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - if you want to make requests through API (regarding Auto Scaling), you have to sign them using HMACK-SHA1
 
-#### Lifecycle hooks
+##### Lifecycle hooks
 
 - ASG exposes **lifecycle hooks**.
 
@@ -2359,23 +2361,59 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - **when is paused** state you can **do your stuff** like **perform a backup or save some data**.
 
-* this is usually used when your instance is stateful
+* this is usually used when your instance is stateful.
 
-#### Default termination policy
+- you should probably manually complete given lifecycle. Otherwise it will wait the maximum period.
 
-There are number of factors that are taken into consideration while picking which instance to terminate.
+##### Termination policies
 
-- **look at the type of the instance if the allocation strategy is specified**
+- which instance should be terminated and why.
 
-* if instance uses **old launch template** terminate that instance. **that launch template has to be the oldest. if there are more instances with the same old launch templates, skip this step**
+* you can have **multiple termination policies (even define all of them)**. There is an **order to which these policies are applied**. The order is **dictated by how you define your policies**.
 
-- terminate based on **how close an instance is to next billing hour**. Again **if there are multiple of such instances, skip this step**.
+- there are multiple termination policies, most of them are self explanatory:
+  - `OldestInstance`
+  - `NewestInstance`
+  - `OldestLaunchConfiguration`
+  - `OldestLaunchTemplate`: remember that **you should favour launch templates**.
+  - `ClosestToNextInstanceHour`
+  - `Default`: remmeber that **default will always apply first to AZ with the most instances**
 
-* pick **random instance**
+###### Default termination policy
 
-Regardless of these steps, default termination policy will try to terminate instances **in the AZ that has the most amount of instances**.
+- the `default` termination policy is will perform other termination policies based on given criteria. There is a flowchart for that
 
-##### Migration
+* the steps are
+  - `oldestLaunchConfiguration`
+  - `ClosestToNextInstanceHour`
+  - random instance
+
+##### Instance Protection
+
+- no matter what happens, given instance will not be terminated.
+
+* can be applied to asg or individual instance
+
+- can be terminated manually.
+
+* **instance protection starts when instance is in `InService` state**.
+
+- **instance protection** is **not the same** as **termination protection**. You can still
+  - **terminate it manually**
+  - use `terminate-instancees` comand
+  - you asg can also run `TerminateInstances` action.
+
+* to make sure that your instance **will not be terminated event if marked as unhealthy** use **termination protection**.
+
+##### Suspend processes
+
+- this allow you to suspend asg processes
+
+* useful for where you want to resize your instance - thiswould require termination, thus asg would most likely spin a new instance.
+
+- you can **even suspend health checks**.
+
+#### Migration
 
 - remember that **security groups are regional**
 
@@ -3053,6 +3091,12 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - your targets can be **Kinesis Firehose** and **Kinesis Data Analytics** and even **Data Stream itself**. This enables you to create 0 code infrastructure.
 
 * normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
+
+###### Monitoring
+
+- you should monitor **IteratorAge** to make sure you do not have any `poison pill` messages within your stream.
+
+* also worth moniroting **MillisBehindLatest**. High `MillisBehindLatest` can indicate that you are dropping records (**you cannot consume them fast enough**).
 
 ##### Kinesis Video Streams
 
@@ -3944,6 +3988,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you **only have to tick 1 box to make it work**
 
+- if you want notifications about auto-healing you should **look into CloudWatch (events)**. There is no native ops-work integration when it comes to auto-healing and sns.
+
 #### Instances
 
 - there are multiple instance types:
@@ -4261,17 +4307,23 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 #### Wait Conditions
 
-- coordinate stack resource creation with something that is external to your stack
+- coordinate stack resource creation with something **that is external to your stack**.
 
-* you could also track configuration process
+* you could also track configuration process.
 
 - used internally when using **creation policies**. The `creation-policy` is the preffered way of using `wait conditions`.
+
+* it generates **presigned URL** which is used to **communicate that given resource is ready / was created**.
 
 #### Mappings
 
 - this is a `key:value` structure that is designed to be used with `FindInMap` intrinsic function.
 
 * usually used in a context of AMI ids per region.
+
+#### Macros
+
+- similarly to `Custom Resouces` you create a lambda function. This lambda function will be used to **modify the template itself**.
 
 ### AWS Glue
 
