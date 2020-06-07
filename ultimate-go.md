@@ -695,6 +695,40 @@ What's worth noting is that **whenever you have to specify `wg.Add(1)` somewhere
 
 * `runtime.Gosched` allows you to practice so called _chaos engineering_. **SHOULD NOT BE USED IN A PRODUCTION CODE**. But it can be useful when testing code. It says to the runtime "now I'm willing to give up my processor context and allow others to run". Keep in mind that his is only a signal, not a demand. Runtime does not have to listen.
 
+### ErrorGroups
+
+These can be useful if you want **all goroutines to run and THEN handle errors**.
+
+```go
+func fetchAll(ctx context.Context) error {
+	errs, ctx := errgroup.WithContext(ctx)
+
+	// run all the http requests in parallel
+	for i := 0; i < 10; i++ {
+		id := i
+		errs.Go(func() error {
+			fmt.Printf("starting task %v \n", id)
+			time.Sleep(time.Second)
+			if rand.Int() % 2 == 0 {
+				fmt.Printf("task %v ERRORED \n", id)
+				return errors.Errorf("task %v boom", id)
+			}
+			fmt.Printf("task %v finished \n", id)
+			return nil
+		})
+	}
+	// Wait for completion and return the first error (if any)
+	return errs.Wait()
+}
+
+func main() {
+	err := fetchAll(context.Background())
+	fmt.Println(err)
+}
+```
+
+Please note that **only the first error will be reported**. Kinda bummer, I know.
+
 ### Deadlocks
 
 Deadlock means that every single goroutine is within a _waiting state_. **Usually happens when you forgot to call `wg.Done` somewhere**.
