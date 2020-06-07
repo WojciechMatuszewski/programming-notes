@@ -447,7 +447,7 @@ An example for s3-prefix (folder)
 
 - allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use all-features**
 
-* you can share **a lot of stuff**. Most **notable are subnets**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
+* you can share **a lot of stuff**. Most **notable are subnets and AMIs**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
 
 - when you are working with RAM the key keyword is **trusted access**.
 
@@ -1168,6 +1168,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - **with multi-az deployments standby db only comes into play when your primary failed**
 
 * when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
+
+- when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all costs, **create read replica** and **update the engine on the replica**. Then promote the replica.
 
 - since the **failover, just like master is within a VPC** you have to **make sure that the failover subnet routing rules are the same as master**. Otherwise you might have a situation where a failover happens and you cannot connect to your instance because routing rules are not configured correctly.
 
@@ -4127,6 +4129,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * when it comes to **ECS, it allows you to create blue / green (traffic shifts)** with that aswell.
 
 - can **integrate with AWS Config** to make sure changes are compliant, otherwise they will not deploy.
+
+##### Deploying to ASG
+
+- it may happen that **scale out event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
+
+* you should **suspend asg for the deployment period** or **redeploy your application again** after the initial deployment.
 
 #### CodePipeline
 

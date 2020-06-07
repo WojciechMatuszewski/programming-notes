@@ -22,6 +22,44 @@ vpc: ...
 vpc: ${file(file):vpc}
 ```
 
+## APIGW
+
+### Mapping templates
+
+The dreaded mapping templates, **who the fuck likes VTL?!**.
+
+It can be useful though. One scenario I've encounter is to assign a static property to request body. This can be done using `mapping templates` at `apigw` level, no need for code.
+
+```vtl
+{
+  #set($inputRoot = $util.parseJson($input.json('$')))
+  "body" : {
+    #foreach($entry in $inputRoot.entrySet())
+    "$entry.key": "$entry.value"
+    #end
+    "foo":"bar"
+  }
+}
+
+```
+
+Pretty straight forward right? As much as I hate using `vtl`, it's not that bad. The `foo:bar` key-pair is the static one, will always be there, no matter the body.
+
+You can take this a step forward and only include it IF there there are no such property within the body already.
+
+```vtl
+ "body" : {
+    #foreach($entry in $inputRoot.entrySet())
+    "$entry.key": "$entry.value"
+    #end
+    #if(!$inputRoot.containsKey("foo"))
+    "foo": "bar"
+    #end
+  }
+```
+
+This can help you when you have differences between given APIs (running 2 lambdas versions).
+
 ## Running functions locally
 
 ### Serverless Invoke
