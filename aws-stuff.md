@@ -229,6 +229,24 @@ First thing first **you will need a role that will be shared along all your on p
 
 * you can **leverage tags** to create access control lists based on tags.
 
+##### Resource arn syntax
+
+There is a standard `arn` indentifier which is assigned to every resource
+
+```
+arn:partition:service:region:account:resource
+```
+
+You might be wondering why `s3` have `arn` defined as:
+
+```
+arn:aws:s3:::example_bucket
+```
+
+This is very different from other services where you have to specify most (if not all parts of the syntax).
+
+It turns out that this is somewhat **service specyfic**. For global services you can skip the `region` part, and it just happens that for `s3` you can skip both `region` and `account`.
+
 ##### Resource Policy
 
 Now we are in the domain of a given service / resource.
@@ -2810,20 +2828,19 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * **by default** CloudWatch **pushes logs every 5 mins**. You can **enable Detailed Monitoring** which will enable **logging in 1 min intervals** but that solution **is a paid feature, per instance**
 
+- the more frequently you publish metrics data the less they stay at that resolution. CloudWatch will after some time aggregate points to a metric with lower resolution eg. 60 secs => 5 mins and so on.
+
+* **namespace groups related metrics**
+
+##### Metrics and dashboards
+
 - You can create **custom CloudWatch metrics**. This will enable you to **eg. monitor RAM on EC2**. With **custom CloudWatch metrics** you can setup **High Resolution metrics** which **will log up to 1 second intervals (the fastest possible)**.
 
 * with **High Res metrics** alarms **will trigger in 10 secs intervals**. Image it triggering every second 😂
 
 - you can create dashboards from metrics. These **dashboards can be shared between accounts and / or within an organization**.
 
-* **CloudTrail IS NOT THE SAME AS CloudWatch**
-
-  - **CloudWatch** - performance
-  - **CloudTrail** - CCTV camera, **monitors AWS API calls**
-
-- the more frequently you publish metrics data the less they stay at that resolution. CloudWatch will after some time aggregate points to a metric with lower resolution eg. 60 secs => 5 mins and so on.
-
-* **namespace groups related metrics**
+* you **can export dashboards to s3 (the data points)**. This is done **by using cli `get-metric-statistics` command / lambda + cloudwatch rule**.
 
 ##### Alarams
 
@@ -2886,19 +2903,27 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
   - **data events**: **resource operations** performed **on or within the resource**
   - **management events**:
 
-- **enabled by default for all new accounts**
+- **enabled by default for all new accounts**.
 
-* **logs** can be **stored on S3 or can be pushed to CloudWatch**
+* **logs** can be **stored on S3 or can be pushed to CloudWatch**. Log files which are **stored on s3, are using SSE-S3 by default!**.
 
-- **event history** persists **up to 90 days**
+- **event history** persists **up to 90 days**.
 
-* you can create **one trial** and **apply it to multiple regions**
+* you can create **one trial** and **apply it to multiple regions**.
 
 - you **can trigger CloudWatch events usng CloudTrial events**. Pretty neat!.
 
+* event are not delivered in real-time. There can be **up to 15mins delay**.
+
+##### Log integrity
+
+- you can check the integrity of the log files using **cli**.
+
+* you need **`digest files`** to do so. These are **delivered every hour to your s3 bucket**.
+
 ##### Data Events
 
-- by **default** CloudTrial **does not log S3 put/get events** and **lambda invocations**
+- by **default** CloudTrail **does not log S3 put/get events** and **lambda invocations**
 
 * you can **enable data events** to **have those events logged**.
 
@@ -2906,7 +2931,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 ##### Global events
 
-- remember that **by default** CloudTrial **does not _listen_ to global events**, like IAM actions.
+- remember that **by default** CloudTrail **does not _listen_ to global events**, like IAM actions.
 
 * make sure to enable capturing global actions as well.
 
@@ -3044,9 +3069,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **fully managed**
 
-* ingest big amounts of data in real-time
+* ingest big amounts of data in real-time.
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed. This is why Kinesis is know for the **data immutability**.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -3060,13 +3085,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ##### Kinesis Data Firehose
 
-- allows you to **store data from kinesis stream on persistent storage**
+- allows you to **store data from kinesis stream on persistent storage, IN NEAR REAL-TIME (minimum 1 min. interval)**. The `near real-time` is very important here.
+  Let's say you want to implement a search functionality `in real-time` using `ES`. You **would not use Firehose for that**, you would have to write a lambda function kinesis consumer. On the other hand, if the requirement was `near real-time`, it is completely ok to do it using `Firehose`.
 
 * it can **modify the data before storing it**. You should probably **transform the data to parqet format**.
 
-- **you do not have to specify capacity upfront**
+- **you do not have to specify capacity upfront**.
 
-* **data** can be **send to S3, Redshift, AWS ES, Splunk**
+* **data** can be **send to S3, Redshift, AWS ES, Splunk**. Remember that **FIREHOSE DOES NOT INTEGRATE WITH `QuickSight`**.
 
 - very useful for **replayability and disaster recovery**. You can replay your events from s3 directly.
 
@@ -3074,15 +3100,17 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ##### Kinesis Data Analytics
 
-- allows you to make **sql queries against data in the stream**
+- this is **data flows real-time**.
 
-* can ingest from **kinesis stream and kinesis firehose**
+* allows you to make **sql queries against data in the stream**
 
-- **serverless product**
+- can ingest from **kinesis stream and kinesis firehose**
 
-* can be used for **ETL on streaming data**.
+* **serverless product**
 
-- can have lambda as target (also s3, redshift, rds).
+- can be used for **ETL on streaming data**.
+
+* can have lambda as target (also s3, redshift, rds).
 
 ##### Kinesis Data Streams
 
