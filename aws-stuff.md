@@ -563,8 +563,6 @@ An example for s3-prefix (folder)
 
 * keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
 
-- it **exposes SNS topic (you can also run lambda on changes)** so that you can **react to compliance events**. This way you can do something with the resources yourself.
-
 #### Multi-account
 
 - you can get a **multi-account, multi-region view of configuration and compliance**.
@@ -574,6 +572,14 @@ An example for s3-prefix (folder)
 - does not cost anything for existing Config consumers.
 
 * uses the notion of **aggregator**. This aggregator is responsible for discovery and aggregation of compliance data.
+
+#### Remediate mechanism
+
+- it enables you to run **bunch of stuff in an event of `non-compliance`**. This list **includes specifying SNS topic**.
+
+* if you want to run **lambda when resource in non-compliant**, you should use **`CloudWatch rules` and create CloudTrial event pattern**.
+
+- you can let **AWS config shutdown EC2 instance automatically when that instance is not compliant**.
 
 ### License Manager
 
@@ -659,11 +665,19 @@ An example for s3-prefix (folder)
 
 * the data is **structural**. You declare **paths to given values like an url: /dupa/dupa1**
 
-- **keys can be encrypted (secure string)** using **KMS**. This is an **ideal solution for passwords for DB for smth**
+- **keys can be encrypted (secure string)** using **KMS**.
 
-* **scallable** and **serverless**
+* **scallable** and **serverless**.
 
 - very useful for **distributing config inside ASG**
+
+#### Secrets Manager
+
+- while you can store secrets within `Parameter Store`, **`Secrets Manager` rotate the secrets (automatically or programatically)**;
+
+* this is an **ideal solution for passwords for DB for smth**.
+
+- if you need to **rotate secrets programatically**, you can do it by using **lambda**.
 
 ##### Advanced Parameters
 
@@ -1412,6 +1426,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **failover is much faster than CRR read-replica**
 
+##### Crash recovery
+
+- Aurora will **automatically recover from crashing** on parallel threads. This means that **there is also no downtime "almost instantaneously"**.
+
+* this is **not the case with RDS** which, when crashed, **usually takes up to 30 mins to recover**.
+
 #### Aurora Serverless
 
 - uses **ACUs** which is a **unit of measurement for processing(compute) and memory in Aurora Serverless**
@@ -1878,13 +1898,19 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
 
-#### Monitoring
+#### Access Logs
+
+- if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3 (sse-s3 by default)**. These allow you to get information about **individual requests** like IP address of the client, latencies etc.
+
+* **access logs are not the same as error logs**.
+
+- logs are **delivered on a time-interval**. You can pick **2 values: 5 mins, or 60 mins**.
+
+#### CloudWatch
 
 - **logs send to CloudWatch in 60sec interval IF there are reqests flowing through the load balancer**
 
-* if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3**. These allow you to get information about **individual requests** like IP address of the client, latencies etc..
-
-- **access logs are not the same as error logs**.
+* this is not the same as `access logs`. **Access logs contains details about a single request**, the CloudWatch metrics give you **broader view on the ALB as a whole**.
 
 #### Health Checks
 
@@ -2848,6 +2874,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * alarms can **take actions**, like **trigger ASG action / send SNS notification**.
 
+###### Billing Alarms
+
+- you can switch to `n.viriginia` to get to billing dashboards
+
+* you can create **normal, cloudwatch alarams on those billing dashboars**. You can do it per service or overall.
+
 ##### Logs
 
 - **log group is a container for a log streams** which have the same specifications (retention etc...)
@@ -2886,6 +2918,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 * you can even **make some actions based on events comming from different services**.
 
 - you can create a rule which has multiple targets.
+
+* you **cannot use `CloudWatch Alarms` as source**.
 
 ##### Dashboards
 
@@ -4937,4 +4971,8 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 TODO:
 
-- https://acloud.guru/exam-simulator/review?attemptId=12d189f2-28b6-45e4-92d4-7551aff0038b&examId=a380c748-ab8b-4cc4-8239-c979a4131588&courseId=aws-certified-devops-engineer-professional-2019
+- cloud formation section on linux academy.
+
+- https://acloud.guru/exam-simulator/review?attemptId=c110118f-16d7-4e3b-bd86-6f0bb5595c82&examId=273b533b-21c6-4796-8573-f87d2d108fd5&courseId=aws-certified-devops-engineer-professional-2019
+
+basically `Policies and Standards Automation` (finished 3rd question)
