@@ -617,6 +617,8 @@ An example for s3-prefix (folder)
 
 - can be paired with **EC2 rescue document** to enable auto-repair for your instances.
 
+* for **more complex scenarios like error handling** you should prefer using `Step Functions`.
+
 #### Session Manager - Running commands on instances
 
 - this **can be** done **without using SSH** for both **Windows** and **Linux** instances
@@ -2846,6 +2848,16 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * you can create **custom a custom platform**. This is much more involving. It uses **Packer instead of Docker**.
 
+#### Environments
+
+- there are multiple pre-defined envirioments you can use.
+
+##### Worker Environment
+
+- this is where you have SQS queue and your instances are listening on `localhost`.
+
+* you can create a special `cron.yml` file which **sends POST requests to `localhost` on a period**.
+
 ### Monitoring Services
 
 #### CloudWatch
@@ -4385,6 +4397,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * it generates **presigned URL** which is used to **communicate that given resource is ready / was created**.
 
+- you can **also use helper scripts (`cfn signal)** for **communication**.
+
 #### Mappings
 
 - this is a `key:value` structure that is designed to be used with `FindInMap` intrinsic function.
@@ -4394,6 +4408,16 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 #### Macros
 
 - similarly to `Custom Resouces` you create a lambda function. This lambda function will be used to **modify the template itself**.
+
+#### Helper scripts
+
+- these are utilities provided by CloudFormation to **orchestrate, notify CF when changes happen to the underlying resources**
+
+* mostly used by non-serverless components like EC2 (there you want your programs to report to CF during setup).
+
+- there are multiple helper scripts
+  - `cfn hup`: **deamon which detects changes in resource metadata**
+  - `cfn signal`: used for `WaitConditions`, coordination between resources
 
 ### AWS Glue
 
