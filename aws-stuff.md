@@ -1044,6 +1044,10 @@ So when to use what?
 
 - these can be send to **SNS, SQS or Lambda**.
 
+* the events are **object based events**. If you want **all s3 events** you should:
+  - create **`CloudTrail` for this bucket**
+  - use **`CloudWatch rule` with `CloudTrail` integration** and select given destination.
+
 ### Storage Gateway
 
 - prefer if you have any kind of integration with `on-prem`.
@@ -2880,6 +2884,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * you **can export dashboards to s3 (the data points)**. This is done **by using cli `get-metric-statistics` command / lambda + cloudwatch rule**.
 
+- **dashboards** are used to **correlate data**. This is just a **fancy way of saying having multiple graphs near each other (as widgets)**.
+
+##### Billing dashboard
+
+- remember that **billing metrics are only available within `north virginia (eu-west-1) region`**.
+
+* you can, just like with other metrics, create automatic dashboards.
+
 ##### Alarams
 
 - they **react to given metric**
@@ -2909,11 +2921,23 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
   - **Disk**
   - **Status check**
 
-- for **non standard metrics like RAM usage** you can install **CloudWatch agent** to push those to custom metric.
+- for **non standard metrics like RAM usage** you can install **CloudWatch unified log agent** to push those to custom metric.
 
 * you would use **CloudWatch Logs** for creating **application-level alarms**. This could be number of errors and such.
 
-- you can **stream logs to lambda or Elasticsearch**
+- you can **stream logs to lambda or Elasticsearch**.
+
+* you can **export logs directly to S3**. You have to remember though about permissions (`getBucketAcl`). Otherwise you will not be able to export the data, even though your bucket might be public.
+
+- the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real time (buffered) use `Kinesis Firehose`**.
+
+##### Unified log agent
+
+- this is the **new tool for pushing LOGS AND METRICS to `CloudWatch logs`**.
+
+* previously with `CloudWatch agent` you had 2 separate scripts to do what the `unified agent is doing at the moment`.
+
+- **config file**, by default, **is pushed to SSM**.
 
 ##### Events
 
@@ -2932,6 +2956,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can create a rule which has multiple targets.
 
 * you **cannot use `CloudWatch Alarms` as source**.
+
+- there are multiple predefined events but you can also **integrate with `CloudTrail`** to have access to **every event except `List`, `Get` or `Describe`**.
 
 ##### Dashboards
 
