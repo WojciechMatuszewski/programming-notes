@@ -686,6 +686,77 @@ You can actually limit the number of cores golang uses
     runtime.GOMAXPROCS(1)
 ```
 
+### `defer` statement
+
+It is crucial to understand how `defer` works in terms of `closure` and the execution environment.
+
+#### LIFO
+
+`defer` creates `LIFO` structure, this means that this:
+
+```go
+defer fmt.Println("first in the code")
+defer fmt.Println("second in the code")
+```
+
+will produce the following log:
+
+```
+last in the code
+first in the code
+```
+
+#### Evaluation
+
+`defer` is evaluated using normal flow. That means that the **`defer` itself is evaluated within the standard code flow**
+
+```go
+fmt.Println("doing work")
+
+defer fmt.Println("doing more work") // defer is evaluated right here
+
+fmt.Println("some other work")
+```
+
+But the confusion usually comes when we use `defer` with functions (usually anonymous ones).
+When it comes to functions and defer, the same rules apply, BUT, **the code inside the defferred function is RUN WHEN DEFER RUNS!**.
+
+```go
+fmt.Println("work")
+
+defer func() {
+  fmt.Println("invoked")
+}() // defer evaluated, scoped and closure captured
+
+fmt.Println("finished")
+
+// NOW, here, the fmt.Println("invoked") gets run!
+```
+
+That means that the **closure is evaluated at `defer` evaluation time!**.
+
+```go
+var err error
+defer func() {
+  fmt.Println("first defer", err)
+}()
+
+defer func(e error){
+  fmt.Println("second defer", e)
+}(err)
+
+err = errors.New("boom")
+```
+
+will produce
+
+```
+  second defer <nil>
+  first defer boom
+```
+
+See? **the closure was evaluated at the `defer` evaluation time (second defer)**, while the **first defer reported the error because the function ran after it was assigned value (no inner closure)**.
+
 ### WaitGroups
 
 Because you explicitly need to pass the number of `goroutines` that are going to be running you must reflect on your implementation. Nice!
