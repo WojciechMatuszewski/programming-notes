@@ -4108,6 +4108,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
   - **create and start new instances** to **replace your current ones**.
   - **on Linux-based instances** you can **run `Update Dependencies stack command`**.
 
+#### Blue-green deployments
+
+- just like with `ElasticBeanstalk` there is a possibility to do blue green deployments with `OpsWorks`
+
+* you shoukd **clone the entire stack** and **change DNS to the other stack**. Much more involved than EB but it works.
+
 ### WAF (Web Application Firewall)
 
 - **layer 7**.
@@ -4471,9 +4477,11 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - **shows you** when given service is **using more than a service limit**
 
-* what is very important is that **Trusted Advisor is more about accounts and IAM**. This is something completely different than AWS Inspector which has to deal with EC2 instances mostly.
+* what is very important is that **Trusted Advisor is more about accounts and IAM and unused resources**. This is something completely different than AWS Inspector which has to deal with EC2 instances mostly.
 
 - you can use **AWS Service Quotas** to change **service limits** that you emposed. This is **something that trusted advisor alone cannot do!**.
+
+* it has **reports on underutilized resources which can greatly help with cost savings**.
 
 ### KMS
 
