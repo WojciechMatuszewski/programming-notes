@@ -603,11 +603,15 @@ An example for s3-prefix (folder)
 
 - there is an **agent (baked into modern Windows or Linux AMIs)** which you can install. That means that **you can manage on-prem instances aswell!**.
 
-* to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**. Remember that **when you have instances managed on prem** they will have **`mi`(managed instance) prefix**. **AWS instances have `i` prefix attached**.
-
 - there are **documents** which are basically **scripts (actions) that SSM can use to do stuff**.
 
 - you **do not have to have SSH ports open**. You also **do not need SSH keys**.
+
+#### Managed instances
+
+- to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**. Remember that **when you have instances managed on prem** they will have **`mi`(managed instance) prefix**. **AWS instances have `i` prefix attached**.
+
+* **activation on prem** is **done using single activation code**. You do not have to create separate code for every instance.
 
 #### Automation
 
@@ -667,7 +671,7 @@ An example for s3-prefix (folder)
 
 * the data is **structural**. You declare **paths to given values like an url: /dupa/dupa1**
 
-- **keys can be encrypted (secure string)** using **KMS**.
+- **keys can be encrypted (secure string)** using **KMS**. They also have **versions, and history of edits**.
 
 * **scallable** and **serverless**.
 
@@ -2925,7 +2929,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * you would use **CloudWatch Logs** for creating **application-level alarms**. This could be number of errors and such.
 
-- you can **stream logs to lambda or Elasticsearch**.
+- you can **stream logs to lambda or Elasticsearch (uses lambda underneath)**.
 
 * you can **export logs directly to S3**. You have to remember though about permissions (`getBucketAcl`). Otherwise you will not be able to export the data, even though your bucket might be public.
 
@@ -4014,6 +4018,18 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * very often used with `ReceiveCount` attribute, like **specifying `maxReceiveCount`**.
 
+### SES
+
+- for sending **emails, and only emails**.
+
+* you can send **rich text, multimedia etc...**
+
+#### SES vs SNS (email)
+
+- **SNS** is for **simple UTF-8 text based emails**
+
+* **SES** is for **reach, containing multi-media emails**.
+
 ### EventBridge
 
 - SNS and SQS combined (more or less)
@@ -4207,9 +4223,17 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **hosted Git Repo**
 
-* can have **up to 10 triggers defined**. Main use case would be to configure SNS to send updates to other developers.
-
 - you can also **use comments** just like you would on github. For the best experience **use comments feature when you are signed as IAM user** (not federated , or temp credentials).
+
+##### Tiggers
+
+- can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates** to other developers.
+
+* they **only fire when someone pushes to the repository**.
+
+##### Notifications
+
+- while **triggers are used to take action on something happening**, these **should be used for actually implementing notifications**.
 
 #### CodeBuild
 
@@ -4808,7 +4832,11 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - it can also **tell you how is accessing sensible files most often**.
 
-* very **useful for GDPR**
+* very **useful for GDPR**.
+
+- can generate **dashboards** which report on **high-risk objects, user sessions etc**
+
+* it has some **built-in alerting**. You can also **create your own alerts**.
 
 ### Mobile Hub
 
