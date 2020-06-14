@@ -637,7 +637,11 @@ An example for s3-prefix (folder)
 
 - there is a concept of a **patch manager**. This tool enables you to **discover missing updates, update multiple or single instances**.
 
-* there are multiple **patching strategies available**
+* there are multiple **patching strategies available**.
+
+- to apply patches you should **combine maintenance windows with `Run Command`**.
+
+* your **patches can have custom origin!**.
 
 #### Maintenance windows
 
