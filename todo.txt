@@ -2,3 +2,7 @@
 - https://ieftimov.com/post/testing-in-go-golden-files/
 - https://2ality.com/2020/01/typing-objects-typescript.html#object-with-uppercase-%E2%80%9Co%E2%80%9D%3A-instances-of-class-object
 
+- https://medium.com/faun/start-stop-aws-ec2-instances-using-aws-iot-button-aws-lambda-5f5628efc0f7
+- https://aws.amazon.com/blogs/compute/building-well-architected-serverless-applications-approaching-application-lifecycle-management-part-1/?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%2394
+- https://medium.com/swlh/structuring-serverless-projects-2a9a82f7732d
+- https://blog.thundra.io/will-aws-managed-cassandra-replace-dynamodb?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%2394
