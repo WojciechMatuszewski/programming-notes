@@ -2130,6 +2130,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * another option is to **run your own DNS server on EC2**.
 
+#### Delegation sets
+
+- when you create a hosted zone, **by default**, that hosted zone will get **different set of name servers assigned**. This can be **problematic when you have to manage multiple hosted zones**.
+
+* you can create **reusable delegation sets (set of name servers)** which you can **use to create hosted zones with**. The **underlying name servers will always be the same (from the delegation set)**.
+
 #### DDOS
 
 - R53 is considered to be **DDOS resilient**.
