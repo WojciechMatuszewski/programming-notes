@@ -73,3 +73,75 @@ Notes from FrontendMasters workshop.
 - you can use it with media queries (media query reacts on hardware level, eg.
   user preferences inside system settings)
 - should be used to soften or turn off given animation
+
+## Attributes
+
+### `aria-labelledby`
+
+This attribute is useful when you need to group elements.
+
+It takes groups of `ids` to group those elements together.
+
+As an example, lets suppose you have such structure
+
+```jsx
+<p>
+  Your movies list is empty<Link to={to}>Add some</Link>
+</p>
+```
+
+This would result in screen readers reading it as:
+
+- "Your movies list is empty"
+- "Add some"
+
+Which feels disconnected does not it?
+
+We can fix it by using `aria-labelledby` and a simple `div` tag.
+
+```jsx
+<div aria-labelledby="text link">
+  <span id="text">Your movies list is empty</span>
+  <Link to={to} id="link">
+    Add some
+  </Link>
+</div>
+```
+
+Now both of these elements would be read after each other, much better :).
+
+### `aria-describedby`
+
+I would use this attribute mainly with forms and helper text / error text.
+
+Lets say your structure looks as follows:
+
+```jsx
+<input id="id" type="text" />;
+{
+  helperText && <span>Helper text</span>;
+}
+{
+  errorText && <span>Error Text</span>;
+}
+```
+
+The problem with this structure is that `helperText` and `errorText` is not associated with the `input`, thus not being read by screen readers.
+
+To fix the issue you should use `aria-describedby` attribute.
+
+```jsx
+// the ids for helper and error text should be created dinamically
+const helperTextID = helperText ? `${name}-helper` : ""
+const errorTextID = errorText && isInvalid ? `${name}-error}`: ""
+<input id = "id" type = "text" aria-describedby= {`${helperTextID} ${errorTextID}`}>
+
+{
+  helperText && <span id = {helperTextID}>Helper text</span>;
+}
+{
+  errorText && <span id = {errorTextId}>Error Text</span>;
+}
+```
+
+Much better!
