@@ -43,6 +43,27 @@ expect(dateFromMockCalls.getTime()).toBeLessOrEqual(post.getTime())
 
 Use `event.target.elements` to get all form elements. **You have to add name prop to the form elements**
 
+## `JSX` pragma
+
+Sometimes when scrolling through some library (usually UI-related) documentation, you might encounter this syntax:
+
+```js
+/** @jsx jsx */
+// imports
+
+// code
+```
+
+This is usually done to **customize the transition from JSX to JS by using custom `React.createElement` function**.
+
+One usage of this would be emotion `css` prop.
+
+And do not look surprised, you already know one pragma (a directive really) that exists in vanilla JS, the **strict mode**.
+
+```js
+"use strict";
+```
+
 ## Resetting Component State with key property
 
 `key` is used to help React track changes and basically be able to tell whats

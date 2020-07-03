@@ -67,11 +67,15 @@
 
 * for **memory usage information** you can either look into **CloudWatch logs** or you can **create metrics using metric filter (not provided by default)**. The metric filter is very useful if you want to have the graph that includes **allocated memory vs used memory**.
 
+#### X-Ray
+
 - you can **use XRay for distributed tracing**.
 
 * remeber that **X-Ray collects data of INCOMMING requests. Not only those made within / outside our service**
 
 - **X-Ray works in real-time**. Can be used for real-time monitoring.
+
+- X-Ray **does not sample every request**. This is quite important since that means that the data completeness is not guaranteed and it **should not be used as a audit mechanism**.
 
 #### Lambda @ Edge
 
