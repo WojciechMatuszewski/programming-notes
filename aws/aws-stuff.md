@@ -4457,6 +4457,13 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * CF expects that the remote entity **responds with a correct response**.
 
+##### Lambda custom resources
+
+- you would use this technique to deal with **import cycles** or creating resources with sdk quickly.
+
+* very useful when you are dealing with a situation where a resource that you want to create
+  does not have `CloudFormation` support yet.
+
 #### Wait Conditions
 
 - coordinate stack resource creation with something **that is external to your stack**.
