@@ -102,7 +102,8 @@ const Component = React.forwardRef((props, ref) => {
 });
 ```
 
-With `useImperativeHandle` it gives you control over how the ref is used and what capabilities it exposes. Let's say you only want your users to be able to `focus` on a particular input within your element using ref.
+With `useImperativeHandle` it gives you control over how the ref is used and what capabilities it exposes.
+Let's say you only want your users to be able to `focus` on a particular input within your element using ref.
 
 ```jsx
 const Component = React.forwardRef((props, ref) => {
@@ -135,6 +136,8 @@ function Other() {
 ```
 
 I think this hook is not that useful in day-to-day work, but there are probably some use cases where if you do not use it, you might have a hard time doing something.
+
+The `useImperativeHandle` hook allows you too implement *bidirectional* flow of the data. Just like you could with class components and `React.ref`.
 
 ## Components as Functions Gotcha
 
