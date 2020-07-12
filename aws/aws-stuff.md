@@ -531,11 +531,17 @@ An example for s3-prefix (folder)
 
 #### Multi-region certs
 
-- you **can use** the **same SSL certificate from ACM in more than one region** but it **depends** on wheter you are using **ELB or CloudFront**.
+- you **can use** the **same SSL certificate from ACM in more than one region** but it **depends** on whether you are using **ELB or CloudFront**.
 
 * with **ELB** you have to **request a new cert for each region**.
 
 - with **CloudFront** you have to **request cert in n.virginia**. ACM certs within that region can be used for global cloudfront distributions.
+
+#### Zone Apex certs
+
+- you **have to** request a certificate that **has your apex listed** if you want it to **work with `*.example.com` and `example.com`**
+
+- the `*.example.com` certificate **does not cover zone apex domain!**.
 
 ### AWS Support Plans
 
