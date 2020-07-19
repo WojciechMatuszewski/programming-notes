@@ -41,3 +41,23 @@ log.Printf("main: Debug service ended %v", err)
 Keep in mind that the `cfg.Web.Debug` address should be protected, and only accessible by your team.
 
 You can now open your browser and navigate to `debug/pprof/` 🤯
+
+## `exprvar` metrics on http handlers
+
+There is so much tooling built-in to Go ❣️
+
+I already mentioned `pprof`, you did you know you can add your custom metrics there?
+
+You have to import `expvar` package for side effects
+```go
+import _ "expvar"
+```
+
+Now you can create your *dimmensions* if you will
+
+```go
+reqNum := expvar.NewInt("requests")
+reqNum.Add(1)
+```
+
+This is a very powerful technique which enables you to improve observability in your app. 
