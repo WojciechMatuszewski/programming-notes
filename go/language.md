@@ -18,4 +18,26 @@ when it comes to errors.
 This one is coming from the `pkg/errors`. **It carries out the unwrapping recursively** which is a huge plus.
 Definitely will be using this one from now on.
 
+## `pprof` handlers
 
+If you are using the default multiplexer for your http server, the `ServeMux`
+type, you can introduce metics to your server by using the `pprof` package.
+
+All you really have to do is to
+* Import the package as a side effect
+```go
+_ "net/http/pprof" // register the /debug/pprof handlers
+```
+* Register the default multiplexer
+
+```go
+package main
+
+log.Printf("main: Debug service listening on %s", cfg.Web.Debug)
+err := http.ListenAndServe(cfg.Web.Debug, http.DefaultServeMux)
+log.Printf("main: Debug service ended %v", err)
+```
+
+Keep in mind that the `cfg.Web.Debug` address should be protected, and only accessible by your team.
+
+You can now open your browser and navigate to `debug/pprof/` 🤯
