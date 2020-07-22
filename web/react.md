@@ -73,6 +73,43 @@ This may seem trivial but you can actually control this behavior right? Since
 you can pass a key to every component / jsx stuff we can manually re-instantiate
 a given component / node.
 
+## Referential identity and `React.memo`
+
+Lets re-introduce some JS basics. You probably already know this:
+
+```js
+true === true
+"string" === "string"
+
+{} !== {}
+```
+
+Pretty straightforward right? The last equality check has a huge impact on how `React.memo` works.
+
+As you probably know, `React.memo` uses `Object.is` under the hood. It's more or less glorified `===` under the hood (works for `NaN` values and the `-0` and `+0` edge cases).
+
+Either way, when you are passing an object as a prop to a component which uses `React.memo` you might find that component performing the whole render cycle again.
+
+```jsx
+<Component article={article} />;
+
+const Component = React.memo((article) => {
+  // still re-renders :CC
+});
+```
+
+So the problem is that `article` object. The _referential identity_ is not the same between re-renders.
+
+### Lesser known optimization
+
+Yes, you could pass the second parameter to the `React.memo`, but you might also do something like this
+
+```jsx
+<Component {...article} />
+```
+
+Why would this work? Well, know `React.memo` will be diffing between **primitives** (granted `article` does not have an object property). Since `React.memo` diffs between _primitives_, there is no referential identity to worry about.
+
 ## Lesser known hooks
 
 ### `useDebugValue`
@@ -137,7 +174,7 @@ function Other() {
 
 I think this hook is not that useful in day-to-day work, but there are probably some use cases where if you do not use it, you might have a hard time doing something.
 
-The `useImperativeHandle` hook allows you too implement *bidirectional* flow of the data. Just like you could with class components and `React.ref`.
+The `useImperativeHandle` hook allows you too implement _bidirectional_ flow of the data. Just like you could with class components and `React.ref`.
 
 ## Components as Functions Gotcha
 
@@ -209,7 +246,7 @@ Normally such syntax:
 return <Counter />;
 ```
 
-would create underlying `React.Element`. When created that way, React is able to associate hooks used inside `Counter` to `React.Element`.
+Would create underlying `React.Element`. When created that way, React is able to associate hooks used inside `Counter` to `React.Element`.
 
 But when you are trying to invoke the `Counter` directly:
 
@@ -417,9 +454,6 @@ const Component = ({ counter }) => {
 Or simply this:
 
 ```js
-function Eager(v) {
-  return v;
-}
 const Component = ({ counter }) => {
   const [count, setCount] = React.useState(counter);
   return <pre>{count}</pre>;
@@ -428,9 +462,7 @@ const Component = ({ counter }) => {
 
 Results in so called `stale-state`?. Well if you log the value inside the `Eager` function you will see the correct value of the `counter` is passed. So the state is not `stale` per se, **the component did not rerendered**. This is where **3 phases of actually rendering** comes in. Your functional component WAS invoked and the current (correct) value WAS passed into the `useState` hook, but no updates to the dom were committed.
 
-I think this misconception mainly has to do with not knowing about `committing, diffing, and rendering` phases. Yes, the fix to this is to use `useEffect` to trigger local state change, but nevertheless it's worth knowing that.
-
-TODO: so it seems like we are updating the same state. Since the value passed to `useState` is the current one, why does using `setState(counter)` solves the issue?. Normally React ignores updates when values are the same. Does this have to do with the 2 invocations when using the same state values?.
+This is happening because the _initial state_ is only set **once**, when the component is created. There is no magical sync between the initial state and the props.
 
 ## getSnapshotBeforeUpdate
 
