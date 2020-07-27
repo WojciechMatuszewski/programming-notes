@@ -583,6 +583,8 @@ An example for s3-prefix (folder)
 
 * uses the notion of **aggregator**. This aggregator is responsible for discovery and aggregation of compliance data.
 
+- there is a **limit** for the amount of **aggregators** you can have. The **default limit is 50**
+
 #### Remediate mechanism
 
 - it enables you to run **bunch of stuff in an event of `non-compliance`**. This list **includes specifying SNS topic**.
@@ -5086,6 +5088,4 @@ TODO:
 
 - cloud formation section on linux academy.
 
-- https://acloud.guru/exam-simulator/review?attemptId=c110118f-16d7-4e3b-bd86-6f0bb5595c82&examId=273b533b-21c6-4796-8573-f87d2d108fd5&courseId=aws-certified-devops-engineer-professional-2019
-
-basically `Policies and Standards Automation` (finished 3rd question)
+https://practice-exam.acloud.guru/aws-certified-devops-engineer-professional-2019/result/b7cc57f6-f5a3-4896-8e25-42abe4a1ed42
