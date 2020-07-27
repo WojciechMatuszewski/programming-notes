@@ -569,9 +569,17 @@ An example for s3-prefix (folder)
 
 * you can **traverse resource configuration over time**.
 
+* keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
+
+- there is a notion of **relationships**. There are things that are tied **together**. **Think EBS volumes and EC2 instances**.
+
+#### Rules
+
 - you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**. With this you can for example see if someone enabled inbound port on security group which you deemed non-compliant.
 
-* keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
+* there is a **cost** for **each rule**. This is **1 dollar per month**. Like really AWS?
+
+- with **custom rules** you have to have custom lambda written. This is the thing that will be reacting to config changes **and marking them as compliant or not**.
 
 #### Multi-account
 
@@ -587,11 +595,15 @@ An example for s3-prefix (folder)
 
 #### Remediate mechanism
 
-- it enables you to run **bunch of stuff in an event of `non-compliance`**. This list **includes specifying SNS topic**.
+- you can choose an action which is **predefined by AWS**.
 
-* if you want to run **lambda when resource in non-compliant**, you should use **`CloudWatch rules` and create CloudTrial event pattern**.
+* you can also use **CloudWatch events** with eg. a lambda function
 
-- you can let **AWS config shutdown EC2 instance automatically when that instance is not compliant**.
+- you can create an **Automation rule** within **Systems Manager**.
+
+#### Notifications
+
+- **notifications** are avaiable only for **SNS** for the **whole AWS Config**
 
 ### License Manager
 
