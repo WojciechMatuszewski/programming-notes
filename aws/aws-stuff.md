@@ -701,6 +701,8 @@ An example for s3-prefix (folder)
 
 - if you need to **rotate secrets programatically**, you can do it by using **lambda**.
 
+* there is a **limit** when it comes to **size of the secret**, that is **65kb**.
+
 ##### Advanced Parameters
 
 - you can switch any standart parameter to advanced at any time. **You cannot go back from standart to advanced**
@@ -2443,6 +2445,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you should probably manually complete given lifecycle. Otherwise it will wait the maximum period.
 
+* lifecycle hooks should be preferred way of adding any kind of dynamic elements eg. ENI
+
 ##### Termination policies
 
 - which instance should be terminated and why.
@@ -3195,6 +3199,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - very useful for **replayability and disaster recovery**. You can replay your events from s3 directly.
 
 * **there is no need to configure shards!**, this setting is automatic and completely hidden from you.
+
+- you can **transform** the data before sending it to given service. This is done **by lambda function being invoked by the _Firehose_ service**.
 
 ##### Kinesis Data Analytics
 
@@ -4268,6 +4274,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - when working with the buildspec, **do not define any env. variables that start with `CODE_BUILD`**. This prefix is reserved for internal use.
   Ignoring this advice might result in slower build speeds as that prefix also includes memory settings.
 
+* you can configure CodeBuild to have access to VPC. This will require you to specify VPC ID and SGs. Remember that **NAT GW or NAT instance** is **required**.
+
+- there are **metrics** available inside **CloudWatch**. These are about build mainly, success, failure, all that stuff.
+
 #### CodeDeploy
 
 - deploys packages to given services (like ElasticBeanstalk)
@@ -4293,6 +4303,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - enables orchestration of all the above
 
 * you can implement **manual approval step**. The **pipeline will wait 7 days** in that step, if not approved / rejected , pipeline will timeout.
+
+- you can integrate _CodePipeline_ with your github account by using either _OAuth_ or _personal access_ tokens.
 
 ### Cognito
 
