@@ -101,6 +101,14 @@
 
 * you can troubleshoot the problem by **setting concurrency limit to 0**. This will make it so your function is not invoked at all.
 
+#### Deployments with `CodeDeploy`
+
+- this is a neat solution where you want to perform `blue-green` on different lambda versions.
+
+* you will need to use an **alias**. The traffic **will be shifted by `CodeDeploy`**
+
+- just like a normal `CodeDeploy` deployment, there are **validation hooks** you can use to decide if your new alias is OK.
+
 ### Step Functions
 
 - **state machines as a service**
@@ -135,7 +143,7 @@
 
 - Users can have **programmatic access** to AWS console. This basically allows
   you to pass access key and secret key so that you can interact with developer
-  tools
+  tools.
 
 * Users **can be added to groups**. These groups **can have policies** assigned
   to them.
@@ -561,7 +569,7 @@ An example for s3-prefix (folder)
 
 - so CloudTrail monitors API calls to AWS services (made by your account). AWS Config **monitors your AWS resources configurations**.
 
-- you have too **tick additional checkbox** to **support monitoring global services (not only in a given region)**
+- you have too **tick an additional checkbox** to **support monitoring global services (not only in a given region)**
 
 * with AWS Config you can have **history of given resource configurations**
 
@@ -765,6 +773,8 @@ An example for s3-prefix (folder)
 - _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**.
 
 * can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
+
+- there is a hierarchy, _Portfolio_ contains many _Products_ which are just _CloudFormation_ templates.
 
 #### Constraints
 
@@ -1379,9 +1389,9 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **ALL NODES OF `Aurora multi-master`** have to be **in the same region**. This makes DynamoDB only database that supports multi-region multi master configuration.
 
-#### Paralel Query
+#### Parallel Query
 
-- massive **performance benefits** for **long running queries**
+- massive **performance benefits** for **long-running queries**
 
 * you have to manually select this option.
 
@@ -2856,27 +2866,34 @@ Way of grouping EC2 instances.
 
 * supports **multiple environments (dev, prod ...)**
 
-- **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**. You can make sure that the data is still there by **creating DB snaphost** or **creating any parts of your application that you do not want to accidentaly delete OUTSIDE Elastic Beanstalk env**.
+- **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**.
+  You can make sure the data is still there by **creating DB snapshot** or **creating any parts of your application that you do not want to accidentally delete OUTSIDE Elastic Beanstalk env**.
 
 #### Deployments
 
-- you **cannot deploy on premise!**
+- you **cannot deploy on the premise!**
+
+* you can have a **custom AMI** as your blueprint for the application.
 
 * there are several deployment options
 
 - **all at once**: **default** configuration, every instance is affected at once.
 
-* **rolling**: _Elastic Beanstalk_ splits instances into batches and **deploys new verion into them, batch by batch**. You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**.
+* **rolling**: _Elastic Beanstalk_ splits instances into batches and **deploys a version into them, batch by batch**.
+  You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**.
+  Be aware that with this deployment option, you will have a situation where clients are switching between application versions (Load balancer routing)
 
 - **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in a SEPARATE (temporary ASG)**.
+  This strategy is quite nice since clients **will not switch between different application versions**.
 
 * **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**. Before the introduction of per minute/hour billing this method was considered to be not very practical.
 
 #### Other deployment types
 
-- **minimum in-service deployment**: this one is **similar to rolling** but the orchestration service is greedy and is always **trying to deploy to as many instances as possible** while **keeping the minimum healthy** (**rolling has set batches**).
+- **minimum in-service deployment**: this one is **similar to rolling**, but the orchestration service is greedy and is always **trying to deploy to as many instances as possible** while **keeping the minimum healthy** (**rolling has set batches**).
 
-* **canary**: **similar to blue green** but **instead of being binary (either blue or green)** you **split traffic between green and blue**. Usually you shift this traffic using **weighted routing or lambda aliases**.
+* **canary**: **similar to blue-green** but **instead of being binary (either blue or green)** you **split traffic between green and blue**.
+  Usually you shift this traffic using **weighted routing or lambda aliases**.
 
 #### Updates
 
@@ -2884,7 +2901,13 @@ Way of grouping EC2 instances.
 
 * **in-place update** is **performing updates on live instances**
 
-* **disposable** is performing a **rolling update** where **new updates are brough up by terminating old ones (batches)**.
+- **disposable** is performing a **rolling update** where **new updates are brough up by terminating old ones (batches)**.
+
+#### Deleting a stack
+
+- while deleting a stack you might face a problem where **SG created by `Beanstalk` is used as a dependency in other SG**
+
+* this will result in a failure when trying to delete the environment
 
 #### Unsupported Platforms
 
@@ -2896,11 +2919,11 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 #### Environments
 
-- there are multiple pre-defined envirioments you can use.
+- there are multiple pre-defined environments you can use.
 
 ##### Worker Environment
 
-- this is where you have SQS queue and your instances are listening on `localhost`.
+- this is where you have SQS queue, and your instances are listening on `localhost`.
 
 * you can create a special `cron.yml` file which **sends POST requests to `localhost` on a period**.
 
@@ -3868,7 +3891,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * you **can create backup plans from JSON files**
 
-- there are also some **options to configure lifecycle, like moving backups to cold storage after X time after creation**.
+- there are also some **options to configure the lifecycle, like moving backups to cold storage after X time after creation**.
 
 * there are also **backup rules, backup plan can have multiple rules**.
 
@@ -4138,11 +4161,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **stack** as **top level construct**. Type of system like dev, prod, test or a specific application.
 
-* **layers** represent **individual pieces of functionallity** within a stack, something like ECS Cluster, RDS, or OpsWork Layer
+* **layers** represent **individual pieces of functionality** within a stack, something like ECS Cluster, RDS, or OpsWork Layer
 
 #### AutoHealing of instances
 
-- this is **like automatic healthchecks with autoscalling (but fixed)**
+- this is **like automatic health checks with an autoscaling (but fixed)**
 
 * you **only have to tick 1 box to make it work**
 
@@ -4848,6 +4871,20 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 * scans for **vulnarabilities and not IAM issues**
 
 - watches out for lack of best practices
+
+* can be used **with or without an agent**. Inspector **will not launch instances for you**.
+
+#### Assesments
+
+- is the thing that **defines things that Inspector will be checking**
+
+* _assesments runs_ can **generate reports** based on the findings.
+
+- you can run **assesemts on a schedule**. This is done using _CloudWatch_.
+
+#### Uses
+
+- the cool use of this technology I saw was around **validating golden AMI**. This can be done with automated pipeline.
 
 ### AWS WorkLink
 
