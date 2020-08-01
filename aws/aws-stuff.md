@@ -559,7 +559,7 @@ An example for s3-prefix (folder)
 
 - **enterprise**: for mission critical and big companies
 
-* **only business and enterprise** come with **full checks for trusted advisor**.
+* **only business and enterprise** come with **full checks for a trusted advisor**.
 
 - **business and enterprise** allow you to have **programmatic(API) access to AWS Support APIS**
 
@@ -583,11 +583,14 @@ An example for s3-prefix (folder)
 
 #### Rules
 
-- you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**. With this you can for example see if someone enabled inbound port on security group which you deemed non-compliant.
+- you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**. 
+  With this you can for example see if someone enabled inbound port on security group which you deemed non-compliant.
 
-* there is a **cost** for **each rule**. This is **1 dollar per month**. Like really AWS?
+* there is a const **per rule evaluation**. 
 
 - with **custom rules** you have to have custom lambda written. This is the thing that will be reacting to config changes **and marking them as compliant or not**.
+
+* the rule sends a **CloudWatch event**. You can intercept that event using **CloudWatch rules** and do smth with it.
 
 #### Multi-account
 
@@ -754,7 +757,7 @@ An example for s3-prefix (folder)
 
 - allows you to create **WAF rules** that are **cross accounts** and **span multiple resources**.
 
-* it **requires you accounts to be within Organization**. You can create policies there for all accounts (newly joined inherit those)
+* it **requires you account to be within Organization**. You can create policies there for all accounts (newly joined inherit those)
 
 - it **integrates with AWS Config**. So **whenever a new resource is created** Firewall Manager can **apply rules to that resource**
 
@@ -1793,7 +1796,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - Whats more **you can restrict access to a specific IP** using **WAF ACL and CloudFront**
 
-- You can also use **Geo Restriction**. This is **similar** to **R53 geolocation** but you get the **benefit of CDN (speed)**.
+- You can also use **Geo Restriction**. This is **similar** to **R53 geolocation**, but you get the **benefit of CDN (speed)**.
 
 * **SNI** is a way to present **multiple certs to a client**. Client has to **pick which cert. it wants**. Some old browsers do not support this technology.
 
@@ -4093,6 +4096,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **SES** is for **reach, containing multi-media emails**.
 
+
+
 ### EventBridge
 
 - SNS and SQS combined (more or less)
@@ -4191,8 +4196,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - just like with `ElasticBeanstalk` there is a possibility to do blue green deployments with `OpsWorks`
 
-* you shoukd **clone the entire stack** and **change DNS to the other stack**. Much more involved than EB but it works.
-
+* you should **clone the entire stack** and **change DNS to the other stack**. Much more involved than EB but it works.
+ 
 ### WAF (Web Application Firewall)
 
 - **layer 7**.
@@ -4201,7 +4206,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **traffic** is **filtered before reaching /\ services**
 
-* use **AWS Shield for DDOS protection, not WAF!**.
+* use **AWS Shield for DDOS protection, WAF is just to help you filter the request with rules**.
 
 #### WEB ACL
 
@@ -4288,7 +4293,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can also **use comments** just like you would on github. For the best experience **use comments feature when you are signed as IAM user** (not federated , or temp credentials).
 
-##### Tiggers
+##### Triggers
 
 - can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates** to other developers.
 
@@ -4300,7 +4305,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### CodeBuild
 
-- builds packages for deployment
+- Build packages for deployment
 
 * remember to **get the agent from correct region!**.
   This can happen when you are using `user data` to bootstrap the agent
@@ -4315,7 +4320,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### CodeDeploy
 
-- deploys packages to given services (like ElasticBeanstalk)
+- Deploy packages to given services (like ElasticBeanstalk)
 
 - allows you to perform **rolling** updates for **ec2 instances**.
 
@@ -4329,7 +4334,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 ##### Deploying to ASG
 
-- it may happen that **scale out event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
+- it may happen that **scale out an event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
 
 * you should **suspend asg for the deployment period** or **redeploy your application again** after the initial deployment.
 
@@ -4573,15 +4578,21 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - **helps** you to **optimize running costs**
 
-* **checks security-related stuf (IAM)f** and **lists potential problems**
+* **checks security-related stuff (IAM)f** and **lists potential problems**
 
 - **shows you** when given service is **using more than a service limit**
 
 * what is very important is that **Trusted Advisor is more about accounts and IAM and unused resources**. This is something completely different than AWS Inspector which has to deal with EC2 instances mostly.
 
-- you can use **AWS Service Quotas** to change **service limits** that you emposed. This is **something that trusted advisor alone cannot do!**.
+- you can use **AWS Service Quotas** to change **service limits** that you imposed. This is **something that trusted advisor alone cannot do!**.
 
 * it has **reports on underutilized resources which can greatly help with cost savings**.
+
+#### Notifications
+
+- the summary can be sent on a **weekly basis as an email**. This is a feature **built-in**
+
+* you can use **CloudWatch events** to listen on **Trusted Advisor** events. You **have to be in north-virginia**, otherwise you will not be able to create the rule.
 
 ### KMS
 
@@ -4856,11 +4867,11 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### AWS Guard Duty
 
-- ingest from FlowLogs, R53, CloudTrial, AI Thread detection etc to centralized place
+- ingest from FlowLogs, R53, CloudTrial, AI Thread detection etc to a centralized place
 
-* you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **indest from those invited accounts** (**if they accept**).
+* you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **ingest from those invited accounts** (**if they accept**).
 
-- it's usually **preffered for instances that have access to the internet**
+- it's usually **preferred for instances that have access to the internet**
 
 * has **deep integration with CloudWatch**. You can use **CloudWatch events** to trigger lambda or sns when guard duty notices something.
 
@@ -4868,19 +4879,19 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - used for **security monitoring of EC2 instances**. Please keep in mind that it **only tackles security stuff, LEAVE STATE CHANGES TO AWS CONFIG!**
 
-* scans for **vulnarabilities and not IAM issues**
+* scans for **vulnerabilities and not IAM issues**
 
 - watches out for lack of best practices
 
 * can be used **with or without an agent**. Inspector **will not launch instances for you**.
 
-#### Assesments
+#### Assessments
 
 - is the thing that **defines things that Inspector will be checking**
 
-* _assesments runs_ can **generate reports** based on the findings.
+* _assessments runs_ can **generate reports** based on the findings.
 
-- you can run **assesemts on a schedule**. This is done using _CloudWatch_.
+- you can run **assessments on a schedule**. This is done using _CloudWatch_.
 
 #### Uses
 
