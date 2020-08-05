@@ -123,4 +123,37 @@ min, max := 0, 1000
   }
   ```
 
-// https://youtu.be/gi7t6Pl9rxE?list=WL&t=5679
+- try to **avoid pkg directory**. This is something that the go library moved away from long time ago.
+  Using the _pkg_ directory is like putting _I_ before interfaces - needles boilerplate.
+
+## API Design
+
+- **avoid** functions with **multiple arguments of the same type**.
+  Imagine having a function:
+
+  ```go
+  func copy(to, from string) error
+  ```
+
+  Would be hard to distingush between
+
+  ```go
+  copy("/tmp/backup", "presentation")
+  copy("presentation", "/tmp/backup")
+  ```
+
+  Instead, **use aliases, and receivers**
+
+  ```go
+  type Source string
+  func (src Source) CopyTo(dest string) error{}
+
+  func main() {
+    var from Source = "presentantion.md"
+    from.CopyTo("...")
+  }
+  ```
+
+  Much better!
+
+https://youtu.be/gi7t6Pl9rxE?list=WL&t=7704
