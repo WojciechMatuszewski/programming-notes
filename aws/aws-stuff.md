@@ -121,8 +121,6 @@
 
 ### IAM
 
-> IAM allows you to manage users and their level of access to the AWS Console
-
 - **IAM** is universal, **is global**, does not apply to regions
 
 * **Identity Federation** allows your users to login into AWS Console using 3rd
@@ -583,10 +581,10 @@ An example for s3-prefix (folder)
 
 #### Rules
 
-- you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**. 
+- you can **create rules**. There are **predefined(AWS) rules** or you can create **custom rules**.
   With this you can for example see if someone enabled inbound port on security group which you deemed non-compliant.
 
-* there is a const **per rule evaluation**. 
+* there is a const **per rule evaluation**.
 
 - with **custom rules** you have to have custom lambda written. This is the thing that will be reacting to config changes **and marking them as compliant or not**.
 
@@ -612,9 +610,15 @@ An example for s3-prefix (folder)
 
 - you can create an **Automation rule** within **Systems Manager**.
 
+* **AWS Config** will not remediate anything for you automatically.
+
 #### Notifications
 
-- **notifications** are avaiable only for **SNS** for the **whole AWS Config**
+- **notifications** are available only for **SNS** for the **whole AWS Config**
+
+#### Compliance
+
+- you can create **compliance dashboards** by dumping the data into s3 and using **QuickSight**.
 
 ### License Manager
 
@@ -644,9 +648,12 @@ An example for s3-prefix (folder)
 
 #### Managed instances
 
-- to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**. Remember that **when you have instances managed on prem** they will have **`mi`(managed instance) prefix**. **AWS instances have `i` prefix attached**.
+- to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**.
+  Remember that **when you have instances managed on prem** they will have **`mi`(managed instance) prefix**. **AWS instances have `i` prefix attached**.
 
 * **activation on prem** is **done using single activation code**. You do not have to create separate code for every instance.
+
+- instances are **integrated with `AWS Config`**. The `AWS Config` gets the inventory data, thus you can see a timeline of installed stuff.
 
 #### Automation
 
@@ -678,6 +685,10 @@ An example for s3-prefix (folder)
 
 * your **patches can have custom origin!**.
 
+#### Run Command
+
+- the `Run Command` is very important.
+
 #### Maintenance windows
 
 - can be used for **task automation on schedule**
@@ -700,7 +711,7 @@ An example for s3-prefix (folder)
 
 - collect data about system properties, roles, etc.
 
-* can be visualized using `QuickSigth` (**by sending data to s3 first**).
+* can be visualized using `QuickSight` (**by sending data to s3 first**).
 
 #### Parameter Store
 
@@ -712,7 +723,7 @@ An example for s3-prefix (folder)
 
 - **keys can be encrypted (secure string)** using **KMS**. They also have **versions, and history of edits**.
 
-* **scallable** and **serverless**.
+* **scalable** and **serverless**.
 
 - very useful for **distributing config inside ASG**
 
@@ -728,16 +739,16 @@ An example for s3-prefix (folder)
 
 ##### Advanced Parameters
 
-- you can switch any standart parameter to advanced at any time. **You cannot go back from standart to advanced**
+- you can switch any standard parameter to advanced at any time. **You cannot go back from standart to advanced**
 
 * with advanced parameters your parameter can have **up to 8KB of size**. This is **twice the size of a regular one**.
 
-- with advanced parameters you can get **really granual per parameter policies**.
+- with advanced parameters you can get **really granular per parameter policies**.
 
 #### Billing
 
 - **SSM itself is free** but there are various services that have some cost:
-  - **on prem instance managment** is NOT free
+  - **on prem instance management** is NOT free
   - **advanced parameter store** is NOT free.
   - **SSM automation** is NOT free.
 
@@ -1014,6 +1025,8 @@ An example for s3-prefix (folder)
 - with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group permissions to write to dest. bucket!**.
 
 * **bucket policies** and **ALC** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
+
+- if you want to track **policy changes** use **CloudTrail**
 
 So when to use what?
 
@@ -3670,7 +3683,10 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - the **mapping of IPs** occurs on **route table level**. Route table uses **prefix lists**.
 
-* remember that Gateway Endpoint can connec to **multiple s3 buckets** and **multiple dynamodb tables**
+* remember that Gateway Endpoint can connect to **multiple s3 buckets** and **multiple dynamodb tables**
+
+- there is **no additional charge** for using gateway endpoints. The only costs are **data transfer costs**
+  and, of course, resource costs.
 
 ##### Interface Endpoints
 
@@ -3956,7 +3972,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - better for fault tolerance.
 
-* better for horizontal scalling.
+* better for horizontal scaling.
 
 ##### Clustered mode disabled
 
@@ -4096,17 +4112,17 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **SES** is for **reach, containing multi-media emails**.
 
-
-
 ### EventBridge
 
 - SNS and SQS combined (more or less)
 
-* can be **integrated with much more services than SQS or SNS (natively, without pooling)**. What's more important that you can **integrate natively with 3rd party AWS service providers** or webhooks. Since these are going through APIGW the integration could also be done using SQS or SNS.
+* can be **integrated with much more services than SQS or SNS (natively, without pooling)**.
+  What's more important that you can **integrate natively with 3rd party AWS service providers** or webhooks.
+  Since these are going through APIGW the integration could also be done using SQS or SNS.
 
 - does **not support FIFO ordering**
 
-* **NOT for high ammounts of events per second**. You are billted per send event. For case where you have a lot of events look into Kinesis.
+* **NOT for high amounts of events per second**. You are billed per send an event. For case where you have a lot of events look into Kinesis.
 
 #### Schema Registry
 
@@ -4136,7 +4152,13 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **EventBridge** has **better filtering capabilities** compared to SNS.
 
-- **SNS** has **much higher througput** than EventBridge.
+- **SNS** has **much higher throughput** than EventBridge.
+
+#### vs CloudWatch Events
+
+- `EventBridge` pretty much **has the same functionality (and more) as `CloudWatch Events`**.
+
+* there is also `CloudWatach Bus` which is depcracated. This used to function similarly to `EventBridge`.
 
 ### Amazon MQ
 
@@ -4197,7 +4219,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - just like with `ElasticBeanstalk` there is a possibility to do blue green deployments with `OpsWorks`
 
 * you should **clone the entire stack** and **change DNS to the other stack**. Much more involved than EB but it works.
- 
+
 ### WAF (Web Application Firewall)
 
 - **layer 7**.
@@ -4594,6 +4616,18 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * you can use **CloudWatch events** to listen on **Trusted Advisor** events. You **have to be in north-virginia**, otherwise you will not be able to create the rule.
 
+#### Exposed keys
+
+- with `Trusted Advisor` you can do the same thing with AWS keys that you did with `AWS Health` service.
+
+* `Trusted Advisor` has the _exposed access keys_ tab within security pillar.
+
+#### Tiers
+
+- you do not have access to every pillar that `Trusted Advisor` is checking (Cost Optimization, Performance, Security, Fault Tolerance, Service Limits) if you are on a free plan.
+
+* the **Cost Optimization, Performance is available for those with AWS support plan**
+
 ### KMS
 
 - various ways of encryption, but mainly **Server-Side, Client-Side** encryption.
@@ -4896,6 +4930,16 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 #### Uses
 
 - the cool use of this technology I saw was around **validating golden AMI**. This can be done with automated pipeline.
+
+### Health dashboard
+
+- normal dashboard for AWS health is a bit too global. The `Health dashboard` is a dashboard which is presonalized for you.
+
+* you can **subscribe to changes** using **CloudWatch events**.
+
+- the service name is `Health` within `CloudWatch events`.
+
+* this is also a great way of **knowing if your secret key was compromised (pushed to repo)**. This is because the `AWS Health` service tracks github repos.
 
 ### AWS WorkLink
 
