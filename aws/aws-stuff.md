@@ -655,6 +655,8 @@ An example for s3-prefix (folder)
 
 - instances are **integrated with `AWS Config`**. The `AWS Config` gets the inventory data, thus you can see a timeline of installed stuff.
 
+* you will need to create a role for the managed instances SSM agent.
+
 #### Automation
 
 - automate tasks that have to do with EC2.
@@ -1824,6 +1826,13 @@ There are a few approaches when it comes to scaling with dynamoDB
 This will require 2 layers of DNS, one for the `CloudFront` itself (optional but still) and then an `latency-based` routing policy within `R53` as origin to `CloudFront` distribution.
 
 This way, CF will fetch the data from the **R53 latency-based resolved host**. This is pretty neat!.
+
+#### Injecting headers
+
+- with `CloudFront` you can **inject headers to origin request**. This only works one way
+  you **cannot inject headers for the response**
+
+* to **inject response headers** you should **use lambda@edge**.
 
 ### API Gateway
 
@@ -4367,6 +4376,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * you can implement **manual approval step**. The **pipeline will wait 7 days** in that step, if not approved / rejected , pipeline will timeout.
 
 - you can integrate _CodePipeline_ with your github account by using either _OAuth_ or _personal access_ tokens.
+
+* you can run **stages in parallel** by using **run order** parameter.
+
+- remember that `CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
 
 ### Cognito
 
