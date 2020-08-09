@@ -33,13 +33,13 @@ This basically tells `TypeScript` that `Something` is only a type.
 With `TypeScript 3.8` there is another, more streamlined way of doing this, somewhat taken from `flow`. There will be new `import type` syntax
 
 ```ts
-import type {Bar, Baz} from 'module'
+import type { Bar, Baz } from "module";
 ```
 
 Now, there are some restrictions to it, one of which is that you cannot mix default and named exports. This is to ensure that the import statements are non-ambiguous
 
 ```ts
-import type Foo, {Bar, Baz} from 'module'
+import type Foo, { Bar, Baz } from "module";
 // ^ this will fail
 ```
 
@@ -67,7 +67,7 @@ This tool was built by Microsoft. A sample test:
 var stooges = [
   { name: "moe", age: 40 },
   { name: "larry", age: 50 },
-  { name: "curly", age: 60 }
+  { name: "curly", age: 60 },
 ];
 _.pluck(stooges, "name"); // $ExpectType string[]
 ```
@@ -368,7 +368,7 @@ just that the value is the type itself**
 var someObj = {
   prop1: 1,
   prop2: 2,
-  prop3: "someString"
+  prop3: "someString",
 };
 
 Object.keys(someObj); // 'prop1' , 'prop2' ...
@@ -550,7 +550,7 @@ interface SomeObj {
 
 const someObj: SomeObj = {
   someFn,
-  numberToAdd: 4
+  numberToAdd: 4,
 };
 
 function someFn(num: number) {
@@ -586,7 +586,7 @@ returning underlying vanilla JS types it will return us the Typescript type.
 ```typescript
 const person = {
   age: 22,
-  name: "Wojtek"
+  name: "Wojtek",
 };
 
 type Person = typeof person; // {age: number, name: string}
@@ -779,10 +779,7 @@ function reverse<T>(dataToReverse: T[]): T[];
 // real implementation
 function reverse<T>(dataToReverse: string | T[]): string | T[] {
   if (typeof dataToReverse == "string") {
-    return dataToReverse
-      .split("")
-      .reverse()
-      .join("");
+    return dataToReverse.split("").reverse().join("");
   }
   return dataToReverse.slice().reverse();
 }
@@ -821,7 +818,7 @@ enum Something {}
 // you just introduced this to your bundle
 "use strict";
 var Something;
-(function(Something) {})(Something || (Something = {}));
+(function (Something) {})(Something || (Something = {}));
 ```
 
 Not looking to hot right? Well, there is a solution. A very simple one. Use
@@ -832,13 +829,13 @@ inlined_
 ```typescript
 const enum Something {
   yes = "Yes",
-  no = "No"
+  no = "No",
 }
 let selected = Something.no;
 
 // gets compiled to
 "use strict";
-let selected = "No" /* no */;
+let selected = "No"; /* no */
 ```
 
 Much better now!
@@ -971,7 +968,7 @@ Example:
 
 ```ts
 get(
-  matching(friend => friend.friends > 5),
+  matching((friend) => friend.friends > 5),
   "name"
 )(obj.friends);
 ```
@@ -1295,3 +1292,67 @@ const value = someObj?.prop1?.prop2 // ..
 Syntax with `?` is much cleaner, especially with nested objects and properties.
 You no longer have to worry about checks with `&&`. `?` operator takes care that
 for you.
+
+## `const` assertion
+
+There are _literal_ and _primitive_ types in typescript. You know, there is a difference between these 2 types:
+
+```ts
+type Literal = "string";
+
+type Primitive = string;
+```
+
+Usually, we do not want to _mutate_ anything, especially while working with objects and so on. Sine objects and arrays are mutable, typescript was wideing the type of the property to accommodate for that (also for `let` declarations)
+
+```ts
+const circle = {
+  radius: 10,
+};
+// radius: number :C
+```
+
+Now, we can tell typescript that we will not be mutating that value, using so called _const assertion_
+
+```ts
+const circle = {
+  radius: 10,
+} as const;
+// radius: 10 => literal type
+```
+
+## Functional types
+
+### Function paratemers
+
+Typescript can now infer the _function parameters_ from type variable.
+
+So previously to type this simple signature:
+
+```ts
+function call(fn, ...args) {}
+```
+
+You either went for weak `any[]` for parameters with generic as return type:
+
+```ts
+declare function call<R>(fn: (...args: any[]) => R, ...args: any[]): R;
+```
+
+Or played around with `infer` keyword
+
+```ts
+type GetFunctionArguments<F> = F extends (...args: infer A) => any ? A : never;
+declare function call<R, F extends (...args: any[]) => any>(
+  fn: F,
+  ...args: GetFunctionArguments<F>
+): R;
+```
+
+But now since there were improvements to _touple types_ you can just specify the parameters as a generic type.
+
+```ts
+declare function call<A extends any[], R>(fn: (...args: A) => R, ...args: A): R;
+```
+
+Much better!
