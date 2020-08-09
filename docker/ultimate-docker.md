@@ -96,3 +96,66 @@
   ```docker
   COPY src src
   ```
+
+## Reducing image size
+
+- you cannot reduce the image size by deleting unwanted dependencies. This does not make sense as **every line within `Dockerfile` creates a layer**. That _layer_ cannot have negative value, the files that you removed will be hidden from the final result, but the image size will not change.
+
+What you **should avoid**:
+
+- _layer collapsing_. This is the notation with `&&` or `\` and multiple commands
+
+  ```docker
+  RUN apt-get install .. \
+    && apt-get install ..
+  ```
+
+  This is pretty bad since chaning 1 character in this whole sequence will bust the cache for that line.
+
+- _outside builds_. This is where you build (or compile) your program on your machine. This is basically loosing everything _Docker_ is about.
+
+What you **should do**. You should prefer **multi-stage builds**.
+
+## Tips and tricks
+
+- you can reduce amount of layers by composing commands using `apt-get dep1 dep2 dep3` syntax. **Only do this after you are sure that you are done with working on the image**. Otherwise you will be busting the cache, a lot.
+
+- **copy `package.json` and install modules first**. This way you can be sure that whenever you only change application code, the modules layer is already cached.
+
+  ```docker
+  COPY . . # cache busted pretty much always
+  RUN npm install
+  ```
+
+  ***
+
+  ```docker
+  COPY package.json /
+  RUN npm install
+  COPY . . # cache busted here, but that's ok because the steps below are pretty fast
+  EXPOSE PORT
+  CMD ...
+  ```
+
+- use `ENV` to get rid of repetition while specifing version names.
+
+  ```docker
+  ENV NODE_ENV = 10
+  RUN apt-get http://..$NODE_ENV \
+      ...
+  ```
+
+## Building images with what we learned so far
+
+- remember that _PATH_ within `COPY --from=ALIAS PATH TO` needs to be the path of the workdir. In case of _golang_ image, it's the _/go_ directory.
+
+- some of complied languages like _Golang_ need external dependencies (`dynamic linking`). You can use `golang:alpine` image to build your program and then use the `alpine` itself to run it. Much better than trying to fiddle with `scratch`
+
+  ```docker
+  FROM golang:alpine AS builder
+  RUN go build main.go
+
+  FROM alpine
+  COPY --from=builder /go/main .
+  CMD ["./main"]
+  ```
