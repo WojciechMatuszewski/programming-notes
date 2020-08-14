@@ -159,3 +159,74 @@ What you **should do**. You should prefer **multi-stage builds**.
   COPY --from=builder /go/main .
   CMD ["./main"]
   ```
+
+## Naming & Inspecting Containers
+
+- container can **only have one unique name**
+
+- by default, `docker` is specifying random names for containers for us.
+
+- use `--name` flag to name the containers. Use `docker start` / `docker stop` for controling the lifecycle.
+
+- you can use `docker inspect` to see the configuration of the container. Use `jq` to parse the `inspect` json.
+  Eg. if you want `Created` field
+
+  ```bash
+  docker inspect NAME | jq .[0].Created
+  ```
+
+  (you might need to use "" if you are using `zsh`)
+
+  You could also use `--format` flag with `docker inspect`. The `--format` flag uses `go templates`.
+
+  ```bash
+  docker inspect IMAGE --format "{{ .Name }}"
+  ```
+
+## Labels
+
+- a **container can have multiple labels**
+
+- to label images use `-l` flag.
+
+  ```bash
+  docker run -l tag=value IMAGE
+  ```
+
+## Getting inside a container
+
+- normally you would not need to this, but in reality you might have to
+
+- use the `exec` command to execute command. Combine it with `-ti` flags
+
+  ```bash
+  docker exec -ti NAME WHAT (eg.bash)
+  ```
+
+- you do not have to use `-ti` if you do not need interactive mode. You can also just run the command itself
+
+  ```bash
+  docker exec NAME WHAT (eg.bash or ps)
+  ```
+
+- you can export the whole file system of the container
+
+  ```bash
+  docker export NAME > where
+  ```
+
+- if a container is crashing instantly, overwrite it's `entrypoint` and use the `-ti` flag.
+
+  ```
+  docker run -ti --entrypoint sh NAME
+  ```
+
+  This way you can get the shell inside the container, and hopefully debug the issue
+
+## Limiting resources
+
+- only useful is you are not using orchestrator like k8s.
+
+- use can limit the memory using `--memory` flag
+
+- you can also limit CPU.

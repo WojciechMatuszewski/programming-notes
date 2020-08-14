@@ -77,6 +77,14 @@
 
 - X-Ray **does not sample every request**. This is quite important since that means that the data completeness is not guaranteed and it **should not be used as a audit mechanism**.
 
+##### X-Ray daemon
+
+- listens to traffic on **port 2000 UDP**. This is where the SDKs are sending the data.
+
+* automatically **installed on lambda**.
+
+- on `ECS` you have to **setup an container which will run your daemon**.
+
 #### Lambda @ Edge
 
 - **CloudFront will invoke your function when given event happens**. These are **events that has to do with request life-cycle @ CloudFront like origin request or smth like that**.
@@ -294,6 +302,14 @@ An example for s3-prefix (folder)
 - **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
 
 * there are 2 notable managed policies: **AdministratorAccess** and **PowerUserAccess (this is for developers)**
+
+##### SERVICE_PowerUser managed role
+
+- usually these roles allow to read & write but not delete operations
+
+* think pushing, pulling, creating with `CodeCommit` but not deleting branches.
+
+- **this very different than PowerUserAccess managed role**. This role allows for almost everything within every service.
 
 #### Inline vs Managed Policies
 
@@ -666,6 +682,8 @@ An example for s3-prefix (folder)
 - can be paired with **EC2 rescue document** to enable auto-repair for your instances.
 
 * for **more complex scenarios like error handling** you should prefer using `Step Functions`.
+
+- can be used to **update your golden AMI**. This is done by launching an instance, running the user script, creating AMI from the instance and shutting the instance down.
 
 #### Session Manager - Running commands on instances
 
@@ -1593,7 +1611,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **separate hot and cold data**. This will help you with RCU provisioning.
 
-* you can **save some bandwith** with **projection expression**. Remember **entire row is pulled, but then data extracted @Dynamo**
+* you can **save some bandwith** with **projection expression**. Remember **entire row is pulled, but then data extracted by Dynamo**
 
 #### Writing
 
@@ -1612,6 +1630,9 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 #### GSI
 
 - make sure to **project attributes that you use as an index**. Otherwise the **retrival will be costly!**
+
+* you **cannot use strongly consistent reads** with **GSI**. If you find yourself in a situation where you need strongly consistent reads and different query pattern,
+  re-create the table (migrate the existing one).
 
 #### ACID
 
@@ -2487,6 +2508,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * this allows your instance to **pause** before **initialization / termination**.
 
 - **when is paused** state you can **do your stuff** like **perform a backup or save some data**.
+  This can **be really useful** when you want to **do some stuff before your instance gets terminated**.
 
 * this is usually used when your instance is stateful.
 
@@ -3025,9 +3047,11 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - this is the **new tool for pushing LOGS AND METRICS to `CloudWatch logs`**.
 
-* previously with `CloudWatch agent` you had 2 separate scripts to do what the `unified agent is doing at the moment`.
+* previously with `CloudWatch agent` you had 2 separate scripts to do what the `unified agent` is doing at the moment`.
 
 - **config file**, by default, **is pushed to SSM**.
+
+* the unified agent is also **more performant**.
 
 ##### Events
 
