@@ -37,6 +37,12 @@
 
 * by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
 
+#### Alias
+
+- alias can point to a **single version** or **2 lambda versions**.
+
+* you would use **aliases for shifting traffic between versions**.
+
 #### Execution Role
 
 - this the **role assumed by lambda when invoked**
@@ -1613,6 +1619,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * you can **save some bandwith** with **projection expression**. Remember **entire row is pulled, but then data extracted by Dynamo**
 
+- you will need to use **projections** on **LSi** and **GSI**.
+
 #### Writing
 
 - one **WCU** is equal to **1KB**. **1 WCU is THE MINIMUM you consume**
@@ -2088,6 +2096,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **fast: 10secs** or **default: 30 secs** interval
 
+- before setting up health checks, **make sure your firewall settings, especially VPC SG, NACL allow for the requests**.
+
 #### Route53 routing
 
 - just remember that **TTL can bite YOUR ASS!**. **Whenever** you are **considering offloading the balancing to Route53** keep in mind the **TTL**. Since you **cannot attach ASG to Route53** there might be a **case where your instance is no longer there BUT TTL still routes to that IP**.
@@ -2155,6 +2165,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - **records are selected per latency basis**
 
 * **BASED PURELY ON NETWORK CONDITIONS, NOT GEOGRAPHY!**
+
+- is based on the **latency between the user and AWS region NOT your service**.
 
 ##### Geolocation
 
@@ -2967,6 +2979,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 #### Environments
 
 - there are multiple pre-defined environments you can use.
+
+* for `java` you can specify custom java parameters through `Environment properties`
 
 ##### Worker Environment
 
@@ -4379,8 +4393,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - allows you to perform **rolling** updates for **ec2 instances**.
 
-* when deploying with **lambda, using traffic shifts** there are **pre and post deploy hooks** you can use to validate your lambda.
-
 - it enables you to perform **blue / green deployment** with **ASG**.
 
 * when it comes to **ECS, it allows you to create blue / green (traffic shifts)** with that aswell.
@@ -4392,6 +4404,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - it may happen that **scale out an event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
 
 * you should **suspend asg for the deployment period** or **redeploy your application again** after the initial deployment.
+
+##### Validation hooks
+
+- when deploying with **lambda, using traffic shifts** there are **pre and post deploy hooks** you can use to validate your lambda.
+
+* there are also _validation hooks_ for **ecs**. There is a lot more of them than for lambda functions.
 
 #### CodePipeline
 
@@ -4562,7 +4580,9 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - you can use **Snapshot** to **create a snapshot of data for services that support snapshots**
 
-* you can use **retain** or also **delete**.
+* you can use **retain** or also **delete**. There is no such thing as `force delete`.
+
+- when you are dealing with s3, you should create a lambda function to empty the bucket first. This lambda function can be a **custom resource**.
 
 #### Drift Detection
 
@@ -5241,4 +5261,4 @@ TODO:
 
 - cloud formation section on linux academy.
 
-https://practice-exam.acloud.guru/aws-certified-devops-engineer-professional-2019/result/b7cc57f6-f5a3-4896-8e25-42abe4a1ed42
+- create a custom lambda resource that cleans up a bucket when it's deleted
