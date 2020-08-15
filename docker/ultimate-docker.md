@@ -230,3 +230,53 @@ What you **should do**. You should prefer **multi-stage builds**.
 - use can limit the memory using `--memory` flag
 
 - you can also limit CPU.
+
+## Networking Basics
+
+- use `EXPOSE` keyword to well, expose ports from your application
+
+- this is basically port mapping. Since we are out of IPs, we have to map ports.
+
+- you can quickly lookup the port mappings you can use the `docker port`
+
+  ```bash
+  docker port $(docker ps -lq) OPTIONAL_PORT
+  ```
+
+  The `lq` stands for `last` and `quick`.
+
+- the _port mapping_ can be done when you run the container.
+
+  ```bash
+  docker run -p HOST_MACHINE_PORT:DOCKER_IMAGE_EXPOSED_PORT DOCKER_IMAGE
+  ```
+
+## Container Network Drivers
+
+1. The `bridge` driver
+   Think **2 network cards connected togher**. One from the host, one on the container.
+
+2. The `none` driver
+   Container will be **disconnected from the network**. You would use it whenever you want your container to not have network access.
+
+3. The `host` driver
+   The container will **use the network stack of the host**. This is for maximum performance, normally you would not use it.
+
+4. The `container` driver
+   The container will **reuse the network stack of particular container**. This allows for really fast comunication between containers.
+
+## Container Network Model
+
+- think of _wifi_ with a name that you can connect to.
+
+- there is a DNS system built-in. You can assign the DNS name by using `--name` parameter
+
+- you can put 2 containers together in the same network (eg. db and your application) and then use the friendly `name`s.
+
+  ```bash
+  docker network create NAME
+  docker run -d --net NAME --name FIRST_CONTAINER_NAME IMAGE
+  docker run -d --net NAME --name SECOND_CONTAINER_NAME SECOND_IMAGE
+  ```
+
+  Now the first and the second container can communicate with each other.
