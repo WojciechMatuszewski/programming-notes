@@ -280,3 +280,26 @@ What you **should do**. You should prefer **multi-stage builds**.
   ```
 
   Now the first and the second container can communicate with each other.
+
+Remember when you tried to run the `amazon/dynamodb-local` image and your golang backend togher? You can name the database whatever you want,
+it does not have to be `dynamodb`. Just make sure that they are in the same network and have names.
+
+## Service Discovery With Containers
+
+- use `-P` to just expose all ports. This way you do not have to use mappings with `-p HOST_PORT:CONTAINER_PORT`.
+  While the `-P` does not allow you to control the mapping, it's pretty good since you do not have to know which port is exposed by the container.
+
+- use `--net-alias` to assign **only DNS name not the DNS name AND container name** to the container. This is **useful when you want to run
+  containers with the same DNS name in different networks**
+
+  ```bash
+  docker network create dev
+  docker network create prod
+
+  docker run -d --net dev --name redis redis // OK
+  docker run -d --net prod --name redis redis // FAIL, container with a name `redis` already exists
+
+  docker run -d --net prod --net-alias redis redis // OK
+  ```
+
+- the `--name` or `--net-alias` **does not work with DEFAULT BRIDGE NETWORK**. You **have to create your own network**.
