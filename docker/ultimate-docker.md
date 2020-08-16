@@ -303,3 +303,23 @@ it does not have to be `dynamodb`. Just make sure that they are in the same netw
   ```
 
 - the `--name` or `--net-alias` **does not work with DEFAULT BRIDGE NETWORK**. You **have to create your own network**.
+
+## Local Development with Compose
+
+- sometimes you want to make changes on the host machine (code changes) and you want your docker container to automatically pick it up (probably by some kind of framework that you are using which supports hot-reloading). For this **use volumes**.
+
+- to use volumes you can specify the `-v` flag. The syntax is `HOST:CONTAINER_DIR`
+
+  ```bash
+  docker run -d -v $PWD:/src -P NAME
+  ```
+
+  The `$PWD` would be the location of source code you copied using `COPY` command
+
+- the files **are not copied**. We are using internal OS mechanics
+
+## More on volumes
+
+- one gotcha is that **if the volume you are mounting is not empty** it will **overwrite the destination**. You can literally overwrite `/usr` or other important folders.
+
+- you can expose `volume`s from the `Dockerfile` directly through `VOLUME` command.
