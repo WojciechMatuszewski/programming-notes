@@ -198,6 +198,9 @@
 
 * this role **cannot be restricted by SCP**.
 
+- this role makes your life easier since you do not have to setup permissions for services manually.
+  These roles are created when you agree for a given service to create a role within UI, you've done it a lot of times.
+
 #### Assuming Roles
 
 - role which you can assume has two segments
@@ -3134,6 +3137,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - remember that **by default** CloudTrail **does not _listen_ to global events**, like IAM actions.
 
 * make sure to enable capturing global actions as well.
+
+##### CloudTrail and CloudWatch
+
+- there is no automated way to have your logs delivered to `CloudTrial`.
+
+* you have to **create a lambda that listens to s3 events**. That lambda will **log to cloudwatch while reading CloudTrail files**.
 
 #### Flow Logs
 
