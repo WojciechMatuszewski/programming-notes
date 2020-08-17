@@ -323,3 +323,15 @@ it does not have to be `dynamodb`. Just make sure that they are in the same netw
 - one gotcha is that **if the volume you are mounting is not empty** it will **overwrite the destination**. You can literally overwrite `/usr` or other important folders.
 
 - you can expose `volume`s from the `Dockerfile` directly through `VOLUME` command.
+
+## Compose For Development Stack
+
+- each command inside the given `service` correspond to the `Docker` cli-commands
+
+- by default `docker-compose` creates network for you
+
+- `docker-compose` has built in support for scaling:
+
+  ```bash
+  docker-compose up -d --scale SERVICE_NAME=NUM
+  ```
