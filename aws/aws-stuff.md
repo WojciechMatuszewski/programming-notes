@@ -113,7 +113,8 @@
 
 - with event based architecture, it may happen that you cause an infinite loop of invocations (think s3 events)
 
-* you can troubleshoot the problem by **setting concurrency limit to 0**. This will make it so your function is not invoked at all.
+* you can troubleshoot the problem by **setting reserved concurrency limit to 0**.
+  This will make it so your function is not invoked at all. There is a **built-in option for that within the UI**.
 
 #### Deployments with `CodeDeploy`
 
@@ -1526,6 +1527,14 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - Aurora will **automatically recover from crashing** on parallel threads. This means that **there is also no downtime "almost instantaneously"**.
 
 * this is **not the case with RDS** which, when crashed, **usually takes up to 30 mins to recover**.
+
+##### Dealing with replication lag
+
+- make storage size the same between the master and the replica
+
+* `max_allowed_packet` setting should be the same
+
+- turn off `Query Cache`
 
 #### Aurora Serverless
 
