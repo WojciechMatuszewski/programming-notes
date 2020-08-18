@@ -315,9 +315,9 @@ An example for s3-prefix (folder)
 
 ##### SERVICE_PowerUser managed role
 
-- usually these roles allow to read & write but not delete operations
+- usually these roles allow to read & write and delete operations
 
-* think pushing, pulling, creating with `CodeCommit` but not deleting branches.
+* think pushing, pulling, creating with `CodeCommit`.
 
 - **this very different than PowerUserAccess managed role**. This role allows for almost everything within every service.
 
@@ -714,6 +714,8 @@ An example for s3-prefix (folder)
 - to apply patches you should **combine maintenance windows with `Run Command`**.
 
 * your **patches can have custom origin!**.
+
+- the `AWS-DefaultPatchBaseline` is actually **for linux instances!**
 
 #### Run Command
 
@@ -2260,6 +2262,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **cluster** part comes from the fact that you will usually have **multiple ec2 instances running your containers**
 
+- you can **force new deployment** if you pushed new image with the same tag, eg. `latest`.
+
 #### Task Definition
 
 - to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They are **logical group of containers running on your instance**
@@ -2665,6 +2669,8 @@ This is quite important to know
 - the **frequency can be UP TO 24hrs**. You can pick from the list of available frequencies **but the longest one only 24hrs**.
 
 * your volumes can have **multiple tags**. This means that **all policies specified for given tags will be in effect**. That means that you can have a volume where backups are done every 12hrs and every 24hrs.
+
+- underneath, it **probably uses `CloudWatch Events`** since they allow you to **directly call the EBS API**.
 
 #### Termination
 
