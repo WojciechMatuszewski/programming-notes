@@ -335,3 +335,16 @@ it does not have to be `dynamodb`. Just make sure that they are in the same netw
   ```bash
   docker-compose up -d --scale SERVICE_NAME=NUM
   ```
+
+## Recap
+
+- use `JSON` notation within the `CMD` to run stuff in the environment when you do not have `bash/sh` installed
+
+- use `&&` to collapse layers. It's very important to ensure that every command is valid.
+
+- use can use `\` to split longer commands (presumably chained with `&&`)
+
+- you **cannot** `COPY` files outside our _build context_
+
+- `WORKDIR` changes the directory for all subsequent comands. Remember that **the `RUN` command** does **not have any "memory"**.
+  As in what you did in the previous command has no effect on the next one.

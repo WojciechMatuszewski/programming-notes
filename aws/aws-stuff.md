@@ -518,6 +518,7 @@ An example for s3-prefix (folder)
 * they are **delivered to s3 bucket**. That **bucket has to be owned by master account**.
 
 - to **have user-defined tags within cost allocation report** you have to make sure to **active given tags before generating a raport**.
+  All the tags here are named **cost allocation tags**.
 
 ##### Cost & Usage Report
 
@@ -776,6 +777,12 @@ An example for s3-prefix (folder)
 * with advanced parameters your parameter can have **up to 8KB of size**. This is **twice the size of a regular one**.
 
 - with advanced parameters you can get **really granular per parameter policies**.
+
+##### Rotation
+
+- **RDS** secrets **can be rotated automatically** by the service itself
+
+* for **other types of secrets** you have to **setup lambda function to rotate them manually**
 
 #### Billing
 
@@ -4069,7 +4076,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can be scaled vertically and horizontally, but when you **scale horizontally** you have to **create new cluster**.
 
-* **data** is **not automatically replicated betweeen the nodes**. You have to makee sure that you are **sharding your keys to different nodes**.
+* **data** is **not automatically replicated betweeen the nodes**. You have to make sure that you are **sharding your keys to different nodes**.
 
 ### Communication Between Services, Queues
 
@@ -5058,7 +5065,7 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - it can also **tell you how is accessing sensible files most often**.
 
-* very **useful for GDPR**.
+* very **useful for GDPR**, but it can also detect _ssh keys_ and other stuff
 
 - can generate **dashboards** which report on **high-risk objects, user sessions etc**
 
