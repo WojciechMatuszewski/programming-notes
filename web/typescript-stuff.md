@@ -1,5 +1,37 @@
 # Typescript Stuff
 
+## Augmenting global declarations
+
+Lets say you are building a NodeJs app and you want to have strongly typed `process.env` object.
+
+All you have to do is to create some `.d.ts` file (could be `.ts` file but I would go for `d.ts` for clarity) and use the fact that **namespaces are merged just like interfaces**.
+
+```ts
+namespace NodeJS {
+  interface ProcessEnv {
+    MY_GLOBAL_ENV_VARIABLE: string;
+  }
+}
+```
+
+That is all.
+
+### Typescript ignores my `d.ts` file
+
+First of all check if that file matches the `include` pattern that you specified within your `tsconfig`.
+
+If that's the case, we are dealing with something very strage that I've discovered only recently.
+
+You **have a file named the same way as you `d.ts` file**, eg. `env.ts` and `env.d.ts` file.
+The way typescript works is that **the `env.d.ts` file will be ignored since typescript things it was derived from `env.ts` file**. Pretty strange right?
+
+https://github.com/microsoft/TypeScript/issues/31397#issuecomment-492269754
+
+There are 2 solutions here:
+
+1. Rename your `d.ts` file
+2. Specify the `d.ts` file within the `file` block inside your `tsconfig`.
+
 ## Type-Only imports and import elision
 
 Being able to import a concrete `JavaScript` implementation and the type in the same import statement is awesome
