@@ -166,3 +166,33 @@ The **ultimate way** of creating a schema would probably be a **mix of SDL and c
 ### Using Annotations
 
 Mainly used with languages such as `Java`. There is a danger to couple `GraphQL` definitions with your implementation details since it's so close to your domain code.
+
+## Egghead Nik Graf
+
+- start with writing the `queries` not the types. It's a good way to start
+
+- naming fields is very important, it will have an impact later on. **Always be as explicit as you can whenever naming fields**.
+  Remember not to expose implementation details here. As per golang idioms, you **should not repeat the underling type within the field name**.
+
+- there should be a balance between `nullable` vs `non-nullable` fields. Remember that `nullable` fields give you the opportunity to return partial results if something goes wrong.
+
+- you **cannot create union of `Scalar` types**.
+
+- prefer the `Relay` pagination spec. It's considered based practice, it will save you a lot of headaches. Remember that you can _extend_ the spec, it's not rigid.
+
+- what out for impossible states when it comes to query parameters. When you have multiple ways of quering the same type, use `typeBySomething` convention.
+
+  ```graphql
+  productBySlug(slug: String!): Product!
+  # optional just `product`. It's a team decision
+  productById(id: ID!): Product!
+  ```
+
+- the `input` notation actually is a _Relay_ spec. Pretty sweet!
+
+- try to **return entities which were affected by the mutation** in the **result of the mutation**. This will probably be a type which contains `payload` within it's name.
+
+- alaways design with domain in mind. Again, be as verbose as possible.
+
+- _update_ type mutations require tradeoffs. This is where you create an input with all fields optional, but some of them might be actually required on the entity are trying to update.
+  This is where you might need to implement some validation on the backend to make sure user does not set required values as `null`s.

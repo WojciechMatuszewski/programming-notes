@@ -3355,6 +3355,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
 
+- the **iteration logic** is handled **behind the scenes** using **DynamoDB tables**.
+
 ###### Monitoring
 
 - you should monitor **IteratorAge** to make sure you do not have any `poison pill` messages within your stream.
@@ -4066,7 +4068,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * data there is **lost when** instance (or cluster) is **stopped**.
 
-- **DOES NOT support encryption**.
+- **DOES NOT support encryption natively (through KMS)**.
 
 * **nodes can be spread a cross multiple AZs**, but there is no failover.
 
