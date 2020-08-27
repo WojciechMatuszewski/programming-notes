@@ -3401,6 +3401,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **always prefer kinesis consumer/producer libraries to any SDks**. The kinesis library is really fast and optimized.
 
+* you can actually **have the KCL worker consume `DynamoDB` streams**. This is **NOT a Lambda trigger**.
+
 ##### Retries & Error handling
 
 - you can configure **`on-failure` destination**. This can be either **SNS or SQS**
@@ -5295,3 +5297,5 @@ TODO:
 - cloud formation section on linux academy.
 
 - create a custom lambda resource that cleans up a bucket when it's deleted
+
+- the `AutoScalingReplacingUpdate` which basically works like `immutable`

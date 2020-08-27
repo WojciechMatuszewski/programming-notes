@@ -62,6 +62,7 @@ And do not look surprised, you already know one pragma (a directive really) that
 
 ```js
 "use strict";
+
 ```
 
 ## Resetting Component State with key property
@@ -175,6 +176,57 @@ function Other() {
 I think this hook is not that useful in day-to-day work, but there are probably some use cases where if you do not use it, you might have a hard time doing something.
 
 The `useImperativeHandle` hook allows you too implement _bidirectional_ flow of the data. Just like you could with class components and `React.ref`.
+
+## Why does `useRef` have the `current` property
+
+When it comes to `React` there are a lot of things that can go wrong, but one of them is something called a **stale closure problem**. This can especially be a problem while working with hooks.
+
+The simplest example would be with an `useEffect`
+
+```jsx
+function FetchData() {
+  const [count, setCount] = React.useState(0);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setCount(count + 1);
+    }, 2000);
+  }, []);
+
+  // increment by clicking a button
+}
+```
+
+Classical example where your dependency list is wrong.
+
+So we clearly have an stale closure problem here, this is because the `count` is a primitive value, there is no reference.
+
+With the `ref` having the `current` property, they are passed by reference, thus the closure is on that reference, not the value itself.
+
+This means that **the `current` property ensures that the value of the `ref` is an object, thus being passed, referenced by reference**.
+
+So this would work
+
+```jsx
+function FetchData() {
+  const [count, setCount] = React.useState(0);
+  const counterRef = React.useRef(count);
+
+  React.useEffect(() => {
+    counterRef.current = count;
+  });
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setCount(count + 1);
+    }, 2000);
+  }, []);
+
+  // increment by clicking a button
+}
+```
+
+We are basically mutating an object here.
 
 ## Components as Functions Gotcha
 
