@@ -367,6 +367,10 @@ An example for s3-prefix (folder)
 
 * remember that **IAM users are global!**
 
+#### Tags
+
+- you can use `aws:PrincipalTag` to lookup tags **attached to an user or a role**.
+
 #### Certs
 
 - this is a **legacy way of keeping certs**, before ACM was introduced.
@@ -782,7 +786,10 @@ An example for s3-prefix (folder)
 
 - **RDS** secrets **can be rotated automatically** by the service itself
 
-* for **other types of secrets** you have to **setup lambda function to rotate them manually**
+* you can **manually rotate the secret** using a **lambda function**
+
+- when you **first** configure the **secrets rotation**, the **secret is rotated**. This means that the value of that secret is different than the initial value that you set that secret to.
+  This might cause confusion where you forget to update your application to actually use the `Secrets Manager` and you cannot connect to eg. a database.
 
 #### Billing
 
@@ -3037,6 +3044,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - **dashboards** are used to **correlate data**. This is just a **fancy way of saying having multiple graphs near each other (as widgets)**.
 
+##### Insigths
+
+- there are many flavours of `CloudWatch insights`, there are **Application**, **Container** and just **Insights**
+
+* the most important one being the `CloudWatch Insights`. This is a tool which allows you to filter the logs with expressions and other stuff.
+
 ##### Billing dashboard
 
 - remember that **billing metrics are only available within `north virginia (eu-west-1) region`**.
@@ -3082,6 +3095,11 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real time (buffered) use `Kinesis Firehose`**.
 
+###### Log retention
+
+- **by default** CloudWatch keeps the logs forever. **But after 15 months you cannot access them through console**.
+  This means that if you **want to access your logs after **that period of time, you have to **use an API to retrieve the datapoints**
+
 ##### Unified log agent
 
 - this is the **new tool for pushing LOGS AND METRICS to `CloudWatch logs`**.
@@ -3098,7 +3116,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * **events** have to do more with **what is happening on the instance (resource) level**. This could be **EC2 instance changed the state from pending to running** and such.
 
-- you can configure **CloudWatch Events rules**. These allow you to run **scheduled jobs (cron)** and **invoke different targets (services like lambda)**.
+- you can configure **CloudWatch Events rules**. These allow you to run **scheduled jobs (cron)** and **invoke different targets (services like lambda or step functions (and many others))**.
 
 ##### Rules
 
@@ -4702,6 +4720,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * it has **reports on underutilized resources which can greatly help with cost savings**.
 
+- you can refresh all or individual cheks. Checks might have different refresh intervals.
+
 #### Notifications
 
 - the summary can be sent on a **weekly basis as an email**. This is a feature **built-in**
@@ -4880,7 +4900,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - **THE recommended service** for migrating VMs. Minimizes downtime.
 
-* you **actually need VMware system to use it**.
+* you **actually need VMware / Hyper-V or Azure system to use it**.
 
 - used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download thus **SMS connector is needed aswell**.
 
