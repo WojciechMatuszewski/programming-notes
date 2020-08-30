@@ -1109,6 +1109,26 @@ class Counter {
 This works basically the same as the class variant but you update classes to
 functional components and use hooks. Of course you cannot use static properties.
 
+###### The `useProvider` hook
+
+As an addition to _flexible compound components_ pattern you will often see an `useXXX` hook defined. Usually it will look something like this
+
+```jsx
+function useProvider() {
+  const context = React.useContext(ProviderContext);
+  if (!context)
+    throw Error(
+      "`useProvider` cannot be used outside of the `ProviderContext`"
+    );
+
+  return context;
+}
+```
+
+You can even make it so that the hook takes parameters and perform some calculations / derives state.
+
+What is important here to note that **`React.useContext`** will always return the **default context value** when **there is no `Provider` up in the tree**. This is why you should **always set your `Provider` default value to null / undefined**.
+
 ### Prop Collections and Getters
 
 This pattern was widely used with `render props` now migrated to custom hooks.
