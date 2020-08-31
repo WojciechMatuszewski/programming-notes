@@ -4260,6 +4260,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * there is also `CloudWatach Bus` which is depcracated. This used to function similarly to `EventBridge`.
 
+#### Cron and fixed schedule
+
+- with `EventBridge` can create _cron_ schedules or invoke target at fixed rate. The **minimum granularity** is **1 minute**.
+
+* you **cannot use custom bus for cron / fixed rate schedule**.
+
 ### Amazon MQ
 
 - occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
