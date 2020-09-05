@@ -17,7 +17,7 @@ To be able to send some message back (response) we need to have access to some o
 
 Which language has these abilities? `c++` does!. So we are going to combine powers of `c++` with JavaScript to create the ultimate platform: `Node.js`.
 
-## How does `c++` work with `JavaScript`?
+## How does `c++` work with `JavaScript`
 
 ### Basic explanation
 
