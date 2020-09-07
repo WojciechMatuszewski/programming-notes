@@ -848,7 +848,7 @@ though.
 ```typescript
 enum Something {}
 // you just introduced this to your bundle
-"use strict";
+("use strict");
 var Something;
 (function (Something) {})(Something || (Something = {}));
 ```
@@ -866,7 +866,7 @@ const enum Something {
 let selected = Something.no;
 
 // gets compiled to
-"use strict";
+("use strict");
 let selected = "No"; /* no */
 ```
 
@@ -1183,6 +1183,29 @@ type Last2<P extends any[]> = HasTail<P> ? Last2<Tail<P>> : Head<P>
 This restriction stems from TS itself, you can though reference a type from
 within an object type just like we are doing with our first `Last`
 implementation.
+
+#### 1000 IQ big brain Last
+
+Why do you bother with `Head` and `Tail`. You probably forgot about the `length` property on a array.
+In _JavaScript_ we would usually subtract one from the length to get the last element right?
+
+```js
+const last = arr[arr.length - 1];
+```
+
+You could also use the `slice` method (I still think the `length` method is much more readable)
+
+```js
+const last = arr.slice(-1)[0];
+```
+
+Either way, you subtract one from the length. So how we can do that in `typescript`. Well glad you asked!
+
+```ts
+type Last<T extends any[]> = [any, ...T][T["length"]];
+```
+
+Just appreciate how nice it is and how much less _noise_ there is. Since we cannot _subtract_ per se in `typescript`, we can add one throwaway type and just call `length`. It is that simple!.
 
 ### Length
 
