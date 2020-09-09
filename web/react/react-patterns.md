@@ -150,3 +150,216 @@ function increment(dispatch) {
 ```
 
 **No need for memoization!**. This also brings other benefits like _tree-shaking_ and such. Overall, it's a much cleaner solution than having this function defined inside the _consumer hook_ or the _provider_ directly.
+
+## Compound Components
+
+### Non-flexible Compound Components
+
+So basically you want to pass down the necessary props using `React.Children`
+and `React.cloneElement` combo.
+
+```jsx
+function Counter({ children }) {
+  const [count, setCount] = React.useState(0);
+  return React.Children.map(children, (child) =>
+    React.cloneElement(child, { count })
+  );
+}
+```
+
+This will make it so props are passed but **unless you have some `displayName`
+convention, they are passed to every child**.
+
+### Flexible Compound Components
+
+#### Using `static` class methods
+
+This can be used for styling purposes
+
+```js
+const CardHeading = styled.div``;
+class Card {
+  static Heading = ({ children }) => <CardHeading>{children}</CardHeading>;
+  render() {
+    return this.props.children;
+  }
+}
+```
+
+Also using context API
+
+```js
+const CounterContext = React.createContext();
+class Counter {
+  state = {
+    count: 0;
+  }
+  static Display = ({children}) => (
+    <CounterContext.Consumer>
+      {({count}) => <div>count{children}</div>}
+     </CounterContext.Consumer>
+  )
+  render() {
+    return (
+      <CounterContext.Provider value = {{count: this.state.count}}>
+        {this.props.children}
+      </CounterContext.Provider>);
+  }
+}
+```
+
+#### Using hooks
+
+This works basically the same as the class variant but you update classes to
+functional components and use hooks. Of course you cannot use static properties.
+
+##### The `useProvider` hook
+
+As an addition to _flexible compound components_ pattern you will often see an `useXXX` hook defined. Usually it will look something like this
+
+```jsx
+function useProvider() {
+  const context = React.useContext(ProviderContext);
+  if (!context)
+    throw Error(
+      "`useProvider` cannot be used outside of the `ProviderContext`"
+    );
+
+  return context;
+}
+```
+
+You can even make it so that the hook takes parameters and perform some calculations / derives state.
+
+What is important here to note that **`React.useContext`** will always return the **default context value** when **there is no `Provider` up in the tree**. This is why you should **always set your `Provider` default value to null / undefined**.
+
+## Prop Collections and Getters
+
+This pattern was widely used with `render props` now migrated to custom hooks.
+
+The premise is simple, supply custom props in one obj so that consumer can just
+spread those without worrying about missing some props.
+
+This can be really helpful (looking at you `react-virtualized` 😉)
+
+### Prop Collections
+
+This is you basically creating a bag with properties , which you spread on elements. These usually fulfil very common use cases
+
+```jsx
+function useInput(initialValue = undefined) {
+  const [value, setValue] = React.useState(initialValue);
+  function onChange(e) {
+    setValue(e.currentTarget.value);
+  }
+  function resetValue() {
+    setValue(initialValue);
+  }
+  return {
+    // this is prop collection
+    inputProps: { value, onChange: setValue },
+    reset,
+  };
+}
+
+function Component() {
+  const { inputProps } = useInput();
+  // now as a consumer I do not have to worry about forgetting a prop
+  return <input type="text" {...inputProps} />;
+}
+```
+
+Then the consumer, can just spread the `inputProps` on the component he wants to behave like a _controlled input_.
+
+### Prop Getters
+
+This is more flexible version on the `Prop Collections` pattern. This is where you create a _function_ instead of an object. The one benefit here is that user can specify merge their implementation with implementation of your hook.
+
+```js
+function getInputProps({ onChange: suppliedOnChange, ...rest } = {}) {
+  return {
+    onChange: callAll(suppliedOnChange, onChange),
+    value,
+    ...rest,
+  };
+}
+```
+
+Now instead of returning `inputProps` you will return a function. This will allow the user to do something like this
+
+```jsx
+<input
+  type="text"
+  // much more flexible solution!
+  {...getInputProps({ onChange: () => console.log("changed") })}
+/>
+```
+
+The `getInputProps` is responsible for _pseudo-composing_ the `onChange` handlers.
+
+## State Reducer
+
+This is an implementation of _inversion of control_ principle. Your component / hook is using a reducer for managing it's state.
+You want to expose the ability for the user to integrate with your state and influence it as the user sees fit.
+
+```jsx
+const callAll = (...fns) => (...args) => fns.forEach((fn) => fn && fn(...args));
+
+function toggleReducer(state, { type, initialState }) {
+  switch (
+    type
+    // code
+  ) {
+  }
+}
+
+function useToggle({ initialOn = false, reducer = toggleReducer } = {}) {
+  const { current: initialState } = React.useRef({ on: initialOn });
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const { on } = state;
+
+  const toggle = () => dispatch({ type: useToggle.types.toggle });
+  const reset = () => dispatch({ type: useToggle.types.reset, initialState });
+  function getTogglerProps({ onClick, ...props } = {}) {
+    //code
+  }
+
+  function getResetterProps({ onClick, ...props } = {}) {
+    return {
+      onClick: callAll(onClick, reset),
+      ...props,
+    };
+  }
+
+  return {
+    on,
+    reset,
+    toggle,
+    getTogglerProps,
+    getResetterProps,
+  };
+}
+// this will be very helpful
+useToggle.reducer = toggleReducer;
+// this is also quality of life improvement
+useToggle.types = {
+  toggle: "toggle",
+  reset: "reset",
+};
+
+function Usage() {
+  // So here we can manipulate external logic by ourselves
+  function toggleStateReducer(state, action) {
+    if (action.type === useToggle.types.toggle && timesClicked >= 4) {
+      return { on: state.on };
+    }
+    return useToggle.reducer(state, action);
+  }
+  const { on, getTogglerProps, getResetterProps } = useToggle({
+    reducer: toggleStateReducer,
+  });
+  // other code
+}
+```
+
+Look at `toggleStateReducer` and see how easy it is for the user to fulfil his need. You do not have to implement anything internally. Pretty great!
