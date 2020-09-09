@@ -936,7 +936,7 @@ function Component({ children }) {
 
 But this is pretty bad. In such situations you such probably **reach for second argument within `React.memo`**.
 
-## Patterns
+## Patterns (outdated)
 
 ### `isMounted` and functional components
 
