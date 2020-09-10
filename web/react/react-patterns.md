@@ -363,3 +363,43 @@ function Usage() {
 ```
 
 Look at `toggleStateReducer` and see how easy it is for the user to fulfil his need. You do not have to implement anything internally. Pretty great!
+
+## Control props
+
+You are probably aware of the notion of _controlled_ and _uncontrolled_ inputs. This is where you either pass the `value` to an input (non-empty string) and `onChange` function or you do not (there is also option for `onChange` + `readOnly` prop)
+
+Either way, **React has to know, if either you or the framework controls the state of a given element**. This **has to be true for the whole lifecycle of that element**.
+
+When you are writing custom reusable components, you often should do the same, as in check if the consumer is passing any properties that would make your component _controlled_. This is usually done by creating `isControlled` variable.
+
+```jsx
+function MyComponent({ on, onChange }) {
+  const isControlled = on != null;
+
+  function handleChange() {
+    if (isControlled) {
+      const suggestedChange = .// something you would set your state to
+      return onChange(suggestedChange)
+    }
+  // do not call setState when you are controlled! This will result in unnecessary renders.
+    setState(value)
+  }
+}
+```
+
+This is a powerful technique, I might go as far as argue that it is much more powerful than the `state reducer` itself. But the real benefit comes from combining those 2 patterns.
+
+### Warnings
+
+You might have seen them, especially while working with `input` components. They usually scream at you from switching from _controlled_ to _uncontrolled_ and vice-versa.
+
+For your custom components, you should do the same. There is a pattern which utilizes `React.Ref` which enables you to easily check if your component is transitioning from one state to another.
+
+```js
+const { current: wasControlled } = React.useRef(isControlled);
+React.useEffect(() => {
+  // code
+}, [isControlled]);
+```
+
+Notice that I do not use the `prevState` pattern. There is no `useEffect` which saves the current state as the `prevState`. This is because the **component state (either `controlled` or `uncontrolled`) has to be the same for the entire lifecycle of that component**. There is no need to save the previous state, our point of reference should be the initial state.
