@@ -512,7 +512,7 @@ const Component = ({ counter }) => {
 };
 ```
 
-Results in so called `stale-state`?. Well if you log the value inside the `Eager` function you will see the correct value of the `counter` is passed. So the state is not `stale` per se, **the component did not rerendered**. This is where **3 phases of actually rendering** comes in. Your functional component WAS invoked and the current (correct) value WAS passed into the `useState` hook, but no updates to the dom were committed.
+Results in so called `stale-state`?. Well if you log the value inside the `Eager` function you will see the correct value of the `counter` is passed. So the state is not `stale` per se, **the component did not re-rendered**. This is where **3 phases of actually rendering** comes in. Your functional component WAS invoked and the current (correct) value WAS passed into the `useState` hook, but no updates to the dom were committed.
 
 This is happening because the _initial state_ is only set **once**, when the component is created. There is no magical sync between the initial state and the props.
 
