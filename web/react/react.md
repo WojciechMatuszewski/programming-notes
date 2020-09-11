@@ -522,6 +522,15 @@ It sadly seems like this is lesser known React life-cycle method. The method its
 
 Think about all the times you wanted to make chat window scroll nicely on a new message. Dealing with `refs` and `requestAnimationFrame` stuff just to make sure all scrolling logic works nicely. With this you can calculate the `scrollHeight` before an update, send that to `componentDidUpdate` and proceed with logic. SO MUCH EASIER!
 
+## getDerivedStateFromError
+
+You are probably aware of `componentDidCatch`. Maybe you even have an _error boundary_ in which you use the `componentDidCatch` to set the state - usually something similar to `this.setState({error: true})`.
+
+The problem here is that setting state in `componentDidCatch` will be **deprecated** in future React releases.
+There is also the fact that the `componentDidCatch` is invoked during the commit phase. Setting the state there would result in, probably, aborting the current commit and starting again with the state set inside the `componentDidCatch`.
+
+So the lesson here is that you **should use `componentDidCatch` for logging and `getDerivedStateFromError` for setting the actual state**.
+
 ## Profiling
 
 React has it's great _profiler_ as an browser extension. That tool is really
