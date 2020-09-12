@@ -69,3 +69,11 @@ const module = getWorkerForModule();
 ```
 
 You have to **remember though** that **introducing web workers will make your functions asynchronous**.
+
+## `React.memo`
+
+I'm not going to be talking about that you should not use this everywhere in your APP. This should be obvious.
+
+One thing that is really useful while making optimizations, especially with `React.memo` is to make sure that **you are passing stable / primitive props or you implement custom comparator function**. The comparator function is especially tricky for me since you have to return `false` when the re-render should happen. Maybe I'm thinking in the context of `shouldComponentUpdate` all the time 🤔
+
+Either way, use `useCallback` for callbacks, and try to pass only primitives for props (or stable values from _state_ or `useMemo`).
