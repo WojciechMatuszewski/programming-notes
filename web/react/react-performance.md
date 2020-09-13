@@ -126,3 +126,22 @@ Remember that the `setState` is stable, just like the `dispatch` from `useReduce
 Now, the state has to change for the consumers to re-render. This is what we really wanted from the begging.
 
 Combine this with the _value/dispatch provider_ pattern and you are on your way to create a performant context provider :).
+
+## State Colocation
+
+This is more of a tip rather than technique. I think you will come to this realization the more code you write. So here it goes:
+
+> Place code as close to where it's relevant as possible
+
+That's all, basically avoid global state, and if you can, put the state as close (preferably in) the component that is consuming / changing that state. This will make it so that when that state changes, only that component re-renders, nothing more, nothing less.
+
+## Profiling with `React.Profiler`
+
+There is the `React.Profiler` for profiling performance. It exposes timings of commit and render phase.
+
+**BEWARE** It cannot be all sunshine and rainbows. **By default react does not
+include this API in production bundle**. You have to opt in yourself. This is
+achieved through _webpack aliases_. The impact itself is minimal, but still
+worth considering.
+
+[Consult the docs for more info](https://gist.github.com/bvaughn/25e6233aeb1b4f0cdb8d8366e54a3977)

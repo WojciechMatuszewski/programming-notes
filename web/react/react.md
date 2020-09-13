@@ -531,30 +531,6 @@ There is also the fact that the `componentDidCatch` is invoked during the commit
 
 So the lesson here is that you **should use `componentDidCatch` for logging and `getDerivedStateFromError` for setting the actual state**.
 
-## Profiling
-
-React has it's great _profiler_ as an browser extension. That tool is really
-good. But what if you want to send profiling data to your server?.
-
-Well, _React_ has this `React.Profiler` component, which I never heard of. You
-can wrap any piece of your tree with it and it gives you various info about
-_render-related_ timings.
-
-```jsx
-<React.Profiler id="counter" onRender={reportProfile}>
-  <Counter />
-</React.Profiler>
-```
-
-`reportProfile` usually would be a queue sending data to server each X seconds.
-
-**BEWARE** It cannot be all sunshine and rainbows. **By default react does not
-include this API in production bundle**. You have to opt in yourself. This is
-achieved through _webpack aliases_. The impact itself is minimal, but still
-worth considering.
-
-[Consult the docs for more info](https://gist.github.com/bvaughn/25e6233aeb1b4f0cdb8d8366e54a3977)
-
 ## Stale Closure
 
 You are most likely familiar with this issue, when using hooks sometimes values
