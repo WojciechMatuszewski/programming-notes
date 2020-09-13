@@ -77,3 +77,52 @@ I'm not going to be talking about that you should not use this everywhere in you
 One thing that is really useful while making optimizations, especially with `React.memo` is to make sure that **you are passing stable / primitive props or you implement custom comparator function**. The comparator function is especially tricky for me since you have to return `false` when the re-render should happen. Maybe I'm thinking in the context of `shouldComponentUpdate` all the time 🤔
 
 Either way, use `useCallback` for callbacks, and try to pass only primitives for props (or stable values from _state_ or `useMemo`).
+
+### Keeping the default behavior while using comparator
+
+You might be tempted to escape early (I know i'm) inside the `React.memo` comparator function.
+
+```js
+React.memo(Comp, (prev, current) => {
+  return prev.PROP == current.PROP;
+});
+```
+
+This might help you wil optimization but you still have to remember that **_React_ will compare every prop for you inside the default comparator function**. This matters since by escaping early you might introduce some bugs by not re-rendering when some other prop changes (maybe you added a new one).
+
+So you should always try to preserve the default behavior while using your custom _comparator_ function, either by using some kind of library or by performing the `===` (`Object.is`) check yourself.
+
+## Context
+
+So you want to create context for (hopefully) some part of your application. You might write it like so
+
+```jsx
+const Context = React.createContext();
+
+function Provider({ children }) {
+  const [state, setState] = React.useState();
+  return (
+    <Context.Provider value={{ state, setState }}>{children}</Context.Provider>
+  );
+}
+```
+
+While this way of creating the _provider_ component is completely valid, what will happen if the parent of this component will re-render? You guessed it, the `value` will have brand new reference, thus **every consumer of that context will re-render**. This is quite bad.
+
+What you can do here is to memoize the `value` that you pass onto the _provider_.
+
+```jsx
+const Context = React.createContext();
+
+function Provider({ children }) {
+  const [state, setState] = React.useState();
+  const memoizedValue = React.useMemo(() => ({ state, setState }), [state]);
+  return <Context.Provider value={memoizedValue}>{children}</Context.Provider>;
+}
+```
+
+Remember that the `setState` is stable, just like the `dispatch` from `useReducer`.
+
+Now, the state has to change for the consumers to re-render. This is what we really wanted from the begging.
+
+Combine this with the _value/dispatch provider_ pattern and you are on your way to create a performant context provider :).

@@ -151,6 +151,19 @@ function increment(dispatch) {
 
 **No need for memoization!**. This also brings other benefits like _tree-shaking_ and such. Overall, it's a much cleaner solution than having this function defined inside the _consumer hook_ or the _provider_ directly.
 
+You would use it like so:
+
+```jsx
+function Component({ prop }) {
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    increment(dispatch);
+    // increment is always stable!
+  }, [prop]);
+}
+```
+
 ## Compound Components
 
 ### Non-flexible Compound Components
