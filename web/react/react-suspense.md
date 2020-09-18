@@ -111,3 +111,62 @@ function Component() {
 
 Now the _render as you fetch_ makes more sense. You might be able to render the pokemon part while the `LazyImage` is still being resolved. Each time something resolves, `React` is able to go _deeper_ and render more stuff. This is the essence of
 _render as you fetch_ pattern.
+
+## `useTransition`
+
+As of time of writing this, the API is too unstable to even write about it. Just know that it is a hook, and the _transition_ part comes from the fact that you will be transitioning from pre-fallback to fallback state.
+
+## Lazy loading images with _resource_ concept
+
+You can load your data and images at the same time, pretty neat. For that we need to know how to preload an image, it's pretty simple
+
+```js
+function preloadImage(src) {
+  const img = document.createElement("img");
+  img.src = src;
+  img.onload = () => console.log("loaded");
+}
+```
+
+Now par this with the `createResource` function
+
+```js
+function createImageResource(src) {
+  return createResource(
+    new Promise((resolve) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.onload = () => resolve(src);
+    })
+  );
+}
+```
+
+Then you can create 2 resources when you want your data, an image and the payload
+
+```js
+function createPayloadResource(pokemonName, src) {
+  return {
+    data: createPokemonResource(pokemonName),
+    image: createImageResource(src),
+  };
+}
+```
+
+When in your component
+
+```jsx
+function PokemonInfo({ pokemonName, src }) {
+  const pokemonResource = createPayloadResource(pokemonName, src);
+  const pokemon = pokemonResource.data.read();
+
+  return (
+    <div>
+      <p>{pokemon.name}</p>
+      <img src={pokemonResource.image.read()} />
+    </div>
+  );
+}
+```
+
+Neat!
