@@ -127,6 +127,32 @@ Now, the state has to change for the consumers to re-render. This is what we rea
 
 Combine this with the _value/dispatch provider_ pattern and you are on your way to create a performant context provider :).
 
+### When NOT to use `React.useMemo`
+
+While using the `React.useMemo` is usually justified, sometimes it's not needed. Mainly, the **`React.useMemo` is not needed when your provider does not re-render (triggered from the parent)**. This usually means that the _provider_ is a global level provider. Maybe some kind of configuration that is static, or maybe something that you wrap your whole app with.
+
+When you have such situation, the `children` prop will not change (usually).
+
+```jsx
+function Provider({ children }) {
+  // NO NEED TO MEMOIZE CONTEXT HERE!!!
+  return <Consumer>{children}</Consumer>;
+}
+
+function App() {
+  return <p>My whole app here</p>;
+}
+
+export function AppWithProviders() {
+  return (
+    // nothing to trigger re-render of the Provider - no need to memoize the context.
+    <Provider>
+      <App />
+    </Provider>
+  );
+}
+```
+
 ## State Colocation
 
 This is more of a tip rather than technique. I think you will come to this realization the more code you write. So here it goes:
@@ -145,3 +171,11 @@ achieved through _webpack aliases_. The impact itself is minimal, but still
 worth considering.
 
 [Consult the docs for more info](https://gist.github.com/bvaughn/25e6233aeb1b4f0cdb8d8366e54a3977)
+
+### Note on `unstable_wrap`
+
+At least for me, the provided gist was not clear enough so that I could understand what `wrap` is for. So the deal with wrap is that it allows you to _associate_ the _wrapped_ interaction with the current _trace_ segment.
+
+If your _trace_ callback kicks off side effects that change state, you would want to wrap those functions using the `wrap` API so that they are _associated_ with the `trace` segment.
+
+The notion of `wrap` and `trace` is pretty similar to X-Ray traces.
