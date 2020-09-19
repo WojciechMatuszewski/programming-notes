@@ -170,3 +170,21 @@ function PokemonInfo({ pokemonName, src }) {
 ```
 
 Neat!
+
+## `React.SuspenseList`
+
+Coordinating loading states is not fun. Actually it's a pretty hard problem, and I would even go as far as saying it's probably something you should leave to 3rd party libraries or... the new `React.SuspenseList` API.
+
+So you have a page with multiple sections, maybe you want to load them lazily, but you end up with having like 10 loaders on your page. You can wrap your `React.Suspense` calls with `React.SuspenseList` and fix that.
+
+```jsx
+<React.SuspenseList revealOrder = "together">
+  <React.Suspense fallback = {<p>loading...</p>}><Foo/><React.Suspense/>
+  <React.Suspense fallback = {<p>loading...</p>}><Foo/><React.Suspense/>
+  <React.Suspense fallback = {<p>loading...</p>}><Foo/><React.Suspense/>
+</React.SuspenseList>
+```
+
+The code above makes it so that the components are loaded together - there will be only 1 `loading...` string visible on the screen. Pretty neat right?
+
+The API is not finalized so I will not be going through all the options, take a look into docs (which are probably different than the ones I'm currently look at).
