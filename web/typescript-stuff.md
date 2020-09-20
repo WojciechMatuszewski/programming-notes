@@ -741,6 +741,47 @@ type OrderWithPayPal = Order & PayPal;
 const stripeOrder = Object.assign({}, order, stripeData); // OrderWithStripe
 ```
 
+### Distributive properties
+
+While working with unions you might want to check some condition for each member of the union.
+
+For example, I might want to check if this union
+
+```ts
+type MyUnion = string | number | boolean;
+```
+
+contains the `string` type. Thankfully for us, the _union_ type has this property where when you use the _conditional types_ the condition will be applied to all members of the union.
+
+```ts
+type MyUnion = "ala" | 0 | true;
+
+type HasString = Check<MyUnion, "ala">; // 'ala'
+```
+
+The condition inside the `HasString` type is expanded to something like this
+
+```ts
+type HasString =
+  | ("ala" extends "ala" ? "ala" : never)
+  | (0 extends "ala" ? "ala" : never)
+  | (true extends "ala" ? "ala" : never);
+```
+
+Now, typescript is doing this for you, but this is something worth knowing.
+
+### `Extract` utility
+
+So now you know that union members are distributed among the condition when using _conditional types_, but did you know that you do not have to write the _condition_ itself? You can rely on the `Extract<U, T>`.
+
+```ts
+type MyUnion = string | number | boolean;
+
+type HasString = Extract<MyUnion, string>;
+```
+
+Pretty neat right?
+
 ## Discriminant union
 
 Ever used reducer? You probably used `action.type` or similar property to

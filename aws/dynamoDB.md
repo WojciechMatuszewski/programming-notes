@@ -196,4 +196,4 @@ Usually, most of the `read` operations will be `eventually consistent`. This is 
 
 When you have the same `PK`, items with that `PK` will be on the same partition. Each **partition** has **leader and follower nodes**. Data is replicated from the leader to the follower nodes asynchronously. Usually DynamoDB reads from a random node - either leader or a follower node. When that happens there might be a point of time where that data is not yet there on given node.
 
-To make sure your reads are allways targetting the `leader` node (where data is placed first) - you have to manually tell dynamo, on operation basis, to perform a `consistent read / write`.
+To make sure your reads are always targeting the `leader` node (where data is placed first) - you have to manually tell dynamo, on operation basis, to perform a `consistent read / write`.
