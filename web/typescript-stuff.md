@@ -611,6 +611,21 @@ function someFn(this: SomeObj, num: number) {
 This may look weird, it may seem like `someFn` now takes 2 arguments but that's
 not the case. First argument (`this` typing) will get compiled away.
 
+### `ThisType`
+
+This one is pretty wild. This utility type allows you to ensure that all methods on a given object have correct this.
+
+```ts
+const someObj: Record<string, any> & ThisType<{ foo: string }> = {
+  method() {
+    // strongly typed this!
+    console.log(this.foo);
+  },
+};
+```
+
+The implementation is also interesting..., being an empty interface. Kinda magical if you ask me.
+
 ## Typeof
 
 Here there is distinct difference between Javascript world and Typescript world.
