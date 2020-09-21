@@ -361,6 +361,18 @@ type t1 = GetFunctionArgumentTypes<typeof numberArg>; // number
 type t2 = GetFunctionArgumentTypes<typeof arrayMixed>; // [1, 'a', {}]
 ```
 
+#### Inferring multiple types
+
+Nothing is stopping your from using the _infer_ keyword multiple times. Check this out
+
+```ts
+type AppendArgument<Fn, A> = Fn extends (...args: infer Args) => infer R
+  ? (...args: [...Args, A]) => R
+  : never;
+```
+
+Here I've used _infer_ to both get the hold of the function arguments, but also the return type of the `Fn` type. While I could use the `ReturnType` generic, using _infer_ is also nice ;)
+
 ## Mapped And Lookup Types
 
 You can use `in` and `keyof` to transform interfaces and type-objects
