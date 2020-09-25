@@ -1090,6 +1090,16 @@ So when to use what?
 
 * you can use **referrer IAM condition** to **allow request from specific web pages**.
 
+##### Precedence
+
+There is a precedence in which **acls** or **bucket policies** are evaluated.
+
+1. Does the requester has the perrmision to do stuff on s3?
+2. Does the bucket policy has the necessary permissions ?
+3. **If the bucket owner is not the owner of the object** does the **object acl** allow for the action?
+
+The step 3 is crucial. Remember that whenever you upload something to a bucket that is not yours, you can control how much access to the underlying object the bucket owner has.
+
 #### Encryption
 
 - **PER OBJECT** basis
