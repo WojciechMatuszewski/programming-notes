@@ -1,5 +1,83 @@
 # React patterns
 
+## lazy ref pattern
+
+Sometimes you want to initialize the `useRef` value lazily. Now, with `useState` you can do that using the callback initializer, but `useRef` does not have that kind of API.
+
+This is where the notion of _lazy ref_ comes in. This **will feel weird** but believe me, it's sometimes really useful.
+
+```tsx
+function Component() {
+  const rootRef = React.useRef(null);
+  if (!rootRef) {
+    rootRef.current = SOME_VALUE;
+  }
+
+  // now I have mutable value I can use
+}
+```
+
+Yes, we are doing it inside the render function, yes it looks weird, but this is a legit pattern.
+For the curious, this **should be concurrent safe**. The assignment is done only once, there are no side effects.
+
+### Usage
+
+So check this out. You are using some kind of hook which fetches data
+
+```jsx
+const { data, error, loading } = useFetch("/users");
+if (error) return <p>error</p>;
+if (loading) return <p>loading...<p>
+
+return data.names
+```
+
+The `data` will be initially `undefined` and **can be updated through the lifecycle of your component** - think _apollo cache_ or similar.
+
+Now, there might be a time where you want to grab the **first** resolved data value. Soo how would you do it?
+
+1. You cannot use block-level variable since the value will be re-declared between renders, so you lost your previous value.
+
+```jsx
+let firstUsers = null;
+
+const { data, error, loading } = useFetch("/users");
+if (error) return <p>error</p>;
+
+if (loading) return <p>loading...<p>
+
+// will not work! Any re-renders will re-create the `firstUsers`
+if (!firstUsers) {
+  firstUsers = data;
+}
+
+
+return data.names
+```
+
+2. You cannot use `useState` with initial value since we are dealing with `if` conditions
+
+What you would do is to create a _lazy ref_
+
+```jsx
+const firstUsersRef = React.useRef(null)
+
+const { data, error, loading } = useFetch("/users");
+if (error) return <p>error</p>;
+
+if (loading) return <p>loading...<p>
+
+// firstUsersRef is preserved through renders. NICE!
+if (!firstUsersRef.current) {
+  firstUsers.current = data;
+}
+
+
+return data.names
+```
+
+With that, your `current` key should hold the first resolved users 🤗
+
 ## `isMounted` and functional components
 
 While reading github issues I've noticed a that even Dan himself proposes this pattern:
