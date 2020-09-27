@@ -487,10 +487,36 @@ You might have seen them, especially while working with `input` components. They
 For your custom components, you should do the same. There is a pattern which utilizes `React.Ref` which enables you to easily check if your component is transitioning from one state to another.
 
 ```js
-const { current: wasControlled } = React.useRef(isControlled);
-React.useEffect(() => {
-  // code
-}, [isControlled]);
+function Component({ open }) {
+  const isControlled = open != null;
+  const { current: wasControlled } = React.useRef(isControlled);
+
+  if (wasControlled && !isControlled)
+    console.error("Hey, you went from controlled to uncontrolled");
+
+  if (isControlled && !wasControlled)
+    console.error("Hey, you went from uncontrolled to controlled");
+}
 ```
 
 Notice that I do not use the `prevState` pattern. There is no `useEffect` which saves the current state as the `prevState`. This is because the **component state (either `controlled` or `uncontrolled`) has to be the same for the entire lifecycle of that component**. There is no need to save the previous state, our point of reference should be the initial state.
+
+## `wrapEvent` pattern
+
+When you are building component library, you often end up building things like _accordions_ or similar. Those components often take then `onChange` prop.
+It would be useful if that `onChange` prop behave just like the native one right? By that I mean that if you call `.preventDefault()`, the default behavior of the component is prevented.
+
+You can easily do this by creating a wrapper function for that event.
+
+```js
+function wrapEvent(theirHandler, ourHandler) {
+  return function (event) {
+   theirHandler.?(event)
+   if (!event.defaultPrevented) {
+     ourHandler(event)
+   }
+  }
+}
+```
+
+This is something what I saw when spelunking in the _reach-ui_ repo.

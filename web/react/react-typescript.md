@@ -80,3 +80,30 @@ There is no possibility for us to know the `React.Ref` parameter so I've opted t
 You should prefer default value assignment here. Really. Otherwise the definitions gets really awkward. You would have to intersect the `ButtonWithRef` definition with additional `{defaultProps: {}}` type.
 
 This is because by using the _casting_ we are loosing the `defaultProps` typings which `forwardRef` normally provides.
+
+## `ref` being immutable
+
+I do not know about you, but whenever I write `React.useRef` I want to be as explicit as possible. This often leads me to write something like this
+
+```tsx
+const myRef = React.useRef<HTMLDivElement>(null);
+```
+
+Now, this would be fine and all, but whenever you when try to mutate that ref you, the type system will scream at you
+
+> Cannot assign to 'current' because it is a read-only property
+
+Now, this is weird right, should not all _refs_ be mutable? Well, yes, but...
+
+By defining an initial value as `null` you are signaling to the type system that **you will not modify that ref**. That **React owns that ref**. You would not want to mutate something that belongs to another party would you?
+
+So whenever you write something like this
+
+```tsx
+function Component() {
+  const myRef = React.useRef<HTMLDivElement>();
+  return <div ref={myRef} />;
+}
+```
+
+Consider using `null` as initial value - you will most likely never mutate the `current` property anyway, why would you in this case?
