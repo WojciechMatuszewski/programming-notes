@@ -55,6 +55,12 @@ function square(n) {
 }
 ```
 
+#### Picking correct modules
+
+What you **need to know** is that the **esm modules should be favoured over any other modules when working on the web**. This is because they are **easily analyzable by bundlers** and will result in smaller bundles.
+
+`cjs` modules **are hard to analyze** because the **imports / exports can be dynamic (computed)**.
+
 ### ASTS and Initial Execution
 
 AST is a structure that shows a structure of the actual code.
@@ -70,7 +76,7 @@ _Interpreter_ to _Turbofan_
 
 ```js
 // Node 8+
-const { performance } = require('perf_hooks');
+const { performance } = require("perf_hooks");
 
 // SETUP 🏁
 
@@ -81,17 +87,17 @@ const b = 2;
 
 const add = (x, y) => x + y;
 
-performance.mark('start');
+performance.mark("start");
 
 while (iterations--) {
   add(a, b);
 }
 
-performance.mark('end');
+performance.mark("end");
 
-performance.measure('My Special Benchmark', 'start', 'end');
+performance.measure("My Special Benchmark", "start", "end");
 
-const [measure] = performance.getEntriesByName('My Special Benchmark');
+const [measure] = performance.getEntriesByName("My Special Benchmark");
 console.log(measure);
 ```
 
@@ -175,7 +181,7 @@ const makeAPoint = () => {
 };
 const a = makeAPoint();
 const b = makeAPoint();
-console.log(%HaveSameMap(a,b)) //false
+console.log(%HaveSameMap(a, b)); //false
 ```
 
 Every time we invoke `makeAPoint` we are creating a fresh reference to a
@@ -186,7 +192,7 @@ function.
 #### Function inlining
 
 ```js
-const square = x => x * x;
+const square = (x) => x * x;
 // which is faster
 // (1) this ?
 const sumOfSquares = (a, b) => square(a) + square(b);
@@ -218,7 +224,7 @@ files).
 
 Parts what will actually show up on the page are turned into **Render Tree**
 
-###### Style calculation
+### Style calculation
 
 Browser figures out all of the styles that will be applied to a given element.
 
@@ -272,7 +278,7 @@ Much better implementation would be **reading all the widths first then making
 elements wider.** This way browser can batch operations and optimize stuff.
 
 ```js
-const widths = elements.map(element => element.offsetWidth);
+const widths = elements.map((element) => element.offsetWidth);
 for (i = 0; i < widths.length; i++) {
   elements[i].offsetWidth = widths[i] * 2;
 }
@@ -333,12 +339,12 @@ for every element that might animate or do different things** You should not
 overdo it though. Managing layers can be expensive for browser.
 
 ```js
-element.addEventListener('mouseenter', function() {
-  element.style.willChange = 'transform';
+element.addEventListener("mouseenter", function () {
+  element.style.willChange = "transform";
 });
 // cleanup!
-element.addEventListener('animationEnd', function() {
-  element.style.willChange = 'auto';
+element.addEventListener("animationEnd", function () {
+  element.style.willChange = "auto";
 });
 ```
 
