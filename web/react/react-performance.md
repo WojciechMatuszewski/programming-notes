@@ -1,5 +1,44 @@
 # React performance
 
+## Batching updates
+
+React, by default batches your state updates. That is quite good, you probably had situations where you had multiple `setState` calls after each other right?
+
+```js
+function handleSomething() {
+  setValue(1);
+  setOtherValue(2);
+}
+```
+
+The 2 calls from the snippet above would result in only one _re-render_ of you component. This is all and fine but have you noticed that **the batching does not work in _async_ or _native-events_** handlers?
+
+```jsx
+React.useEffect(() => {
+  setTimeout(() => {
+    setValue(1);
+    setOtherValue(2);
+  }, 1000);
+}, []);
+```
+
+This would result in **two _re-renders_**. This is the way it is and we have to live with it until React team changes the way things are.
+
+One way to make sure your state updates are batched is to use `unstable_batchedUpdates`. The name is scarry right? `unstable` , but it's been somewhat documented on github so I would say it's more or less safe to use.
+
+```jsx
+React.useEffect(() => {
+  setTimeout(() => {
+    React.unstable_batchedUpdates(() => {
+      setValue(1);
+      setOtherValue(2);
+    });
+  }, 1000);
+}, []);
+```
+
+Now you should see only 1 render happening :)
+
 ## Lazy loading
 
 Standard technique, using `React.lazy` and the `React.Suspense` is a standard thing to do.
