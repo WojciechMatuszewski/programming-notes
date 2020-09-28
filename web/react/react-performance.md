@@ -20,6 +20,7 @@ React.useEffect(() => {
     setOtherValue(2);
   }, 1000);
 }, []);
+we;
 ```
 
 This would result in **two _re-renders_**. This is the way it is and we have to live with it until React team changes the way things are.
