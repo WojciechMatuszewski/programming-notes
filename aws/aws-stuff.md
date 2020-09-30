@@ -4280,7 +4280,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### Event Manipulation
 
+- you can **transform the event**. This of this picking and choosing which fields you want to forward to given service
 
+* you can **return static response** to given service. This of counting service
 
 ### Amazon MQ
 
