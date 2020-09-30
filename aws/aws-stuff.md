@@ -4278,6 +4278,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you **cannot use custom bus for cron / fixed rate schedule**.
 
+#### Event Manipulation
+
+
+
 ### Amazon MQ
 
 - occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
