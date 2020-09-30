@@ -4284,6 +4284,18 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can **return static response** to given service. This of counting service
 
+#### Batching
+
+- there is **not build-in batching** like SQS
+
+* you have to **batch manually, probably the inside the detail type**.
+
+#### Debugging
+
+- debugging is hard but possible
+
+* what I would suggest is to **make cloud watch log group as your target**. You will be able to see all the events!
+
 ### Amazon MQ
 
 - occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
