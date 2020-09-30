@@ -1152,28 +1152,8 @@ just get the last type out of the tuple.
 Lets try the naive approach
 
 ```ts
-// NOT WORKING
 type Tail<A extends any[]> = A extends [any, ...infer tail] ...
 ```
-
-Sadly we cannot use spread and `infer` together. To implement this type we can
-use _function types_. We are going to work on function parameters where we can
-directly _infer_ from the rest of arguments.
-
-```ts
-type Tail<A extends any[]> = ((...t: A) => any) extends (
-  _: any,
-  ...tail: infer TailType
-) => any
-  ? TailType
-  : never;
-
-type Test = Tail<[1, 2, 3, 4]>; // [2,3,4]
-```
-
-We are sort of creating a _virtual type-only function_ that will allow us to
-work with parameters which we can type and infer from freely (we cannot do that
-using arrays).
 
 ### HasTail
 
