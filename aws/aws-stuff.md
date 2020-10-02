@@ -1591,6 +1591,10 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * data is replicated by default, spread across 3 AZs
 
+- you will need an EC2 instance to run int
+
+* one neat trick I saw is to scale this DB up when you have to perform some kind of operations. Then exports the results to Athenta for quering and scale down the database.
+
 ### QLDB (Quantum Ledger Database)
 
 - database for tracking pre and post states of data. This is very useful for **banking, payroll, finance, even voting**
@@ -3105,6 +3109,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real time (buffered) use `Kinesis Firehose`**.
 
+###### Embedded metrics format
+
+- instead of using the sdk to synchronously put metrics data, just log `JSON` data in specified format.
+
+* EMF will handle up to 100 metrics per `JSON` blob.
+
 ###### Log retention
 
 - **by default** CloudWatch keeps the logs forever. **But after 15 months you cannot access them through console**.
@@ -4295,6 +4305,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - debugging is hard but possible
 
 * what I would suggest is to **make cloud watch log group as your target**. You will be able to see all the events!
+
+- you **cannot create the rule for cloudWatch log group through CF**. This is a mess :C
 
 ### Amazon MQ
 
