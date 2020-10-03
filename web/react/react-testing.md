@@ -31,6 +31,41 @@ test("edge case", () => {
 
 The API is straightforward, it can work with `REST` and `GraphQL`, pretty nice!
 
+## Dreaded `act` function
+
+So you probably are aware of the `act` function right? Right?
+
+You actually might not be, if you are using `@testing-library/react`, all the `fireEvent` and `userEvent` methods are wrapping your interactions with `act`.
+
+But let's say you are faced with the `act` warning - you know which one I'm talking about 😉
+
+So, _React_ is not performing operations synchronously. There is a _scheduler_ package involved. And this is completely fine. Since a lot of worked can be packed in one frame, you do not really notice the UI being updated incrementally.
+But guess what, your tests do!
+
+```js
+function App() {
+  let [ctr, setCtr] = useState(0);
+  useEffect(() => {
+    setCtr(1);
+  }, []);
+  return ctr;
+}
+```
+
+This simple component will have probably two or more _units of work_. When you write your tests like so:
+
+```js
+it("should render 1", () => {
+  const el = document.createElement("div");
+  ReactDOM.render(<App />, el);
+  expect(el.innerHTML).toBe("1"); // this fails!
+});
+```
+
+That assertion will most likely run in between those two _units of work_. This is what `act` is for. To **make sure that your assertions are run AFTER all of the Reacts _units of work_**. And that's really it.
+
+For `async` things you would use `await act(async () => {})`.
+
 ## Generating fake data
 
 You most likely need to supply some kind of data to your components when you are testing them. While you could waste time coming up with some mock data (or use _foo-like_ names which are not that good for testing), you could also use tools like `@jackfranklin/test-data-bot` which will build realistic data for you.
