@@ -48,3 +48,21 @@ const id = "1"; // from the item
 const idlessMessage = error.message.replace(id, "SOME_ID");
 expect(idlessMessage).toMatchInlineSnapshot();
 ```
+
+## Mocks on object which only have getters
+
+This usually happens when you have a file which re-exports methods from other files, a barrel module if you will.
+
+```js
+export * from "./foo";
+```
+
+This is the crux of the issue since this file will be transpiled to an object with only `get` property defined. **Without the `set` property *jest*s `spyOn` does not work**.
+To combat this, mock the entire module, probably using `jest.requireActual` along the way.
+
+```js
+jest.mock("module", () => ({
+  ...jest.requireActual("module"),
+  method: jest.fn(),
+}));
+```
