@@ -132,3 +132,15 @@ function AppProvider({ children, ...props }) {
 ```
 
 Notice the **`...props`**. This will allow you to **overwrite the `value` of the context in your tests**. While you **could** do the same with manually creating the `AppContext.Provider` and supplying there, it just feels wrong for me. We are making all this effort to encapsulate context within this one single _provider_ and that throwing all of this away in tests.
+
+## Cypress debugging
+
+Cypress exposes a couple of ways to debug the problem you are currently facing (or maybe you are just writing code and want to see how things are at a given time).
+
+There are couple of ways:
+
+1. Use the `debugger` inside your code / cypress test. You will probably have to use the `.then` API (this is not a _promise API_) to get the current _subject_.
+
+2. Use the `.debug` command. This is the native way of debugging stuff in Cypress. Pretty neat.
+
+3. Use the `.pause` command. Super useful, especially since Cypress is just so fast sometimes that, at least I, cannot keep up when I do something iteratively.
