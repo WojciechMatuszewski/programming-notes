@@ -4530,17 +4530,27 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### User Pools
 
-- user pool is responsible for **authenticating the users**. It returns the tokens, these tokens can be exchanged for AWS credentials using Identity Pools.
+- this is **where your users live**.
 
-* user pool also **manages the overhead** of **handling SAML/Social sign in provider tokens**
+* user pool is responsible for **authenticating the users**. It returns the tokens, these tokens can be exchanged for AWS credentials using Identity Pools.
 
-- you **do not have to exchange the tokens using Identity Pool for AWS credentials**. You **might want to control access to your backend resources using those credentials**. (eg. APIGW authorizers)
+- user pool also **manages the overhead** of **handling SAML/Social sign in provider tokens**
+
+* you **do not have to exchange the tokens using Identity Pool for AWS credentials**. You **might want to control access to your backend resources using those credentials**. (eg. APIGW authorizers)
 
 #### Identity Pools
 
-- identity pool is **responsible for exchaning user pool tokens for AWS credentials**
+- **here is where you grant permissions to users**
 
-* here you can **enable unathenticated access**. This is quite logical that this option is here since remember that Identity Pool is responsible for STS tokens.
+* identity pool is **responsible for exchaning user pool tokens for AWS credentials**
+
+- here you can **enable unathenticated access**. This is quite logical that this option is here since remember that Identity Pool is responsible for STS tokens.
+
+#### Multi-region
+
+- Cognito **is a regional service**. You will need to implement the replication yourself.
+
+* One solution I saw is to have **triggers write user data to DynamoDB global tables**. This is still not ideal as the user would have to have different passwords per region, but might be a **solution for active-passive** architecture.
 
 #### SAML
 
@@ -4562,18 +4572,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you **do not have to create a new user specially for this**. While working with `Identity Brokers` you should use **IAM role** that the federated user will assume.
 
 * remember that **your identity broker is talking to sts, NOT YOUR USERS!**.
-
-#### User Pools
-
-- this is **where your users live**.
-
-* you can **create groups to control permissions for multiple users**
-
-#### Identity Pools
-
-- **here is where you grant permissions to users**
-
-* using identity pools you can **setup federated identities** (Google, Fb, ..)
 
 #### Identity Federation
 
