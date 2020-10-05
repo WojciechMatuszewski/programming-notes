@@ -26,6 +26,10 @@ With `exports` you are mutating an `module.exports` and if there is an `exports`
 - previous methods were only for a single function on a single invocation resolution. **Use lumigo-cli to see cold starts for all your functions on all your invocations**.
   > lumigo-cli analyze-cold-starts
 
+* there are **2 versions of cold start**
+  - If we are dealing with **new code being deployed**, the cold start will be **relatively long**
+  - If we are dealing with **env update**, the cold start will be **relatively short**
+
 ### Initialization time
 
 - **adding more memory (thus CPU) WILL NOT AFFECT THE SPEED OF THE INITIALIZATION**. This is because lambda is run at full power, always, at initialization.
