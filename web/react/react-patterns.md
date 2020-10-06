@@ -520,3 +520,43 @@ function wrapEvent(theirHandler, ourHandler) {
 ```
 
 This is something what I saw when spelunking in the _reach-ui_ repo.
+
+## Safe initial value pattern
+
+While building components you will most likely have a prop for _initial value_. Most likely your implementation will be similar to this
+
+```jsx
+function Component({ defaultChecked }) {
+  const [checked, setChecked] = React.useState(defaultChecked)
+  return <input type = "radio" checked = {checked}>;
+}
+```
+
+and **there is nothing wrong with that**. The problem appears when you want to have a _reset_ functionality.
+
+With the _reset_ functionality there is a possibility for the consumer to change the _initial value_ over the course of the lifetime of the component. And this **can influence the _reset_ functionality**
+
+```jsx
+function Component({ defaultChecked }) {
+  const [checked, setChecked] = React.useState(defaultChecked)
+
+  // There is a possibility that the consumer changed the value of `defaultChecked` before this runs.
+  const reset = () => setChecked(defaultChecked)
+  return <input type = "radio" checked = {checked}>;
+}
+```
+
+To combat this, use `React.useRef`. This is an _instance variable_. It will have the same value through the lifecycle, unless you yourself change it.
+
+```jsx
+function Component({ defaultChecked }) {
+  const {current: initialChecked} = React.useRef(defaultChecked);
+  const [checked, setChecked] = React.useState(initialChecked)
+
+  // The `initialChecked` could not have changed, it's captured by the `useRef`.
+  const reset = () => setChecked(initialChecked)
+  return <input type = "radio" checked = {checked}>;
+}
+```
+
+Now, I have to emphasize this, **use this pattern when you are dealing with the _reset_ functionality**. Well there might be other use cases, but I think that's the most common one.
