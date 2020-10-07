@@ -527,6 +527,7 @@ While building components you will most likely have a prop for _initial value_. 
 
 ```jsx
 function Component({ defaultChecked }) {
+
   const [checked, setChecked] = React.useState(defaultChecked)
   return <input type = "radio" checked = {checked}>;
 }

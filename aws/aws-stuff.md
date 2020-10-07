@@ -969,6 +969,16 @@ An example for s3-prefix (folder)
 
 - **tiers** apply to **object**, **not a bucket!**
 
+#### Select
+
+- allows you do **get a piece of data from s3**. Like **some part of the object contents**.
+
+* you can write **expressions in SQL**.
+
+- it can **read multiple formats** and there is **no schema involved**.
+
+* this is **mostly for single files**. If you need **analytics, use Athena**.
+
 #### Glacier
 
 - actually separate from S3 but AWS is integrating it within S3 heavily.
