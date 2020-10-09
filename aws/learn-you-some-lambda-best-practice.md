@@ -353,3 +353,5 @@ Notable alarms are:
 - **function policy**: think **what other service can invoke my function**
 
 * **execution role**: think **what can this lambda do**.
+
+// TODO: https://lumigo.io/blog/aws-lambda-extensions-what-are-they-and-why-do-they-matter/?utm_campaign=Weekly%20Updates&utm_medium=email&_hsmi=97037558&utm_content=97037896&utm_source=hs_email

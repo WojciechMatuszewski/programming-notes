@@ -4254,7 +4254,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **NOT for high amounts of events per second**. You are billed per send an event. For case where you have a lot of events look into Kinesis.
 
-- **does not support DQL**. This is quite surprising to me tbh.
+#### Resiliency
+
+- you can use **DQL per rule**
+
+* you can specify **custom number of retires** as well as **time spent retrying**.
 
 #### Schema Registry
 
