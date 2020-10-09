@@ -331,3 +331,25 @@ Notable alarms are:
 - `Lambda` is likely the cheapest part of your infrastructure. use `HTTP APIs` whenever you can.
 
 * in **high thruput scenarios ALB is much cheaper than APIGW REST and HTTP APIs**.
+
+## Orchestration vs Choreography
+
+- two concepts of building services and how these services communicate with each other
+
+### Orchestration
+
+- think **step functions**
+
+* step functions **control the steps of the workflow**. Probably **invoke lambdas**
+
+### Choreography
+
+- think **events**
+
+* you will probably use **EventBridge** here. This is where everything is loosely coupled, there is **no central piece which orchestrates the functions**.
+
+## Security
+
+- **function policy**: think **what other service can invoke my function**
+
+* **execution role**: think **what can this lambda do**.
