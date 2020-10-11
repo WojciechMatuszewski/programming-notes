@@ -447,7 +447,7 @@ that...
 
 ## Lazy State initialization (FC)
 
-There are 2(or 3?) ways to initialize functionals component state.
+There are 2(or 3?) ways to initialize functional component state.
 
 First variant would be to just pass value. This sometimes results in a gotcha where state is stale when that value is coming from a prop.
 
@@ -905,21 +905,6 @@ Some rules to make your life easier
   ref's value**
 
 Easy as that.
-
-## Memoization of children
-
-This can bite you in the ass one day. Remember, when using `React.memo` on the component that takes `children` that `React.memo` will do nothing. `React.memo` **does only shallow compare**, have you looked into how the `ReactElement` obj. looks like? 👍.
-
-One thing you might do is to `memoize` the `children` themselves before passing them as prop
-
-```jsx
-function Component({ children }) {
-  const MemoizedChildren = React.useMemo(() => children, []);
-  return <MemoizedComponent>{MemoizedChildren}</MemoizedComponent>;
-}
-```
-
-But this is pretty bad. In such situations you such probably **reach for second argument within `React.memo`**.
 
 ## Undocumented features
 

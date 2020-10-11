@@ -69,6 +69,9 @@ function Component() {
 
 Use the _magic comments_ feature of webpack. It supports the browser script loading hint.
 
+There is one important part though, **_webpackPreload:true_ will not work for `React.lazy`**. At least I could not get it to work. You will need to manually _preload_ your stuff.
+This is mostly likely because the _preloaded module_ has to be imported at module evaluation time, and you are not doing that when using `React.lazy`.
+
 ### `React.Suspense` and _concurrent_ mode
 
 Lets say you are toggling a component which is imported using `React.lazy` API. Depending on your situation, there are 2 ways to do that
@@ -219,3 +222,40 @@ At least for me, the provided gist was not clear enough so that I could understa
 If your _trace_ callback kicks off side effects that change state, you would want to wrap those functions using the `wrap` API so that they are _associated_ with the `trace` segment.
 
 The notion of `wrap` and `trace` is pretty similar to X-Ray traces.
+
+## Memoization of children
+
+This can bite you in the ass one day. Remember, when using `React.memo` on the component that takes `children` that `React.memo` will do nothing. `React.memo` **does only shallow compare**, have you looked into how the `ReactElement` obj. looks like? 👍.
+
+One thing you might do is to `memoize` the `children` themselves before passing them as prop
+
+```jsx
+function Component({ children }) {
+  const MemoizedChildren = React.useMemo(() => children, []);
+  return <MemoizedComponent>{MemoizedChildren}</MemoizedComponent>;
+}
+```
+
+But this is pretty bad. In such situations you such probably **reach for second argument within `React.memo`**.
+
+## Rendering behavior
+
+https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/
+
+I think the most important thing to remember is that **`React` will render all child components unconditionally just because parent re-rendered!**
+This is very important to remember especially when you are using `React.Context`.
+
+```jsx
+function App() {
+  const forceRerender = React.useReducer((x) => x + 1, 0)[1];
+  return (
+    <CounterProvider>
+      <Parent />
+      <button onClick={forceRerender}>Force</button>
+    </CounterProvider>
+  );
+}
+```
+
+In above snippet, your _context value_ might be _memoized_ but the `Parent` will still be _invoked_ (no commits to the DOM though) when the button is clicked.
+This is where the notion of **having `React.memo` in strategic parts of your app** comes in.
