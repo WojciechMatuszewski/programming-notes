@@ -355,3 +355,23 @@ Notable alarms are:
 * **execution role**: think **what can this lambda do**.
 
 // TODO: https://lumigo.io/blog/aws-lambda-extensions-what-are-they-and-why-do-they-matter/?utm_campaign=Weekly%20Updates&utm_medium=email&_hsmi=97037558&utm_content=97037896&utm_source=hs_email
+
+## Networking
+
+### VPC
+
+- **lambda does not LIVE INSIDE or IS INSIDE the VPC**.
+
+* lambda is **attached to a internal NAT** that **lives inside your vpc**.
+
+![lambda v2n](../assets/lambda-v2n.png)
+
+- this is **why the VPC cold starts are no longer an issue**. It's because the **v2n gateway is created at create/update time** of given lambda.
+
+* _v2ns_ **cannot be put inside public subnet**. This is why **you will net NATGW + IGW when you want your lambda to have internet access**
+
+#### Best practices
+
+- **specify multiple subnets** when you attach your lambda to a VPC.
+
+* use _Private Link_ for connecting to private services or other AWS services through _gateway_ or _interface_ endpoints
