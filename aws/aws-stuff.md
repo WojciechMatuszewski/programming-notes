@@ -1152,11 +1152,14 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 * when using replication **SOME THINGS DO NOT CARRY OVER to the CRR destination**:
   - **lifecycle rules**
-  - any **existing objects before replication was enabled**
+  - any **existing objects before replication was enabled**. You can **change storage class of existing objects** to **force the replication to happen** though.
+    Please remember that it has to be **different storage class** in this case.
 
 - **it is possible** for an **object to change storage class and object permissions while in the process of CRR**
 
 * you can **override the owner of an object** when that object (due to CRR) is **going to another bucket**. This might be helpful to implement some kind of security measures
+
+- replication is a **asynchronous process**.
 
 #### Misc
 
