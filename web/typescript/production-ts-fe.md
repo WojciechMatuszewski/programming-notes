@@ -184,3 +184,13 @@ Now there is no ambiguity with the import. The bundler exactly knows that this s
 - consider adding separate `tsconfig` for `eslint`. You can specify the `projects` option
 
 - it seems like the `babel-jest` (so really _babel_ + _jest_) is faster than `ts-jest`
+
+- `api-extractor` seems like a great tool for automatically generating documentation. It's pretty legit, try it!
+
+- `api-extractor` without a `--local` flag can be used like a validation mechanism for changes in _API surface area_.
+
+- you can use `api-documenter` to automatically create docs from the output of the `api-extractor`. **You can then host those on github pages with like 0 work**. This is so great!
+
+- `api-extractor` and `api-documenter` is maintained by Microsoft. This makes this library no-brainier for creating documentation.
+
+// part 4 19:19
