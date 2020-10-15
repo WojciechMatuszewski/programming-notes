@@ -165,3 +165,20 @@ import type { Firebase } from "firebase";
 ```
 
 Now there is no ambiguity with the import. The bundler exactly knows that this should be stripped, because of the `import type` syntax.
+
+## Creating a library - takeaways
+
+- use `npx gitignore node` for generating `.gitignore` files for node environment.
+
+- use `volta` to pin engines and libraries. `volta` is like better `nvm`.
+
+- `esModuleInterop` treats `cjs` modules as if they have _default export_.
+
+- `skipLibCheck` can be dangerous. If you have this on and _you have to have this on for your library to compile_ any consumer of your library also has to do it.
+  This is something you might not want to happen. Be careful here.
+
+- consider opting-in for `types` option. Since this will force you to explicitly list the _typings_ that are available to you, you are reducing a chance of someone referencing a `devDependency` module in the `src` folder. If you need to split things between testing and development, consider using 2 `tsconfig.json` with different `include` statements.
+
+- use `eslint --init` to setup `eslint` config fast
+
+- consider adding separate `tsconfig` for `eslint`. You can specify the `projects` option
