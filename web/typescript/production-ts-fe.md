@@ -182,3 +182,5 @@ Now there is no ambiguity with the import. The bundler exactly knows that this s
 - use `eslint --init` to setup `eslint` config fast
 
 - consider adding separate `tsconfig` for `eslint`. You can specify the `projects` option
+
+- it seems like the `babel-jest` (so really _babel_ + _jest_) is faster than `ts-jest`
