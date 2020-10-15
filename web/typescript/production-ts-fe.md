@@ -19,7 +19,7 @@ type JSONValue =
 
 Notice that I'm referring to `JSONValue` twice within it's declaration. Previously this was not allowed.
 
-## _Template type literals_
+### _Template type literals_
 
 This is pretty neat, I still have to play around with it but it allow you to basically create permutations of _string literals_.
 
@@ -129,3 +129,39 @@ jest
 ```
 
 This increases the confidence I have in my test suite. Every time I change the identifier for the feature flag, I should also be changing my tests.
+
+### _type only imports_
+
+While working with TypeScript you might have noticed that you can import types along with exported symbols without any problems, like so
+
+```ts
+// type, javascript symbol (function)
+import { UserType, getUser } from "./user";
+```
+
+This is completely ok, but sometimes, the type has the same name as the symbol
+
+```ts
+// type, javascript symbol (object)
+import { User, User } from "./user";
+```
+
+This is possible because TypeScript _lives in different namespace_ if you will from your JavaScript code, this is why having types named the same as your symbols is possible.
+Normally this is not a problem, but sometimes, the compiler might get confused which thing to import and which thing to just strip away while bundling / compiling code.
+This used to be a problem while working with _firebase_. (or really working with code splitting in general, where you import types from modules that you are splitting)
+
+```ts
+// are we importing the namespace or the symbol?
+import { Firebase } from "firebase";
+```
+
+A lot of complains were filled that even though some people used only _modular imports_ of the _firebase_ library, they had the whole library included in their bundle. This is because the bundler could not
+determine (sometimes) if the import is for a typing or a JS symbol.
+
+To combat this issue a _type only imports_ were introduced.
+
+```ts
+import type { Firebase } from "firebase";
+```
+
+Now there is no ambiguity with the import. The bundler exactly knows that this should be stripped, because of the `import type` syntax.
