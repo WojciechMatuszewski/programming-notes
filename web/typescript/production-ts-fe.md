@@ -172,11 +172,6 @@ Now there is no ambiguity with the import. The bundler exactly knows that this s
 
 - use `volta` to pin engines and libraries. `volta` is like better `nvm`.
 
-- `esModuleInterop` treats `cjs` modules as if they have _default export_.
-
-- `skipLibCheck` can be dangerous. If you have this on and _you have to have this on for your library to compile_ any consumer of your library also has to do it.
-  This is something you might not want to happen. Be careful here.
-
 - consider opting-in for `types` option. Since this will force you to explicitly list the _typings_ that are available to you, you are reducing a chance of someone referencing a `devDependency` module in the `src` folder. If you need to split things between testing and development, consider using 2 `tsconfig.json` with different `include` statements.
 
 - use `eslint --init` to setup `eslint` config fast
@@ -193,4 +188,18 @@ Now there is no ambiguity with the import. The bundler exactly knows that this s
 
 - `api-extractor` and `api-documenter` is maintained by Microsoft. This makes this library no-brainier for creating documentation.
 
-// part 4 19:19
+- consider using `noImplicitReturns`. This I hate this rule personally, Mike made a good point that it's too easy to change the intent of given function. I would consider using it in any `.ts` file. The `.tsx` seems to be a bit overkill.
+
+- there is this weird syntax which is equivalent to `module.exports = callableValue`
+
+  ```js
+  export = callableValue
+  ```
+
+  I would avoid it as much as I can, but this is how you would migrate the `module.exports` as a _non-namespace_
+
+### Notable `tsconfig` options
+
+- `esModuleInterop` treats `cjs` modules as if they have _default export_. To avoid using this flag, which again is kinda parasitic since if you enable it, your consumers also have to, use the `import something = require('./something')` syntax.
+
+- `skipLibCheck` can be dangerous. If you have this on and _you have to have this on for your library to compile_ any consumer of your library also has to do it. This is something you might not want to happen. Be careful here. I would turn this on, only within apps context.
