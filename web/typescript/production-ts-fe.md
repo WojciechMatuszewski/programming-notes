@@ -203,3 +203,82 @@ Now there is no ambiguity with the import. The bundler exactly knows that this s
 - `esModuleInterop` treats `cjs` modules as if they have _default export_. To avoid using this flag, which again is kinda parasitic since if you enable it, your consumers also have to, use the `import something = require('./something')` syntax.
 
 - `skipLibCheck` can be dangerous. If you have this on and _you have to have this on for your library to compile_ any consumer of your library also has to do it. This is something you might not want to happen. Be careful here. I would turn this on, only within apps context.
+
+## Converting from JS to TS
+
+Here just look at the notes [in the repo](https://github.com/mike-north/professional-ts).
+
+## Pure type information
+
+This is where you have to define types for yours app entities. Mike decided to simply use `types.ts` file. I'm all up for it, seems reasonable.
+
+## 3rd party typings and overwrites
+
+_Definitely Typed_ is interesting. By default any merge request that is not marked as _needs work_ will be merged. Due to this, you are taking upon a lot of _mystery code_. You do not want bugs from such code block you. To make sure this is not the case, you will need to know how to overwrite 3rd party typings.
+
+1. Create _types_ directory in the root of your project. This is where we will be putting our overwrites.
+
+2. Use `tsconfig` _paths_ option
+
+```json
+"paths": {
+    "*": ["types/*"]
+  }
+```
+
+This tells the compiler to also include the `types` directory when resolving module types. So let's say you are importing _React_ module
+
+```js
+import React from "react";
+```
+
+- compiler will first look into the `types` directory for `react.d.ts` file
+
+- if the file is not there, compiler will look into `@types/react` for `react.d.ts` file
+
+Please note that this will **completely overwrite _@types_ definitions**.
+
+## Handling runtime data
+
+Use _type guards_ with _assert signatures_. One neat trick Mike shown is how to type the _type guard_ itself when it's passed as a parameter
+
+```ts
+function isTypedArray<T>(
+  arg: any,
+  check: (val: any) => val is T
+): asserts arg is T[] {}
+```
+
+You would mostly use this when using _fetch_ API or similar. Basically anything that comes from the backend, maybe expect _GraphQL_ :)
+
+The method presented is considerable faster than `propTypes`.
+
+## Tests for types
+
+This is very important topic. This is how you would **keep your _type-guards_ up to date**.
+
+There are two tools you can use
+
+- _dtslint_: used mostly in the _Definitely Typed_ repo. **Your test will run against multiple _TypeScript_ versions**. This is great stuff.
+  One catch here is that the setup is not fun.
+
+- _tsd_: much more straightforward setup than _dtslint_. Instead of comments it uses special generic types for assertions.
+
+A simple test using `dtslint` would look as following
+
+```ts
+const team: ITeam = null; // $ExpectError
+```
+
+Notice the comment here. This is how you make assertions using _dtslint_.
+
+Contrast that with _tsd_.
+
+```ts
+import { ITeam } from "../../src/types";
+import { expectAssignable, expectNotAssignable } from "tsd";
+
+expectNotAssignable<ITeam>(null);
+```
+
+The _tsd_ exposes a lot of assertions. The **only thing _tsd_ is missing is the ability to test multiple _TypeScript_ versions**.
