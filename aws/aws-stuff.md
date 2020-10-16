@@ -3128,6 +3128,10 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * EMF will handle up to 100 metrics per `JSON` blob.
 
+- use `properties` for data which has high cardinatlity. That means that there are a lot of potential unique `name/value` pairs. Remember that the `CloudWatch` can only store 10 dimmensions per metric.
+
+- use `CloudWatch` insights for searching through the `properties` that you set using EMF.
+
 ###### Log retention
 
 - **by default** CloudWatch keeps the logs forever. **But after 15 months you cannot access them through console**.
