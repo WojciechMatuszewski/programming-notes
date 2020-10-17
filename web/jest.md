@@ -66,3 +66,33 @@ jest.mock("module", () => ({
   method: jest.fn(),
 }));
 ```
+
+## Async timers
+
+So it's 2k20 when writing this and we still are having problems with mocking timers inside async callbacks.
+
+```js
+const wait = () => new Promise((resolve) => setTimeout(resolve, 3000));
+```
+
+The function above would be easy to test, the whole deal is to make sure you call the `advanceTimersByTime` or `clock.tickAsync` **AFTER** the _promise_ callback has been invoked.
+
+But what if you have more complex example, like a webserver with a delay (you have to use the native `http` module because `msw` does not support timer mocks - it uses the `timer` module, LOL!)
+
+```js
+const { createServer } = require("http");
+const server = createServer(async (_, res) => {
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 400);
+  });
+
+  res.write(JSON.stringify({ message: "success" }));
+  res.end();
+});
+```
+
+So with this example, I was not able to make sure the functions that run timers run after the promise callback. You might overcome this using the _legacy_ timers from jest and the `setImmediate` trick.
+
+This is quite bad.
