@@ -69,3 +69,25 @@ request.on("error", console.log);
 ```
 
 You would mostly use that on the server though to _stream_ the response.
+
+## `async iterable` streams
+
+This one is great, especially for any kind of _transformers_. Instead of using the `new Transform` syntax, you just use _generators_
+
+```js
+const { pipeline } = require("stream");
+
+async function* upperCase(readable) {
+  for await (chunk of readable) {
+    yield chunk.toString().toUpperCase();
+  }
+}
+
+pipeline(process.stdin, upperCase, process.stdout, (err) => {
+  if (err) {
+    console.log(err);
+  }
+});
+```
+
+Pretty easy right?
