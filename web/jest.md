@@ -96,3 +96,30 @@ const server = createServer(async (_, res) => {
 So with this example, I was not able to make sure the functions that run timers run after the promise callback. You might overcome this using the _legacy_ timers from jest and the `setImmediate` trick.
 
 This is quite bad.
+
+### `msw` workaround
+
+So we learned that the `msw` package is using the `timers` package so that the `setTimeout` used to make `ctx.delay` possible is not mocked.
+But what if you really want to make it work? Well, just mock the `timers` package yourself.
+
+```js
+jest.mock("timers", () => ({
+  setTimeout: setTimeout,
+}));
+```
+
+This will make it so that the `timers.setTimeout` actually points to the global one. This will allow `sinon` or `jest` to mock those.
+
+```js
+const FakeTimers = require("@sinonjs/fake-timers");
+const clock = FakeTimers.install();
+
+jest.mock("timers", () => ({
+  setTimeout: setTimeout,
+}));
+```
+
+And now you can use `await clock.tickAsync` in your tests. This is **actually, IMO, the best solution to the problem described above**.
+One thing that is quite bad about this whole situation is that we are relying on implementation details. If the author changes the implementation of `ctx.delay` we are doomed.
+
+Nevertheless having some test is better than having no test at all.
