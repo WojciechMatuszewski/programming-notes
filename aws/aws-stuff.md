@@ -243,6 +243,14 @@ First thing first **you will need a role that will be shared along all your on p
 
 * you **cannot switch roles** when you login **as root user**.
 
+##### `iam:PassRole`
+
+- this is a guardrail on the permissions to grant to other AWS services
+
+* imagine having only some kind of limited role when you can create EC2 Instances. Without `iam:PassRole` you could assign an Administrator Access to the EC2, connect to it and, potentially, do damage.
+
+- you can limit what kind of roles can can be _passed_ or limit things to specific service.
+
 #### Policies
 
 - **applied** to a **IAM Role or a Resource**
@@ -3070,6 +3078,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 * you **can export dashboards to s3 (the data points)**. This is done **by using cli `get-metric-statistics` command / lambda + cloudwatch rule**.
 
 - **dashboards** are used to **correlate data**. This is just a **fancy way of saying having multiple graphs near each other (as widgets)**.
+
+###### Metrics math
+
+- instead of simply using _count_ and _threshold_ for your alerting, you can create expressions for better alerts
+
+* think creating an alert that _X out of Y request failed within given time window_, not _just X request failed in a given time window_
+
+- while a bit more complex I think these should be favourited, it will make sure that you are not overwhelmed with incidents.
 
 ##### Insigths
 
