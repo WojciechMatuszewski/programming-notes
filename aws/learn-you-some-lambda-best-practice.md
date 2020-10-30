@@ -354,8 +354,6 @@ Notable alarms are:
 
 * **execution role**: think **what can this lambda do**.
 
-// TODO: https://lumigo.io/blog/aws-lambda-extensions-what-are-they-and-why-do-they-matter/?utm_campaign=Weekly%20Updates&utm_medium=email&_hsmi=97037558&utm_content=97037896&utm_source=hs_email
-
 ## Networking
 
 ### VPC
@@ -375,3 +373,14 @@ Notable alarms are:
 - **specify multiple subnets** when you attach your lambda to a VPC.
 
 * use _Private Link_ for connecting to private services or other AWS services through _gateway_ or _interface_ endpoints
+
+## Lambda extensions
+
+- scripts or binaries that run alongside your lambda function
+
+* can be external or internal. An _internal extension_ will most likely run the lambda function and perform some work before that.
+  An _external extension_ will run alongside your lambda function in a separate process.
+
+- remember that you can make your node script executable by specifying the `#!/usr/bin/env node` header (file has to be without an extension).
+
+* there is a pattern of spinning a local http server which the lambda function will reach out to for different stuff, like ssm parameters.
