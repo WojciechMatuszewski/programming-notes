@@ -197,3 +197,31 @@ Usually, most of the `read` operations will be `eventually consistent`. This is 
 When you have the same `PK`, items with that `PK` will be on the same partition. Each **partition** has **leader and follower nodes**. Data is replicated from the leader to the follower nodes asynchronously. Usually DynamoDB reads from a random node - either leader or a follower node. When that happens there might be a point of time where that data is not yet there on given node.
 
 To make sure your reads are always targeting the `leader` node (where data is placed first) - you have to manually tell dynamo, on operation basis, to perform a `consistent read / write`.
+
+## Sorting
+
+### Lexical sorting
+
+There are some rules on how _string_ type is sorted, the order is basically a dictionary order with
+
+- **uppercase letters come before lowercase**
+
+- numbers and symbols are relevant
+
+The most important part here is that **uppercase letters come before lowercase**. This can trip you out. This is why you see so many people use all uppercase or lowercase values in their tables.
+
+### Timestamps
+
+As long as the format is sortable, it's ok. You can use _epoch time_ or _ISO-8601_. Does not really matter, just make sure they are sortable.
+
+### UUIDs
+
+Regular _UUID_ will not do - it's not sortable. What you need is something that contains the timestamp and enough randomness to prevent collisions. You might look into
+
+- KSUID
+
+- ULID: this one even has a spec.
+
+### ScanIndexForward
+
+So you have all the necessary information about sorting related things to use this attribute. Remember, _DynamoDB_, by default, always scans forward, that means in ascending manner.

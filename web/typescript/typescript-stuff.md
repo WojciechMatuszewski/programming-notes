@@ -20,7 +20,7 @@ That is all.
 
 First of all check if that file matches the `include` pattern that you specified within your `tsconfig`.
 
-If that's the case, we are dealing with something very strage that I've discovered only recently.
+If that's the case, we are dealing with something very strange that I've discovered only recently.
 
 You **have a file named the same way as you `d.ts` file**, eg. `env.ts` and `env.d.ts` file.
 The way typescript works is that **the `env.d.ts` file will be ignored since typescript things it was derived from `env.ts` file**. Pretty strange right?
@@ -31,6 +31,50 @@ There are 2 solutions here:
 
 1. Rename your `d.ts` file
 2. Specify the `d.ts` file within the `file` block inside your `tsconfig`.
+
+## TripleSlash aka Reference
+
+You have seen them, the weird `/// <reference types|lib=...>` syntax. This is mostly relic of the past but still can be useful in day-to-day work.
+
+So, before `tsconfig.json` existed, you had to use the `/// <reference types|lib= >` syntax to tell the compiler
+
+> hey, whenever you parse this file, also include _the files I referenced_ in the compilation
+
+Nowadays, we would most likely use the `include` property in the `tsconfig.json` to do so.
+
+But, there are some use cases for them, mainly when you want to make sure that given _declarations_ are imported when the compiler imports your file.
+So let's say you want to augment the `process.env` typings. This is done by creating a _declaration file_ and _extending the ProcessEnv interface_
+
+```ts
+declare module NodeJS {
+  interface ProcessEnv {
+    MY_VALUE: string;
+  }
+}
+```
+
+And this is completely fine, if you do it for your project only, and no one is going to consume it, you might leave it as it is. But sometimes when you are exposing your project as a package, you might want to separate your project typings from the global augmentations
+
+```ts
+// index.d.ts
+interface MyLibrary {}
+
+// global.d.ts
+declare module NodeJS {
+  // code
+}
+```
+
+Usually, only the `index.d.ts` is consumed, with the `/// <reference types|lib="code">` syntax you can include the `global.d.ts` file inside the `index.d.ts` file
+
+```ts
+// index.d.ts
+/// <reference path = "./global.d.ts">
+
+interface MyLibrary {}
+```
+
+You are doing this because **there is nothing to import from the `global.d.ts` file**. You could import the file itself, but the `/// <reference types|lib|path = "">` syntax is more common.
 
 ## Type-Only imports and import elision
 
