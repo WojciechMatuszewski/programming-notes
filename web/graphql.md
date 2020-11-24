@@ -141,7 +141,7 @@ const CHILD_FRAGMENT = gql`
 function Child() {}
 ```
 
-See how I'm colocating the data-needs within the vicinity of the `Child` using `Fragment` ?. This allows me to easily tweak it and make changes to it without touching the `Parent` query. **This is not an ideal solution** but I think it's worth considering.
+See how I'm collocating the data-needs within the vicinity of the `Child` using `Fragment` ?. This allows me to easily tweak it and make changes to it without touching the `Parent` query. **This is not an ideal solution** but I think it's worth considering.
 
 ## Approaches for creating a schema
 

@@ -66,3 +66,23 @@ server.listen(3000);
 ```
 
 So easy right? Now imagine what you can do with _GraphQL_ and other stuff.
+
+## `max-age` on the CDN level
+
+If you are doing any kind of _Static Site Generation_ you might have faced a problem where your customers are getting stale data even though you changed the content. This is probably because you set a high `max-age` header because your content is, well, static.
+
+While having a high `max-age` for things that literally do not change is a good strategy, it will not necessarily work well with SSG. What you want to do is to set relatively short `max-age` on the browser level and a long `max-age` on the CDN level, where you have the ability to purge the content from the cache.
+
+This way you basically have best of two worlds.
+
+- Your content is cached so your visitors are getting the content in a fastly manner
+- You have the ability to purge entry from CDN cache
+
+To make it all work, you will need to use the `s-maxage` header. This is the header which only CDN understands, it allows you to difference between browser cache (`max-age`) and CDN cache (`s-maxage`).
+
+The workflow you presumably look as follows
+
+1. You build your static sites
+2. You introduce a cache in the content to some of them
+3. You purge existing entries in CDN which correspond to the pages you have changed
+4. You deploy your changes

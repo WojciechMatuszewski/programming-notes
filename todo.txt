@@ -6,3 +6,6 @@
 - https://aws.amazon.com/blogs/compute/building-well-architected-serverless-applications-approaching-application-lifecycle-management-part-1/?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%2394
 - https://medium.com/swlh/structuring-serverless-projects-2a9a82f7732d
 - https://blog.thundra.io/will-aws-managed-cassandra-replace-dynamodb?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%2394
+
+
+- APIGW caching
