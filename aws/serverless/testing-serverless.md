@@ -276,4 +276,113 @@ This might seem weird, I totally get you. It might event be something you run on
 
 This is huge! No more manual testing and "seeing if things work". By introducing manual procedures you are introducing toil. We do not want that.
 
+#### Sending the event
+
+Let's say we have an _API Gateway_ fronting a simple lambda function which will send events to the _EventBridge_. We want to test that the handler is sending that event correctly. In such case, we will introduce _test only_ resource, mainly _SQS queue_.
+The queue will be used as a target of the _EventBridge_. Then we could assert that after I invoked the API, the event is in the queue.
+
+The test would look something like this
+
+```ts
+import phin from "phin";
+
+const apiUrl = "https://ex59t535b2.execute-api.eu-central-1.amazonaws.com/";
+const queueUrl =
+  "https://sqs.eu-central-1.amazonaws.com/286420114124/testingServerlessRefresher-asyncFlowqueueB14A1593-14PFRLCUOZCTA";
+
+const testTimeout = 30 * 1000;
+
+test(
+  "event is send",
+  async () => {
+    const result = await phin({
+      method: "POST",
+      parse: "json",
+      url: apiUrl,
+      data: {
+        firstName: "Karol",
+        lastName: "Matuszewski",
+      } as any,
+    });
+
+    expect(result.statusCode).toEqual(200);
+
+    expect({
+      region: "eu-central-1",
+      queueUrl,
+      timeout: testTimeout,
+    }).toHaveMessage(
+      (msg) =>
+        msg.detail.firstName === "Karol" &&
+        msg.detail.lastName === "Matuszewski"
+    );
+  },
+  testTimeout
+);
+```
+
+It's pretty self explanatory right? Again, the confidence we gain here is huge
+
+1. Is my handler sending the correct event?
+2. Is the execution role of my handler correctly set up?
+
+One thing I want to stress here. The **_SQS_ queue is only for testing purposes**. You would not want to deploy this resource to your production environment. Due to this, I've set up a relatively short _visibility timeout_ on the queue itself - 300 second.
+
+### Testing `S3` flows
+
+We could have couple of scenarios here. For simplicity sake, let's say I want to get a _presigned url_ back, which allows me to upload the image. After the upload is complete, the image should be in a bucket under a given key.
+
+```ts
+test(
+  "creates a presigned url which enables the user to upload the image",
+  async () => {
+    const result = await phin<{ url: string; fields: Record<string, string> }>({
+      method: "GET",
+      parse: "json",
+      url: `${apiUrl}/get-upload-url?name=image.png`,
+    });
+
+    expect(result.statusCode).toEqual(200);
+    expect(result.body).toEqual({
+      url: expect.any(String),
+      fields: expect.any(Object),
+    });
+
+    const { url, fields } = result.body;
+
+    const fileToUpload = fs.readFileSync(join(__dirname, "image.png"));
+
+    const formData = new FormData();
+    Object.entries(fields).forEach(([key, value]) =>
+      formData.append(key, value)
+    );
+    formData.append("file", fileToUpload);
+
+    const uploadResult = await phin({
+      url: url,
+      method: "POST",
+      data: formData.getBuffer(),
+      headers: formData.getHeaders(),
+    });
+
+    expect(uploadResult.statusCode).toEqual(204);
+
+    expect({
+      region: "eu-central-1",
+      bucket: bucketName,
+      timeout: testTimeout,
+    }).toHaveObject(fields.key);
+  },
+  testTimeout
+);
+```
+
+One thing to notice here is that the `/get-upload-url` path returns **presigned POST data**. There are numerous benefits to using _presigned POST_ instead of _presigned GET/PUT_ urls with S3, mainly the _Conditions API_.
+
+Just like every _E2E_ test, the confidence gain from this test is insane
+
+1. Is my handler configured correctly when it comes to IAM?
+2. Are the conditions specified in the handler correct?
+3. Can the user upload images to S3 using the data returned in the response?
+
 ## Testing batch processing and streaming
