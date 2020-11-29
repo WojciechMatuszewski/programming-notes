@@ -386,3 +386,195 @@ Just like every _E2E_ test, the confidence gain from this test is insane
 3. Can the user upload images to S3 using the data returned in the response?
 
 ## Testing batch processing and streaming
+
+There is a lot to think about when it comes to batch processing and streams. I think the main gotchas are idempotency and ensuring that one _poison pill_ is will not cause our service to halt completely.
+
+We can tackle the second concern in our unit tests.
+
+### Batch processing with SQS
+
+#### Unit tests
+
+Let's say you are pulling from _SQS_ queue. You are knowledgeable in AWS so you know that the _lambda service_ will automatically delete the messages that you process. But you might not be aware is that **whenever you throw an error from your lambda function, THE WHOLE BATCH will be retried**. This is usually not a problem when the batch size is 1, but that is often not the case.
+
+What you have to do in such situation is to delete messages manually, while processing the batch in parallel. The logic for that would look something like this
+
+```ts
+import { SQSHandler } from "aws-lambda";
+import SQS from "aws-sdk/clients/sqs";
+
+const sqs = new SQS();
+
+async function performWork() {}
+
+const handler: SQSHandler = async (event) => {
+  const promises = event.Records.map(async (record) => {
+    await performWork();
+    await sqs
+      .deleteMessage({
+        ReceiptHandle: record.receiptHandle,
+        QueueUrl: "QUEUE_URL",
+      })
+      .promise();
+  });
+
+  const results = await Promise.allSettled(promises);
+  const hasErrors = results.find((result) => result.status === "rejected");
+
+  if (hasErrors) {
+    throw new Error("Errors occurred");
+  }
+};
+
+export { handler };
+```
+
+Notice that I'm throwing an error if there were some errors. That is completely OK, because I'm manually deleting messages. This way, the next event will only contain messages that were problematic. Combine this approach with bisecting on error and you have something that is resilient to failures.
+
+So to the test itself. Previously I was advocating for extracting the logic to a separate function which could be exported. Here I will be using _dependency injection_ for the _SQS_ service and the _performWork_ function.
+
+```ts
+import { SQSHandler } from "aws-lambda";
+import SQS from "aws-sdk/clients/sqs";
+
+const sqs = new SQS();
+
+async function performWork() {}
+
+function isRejected(result: PromiseSettledResult<void>) {
+  return result.status === "rejected";
+}
+
+function createHandler(worker: () => void, sqsService: SQS) {
+  const handler: SQSHandler = async (event) => {
+    // code
+  };
+
+  return handler;
+}
+
+const handler = createHandler(performWork, sqs);
+
+export { handler };
+```
+
+This way I can easily pass the dependencies in the test itself. The test is rather straightforward, I'm not going to be pasting it here.
+
+#### E2E tests
+
+Let's face it, while working with any kind of batching oriented workloads, you are going to have to deal with _Dead letter queues_. I would go as far as to say that _DLQs_ are must haves.
+
+How we can ensure that we are adhering to best practices (deleting messages manually and actually having _DLQs_ set up)? We can write tests for that!
+
+These tests will be really slow. I'm talking more than a minute. This is due to native retry mechanism you get when your lambda is hooked to _SQS_.
+
+So let's imagine a scenario where we want to send emails through _SES_. Our lambda is fronted by _SQS_ so that we can perform work in batches. We are going to write a tests which ensures that
+
+1. Only the poisoned message lands in _DQL_ (the other one is deleted)
+2. We are actually have _DQL_ setup up
+3. Our lambda function has permissions to send an email through _SES_ service
+
+The test for this would look something like this
+
+```ts
+test(
+  "bad requests land in dlq",
+  async () => {
+    const badMessageId = ulid();
+
+    // Can be executed once every 60 seconds!
+    await sqs.purgeQueue({ QueueUrl: dqlUrl }).promise();
+
+    await sqs
+      .sendMessageBatch({
+        Entries: [
+          {
+            Id: ulid(),
+            MessageBody: JSON.stringify({
+              // This is an email exposed by SES that will always succeed
+              destination: "success@simulator.amazonses.com",
+              source: "MY_OWN_EMAIL_CONFIRMED_IN_SES",
+            }),
+          },
+          {
+            Id: ulid(),
+            MessageBody: JSON.stringify({
+              destination: "success@simulator.amazonses.com",
+              source: "dupa@dupa.pl",
+              id: badMessageId,
+            }),
+          },
+        ],
+        QueueUrl: queueUrl,
+      })
+      .promise();
+
+    await expect({
+      region: "eu-central-1",
+      queueUrl: dqlUrl,
+      timeout: testTimeout,
+      poolEvery: 2000,
+    }).toHaveMessage((msg) => {
+      return msg.id === badMessageId;
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 6000));
+
+    const { Attributes } = await sqs
+      .getQueueAttributes({ QueueUrl: dqlUrl, AttributeNames: ["All"] })
+      .promise();
+
+    expect(Attributes!.ApproximateNumberOfMessages).toEqual(1);
+    expect(Attributes!.ApproximateNumberOfMessagesNotVisible).toEqual(0);
+  },
+  testTimeout
+);
+```
+
+Again, so much confidence! This test is not without it's drawbacks though. First of all it takes a lot of time to run, but I think the most important drawback is that due to us calling `purgeQueue` we can run it once per 60 seconds.
+
+### Stream with _DynamoDB_ streams
+
+This is basically the same strategy as for checking if something is triggered by _EventBridge_ or other similar services.
+
+Let's say that I'm going to be pushing to _EventBridge_ from _DynamoDB_ stream. One neat thing I like to do is to make a _CloudWatch_ log group a target of _EventBridge_ rule. This way I do not have to log anything inside the stream handler.
+
+The test would look something like this:
+
+```ts
+test(
+  "events are sent do event bridge",
+  async () => {
+    const itemId = ulid();
+    await docClient
+      .put({ Item: { id: itemId }, TableName: tableName })
+      .promise();
+
+    const searchLog = async () => {
+      const result = await logs
+        .filterLogEvents({
+          logGroupName,
+          filterPattern: itemId,
+        })
+        .promise();
+
+      if (!result.events) return [];
+
+      return result.events.map((event) => JSON.parse(event.message!).detail.id);
+    };
+
+    await waitForExpect(
+      async () => {
+        const events = await searchLog();
+        return expect(events).toContain(itemId);
+      },
+      testTimeout,
+      2000
+    );
+  },
+  testTimeout
+);
+```
+
+Sadly, the `aws-testing-library` does not have a matcher for a specific log group, so I had to write my own code for that.
+Otherwise it's almost exactly the same as previous tests.
