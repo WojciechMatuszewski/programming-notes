@@ -177,6 +177,46 @@ I think this hook is not that useful in day-to-day work, but there are probably 
 
 The `useImperativeHandle` hook allows you too implement _bidirectional_ flow of the data. Just like you could with class components and `React.ref`.
 
+#### Pseudo implementation
+
+One thing I find really useful while learning is to try to re-implement things, this way I'm actually learning how a given abstraction works under the hood (even though my implementation is probably not covering all the use cases and so on).
+
+The simplest way you could implement `useImperativeHandle` would be to just assign methods to ref in the render
+
+```ts
+const Component = React.forwardRef((props, ref) => {
+  const method = () => {};
+
+  ref.current = {
+    method,
+  };
+
+  return; // stuff
+});
+```
+
+The parent who is passing the ref would be able to call the `method` without any problems. This is actually the way you would do this using _class components_.
+
+This method has one drawback and that is the fact that we are performing a _side effect_ in render (also that assignment might not be idempotent). This is something you should avoid, the _component function_ should be a pure function.
+
+What you could do instead is to wrap the assignment with `useLayoutEffect`.
+
+```ts
+const Component = React.forwardRef((props, ref) => {
+  const method = () => {};
+
+  React.useLayoutEffect(() => {
+    ref.current = {
+      method,
+    };
+  });
+
+  return; // stuff
+});
+```
+
+Now the _side effect_ is contained. Pretty nice!
+
 ## Why does `useRef` have the `current` property
 
 When it comes to `React` there are a lot of things that can go wrong, but one of them is something called a **stale closure problem**. This can especially be a problem while working with hooks.
