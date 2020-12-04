@@ -578,3 +578,7 @@ test(
 
 Sadly, the `aws-testing-library` does not have a matcher for a specific log group, so I had to write my own code for that.
 Otherwise it's almost exactly the same as previous tests.
+
+## Random notes
+
+- Look for ways to split your lambdas. Use asynchronous communication whenever possible (_DynamoDB streams_, _SQS_ etc)
