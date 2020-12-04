@@ -124,6 +124,24 @@
 
 - just like a normal `CodeDeploy` deployment, there are **validation hooks** you can use to decide if your new alias is OK.
 
+#### EFS Integration
+
+- your lambda functions can integrate with EFS
+
+* there are some latency considerations. Reading large files will take a couple of seconds (might impact start performance)
+
+- the benefit here is the _elasticity_ of the storage. Keep in mind that EFS can grow almost infinetely.
+
+#### Container deployments
+
+- you can package your lambda code as a container image and push that to ECR
+
+* the size limit here is 10 GB, much bigger than the previous 250 MB of zip file
+
+- **your image has to communicate with lambda runtime**
+
+* this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of space
+
 ### Step Functions
 
 - **state machines as a service**
