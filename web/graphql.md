@@ -143,6 +143,16 @@ function Child() {}
 
 See how I'm collocating the data-needs within the vicinity of the `Child` using `Fragment` ?. This allows me to easily tweak it and make changes to it without touching the `Parent` query. **This is not an ideal solution** but I think it's worth considering.
 
+### Fragment matchers
+
+When your schema is using _GraphQL interfaces_ or _unions_ you might have encountered a warning about _Heuristic fragment matcher_.
+
+The warning itself is not critical but should not be taken lightly. Since your _GraphQL client_ usually (unless you fixed the warning :) ) does not know nothing about your schema, it has no way of validating if the fragments you are using on a type that implements an _interface_ are indeed correct.
+
+The default behavior is to use something called _heuristic fragment matcher_. The _heuristic_ means _good but not ideal_. Since this fragment matcher cannot handle fragments on unions or interfaces, you will need to implement your own.
+
+You can use `graphql-codegen` to do that.
+
 ## Approaches for creating a schema
 
 As with almost everything within JS ecosystem, there are multiple ways you can go about when it comes to creating a schema.
