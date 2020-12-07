@@ -37,6 +37,10 @@
 
 * by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
 
+#### Billing
+
+- executions are **billed by the millisecond**
+
 #### Alias
 
 - alias can point to a **single version** or **2 lambda versions**.
@@ -77,7 +81,7 @@
 
 - you can **use XRay for distributed tracing**.
 
-* remeber that **X-Ray collects data of INCOMMING requests. Not only those made within / outside our service**
+* remember that **X-Ray collects data of INCOMMING requests. Not only those made within / outside our service**
 
 - **X-Ray works in real-time**. Can be used for real-time monitoring.
 
@@ -91,7 +95,7 @@
 
 - on `ECS` you have to **setup an container which will run your daemon**.
 
-#### Lambda @ Edge
+#### Lambda @Edge
 
 - **CloudFront will invoke your function when given event happens**. These are **events that has to do with request life-cycle @ CloudFront like origin request or smth like that**.
 
@@ -99,15 +103,27 @@
 
 - you can also **perform some redirect logic , maybe check auth**.
 
+* **they are not executed in the edge location**. They are executed in the region closes to the edge location. This is why you have to be mindful of the region whenever you browse the logs.
+
 #### Event Source Mapping
 
-- this mainly have to do with services that **invoke lambda functions and push events there**
+- this is where **lambda service reads from other service and invokes your function**
 
-* this is where you have **discarded events from those services (Kinesis, DynamoDB, SQS)** send to **SQS or SNS**.
+* this is **one way a service could _trigger_ your function**
+
+- services that use _event source mapping_: _DynamoDB_, _Kinesis_, _MQ_, _SQS_ and _managed Kafka_.
+
+* _Event Source Mapping_ uses **lambda execution role** for IAM permissions. This is why you have to specify that, for example, your function can read and delete messages from SQS
 
 - **do not confuse it** with **lambda destination**.
 
 * **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
+
+#### Resource-based policies
+
+- when a service does not use the _event source mapping_ and underlying _execution role_, you have to specify the _resource-based policy_ so that the service can invoke your function directly.
+
+* list of services that use this method of integration is much greater than the _event source mapping_ ones.
 
 #### Infinite loops and lambda
 
@@ -130,7 +146,7 @@
 
 * there are some latency considerations. Reading large files will take a couple of seconds (might impact start performance)
 
-- the benefit here is the _elasticity_ of the storage. Keep in mind that EFS can grow almost infinetely.
+- the benefit here is the _elasticity_ of the storage. Keep in mind that EFS can grow almost infinitely.
 
 #### Container deployments
 
@@ -1620,6 +1636,14 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - instead of initializing a connection you connect to a **DATA API (shared proxy)**. This is quite **similar to RDS Proxy**.
 
+##### Aurora Serverless v2 (2020)
+
+- can be a bit more expensive
+
+* scales much faster. There is less over-provisioning going on since the compute increments in 0.5 ACUs instead of doubling the ACUs
+
+- as of writing this, it does not support _DATA API_. This will probably come sooner than later since it's not even GA.
+
 ### Neptune
 
 - NoSQL **Graph database**.
@@ -1881,7 +1905,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 ##### Signed URLS & Signed Cookies
 
-- **configured on BEHAVIOUR LEVEL**
+- **configured on BEHAVIOR LEVEL**
 
 * there is a notion of **trusted signers**. These are **AWS Accounts** which hold **CloudFront key pairs** and are used to **sign urls**.
 
@@ -1966,7 +1990,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Response Codes
 
-- **4xx means Client erros**. This is where WAF is blocking the request (403), or concurrency throttling happens (429).
+- **4xx means Client errors**. This is where WAF is blocking the request (403), or concurrency throttling happens (429).
 
 * **5xx means Server errors**. This is APIGW or the integration failing.
   - **502 (Bad Gateway)** usually bad request, apigw got malformed response from eg. lambda.
