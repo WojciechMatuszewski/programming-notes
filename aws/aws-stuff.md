@@ -158,13 +158,19 @@
 
 * this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of space
 
+##### Lambda layers and extensions with container deployments
+
+- lambda layers are not directly supported with the container deployments
+
+* to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build with a image that contains the layer**
+
 ### Step Functions
 
 - **state machines as a service**
 
 * for **orchestrating serverless workflows**
 
-- you can create **manual steps** with step functions. This can be **while dealing with hybrid approach** where **there is some level of human interaction needed (like clicking a link)**
+- you can create **manual steps** with step functions. This can be **whi le dealing with hybrid approach** where **there is some level of human interaction needed (like clicking a link)**
 
 * **does not** integrate with **Mechanical Turk**. You will need **SWF for that**.
 
@@ -586,6 +592,8 @@ An example for s3-prefix (folder)
 
 * mainly for setting up alarams and notifications if you go above certain threshold.
 
+- remember that **it takes up to 48hrs for all budget related information to be updated on your account**. That means that **some alerts might fire way after you crossed the threshold of your budget**.
+
 ### ACM
 
 - provides **x509 certs (SSL/TSL)**
@@ -847,6 +855,14 @@ An example for s3-prefix (folder)
 * whenever parameters change, you can call `UpdateStack` API and update your stack with new parameters
 
 - might be useful for **EC2 size / AMI configuration**.
+
+### AppConfig
+
+- somewhat an alternative to the `SSM`
+
+* think **SSM but with rolling deployment options** (including rollback)
+
+- there is a neat _extension_ which runs HTTP endpoint which acts as a caching layer between your lambda and the _AppConfig_ service.
 
 ### AWS Firewall Manager
 
