@@ -1470,7 +1470,7 @@ const circle = {
 
 ## Functional types
 
-### Function paratemers
+### Function parameters
 
 Typescript can now infer the _function parameters_ from type variable.
 
@@ -1503,3 +1503,39 @@ declare function call<A extends any[], R>(fn: (...args: A) => R, ...args: A): R;
 ```
 
 Much better!
+
+## Typescript being too generous
+
+I love typescript, but sometimes, in my opinion, it's just too permissive, even on the strictest settings.
+
+### The `VoidFunction`
+
+`VoidFunction` type, function that should not return anything. It turns out, you often can return stuff from that function, _Typescript_ will not shout at you (but it should!)
+
+```ts
+const doWork = (work: VoidFunction) => work();
+
+const arr = [];
+doWork(() => arr.push(1));
+```
+
+The `arr.push` will return the amount of elements that were pushed into the array. So in this case, the `work` function annotated as `VoidFunction` actually returns some data.
+
+This behavior is pretty weird. I would love it so that _Typescript_ will not let me do that.
+
+### The matching parameter shape
+
+As long as the data you are passing matches the parameter type, it will be allowed. I'm mainly talking about this
+
+```ts
+type Props = {
+  key: string;
+};
+
+const doWork = (props: Props) => {};
+
+const param = { key: "1", somethingElse: "2" };
+doWork(param);
+```
+
+It would be super nice for _Typescript_ to complain here.
