@@ -217,7 +217,7 @@ function doSomething(val: number | string) {
 
 ```
 
-## Null Coalescing
+## Nullish Coalescing
 
 This is more of a JavaScript thingy but hey, we are all probably writing only
 TypeScript now :)
@@ -241,6 +241,26 @@ console.log(0 ?? "something"); // 0
 
 This can help in cases where you have valid non-truthy values as your _guardian
 values_ but you still want to check for `null` and `undefined`
+
+## Logical assignment operator
+
+Just like the previous feature, this one is more of a JavaScript thingy. With _nullish coalescing_ you are returning given value,
+with _logical assignment operator_ you can assign given value using the nullish operators.
+
+```ts
+type Obj = {
+  prop: {
+    value?: string;
+  };
+};
+
+function doWork(obj: Obj) {
+  obj.prop.value ??= "default value";
+  return obj;
+}
+```
+
+I personally do not use this feature that often but, nevertheless I think its nice to have.
 
 ## Pick and Exclude
 
