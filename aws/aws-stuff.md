@@ -1785,7 +1785,15 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
-- you **can use multiple lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
+- you **can use TWO lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
+
+* while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that table
+
+##### Dynamodb Streams fan-out
+
+- to combat the 2 lambda subscriber limit you can implement the fanout pattern
+
+* since you probably want to preserve the order, you will most likely **1 subscriber pushing to _Kinesis Data streams_**
 
 ##### Triggers
 
@@ -3485,6 +3493,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
 
 - the **iteration logic** is handled **behind the scenes** using **DynamoDB tables**.
+
+* this is usually the Kinesis variant everyone is talking about when then are talking about _Kinesis_
+
+###### Autoscalling
+
+- while there is **no native autoscalling functionality** you can deploy your own solution
+
+* this involves a cloudwatch alarm and a lambda function which will do the scaling by using sdk
+
+- there are **api limits for the amount of time you can scale your stream**
 
 ###### Monitoring
 
