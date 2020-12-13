@@ -158,13 +158,19 @@
 
 * this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of space
 
+##### Lambda layers and extensions with container deployments
+
+- lambda layers are not directly supported with the container deployments
+
+* to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build with a image that contains the layer**
+
 ### Step Functions
 
 - **state machines as a service**
 
 * for **orchestrating serverless workflows**
 
-- you can create **manual steps** with step functions. This can be **while dealing with hybrid approach** where **there is some level of human interaction needed (like clicking a link)**
+- you can create **manual steps** with step functions. This can be **whi le dealing with hybrid approach** where **there is some level of human interaction needed (like clicking a link)**
 
 * **does not** integrate with **Mechanical Turk**. You will need **SWF for that**.
 
@@ -586,6 +592,8 @@ An example for s3-prefix (folder)
 
 * mainly for setting up alarams and notifications if you go above certain threshold.
 
+- remember that **it takes up to 48hrs for all budget related information to be updated on your account**. That means that **some alerts might fire way after you crossed the threshold of your budget**.
+
 ### ACM
 
 - provides **x509 certs (SSL/TSL)**
@@ -847,6 +855,14 @@ An example for s3-prefix (folder)
 * whenever parameters change, you can call `UpdateStack` API and update your stack with new parameters
 
 - might be useful for **EC2 size / AMI configuration**.
+
+### AppConfig
+
+- somewhat an alternative to the `SSM`
+
+* think **SSM but with rolling deployment options** (including rollback)
+
+- there is a neat _extension_ which runs HTTP endpoint which acts as a caching layer between your lambda and the _AppConfig_ service.
 
 ### AWS Firewall Manager
 
@@ -1769,7 +1785,15 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
-- you **can use multiple lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
+- you **can use TWO lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
+
+* while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that table
+
+##### Dynamodb Streams fan-out
+
+- to combat the 2 lambda subscriber limit you can implement the fanout pattern
+
+* since you probably want to preserve the order, you will most likely **1 subscriber pushing to _Kinesis Data streams_**
 
 ##### Triggers
 
@@ -3469,6 +3493,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
 
 - the **iteration logic** is handled **behind the scenes** using **DynamoDB tables**.
+
+* this is usually the Kinesis variant everyone is talking about when then are talking about _Kinesis_
+
+###### Autoscalling
+
+- while there is **no native autoscalling functionality** you can deploy your own solution
+
+* this involves a cloudwatch alarm and a lambda function which will do the scaling by using sdk
+
+- there are **api limits for the amount of time you can scale your stream**
 
 ###### Monitoring
 

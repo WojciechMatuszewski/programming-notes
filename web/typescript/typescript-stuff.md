@@ -217,7 +217,7 @@ function doSomething(val: number | string) {
 
 ```
 
-## Null Coalescing
+## Nullish Coalescing
 
 This is more of a JavaScript thingy but hey, we are all probably writing only
 TypeScript now :)
@@ -241,6 +241,26 @@ console.log(0 ?? "something"); // 0
 
 This can help in cases where you have valid non-truthy values as your _guardian
 values_ but you still want to check for `null` and `undefined`
+
+## Logical assignment operator
+
+Just like the previous feature, this one is more of a JavaScript thingy. With _nullish coalescing_ you are returning given value,
+with _logical assignment operator_ you can assign given value using the nullish operators.
+
+```ts
+type Obj = {
+  prop: {
+    value?: string;
+  };
+};
+
+function doWork(obj: Obj) {
+  obj.prop.value ??= "default value";
+  return obj;
+}
+```
+
+I personally do not use this feature that often but, nevertheless I think its nice to have.
 
 ## Pick and Exclude
 
@@ -1470,7 +1490,7 @@ const circle = {
 
 ## Functional types
 
-### Function paratemers
+### Function parameters
 
 Typescript can now infer the _function parameters_ from type variable.
 
@@ -1503,3 +1523,39 @@ declare function call<A extends any[], R>(fn: (...args: A) => R, ...args: A): R;
 ```
 
 Much better!
+
+## Typescript being too generous
+
+I love typescript, but sometimes, in my opinion, it's just too permissive, even on the strictest settings.
+
+### The `VoidFunction`
+
+`VoidFunction` type, function that should not return anything. It turns out, you often can return stuff from that function, _Typescript_ will not shout at you (but it should!)
+
+```ts
+const doWork = (work: VoidFunction) => work();
+
+const arr = [];
+doWork(() => arr.push(1));
+```
+
+The `arr.push` will return the amount of elements that were pushed into the array. So in this case, the `work` function annotated as `VoidFunction` actually returns some data.
+
+This behavior is pretty weird. I would love it so that _Typescript_ will not let me do that.
+
+### The matching parameter shape
+
+As long as the data you are passing matches the parameter type, it will be allowed. I'm mainly talking about this
+
+```ts
+type Props = {
+  key: string;
+};
+
+const doWork = (props: Props) => {};
+
+const param = { key: "1", somethingElse: "2" };
+doWork(param);
+```
+
+It would be super nice for _Typescript_ to complain here.
