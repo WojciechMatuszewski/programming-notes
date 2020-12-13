@@ -4247,10 +4247,6 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
 
-* you **can use Message Group ID**. This can **help with ordering** but **only within a given Message Groupd ID**. Basically it **guarantess** that **items with the same Message Group ID** will **come ordered**.
-
-- **Message Group ID** also allows for **parallel consumption of batches**. If you need to preserve order within a given group, but those groups are independend, using message group ID **that is unique PER group of objects** can greatly speed up the processing time.
-
 ##### Pooling
 
 - there is a notion of **pooling**.
@@ -4279,6 +4275,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you **HAVE TO use Message Group ID**. If you do not have multiple groups just just a single static one.
 
+- **Message Group ID** allows for **parallel consumption of batches**. If you need to preserve order within a given group, but those groups are independend, using message group ID **that is unique PER group of objects** can greatly speed up the processing time.
+
 * you can use **Message deduplication ID** to **ignore (5 mins period) messages that have been send to the queue multiple times**. This is only available for SQS FIFO.
 
 #### DLQ
@@ -4294,6 +4292,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - this is the **policy used to determine when to move given msg to DLQ**
 
 * very often used with `ReceiveCount` attribute, like **specifying `maxReceiveCount`**.
+
+- you can redrive messages from DQL using [replay-aws-dlq](https://github.com/garryyao/replay-aws-dlq), you probably want to use `npx` for that.
 
 ### SES
 

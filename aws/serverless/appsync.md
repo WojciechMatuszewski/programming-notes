@@ -134,6 +134,8 @@ type Query {
 
 Now we can directly attach a resolver to the `UnhydratedTweetsPage` and not interfere with `TweetsPage`. As you can see, we leaked the implementation details to our schema. From the clients perspective the results are _hydrated_.
 
+**I would only use this if my API will never, ever be public**.
+
 ### Pipeline resolvers
 
 This is the approach I would recommend anyone uses.
@@ -148,3 +150,5 @@ type Query {
   getTweets(userId: ID!): TweetsPage!
 }
 ```
+
+There is a bit more configuration to this approach, but I think the benefits heavily outweigh the negatives.
