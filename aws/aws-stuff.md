@@ -4853,17 +4853,23 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * automatically provides resources for you
 
-* has an option to deploy a **crawler**. That crawler will **discover (scan) data and populate the Data Catalog**. This **data is usually s3**.
+- has an option to deploy a **crawler**. That crawler will **discover (scan) data and populate the Data Catalog**. This **data is usually s3**.
 
-- with **Data Catalog** you can use **Athena / EMR / Redshift to query that catalog**.
+* with **Data Catalog** you can use **Athena / EMR / Redshift to query that catalog**.
 
-* **can generate ETL code** but **only for Scala or Python**.
+- **can generate ETL code** but **only for Scala or Python**.
 
-- has a **central metadata repository (data catalog)**.
+* has a **central metadata repository (data catalog)**.
 
-* **ETL code** can be written using **Python or Scala**
+- **ETL code** can be written using **Python or Scala**
 
-- as the Load step of the ETL, you can load data to **Redshift, RDS, S3**
+* as the Load step of the ETL, you can load data to **Redshift, RDS, S3**
+
+#### Glue materialized views
+
+- allows you to replicate data from multiple data sources to another data source
+
+* with materialized views **you no longer have to implemented an _ElasticSearch_ connector!**. Materialized views **work with DynamoDB and _ElasticSearch_**.
 
 ### AWS Trusted Advisor
 

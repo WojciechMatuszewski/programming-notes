@@ -190,6 +190,8 @@ As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamod
 
 - use `ConditionExpression` to fail specific operations. This can be used together with `Transactions (read / write)` to create powerful operations.
 
+* you can use logical operators like `AND` with `ConditionExpression` to create powerful conditions.
+
 ## Consistency
 
 Usually, most of the `read` operations will be `eventually consistent`. This is due to the fact how DynamoDB is built.
