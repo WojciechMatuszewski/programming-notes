@@ -4421,6 +4421,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you **cannot create the rule for cloudWatch log group through CF**. This is a mess :C
 
+#### DLQ
+
+- you can set up DLQ for a given target of a rule
+
+* the EB will **annotate the message that is pushed to DLQ with basic error info**. This will allow you to debug stuff bettter
+
 ### Amazon MQ
 
 - occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
