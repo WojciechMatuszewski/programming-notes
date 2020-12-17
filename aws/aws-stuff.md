@@ -166,7 +166,7 @@
 
 #### Tumbling windows
 
-- available to you when you are consuming \*_DDB streams or Firehose events_
+- available to you when you are consuming **DDB streams or Firehose events**
 
 * enables you to return **state** which **could be consumed by another lambda invocation**
 
