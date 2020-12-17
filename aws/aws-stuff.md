@@ -164,6 +164,16 @@
 
 * to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build with a image that contains the layer**
 
+#### Tumbling windows
+
+- available to you when you are consuming \*_DDB streams or Firehose events_
+
+* enables you to return **state** which **could be consumed by another lambda invocation**
+
+- **state persists within the tumbling window**. The **max window you can set is 15 minutes**
+
+* for doing **agregation work**. Think of **calculating sales numbers for a 15 minute window**
+
 ### Step Functions
 
 - **state machines as a service**
