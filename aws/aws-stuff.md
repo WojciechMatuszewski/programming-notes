@@ -164,6 +164,16 @@
 
 * to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build with a image that contains the layer**
 
+#### Tumbling windows
+
+- available to you when you are consuming **DDB streams or Firehose events**
+
+* enables you to return **state** which **could be consumed by another lambda invocation**
+
+- **state persists within the tumbling window**. The **max window you can set is 15 minutes**
+
+* for doing **agregation work**. Think of **calculating sales numbers for a 15 minute window**
+
 ### Step Functions
 
 - **state machines as a service**
@@ -4422,6 +4432,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * what I would suggest is to **make cloud watch log group as your target**. You will be able to see all the events!
 
 - you **cannot create the rule for cloudWatch log group through CF**. This is a mess :C
+
+#### DLQ
+
+- you can set up DLQ for a given target of a rule
+
+* the EB will **annotate the message that is pushed to DLQ with basic error info**. This will allow you to debug stuff bettter
 
 ### Amazon MQ
 
