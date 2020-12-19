@@ -4346,7 +4346,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - SNS and SQS combined (more or less)
 
 * can be **integrated with much more services than SQS or SNS (natively, without pooling)**.
-  What's more important that you can **integrate natively with 3rd party AWS service providers** or webhooks.
+  What's more important that you can **integrate natively with 3rd party AWS service providers**.
   Since these are going through APIGW the integration could also be done using SQS or SNS.
 
 - does **not support FIFO ordering**
@@ -4358,6 +4358,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you can use **DQL per rule**
 
 * you can specify **custom number of retires** as well as **time spent retrying**.
+
+- when an **event is sent to rule DLQ**, the message is **annotated with additional info**. This should help you with debuging. Also remember to **always have a dlq per rule**.
 
 #### Schema Registry
 
