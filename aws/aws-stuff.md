@@ -57,6 +57,14 @@
 
 * this is **especially useful** when **wanting to grant other account permissions to invoke your function**
 
+- you can allow your function to be invoked by a given lambda service which originates from given account
+
+#### Firecracker
+
+- _Firecracker_ processes your lambdas I/O and network requests and sends them to the _Host kernel_
+
+* lives in a very limited guest envioriment
+
 #### Provisioned Concurrency
 
 - you have to have a **function version** or an **alias that DOES NOT point to \$latest** to turn it on.
@@ -115,15 +123,26 @@
 
 * _Event Source Mapping_ uses **lambda execution role** for IAM permissions. This is why you have to specify that, for example, your function can read and delete messages from SQS
 
-- **do not confuse it** with **lambda destination**.
+#### Lambda destinations
 
-* **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
+- **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
+
+* work only for **async** and **stream based invocations**. This is completely BS
 
 #### Resource-based policies
 
 - when a service does not use the _event source mapping_ and underlying _execution role_, you have to specify the _resource-based policy_ so that the service can invoke your function directly.
 
 * list of services that use this method of integration is much greater than the _event source mapping_ ones.
+
+- and example policy to enable a given function to be invoked by another function
+  ```ts
+  beingInvoked.addPermission("invoke-resource-based", {
+    // default execution role of a lambda function
+    principal: new iam.ArnPrincipal(invoker.role?.roleArn!),
+    action: "lambda:InvokeFunction",
+  });
+  ```
 
 #### Infinite loops and lambda
 
@@ -4508,6 +4527,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - **traffic** is **filtered before reaching /\ services**
 
 * use **AWS Shield for DDOS protection, WAF is just to help you filter the request with rules**.
+
+- you can match based on headers, ips any many other stuff
 
 #### WEB ACL
 
