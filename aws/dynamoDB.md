@@ -227,3 +227,11 @@ Regular _UUID_ will not do - it's not sortable. What you need is something that 
 ### ScanIndexForward
 
 So you have all the necessary information about sorting related things to use this attribute. Remember, _DynamoDB_, by default, always scans forward, that means in ascending manner.
+
+### Prepending arbitrary symbols
+
+- sometimes you want to get the enmity and all the other entities that relates to the entity, think GitHub repo and issues for this repo
+
+* to ensure that you get the repo first and then the issues within the same query, you might look into prepending the `issues` SK with some arbitrary character, this would _push_ the `repo` entity up top
+
+- that character usually is `#` or `0`, depending on the use case and the structure of the data.
