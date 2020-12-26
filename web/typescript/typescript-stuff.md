@@ -460,6 +460,20 @@ type Test = MyPartial<Something>;
 */
 ```
 
+### Altering mapped types keys
+
+You can use `as _something_` syntax to alter (probably perform conditional operation) on the _mapped types_ keys.
+
+```ts
+type NoNumbers<T extends Record<string, unknown>> = {
+  [K in keyof T as T[K] extends number ? never : K]: T[K];
+};
+
+type Test = NoNumbers<{ prop1: string; prop2: number }>; // {prop1: string}
+```
+
+As of writing this, this is relatively new addition to the language.
+
 ### Keyof and `[keyof]`
 
 Differences are quite big
@@ -524,6 +538,20 @@ WEIRD STUFF HUH?
     property: never;
 }
 */
+```
+
+This difference stems from the fact that `type | undefined` allows for value to be _skipped_.
+
+```ts
+declare function foo1(prop: number | undefined);
+foo1(); // Ok.
+```
+
+While the optional parameter syntax does not
+
+```ts
+declare function foo1(prop?: number);
+foo1(); // Error!
 ```
 
 ### Plucking nullable (also undefined) keys
@@ -1559,3 +1587,27 @@ doWork(param);
 ```
 
 It would be super nice for _Typescript_ to complain here.
+
+## Testing for `never`
+
+Let's say that for some reason, you want to test if the _type parameter_ that you defined is of type `never`. Normally I would do something like this
+
+```ts
+type CheckForNever<T> = T extends never ? 1 : 0;
+
+type Test1 = CheckForNever<"hi">; // 0 => Ok.
+type Test2 = CheckForNever<never>; // never => Wtf?
+```
+
+Tbh, I have no idea why it happens. The way the article describes is
+
+> Once one of the types in your expression is `never` it will **poison** the rest of the expression to evaluate to `never`
+
+You can trick the type system into behaving as you first though (returning `1` when `never` is passed in) by checking on _touple types_
+
+```ts
+type CheckForNever<T> = [T] extends [never] ? 1 : 0;
+
+type Test1 = CheckForNever<"hi">; // 0 => Ok.
+type Test2 = CheckForNever<never>; // 1 => Ok.
+```
