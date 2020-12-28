@@ -193,6 +193,8 @@
 
 * for doing **agregation work**. Think of **calculating sales numbers for a 15 minute window**
 
+- aggregation is preserved **per shard**
+
 ### Step Functions
 
 - **state machines as a service**
@@ -4457,6 +4459,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you can set up DLQ for a given target of a rule
 
 * the EB will **annotate the message that is pushed to DLQ with basic error info**. This will allow you to debug stuff bettter
+
+#### Decoupling
+
+- one thing that _EventBridge_ is really good at is the decoupling
+
+* one pattern that is to relly on _CloudTrail_ to _EventBridge_ integration in some situations, rather than the native integrations between services. Think multiple buckets hooked into 1 lambda function (putEvent)
 
 ### Amazon MQ
 
