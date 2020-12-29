@@ -195,6 +195,14 @@
 
 - aggregation is preserved **per shard**
 
+#### Custom checkpoints for DDB And Kinesis
+
+- this allows you to **return which message failed in a given batch**
+
+* is **different than bisect on error** because **with bisect on error one message might be processed multiple times**. Here we are **telling the pooler which message failed exactly**
+
+- **DOES NOT WORK WITH SQS**. You still have to use the pattern where you throw the messages that failed the processing
+
 ### Step Functions
 
 - **state machines as a service**
@@ -4384,6 +4392,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **NOT for high amounts of events per second**. You are billed per send an event. For case where you have a lot of events look into Kinesis.
 
+- one important thing to remember here is that **EB supports only 5 targets per rule**. This is something you should keep in mind while designing stuff.
+
 #### Resiliency
 
 - you can use **DQL per rule**
@@ -4893,6 +4903,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - there are multiple helper scripts
   - `cfn hup`: **deamon which detects changes in resource metadata**
   - `cfn signal`: used for `WaitConditions`, coordination between resources
+
+#### Custom resource types
+
+- you (or others) can create **custom CF resource types**
+
+* this is something you **upload to CF registry**
+
+- as a developer of such resource type, **you are responsible for implementing _create_, _delete_ and _update_ hooks**
 
 ### AWS Glue
 
