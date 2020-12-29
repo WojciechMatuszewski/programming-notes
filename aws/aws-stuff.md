@@ -1207,6 +1207,14 @@ There is a precedence in which **acls** or **bucket policies** are evaluated.
 
 The step 3 is crucial. Remember that whenever you upload something to a bucket that is not yours, you can control how much access to the underlying object the bucket owner has.
 
+#### Access Points
+
+- having multiple different statements in bucket policy can be painful. Especially when we are talking multiple users
+
+* _access points_ allow you to **create a designeted URL with a policy for a given user to request data from**
+
+- this way you **can have 1 policy per 1 user per 1 endpoint**
+
 #### Encryption
 
 - **PER OBJECT** basis
