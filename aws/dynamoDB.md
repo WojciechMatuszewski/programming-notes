@@ -10,6 +10,12 @@
 
 * there is an underlying cost for activating it.
 
+### PartiQL support
+
+- you can use the _PartiSQL_ to read from your table
+
+* **can result in full table scans if you are not careful**. While you can do the famous `select * from WHERE = ...` expression, it will be costly
+
 ### Data types
 
 #### Scalar Types
