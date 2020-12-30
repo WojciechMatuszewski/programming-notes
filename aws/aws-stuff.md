@@ -195,6 +195,12 @@
 
 - aggregation is preserved **per shard**
 
+##### Vs Kinesis Analytics
+
+- with **Analytics streams** the **aggregation** is performed **on the whole stream**
+
+* with **Tumbling windows** the **aggregation** is performed **only within a single shard**
+
 #### Custom checkpoints for DDB And Kinesis
 
 - this allows you to **return which message failed in a given batch**
@@ -3486,7 +3492,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * ingest big amounts of data in real-time.
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed. This is why Kinesis is know for the **data immutability**.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS or 365 DAYS**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed. This is why Kinesis is know for the **data immutability**.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -3581,7 +3587,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - unit of scale within Kinesis Data Streams
 
-* **getRecords** can **only be called 5 times per second per shard**.
+* **getRecords** can **only be called 5 times per second per shard**. This means that you can have **up to 5 consumers per shard at maximum**
 
 - data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool data once per 200ms**.
 

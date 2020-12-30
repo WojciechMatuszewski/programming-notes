@@ -9,6 +9,8 @@ With `exports` you are mutating an `module.exports` and if there is an `exports`
 
 * memory allocation also controls CPU allocation
 
+### Power tuning
+
 - use **aws lambda power tuning tool** to see memory vs cost for your function
 
 * use **lumigo-cli** to make your life easier. This tool is a collection of utility tools for AWS and also includes the aforementioned _power tuning tool_
@@ -16,6 +18,12 @@ With `exports` you are mutating an `module.exports` and if there is an `exports`
 - within **lumigo-cli** you can set different profiles and visualize results, for example:
 
   > lumigo-cli powertune-lambda -n io-bound-example -r eu-central-1 -s speed
+
+### AWS Compute Optimizer
+
+- this is an **complementary** service to the **power tuning** one.
+
+* **compute optimizer looks at the actual load** while the **power tuning tools creates artificial load**
 
 ## Cold Start
 
