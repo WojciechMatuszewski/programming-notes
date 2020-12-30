@@ -282,3 +282,11 @@ Lets consider `setImmediate`. The name implies that it will be run, well, immedi
 
 **Excluding microtask queue and close queue**
 _timer queue_ > _I/O callback queue_ > _check queue_
+
+## Event loop
+
+Let's summarize our knowledge of the _event loop_
+
+- **_event loop_ has _phases_ – different queues that contain _commands_**
+
+* With each **transition** to **another phase**, the **`process.nextTick` and the microtask (promises) are drained**. This happens to a certain extend, the _libuv_ makes sure we are not starving the _event loop_ with blocking calls
