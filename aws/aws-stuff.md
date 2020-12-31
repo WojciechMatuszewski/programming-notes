@@ -1527,6 +1527,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * use CloudWatch alarm which will trigger lambda which updates R53, multi-region read replica will be promoted.
 
+#### Streaming
+
+- RDS has some CDC capabilities
+
+* you can **stream** data **to Kinesis** if you are using **PostgreSQL**
+
 ### Aurora
 
 - **SQL and PostgreSQ** compatible
