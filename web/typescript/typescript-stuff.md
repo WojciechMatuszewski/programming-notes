@@ -1,5 +1,25 @@
 # Typescript Stuff
 
+## _type space_ vs _value space_
+
+While working with Typescript, you will be operating in 2 different _spaces_.
+
+**The _type space_ is where the typings live**
+
+**The _value space_ is where the JS constructs live**
+
+It is important to be aware of this. You might see code that looks as follows
+
+```ts
+// declared in the 'type space'
+type Person = { age: number };
+
+// declared in the 'value space'
+const Person = { firstName: "Wojtek" };
+```
+
+Notice that we have a sort of overlap here. You might expect some kind of shadowing issue to occur, but that is not the case. These 2 declarations are _isolated_ from each other, they live in 2 different _spaces_.
+
 ## Augmenting global declarations
 
 Lets say you are building a NodeJs app and you want to have strongly typed `process.env` object.
