@@ -2020,6 +2020,16 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you **can get pretty complex since CloudFront gives you a lot of settings**.
 
+* you **attach cache policies to them**. You can create **your own cache policies** or **use the managed ones**
+
+#### Cache Key
+
+- this is how _CloudFront_ knows if the asset you are requesting is within a cache or not
+
+* _cache key_ is **created based on the request parameters** like **url or/and headers/cookies**
+
+- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that behavior**b
+
 #### Restricting access to CloudFront distribution
 
 - you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
