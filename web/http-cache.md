@@ -14,10 +14,10 @@ All you have to do is to set the header, here is an example in `nodejs`
 const http = require("http");
 
 const server = http.createServer(function requestListener(request, response) {
-  response.setHeader("content-type", "text/html");
-  response.setHeader("cache-control", "max-age=10");
-  response.writeHead(200);
-  response.end("<div>works</div>");
+    response.setHeader("content-type", "text/html");
+    response.setHeader("cache-control", "max-age=10");
+    response.writeHead(200);
+    response.end("<div>works</div>");
 });
 
 server.listen(3000);
@@ -44,22 +44,22 @@ Here is the `nodejs` sample
 const http = require("http");
 
 const server = http.createServer(function requestListener(request, response) {
-  if (
-    request.headers["if-none-match"] &&
-    request.headers["if-none-match"] === "1"
-  ) {
-    response.writeHead(304);
-    response.end("");
-  } else if (request.url === "/") {
-    response.setHeader("content-type", "text/html");
-    response.setHeader("ETag", "1");
-    response.setHeader("cache-control", "max-age=10");
-    response.writeHead(200);
-    response.end("<div>works</div>");
-  } else {
-    response.setHeader("content-type", "text/html");
-    response.end("<div>works2</div>");
-  }
+    if (
+        request.headers["if-none-match"]
+        && request.headers["if-none-match"] === "1"
+    ) {
+        response.writeHead(304);
+        response.end("");
+    } else if (request.url === "/") {
+        response.setHeader("content-type", "text/html");
+        response.setHeader("ETag", "1");
+        response.setHeader("cache-control", "max-age=10");
+        response.writeHead(200);
+        response.end("<div>works</div>");
+    } else {
+        response.setHeader("content-type", "text/html");
+        response.end("<div>works2</div>");
+    }
 });
 
 server.listen(3000);

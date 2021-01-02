@@ -9,12 +9,12 @@ For example, this is how you could type a _type_ which allows only _json values_
 
 ```ts
 type JSONValue =
-  | number
-  | string
-  | null
-  | boolean
-  | JSONValue[]
-  | { [k: string]: JSONValue };
+    | number
+    | string
+    | null
+    | boolean
+    | JSONValue[]
+    | { [k: string]: JSONValue };
 ```
 
 Notice that I'm referring to `JSONValue` twice within it's declaration. Previously this was not allowed.
@@ -82,12 +82,12 @@ There was a neat addition to TypeScript, where you can type the error that is pa
 ```ts
 declare function somethingRisky(): number;
 try {
-  somethingRisky();
-  // e can literally be anything, strings, numbers, objects, you name it!
+    somethingRisky();
+    // e can literally be anything, strings, numbers, objects, you name it!
 } catch (e: unknown) {
-  if (e instanceof Error) {
-    console.log(e.stack);
-  }
+    if (e instanceof Error) {
+        console.log(e.stack);
+    }
 }
 ```
 
@@ -98,7 +98,7 @@ So, you are probably familiar with a notion of _type guard_. To give you an exam
 
 ```ts
 function isError(err: unknown): err is Error {
-  return err instanceof Error;
+    return err instanceof Error;
 }
 ```
 
@@ -106,7 +106,7 @@ With _type assertions_ or some might call them _assert signatures_ we will not r
 
 ```ts
 function assertIsError(err: unknown): asserts err is Error {
-  if (!(err instanceof Error)) throw new Error("not an error!");
+    if (!(err instanceof Error)) throw new Error("not an error!");
 }
 ```
 
@@ -116,16 +116,17 @@ So, let's say I want to mock the function that gets the feature flag value, I wo
 
 ```ts
 function assertIsCorrectName(name: string): asserts name is "MY_FEATURE_FLAG" {
-  if (!name == "MY_FEATURE_FLAG")
-    throw new Error(`expected MY_FEATURE_FLAG, got: ${name}`);
+    if (!name == "MY_FEATURE_FLAG") {
+        throw new Error(`expected MY_FEATURE_FLAG, got: ${name}`);
+    }
 }
 
 jest
-  .spyOn(featureFlagService, "getFeatureFlag")
-  .mockImplementation((featureFlagName) => {
-    assertIsCorrectName(featureFlagName);
-    return true;
-  });
+    .spyOn(featureFlagService, "getFeatureFlag")
+    .mockImplementation((featureFlagName) => {
+        assertIsCorrectName(featureFlagName);
+        return true;
+    });
 ```
 
 This increases the confidence I have in my test suite. Every time I change the identifier for the feature flag, I should also be changing my tests.
@@ -136,7 +137,7 @@ While working with TypeScript you might have noticed that you can import types a
 
 ```ts
 // type, javascript symbol (function)
-import { UserType, getUser } from "./user";
+import { getUser, UserType } from "./user";
 ```
 
 This is completely ok, but sometimes, the type has the same name as the symbol
@@ -193,7 +194,7 @@ Now there is no ambiguity with the import. The bundler exactly knows that this s
 - there is this weird syntax which is equivalent to `module.exports = callableValue`
 
   ```js
-  export = callableValue
+  export = callableValue;
   ```
 
   I would avoid it as much as I can, but this is how you would migrate the `module.exports` as a _non-namespace_
@@ -244,8 +245,8 @@ Use _type guards_ with _assert signatures_. One neat trick Mike shown is how to 
 
 ```ts
 function isTypedArray<T>(
-  arg: any,
-  check: (val: any) => val is T
+    arg: any,
+    check: (val: any) => val is T,
 ): asserts arg is T[] {}
 ```
 
@@ -275,8 +276,8 @@ Notice the comment here. This is how you make assertions using _dtslint_.
 Contrast that with _tsd_.
 
 ```ts
-import { ITeam } from "../../src/types";
 import { expectAssignable, expectNotAssignable } from "tsd";
+import { ITeam } from "../../src/types";
 
 expectNotAssignable<ITeam>(null);
 ```

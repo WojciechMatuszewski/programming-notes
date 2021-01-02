@@ -22,10 +22,10 @@ Course material from [node university](https://node.university/).
   ```js
   // code
   if (cached && cached.source) {
-    content = cached.source;
-    cached.source = undefined;
+      content = cached.source;
+      cached.source = undefined;
   } else {
-    content = fs.readFileSync(filename, "utf8");
+      content = fs.readFileSync(filename, "utf8");
   }
   // code
   ```

@@ -9,23 +9,23 @@ Check this out:
 ```jsx
 let data = null;
 const pokemonPromise = fetchPokemon("pikachu").then(
-  (fetchedPokemon) => (data = fetchedPokemon)
+    (fetchedPokemon) => (data = fetchedPokemon),
 );
 
 function Component() {
-  if (!data) {
-    throw pokemonPromise;
-  }
+    if (!data) {
+        throw pokemonPromise;
+    }
 
-  return <div>pokemon is fetched</div>;
+    return <div>pokemon is fetched</div>;
 }
 
 function App() {
-  return (
-    <React.Suspense fallback={<p>loading</p>}>
-      <Component />
-    </React.Suspense>
-  );
+    return (
+        <React.Suspense fallback={<p>loading</p>}>
+            <Component />
+        </React.Suspense>
+    );
 }
 ```
 
@@ -86,8 +86,8 @@ Tbh I was struggling to understand the name of the pattern. When you look at the
 const resource = createResource(fetchPokemon("pikachu"));
 
 function Component() {
-  const pokemon = resource.read();
-  return <div>{pokemon.name}</div>;
+    const pokemon = resource.read();
+    return <div>{pokemon.name}</div>;
 }
 ```
 
@@ -98,14 +98,14 @@ const resource = createResource(fetchPokemon("pikachu"));
 const imageResource = createResource(fetchImage("pikachu"));
 
 function Component() {
-  const pokemon = resource.read();
-  return (
-    <div>
-      <p>{pokemon.name}</p>
-      // uses `.read`
-      <LazyImage resource={imageResource} />
-    </div>
-  );
+    const pokemon = resource.read();
+    return (
+        <div>
+            <p>{pokemon.name}</p>
+            // uses `.read`
+            <LazyImage resource={imageResource} />
+        </div>
+    );
 }
 ```
 
@@ -122,9 +122,9 @@ You can load your data and images at the same time, pretty neat. For that we nee
 
 ```js
 function preloadImage(src) {
-  const img = document.createElement("img");
-  img.src = src;
-  img.onload = () => console.log("loaded");
+    const img = document.createElement("img");
+    img.src = src;
+    img.onload = () => console.log("loaded");
 }
 ```
 
@@ -132,13 +132,13 @@ Now par this with the `createResource` function
 
 ```js
 function createImageResource(src) {
-  return createResource(
-    new Promise((resolve) => {
-      const img = document.createElement("img");
-      img.src = src;
-      img.onload = () => resolve(src);
-    })
-  );
+    return createResource(
+        new Promise((resolve) => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.onload = () => resolve(src);
+        }),
+    );
 }
 ```
 
@@ -146,10 +146,10 @@ Then you can create 2 resources when you want your data, an image and the payloa
 
 ```js
 function createPayloadResource(pokemonName, src) {
-  return {
-    data: createPokemonResource(pokemonName),
-    image: createImageResource(src),
-  };
+    return {
+        data: createPokemonResource(pokemonName),
+        image: createImageResource(src),
+    };
 }
 ```
 
@@ -157,15 +157,15 @@ When in your component
 
 ```jsx
 function PokemonInfo({ pokemonName, src }) {
-  const pokemonResource = createPayloadResource(pokemonName, src);
-  const pokemon = pokemonResource.data.read();
+    const pokemonResource = createPayloadResource(pokemonName, src);
+    const pokemon = pokemonResource.data.read();
 
-  return (
-    <div>
-      <p>{pokemon.name}</p>
-      <img src={pokemonResource.image.read()} />
-    </div>
-  );
+    return (
+        <div>
+            <p>{pokemon.name}</p>
+            <img src={pokemonResource.image.read()} />
+        </div>
+    );
 }
 ```
 

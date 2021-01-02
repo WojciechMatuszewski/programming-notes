@@ -21,8 +21,8 @@ This works always the same. More testable and overall better
 
 ```javascript
 function daysInMonth(y, m) {
-  var start = new Date(y, m - 1, 1),
-    end = new Date(y, m, 1);
+    var start = new Date(y, m - 1, 1),
+        end = new Date(y, m, 1);
 }
 ```
 
@@ -31,20 +31,20 @@ function daysInMonth(y, m) {
 ```javascript
 // this function calculates and mutates stuff, this is not the best
 function teaser(size, elt) {
-  setText(elt, slice(0, size, text(elt)));
+    setText(elt, slice(0, size, text(elt)));
 }
 map(teaser(50), all("p"));
 
 // this is much better
 var teaser = slice(0);
 map(
-  compose(
-    // setText is only one of the operations in chain, easily removable
-    setText,
-    teaser(50),
-    text
-  ),
-  all("p")
+    compose(
+        // setText is only one of the operations in chain, easily removable
+        setText,
+        teaser(50),
+        text,
+    ),
+    all("p"),
 );
 ```
 
@@ -69,11 +69,11 @@ Curry implementation
 
 ```javascript
 function curry(fn) {
-  return function curried() {
-    if (arguments.length >= fn.length) return fn.apply(null, arguments);
-    var args = Array.prototype.slice.call(arguments);
-    return curried.bind(null, ...args);
-  };
+    return function curried() {
+        if (arguments.length >= fn.length) return fn.apply(null, arguments);
+        var args = Array.prototype.slice.call(arguments);
+        return curried.bind(null, ...args);
+    };
 }
 ```
 
@@ -113,9 +113,9 @@ Function can meld aka compose Simple compose example
 ```javascript
 // the convention is to read composed function from right to left
 function compose(g, f) {
-  return function(x) {
-    return g(f(x));
-  };
+    return function(x) {
+        return g(f(x));
+    };
 }
 ```
 
@@ -130,7 +130,7 @@ Sometimes you cannot be 100% `point-free`
 
 ```javascript
 var isAuthor = function(name, array) {
-  return _.compose(_.contains(name), names)(articles);
+    return _.compose(_.contains(name), names)(articles);
 };
 ```
 
@@ -138,7 +138,7 @@ And of course there is more than compose. Lets use curry with point-free style
 
 ```javascript
 var fork = _.curry(function(lastly, f, g, x) {
-  return lastly(f(x), g(x));
+    return lastly(f(x), g(x));
 });
 ```
 
@@ -211,11 +211,11 @@ There are various methods that you can use with `lenses` like
 
 ```javascript
 var _Container = function(val) {
-  this.val = val;
+    this.val = val;
 };
 
 var Container = function(x) {
-  return new _Container(x);
+    return new _Container(x);
 };
 
 Container(3); // _Container {val: 3}
@@ -327,7 +327,7 @@ console.log("exercise 2...ok!");
 // ==========
 // Use safeGet and _.head to find the first initial of the user
 var safeGet = _.curry(function(x, o) {
-  return Maybe(o[x]);
+    return Maybe(o[x]);
 });
 var user = { id: 2, name: "Albert" };
 console.log("--------Start exercise 3--------");
@@ -343,7 +343,7 @@ console.log("exercise 3...ok!");
 console.log("--------Start exercise 4--------");
 
 var ex4 = function(n) {
-  return Maybe(n).map(parseInt);
+    return Maybe(n).map(parseInt);
 };
 
 // or
@@ -405,18 +405,18 @@ console.log("--------Start exercise 1--------");
 var showWelcome = compose(_.add("Welcome "), _.get("name"));
 
 var checkActive = function(user) {
-  return user.active ? Right(user) : Left("Your account is not active");
+    return user.active ? Right(user) : Left("Your account is not active");
 };
 
 var ex1 = compose(map(showWelcome), checkActive);
 
 assertDeepEqual(
-  Left("Your account is not active"),
-  ex1({ active: false, name: "Gary" })
+    Left("Your account is not active"),
+    ex1({ active: false, name: "Gary" }),
 );
 assertDeepEqual(
-  Right("Welcome Theresa"),
-  ex1({ active: true, name: "Theresa" })
+    Right("Welcome Theresa"),
+    ex1({ active: true, name: "Theresa" }),
 );
 console.log("exercise 1...ok!");
 
@@ -426,7 +426,7 @@ console.log("exercise 1...ok!");
 console.log("--------Start exercise 2--------");
 
 var ex2 = function(x) {
-  return x.length > 3 ? Right(x) : Left("You need > 3");
+    return x.length > 3 ? Right(x) : Left("You need > 3");
 };
 
 assertDeepEqual(Right("fpguy99"), ex2("fpguy99"));
@@ -438,8 +438,8 @@ console.log("exercise 2...ok!");
 // Use ex2 above and Either as a functor to save the user if they are valid
 
 var save = function(x) {
-  console.log("SAVED USER!");
-  return x;
+    console.log("SAVED USER!");
+    return x;
 };
 
 var ex3 = compose(map(save), ex2);
@@ -455,10 +455,10 @@ console.log("exercise 3...ok!");
 console.log("--------Start exercise 4--------");
 
 var getValue = function(x) {
-  return document.querySelector(x).value;
+    return document.querySelector(x).value;
 }.toIO();
 var stripSpaces = function(s) {
-  return s.replace(/\s+/g, "");
+    return s.replace(/\s+/g, "");
 };
 
 var ex4 = compose(map(stripSpaces), getValue);
@@ -470,7 +470,7 @@ console.log("exercise 4...ok!");
 // ==========
 // Use getHref() / getProtocal() and runIO() to get the protocal of the page.
 var getHref = function() {
-  return location.href;
+    return location.href;
 }.toIO();
 var getProtocal = compose(_.head, _.split("/"));
 var ex5 = compose(map(getProtocal), getHref);
@@ -487,7 +487,7 @@ console.log("exercise 5...ok!");
 localStorage.user = JSON.stringify({ email: "george@foreman.net" });
 
 var getCache = function(x) {
-  return Maybe(localStorage[x]);
+    return Maybe(localStorage[x]);
 }.toIO();
 var ex6 = compose(map(map(compose(_.get("email"), JSON.parse))), getCache);
 
@@ -497,19 +497,21 @@ console.log("exercise 6...ok!");
 // TEST HELPERS
 // =====================
 function inspectIt(x) {
-  return (
-    (x.inspect && x.inspect()) || (x.toString && x.toString()) || x.valueOf()
-  ); //hacky for teachy.
+    return (
+        (x.inspect && x.inspect()) || (x.toString && x.toString())
+        || x.valueOf()
+    ); // hacky for teachy.
 }
 
 function assertEqual(x, y) {
-  if (x !== y) {
-    throw "expected " + x + " to equal " + y;
-  }
+    if (x !== y) {
+        throw "expected " + x + " to equal " + y;
+    }
 }
 function assertDeepEqual(x, y) {
-  if (x.val !== y.val)
-    throw "expected " + inspectIt(x) + " to equal " + inspectIt(y);
+    if (x.val !== y.val) {
+        throw "expected " + inspectIt(x) + " to equal " + inspectIt(y);
+    }
 }
 ```
 
@@ -561,10 +563,10 @@ Lifting just means transforming to a given type. Let's reflect on how we are wri
 
 ```js
 async function compute() {
-  const v1 = await Promise.resolve(1);
-  const v2 = await Promise.resolve(2);
+    const v1 = await Promise.resolve(1);
+    const v2 = await Promise.resolve(2);
 
-  return v1 + v2;
+    return v1 + v2;
 }
 ```
 
@@ -572,9 +574,9 @@ There is something wrong with it right? It feels like we are `unpacking` from a 
 
 ```js
 function capitalizeFirst(arr) {
-  const [first, ...rest] = arr;
-  const changed = first.toUpperCase();
-  return [changed, ...rest];
+    const [first, ...rest] = arr;
+    const changed = first.toUpperCase();
+    return [changed, ...rest];
 }
 ```
 
@@ -595,6 +597,6 @@ This way we can `add` using `async` code without unpacking
 ```js
 const adder = liftP(addTwo);
 async function compute() {
-  return await adder(Promise.resolve(1), Promise.resolve(2));
+    return await adder(Promise.resolve(1), Promise.resolve(2));
 }
 ```

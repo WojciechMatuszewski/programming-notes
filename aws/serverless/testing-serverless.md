@@ -24,11 +24,11 @@ Let's say your handler looks like this
 
 ```ts
 const handler: APIGatewayProxyHandlerV2 = async (event) => {
-  // some logic
+    // some logic
 
-  await docClient.put().promise();
+    await docClient.put().promise();
 
-  return; // some return stuff
+    return; // some return stuff
 };
 ```
 
@@ -39,16 +39,16 @@ Instead of doing that, extract the logic you have in your handler, to a separate
 
 ```ts
 export function performMyLogic() {
-  // some logic
+    // some logic
 }
 
 const handler: APIGatewayProxyHandlerV2 = async (event) => {
-  const logicResult = performMyLogic();
-  // do something with the `logicResult`
+    const logicResult = performMyLogic();
+    // do something with the `logicResult`
 
-  await docClient.put().promise();
+    await docClient.put().promise();
 
-  return; // some return stuff
+    return; // some return stuff
 };
 ```
 
@@ -86,23 +86,23 @@ That is a lot to cover, but having those tests will really, really make you cert
 A sample test which tests one of the failure modes would look something like this:
 
 ```ts
-import { createHandler } from "../../functions/simple-api/handler";
 import invokeEvent from "../../events/simple-api-event.json";
+import { createHandler } from "../../functions/simple-api/handler";
 
 const tableName =
-  "testingServerlessRefresher-simpleAPItable78ABB1E1-ORU7YEL1MKO7";
+    "testingServerlessRefresher-simpleAPItable78ABB1E1-ORU7YEL1MKO7";
 
 describe("returns bad request if", () => {
-  test("body does not exist", async () => {
-    const handler = createHandler(tableName);
-    const event = { ...invokeEvent, body: undefined };
+    test("body does not exist", async () => {
+        const handler = createHandler(tableName);
+        const event = { ...invokeEvent, body: undefined };
 
-    const result = await handler(event, {} as any, () => null);
-    expect(result).toEqual({
-      statusCode: 400,
-      body: JSON.stringify({ message: "Body not found" }),
+        const result = await handler(event, {} as any, () => null);
+        expect(result).toEqual({
+            statusCode: 400,
+            body: JSON.stringify({ message: "Body not found" }),
+        });
     });
-  });
 });
 ```
 
@@ -166,21 +166,21 @@ The test for this would look something like this:
 import phin from "phin";
 
 test("saves and returns the item", async () => {
-  const response = await phin({
-    url: "https://87wa3d2y4c.execute-api.eu-central-1.amazonaws.com/",
-    method: "POST",
-    data: {
-      firstName: "Karol",
-    } as any,
-    parse: "json",
-  });
+    const response = await phin({
+        url: "https://87wa3d2y4c.execute-api.eu-central-1.amazonaws.com/",
+        method: "POST",
+        data: {
+            firstName: "Karol",
+        } as any,
+        parse: "json",
+    });
 
-  expect(response.statusCode).toEqual(200);
-  expect(response.body).toEqual({
-    firstName: "Karol",
-    id: expect.any(String),
-    lastName: "Unknown",
-  });
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toEqual({
+        firstName: "Karol",
+        id: expect.any(String),
+        lastName: "Unknown",
+    });
 });
 ```
 
@@ -212,12 +212,12 @@ So add the log line in your handler
 
 ```ts
 const handler: EventBridgeHandler<any, any, any> = async (event) => {
-  // logic
+    // logic
 
-  // use some kind of logger with sampling
-  console.log(event);
+    // use some kind of logger with sampling
+    console.log(event);
 
-  // logic
+    // logic
 };
 ```
 
@@ -231,41 +231,41 @@ const eb = new EventBridge();
 const busName = "testingServerlessRefresherasyncFlowbusC977BBFB";
 
 const functionName =
-  "testingServerlessRefreshe-asyncFlowreceiver06D8229-WWVZV9IH3RHC";
+    "testingServerlessRefreshe-asyncFlowreceiver06D8229-WWVZV9IH3RHC";
 
 const testTimeout = 30 * 1000;
 
 test(
-  "event is passed to the handler",
-  async () => {
-    const userId = ulid();
+    "event is passed to the handler",
+    async () => {
+        const userId = ulid();
 
-    const detail = {
-      id: userId,
-      firstName: "Wojciech",
-      lastName: "Matuszewski",
-    };
+        const detail = {
+            id: userId,
+            firstName: "Wojciech",
+            lastName: "Matuszewski",
+        };
 
-    await eb
-      .putEvents({
-        Entries: [
-          {
-            EventBusName: busName,
-            Detail: JSON.stringify(detail),
-            DetailType: "user",
-            Source: "async-flow",
-          },
-        ],
-      })
-      .promise();
+        await eb
+            .putEvents({
+                Entries: [
+                    {
+                        EventBusName: busName,
+                        Detail: JSON.stringify(detail),
+                        DetailType: "user",
+                        Source: "async-flow",
+                    },
+                ],
+            })
+            .promise();
 
-    await expect({
-      region: "eu-central-1",
-      function: functionName,
-      timeout: testTimeout,
-    }).toHaveLog(userId);
-  },
-  testTimeout
+        await expect({
+            region: "eu-central-1",
+            function: functionName,
+            timeout: testTimeout,
+        }).toHaveLog(userId);
+    },
+    testTimeout,
 );
 ```
 
@@ -288,36 +288,36 @@ import phin from "phin";
 
 const apiUrl = "https://ex59t535b2.execute-api.eu-central-1.amazonaws.com/";
 const queueUrl =
-  "https://sqs.eu-central-1.amazonaws.com/286420114124/testingServerlessRefresher-asyncFlowqueueB14A1593-14PFRLCUOZCTA";
+    "https://sqs.eu-central-1.amazonaws.com/286420114124/testingServerlessRefresher-asyncFlowqueueB14A1593-14PFRLCUOZCTA";
 
 const testTimeout = 30 * 1000;
 
 test(
-  "event is send",
-  async () => {
-    const result = await phin({
-      method: "POST",
-      parse: "json",
-      url: apiUrl,
-      data: {
-        firstName: "Karol",
-        lastName: "Matuszewski",
-      } as any,
-    });
+    "event is send",
+    async () => {
+        const result = await phin({
+            method: "POST",
+            parse: "json",
+            url: apiUrl,
+            data: {
+                firstName: "Karol",
+                lastName: "Matuszewski",
+            } as any,
+        });
 
-    expect(result.statusCode).toEqual(200);
+        expect(result.statusCode).toEqual(200);
 
-    expect({
-      region: "eu-central-1",
-      queueUrl,
-      timeout: testTimeout,
-    }).toHaveMessage(
-      (msg) =>
-        msg.detail.firstName === "Karol" &&
-        msg.detail.lastName === "Matuszewski"
-    );
-  },
-  testTimeout
+        expect({
+            region: "eu-central-1",
+            queueUrl,
+            timeout: testTimeout,
+        }).toHaveMessage(
+            (msg) =>
+                msg.detail.firstName === "Karol"
+                && msg.detail.lastName === "Matuszewski",
+        );
+    },
+    testTimeout,
 );
 ```
 
@@ -334,46 +334,48 @@ We could have couple of scenarios here. For simplicity sake, let's say I want to
 
 ```ts
 test(
-  "creates a presigned url which enables the user to upload the image",
-  async () => {
-    const result = await phin<{ url: string; fields: Record<string, string> }>({
-      method: "GET",
-      parse: "json",
-      url: `${apiUrl}/get-upload-url?name=image.png`,
-    });
+    "creates a presigned url which enables the user to upload the image",
+    async () => {
+        const result = await phin<
+            { url: string; fields: Record<string, string> }
+        >({
+            method: "GET",
+            parse: "json",
+            url: `${apiUrl}/get-upload-url?name=image.png`,
+        });
 
-    expect(result.statusCode).toEqual(200);
-    expect(result.body).toEqual({
-      url: expect.any(String),
-      fields: expect.any(Object),
-    });
+        expect(result.statusCode).toEqual(200);
+        expect(result.body).toEqual({
+            url: expect.any(String),
+            fields: expect.any(Object),
+        });
 
-    const { url, fields } = result.body;
+        const { url, fields } = result.body;
 
-    const fileToUpload = fs.readFileSync(join(__dirname, "image.png"));
+        const fileToUpload = fs.readFileSync(join(__dirname, "image.png"));
 
-    const formData = new FormData();
-    Object.entries(fields).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
-    formData.append("file", fileToUpload);
+        const formData = new FormData();
+        Object.entries(fields).forEach(([key, value]) =>
+            formData.append(key, value)
+        );
+        formData.append("file", fileToUpload);
 
-    const uploadResult = await phin({
-      url: url,
-      method: "POST",
-      data: formData.getBuffer(),
-      headers: formData.getHeaders(),
-    });
+        const uploadResult = await phin({
+            url: url,
+            method: "POST",
+            data: formData.getBuffer(),
+            headers: formData.getHeaders(),
+        });
 
-    expect(uploadResult.statusCode).toEqual(204);
+        expect(uploadResult.statusCode).toEqual(204);
 
-    expect({
-      region: "eu-central-1",
-      bucket: bucketName,
-      timeout: testTimeout,
-    }).toHaveObject(fields.key);
-  },
-  testTimeout
+        expect({
+            region: "eu-central-1",
+            bucket: bucketName,
+            timeout: testTimeout,
+        }).toHaveObject(fields.key);
+    },
+    testTimeout,
 );
 ```
 
@@ -408,22 +410,22 @@ const sqs = new SQS();
 async function performWork() {}
 
 const handler: SQSHandler = async (event) => {
-  const promises = event.Records.map(async (record) => {
-    await performWork();
-    await sqs
-      .deleteMessage({
-        ReceiptHandle: record.receiptHandle,
-        QueueUrl: "QUEUE_URL",
-      })
-      .promise();
-  });
+    const promises = event.Records.map(async (record) => {
+        await performWork();
+        await sqs
+            .deleteMessage({
+                ReceiptHandle: record.receiptHandle,
+                QueueUrl: "QUEUE_URL",
+            })
+            .promise();
+    });
 
-  const results = await Promise.allSettled(promises);
-  const hasErrors = results.find((result) => result.status === "rejected");
+    const results = await Promise.allSettled(promises);
+    const hasErrors = results.find((result) => result.status === "rejected");
 
-  if (hasErrors) {
-    throw new Error("Errors occurred");
-  }
+    if (hasErrors) {
+        throw new Error("Errors occurred");
+    }
 };
 
 export { handler };
@@ -442,15 +444,15 @@ const sqs = new SQS();
 async function performWork() {}
 
 function isRejected(result: PromiseSettledResult<void>) {
-  return result.status === "rejected";
+    return result.status === "rejected";
 }
 
 function createHandler(worker: () => void, sqsService: SQS) {
-  const handler: SQSHandler = async (event) => {
-    // code
-  };
+    const handler: SQSHandler = async (event) => {
+        // code
+    };
 
-  return handler;
+    return handler;
 }
 
 const handler = createHandler(performWork, sqs);
@@ -478,56 +480,56 @@ The test for this would look something like this
 
 ```ts
 test(
-  "bad requests land in dlq",
-  async () => {
-    const badMessageId = ulid();
+    "bad requests land in dlq",
+    async () => {
+        const badMessageId = ulid();
 
-    // Can be executed once every 60 seconds!
-    await sqs.purgeQueue({ QueueUrl: dqlUrl }).promise();
+        // Can be executed once every 60 seconds!
+        await sqs.purgeQueue({ QueueUrl: dqlUrl }).promise();
 
-    await sqs
-      .sendMessageBatch({
-        Entries: [
-          {
-            Id: ulid(),
-            MessageBody: JSON.stringify({
-              // This is an email exposed by SES that will always succeed
-              destination: "success@simulator.amazonses.com",
-              source: "MY_OWN_EMAIL_CONFIRMED_IN_SES",
-            }),
-          },
-          {
-            Id: ulid(),
-            MessageBody: JSON.stringify({
-              destination: "success@simulator.amazonses.com",
-              source: "dupa@dupa.pl",
-              id: badMessageId,
-            }),
-          },
-        ],
-        QueueUrl: queueUrl,
-      })
-      .promise();
+        await sqs
+            .sendMessageBatch({
+                Entries: [
+                    {
+                        Id: ulid(),
+                        MessageBody: JSON.stringify({
+                            // This is an email exposed by SES that will always succeed
+                            destination: "success@simulator.amazonses.com",
+                            source: "MY_OWN_EMAIL_CONFIRMED_IN_SES",
+                        }),
+                    },
+                    {
+                        Id: ulid(),
+                        MessageBody: JSON.stringify({
+                            destination: "success@simulator.amazonses.com",
+                            source: "dupa@dupa.pl",
+                            id: badMessageId,
+                        }),
+                    },
+                ],
+                QueueUrl: queueUrl,
+            })
+            .promise();
 
-    await expect({
-      region: "eu-central-1",
-      queueUrl: dqlUrl,
-      timeout: testTimeout,
-      poolEvery: 2000,
-    }).toHaveMessage((msg) => {
-      return msg.id === badMessageId;
-    });
+        await expect({
+            region: "eu-central-1",
+            queueUrl: dqlUrl,
+            timeout: testTimeout,
+            poolEvery: 2000,
+        }).toHaveMessage((msg) => {
+            return msg.id === badMessageId;
+        });
 
-    await new Promise((resolve) => setTimeout(resolve, 6000));
+        await new Promise((resolve) => setTimeout(resolve, 6000));
 
-    const { Attributes } = await sqs
-      .getQueueAttributes({ QueueUrl: dqlUrl, AttributeNames: ["All"] })
-      .promise();
+        const { Attributes } = await sqs
+            .getQueueAttributes({ QueueUrl: dqlUrl, AttributeNames: ["All"] })
+            .promise();
 
-    expect(Attributes!.ApproximateNumberOfMessages).toEqual(1);
-    expect(Attributes!.ApproximateNumberOfMessagesNotVisible).toEqual(0);
-  },
-  testTimeout
+        expect(Attributes!.ApproximateNumberOfMessages).toEqual(1);
+        expect(Attributes!.ApproximateNumberOfMessagesNotVisible).toEqual(0);
+    },
+    testTimeout,
 );
 ```
 
@@ -543,36 +545,38 @@ The test would look something like this:
 
 ```ts
 test(
-  "events are sent do event bridge",
-  async () => {
-    const itemId = ulid();
-    await docClient
-      .put({ Item: { id: itemId }, TableName: tableName })
-      .promise();
+    "events are sent do event bridge",
+    async () => {
+        const itemId = ulid();
+        await docClient
+            .put({ Item: { id: itemId }, TableName: tableName })
+            .promise();
 
-    const searchLog = async () => {
-      const result = await logs
-        .filterLogEvents({
-          logGroupName,
-          filterPattern: itemId,
-        })
-        .promise();
+        const searchLog = async () => {
+            const result = await logs
+                .filterLogEvents({
+                    logGroupName,
+                    filterPattern: itemId,
+                })
+                .promise();
 
-      if (!result.events) return [];
+            if (!result.events) return [];
 
-      return result.events.map((event) => JSON.parse(event.message!).detail.id);
-    };
+            return result.events.map((event) =>
+                JSON.parse(event.message!).detail.id
+            );
+        };
 
-    await waitForExpect(
-      async () => {
-        const events = await searchLog();
-        return expect(events).toContain(itemId);
-      },
-      testTimeout,
-      2000
-    );
-  },
-  testTimeout
+        await waitForExpect(
+            async () => {
+                const events = await searchLog();
+                return expect(events).toContain(itemId);
+            },
+            testTimeout,
+            2000,
+        );
+    },
+    testTimeout,
 );
 ```
 

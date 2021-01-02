@@ -67,9 +67,9 @@ So let's say you want to augment the `process.env` typings. This is done by crea
 
 ```ts
 declare module NodeJS {
-  interface ProcessEnv {
-    MY_VALUE: string;
-  }
+    interface ProcessEnv {
+        MY_VALUE: string;
+    }
 }
 ```
 
@@ -81,7 +81,7 @@ interface MyLibrary {}
 
 // global.d.ts
 declare module NodeJS {
-  // code
+    // code
 }
 ```
 
@@ -161,9 +161,9 @@ This tool was built by Microsoft. A sample test:
 
 ```ts
 var stooges = [
-  { name: "moe", age: 40 },
-  { name: "larry", age: 50 },
-  { name: "curly", age: 60 },
+    { name: "moe", age: 40 },
+    { name: "larry", age: 50 },
+    { name: "curly", age: 60 },
 ];
 _.pluck(stooges, "name"); // $ExpectType string[]
 ```
@@ -234,7 +234,6 @@ function doSomething(val: number | string) {
     checkIfString(val)
     val // string here!
 }
-
 ```
 
 ## Nullish Coalescing
@@ -292,9 +291,9 @@ You can, well, _Pick_ specific properties from an interface.
 
 ```typescript
 interface User {
-  name: string;
-  email: string;
-  password: string;
+    name: string;
+    email: string;
+    password: string;
 }
 
 type OnlyName = Pick<User, "name">; // {name: string}
@@ -308,9 +307,9 @@ It works by diffing two types. That's a common gotcha (at least for me).
 
 ```typescript
 interface User {
-  name: string;
-  email: string;
-  password: string;
+    name: string;
+    email: string;
+    password: string;
 }
 
 // remember, we are diffing 2 types, code below will not do what we want it to do
@@ -328,9 +327,9 @@ with HOC's). Let's say we want to remove a prop from something in a generic way.
 ```typescript
 // from Root Pick...
 type Omit<Root, PropsToOmit> = Pick<
-  Root,
-  // Exclude these props from Root which can be found in PropsToOmit
-  Exclude<keyof Root, keyof PropsToOmit>
+    Root,
+    // Exclude these props from Root which can be found in PropsToOmit
+    Exclude<keyof Root, keyof PropsToOmit>
 >;
 ```
 
@@ -350,7 +349,7 @@ You can actually get the return type of a given function. Quite neat!
 
 ```typescript
 function add(x: number) {
-  return x + 1;
+    return x + 1;
 }
 
 type SomeType = ReturnType<typeof add>; // number
@@ -363,13 +362,13 @@ type SomeType = ReturnType<typeof add>; // number
 ```typescript
 const None = "None";
 function something() {
-  return { x: None };
+    return { x: None };
 }
 type HeyTs = typeof None; // "None"
-type SomeType = ReturnType<typeof something>; //{x: string}
+type SomeType = ReturnType<typeof something>; // {x: string}
 
 function something() {
-  return { x: None as typeof None };
+    return { x: None as typeof None };
 }
 // .. same operations
 // return type is now {x: "None"}
@@ -434,8 +433,8 @@ inferred.**
 ```typescript
 // you could also do args: infer U
 type GetFunctionArgumentTypes<F> = F extends (...args: Array<infer U>) => void
-  ? U
-  : never;
+    ? U
+    : never;
 
 function numberArg(x: number) {}
 
@@ -451,8 +450,8 @@ Nothing is stopping your from using the _infer_ keyword multiple times. Check th
 
 ```ts
 type AppendArgument<Fn, A> = Fn extends (...args: infer Args) => infer R
-  ? (...args: [...Args, A]) => R
-  : never;
+    ? (...args: [...Args, A]) => R
+    : never;
 ```
 
 Here I've used _infer_ to both get the hold of the function arguments, but also the return type of the `Fn` type. While I could use the `ReturnType` generic, using _infer_ is also nice ;)
@@ -596,16 +595,16 @@ Remember our `[keyof Something]` notation?
 
 ```typescript
 interface Something {
-  id: number;
-  name: string;
-  property?: string;
+    id: number;
+    name: string;
+    property?: string;
 }
 
 type RemoveUndefinableKeys<Type> = {
-  [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
+    [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
 }[keyof Type];
 
-type Test1 = RemoveUndefinableKeys<Something>; //"id" | "name" | undefined
+type Test1 = RemoveUndefinableKeys<Something>; // "id" | "name" | undefined
 ```
 
 How does `RemoveUndefinableKeys` work?
@@ -631,7 +630,7 @@ from the interface).
 
 ```typescript
 type RemoveUndefinableKeys<Type> = {
-  [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
+    [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
 }[keyof Type];
 // would return "id" | "name" | undefined
 ```
@@ -700,23 +699,23 @@ might night to type `this` keyword. Let's see how this can be done:
 
 ```typescript
 interface SomeObj {
-  someFn: (num: number) => number;
-  numberToAdd: number;
+    someFn: (num: number) => number;
+    numberToAdd: number;
 }
 
 const someObj: SomeObj = {
-  someFn,
-  numberToAdd: 4,
+    someFn,
+    numberToAdd: 4,
 };
 
 function someFn(num: number) {
-  return num + this.numberToAdd; // might cause an error
-  // typescript sometimes has problems with inferring the right this
+    return num + this.numberToAdd; // might cause an error
+    // typescript sometimes has problems with inferring the right this
 }
 
 // much better implementation would be
 function someFn(this: SomeObj, num: number) {
-  return num + this.numberToAdd; // much better, we even get autocomplete
+    return num + this.numberToAdd; // much better, we even get autocomplete
 }
 ```
 
@@ -756,8 +755,8 @@ returning underlying vanilla JS types it will return us the Typescript type.
 
 ```typescript
 const person = {
-  age: 22,
-  name: "Wojtek",
+    age: 22,
+    name: "Wojtek",
 };
 
 type Person = typeof person; // {age: number, name: string}
@@ -775,14 +774,14 @@ This is very simple guard. Check this out:
 
 ```typescript
 function someFn(arg: number | string) {
-  if (typeof arg == "number") {
-    // typescript knows we are dealing with a number here
-    return arg.toExponential(); // ok
-  }
-  // typescript knows we are dealing with a string here
-  // BUT BEWARE!
-  // if we did not return above type would be number | string here
-  arg.toLowerCase(); // ok
+    if (typeof arg == "number") {
+        // typescript knows we are dealing with a number here
+        return arg.toExponential(); // ok
+    }
+    // typescript knows we are dealing with a string here
+    // BUT BEWARE!
+    // if we did not return above type would be number | string here
+    arg.toLowerCase(); // ok
 }
 ```
 
@@ -835,7 +834,6 @@ interface BadResponse extends Response {
 function isGoodResponse(response: OkResponse | BadResponse) response is OkResponse {
   return response.status == 'OK'
 }
-
 ```
 
 ### `in` Type Guards
@@ -862,14 +860,14 @@ Instead of `extend`ing interfaces you can use `&` to _merge_ them.
 
 ```typescript
 interface Order {
-  amount: number;
+    amount: number;
 }
 interface Stripe {
-  cvc: string;
-  card: string;
+    cvc: string;
+    card: string;
 }
 interface PayPal {
-  email: string;
+    email: string;
 }
 
 // i think this is much better than interface Stripe extends Order {}
@@ -936,7 +934,7 @@ Thats the _union_ part. Now the _discriminant_ is the **thing that enables
 typescript (and you) to distinguish between different actions**
 
 ```typescript
-  reducer(state, action) {
+reducer(state, action) {
     // type is a common property
     // that lives on all of the actions
     switch(action.type) {
@@ -952,15 +950,15 @@ typescript (and you) to distinguish between different actions**
 
 ```typescript
 interface Item {
-  name: string;
+    name: string;
 }
 
 interface Artist extends Item {
-  songs: number;
+    songs: number;
 }
 
 type Artist2 = {
-  songs: number;
+    songs: number;
 } & Item;
 ```
 
@@ -969,10 +967,10 @@ type Artist2 = {
 
 ```typescript
 interface Artist {
-  name: string;
+    name: string;
 }
 interface Artist {
-  songs: number;
+    songs: number;
 }
 // /\ merged together
 
@@ -990,10 +988,10 @@ function reverse(dataToReverse: string): string;
 function reverse<T>(dataToReverse: T[]): T[];
 // real implementation
 function reverse<T>(dataToReverse: string | T[]): string | T[] {
-  if (typeof dataToReverse == "string") {
-    return dataToReverse.split("").reverse().join("");
-  }
-  return dataToReverse.slice().reverse();
+    if (typeof dataToReverse == "string") {
+        return dataToReverse.split("").reverse().join("");
+    }
+    return dataToReverse.slice().reverse();
 }
 ```
 
@@ -1009,7 +1007,7 @@ declare function add(x: number, y: number): number;
 // somewhere in js file for example
 
 function add(x, y) {
-  return x + y;
+    return x + y;
 }
 ```
 
@@ -1030,7 +1028,7 @@ enum Something {}
 // you just introduced this to your bundle
 ("use strict");
 var Something;
-(function (Something) {})(Something || (Something = {}));
+(function(Something) {})(Something || (Something = {}));
 ```
 
 Not looking to hot right? Well, there is a solution. A very simple one. Use
@@ -1040,8 +1038,8 @@ inlined_
 
 ```typescript
 const enum Something {
-  yes = "Yes",
-  no = "No",
+    yes = "Yes",
+    no = "No",
 }
 let selected = Something.no;
 
@@ -1130,7 +1128,7 @@ With `HasKey` we can start our basic implementation.
 
 ```typescript
 declare function get<K extends string>(
-  key: K
+    key: K,
 ): <Obj extends HasKey<K>>(obj: Obj) => Obj[K];
 ```
 
@@ -1165,7 +1163,7 @@ return our function has return value correctly typed.
 
 ```ts
 declare function get<K extends string>(
-  key: K
+    key: K,
 ): <Obj extends HasKey<K>>(obj: Obj) => KeyAt<Obj, K>;
 ```
 
@@ -1180,8 +1178,8 @@ Example:
 
 ```ts
 get(
-  matching((friend) => friend.friends > 5),
-  "name"
+    matching((friend) => friend.friends > 5),
+    "name",
 )(obj.friends);
 ```
 
@@ -1194,7 +1192,7 @@ Let's type `matching` first:
 interface Traversal<Item> {}
 
 declare function matching<A>(
-  filteringFunction: (a: A) => boolean
+    filteringFunction: (a: A) => boolean,
 ): Traversal<A>;
 ```
 
@@ -1202,13 +1200,13 @@ We have to change our implementation a bit to introduce `matching`.
 
 ```ts
 declare function get<Item, K extends string>(
-  traversal: Traversal<Item>,
-  key: K
+    traversal: Traversal<Item>,
+    key: K,
 ): <Obj extends Array<HasKey<K>>>(obj: Obj) => Array<KeyAt<Obj, K>>;
 
 const popularFriends = get(
-  matching((user: User) => user.friends.length > 5),
-  "name"
+    matching((user: User) => user.friends.length > 5),
+    "name",
 )(user.friends);
 ```
 
@@ -1227,17 +1225,12 @@ utility types already).
 
 ```ts
 // power of conditionals and infer baby!
-export type Unpack<F> = F extends Array<infer Item>
-  ? Item
-  : F extends Set<infer Item>
-  ? Item
-  : F extends Map<any, Item>
-  ? Item
-  : F extends { [n: string]: infer Item }
-  ? Item
-  : F extends { [n: number]: infer Item }
-  ? Item
-  : never;
+export type Unpack<F> = F extends Array<infer Item> ? Item
+    : F extends Set<infer Item> ? Item
+    : F extends Map<any, Item> ? Item
+    : F extends { [n: string]: infer Item } ? Item
+    : F extends { [n: number]: infer Item } ? Item
+    : never;
 ```
 
 ## Tuples and Currying
@@ -1288,15 +1281,14 @@ With those simple types we can define our **strict curry** type
 
 ```ts
 type CurryV0<Parameters extends any[], ReturnType> = (
-  arg: Head<Parameters>
-) => HasTail<Parameters> extends true
-  ? CurryV0<Tail<Parameters>, ReturnType>
-  : ReturnType;
+    arg: Head<Parameters>,
+) => HasTail<Parameters> extends true ? CurryV0<Tail<Parameters>, ReturnType>
+    : ReturnType;
 
 declare function curry<P extends any[], R>(f: (...args: P) => R): CurryV0<P, R>;
 
 function addTwo(x: number, y: number) {
-  return x + y;
+    return x + y;
 }
 
 const curried = curry(addTwo);
@@ -1320,8 +1312,8 @@ Instead of plucking off tail from tuple we will only pluck the last type.
 
 ```ts
 type Last<P extends any[]> = {
-  0: Last<Tail<P>>;
-  1: Head<P>;
+    0: Last<Tail<P>>;
+    1: Head<P>;
 }[HasTail<P> extends true ? 1 : 0];
 type Test = Last<[1, 2, 3, 4]>; // 4
 ```
@@ -1389,11 +1381,10 @@ again, make us of `function types` trick.
 
 ```ts
 type Prepend<TypeToPrepend, Tuple extends any[]> = ((
-  head: TypeToPrepend,
-  ...tail: Tuple
-) => any) extends (...args: infer U) => any
-  ? U
-  : never;
+    head: TypeToPrepend,
+    ...tail: Tuple
+) => any) extends (...args: infer U) => any ? U
+    : never;
 
 type Test = Prepend<number, [1, 2, 3]>; // [number, 1,2,3]
 ```
@@ -1418,12 +1409,12 @@ seen before)
 
 ```ts
 type Drop<
-  ElementsToDrop extends Number,
-  TupleToDropFrom extends any[],
-  Iterator extends any[] = []
+    ElementsToDrop extends Number,
+    TupleToDropFrom extends any[],
+    Iterator extends any[] = [],
 > = {
-  0: Drop<ElementsToDrop, Tail<TupleToDropFrom>, Prepend<Iterator, any>>;
-  1: TupleToDropFrom;
+    0: Drop<ElementsToDrop, Tail<TupleToDropFrom>, Prepend<Iterator, any>>;
+    1: TupleToDropFrom;
 }[Length<Iterator> extends ElementsToDrop ? 1 : 0];
 
 type Test = Drop<2, [1, 2, 3, 4]>; // [3,4]
@@ -1444,8 +1435,8 @@ This definitely can be a problem. Example
 
 ```typescript
 type Person = {
-  first: string;
-  last: string;
+    first: string;
+    last: string;
 };
 
 const tooFew = { first: "Stefan" };
@@ -1462,10 +1453,9 @@ the exact shape of given `type / interface`
 
 ```ts
 type ValidateShape<T, Shape> = T extends Shape
-  ? Exclude<keyof T, keyof Shape> extends never
-    ? T
+    ? Exclude<keyof T, keyof Shape> extends never ? T
     : never
-  : never;
+    : never;
 ```
 
 - check if T is _`Shape`-compatible_ with `extends`
@@ -1495,13 +1485,14 @@ So an example:
 
 ```js
 const someObj = {
-  prop1: {
-    prop2: undefined
-  }
+    prop1: {
+        prop2: undefined,
+    },
 };
 
-const value = someObj.prop1 && someObj.prop1.prop2 & //...
-const value = someObj?.prop1?.prop2 // ..
+const value = someObj.prop1 && someObj.prop1.prop2
+        // ...
+        & const; // ..
 ```
 
 Syntax with `?` is much cleaner, especially with nested objects and properties.
@@ -1522,7 +1513,7 @@ Usually, we do not want to _mutate_ anything, especially while working with obje
 
 ```ts
 const circle = {
-  radius: 10,
+    radius: 10,
 };
 // radius: number :C
 ```
@@ -1531,7 +1522,7 @@ Now, we can tell typescript that we will not be mutating that value, using so ca
 
 ```ts
 const circle = {
-  radius: 10,
+    radius: 10,
 } as const;
 // radius: 10 => literal type
 ```
@@ -1559,8 +1550,8 @@ Or played around with `infer` keyword
 ```ts
 type GetFunctionArguments<F> = F extends (...args: infer A) => any ? A : never;
 declare function call<R, F extends (...args: any[]) => any>(
-  fn: F,
-  ...args: GetFunctionArguments<F>
+    fn: F,
+    ...args: GetFunctionArguments<F>
 ): R;
 ```
 
@@ -1597,7 +1588,7 @@ As long as the data you are passing matches the parameter type, it will be allow
 
 ```ts
 type Props = {
-  key: string;
+    key: string;
 };
 
 const doWork = (props: Props) => {};

@@ -14,20 +14,22 @@ An example for aws-cdk
 
 ```ts
 const likeATweetRequest = appsync.MappingTemplate.fromFile(
-  getMappingTemplatePath("Mutation.like.request.vtl")
+    getMappingTemplatePath("Mutation.like.request.vtl"),
 )
-  .renderTemplate()
-  .replace("LikesTable", props.likesTable.tableName)
-  .replace("TweetsTable", props.tweetsTable.tableName)
-  .replace("UsersTable", props.usersTable.tableName);
+    .renderTemplate()
+    .replace("LikesTable", props.likesTable.tableName)
+    .replace("TweetsTable", props.tweetsTable.tableName)
+    .replace("UsersTable", props.usersTable.tableName);
 
 likesTableDataSource.createResolver({
-  typeName: "Mutation",
-  fieldName: "like",
-  requestMappingTemplate: appsync.MappingTemplate.fromString(likeATweetRequest),
-  responseMappingTemplate: appsync.MappingTemplate.fromFile(
-    getMappingTemplatePath("Mutation.like.response.vtl")
-  ),
+    typeName: "Mutation",
+    fieldName: "like",
+    requestMappingTemplate: appsync.MappingTemplate.fromString(
+        likeATweetRequest,
+    ),
+    responseMappingTemplate: appsync.MappingTemplate.fromFile(
+        getMappingTemplatePath("Mutation.like.response.vtl"),
+    ),
 });
 
 // Add missing permissions
@@ -47,14 +49,14 @@ For the implementation itself, you can just add `__typename` as an attribute on 
 
 ```ts
 const newTweet = {
-  __typename: TweetTypes.TWEET,
-  id,
-  text,
-  creator: username,
-  createdAt: timestamp,
-  replies: 0,
-  likes: 0,
-  retweets: 0,
+    __typename: TweetTypes.TWEET,
+    id,
+    text,
+    creator: username,
+    createdAt: timestamp,
+    replies: 0,
+    likes: 0,
+    retweets: 0,
 } as const;
 
 await docClient.put({ TableName: "foo", Item: newTweet });

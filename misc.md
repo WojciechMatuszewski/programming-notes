@@ -28,21 +28,21 @@ Simple example
 
 ```js
 function memoize(func) {
-  return function memoized() {
-    // we are doing it old school :D
-    var args = Array.prototype.slice.call(arguments);
-    // cache can be a closed over variable or variable on function itself
-    func.cache = func.cache || {};
+    return function memoized() {
+        // we are doing it old school :D
+        var args = Array.prototype.slice.call(arguments);
+        // cache can be a closed over variable or variable on function itself
+        func.cache = func.cache || {};
 
-    var cachedResult = func.cache[args];
+        var cachedResult = func.cache[args];
 
-    if (cachedResult != null) return cachedResult;
+        if (cachedResult != null) return cachedResult;
 
-    var computationResult = func.apply(this, args);
+        var computationResult = func.apply(this, args);
 
-    func.cache[args] = computationResult;
-    return computationResult;
-  };
+        func.cache[args] = computationResult;
+        return computationResult;
+    };
 }
 ```
 
@@ -94,11 +94,11 @@ event test this theory using _fake promise_.
 
 ```js
 function fakePromise() {
-  return {
-    then: function() {
-      console.log("IM CALLED");
-    }
-  };
+    return {
+        then: function() {
+            console.log("IM CALLED");
+        },
+    };
 }
 
 Promise.resolve(42).then(fakePromise);
@@ -209,7 +209,7 @@ There soon may be deprecated due to `webpack 5` releasing but did you know that 
 
 ```js
 const Tilt = React.lazy(() =>
-  import(/* webpackChunkName: "tilt", webpackPrefetch: true */ "../tilt")
+    import(/* webpackChunkName: "tilt", webpackPrefetch: true */ "../tilt")
 );
 ```
 

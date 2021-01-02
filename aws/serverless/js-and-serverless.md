@@ -14,10 +14,10 @@ This will timeout (default timeout is 3 seconds):
 
 ```js
 module.exports.handler = (event, ctx, callback) => {
-  setTimeout(() => console.log("timeout"), 10000);
+    setTimeout(() => console.log("timeout"), 10000);
 
-  // or return
-  callback(null, 200);
+    // or return
+    callback(null, 200);
 };
 ```
 
@@ -25,12 +25,12 @@ But this will **not**:
 
 ```js
 module.exports.handler = (event, ctx, callback) => {
-  ctx.callbackWaitsForEmptyEventLoop = false;
+    ctx.callbackWaitsForEmptyEventLoop = false;
 
-  setTimeout(() => console.log("timeout"), 10000);
+    setTimeout(() => console.log("timeout"), 10000);
 
-  // or return
-  callback(null, 200);
+    // or return
+    callback(null, 200);
 };
 ```
 
@@ -42,8 +42,8 @@ This is an ideal scenario to hold open connection to a database. Usually the set
 let connection = null;
 
 function connectToDB() {
-  if (connection) return connection;
-  // connect and save
+    if (connection) return connection;
+    // connect and save
 }
 ```
 

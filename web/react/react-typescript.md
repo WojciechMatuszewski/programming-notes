@@ -62,14 +62,14 @@ That means that we have to use _casting_. This is possible due to the fact that 
 ```tsx
 // previous code
 type ButtonWithRef = <E extends React.ElementType = typeof defaultElement>(
-  props: ComponentProps<E>
+    props: ComponentProps<E>,
 ) => JSX.Element;
 
 const Button = React.forwardRef(
-  (props: ButtonBaseProps, ref: React.Ref<unknown>) => {
-    // code
-    // remember to pas `ref` to the <Element/>
-  }
+    (props: ButtonBaseProps, ref: React.Ref<unknown>) => {
+        // code
+        // remember to pas `ref` to the <Element/>
+    },
 ) as ButtonWithRef;
 ```
 
@@ -101,8 +101,8 @@ So whenever you write something like this
 
 ```tsx
 function Component() {
-  const myRef = React.useRef<HTMLDivElement>();
-  return <div ref={myRef} />;
+    const myRef = React.useRef<HTMLDivElement>();
+    return <div ref={myRef} />;
 }
 ```
 

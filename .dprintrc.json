@@ -1,0 +1,15 @@
+{
+  "projectType": "openSource",
+  "plugins": [
+    "https://plugins.dprint.dev/markdown-0.4.3.wasm",
+    "https://plugins.dprint.dev/typescript-0.37.0.wasm",
+    "https://plugins.dprint.dev/json-0.7.2.wasm"
+  ],
+  "includes": [
+    "**/*.{ts,tsx,json,js,jsx,md}"
+  ],
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json"
+  ]
+}

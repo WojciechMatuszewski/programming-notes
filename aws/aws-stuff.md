@@ -1387,7 +1387,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 ### Snowball Edge
 
-- - big briefcase, **up to 80 TB** os **usable storage**.
+-
+  - big briefcase, **up to 80 TB** os **usable storage**.
 
 * there are **three versions**: **compute**, **storage optimized**, **compute optimized with GPU**.
 
@@ -2028,7 +2029,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * _cache key_ is **created based on the request parameters** like **url or/and headers/cookies**
 
-- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that behavior**b
+- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that behavior**
 
 #### Restricting access to CloudFront distribution
 

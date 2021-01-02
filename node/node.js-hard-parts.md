@@ -194,9 +194,9 @@ Another input to our `doOnError` function is a raw socket (**that raw socket is 
 ```javascript
 function cleanTweets(tweetsToClean) {}
 function useImportedTweets(errorData, data) {
-  const cleanedTweetsJson = cleanTweets(data);
-  const tweetsObj = JSON.parse(cleanedTweetsJson);
-  console.log(tweetsObj.tweet2);
+    const cleanedTweetsJson = cleanTweets(data);
+    const tweetsObj = JSON.parse(cleanedTweetsJson);
+    console.log(tweetsObj.tweet2);
 }
 
 // dot represents current location in file system
@@ -245,17 +245,17 @@ So the logic now is simple. We put `doOnNewBatch` on the callback queue. When ca
 
 ```javascript
 function useImportedTweets(errorData, data) {
-  // parsing
-  console.log(tweets.tweet1);
+    // parsing
+    console.log(tweets.tweet1);
 }
 function immediately() {
-  console.log("run me last");
+    console.log("run me last");
 }
 function printHello() {
-  console.log("hello");
+    console.log("hello");
 }
 function blockFor500ms() {
-  // BLOCK JS thread DIRECTLY for 500ms
+    // BLOCK JS thread DIRECTLY for 500ms
 }
 // remember this is not Web-API, Node has his own implementation
 setTimeout(printHello, 0);

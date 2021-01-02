@@ -9,15 +9,15 @@ Example
 ```javascript
 // this aware function
 function ask(question) {
-  console.log(this.teacher, question);
+    console.log(this.teacher, question);
 }
 
 function otherClass() {
-  var myContext = {
-    teacher: "Suzy"
-  };
-  // calling this aware function with myContext as function context
-  ask.call(myContext, "Why");
+    var myContext = {
+        teacher: "Suzy",
+    };
+    // calling this aware function with myContext as function context
+    ask.call(myContext, "Why");
 }
 
 otherClass(); // Suzy, Why
@@ -27,34 +27,34 @@ otherClass(); // Suzy, Why
 
 ```javascript
 var workshop = {
-    teacher:"Kyle",
+    teacher: "Kyle",
     ask(question) {
         // because of a call site this keyword will end up
         // pointing to the teacher object key
-        console.log(this.teacher, question)
-    }
+        console.log(this.teacher, question);
+    },
 };
 // calling ask on workshop so the context is implicitly workshop
-workshop.ask("...")
+workshop.ask("...");
 ```
 
 You can also share some functionality and assign context accordingly. This allows us to use **_this_** aware functions in different contexts
 
 ```javascript
 function ask(question) {
-  console.log(this.teacher, question);
+    console.log(this.teacher, question);
 }
 
 var workshop1 = {
-  teacher: "Kyle",
-  // ES6
-  ask
+    teacher: "Kyle",
+    // ES6
+    ask,
 };
 
 var workshop2 = {
-  teacher: "Suzy",
-  // ES6
-  ask
+    teacher: "Suzy",
+    // ES6
+    ask,
 };
 
 workshop1.ask("..."); // Kyle
@@ -66,7 +66,6 @@ workshop2.ask("..."); // Suzy
 Other ways to set up context binding
 
 ```javascript
-
 // you can use .call or .apply
 
 // it's easy to remember
@@ -82,10 +81,10 @@ ask.apply(workshop1, ['some question'])
 
 ```javascript
 var workshop = {
-  teacher: "Kyle",
-  ask(question) {
-    console.log(this.teacher, question);
-  }
+    teacher: "Kyle",
+    ask(question) {
+        console.log(this.teacher, question);
+    },
 };
 
 // this is not the call site
@@ -104,7 +103,7 @@ The purpose of the **_new_** keyword is to invoke a function with the **_this_**
 
 ```javascript
 function ask(question) {
-  console.log(this.teacher, question);
+    console.log(this.teacher, question);
 }
 var newEmptyObject = new ask("...");
 ```
@@ -160,11 +159,11 @@ workshop.ask("Is this lexical this")
 
 ```javascript
 var workshop = {
-  teacher: "Kyle",
-  // so you would think that ask would look up to the object as it's next scope
-  // but nope, just because there are curly braces (object) does not make it a scope
-  // it will go to global instead
-  ask: question => console.log(this.teacher, question)
+    teacher: "Kyle",
+    // so you would think that ask would look up to the object as it's next scope
+    // but nope, just because there are curly braces (object) does not make it a scope
+    // it will go to global instead
+    ask: question => console.log(this.teacher, question),
 };
 
 workshop.ask("What happened to this");

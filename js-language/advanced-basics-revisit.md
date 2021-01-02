@@ -54,10 +54,10 @@ console.log(instance.__proto__); // {speak: () => "woof"} and then global Object
 ```js
 var name = "Wojtek";
 {
-  var name = "Mateusz";
-  console.log(name); // Mateusz
+    var name = "Mateusz";
+    console.log(name); // Mateusz
 }
-console.log(name); //Mateusz
+console.log(name); // Mateusz
 ```
 
 - with the function scope:
@@ -65,8 +65,8 @@ console.log(name); //Mateusz
 ```js
 var name = "Wojtek";
 function someFunc() {
-  var name = "Mateusz";
-  console.log(name); // Mateusz
+    var name = "Mateusz";
+    console.log(name); // Mateusz
 }
 console.log(name); // Wojtek
 ```
@@ -79,17 +79,17 @@ console.log(name); // Wojtek
 
 ```js
 const Person = {
-  firstName: "Wojtek",
-  getName: () => this.firstName,
+    firstName: "Wojtek",
+    getName: () => this.firstName,
 };
 console.log(Person.getName); // undefined
 
 const Person2 = {
-  firstName: "Wojtek",
-  getName: function () {
-    // placed inside a function with a context
-    return () => this.firstName;
-  },
+    firstName: "Wojtek",
+    getName: function() {
+        // placed inside a function with a context
+        return () => this.firstName;
+    },
 };
 console.log(Person2.getName()()); // Wojtek
 ```

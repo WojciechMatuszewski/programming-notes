@@ -10,7 +10,7 @@ The idea is that instead of using `any` you alias it to a descriptive name.
 type IDoNotKnowTheTypeYet = any;
 
 function someFunc(param: IDoNotKnowTheTypeYet) {
-  // stuff
+    // stuff
 }
 ```
 
@@ -24,7 +24,7 @@ When you have this setting as `false`, you can **pass `undefined` and `null` as 
 
 ```ts
 function someFunc(num: number) {
-  return 1;
+    return 1;
 }
 // compiles, WAT!?
 someFunc(undefined);
@@ -34,8 +34,8 @@ When you have some paramters listed as optional, Typescript wont scream at you w
 
 ```ts
 function someFunc(num?: number) {
-  // just... wow!
-  return num.toFixed();
+    // just... wow!
+    return num.toFixed();
 }
 
 someFunc(undefined);

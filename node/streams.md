@@ -78,15 +78,15 @@ This one is great, especially for any kind of _transformers_. Instead of using t
 const { pipeline } = require("stream");
 
 async function* upperCase(readable) {
-  for await (chunk of readable) {
-    yield chunk.toString().toUpperCase();
-  }
+    for await (chunk of readable) {
+        yield chunk.toString().toUpperCase();
+    }
 }
 
 pipeline(process.stdin, upperCase, process.stdout, (err) => {
-  if (err) {
-    console.log(err);
-  }
+    if (err) {
+        console.log(err);
+    }
 });
 ```
 

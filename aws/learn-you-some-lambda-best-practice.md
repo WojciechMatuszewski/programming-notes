@@ -304,7 +304,7 @@ Notable alarms are:
 - this is very **useful with `Logs Insights`**. You can create simple filter:
 
   ```
-   fields @timestamp, `x-correlation-id`
+  fields @timestamp, `x-correlation-id`
   | filter `x-correlaction-id` = 'REQUEST_ID'
   ```
 

@@ -14,7 +14,7 @@ With `RxJs` there is a notion of `hot` and `cold` observables.
 So, the notion of `hot` and `cold` carries with itself some gotchas.
 
 ```js
-const obs$ = of(1).pipe(from(() => fetch('something')));
+const obs$ = of(1).pipe(from(() => fetch("something")));
 ```
 
 So a network request will be made **whenever you subscribe to `obs$`** since
@@ -77,11 +77,11 @@ STREAM**. Now lets see an example:
 
 ```typescript
 source$.pipe(
-  // switchMap can fail
-  switchMap(something => from(resourceGetterFn(something))).pipe(
-    // resolveResourceResponse can fail
-    mergeMap(response => resolveResourceResponse(response))
-  )
+    // switchMap can fail
+    switchMap(something => from(resourceGetterFn(something))).pipe(
+        // resolveResourceResponse can fail
+        mergeMap(response => resolveResourceResponse(response)),
+    ),
 );
 ```
 
@@ -89,10 +89,10 @@ Now, what would happen when we did this:
 
 ```typescript
 source$.pipe(
-  // previous code with switchMap etc
-  catchError(_ => {
-    return of();
-  })
+    // previous code with switchMap etc
+    catchError(_ => {
+        return of();
+    }),
 );
 ```
 
@@ -109,13 +109,13 @@ what code you are writing). To solve this problem we just need to move
 
 ```typescript
 source$.pipe(
-  // switchMap can fail
-  switchMap(something => from(resourceGetterFn(something))).pipe(
-    mergeMap(response => resolveResourceResponse(response)),
-    catchError(_ => {
-      return of();
-    })
-  )
+    // switchMap can fail
+    switchMap(something => from(resourceGetterFn(something))).pipe(
+        mergeMap(response => resolveResourceResponse(response)),
+        catchError(_ => {
+            return of();
+        }),
+    ),
 );
 ```
 
@@ -139,11 +139,11 @@ IE 11.
 `fromFetch` is lazy. It will only fire when you subscribe.
 
 ```js
-const data$ = from(fetch('')); // fired right away
+const data$ = from(fetch("")); // fired right away
 
-const data2$ = defer(() => from(fetch(''))); // fired when subscribed to
+const data2$ = defer(() => from(fetch(""))); // fired when subscribed to
 
-const data3$ = fromFetch(''); // fired when subscribed to
+const data3$ = fromFetch(""); // fired when subscribed to
 ```
 
 The fact that `from(fetch)` fires right away is huge. I wonder how many bugs
@@ -166,12 +166,10 @@ Well, it turns out you can add multiple subscribers to one _meta_ subscription
 and unsubscribe only from this one giant _met_ subscription.
 
 ```js
-    const subSink = /* some cone that produces Subscription */
-    const anotherSubscription = /* some cone that produces Subscription */
+const subSink = /* some cone that produces Subscription */
+    const; /* some cone that produces Subscription */
 
-    subSink.add(anotherSubscription)
-
-    subSink.unsubscribe()
+subSink.unsubscribe();
 ```
 
 Actually you can even create standalone `subscription` using `new` keyword.
@@ -191,17 +189,17 @@ This is all and good but did you know that you can actually place operators
 **AFTER** `takeUntil`?.
 
 ```js
-const touchStart$ = fromEvent(element, 'touchstart');
-const touchMove$ = fromEvent(element, 'touchmove');
-const touchEnd$ = fromEvent(element, 'touchend');
+const touchStart$ = fromEvent(element, "touchstart");
+const touchMove$ = fromEvent(element, "touchmove");
+const touchEnd$ = fromEvent(element, "touchend");
 
 const drag$ = touchStart.pipe(
-  switchMap(() =>
-    touchMove$.pipe(
-      takeUntil(touchEnd$),
-      concat(/*some observable*/)
-    )
-  )
+    switchMap(() =>
+        touchMove$.pipe(
+            takeUntil(touchEnd$),
+            concat(), /*some observable*/
+        )
+    ),
 );
 ```
 
@@ -228,17 +226,17 @@ probably need `switchMap`.
 ### Drag and Drop
 
 ```js
-const element = querySelector('element');
+const element = querySelector("element");
 
-const mouseDown$ = fromEvent(element, 'mousedown');
-const mouseUp$ = fromEvent(element, 'mouseup');
-const mouseLeave$ = fromEvent(element, 'mouseleave');
-const mouseMove$ = fromEvent(element, 'mousemove');
+const mouseDown$ = fromEvent(element, "mousedown");
+const mouseUp$ = fromEvent(element, "mouseup");
+const mouseLeave$ = fromEvent(element, "mouseleave");
+const mouseMove$ = fromEvent(element, "mousemove");
 
 const stop$ = merge(mouseLeave$, mouseUp$);
 
 const dragAndDrop$ = mouseDown$.pipe(
-  exhaustMap(() => mouseMove$.pipe(takeUntil($stop)))
+    exhaustMap(() => mouseMove$.pipe(takeUntil($stop))),
 );
 ```
 
@@ -248,11 +246,11 @@ This is very useful :).
 [A **very basic** implementation could be found here.](https://codesandbox.io/s/old-feather-rz6xm)
 
 ```js
-const button = querySelector('element');
-const buttonClick$ = fromEvent(button, 'click');
+const button = querySelector("element");
+const buttonClick$ = fromEvent(button, "click");
 
 const preventDoubleSubmit$ = buttonClick$.pipe(
-  exhaustMap(() => http.post(/* something */))
+    exhaustMap(() => http.post(/* something */)),
 );
 ```
 
@@ -269,8 +267,8 @@ Example:
 
 ```js
 of(1)
-  .pipe(mapTo(new Notification('E')))
-  .subscribe(console.log);
+    .pipe(mapTo(new Notification("E")))
+    .subscribe(console.log);
 /*
     Notification {kind: "E", value: undefined, error: undefined, hasValue: false, constructor: Object}
     kind: "E"
@@ -304,25 +302,27 @@ Example:
 ```js
 // sample stream
 interval(500)
-  .pipe(
-    mapTo('normal value'),
-    // sometimes value, sometimes throw
-    map(v => {
-      if (randomInt() > 50) {
-        throw new Error('boom!');
-      } else return v;
-    }),
-    materialize(),
-    // turns Observable<T> into Notification<Observable<T>>
-    // so we can delay or use other operators.
-    delay(500),
-    // Notification of value (error message)
-    map(n => (n.hasValue ? n : new Notification('N', n.error.message, null))),
-    // back to normal
-    dematerialize()
-  )
-  // now it never throw so in console we will have
-  // `normal value` or `boom!` but all as... normal values (next() emission)
-  // and delay() works as expected
-  .subscribe(v => console.log(v));
+    .pipe(
+        mapTo("normal value"),
+        // sometimes value, sometimes throw
+        map(v => {
+            if (randomInt() > 50) {
+                throw new Error("boom!");
+            } else return v;
+        }),
+        materialize(),
+        // turns Observable<T> into Notification<Observable<T>>
+        // so we can delay or use other operators.
+        delay(500),
+        // Notification of value (error message)
+        map(
+            n => (n.hasValue ? n : new Notification("N", n.error.message, null))
+        ),
+        // back to normal
+        dematerialize(),
+    )
+    // now it never throw so in console we will have
+    // `normal value` or `boom!` but all as... normal values (next() emission)
+    // and delay() works as expected
+    .subscribe(v => console.log(v));
 ```

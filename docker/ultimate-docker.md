@@ -127,7 +127,7 @@ What you **should do**. You should prefer **multi-stage builds**.
   RUN npm install
   ```
 
-  ***
+  ---
 
   ```docker
   COPY package.json /

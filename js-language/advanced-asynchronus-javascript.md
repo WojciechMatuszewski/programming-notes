@@ -35,8 +35,8 @@ We wrote only 24 lines of code and yet, this implementation is already powerful.
 
 ```js
 const subscription = Observable.timeout(1000).subscribe({
-  next: () => console.log("next"),
-  complete: () => console.log("complete")
+    next: () => console.log("next"),
+    complete: () => console.log("complete"),
 });
 
 // you can also unsubscribe
@@ -135,21 +135,21 @@ Well, map takes a _projection function_ an applies that function to a argument p
 
 ```js
 function map(projectionFn) {
-  // this is the inputObservable from .pipe
-  return function(inputObservable) {
-    // returning new observable so we can chain other methods
-    return new Observable(function subscribe(outputObserver) {
-      const subscription = inputObservable.subscribe({
-        // you could wrap this call into try catch also
-        next: x => outputObserver.next(projectionFn(x)),
-        complete: () => outputObserver.complete(),
-        error: err => outputObserver.error(err)
-      });
-      return {
-        unsubscribe: subscription.unsubscribe
-      };
-    });
-  };
+    // this is the inputObservable from .pipe
+    return function(inputObservable) {
+        // returning new observable so we can chain other methods
+        return new Observable(function subscribe(outputObserver) {
+            const subscription = inputObservable.subscribe({
+                // you could wrap this call into try catch also
+                next: x => outputObserver.next(projectionFn(x)),
+                complete: () => outputObserver.complete(),
+                error: err => outputObserver.error(err),
+            });
+            return {
+                unsubscribe: subscription.unsubscribe,
+            };
+        });
+    };
 }
 ```
 
@@ -159,16 +159,16 @@ Now you can event _compose map operators_
 
 ```js
 Observable.fromEvent(btn, "click")
-  .pipe(
-    compose(
-      map(evt => 3),
-      map(num => num + 1),
-      map(num => num / 2)
+    .pipe(
+        compose(
+            map(evt => 3),
+            map(num => num + 1),
+            map(num => num / 2),
+        ),
     )
-  )
-  .subscribe({
-    next: console.log // 2...
-  });
+    .subscribe({
+        next: console.log, // 2...
+    });
 ```
 
 #### Filter
@@ -177,18 +177,18 @@ Very similar to '.map'
 
 ```js
 function filter(predicateFn) {
-  return function(inputObservable) {
-    return new Observable(function subscribe(outputObserver) {
-      return inputObservable.subscribe({
-        next: x => {
-          if (predicateFn(x)) {
-            return outputObserver.next(x);
-          }
-        }
-        // other methods
-      });
-    });
-  };
+    return function(inputObservable) {
+        return new Observable(function subscribe(outputObserver) {
+            return inputObservable.subscribe({
+                next: x => {
+                    if (predicateFn(x)) {
+                        return outputObserver.next(x);
+                    }
+                },
+                // other methods
+            });
+        });
+    };
 }
 ```
 
@@ -248,7 +248,7 @@ Simple implementation:
 (I'm assuming this is a method on a class called _Observable_)
 
 ```js
-  retry(num) {
+retry(num) {
     return new Observable(observer => {
       let currentSub = null;
       function processRequest(currentAttemptNumber) {

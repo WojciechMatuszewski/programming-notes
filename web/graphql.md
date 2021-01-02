@@ -70,7 +70,7 @@ union Pet = Cat | Dog
 While fetching data you can specify fragments on each
 
 ```graphql
-    query {
+query {
         getAllPets {
             ... on Cat {
 
@@ -103,7 +103,7 @@ These are types that you should avoid. The term `anemic` means something without
 These types can be used within `mutations` and `queries`. An example:
 
 ```graphql
-  updateCheckout(input: UpdateCheckoutInput!): UpdateCheckoutPayload
+updateCheckout(input: UpdateCheckoutInput!): UpdateCheckoutPayload
 
   input UpdateCheckoutInput {
     email: Email

@@ -57,7 +57,7 @@ message Person {
 - you can nest `message` definition within a `message` definition. Allows you to create nested structures.
 
 ```protobuf
-  message Address {
+message Address {
     string address_line_1 = 1;
     string address_line_2 = 2;
     string zip_code = 3;

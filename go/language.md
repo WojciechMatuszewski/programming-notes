@@ -2,7 +2,7 @@
 
 ## `errors.Unwrap` vs `errors.Cause`
 
-As you probably know, you should *wrap* your errors to provide additional context to them.
+As you probably know, you should _wrap_ your errors to provide additional context to them.
 Now, you do not have to do it all the time, every time, but in most situations it's a good practice™️.
 
 Sometimes you need to unwind the errors though, and there are two methods to do so.
@@ -24,11 +24,14 @@ If you are using the default multiplexer for your http server, the `ServeMux`
 type, you can introduce metics to your server by using the `pprof` package.
 
 All you really have to do is to
-* Import the package as a side effect
+
+- Import the package as a side effect
+
 ```go
 _ "net/http/pprof" // register the /debug/pprof handlers
 ```
-* Register the default multiplexer
+
+- Register the default multiplexer
 
 ```go
 package main
@@ -49,15 +52,16 @@ There is so much tooling built-in to Go ❣️
 I already mentioned `pprof`, you did you know you can add your custom metrics there?
 
 You have to import `expvar` package for side effects
+
 ```go
 import _ "expvar"
 ```
 
-Now you can create your *dimmensions* if you will
+Now you can create your _dimmensions_ if you will
 
 ```go
 reqNum := expvar.NewInt("requests")
 reqNum.Add(1)
 ```
 
-This is a very powerful technique which enables you to improve observability in your app. 
+This is a very powerful technique which enables you to improve observability in your app.

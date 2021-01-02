@@ -6,13 +6,13 @@ So lets say you want to transform some string.
 
 ```js
 const nextCharForNumberString = str => {
-  const trimmed = str.trim();
-  const number = parseInt(trimmed);
-  const nextNumber = number + 1;
-  return String.fromCharCode(nextNumber);
+    const trimmed = str.trim();
+    const number = parseInt(trimmed);
+    const nextNumber = number + 1;
+    return String.fromCharCode(nextNumber);
 };
 
-const result = nextCharForNumberString(' 64 ');
+const result = nextCharForNumberString(" 64 ");
 
 console.log(result);
 ```
@@ -24,12 +24,12 @@ Let's try to avoid side-effects using composable operations like `map`
 
 ```js
 const nextCharForNumberString = str =>
-  // putting stuff into `container`
-  [str]
-    .map(s => s.trim())
-    .map(s => parseInt(s))
-    .map(i => i + 1)
-    .map(i => String.fromCharCode(i));
+    // putting stuff into `container`
+    [str]
+        .map(s => s.trim())
+        .map(s => parseInt(s))
+        .map(i => i + 1)
+        .map(i => String.fromCharCode(i));
 
 console.log(result[0]);
 ```
@@ -41,18 +41,17 @@ Turns out that `container` is a data type called `Functor`. To be exact **functo
 ```js
 // this is going to be our functor
 const Box = x => ({
-  map: f => Box(f(x)),
-  // used for extracting values
-  fold: f => f(x)
+    map: f => Box(f(x)),
+    // used for extracting values
+    fold: f => f(x),
 });
 
 const nextCharForNumberString = str =>
-  // putting stuff into `container`
-  Box(str)
-    .map(s => s.trim())
-    .map(s => parseInt(s))
-    .map(i => i + 1)s
-    .fold(i => String.fromCharCode(i));
+    // putting stuff into `container`
+    Box(str)
+        .map(s => s.trim())
+        .map(s => parseInt(s))
+        .map(i => i + 1);
 ```
 
 Now we have algebraic structure to work with. **Your first functor**👍
@@ -63,14 +62,14 @@ Now we have algebraic structure to work with. **Your first functor**👍
 
 ```js
 const Right = x => ({
-  map: f => Right(f(x)),
-  fold: (f, g) => g(x)
+    map: f => Right(f(x)),
+    fold: (f, g) => g(x),
 });
 
 const Left = x => ({
-  map: f => Left(x),
-  // first function is treated as error callback
-  fold: (f, g) => f(x)
+    map: f => Left(x),
+    // first function is treated as error callback
+    fold: (f, g) => f(x),
 });
 ```
 
@@ -80,20 +79,20 @@ Let's say you have a method that can return `null` or `undefined` but you still 
 ```js
 // can return undefined
 function getColor(name) {
-  return { green: 'a', blue: 'b', yellow: 'c' }[name];
+    return { green: "a", blue: "b", yellow: "c" }[name];
 }
 
 // protecting against null or undefined
 function fromNullable(x) {
-  return x != null ? Right(x) : Left(x);
+    return x != null ? Right(x) : Left(x);
 }
 
-fromNullable(getColor('someColor'))
-  .map(/*some kind of operation*/)
-  .fold(
-    e => console.log('undefined or null, all maps ignored'),
-    data => console.log(data)
-  );
+fromNullable(getColor("someColor"))
+    .map() /*some kind of operation*/
+    .fold(
+        e => console.log("undefined or null, all maps ignored"),
+        data => console.log(data),
+    );
 ```
 
 ### Another example
@@ -101,16 +100,16 @@ fromNullable(getColor('someColor'))
 Let's say you want to read from file (using `fs` module) but you also want to guard against errors
 
 ```js
-const fs = require('fs');
+const fs = require("fs");
 
 const getPort = () => {
-  try {
-    const str = fs.readFileSync('config.json');
-    const config = JSON.parse(str);
-    return config.port;
-  } catch (e) {
-    return 3000;
-  }
+    try {
+        const str = fs.readFileSync("config.json");
+        const config = JSON.parse(str);
+        return config.port;
+    } catch (e) {
+        return 3000;
+    }
 };
 
 const result = getPort();
@@ -144,24 +143,24 @@ You feel really powerful with your `Functor` but you encountered a problem.
 
 ```js
 const applyDiscount = (price, discount) =>
-  // 1 functor deep
-  moneyToFloat(price).map(cost =>
-    // 2 functors deep
-    percentToFloat(discount).map(savings => cost - cost * savings)
-  );
+    // 1 functor deep
+    moneyToFloat(price).map(cost =>
+        // 2 functors deep
+        percentToFloat(discount).map(savings => cost - cost * savings)
+    );
 // Box(Box(4))
-console.log(applyDiscount('$5.00', '20%'));
+console.log(applyDiscount("$5.00", "20%"));
 ```
 
 Oh no! You have **a Box within a Box**. That is bad. You might say _ok Wojtek, I'm just going to fold twice instead of mapping_
 
 ```js
 const applyDiscount = (price, discount) =>
-  // 1 functor deep
-  moneyToFloat(price).fold(cost =>
-    // 2 functors deep
-    percentToFloat(discount).fold(savings => cost - cost * savings)
-  );
+    // 1 functor deep
+    moneyToFloat(price).fold(cost =>
+        // 2 functors deep
+        percentToFloat(discount).fold(savings => cost - cost * savings)
+    );
 ```
 
 But that's not really the solution. It just feels bad.
@@ -173,8 +172,8 @@ Chain method allows us to **escape nested containers**.
 ```js
 // defined inside Monad
 function chain(f) {
-  // x is from closure
-  return f(x);
+    // x is from closure
+    return f(x);
 }
 ```
 
@@ -188,8 +187,8 @@ Very basic example of such type is `Sum` type.
 
 ```js
 const Sum = x => ({
-  x,
-  concat: ({ x: y }) => Sum(x + y)
+    x,
+    concat: ({ x: y }) => Sum(x + y),
 });
 ```
 
