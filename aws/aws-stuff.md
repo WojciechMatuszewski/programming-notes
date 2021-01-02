@@ -1387,8 +1387,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 ### Snowball Edge
 
--
-  - big briefcase, **up to 80 TB** os **usable storage**.
+- - big briefcase, **up to 80 TB** os **usable storage**.
 
 * there are **three versions**: **compute**, **storage optimized**, **compute optimized with GPU**.
 
@@ -2185,6 +2184,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **CAN** have **SecurityGroup attached**
 
+- supports **gRPC** and **HTTP/2**
+
 #### NLB
 
 - work in **layer 4**. They are **software based**. This is the reason behind the extreme performance.
@@ -2200,6 +2201,14 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 * has **cross-zone load balancing disabled by default**.
 
 - when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
+
+#### Gateway Load Balancer
+
+- a very **simple passthrough**. Instead of calling a special URL, **you preserve your route table mappings**
+
+* works on **layer 3**.
+
+- from the **architectural perspective** is **similar to NLB + private link combo**
 
 #### Access Logs
 
