@@ -22,10 +22,10 @@ Course material from [node university](https://node.university/).
   ```js
   // code
   if (cached && cached.source) {
-      content = cached.source;
-      cached.source = undefined;
+    content = cached.source;
+    cached.source = undefined;
   } else {
-      content = fs.readFileSync(filename, "utf8");
+    content = fs.readFileSync(filename, "utf8");
   }
   // code
   ```
@@ -52,3 +52,12 @@ Course material from [node university](https://node.university/).
 ## Globals
 
 - Instead of `window` there is a `global` variable (sometimes you see it used while checking out Jest code)
+
+## ESM
+
+- you can opt into native ESM support by specifying `type: module` in your `package.json`
+
+* the **most important thing to remember** is that **the globals from the CJS wrapper are thing of the past**.
+  This means that `__filename` , `__dirname` and others are **gone**
+
+- as an **alternative to CJS wrapper globals** consider using **`import.meta.XX`**

@@ -194,9 +194,9 @@ Another input to our `doOnError` function is a raw socket (**that raw socket is 
 ```javascript
 function cleanTweets(tweetsToClean) {}
 function useImportedTweets(errorData, data) {
-    const cleanedTweetsJson = cleanTweets(data);
-    const tweetsObj = JSON.parse(cleanedTweetsJson);
-    console.log(tweetsObj.tweet2);
+  const cleanedTweetsJson = cleanTweets(data);
+  const tweetsObj = JSON.parse(cleanedTweetsJson);
+  console.log(tweetsObj.tweet2);
 }
 
 // dot represents current location in file system
@@ -245,17 +245,17 @@ So the logic now is simple. We put `doOnNewBatch` on the callback queue. When ca
 
 ```javascript
 function useImportedTweets(errorData, data) {
-    // parsing
-    console.log(tweets.tweet1);
+  // parsing
+  console.log(tweets.tweet1);
 }
 function immediately() {
-    console.log("run me last");
+  console.log("run me last");
 }
 function printHello() {
-    console.log("hello");
+  console.log("hello");
 }
 function blockFor500ms() {
-    // BLOCK JS thread DIRECTLY for 500ms
+  // BLOCK JS thread DIRECTLY for 500ms
 }
 // remember this is not Web-API, Node has his own implementation
 setTimeout(printHello, 0);
@@ -290,3 +290,7 @@ Let's summarize our knowledge of the _event loop_
 - **_event loop_ has _phases_ – different queues that contain _commands_**
 
 * With each **transition** to **another phase**, the **`process.nextTick` and the microtask (promises) are drained**. This happens to a certain extend, the _libuv_ makes sure we are not starving the _event loop_ with blocking calls
+
+- The **loop starts by checking the _microtask_ and _nexTick_ queues**, then moves to _expired timers_ and such. [This article contains nice visual representation](https://blog.insiderattack.net/promises-next-ticks-and-immediates-nodejs-event-loop-part-3-9226cbe7a6aa).
+
+* It **seems that** the `setTimeout(fn, 0)` is **guaranteed to run at the next loop of the event loop**. **After the immediates set synchronously**.

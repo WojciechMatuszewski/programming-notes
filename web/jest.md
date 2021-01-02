@@ -57,13 +57,13 @@ This usually happens when you have a file which re-exports methods from other fi
 export * from "./foo";
 ```
 
-This is the crux of the issue since this file will be transpiled to an object with only `get` property defined. **Without the `set` property _jest_s `spyOn` does not work**.
+This is the crux of the issue since this file will be transpiled to an object with only `get` property defined. **Without the `set` property \_jest_s `spyOn` does not work**.
 To combat this, mock the entire module, probably using `jest.requireActual` along the way.
 
 ```js
 jest.mock("module", () => ({
-    ...jest.requireActual("module"),
-    method: jest.fn(),
+  ...jest.requireActual("module"),
+  method: jest.fn(),
 }));
 ```
 
@@ -84,14 +84,14 @@ But what if you have more complex example, like a webserver with a delay (you ha
 ```js
 const { createServer } = require("http");
 const server = createServer(async (_, res) => {
-    await new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, 400);
-    });
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 400);
+  });
 
-    res.write(JSON.stringify({ message: "success" }));
-    res.end();
+  res.write(JSON.stringify({ message: "success" }));
+  res.end();
 });
 ```
 
@@ -117,7 +117,7 @@ const FakeTimers = require("@sinonjs/fake-timers");
 const clock = FakeTimers.install();
 
 jest.mock("timers", () => ({
-    setTimeout: setTimeout,
+  setTimeout: setTimeout,
 }));
 ```
 
@@ -132,7 +132,7 @@ So let us say you have a situation where you are invoking something in a _fire-a
 
 ```js
 function getData() {
-    void callService(URL).catch(console.log);
+  void callService(URL).catch(console.log);
 }
 ```
 
@@ -144,14 +144,14 @@ The solution here is to make sure that the `callService` promise is _flushed_ be
 
 ```js
 test("it does not throw even if the `callService` rejects", async () => {
-    getDataMock.mockRejectedValueOnce(new Error("boom"));
+  getDataMock.mockRejectedValueOnce(new Error("boom"));
 
-    const result = getData();
+  const result = getData();
 
-    await new Promise((r) => setImmediate(r));
+  await new Promise((r) => setImmediate(r));
 
-    // if the `getData` throws, the test would not pass
-    expect(result).toEqual(undefined);
+  // if the `getData` throws, the test would not pass
+  expect(result).toEqual(undefined);
 });
 ```
 
@@ -179,14 +179,14 @@ I would not recommend this method. This is a mental shortcut which is indirect a
 
 ```js
 test("it does not throw even if the `callService` rejects", async () => {
-    getDataMock.mockRejectedValueOnce(new Error("boom"));
+  getDataMock.mockRejectedValueOnce(new Error("boom"));
 
-    const result = getData();
+  const result = getData();
 
-    await Promise.resolve();
+  await Promise.resolve();
 
-    // if the `getData` throws, the test would not pass
-    expect(result).toEqual(undefined);
+  // if the `getData` throws, the test would not pass
+  expect(result).toEqual(undefined);
 });
 ```
 
@@ -212,17 +212,17 @@ So the situation here is that we have a promise which is resolved when some time
 
 ```js
 test("waiting", async () => {
-    jest.useFakeTimers("modern");
+  jest.useFakeTimers("modern");
 
-    const waiter = new Promise((r) => {
-        setTimeout(() => r("DATA"), 100000);
-    });
+  const waiter = new Promise((r) => {
+    setTimeout(() => r("DATA"), 100000);
+  });
 
-    jest.runAllTimers();
+  jest.runAllTimers();
 
-    await expect(waiter).resolves.toEqual("DATA");
+  await expect(waiter).resolves.toEqual("DATA");
 });
 ```
 
 As you can see, there is not much to it. All you have to do is to let the callbacks be allocated to proper queues in the event loop phases and then call the `jest` timers API.
-The `Promise` callback it put inside the `microtask` queue which is checked before moving to a new _phase. Inside that callback we are pushing a new callback into the \_timers_ queue.
+The `Promise` callback it put inside the `microtask` queue which is checked before moving to a new _phase_. Inside that callback we are pushing a new callback into the \_timers\_ queue.
