@@ -5076,6 +5076,16 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * it has **different use-cases that Kinesis Analytics**. **Kinesis should be used for real-time or near real time stuff, that also applies to analytics**. With `IOT Analytics` data is stored long term.
 
+### AWS Proton
+
+- enables you to create **envioriment and service templates which are VERSIONED**
+
+* **developers** can **deploy services based of those templates**
+
+- you have the notion of **schema** which is **OpenApi spec which defines the set of inputs**
+
+* this **kinda resambles CDK Constructs**
+
 ### QuickSight
 
 - visualisation of data, mainly used for IOT, also for **streaming data**.
