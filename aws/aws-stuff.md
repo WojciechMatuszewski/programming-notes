@@ -420,7 +420,8 @@ An example for s3-prefix (folder)
 
 #### Resource Based Policies
 
-- these are **special subset of policies** which are **attached to AWS Services**
+- these are **special subset of policies** which are **attached to AWS Services**.
+  Think allowing _APIGW_ to invoke your lambda function. You would **add that policy on the target resource, not the source of the event**
 
 * they have **Principal field**. This is due to the fact that they are evaluated whenever some principal access given resource. IAM role / group policies does not have that because they are applied to principals from the beginning.
 
@@ -1094,23 +1095,25 @@ An example for s3-prefix (folder)
 
 - **used** by **virtual tape library** (underneath)
 
-* there exists a concept of **glacier vault**. You can think of the vault as a **bucket in it's own rights**.
+* you can **recover files from GLACIER** within **1-5 mins (expedited), 3-5 hrs (standard), 5-12hrs (bulk)**.
 
-- **glacier vault** can be given **access by using IAM roles**.
+- you can **recover files from DEEP ARCHIVE** within **12 hrs (standard) and 48hrs (bulk)**
 
-* you can create **vault archives UP to 40 tb** (this is usually a .zip file).
+* you can retrieve specific component of an archive (a single file).
 
-- you can **recover files from GLACIER** within **1-5 mins (expedited), 3-5 hrs (standard), 5-12hrs (bulk)**.
+##### Glacier Vaults
 
-* you can **recover files from DEEP ARCHIVE** within **12 hrs (standard) and 48hrs (bulk)**
+- _Glacier Vaults_ are **containers for _Glacier Archives_**
 
-- you can retrieve specific component of an archive (a single file).
+* **glacier vault** can be given **access by using IAM roles**.
 
-##### Vault Lock
+- you can create **vault archives UP to 40 tb** (this is usually a .zip file).
+
+###### Vault Lock
 
 - you have **24hrs** after creation **to confirm that the lock you created meets your requirements**. If that's not the case **you can abort it** or **complete it**.
 
-* vault lock is **immutable**. You **cannot change it**. You can either **destroy it or create a new one**.
+* vault lock is **immutable**. **Once approved cannot be changed or deleted**.
 
 - you can **attach vault lock policies to the vault** eg. nobody can delete anything out of it (or use MFA). This is mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing deletes and such**
 
@@ -1271,6 +1274,8 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 * you can **override the owner of an object** when that object (due to CRR) is **going to another bucket**. This might be helpful to implement some kind of security measures
 
 - replication is a **asynchronous process**.
+
+* **SSL** is **enabled by default** when using replication
 
 #### Misc
 
@@ -4624,6 +4629,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **offered for free for all AWS accounts automatically**. This is to keep base security level of all accounts within aws.
 
+* it **covers different services than WAF**. One notable fact is that **it does not cover APIGW**
+
 #### Shield Advanced
 
 - gives you more **premium features** but costs **3k/month (costs of WAF included)**.
@@ -5018,6 +5025,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - With **KMS** you **can create User Keys** but that process is not necessary. **Depending on the encryption model** you could use **AWS Managed Service Keys in KMS**.
 
+#### Key Rotation
+
+- **AWS Managed** keys are **rotated every 3 years**. You **cannot change** that option
+
+* With **CMK** you can **opt into** rotating your keys **once per year**
+
+- With **CMK and custom _key material_** you can **manually rotate the key whenever you want**
+
 #### CMK
 
 - **CMK** is the **root object used for any encryption within KMS**. CMK has an ARN.
@@ -5031,6 +5046,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - this key **usually not used for the encryption directly**. This is due to **size limit of 4kb that you want to encrypt**. For the encryption itself you should use **data encryption keys**.
 
 * can be created based on imported `Key Material`. Once created, underlying `Key Material` cannot be changed, you would have to create a new key.
+
+- when you **delete the CMK** you **will not be able to decrypt your data back**. The deletion operation is considered dangerous
 
 #### CMK Grants
 
