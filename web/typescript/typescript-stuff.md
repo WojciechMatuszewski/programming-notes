@@ -1,5 +1,61 @@
 # Typescript Stuff
 
+## `tsconfig.json`
+
+### `esModuleInterop` shenanigans
+
+The whole purpose of this option is to enable you to write `ESM` compliant imports when you are using `CJS` modules.
+
+```ts
+// instead of this
+const express = require("express");
+
+// you can import it this way
+import express from "express";
+```
+
+The problem starts whenever you generate a _declaration file_ from a `ESM` module transpiled down to `CJS`.
+
+Let's say your module looks as follows
+
+```ts
+// foo.ts
+export function foo() {
+  return 1;
+}
+
+// index.ts
+export * from "./foo";
+```
+
+The _declaration file_ would look like this
+
+```ts
+export * from "./foo";
+```
+
+So it does look like a regular `ESM` barrel file. Nothing wrong with that right?
+Well, **if you have `esModuleInterop: true`, TypeScript will not complain at you, if you import modules as if they had `export default` defined but in reality they do not**.
+
+The `index.ts` clearly does not have `export default` defined, nor the _declaration file_. Well imagine my surprise when having something like this
+
+```ts
+import lib from "lib/foo";
+```
+
+does not result in TypeScript errors. It should, because if you do
+
+```ts
+import lib from "lib/foo";
+lib.foo();
+```
+
+you will be greeted with a runtime error.
+
+This whole issue stems from the fact that **sometimes TypeScript cannot be sure if _synthetic default exports_ should be allowed for a given _declaration file_**
+
+As a rule of thumb, you should always check how the declaration file is looking before attempting to import any 3rd party module. **Test might not help you. If you forgot to set `__esModule:true` while mocking, the wrong import will still work due to interop settings**.
+
 ## _type space_ vs _value space_
 
 While working with Typescript, you will be operating in 2 different _spaces_.
