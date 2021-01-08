@@ -1176,7 +1176,7 @@ An example for s3-prefix (folder)
 
 * when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
 
-- **ACLs are legacy!**. They are attached to bucket or an object. Mainly used for **granting log delivery**.
+- **ACLs are legacy!**. They are attached to bucket or an object. Mainly used for **granting log delivery**. You **can** attach **object ACLS on per user basis using the CLI / API**. You are not able to do this using the console.
 
 * you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
 
@@ -1210,7 +1210,7 @@ So when to use what?
 
 There is a precedence in which **acls** or **bucket policies** are evaluated.
 
-1. Does the requester has the perrmision to do stuff on s3?
+1. Does the requester has the permission to do stuff on s3?
 2. Does the bucket policy has the necessary permissions ?
 3. **If the bucket owner is not the owner of the object** does the **object acl** allow for the action?
 
@@ -5039,7 +5039,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - **CMK** is the **root object used for any encryption within KMS**. CMK has an ARN.
 
-* CMK **never leaves the service**. That means that CMKS **never leave the region**.
+* CMK **never leaves the service**. That means that CMKS **never leave the region**. **CMK CANNOT be exported**
 
 - if you have appropriate persmissions - **resource policy on the CMK**, you can request KMS to encrypt and decrypt data using CMK.
 
@@ -5059,11 +5059,13 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - grants can be **easly revoked when neeeded**.
 
+* you would **mainly use this for granting temporary access**
+
 #### Key Material
 
 - aka **Backing Keys**. They are used for creating CMK.
 
-* you can **import your own key material**.
+* you can **import your own key material**. You would do that if you have custom compliance requirements.
 
 - they can be **rotated**. The **period** of the rotation **depends if it's AWS Managed (3 years) or Customer Manager (1 year)**
 
@@ -5072,6 +5074,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - created based on a **request to KMS based on a SPECIFIC CMK**.
 
 * you get **2 versions of this key**. One is **encrypted** and one is in a **plain text** format. You should **encrypt with plain text (discard after)**
+
+- control **access to the CMKs** in KMS. While there are other methods to do so, **you need to use Key Policies if you want to control the access**
+
+* the policies themselves are pretty similar to IAM policies
+
+-
 
 ### AWS IOT
 
