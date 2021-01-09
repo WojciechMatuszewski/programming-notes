@@ -4757,6 +4757,16 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you **do not have to exchange the tokens using Identity Pool for AWS credentials**. You **might want to control access to your backend resources using those credentials**. (eg. APIGW authorizers)
 
+##### Resource servers
+
+- these allow you to set **custom oAuth scopes**
+
+* **name is misleading**. The **identifier does not have to be an url**.
+
+- you can **set scope authorization on APIGW level**. You can have authorizer check those on per endpoint basis
+
+* these **will not be retrieved when you use amplify js library**. You need to use the _cognito endpoint_ (probably hosted UI). If you really need to get them programatically, you can try the _cognito-js_ library.
+
 #### Identity Pools
 
 - **here is where you grant permissions to users**
