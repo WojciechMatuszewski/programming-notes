@@ -1452,7 +1452,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
 
-- when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all costs, **create read replica** and **update the engine on the replica**. Then promote the replica.
+- when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all costs, **create read replica** and **update the engine on the replica**. Then promote the replica. Remember that you have to update the **EngineVersion property** in CF
 
 - since the **failover, just like master is within a VPC** you have to **make sure that the failover subnet routing rules are the same as master**. Otherwise you might have a situation where a failover happens and you cannot connect to your instance because routing rules are not configured correctly.
 
@@ -2515,6 +2515,12 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - a good usage of fargate would be **load testing**, where you have **docker image of test automation framework** deployed.
 
+#### Forcing new deployment
+
+- this is needed to force the underlying deployment to use the latest pushed image
+
+* you **might need to restart the ECS agent** when you use _Service Auto Scalling_
+
 #### Security
 
 - with **awsvpc** network mode you can **attach security groups to ENIs**.
@@ -2729,6 +2735,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * you can **suspend Auto Scalling**. This is **useful** while **debugging**.
 
 - if you want to make requests through API (regarding Auto Scaling), you have to sign them using HMACK-SHA1
+
+##### Updates to the ASG
+
+- you can either use _AutoScalingReplacingUpdate_ or _AutoScalingRollingUpdate_
+
+* use **ReplacingUpdate** with **`willReplate: true`**. This deployment option works very **similar to the `immutable` option from EB**
+
+- there are more policies but these 2 are the most important
 
 ##### Lifecycle hooks
 
@@ -5628,11 +5642,3 @@ Next, your architecture should be able to **absorb the DDOS attack**. As weird a
 - use the **Enhanced Networking** when using EC2 instances
 
 Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
-
-TODO:
-
-- cloud formation section on linux academy.
-
-- create a custom lambda resource that cleans up a bucket when it's deleted
-
-- the `AutoScalingReplacingUpdate` which basically works like `immutable`

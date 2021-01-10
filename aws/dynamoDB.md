@@ -198,6 +198,24 @@ As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamod
 
 * you can use logical operators like `AND` with `ConditionExpression` to create powerful conditions.
 
+### UpdateExpression
+
+- you **can use SET, DELETE, REMOVE, ADD in one _UpdateExpression_**.
+
+  - if you want to **perform multiple operations of the same _kind_** (multiple ADDs, multiple DELETEs) just separate those using `,`.
+
+    ```
+    ADD #count :count, ADD #somethingElse :value
+    ```
+
+  - if you want to **perform multiple operations of different _kind_** (multiple ADDs with multiple DELETEs) you only need commas separating operations of the same _kind_
+
+  ```
+  ADD #count :count, ADD #somethingElse :value DELETE #ids :ids
+  ```
+
+- there is **no `AND` keyword**. This keyword is present in `KeyConditionExpression`
+
 ## Consistency
 
 Usually, most of the `read` operations will be `eventually consistent`. This is due to the fact how DynamoDB is built.
