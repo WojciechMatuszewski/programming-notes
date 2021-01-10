@@ -210,9 +210,9 @@ As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamod
 
   - if you want to **perform multiple operations of different _kind_** (multiple ADDs with multiple DELETEs) you only need commas separating operations of the same _kind_
 
-  ```
-  ADD #count :count, ADD #somethingElse :value DELETE #ids :ids
-  ```
+    ```
+    ADD #count :count, ADD #somethingElse :value DELETE #ids :ids
+    ```
 
 - there is **no `AND` keyword**. This keyword is present in `KeyConditionExpression`
 
