@@ -22,8 +22,8 @@ Let's say you have the following
 
 ```js
 cy.get(".todo-list li") // command
-  .find("label") // command
-  .should("contain", "todo A"); // assertion
+    .find("label") // command
+    .should("contain", "todo A"); // assertion
 ```
 
 Let's say that the first `command` is successful and the `li` is found. This means that **only the second command will be retried until the assertion passes**. This is very important, let's say we are adding an item before executing the chain
@@ -32,8 +32,8 @@ Let's say that the first `command` is successful and the `li` is found. This mea
 cy.get(".new-todo").type("todo A{enter}"); // add item
 // What if there is a delay here and there already is an `li` within `todo-list`?
 cy.get(".todo-list li") // command
-  .find("label") // command
-  .should("contain", "todo A"); // assertion
+    .find("label") // command
+    .should("contain", "todo A"); // assertion
 ```
 
 If there already is an `li` within the `.todo-list` but with different label, and there is some delay between clicking _enter_ and `todo A` appearing, the whole chain will fail.
@@ -48,7 +48,7 @@ Instead of doing 2 commands, we can perform 1 command on the merged selector.
 
 ```js
 cy.get(".todo-list li label") // command, will be retried until the assertion passes (with timeout)
-  .should("contain", "todo A");
+    .should("contain", "todo A");
 ```
 
 This makes sure that we are executing the whole selector each time the `should` fails, not only looking at the label.
@@ -64,9 +64,9 @@ The deal here is to split the chain we had previously to ensure that all precond
 cy.get(".new-todo").type("todo A{enter}"); // add item
 
 cy.get(".todo-list li") // command
-  .should("have.length", 2) // assertion
-  .find("label") // command
-  .should("contain", "todo A"); // assertion
+    .should("have.length", 2) // assertion
+    .find("label") // command
+    .should("contain", "todo A"); // assertion
 ```
 
 Now, the first assertion will pass only if the item is actually added. Then we can proceed with our `label` assertion.

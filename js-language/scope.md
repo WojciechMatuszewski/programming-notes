@@ -15,23 +15,23 @@ var teacher = "Kyle";
 // function keyword is a declaration
 // it also makes a 'marble'
 function otherClass() {
-  // scope manager creates a new 'bucket' (functions local scope)
+    // scope manager creates a new 'bucket' (functions local scope)
 
-  // this shadows a variable created above, of course these are completely different variables (they are scoped differently)
-  var teacher = "Suzy";
-  // by shadowing global variable we have no way to access the global variable in this functions scope
+    // this shadows a variable created above, of course these are completely different variables (they are scoped differently)
+    var teacher = "Suzy";
+    // by shadowing global variable we have no way to access the global variable in this functions scope
 
-  console.log("Welcome!");
+    console.log("Welcome!");
 }
 // we step back to global scope
 
 // next formal declaration, things happen just as before :)
 function ask() {
-  // scope manager creates a new 'bucket' (functions local scope)
+    // scope manager creates a new 'bucket' (functions local scope)
 
-  // create scoped variable in this scope
-  var question = "Why";
-  console.log(question);
+    // create scoped variable in this scope
+    var question = "Why";
+    console.log(question);
 }
 
 // identifier in source position
@@ -120,14 +120,14 @@ That's the thing that we talked about so far. That's the process of compiler and
 var teacher = "Kyle";
 
 function otherClass() {
-  var teacher = "Suzy";
+    var teacher = "Suzy";
 
-  function ask(question) {
-    // teacher reference got 'locked in', it's fixed and predictable
-    console.log(teacher, question);
-  }
+    function ask(question) {
+        // teacher reference got 'locked in', it's fixed and predictable
+        console.log(teacher, question);
+    }
 
-  ask("Why?");
+    ask("Why?");
 }
 ```
 
@@ -146,7 +146,7 @@ var teacher = "Kyle";
 
 // variable is re-assigned not re-declared !
 var teacher = "Suzy";
-console.log(teacher); //Suzy
+console.log(teacher); // Suzy
 
 console.log(teacher); // Suzy -- oops
 ```
@@ -181,8 +181,8 @@ var teacher = "Kyle";
 // the word function is not the first word in the expression
 // this IFFIE does not pollute global scope
 (function anotherTeacher() {
-  var teacher = "Suzy";
-  console.log(teacher); // Suzy
+    var teacher = "Suzy";
+    console.log(teacher); // Suzy
 })();
 
 anotherTeacher();
@@ -198,9 +198,9 @@ Instead of writing and IFFIE let's write a block
 var teacher = "Kyle";
 
 {
-  // let is block scoped
-  let teacher = "Suzy";
-  console.log(teacher); // Suzy
+    // let is block scoped
+    let teacher = "Suzy";
+    console.log(teacher); // Suzy
 }
 
 console.log(teacher); // Kyle
@@ -210,18 +210,18 @@ Block scoping is useful with encapsulating a logic in e.g if statements
 
 ```javascript
 function diff(x, y) {
-  if (x > y) {
-    // sadly this will be function scoped inside diff function
-    // but the premise is to signal to the reader that this variable should only be accessible within this if statement
-    var tmp = x;
-    // to get the desired behavior use let (or const in this example)
-    /*
+    if (x > y) {
+        // sadly this will be function scoped inside diff function
+        // but the premise is to signal to the reader that this variable should only be accessible within this if statement
+        var tmp = x;
+        // to get the desired behavior use let (or const in this example)
+        /*
       const tmp = x
     */
-    x = y;
-    y = tmp;
-  }
-  return y - x;
+        x = y;
+        y = tmp;
+    }
+    return y - x;
 }
 ```
 
@@ -229,14 +229,14 @@ Var keyword can be useful inside try/catch blocks
 
 ```javascript
 function lookupRecord(searchStr) {
-  // variable id is available at function level
-  try {
-    var id = getRecord(searchStr);
-  } catch (e) {
-    // this is not re-declaration, this only re-assigns
-    var id = -1;
-  }
-  return id;
+    // variable id is available at function level
+    try {
+        var id = getRecord(searchStr);
+    } catch (e) {
+        // this is not re-declaration, this only re-assigns
+        var id = -1;
+    }
+    return id;
 }
 ```
 
@@ -287,7 +287,7 @@ Use it only when you have primitive value type and never going to re-assign that
 
 ```javascript
 // we could explain what really happens here (2 passes,
-//scope manager talking with scope of current function),
+// scope manager talking with scope of current function),
 // but we are kind of lazy and we are going to introduce a magic concept of hoisting
 student;
 teacher;
@@ -308,7 +308,7 @@ How does function behave ?
 
 ```javascript
 function teacher() {
-  return "Kyle";
+    return "Kyle";
 }
 
 var otherTeacher;
@@ -317,7 +317,7 @@ teacher(); // Kyle
 otherTeacher(); // TypeError
 
 otherTeacher = function() {
-  return "Suzy";
+    return "Suzy";
 };
 ```
 
@@ -331,12 +331,12 @@ var teacher = "Kyle";
 otherTeacher(); // undefined
 
 function otherTeacher() {
-  // remember about 2 pass
-  // so teacher here is undefined as a value
-  // but it has been defined in a parsing phase (shadowing the outer teacher)
-  console.log(teacher);
-  // scope manager will define this statement as a variable but assign it's value only when the second pass will get here
-  var teacher = "Suzy";
+    // remember about 2 pass
+    // so teacher here is undefined as a value
+    // but it has been defined in a parsing phase (shadowing the outer teacher)
+    console.log(teacher);
+    // scope manager will define this statement as a variable but assign it's value only when the second pass will get here
+    var teacher = "Suzy";
 }
 ```
 
@@ -345,11 +345,11 @@ Of course it does!
 
 ```javascript
 {
-  // here scope manager (block scope) will declare this variable
-  // but instead of assigning undefined to it as to a var
-  // variable will be in so called TDZ state
-  teacher = "Kyle"; // TDZ error
-  let teacher;
+    // here scope manager (block scope) will declare this variable
+    // but instead of assigning undefined to it as to a var
+    // variable will be in so called TDZ state
+    teacher = "Kyle"; // TDZ error
+    let teacher;
 }
 ```
 
@@ -357,19 +357,19 @@ Another more through proof
 
 ```javascript
 {
-  // so if variable teacher did not exist here we would go to the outer scope
-  // and look there for that variable (it's declared there with var [function scope])
-  // but instead we get a TDZ error because variable exists, but it's in TDZ state
-  teacher = "Kyle"; // TDZ error
-  let teacher;
+    // so if variable teacher did not exist here we would go to the outer scope
+    // and look there for that variable (it's declared there with var [function scope])
+    // but instead we get a TDZ error because variable exists, but it's in TDZ state
+    teacher = "Kyle"; // TDZ error
+    let teacher;
 }
 
 var teacher = "Kyle";
 
 {
-  // same as above
-  console.log(teacher); // TDZ error!
-  let teacher = "Suzy";
+    // same as above
+    console.log(teacher); // TDZ error!
+    let teacher = "Suzy";
 }
 ```
 
@@ -449,13 +449,13 @@ If you cannot use let or you are feeling creative you can use IFFIE's :)
 
 ```javascript
 for (var i = 1; i <= 3; i++) {
-  // you probably should rename argument taken by the IFFIE
-  // (left the i here for reference)
-  (function(i) {
-    setTimeout(function() {
-      console.log(i);
-    }, 0);
-  })(i);
+    // you probably should rename argument taken by the IFFIE
+    // (left the i here for reference)
+    (function(i) {
+        setTimeout(function() {
+            console.log(i);
+        }, 0);
+    })(i);
 }
 ```
 
@@ -491,12 +491,12 @@ The purpose of a module is that you have some state that you closed over and you
 
 ```javascript
 function WorkshopModule(teacher) {
-  var publicAPI = { ask };
-  return publicAPI;
+    var publicAPI = { ask };
+    return publicAPI;
 
-  function ask(question) {
-    console.log(teacher, question);
-  }
+    function ask(question) {
+        console.log(teacher, question);
+    }
 }
 
 var workshop = WorkshopModule("kyle");
@@ -511,6 +511,6 @@ Factory is creating modules that are independent of each other.
 var teacher = "Kyle";
 
 export default function ask(question) {
-  console.log(teacher, question);
+    console.log(teacher, question);
 }
 ```

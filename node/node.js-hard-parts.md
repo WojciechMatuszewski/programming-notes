@@ -282,3 +282,15 @@ Lets consider `setImmediate`. The name implies that it will be run, well, immedi
 
 **Excluding microtask queue and close queue**
 _timer queue_ > _I/O callback queue_ > _check queue_
+
+## Event loop
+
+Let's summarize our knowledge of the _event loop_
+
+- **_event loop_ has _phases_ – different queues that contain _commands_**
+
+* With each **transition** to **another phase**, the **`process.nextTick` and the microtask (promises) are drained**. This happens to a certain extend, the _libuv_ makes sure we are not starving the _event loop_ with blocking calls
+
+- The **loop starts by checking the _microtask_ and _nexTick_ queues**, then moves to _expired timers_ and such. [This article contains nice visual representation](https://blog.insiderattack.net/promises-next-ticks-and-immediates-nodejs-event-loop-part-3-9226cbe7a6aa).
+
+* It **seems that** the `setTimeout(fn, 0)` is **guaranteed to run at the next loop of the event loop**. **After the immediates set synchronously**.

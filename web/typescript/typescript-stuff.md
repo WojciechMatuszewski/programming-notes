@@ -1,5 +1,81 @@
 # Typescript Stuff
 
+## `tsconfig.json`
+
+### `esModuleInterop` shenanigans
+
+The whole purpose of this option is to enable you to write `ESM` compliant imports when you are using `CJS` modules.
+
+```ts
+// instead of this
+const express = require("express");
+
+// you can import it this way
+import express from "express";
+```
+
+The problem starts whenever you generate a _declaration file_ from a `ESM` module transpiled down to `CJS`.
+
+Let's say your module looks as follows
+
+```ts
+// foo.ts
+export function foo() {
+  return 1;
+}
+
+// index.ts
+export * from "./foo";
+```
+
+The _declaration file_ would look like this
+
+```ts
+export * from "./foo";
+```
+
+So it does look like a regular `ESM` barrel file. Nothing wrong with that right?
+Well, **if you have `esModuleInterop: true`, TypeScript will not complain at you, if you import modules as if they had `export default` defined but in reality they do not**.
+
+The `index.ts` clearly does not have `export default` defined, nor the _declaration file_. Well imagine my surprise when having something like this
+
+```ts
+import lib from "lib/foo";
+```
+
+does not result in TypeScript errors. It should, because if you do
+
+```ts
+import lib from "lib/foo";
+lib.foo();
+```
+
+you will be greeted with a runtime error.
+
+This whole issue stems from the fact that **sometimes TypeScript cannot be sure if _synthetic default exports_ should be allowed for a given _declaration file_**
+
+As a rule of thumb, you should always check how the declaration file is looking before attempting to import any 3rd party module. **Test might not help you. If you forgot to set `__esModule:true` while mocking, the wrong import will still work due to interop settings**.
+
+## _type space_ vs _value space_
+
+While working with Typescript, you will be operating in 2 different _spaces_.
+
+**The _type space_ is where the typings live**
+
+**The _value space_ is where the JS constructs live**
+
+It is important to be aware of this. You might see code that looks as follows
+
+```ts
+// declared in the 'type space'
+type Person = { age: number };
+
+// declared in the 'value space'
+const Person = { firstName: "Wojtek" };
+```
+
+Notice that we have a sort of overlap here. You might expect some kind of shadowing issue to occur, but that is not the case. These 2 declarations are _isolated_ from each other, they live in 2 different _spaces_.
+
 ## Augmenting global declarations
 
 Lets say you are building a NodeJs app and you want to have strongly typed `process.env` object.
@@ -214,7 +290,6 @@ function doSomething(val: number | string) {
     checkIfString(val)
     val // string here!
 }
-
 ```
 
 ## Nullish Coalescing
@@ -346,7 +421,7 @@ function something() {
   return { x: None };
 }
 type HeyTs = typeof None; // "None"
-type SomeType = ReturnType<typeof something>; //{x: string}
+type SomeType = ReturnType<typeof something>; // {x: string}
 
 function something() {
   return { x: None as typeof None };
@@ -460,6 +535,20 @@ type Test = MyPartial<Something>;
 */
 ```
 
+### Altering mapped types keys
+
+You can use `as _something_` syntax to alter (probably perform conditional operation) on the _mapped types_ keys.
+
+```ts
+type NoNumbers<T extends Record<string, unknown>> = {
+  [K in keyof T as T[K] extends number ? never : K]: T[K];
+};
+
+type Test = NoNumbers<{ prop1: string; prop2: number }>; // {prop1: string}
+```
+
+As of writing this, this is relatively new addition to the language.
+
 ### Keyof and `[keyof]`
 
 Differences are quite big
@@ -526,6 +615,20 @@ WEIRD STUFF HUH?
 */
 ```
 
+This difference stems from the fact that `type | undefined` allows for value to be _skipped_.
+
+```ts
+declare function foo1(prop: number | undefined);
+foo1(); // Ok.
+```
+
+While the optional parameter syntax does not
+
+```ts
+declare function foo1(prop?: number);
+foo1(); // Error!
+```
+
 ### Plucking nullable (also undefined) keys
 
 Let's say you have an interface
@@ -557,7 +660,7 @@ type RemoveUndefinableKeys<Type> = {
   [Key in keyof Type]: undefined extends Type[Key] ? never : Key;
 }[keyof Type];
 
-type Test1 = RemoveUndefinableKeys<Something>; //"id" | "name" | undefined
+type Test1 = RemoveUndefinableKeys<Something>; // "id" | "name" | undefined
 ```
 
 How does `RemoveUndefinableKeys` work?
@@ -787,7 +890,6 @@ interface BadResponse extends Response {
 function isGoodResponse(response: OkResponse | BadResponse) response is OkResponse {
   return response.status == 'OK'
 }
-
 ```
 
 ### `in` Type Guards
@@ -888,7 +990,7 @@ Thats the _union_ part. Now the _discriminant_ is the **thing that enables
 typescript (and you) to distinguish between different actions**
 
 ```typescript
-  reducer(state, action) {
+reducer(state, action) {
     // type is a common property
     // that lives on all of the actions
     switch(action.type) {
@@ -968,6 +1070,44 @@ function add(x, y) {
 This allows you to have JS codebase covered with types that are separate. Users
 who use typescript can benefit from type completion while users using vanilla
 still have access to your library.
+
+## Readonly
+
+The `readonly` keyword is used to make sure you are not mutating the data **within a given context**. If parameters are annotated with `readonly`, even if you pass something that previously was not annotated with `readonly`, it **will be _promoted_ to `readonly` within that context**.
+
+```ts
+type Person = {
+  age: number;
+  name: string;
+};
+
+const p: Person = {
+  age: 12,
+  name: "Wojtek",
+};
+
+declare function foo(person: Readonly<Person>): any;
+
+foo(p); // Ok, note that I did not declare P as `Readonly<Person>`
+```
+
+Of course, if I declare the variable (cannot be primitive) as `readonly` there is no _promotion_ process.
+
+```ts
+type Person = {
+  age: number;
+  name: string;
+};
+
+const p: Readonly<Person> = {
+  age: 12,
+  name: "Wojtek",
+};
+
+declare function foo(person: Person): any;
+
+foo(p); // Error, you cannot "downgrade" from readonly
+```
 
 ## Enums
 
@@ -1447,13 +1587,14 @@ So an example:
 
 ```js
 const someObj = {
-  prop1: {
-    prop2: undefined
-  }
+    prop1: {
+        prop2: undefined,
+    },
 };
 
-const value = someObj.prop1 && someObj.prop1.prop2 & //...
-const value = someObj?.prop1?.prop2 // ..
+const value = someObj.prop1 && someObj.prop1.prop2
+        // ...
+        & const; // ..
 ```
 
 Syntax with `?` is much cleaner, especially with nested objects and properties.
@@ -1559,3 +1700,27 @@ doWork(param);
 ```
 
 It would be super nice for _Typescript_ to complain here.
+
+## Testing for `never`
+
+Let's say that for some reason, you want to test if the _type parameter_ that you defined is of type `never`. Normally I would do something like this
+
+```ts
+type CheckForNever<T> = T extends never ? 1 : 0;
+
+type Test1 = CheckForNever<"hi">; // 0 => Ok.
+type Test2 = CheckForNever<never>; // never => Wtf?
+```
+
+Tbh, I have no idea why it happens. The way the article describes is
+
+> Once one of the types in your expression is `never` it will **poison** the rest of the expression to evaluate to `never`
+
+You can trick the type system into behaving as you first though (returning `1` when `never` is passed in) by checking on _touple types_
+
+```ts
+type CheckForNever<T> = [T] extends [never] ? 1 : 0;
+
+type Test1 = CheckForNever<"hi">; // 0 => Ok.
+type Test2 = CheckForNever<never>; // 1 => Ok.
+```

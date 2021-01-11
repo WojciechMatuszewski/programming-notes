@@ -17,7 +17,6 @@ var msg2 = `there were ${num} cats`;
 You can use your own function for formating or any other stuff you want. You can also use string interpolation inside string interpolation :)
 
 ```javascript
-
 // values are the values interpolated inside the string
 function formatCurrency(strings, ...values) {
     var str = ""
@@ -82,7 +81,7 @@ var [...rest, last] = arr; // error!
 
 ```javascript
 function data() {
-  return [1, 2, , 4];
+    return [1, 2, , 4];
 }
 
 // normally third would be undefined but we assigned default value
@@ -93,7 +92,7 @@ var [first, second, third = 3, fourth] = data();
 
 ```javascript
 function data() {
-  return [1, 2, 3, 4];
+    return [1, 2, 3, 4];
 }
 var temp;
 // temp is assigned to array from data()
@@ -129,7 +128,7 @@ You can skip some values using comma separator
 
 ```javascript
 function data() {
-  return [1, 2, 3, 4];
+    return [1, 2, 3, 4];
 }
 var [first, , third, fourth] = data();
 ```
@@ -140,7 +139,7 @@ Let's say we want to swap values without using `tmp` variable
 
 ```javascript
 var x = 10,
-  y = 20;
+    y = 20;
 // here we are swapping values
 [y, x] = [x, y];
 ```
@@ -176,7 +175,7 @@ function data([first = 10,second = 20,third = 30] = []) {
 
 ```javascript
 function data() {
-  return [1, [2, 3], 4];
+    return [1, [2, 3], 4];
 }
 // you can also use default values inside destructuring
 var [first, [second, third] = [], fourth] = data() || [];
@@ -206,17 +205,17 @@ Find an item inside array which fulfils the predicate
 var arr = [{ a: 1 }, { a: 2 }];
 
 arr.find(function match(v) {
-  return v && v.a > 1;
+    return v && v.a > 1;
 });
 // {a:2}
 
 arr.find(function match(v) {
-  return v && v.a > 10;
+    return v && v.a > 10;
 });
 // undefined
 
 arr.findIndex(function match(v) {
-  return v && v.a > 10;
+    return v && v.a > 10;
 });
 // -1 is quite meh here ;/
 // -1
@@ -273,7 +272,7 @@ You could do the mapping then the flattening, but thats not really performant an
 
 ```javascript
 [1, 2, 3].flatMap(function all(v) {
-  return [v * 2, String(v * 2)];
+    return [v * 2, String(v * 2)];
 });
 // [2, "2", 4, "4", 6, "6"]
 ```
@@ -286,7 +285,7 @@ We typically thing about the `.map` operator as producing new array (same length
 
 ```javascript
 [1, 2, 3, 4, 5].flatMap(function doubleEvents(v) {
-  return v % 2 == 0 ? [v, v * 2] : [];
+    return v % 2 == 0 ? [v, v * 2] : [];
 });
 // [2,4,4,8,6,12]
 ```
@@ -320,11 +319,11 @@ var str = "hello";
 var it = str[Symbol.iterator]();
 // using iterator explicitly
 for (let v of it) {
-  console.log(v);
+    console.log(v);
 }
 // using iterator implicitly
 for (v of str) {
-  console.log(v);
+    console.log(v);
 }
 ```
 
@@ -347,9 +346,9 @@ Create a generator ! (more on them later)
 
 ```javascript
 Number.prototype[Symbol.iterator] = function*() {
-  for (let i = 0; i < this; i++) {
-    yield i;
-  }
+    for (let i = 0; i < this; i++) {
+        yield i;
+    }
 };
 
 var i = 10;
@@ -364,12 +363,12 @@ So instead of creating a function that returns an iterator result `{value: ..., 
 
 ```javascript
 function* main() {
-  yield 1;
-  yield 2;
-  yield 3;
-  // we did not yield 4,
-  // it equals to actually throwing 4 away, since done will be true
-  return 4;
+    yield 1;
+    yield 2;
+    yield 3;
+    // we did not yield 4,
+    // it equals to actually throwing 4 away, since done will be true
+    return 4;
 }
 var it = main();
 

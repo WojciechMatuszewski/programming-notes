@@ -11,21 +11,21 @@ There are 2 ways to go about it.
 Recently I'm leaning more towards option 3, so there is a quick showcase of the API
 
 ```jsx
-import { setupServer } from "msw/node";
 import { rest } from "msw";
+import { setupServer } from "msw/node";
 
 const server = setupServer(rest.post("url", HANDLER));
 
 test("it works", () => {
-  // test stuff based on the HANDLER implementation
+    // test stuff based on the HANDLER implementation
 });
 
 test("edge case", () => {
-  server.use("url", SOME_EDGE_CASE_HANDLER);
-  // test
+    server.use("url", SOME_EDGE_CASE_HANDLER);
+    // test
 
-  // reset to globally defined handlers. You can also use `beforeEach` for this.
-  server.resetHandlers();
+    // reset to globally defined handlers. You can also use `beforeEach` for this.
+    server.resetHandlers();
 });
 ```
 
@@ -44,11 +44,11 @@ But guess what, your tests do!
 
 ```js
 function App() {
-  let [ctr, setCtr] = useState(0);
-  useEffect(() => {
-    setCtr(1);
-  }, []);
-  return ctr;
+    let [ctr, setCtr] = useState(0);
+    useEffect(() => {
+        setCtr(1);
+    }, []);
+    return ctr;
 }
 ```
 
@@ -56,9 +56,9 @@ This simple component will have probably two or more _units of work_. When you w
 
 ```js
 it("should render 1", () => {
-  const el = document.createElement("div");
-  ReactDOM.render(<App />, el);
-  expect(el.innerHTML).toBe("1"); // this fails!
+    const el = document.createElement("div");
+    ReactDOM.render(<App />, el);
+    expect(el.innerHTML).toBe("1"); // this fails!
 });
 ```
 
@@ -78,10 +78,10 @@ A sample of the `@jackfranklin/test-data-bot` API
 import { build, fake } from "@jackfranklin/test-data-bot";
 
 const fakeCoords = build({
-  fields: {
-    latitude: fake((f) => f.address.latitude()),
-    longitude: fake((f) => f.address.longitude()),
-  },
+    fields: {
+        latitude: fake((f) => f.address.latitude()),
+        longitude: fake((f) => f.address.longitude()),
+    },
 });
 ```
 
@@ -95,13 +95,13 @@ So, the file would look something like this:
 import { render as rtlRender } from "@testing-library/react";
 
 function render(ui, ...options) {
-  const Wrapper = ({ children }) => (
-    <MyProvider>
-      <MySecondProvider>{children}</MySecondProvider>
-    </MyProvider>
-  );
+    const Wrapper = ({ children }) => (
+        <MyProvider>
+            <MySecondProvider>{children}</MySecondProvider>
+        </MyProvider>
+    );
 
-  return rtlRender(ui, { wrapper: Wrapper, ...options });
+    return rtlRender(ui, { wrapper: Wrapper, ...options });
 }
 
 export * from "@testing-library/react";
@@ -119,15 +119,15 @@ const AppContext = React.createContext();
 AppContext.displayName = "AppContext";
 
 function AppProvider({ children, ...props }) {
-  const [state, setState] = React.useState();
+    const [state, setState] = React.useState();
 
-  const value = React.useMemo(() => ({ state, setState }), [state]);
+    const value = React.useMemo(() => ({ state, setState }), [state]);
 
-  return (
-    <AppContext.Provider value={value} {...props}>
-      {children}
-    </AppContext.Provider>
-  );
+    return (
+        <AppContext.Provider value={value} {...props}>
+            {children}
+        </AppContext.Provider>
+    );
 }
 ```
 

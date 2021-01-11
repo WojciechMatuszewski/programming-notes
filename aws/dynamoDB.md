@@ -10,6 +10,12 @@
 
 * there is an underlying cost for activating it.
 
+### PartiQL support
+
+- you can use the _PartiSQL_ to read from your table
+
+* **can result in full table scans if you are not careful**. While you can do the famous `select * from WHERE = ...` expression, it will be costly
+
 ### Data types
 
 #### Scalar Types
@@ -192,6 +198,24 @@ As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamod
 
 * you can use logical operators like `AND` with `ConditionExpression` to create powerful conditions.
 
+### UpdateExpression
+
+- you **can use SET, DELETE, REMOVE, ADD in one _UpdateExpression_**.
+
+  - if you want to **perform multiple operations of the same _kind_** (multiple ADDs, multiple DELETEs) just separate those using `,`.
+
+    ```
+    ADD #count :count, ADD #somethingElse :value
+    ```
+
+  - if you want to **perform multiple operations of different _kind_** (multiple ADDs with multiple DELETEs) you only need commas separating operations of the same _kind_
+
+    ```
+    ADD #count :count, ADD #somethingElse :value DELETE #ids :ids
+    ```
+
+- there is **no `AND` keyword**. This keyword is present in `KeyConditionExpression`
+
 ## Consistency
 
 Usually, most of the `read` operations will be `eventually consistent`. This is due to the fact how DynamoDB is built.
@@ -227,3 +251,11 @@ Regular _UUID_ will not do - it's not sortable. What you need is something that 
 ### ScanIndexForward
 
 So you have all the necessary information about sorting related things to use this attribute. Remember, _DynamoDB_, by default, always scans forward, that means in ascending manner.
+
+### Prepending arbitrary symbols
+
+- sometimes you want to get the enmity and all the other entities that relates to the entity, think GitHub repo and issues for this repo
+
+* to ensure that you get the repo first and then the issues within the same query, you might look into prepending the `issues` SK with some arbitrary character, this would _push_ the `repo` entity up top
+
+- that character usually is `#` or `0`, depending on the use case and the structure of the data.

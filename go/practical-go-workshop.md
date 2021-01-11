@@ -11,7 +11,7 @@
 * do not mix and match long and short variable names
 
 ```go
-    func (s *SNMP) Fetch(oid []int, index int) (int, error)
+func (s *SNMP) Fetch(oid []int, index int) (int, error)
 
     // vs (clearly suffers when it comes to readability \/)
     func (s *SNMP) Fetch(o []int, i int) (int, error)
@@ -55,7 +55,6 @@ players := 0
 Of course, do not follow this rule blindly. There are exceptions, mostly where you have 2 related variables.
 
 ```go
-
 // weird right?
 var min int
 max := 1000

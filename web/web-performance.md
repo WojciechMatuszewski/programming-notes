@@ -32,7 +32,7 @@ const a = 1;
 const b = 2;
 // Wrapping something in parenthesis tells the parser to parse it immediately
 (function add(a, b) {
-  return x + y;
+    return x + y;
 });
 add(a, b);
 ```
@@ -42,16 +42,16 @@ of salt)
 
 ```js
 function sumOfSquares(x, y) {
-  // 👇this will  repeatedly be parsed
-  function square(n) {
-    return n * n;
-  }
-  return square(x) + square(y);
+    // 👇this will  repeatedly be parsed
+    function square(n) {
+        return n * n;
+    }
+    return square(x) + square(y);
 }
 
 // move the inner function out
 function square(n) {
-  return n * n;
+    return n * n;
 }
 ```
 
@@ -90,7 +90,7 @@ const add = (x, y) => x + y;
 performance.mark("start");
 
 while (iterations--) {
-  add(a, b);
+    add(a, b);
 }
 
 performance.mark("end");
@@ -207,9 +207,9 @@ compiler can inline functions on your behalf.
 ### Takeaways
 
 > - The easiest way to reduce parse, compile, and execution times is to ship
->   less code.
+  > less code.
 > - Use the **User Timing API** to figure out where the biggest amount of hurt
->   is.
+  > is.
 > - Use type system if you can to help with hidden classes and optimizations
 
 ## Rendering performance
@@ -266,8 +266,8 @@ naive implementation:
 
 ```js
 for (let element of elements) {
-  let width = element.offsetWidth;
-  element.offsetWidth = width * 2;
+    let width = element.offsetWidth;
+    element.offsetWidth = width * 2;
 }
 ```
 
@@ -280,7 +280,7 @@ elements wider.** This way browser can batch operations and optimize stuff.
 ```js
 const widths = elements.map((element) => element.offsetWidth);
 for (i = 0; i < widths.length; i++) {
-  elements[i].offsetWidth = widths[i] * 2;
+    elements[i].offsetWidth = widths[i] * 2;
 }
 ```
 
@@ -339,12 +339,12 @@ for every element that might animate or do different things** You should not
 overdo it though. Managing layers can be expensive for browser.
 
 ```js
-element.addEventListener("mouseenter", function () {
-  element.style.willChange = "transform";
+element.addEventListener("mouseenter", function() {
+    element.style.willChange = "transform";
 });
 // cleanup!
-element.addEventListener("animationEnd", function () {
-  element.style.willChange = "auto";
+element.addEventListener("animationEnd", function() {
+    element.style.willChange = "auto";
 });
 ```
 

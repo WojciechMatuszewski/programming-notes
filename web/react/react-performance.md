@@ -6,8 +6,8 @@ React, by default batches your state updates. That is quite good, you probably h
 
 ```js
 function handleSomething() {
-  setValue(1);
-  setOtherValue(2);
+    setValue(1);
+    setOtherValue(2);
 }
 ```
 
@@ -50,18 +50,18 @@ So what you can do here is to **preload your chunk on user interaction**. Like _
 
 ```jsx
 function loadGlobe() {
-  return import("../globe");
+    return import("../globe");
 }
 const Globe = React.lazy(loadGlobe);
 
 function Component() {
-  return (
-    <div onFocus={loadGlobe} onMouseOver={loadGlobe}>
-      <React.Suspense fallback={<p>loading..</p>}>
-        {showGlobe && <Globe />}
-      </React.Suspense>
-    </div>
-  );
+    return (
+        <div onFocus={loadGlobe} onMouseOver={loadGlobe}>
+            <React.Suspense fallback={<p>loading..</p>}>
+                {showGlobe && <Globe />}
+            </React.Suspense>
+        </div>
+    );
 }
 ```
 
@@ -80,11 +80,11 @@ First would be to wrap the component in question in `React.Suspense` and toggle 
 
 ```jsx
 {
-  showGlobe && (
-    <React.Suspense fallback={<div>loading...</div>}>
-      <Globe />
-    </React.Suspense>
-  );
+    showGlobe && (
+        <React.Suspense fallback={<div>loading...</div>}>
+            <Globe />
+        </React.Suspense>
+    );
 }
 ```
 
@@ -94,9 +94,9 @@ So to prevent this, **do not toggle the `React.Suspense`, toggle the children**.
 
 ```jsx
 {
-  <React.Suspense fallback={<div>loading...</div>}>
-    {showGlobe && <Globe />};
-  </React.Suspense>;
+    <React.Suspense fallback={<div>loading...</div>}>
+        {showGlobe && <Globe />};
+    </React.Suspense>;
 }
 ```
 
@@ -127,7 +127,7 @@ You might be tempted to escape early (I know i'm) inside the `React.memo` compar
 
 ```js
 React.memo(Comp, (prev, current) => {
-  return prev.PROP == current.PROP;
+    return prev.PROP == current.PROP;
 });
 ```
 
@@ -143,10 +143,12 @@ So you want to create context for (hopefully) some part of your application. You
 const Context = React.createContext();
 
 function Provider({ children }) {
-  const [state, setState] = React.useState();
-  return (
-    <Context.Provider value={{ state, setState }}>{children}</Context.Provider>
-  );
+    const [state, setState] = React.useState();
+    return (
+        <Context.Provider value={{ state, setState }}>
+            {children}
+        </Context.Provider>
+    );
 }
 ```
 
@@ -158,9 +160,10 @@ What you can do here is to memoize the `value` that you pass onto the _provider_
 const Context = React.createContext();
 
 function Provider({ children }) {
-  const [state, setState] = React.useState();
-  const memoizedValue = React.useMemo(() => ({ state, setState }), [state]);
-  return <Context.Provider value={memoizedValue}>{children}</Context.Provider>;
+    const [state, setState] = React.useState();
+    const memoizedValue = React.useMemo(() => ({ state, setState }), [state]);
+    return <Context.Provider value={memoizedValue}>{children}
+    </Context.Provider>;
 }
 ```
 
@@ -247,13 +250,13 @@ This is very important to remember especially when you are using `React.Context`
 
 ```jsx
 function App() {
-  const forceRerender = React.useReducer((x) => x + 1, 0)[1];
-  return (
-    <CounterProvider>
-      <Parent />
-      <button onClick={forceRerender}>Force</button>
-    </CounterProvider>
-  );
+    const forceRerender = React.useReducer((x) => x + 1, 0)[1];
+    return (
+        <CounterProvider>
+            <Parent />
+            <button onClick={forceRerender}>Force</button>
+        </CounterProvider>
+    );
 }
 ```
 

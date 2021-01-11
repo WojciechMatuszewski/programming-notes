@@ -40,7 +40,6 @@ It can be useful though. One scenario I've encounter is to assign a static prope
     "foo":"bar"
   }
 }
-
 ```
 
 Pretty straight forward right? As much as I hate using `vtl`, it's not that bad. The `foo:bar` key-pair is the static one, will always be there, no matter the body.
@@ -48,7 +47,7 @@ Pretty straight forward right? As much as I hate using `vtl`, it's not that bad.
 You can take this a step forward and only include it IF there there are no such property within the body already.
 
 ```vtl
- "body" : {
+"body" : {
     #foreach($entry in $inputRoot.entrySet())
     "$entry.key": "$entry.value"
     #end
@@ -243,7 +242,6 @@ func main() {
     fmt.Println(err.Error())
   }
 }
-
 ```
 
 #### Default values for JSON key value pairs
@@ -286,7 +284,6 @@ Pretty straightforward right?
 You will often see this using AWS golang package. There, the underlying `struct` fields are mostly defined as pointers.
 
 ```go
-
 type Student struct {
   Name string `json:"name,omitempty"`
   Grade *int `json:"grade,omitempty"`
@@ -298,7 +295,6 @@ if st.Grade == nil {
   var g int = 3;
   st.Grade = &g
 }
-
 ```
 
 One concert here would be performance, but always remember to measure before you employ any kind of optimizations.

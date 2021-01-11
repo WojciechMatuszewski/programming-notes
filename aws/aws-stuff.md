@@ -193,6 +193,22 @@
 
 * for doing **agregation work**. Think of **calculating sales numbers for a 15 minute window**
 
+- aggregation is preserved **per shard**
+
+##### Vs Kinesis Analytics
+
+- with **Analytics streams** the **aggregation** is performed **on the whole stream**
+
+* with **Tumbling windows** the **aggregation** is performed **only within a single shard**
+
+#### Custom checkpoints for DDB And Kinesis
+
+- this allows you to **return which message failed in a given batch**
+
+* is **different than bisect on error** because **with bisect on error one message might be processed multiple times**. Here we are **telling the pooler which message failed exactly**
+
+- **DOES NOT WORK WITH SQS**. You still have to use the pattern where you throw the messages that failed the processing
+
 ### Step Functions
 
 - **state machines as a service**
@@ -404,7 +420,8 @@ An example for s3-prefix (folder)
 
 #### Resource Based Policies
 
-- these are **special subset of policies** which are **attached to AWS Services**
+- these are **special subset of policies** which are **attached to AWS Services**.
+  Think allowing _APIGW_ to invoke your lambda function. You would **add that policy on the target resource, not the source of the event**
 
 * they have **Principal field**. This is due to the fact that they are evaluated whenever some principal access given resource. IAM role / group policies does not have that because they are applied to principals from the beginning.
 
@@ -1078,23 +1095,25 @@ An example for s3-prefix (folder)
 
 - **used** by **virtual tape library** (underneath)
 
-* there exists a concept of **glacier vault**. You can think of the vault as a **bucket in it's own rights**.
+* you can **recover files from GLACIER** within **1-5 mins (expedited), 3-5 hrs (standard), 5-12hrs (bulk)**.
 
-- **glacier vault** can be given **access by using IAM roles**.
+- you can **recover files from DEEP ARCHIVE** within **12 hrs (standard) and 48hrs (bulk)**
 
-* you can create **vault archives UP to 40 tb** (this is usually a .zip file).
+* you can retrieve specific component of an archive (a single file).
 
-- you can **recover files from GLACIER** within **1-5 mins (expedited), 3-5 hrs (standard), 5-12hrs (bulk)**.
+##### Glacier Vaults
 
-* you can **recover files from DEEP ARCHIVE** within **12 hrs (standard) and 48hrs (bulk)**
+- _Glacier Vaults_ are **containers for _Glacier Archives_**
 
-- you can retrieve specific component of an archive (a single file).
+* **glacier vault** can be given **access by using IAM roles**.
 
-##### Vault Lock
+- you can create **vault archives UP to 40 tb** (this is usually a .zip file).
+
+###### Vault Lock
 
 - you have **24hrs** after creation **to confirm that the lock you created meets your requirements**. If that's not the case **you can abort it** or **complete it**.
 
-* vault lock is **immutable**. You **cannot change it**. You can either **destroy it or create a new one**.
+* vault lock is **immutable**. **Once approved cannot be changed or deleted**.
 
 - you can **attach vault lock policies to the vault** eg. nobody can delete anything out of it (or use MFA). This is mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing deletes and such**
 
@@ -1157,7 +1176,7 @@ An example for s3-prefix (folder)
 
 * when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
 
-- **ACLs are legacy!**. They are attached to bucket or an object. Mainly used for **granting log delivery**.
+- **ACLs are legacy!**. They are attached to bucket or an object. Mainly used for **granting log delivery**. You **can** attach **object ACLS on per user basis using the CLI / API**. You are not able to do this using the console.
 
 * you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
 
@@ -1191,11 +1210,19 @@ So when to use what?
 
 There is a precedence in which **acls** or **bucket policies** are evaluated.
 
-1. Does the requester has the perrmision to do stuff on s3?
+1. Does the requester has the permission to do stuff on s3?
 2. Does the bucket policy has the necessary permissions ?
 3. **If the bucket owner is not the owner of the object** does the **object acl** allow for the action?
 
 The step 3 is crucial. Remember that whenever you upload something to a bucket that is not yours, you can control how much access to the underlying object the bucket owner has.
+
+#### Access Points
+
+- having multiple different statements in bucket policy can be painful. Especially when we are talking multiple users
+
+* _access points_ allow you to **create a designeted URL with a policy for a given user to request data from**
+
+- this way you **can have 1 policy per 1 user per 1 endpoint**
 
 #### Encryption
 
@@ -1247,6 +1274,8 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 * you can **override the owner of an object** when that object (due to CRR) is **going to another bucket**. This might be helpful to implement some kind of security measures
 
 - replication is a **asynchronous process**.
+
+* **SSL** is **enabled by default** when using replication
 
 #### Misc
 
@@ -1423,7 +1452,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
 
-- when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all costs, **create read replica** and **update the engine on the replica**. Then promote the replica.
+- when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all costs, **create read replica** and **update the engine on the replica**. Then promote the replica. Remember that you have to update the **EngineVersion property** in CF
 
 - since the **failover, just like master is within a VPC** you have to **make sure that the failover subnet routing rules are the same as master**. Otherwise you might have a situation where a failover happens and you cannot connect to your instance because routing rules are not configured correctly.
 
@@ -1502,6 +1531,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - do not mistake this with Multi-AZ failover
 
 * use CloudWatch alarm which will trigger lambda which updates R53, multi-region read replica will be promoted.
+
+#### Streaming
+
+- RDS has some CDC capabilities
+
+* you can **stream** data **to Kinesis** if you are using **PostgreSQL**
 
 ### Aurora
 
@@ -1816,7 +1851,9 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you **can use TWO lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
 
-* while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that table
+* while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that tabl
+
+- items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
 
 ##### KCL Adapter
 
@@ -1996,6 +2033,16 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you **can get pretty complex since CloudFront gives you a lot of settings**.
 
+* you **attach cache policies to them**. You can create **your own cache policies** or **use the managed ones**
+
+#### Cache Key
+
+- this is how _CloudFront_ knows if the asset you are requesting is within a cache or not
+
+* _cache key_ is **created based on the request parameters** like **url or/and headers/cookies**
+
+- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that behavior**
+
 #### Restricting access to CloudFront distribution
 
 - you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
@@ -2150,6 +2197,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **CAN** have **SecurityGroup attached**
 
+- supports **gRPC** and **HTTP/2**
+
 #### NLB
 
 - work in **layer 4**. They are **software based**. This is the reason behind the extreme performance.
@@ -2165,6 +2214,14 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 * has **cross-zone load balancing disabled by default**.
 
 - when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
+
+#### Gateway Load Balancer
+
+- a very **simple passthrough**. Instead of calling a special URL, **you preserve your route table mappings**
+
+* works on **layer 3**.
+
+- from the **architectural perspective** is **similar to NLB + private link combo**
 
 #### Access Logs
 
@@ -2464,6 +2521,12 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - a good usage of fargate would be **load testing**, where you have **docker image of test automation framework** deployed.
 
+#### Forcing new deployment
+
+- this is needed to force the underlying deployment to use the latest pushed image
+
+* you **might need to restart the ECS agent** when you use _Service Auto Scalling_
+
 #### Security
 
 - with **awsvpc** network mode you can **attach security groups to ENIs**.
@@ -2678,6 +2741,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * you can **suspend Auto Scalling**. This is **useful** while **debugging**.
 
 - if you want to make requests through API (regarding Auto Scaling), you have to sign them using HMACK-SHA1
+
+##### Updates to the ASG
+
+- you can either use _AutoScalingReplacingUpdate_ or _AutoScalingRollingUpdate_
+
+* use **ReplacingUpdate** with **`willReplate: true`**. This deployment option works very **similar to the `immutable` option from EB**
+
+- there are more policies but these 2 are the most important
 
 ##### Lifecycle hooks
 
@@ -3474,7 +3545,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * ingest big amounts of data in real-time.
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS for**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed. This is why Kinesis is know for the **data immutability**.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS or 365 DAYS**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed. This is why Kinesis is know for the **data immutability**.
 
 * stream can scale almost indefinitely, using **kinesis shards**
 
@@ -3569,7 +3640,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - unit of scale within Kinesis Data Streams
 
-* **getRecords** can **only be called 5 times per second per shard**.
+* **getRecords** can **only be called 5 times per second per shard**. This means that you can have **up to 5 consumers per shard at maximum**
 
 - data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool data once per 200ms**.
 
@@ -4388,6 +4459,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **NOT for high amounts of events per second**. You are billed per send an event. For case where you have a lot of events look into Kinesis.
 
+- one important thing to remember here is that **EB supports only 5 targets per rule**. This is something you should keep in mind while designing stuff.
+
 #### Resiliency
 
 - you can use **DQL per rule**
@@ -4463,6 +4536,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you can set up DLQ for a given target of a rule
 
 * the EB will **annotate the message that is pushed to DLQ with basic error info**. This will allow you to debug stuff bettter
+
+#### Decoupling
+
+- one thing that _EventBridge_ is really good at is the decoupling
+
+* one pattern that is to relly on _CloudTrail_ to _EventBridge_ integration in some situations, rather than the native integrations between services. Think multiple buckets hooked into 1 lambda function (putEvent)
 
 ### Amazon MQ
 
@@ -4571,6 +4650,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * while you could be doing this using NACL, the DDOS traffic would be dangerously close to your system (already entered your VPC). You should prefer to elivate the tread as far of your network as possible.
 
 - **offered for free for all AWS accounts automatically**. This is to keep base security level of all accounts within aws.
+
+* it **covers different services than WAF**. One notable fact is that **it does not cover APIGW**
 
 #### Shield Advanced
 
@@ -4701,6 +4782,16 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - user pool also **manages the overhead** of **handling SAML/Social sign in provider tokens**
 
 * you **do not have to exchange the tokens using Identity Pool for AWS credentials**. You **might want to control access to your backend resources using those credentials**. (eg. APIGW authorizers)
+
+##### Resource servers
+
+- these allow you to set **custom oAuth scopes**
+
+* **name is misleading**. The **identifier does not have to be an url**.
+
+- you can **set scope authorization on APIGW level**. You can have authorizer check those on per endpoint basis
+
+* these **will not be retrieved when you use amplify js library**. You need to use the _cognito endpoint_ (probably hosted UI). If you really need to get them programatically, you can try the _cognito-js_ library.
 
 #### Identity Pools
 
@@ -4898,6 +4989,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
   - `cfn hup`: **deamon which detects changes in resource metadata**
   - `cfn signal`: used for `WaitConditions`, coordination between resources
 
+#### Custom resource types
+
+- you (or others) can create **custom CF resource types**
+
+* this is something you **upload to CF registry**
+
+- as a developer of such resource type, **you are responsible for implementing _create_, _delete_ and _update_ hooks**
+
 ### AWS Glue
 
 - **serverless, fully managed EXTRACT TRANSFORM AND LOAD (ETL) service**
@@ -4964,11 +5063,19 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - With **KMS** you **can create User Keys** but that process is not necessary. **Depending on the encryption model** you could use **AWS Managed Service Keys in KMS**.
 
+#### Key Rotation
+
+- **AWS Managed** keys are **rotated every 3 years**. You **cannot change** that option
+
+* With **CMK** you can **opt into** rotating your keys **once per year**
+
+- With **CMK and custom _key material_** you can **manually rotate the key whenever you want**
+
 #### CMK
 
 - **CMK** is the **root object used for any encryption within KMS**. CMK has an ARN.
 
-* CMK **never leaves the service**. That means that CMKS **never leave the region**.
+* CMK **never leaves the service**. That means that CMKS **never leave the region**. **CMK CANNOT be exported**
 
 - if you have appropriate persmissions - **resource policy on the CMK**, you can request KMS to encrypt and decrypt data using CMK.
 
@@ -4978,6 +5085,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * can be created based on imported `Key Material`. Once created, underlying `Key Material` cannot be changed, you would have to create a new key.
 
+- when you **delete the CMK** you **will not be able to decrypt your data back**. The deletion operation is considered dangerous
+
 #### CMK Grants
 
 - allow you to **programatically delegate** the **use of CMK to other principals**. This is much better way of handling dynamic permissions than IAM.
@@ -4986,11 +5095,13 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - grants can be **easly revoked when neeeded**.
 
+* you would **mainly use this for granting temporary access**
+
 #### Key Material
 
 - aka **Backing Keys**. They are used for creating CMK.
 
-* you can **import your own key material**.
+* you can **import your own key material**. You would do that if you have custom compliance requirements.
 
 - they can be **rotated**. The **period** of the rotation **depends if it's AWS Managed (3 years) or Customer Manager (1 year)**
 
@@ -4999,6 +5110,12 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - created based on a **request to KMS based on a SPECIFIC CMK**.
 
 * you get **2 versions of this key**. One is **encrypted** and one is in a **plain text** format. You should **encrypt with plain text (discard after)**
+
+- control **access to the CMKs** in KMS. While there are other methods to do so, **you need to use Key Policies if you want to control the access**
+
+* the policies themselves are pretty similar to IAM policies
+
+-
 
 ### AWS IOT
 
@@ -5021,6 +5138,16 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - ingegrates with `Quicksight`.
 
 * it has **different use-cases that Kinesis Analytics**. **Kinesis should be used for real-time or near real time stuff, that also applies to analytics**. With `IOT Analytics` data is stored long term.
+
+### AWS Proton
+
+- enables you to create **envioriment and service templates which are VERSIONED**
+
+* **developers** can **deploy services based of those templates**
+
+- you have the notion of **schema** which is **OpenApi spec which defines the set of inputs**
+
+* this **kinda resambles CDK Constructs**
 
 ### QuickSight
 
@@ -5527,11 +5654,3 @@ Next, your architecture should be able to **absorb the DDOS attack**. As weird a
 - use the **Enhanced Networking** when using EC2 instances
 
 Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
-
-TODO:
-
-- cloud formation section on linux academy.
-
-- create a custom lambda resource that cleans up a bucket when it's deleted
-
-- the `AutoScalingReplacingUpdate` which basically works like `immutable`

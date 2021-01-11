@@ -6,7 +6,7 @@ So just to set the stage here. Lets say you have a simple `Component` component.
 
 ```jsx
 function Component() {
-  // code
+    // code
 }
 ```
 
@@ -15,8 +15,8 @@ This component is wrapped in an `ErrorBoundary`
 ```jsx
 // app
 <ErrorBoundary>
-  <Component />
-</ErrorBoundary>
+    <Component />
+</ErrorBoundary>;
 ```
 
 You would expect all errors be cough by that `ErrorBoundary` right? Well it's sadly not the case.

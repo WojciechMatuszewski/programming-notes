@@ -205,7 +205,7 @@ fmt.Println(cap(users))
 You can take a slice of slice. The syntax is similar to the one in `python`.
 
 ```go
-    users := string[]{"Wojtek", "Mateusz", "Ela"}
+users := string[]{"Wojtek", "Mateusz", "Ela"}
     users2 := users[1:3]
 ```
 
@@ -216,7 +216,7 @@ There are some gotchas associated with this technique though.
 This means that **operations that mutate `users2` will probably mutate `users`**
 
 ```go
-	users := []string{"Wojtek", "Mateusz", "Ela"}
+users := []string{"Wojtek", "Mateusz", "Ela"}
 	users2 := users[1:2]
 
 	users2[0] = "CHANGED"
@@ -228,7 +228,7 @@ This logs `CHANGED` and `CHANGED`. This is very easy to miss so **watch out for 
 Another thing that is worth knowing that the **range syntax** (x:y) is **not inclusive on the end range**.
 
 ```go
-  users := []string{"Wojtek", "Mateusz", "Ela"}
+users := []string{"Wojtek", "Mateusz", "Ela"}
   users2 := users[1:2]
   // users2 => [Mateusz]
 ```
@@ -238,7 +238,7 @@ So the `x:y` syntax takes **from x to y but NOT INCLUDING y**.
 Another thing that comes in to play when taking `slice` out of `slice` is the `capacity`. The `capacity` changes on the _derived_ slice.
 
 ```go
-    users := []string{"Wojtek", "Mateusz", "Ela"}
+users := []string{"Wojtek", "Mateusz", "Ela"}
     users2 := users[1:2]
 
     fmt.Println(cap(users2))
@@ -255,7 +255,7 @@ So by now you should be familiar how `append` works. Mainly how the share semant
 What will happen if I `append` to `users2`?
 
 ```go
-	users := []string{"Wojtek", "Mateusz", "Ela"}
+users := []string{"Wojtek", "Mateusz", "Ela"}
 	users2 := users[1:2]
 
 	users2 = append(users2, "CHANGED")
@@ -269,7 +269,7 @@ There is a way to deal with such situations though, that is making use of **thir
 So when `length = capacity` `append` will create new `backing array`, and we will be free of side-effects.
 
 ```go
-	users := []string{"Wojtek", "Mateusz", "Ela"}
+users := []string{"Wojtek", "Mateusz", "Ela"}
 	users2 := users[1:2:2]
 
 	users2 = append(users2, "CHANGED")
@@ -389,7 +389,7 @@ You may be thinking that we are passing `PullerStorer` to `store` and `pull` but
 
 * **readability review** is very important. Consistency is the key to make sure your code reads well!.
 
-Going back to our `Copy` method. As you might have noticed, **it is hiding the cost of initialization**. It does not prevent fraud and misuse. It's the same thing as with `SendEmail`, we can improve it:\
+Going back to our `Copy` method. As you might have noticed, **it is hiding the cost of initialization**. It does not prevent fraud and misuse. It's the same thing as with `SendEmail`, we can improve it:
 
 ```go
 func Copy(p Puller, s Storer, batch int) error {
@@ -543,7 +543,6 @@ The consumer created mock for themselves and we as package creators did not have
 - use `naked switch` / `switch` statement for `if/else` logic
 
 ```go
-
 switch {
     case 1 == 1:
     case 2 == 2:
@@ -554,7 +553,6 @@ switch {
 - construct `ErrorVariables` when your API can return multiple error types.
 
 ```go
-
 var (
     ErrPageNotFound = errors.New("Page not found")
     ErrPageMoved = errors.New("Page moved")
@@ -592,7 +590,6 @@ The `type` within the `err.(type)` expression is a language feature.
 Lets consider the `net` package. That package exposes a lot of custom error types
 
 ```go
-
 switch e := err.(type) {
     case *net.OpError:
         if !e.Temporary() {}
@@ -683,7 +680,7 @@ Guess what is the output of the program? `Bad Request`. Why? because we are comp
 You can actually limit the number of cores golang uses
 
 ```golang
-    runtime.GOMAXPROCS(1)
+runtime.GOMAXPROCS(1)
 ```
 
 ### `defer` statement
@@ -751,7 +748,7 @@ err = errors.New("boom")
 will produce
 
 ```
-  second defer <nil>
+second defer <nil>
   first defer boom
 ```
 
@@ -859,7 +856,6 @@ var counter int64
 
 // inside goroutine
 atomic.AddInt64(&counter, 1)
-
 ```
 
 ### Mutexes
@@ -920,7 +916,6 @@ Golang has a built-in data race detector. **Use `-race` flag to spot data-races*
 This one is quite simple but **introduces unknown latency**.
 
 ```go
-
 func main() {
     ch := make(chan string)
 
@@ -974,7 +969,7 @@ func main() {
 You can also get information about the state of the channel (if it was closed or not).
 
 ```go
-    data, isClosedOrData <- ch
+data, isClosedOrData <- ch
 ```
 
 ### Pooling pattern
@@ -1152,7 +1147,7 @@ You can keep stuff within the `context`. This might come in quite handy for trac
 The API has a particular shape and the usage of it might be a bit surprising.
 
 ```go
-    ctx := context.WithValue(context.Background(), "key" , 1)
+ctx := context.WithValue(context.Background(), "key" , 1)
 ```
 
 You might be thinking that we just stored value `1` and that value is reachable under key `key`.
@@ -1198,7 +1193,6 @@ select {
     case <- ctx.Done():
     fmt.Println("cancelled")
 }
-
 ```
 
 What will happen if the "some computation" block will take more than lets say `150 Milliseconds`? Well, you will see `cancelled` printed instantly. The `goroutine` will not have the time to report (most likely).
