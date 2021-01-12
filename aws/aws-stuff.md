@@ -5713,6 +5713,30 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
   - SurgeQueueLenght - backend systems are not able to process requests (backpressure)
   - SpilloverCount - when the SurgeQueue overflows
 
-- CloudWatch monitors CI/CD services (Code\*)
+- CloudWatch monitors CI/CD services (_CodePipeline_)
 
 - CloudFormation logs (?)
+
+- cross account access (assume role), CI/CD via CodePipeline
+
+- data protection in transit
+
+- host firewalls (?)
+
+- S3 encryption. Glacer encrypts by default
+
+- Network intrusion - Guard Duty (CloudTrial, VPC Flow Logs, DNS Query Logs)
+
+- AWS Trusted Advisor
+
+- What does server-side encryption mean? - encrypting on the service-side. The service that receives the data.
+
+- CloudWatch consuming CloudTrail logs
+
+- AutoScaling lifecycle hooks and policies
+
+- standby states for ec2 instances within asg
+
+- AutoScalling termination policies
+
+- ValidateService script after CodeBuild deployment finishes
