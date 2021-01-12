@@ -5642,3 +5642,65 @@ Next, your architecture should be able to **absorb the DDOS attack**. As weird a
 - use the **Enhanced Networking** when using EC2 instances
 
 Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
+
+### Notes from the Exam Rediness: DevOps
+
+- how IAM integrates with CodeCommit?
+
+- CodeCommit integration with CloudWatch Events (triggering CodeBuild)
+
+- how would Jenkins would integrate with CodeCommit? (fault tolerance and scalability)
+
+- buildspec and appsec file
+
+- CodeDeploy deployment configuration (4 settings)
+
+- chaining deployments - 1 deployment published to "beta" bucket which kicks off another deployment. If it fails (lambda can test the deployment), we rollback
+
+- cross account pipelines
+
+- deployments
+
+  - in place
+  - rolling updates
+  - rolling updates: canary
+  - blue green
+  - red black
+  - immutable
+
+- CodeCommit supports pre-commit hooks
+
+- CodeBuild does not handle artifacts protection. You have to eg. add default encryption to s3 bucket where you are going to store the artifacts
+
+- Jenkins EC2 plugin, CodeBuild plugin
+
+- Code Star (template.yaml)
+
+- Update policy for ASG
+
+- WaitConditions and Signals (CF), CreationPolicy
+
+- StackPolicy
+
+- StackSets
+
+- CF helper scripts (cfn-init, cfn-hup). With long cfn-hup interval EC2 deployments(subsequents) might take a while
+
+- EB envioriments (and .ebextensions/config.yaml file)
+
+- OpsWorks Stacks
+
+- Rollback UPDATE_FAILED - resources probably changed outside of CloudFormation
+
+- EB export vs Docker. You cannot lift and shift with EB (unless you are using Docker)
+
+- ELB not allowing you to switch users between ASGs based on weight
+
+- ELB monitoring
+
+  - SurgeQueueLenght - backend systems are not able to process requests (backpressure)
+  - SpilloverCount - when the SurgeQueue overflows
+
+- CloudWatch monitors CI/CD services (Code\*)
+
+- CloudFormation logs (?)
