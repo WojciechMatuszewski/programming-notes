@@ -1855,6 +1855,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
 
+##### KCL Adapter
+
+- you can use **DynamoDB Streams Kinesis Adapter** to process the stream data **when you are using KCL**
+
+* the **API exposed** is **very similar** to the **Kinesis one**
+
 ##### Dynamodb Streams fan-out
 
 - to combat the 2 lambda subscriber limit you can implement the fanout pattern
@@ -4756,6 +4762,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * you can run **stages in parallel** by using **run order** parameter.
 
 - remember that `CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
+
+##### Custom action job workers
+
+- you can have **custom action types** within _CodePipeline_
+
+* those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results to the _CodePipeline_**
 
 ### Cognito
 
