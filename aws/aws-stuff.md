@@ -1825,7 +1825,13 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - make sure to **project attributes that you use as an index**. Otherwise the **retrival will be costly!**
 
 * you **cannot use strongly consistent reads** with **GSI**. If you find yourself in a situation where you need strongly consistent reads and different query pattern,
-  re-create the table (migrate the existing one).
+  re-create the table (migrate the existingone).
+
+#### LSI
+
+- the LSI **can be strongly consistent**
+
+* **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to tables WITHOUT LSI**
 
 #### ACID
 
