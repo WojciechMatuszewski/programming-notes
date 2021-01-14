@@ -3289,6 +3289,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * you can create **normal, cloudwatch alarams on those billing dashboars**. You can do it per service or overall.
 
+###### Monitoring spend
+
+- you have to enable **Billing ALERTS not Alarams** for you to be able to **track estimated AWS charges**
+
+* there is a **delay between incurring a charge and a AWS Budget notifications**
+
 ##### Logs
 
 - **log group is a container for a log streams** which have the same specifications (retention etc...)
@@ -3563,6 +3569,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * there is a notion of **kinesis partition key**. When sending events you can specify such key. This key is **used to sometimes guarantee the order of events**, but **mainly it acts as a `spreader` of things on the shards**
 
+##### KCL
+
+- Java app which is used to ingest data from Kinesis stream
+
+* you can specify **maxRecords** property. Having it low, can be a cause of a slow reading speed
+
+- if your **application throws errors** you also might experience slow reading speed
+
 ##### Kinesis Data Firehose
 
 - allows you to **store data from kinesis stream on persistent storage, IN NEAR REAL-TIME (minimum 1 min. interval)**. The `near real-time` is very important here.
@@ -3651,6 +3665,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool data once per 200ms**.
 
 * there is a maximum of **1 MB of writes / second / shard**.
+
+####### Resharding
+
+- you can either **split** or **merge** shards
+
+* when you want to merge two shards, you have to **ensure that they are adjencent to each other** (based on the hash key)
+
+- you **might end up with an extra shard while resharding**. This is caused by the **difference between `StartingHashKey` and `EndingHashKey` to be low**
 
 ###### AWS Kinesis library
 
@@ -4579,6 +4601,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **layers** represent **individual pieces of functionality** within a stack, something like ECS Cluster, RDS, or OpsWork Layer
 
+#### Chef
+
+- _Chef solo_ for easy configuration management
+
+* _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy stuff
+
 #### AutoHealing of instances
 
 - this is **like automatic health checks with an autoscaling (but fixed)**
@@ -4756,6 +4784,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - when deploying with **lambda, using traffic shifts** there are **pre and post deploy hooks** you can use to validate your lambda.
 
 * there are also _validation hooks_ for **ecs**. There is a lot more of them than for lambda functions.
+
+##### Envioriment Variables
+
+- there are some **reserved environment variables**. For `CodeBuild`, they have a prefix of `CODEBUILD_`
+
+* you are **able to override / specify the reserved environment variables**, you should not do that though
 
 #### CodePipeline
 
