@@ -5422,6 +5422,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - you can run **assessments on a schedule**. This is done using _CloudWatch_.
 
+* you **HAVE TO TAG YOUR INSTANCE FOR THE ASSESSMENT TO RUN!**
+
 #### Uses
 
 - the cool use of this technology I saw was around **validating golden AMI**. This can be done with automated pipeline.
