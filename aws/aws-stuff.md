@@ -3608,6 +3608,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * can have lambda as target (also s3, redshift, rds).
 
+- under the hood it's **managed Apache Flink** backed by EKS.
+
 ##### Kinesis Data Streams
 
 - **processing** data **in near real-time**
@@ -3629,6 +3631,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 * this involves a cloudwatch alarm and a lambda function which will do the scaling by using sdk
 
 - there are **api limits for the amount of time you can scale your stream**
+
+##### Parallelization factor
+
+- parallel invocations on the **shard level**
+
+* per partition key order is maintained
+
+- this increases processing power per shard
+
+* also works for EFO (enhanced fanout) consumers
 
 ###### Monitoring
 
