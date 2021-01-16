@@ -2477,6 +2477,10 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you can **force new deployment** if you pushed new image with the same tag, eg. `latest`.
 
+#### X-Ray integration
+
+- to monitor all of your services, you should **deploy X-Ray within a Docker container as ECS service**
+
 #### Task Definition
 
 - to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They are **logical group of containers running on your instance**
@@ -4790,6 +4794,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - it may happen that **scale out an event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
 
 * you should **suspend asg for the deployment period** or **redeploy your application again** after the initial deployment.
+
+##### Deploying to Lambda service
+
+- you **do not have to store your artifacts in s3 if you are using CodeCommit**
 
 ##### Validation hooks
 
