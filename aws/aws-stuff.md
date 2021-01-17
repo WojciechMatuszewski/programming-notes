@@ -1440,7 +1440,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - data **synchronized asynchronously**
 
-* **master has to have backups enabled to be able to use read replicas**
+* \*\*master has to have backups enabled to be able toprocess.env.AWS_EMF_ENVIRONMENT = "Local";`
+*
 
 #### Multi-AZ
 
@@ -1863,6 +1864,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 * while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that tabl
 
 - items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
+
+* the **throughput of the stream** is based on the **number of paritions** given table **has**. This is because, **the more paritions your table has** the more **underlying shards will be allocated for that table**
 
 ##### KCL Adapter
 
