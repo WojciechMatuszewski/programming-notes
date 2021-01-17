@@ -1448,9 +1448,9 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * when choosing **multi-az deployment** you **CANNOT specify which AZ it will be deployed into**
 
-- **with multi-az deployments standby db only comes into play when your primary failed**
+- **with multi-az deployments standby db only comes into play when your primary failed**.
 
-* when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**
+* when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**.
 
 - when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all costs, **create read replica** and **update the engine on the replica**. Then promote the replica. Remember that you have to update the **EngineVersion property** in CF
 
@@ -1463,6 +1463,9 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 * takes place **during maintenance window, specified when creating a RDS db**
 
 - you can **defer** updates. Updates **marked as `required` cannot be deffered indefinetely.**. Updates **marked as `available` CAN be deffered indefinetely**.
+
+* when you **replace the `DBVersion`** both the **primary and secondary will be taken offline**. This is completely different behaviour than patching the underlying OS.
+  To make sure your application still works, deploy the secondary stack with RR
 
 #### Encryption
 
@@ -4811,6 +4814,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you are **able to override / specify the reserved environment variables**, you should not do that though
 
+##### Deployment Group
+
+- **configuration set** which will be **used during given deployment**
+
+* think of **alarms for deployment, triggers and such**
+
 #### CodePipeline
 
 - enables orchestration of all the above
@@ -4821,13 +4830,25 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can run **stages in parallel** by using **run order** parameter.
 
-- remember that `CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
+- remember that j`CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
 
 ##### Custom action job workers
 
 - you can have **custom action types** within _CodePipeline_
 
 * those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results to the _CodePipeline_**
+
+##### EventBridge / CloudWatch events integration
+
+- you can listen to events produced by the _CodePipeline_ using _EventBridge_ or _CloudWatch events_
+
+* one pattern is to use **Systems Manager Automation with CloudWatch / EB based on those events**
+
+### CodeStar
+
+- _CodeStar_ **ties all the Code services together**. This includes the pipelines and other stuff.
+
+* you configure it through the `template.yaml` file, which is basically the `SAM` file.
 
 ### Cognito
 
@@ -5102,6 +5123,22 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - the summary can be sent on a **weekly basis as an email**. This is a feature **built-in**
 
 * you can use **CloudWatch events** to listen on **Trusted Advisor** events. You **have to be in north-virginia**, otherwise you will not be able to create the rule.
+
+##### Weekly emails
+
+- you can setup **weekly email notifications**
+
+* this is not something you would use to get a fresh set of data, but it still may be viable to you
+
+##### Alerts
+
+- you can create **alarms based on the _color_ of the resources**. In the console you can see checks that are _red_ or _yellow_
+
+##### Getting fresh updates
+
+- this involves running **lambda on a cron job, refreshing the _Trusted Advisor_ API**
+
+* you can refresh the results every 15 minutes or so
 
 #### Exposed keys
 
@@ -5442,7 +5479,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - you can run **assessments on a schedule**. This is done using _CloudWatch_.
 
-* you **HAVE TO TAG YOUR INSTANCE FOR THE ASSESSMENT TO RUN!**
+* **if you want to pick which instance** should the _Amazon Inspector_ be working on, you **should tag it**.
+  You are then **able to pick the instance based on tags**
 
 #### Uses
 
