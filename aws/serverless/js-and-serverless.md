@@ -14,10 +14,10 @@ This will timeout (default timeout is 3 seconds):
 
 ```js
 module.exports.handler = (event, ctx, callback) => {
-    setTimeout(() => console.log("timeout"), 10000);
+  setTimeout(() => console.log("timeout"), 10000);
 
-    // or return
-    callback(null, 200);
+  // or return
+  callback(null, 200);
 };
 ```
 
@@ -25,12 +25,12 @@ But this will **not**:
 
 ```js
 module.exports.handler = (event, ctx, callback) => {
-    ctx.callbackWaitsForEmptyEventLoop = false;
+  ctx.callbackWaitsForEmptyEventLoop = false;
 
-    setTimeout(() => console.log("timeout"), 10000);
+  setTimeout(() => console.log("timeout"), 10000);
 
-    // or return
-    callback(null, 200);
+  // or return
+  callback(null, 200);
 };
 ```
 
@@ -42,8 +42,8 @@ This is an ideal scenario to hold open connection to a database. Usually the set
 let connection = null;
 
 function connectToDB() {
-    if (connection) return connection;
-    // connect and save
+  if (connection) return connection;
+  // connect and save
 }
 ```
 
@@ -52,3 +52,13 @@ Such connections usually push stuff to the event loop, thus preventing your lamb
 ### What about the `async` handlers
 
 The behavior is a little bit different when it comes to `async` handlers. There is **no waiting for the event loop**. The async handler behaves as if you specified `ctx.callbackWaitsForEmptyEventLoop = false`.
+
+## EMF Connecting to the X-Ray daemon, wtf?
+
+This will happen to you whenever you run the logger locally and not set the envioriment override.
+The EMF logger will _probe_ given envioriments starting from the _Lambda_ one. If some envioriment variables cannot be found, the next one is _probed_.
+
+It just so happens that the **default envioriment is using CloudWatch Agent**. Since you did not override anything, the default envioriment was selected.
+
+This results in you having weird _cannot connect to..._ logs in the console.
+To let the logger know that it is running in the local envioriment, specify `process.env.AWS_EMF_ENVIRONMENT = "Local";`
