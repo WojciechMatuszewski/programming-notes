@@ -4752,7 +4752,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 ### CI/CD
 
-#### Code Commit
+#### CodeCommit
 
 - **hosted Git Repo**
 
@@ -4794,6 +4794,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * when it comes to **ECS, it allows you to create blue / green (traffic shifts)** with that aswell.
 
 - can **integrate with AWS Config** to make sure changes are compliant, otherwise they will not deploy.
+
+* you can **schedule jobs using CloudWatch events**.
 
 ##### Deploying to ASG
 
@@ -5013,6 +5015,9 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * you can also create a specific **stack role**. That role will be **used by CF while creating resources**. In such case the underlying identity needs only permissions to create the stack itself, not the resources that that stack might create.
 
 - this allows for **separation of roles**. This works on the similarly to `change sets`. You can enable junior memebers to interact with the stack, modify some of the resources, but full managment of the stack can be off limits to them.
+
+* there is also special **stack policy**. It **may seem like it's overlapping with _stack role_**. While this is **somewhat a case, you might want to allow users do 1 thing and the service itself other thing**.
+  The **stack policy only applies on UPDATES**.
 
 #### Deletion Policy
 
@@ -5843,3 +5848,5 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - AutoScalling termination policies
 
 - ValidateService script after CodeBuild deployment finishes
+
+- Envioriment Variables in CodeBuild (and hooks)
