@@ -4613,7 +4613,13 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you do not have to manage hardware
 
-### AWS OpsWork
+### AWS OpsWorks
+
+- there are **three services under the `OpsWorks` umbrella**
+
+* there is a **notion of a recipe**. This is a **unit for work** that **you want the service to perform**
+
+#### AWS OpsWorks Stacks
 
 - **in between Elastic Beanstalk** and **manual deployment**.
 
@@ -4623,11 +4629,19 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **layers** represent **individual pieces of functionality** within a stack, something like ECS Cluster, RDS, or OpsWork Layer
 
-#### Chef
+- uses **Chef solo for configuration**
 
-- _Chef solo_ for easy configuration management
+* uses **declarative language for configuration**. You basically tell it what you want to happen, the service will figure the rest out
 
-* _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy stuff
+#### AWS OpsWorks for Chef Automate
+
+- _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy stuff
+
+#### AWS OpsWorks for Puppet Enterprise
+
+- a **fully managed configuration mechanism**
+
+* think about it as **more powerful version of _Chef solo_**
 
 #### AutoHealing of instances
 
@@ -4758,6 +4772,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can also **use comments** just like you would on github. For the best experience **use comments feature when you are signed as IAM user** (not federated , or temp credentials).
 
+* to begin using the repository, **you have to generate credentials for it**
+
 ##### Triggers
 
 - can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates** to other developers.
@@ -4783,6 +4799,18 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - there are **metrics** available inside **CloudWatch**. These are about build mainly, success, failure, all that stuff.
 
+##### Artifacts
+
+- you can tell CodeBuild to put artifacts to s3 for you
+
+* **by default** the **service role of CodeBuild** gets **s3 star IAM permissions**
+
+- **you might have problems with permissions uploading if you have custom bucket policy**
+
+##### Build triggers
+
+- you can have **CRON expression** for **scheduled builds**
+
 #### CodeDeploy
 
 - Deploy packages to given services (like ElasticBeanstalk)
@@ -4797,11 +4825,17 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can **schedule jobs using CloudWatch events**.
 
+- it **DOES NOT integrate with CodeCommit directly**. You can **either supply an s3 location or GitHub repo**
+
+* uses the **appspec.yaml** file
+
 ##### Deploying to ASG
 
 - it may happen that **scale out an event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
 
 * you should **suspend asg for the deployment period** or **redeploy your application again** after the initial deployment.
+
+- you **can deploy based on tags** on the **underlying EC2 instances**
 
 ##### Deploying to Lambda service
 
