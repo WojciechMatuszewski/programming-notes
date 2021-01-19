@@ -219,6 +219,16 @@
 
 * **does not** integrate with **Mechanical Turk**. You will need **SWF for that**.
 
+#### Best Practices
+
+- use timeouts to avoid stuck executions
+
+* avoid passing large payloads (use arns)
+
+- handle exceptions with the `Catch` operator
+
+* there is a **limit in terms of number of entries in the execution history**. It's quite big - 25000. Avoid reaching it (split executions into multiple workflows if needed)
+
 ### IAM
 
 - **IAM** is universal, **is global**, does not apply to regions
@@ -2209,7 +2219,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **CAN** have **SecurityGroup attached**
 
-- supports **gRPC** and **HTTP/2**
+- supports **gRPC**, **HTTP/2** and **IPv6**
 
 #### NLB
 
@@ -2226,6 +2236,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 * has **cross-zone load balancing disabled by default**.
 
 - when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
+
+* **supports IPv6**
 
 #### Gateway Load Balancer
 
@@ -4811,6 +4823,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can have **CRON expression** for **scheduled builds**
 
+
+##### Metrics
+
+- there are **number of default CW metrics**. These include **no. total builds, failed builds, successful builds and the duration of builds**
+
+
 #### CodeDeploy
 
 - Deploy packages to given services (like ElasticBeanstalk)
@@ -5193,6 +5211,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - you do not have access to every pillar that `Trusted Advisor` is checking (Cost Optimization, Performance, Security, Fault Tolerance, Service Limits) if you are on a free plan.
 
 * the **Cost Optimization, Performance is available for those with AWS support plan**
+
+- if **you need all the checks** your account have to have **at least business support plan**
 
 ### KMS
 
