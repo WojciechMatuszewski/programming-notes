@@ -2499,6 +2499,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - to monitor all of your services, you should **deploy X-Ray within a Docker container as ECS service**
 
+#### CloudWatch Events integration
+
+- ECS integrates as a **target** of **CloudWatch Events**
+
+* you can change a lot of stuff when an event is invoked, **even the task count of the cluster**
+
 #### Task Definition
 
 - to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They are **logical group of containers running on your instance**
@@ -2774,7 +2780,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can either use _AutoScalingReplacingUpdate_ or _AutoScalingRollingUpdate_
 
-* use **ReplacingUpdate** with **`willReplate: true`**. This deployment option works very **similar to the `immutable` option from EB**
+* use **ReplacingUpdate** with **`willReplace: true`**. This deployment option works very **similar to the `immutable` option from EB**
 
 - there are more policies but these 2 are the most important
 
@@ -4823,11 +4829,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can have **CRON expression** for **scheduled builds**
 
-
 ##### Metrics
 
 - there are **number of default CW metrics**. These include **no. total builds, failed builds, successful builds and the duration of builds**
-
 
 #### CodeDeploy
 
@@ -5523,6 +5527,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 * has **deep integration with CloudWatch**. You can use **CloudWatch events** to trigger lambda or sns when guard duty notices something.
 
+- will detect if someone is mining bitcoin on your machines (since it's scanning flow/vpc logs)
+
 ### Amazon Inspector
 
 - used for **security monitoring of EC2 instances**. Please keep in mind that it **only tackles security stuff, LEAVE STATE CHANGES TO AWS CONFIG!**
@@ -5904,3 +5910,5 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - ValidateService script after CodeBuild deployment finishes
 
 - Envioriment Variables in CodeBuild (and hooks)
+
+- automation vs run script
