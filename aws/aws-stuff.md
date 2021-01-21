@@ -4796,11 +4796,17 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates** to other developers.
 
-* they **only fire when someone pushes to the repository**.
+* **limited in scope**
+
+- they **DO NOT** use **CloudWatch Events to evaluate events**
 
 ##### Notifications
 
-- while **triggers are used to take action on something happening**, these **should be used for actually implementing notifications**.
+- **much more granular than _Triggers_**
+
+* they actually **use CloudWatch Events** to evaluate events
+
+- since the notifications use CloudWatch Events, **this is where you would integrate with CloudWatch Events**, not the _Triggers_ tab.
 
 #### CodeBuild
 
