@@ -5137,8 +5137,9 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * mostly used by non-serverless components like EC2 (there you want your programs to report to CF during setup).
 
 - there are multiple helper scripts
-  - `cfn hup`: **deamon which detects changes in resource metadata**
-  - `cfn signal`: used for `WaitConditions`, coordination between resources
+  - `cfn-hup`: **daemon which pools CF for changes**. If changed occured for a given CF block, runs scripts defined by you
+  - `cfn-init`: used for **more complex user-init scripts**. Instead of writing scrips, you pass directives to a special program which is OS agnostic.
+  - `cfn-signal`: used for `WaitConditions`, coordination between resources
 
 #### Custom resource types
 
@@ -5525,7 +5526,7 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### AWS Guard Duty
 
-- ingest from FlowLogs, R53, CloudTrial, AI Thread detection etc to a centralized place
+- ingest from FlowLogs, R53, CloudTrial, AI **Thread detection in terms of ACCOUNTS** etc to a centralized place
 
 * you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **ingest from those invited accounts** (**if they accept**).
 
