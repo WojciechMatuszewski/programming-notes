@@ -948,7 +948,7 @@ An example for s3-prefix (folder)
 
 * can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
 
-- there is a hierarchy, _Portfolio_ contains many _Products_ which are just _CloudFormation_ templates.
+- there is a hierarchy, **_Portfolio_** contains many **_Products_** which are just _CloudFormation_ templates.
 
 #### Constraints
 
@@ -1438,7 +1438,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - with **read replicas** you **CAN SPECIFY to which az to deploy**
 
-* you **can target read replica** but you **CAN NOT target second-master (multi-az)**
+* you **can target read replica** but you **CAN NOT target second-master (multi-az)**.
+  You can use **R53 weighted policy for that**
 
 - you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
 
@@ -1450,8 +1451,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - data **synchronized asynchronously**
 
-* \*\*master has to have backups enabled to be able toprocess.env.AWS_EMF_ENVIRONMENT = "Local";`
-*
+* **master has to have backups enabled to be able toprocess.env.AWS_EMF_ENVIRONMENT = "Local";`**
 
 #### Multi-AZ
 
@@ -1490,7 +1490,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Backups and Restore
 
-- you can perform **manual database storage-level snapshots**. These **will NOT be destroyed when you terminate db, YOU have to delete it manually when you want**.
+- you can perform **manual database storage-level snapshots**. These **will NOT be destroyed when you terminate db, YOU have to delete it manually when you want**. You would most likely use **step functions and lambda** to carry out this task.
 
 * **automatic backups are also an option**. These have **retention period UP to 35 days**. You have to **specify backup window, backup window has a duration**.
 
@@ -1707,7 +1707,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - make storage size the same between the master and the replica
 
-* `max_allowed_packet` setting should be the same
+* `max_allowed_packet` setting should be the same. Mismatch in this setting can cause replication to fail altogether.
 
 - turn off `Query Cache`
 
@@ -4911,6 +4911,16 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * one pattern is to use **Systems Manager Automation with CloudWatch / EB based on those events**
 
+##### Artifacts
+
+- you can **deploy to multiple regions**. This means that you can have per-region artifact stores
+
+* you **have to have artifact store in the region the pipeline is defined**
+
+- if you **create the _CodePipeline_ through the console**, **the wizard will create AWS managed CMK to encrypt the artifacts**. This is **not the case if you do it through the CLI**
+
+* you can create your own CMK and manage it yourself
+
 ### CodeStar
 
 - _CodeStar_ **ties all the Code services together**. This includes the pipelines and other stuff.
@@ -5039,6 +5049,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * there are 3 levels of update behaviors: **with no interruption**, **with some interruption** and **replacement**.
 
 - when using CloudFormation documentation, look for `update requirements` for a given property.
+
+* you can specify the **UpdateReplacePolicy** to **ensure that no accidental deletions of the resources happen when CF changes**
 
 ##### Change Set
 
@@ -5188,6 +5200,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * it has **reports on underutilized resources which can greatly help with cost savings**.
 
 - you can refresh all or individual cheks. Checks might have different refresh intervals.
+
+* you can check **service limits page**. This page is free for all, you do not have to have business or enterprise level of support
 
 #### Notifications
 
