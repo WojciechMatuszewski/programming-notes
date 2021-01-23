@@ -78,3 +78,16 @@ Course material from frontendmasters
   ```
 
 ### Improving FCP
+
+- use CDNs, do fewer things
+- use compression (gzip, brotli)
+
+### Improving LCP
+
+- make sure there are no waterfalls when it comes to downloading assets
+
+- use _resource hints_ like _async_ or _defer_
+  - _async_: when the script is downloaded, the browser will execute it immediately, no matter what
+  - _defer_: when the script is downloaded, the browser WILL NOT execute it immediately
+
+35:15 part 5
