@@ -87,7 +87,22 @@ Course material from frontendmasters
 - make sure there are no waterfalls when it comes to downloading assets
 
 - use _resource hints_ like _async_ or _defer_
+
   - _async_: when the script is downloaded, the browser will execute it immediately, no matter what
   - _defer_: when the script is downloaded, the browser WILL NOT execute it immediately
 
-35:15 part 5
+- the _loading_ attribute on images does not work on Safari. You have to use _IntersectionObserver_ to have full compatible lazy loading
+
+- use `srcset` and `sizes` on images, create images in different resolutions
+
+- remember to `preconnect` to resources
+
+### Improving CLS
+
+- specify aspect rations / width / height of images / places where ads will be loaded
+
+## Part 3 - planing
+
+- performance mindset should be engraved in your team culture
+
+- use performance budgets
