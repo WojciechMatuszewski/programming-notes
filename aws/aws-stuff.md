@@ -219,6 +219,16 @@
 
 * **does not** integrate with **Mechanical Turk**. You will need **SWF for that**.
 
+#### Best Practices
+
+- use timeouts to avoid stuck executions
+
+* avoid passing large payloads (use arns)
+
+- handle exceptions with the `Catch` operator
+
+* there is a **limit in terms of number of entries in the execution history**. It's quite big - 25000. Avoid reaching it (split executions into multiple workflows if needed)
+
 ### IAM
 
 - **IAM** is universal, **is global**, does not apply to regions
@@ -938,7 +948,7 @@ An example for s3-prefix (folder)
 
 * can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
 
-- there is a hierarchy, _Portfolio_ contains many _Products_ which are just _CloudFormation_ templates.
+- there is a hierarchy, **_Portfolio_** contains many **_Products_** which are just _CloudFormation_ templates.
 
 #### Constraints
 
@@ -1206,6 +1216,12 @@ So when to use what?
 
 * you can use **referrer IAM condition** to **allow request from specific web pages**.
 
+##### Access logs
+
+- **server access logs are delivered to another s3 bucket**
+
+* the **logs include all bucket / object events**
+
 ##### Precedence
 
 There is a precedence in which **acls** or **bucket policies** are evaluated.
@@ -1428,7 +1444,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - with **read replicas** you **CAN SPECIFY to which az to deploy**
 
-* you **can target read replica** but you **CAN NOT target second-master (multi-az)**
+* you **can target read replica** but you **CAN NOT target second-master (multi-az)**.
+  You can use **R53 weighted policy for that**
 
 - you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
 
@@ -1440,8 +1457,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - data **synchronized asynchronously**
 
-* \*\*master has to have backups enabled to be able toprocess.env.AWS_EMF_ENVIRONMENT = "Local";`
-*
+* **master has to have backups enabled to be able toprocess.env.AWS_EMF_ENVIRONMENT = "Local";`**
 
 #### Multi-AZ
 
@@ -1480,7 +1496,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Backups and Restore
 
-- you can perform **manual database storage-level snapshots**. These **will NOT be destroyed when you terminate db, YOU have to delete it manually when you want**.
+- you can perform **manual database storage-level snapshots**. These **will NOT be destroyed when you terminate db, YOU have to delete it manually when you want**. You would most likely use **step functions and lambda** to carry out this task.
 
 * **automatic backups are also an option**. These have **retention period UP to 35 days**. You have to **specify backup window, backup window has a duration**.
 
@@ -1697,7 +1713,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - make storage size the same between the master and the replica
 
-* `max_allowed_packet` setting should be the same
+* `max_allowed_packet` setting should be the same. Mismatch in this setting can cause replication to fail altogether.
 
 - turn off `Query Cache`
 
@@ -1866,6 +1882,20 @@ There are a few approaches when it comes to scaling with dynamoDB
 - items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
 
 * the **throughput of the stream** is based on the **number of paritions** given table **has**. This is because, **the more paritions your table has** the more **underlying shards will be allocated for that table**
+
+- DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do not use Kinesis directly
+
+#### Integration with Kinesis Data Streams
+
+- DDB can stream CDC events to Kinesis Data Streams
+
+* since Kinesis is used, **you have the ability to retain the CDC events up to a year**
+
+- technically you no longer have to write mapping code to put stuff into eg. Elastic Search. You can go Data Streams => Firehose => Elastic Search
+
+* **as of writing this, there is no CloudFormation support, only console or CLI**
+
+- as good as this feature sounds, **you have to calculate your shards yourself**. DDB will not do that for you
 
 ##### KCL Adapter
 
@@ -2215,7 +2245,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **CAN** have **SecurityGroup attached**
 
-- supports **gRPC** and **HTTP/2**
+- supports **gRPC**, **HTTP/2** and **IPv6**
 
 #### NLB
 
@@ -2232,6 +2262,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 * has **cross-zone load balancing disabled by default**.
 
 - when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
+
+* **supports IPv6**
 
 #### Gateway Load Balancer
 
@@ -2492,6 +2524,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 #### X-Ray integration
 
 - to monitor all of your services, you should **deploy X-Ray within a Docker container as ECS service**
+
+#### CloudWatch Events integration
+
+- ECS integrates as a **target** of **CloudWatch Events**
+
+* you can change a lot of stuff when an event is invoked, **even the task count of the cluster**
 
 #### Task Definition
 
@@ -2768,7 +2806,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can either use _AutoScalingReplacingUpdate_ or _AutoScalingRollingUpdate_
 
-* use **ReplacingUpdate** with **`willReplate: true`**. This deployment option works very **similar to the `immutable` option from EB**
+* use **ReplacingUpdate** with **`willReplace: true`**. This deployment option works very **similar to the `immutable` option from EB**
 
 - there are more policies but these 2 are the most important
 
@@ -2842,6 +2880,15 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * you can **copy a security group within a given region**
 
 - you can **export security group config** to a **new region VIA CLI!**
+
+#### Troubleshooting Rolling update
+
+- rolling update settings are set using the `Update Policy` setting. If those are not set correctly, you might encounter unexcepted results
+
+* there are 3 things you might want to do
+  - Configure `WaitOnResourceSignals` and `PauseTime` to avoid problems with success signals
+  - Configure `MinSuccessfulInstancesPercent` to avoid stack rollback
+  - Configure `SuspendProcesses`
 
 #### EBS (Elastic Block Store)
 
@@ -4620,6 +4667,15 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you do not have to manage hardware
 
 ### AWS OpsWorks
+<<<<<<< HEAD
+=======
+
+- there are **three services under the `OpsWorks` umbrella**
+
+* there is a **notion of a recipe**. This is a **unit for work** that **you want the service to perform**
+
+#### AWS OpsWorks Stacks
+>>>>>>> 6d82ab40f64e87088f43ab023850d57463885acf
 
 - **in between Elastic Beanstalk** and **manual deployment**.
 
@@ -4629,11 +4685,19 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * **layers** represent **individual pieces of functionality** within a stack, something like ECS Cluster, RDS, or OpsWork Layer
 
-#### Chef
+- uses **Chef solo for configuration**
 
-- _Chef solo_ for easy configuration management
+* uses **declarative language for configuration**. You basically tell it what you want to happen, the service will figure the rest out
 
-* _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy stuff
+#### AWS OpsWorks for Chef Automate
+
+- _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy stuff
+
+#### AWS OpsWorks for Puppet Enterprise
+
+- a **fully managed configuration mechanism**
+
+* think about it as **more powerful version of _Chef solo_**
 
 #### AutoHealing of instances
 
@@ -4772,15 +4836,23 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can also **use comments** just like you would on github. For the best experience **use comments feature when you are signed as IAM user** (not federated , or temp credentials).
 
+* to begin using the repository, **you have to generate credentials for it**
+
 ##### Triggers
 
 - can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates** to other developers.
 
-* they **only fire when someone pushes to the repository**.
+* **limited in scope**
+
+- they **DO NOT** use **CloudWatch Events to evaluate events**
 
 ##### Notifications
 
-- while **triggers are used to take action on something happening**, these **should be used for actually implementing notifications**.
+- **much more granular than _Triggers_**
+
+* they actually **use CloudWatch Events** to evaluate events
+
+- since the notifications use CloudWatch Events, **this is where you would integrate with CloudWatch Events**, not the _Triggers_ tab.
 
 #### CodeBuild
 
@@ -4797,6 +4869,22 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - there are **metrics** available inside **CloudWatch**. These are about build mainly, success, failure, all that stuff.
 
+##### Artifacts
+
+- you can tell CodeBuild to put artifacts to s3 for you
+
+* **by default** the **service role of CodeBuild** gets **s3 star IAM permissions**
+
+- **you might have problems with permissions uploading if you have custom bucket policy**
+
+##### Build triggers
+
+- you can have **CRON expression** for **scheduled builds**
+
+##### Metrics
+
+- there are **number of default CW metrics**. These include **no. total builds, failed builds, successful builds and the duration of builds**
+
 #### CodeDeploy
 
 - Deploy packages to given services (like ElasticBeanstalk)
@@ -4811,11 +4899,17 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can **schedule jobs using CloudWatch events**.
 
+- it **DOES NOT integrate with CodeCommit directly**. You can **either supply an s3 location or GitHub repo**
+
+* uses the **appspec.yaml** file
+
 ##### Deploying to ASG
 
 - it may happen that **scale out an event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
 
 * you should **suspend asg for the deployment period** or **redeploy your application again** after the initial deployment.
+
+- you **can deploy based on tags** on the **underlying EC2 instances**
 
 ##### Deploying to Lambda service
 
@@ -4859,7 +4953,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can run **stages in parallel** by using **run order** parameter.
 
-- remember that j`CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
+- remember that `CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
 
 ##### Custom action job workers
 
@@ -4867,15 +4961,33 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results to the _CodePipeline_**
 
+<<<<<<< HEAD
 - the worker **has to pool CodePipeline for tasks to perform**
 
 * you would use this for any 3rd party, proprietary tool that needs to be included in the pipeline.
+=======
+##### Cross region actions
+
+- you can create cross region actions for **three action types: source, third-party and custom**
+
+* CodePipeline **copies artifacts from the build region to a given region automatically**
+>>>>>>> 6d82ab40f64e87088f43ab023850d57463885acf
 
 ##### EventBridge / CloudWatch events integration
 
 - you can listen to events produced by the _CodePipeline_ using _EventBridge_ or _CloudWatch events_
 
 * one pattern is to use **Systems Manager Automation with CloudWatch / EB based on those events**
+
+##### Artifacts
+
+- you can **deploy to multiple regions**. This means that you can have per-region artifact stores
+
+* you **have to have artifact store in the region the pipeline is defined**
+
+- if you **create the _CodePipeline_ through the console**, **the wizard will create AWS managed CMK to encrypt the artifacts**. This is **not the case if you do it through the CLI**
+
+* you can create your own CMK and manage it yourself
 
 ### CodeStar
 
@@ -5006,6 +5118,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - when using CloudFormation documentation, look for `update requirements` for a given property.
 
+* you can specify the **UpdateReplacePolicy** to **ensure that no accidental deletions of the resources happen when CF changes**
+
 ##### Change Set
 
 - proposed change for a specific stack. Others can be notified by SNS that such change set was setup.
@@ -5103,8 +5217,9 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 * mostly used by non-serverless components like EC2 (there you want your programs to report to CF during setup).
 
 - there are multiple helper scripts
-  - `cfn hup`: **deamon which detects changes in resource metadata**
-  - `cfn signal`: used for `WaitConditions`, coordination between resources
+  - `cfn-hup`: **daemon which pools CF for changes**. If changed occured for a given CF block, runs scripts defined by you
+  - `cfn-init`: used for **more complex user-init scripts**. Instead of writing scrips, you pass directives to a special program which is OS agnostic.
+  - `cfn-signal`: used for `WaitConditions`, coordination between resources
 
 #### Custom resource types
 
@@ -5154,6 +5269,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - you can refresh all or individual cheks. Checks might have different refresh intervals.
 
+* you can check **service limits page**. This page is free for all, you do not have to have business or enterprise level of support
+
 #### Notifications
 
 - the summary can be sent on a **weekly basis as an email**. This is a feature **built-in**
@@ -5187,6 +5304,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - you do not have access to every pillar that `Trusted Advisor` is checking (Cost Optimization, Performance, Security, Fault Tolerance, Service Limits) if you are on a free plan.
 
 * the **Cost Optimization, Performance is available for those with AWS support plan**
+
+- if **you need all the checks** your account have to have **at least business support plan**
 
 ### KMS
 
@@ -5247,8 +5366,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - control **access to the CMKs** in KMS. While there are other methods to do so, **you need to use Key Policies if you want to control the access**
 
 * the policies themselves are pretty similar to IAM policies
-
--
 
 ### AWS IOT
 
@@ -5489,13 +5606,15 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### AWS Guard Duty
 
-- ingest from FlowLogs, R53, CloudTrial, AI Thread detection etc to a centralized place
+- ingest from FlowLogs, R53, CloudTrial, AI **Thread detection in terms of ACCOUNTS** etc to a centralized place
 
 * you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **ingest from those invited accounts** (**if they accept**).
 
 - it's usually **preferred for instances that have access to the internet**
 
 * has **deep integration with CloudWatch**. You can use **CloudWatch events** to trigger lambda or sns when guard duty notices something.
+
+- will detect if someone is mining bitcoin on your machines (since it's scanning flow/vpc logs)
 
 ### Amazon Inspector
 
@@ -5863,18 +5982,16 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 - Network intrusion - Guard Duty (CloudTrial, VPC Flow Logs, DNS Query Logs)
 
-- AWS Trusted Advisor
-
-- What does server-side encryption mean? - encrypting on the service-side. The service that receives the data.
-
 - CloudWatch consuming CloudTrail logs
 
 - AutoScaling lifecycle hooks and policies
 
 - standby states for ec2 instances within asg
 
-- AutoScalling termination policies
-
 - ValidateService script after CodeBuild deployment finishes
 
 - Envioriment Variables in CodeBuild (and hooks)
+
+- automation vs run script
+
+- CodeDeploy revision and rollbacks (retain the content)
