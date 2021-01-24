@@ -5334,8 +5334,6 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * the policies themselves are pretty similar to IAM policies
 
--
-
 ### AWS IOT
 
 - **regional** service
