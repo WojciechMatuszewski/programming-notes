@@ -1883,6 +1883,20 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 * the **throughput of the stream** is based on the **number of paritions** given table **has**. This is because, **the more paritions your table has** the more **underlying shards will be allocated for that table**
 
+- DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do not use Kinesis directly
+
+#### Integration with Kinesis Data Streams
+
+- DDB can stream CDC events to Kinesis Data Streams
+
+* since Kinesis is used, **you have the ability to retain the CDC events up to a year**
+
+- technically you no longer have to write mapping code to put stuff into eg. Elastic Search. You can go Data Streams => Firehose => Elastic Search
+
+* **as of writing this, there is no CloudFormation support, only console or CLI**
+
+- as good as this feature sounds, **you have to calculate your shards yourself**. DDB will not do that for you
+
 ##### KCL Adapter
 
 - you can use **DynamoDB Streams Kinesis Adapter** to process the stream data **when you are using KCL**
