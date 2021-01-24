@@ -1,7 +1,23 @@
-# Lambda best practices
+# Lambda
 
 There is a difference between `exports =` and `module.exports =`. **Always preffer `module.exports` because it's the `module.exports` that gets returned**.
 With `exports` you are mutating an `module.exports` and if there is an `exports` and `module.exports` within the same file, it's the `module.exports` that will be honoured.
+
+## Invocation modes
+
+- there are 2 invocation modes for any lambda function: _request response_ and the _event_ model
+
+* the _request response_ model directly passes the event to the execution environment
+
+- the _event_ model passes the payload to the internal SQS queue which is then consumed by _Lambda poller fleet_ and then passed to the execution environment
+
+### Execution envioriment
+
+- this is a worker running on EC2
+
+* the execution environment is **reused per function version**, **not alias**
+
+- given execution environment can be reused. It will be "alive" up to 8 hrs
 
 ## Tuning function memory
 

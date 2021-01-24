@@ -1216,6 +1216,12 @@ So when to use what?
 
 * you can use **referrer IAM condition** to **allow request from specific web pages**.
 
+##### Access logs
+
+- **server access logs are delivered to another s3 bucket**
+
+* the **logs include all bucket / object events**
+
 ##### Precedence
 
 There is a precedence in which **acls** or **bucket policies** are evaluated.
@@ -2854,6 +2860,15 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 * you can **copy a security group within a given region**
 
 - you can **export security group config** to a **new region VIA CLI!**
+
+#### Troubleshooting Rolling update
+
+- rolling update settings are set using the `Update Policy` setting. If those are not set correctly, you might encounter unexcepted results
+
+* there are 3 things you might want to do
+  - Configure `WaitOnResourceSignals` and `PauseTime` to avoid problems with success signals
+  - Configure `MinSuccessfulInstancesPercent` to avoid stack rollback
+  - Configure `SuspendProcesses`
 
 #### EBS (Elastic Block Store)
 
@@ -4897,13 +4912,19 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can run **stages in parallel** by using **run order** parameter.
 
-- remember that j`CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
+- remember that `CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
 
 ##### Custom action job workers
 
 - you can have **custom action types** within _CodePipeline_
 
 * those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results to the _CodePipeline_**
+
+##### Cross region actions
+
+- you can create cross region actions for **three action types: source, third-party and custom**
+
+* CodePipeline **copies artifacts from the build region to a given region automatically**
 
 ##### EventBridge / CloudWatch events integration
 
@@ -5916,20 +5937,16 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 - Network intrusion - Guard Duty (CloudTrial, VPC Flow Logs, DNS Query Logs)
 
-- AWS Trusted Advisor
-
-- What does server-side encryption mean? - encrypting on the service-side. The service that receives the data.
-
 - CloudWatch consuming CloudTrail logs
 
 - AutoScaling lifecycle hooks and policies
 
 - standby states for ec2 instances within asg
 
-- AutoScalling termination policies
-
 - ValidateService script after CodeBuild deployment finishes
 
 - Envioriment Variables in CodeBuild (and hooks)
 
 - automation vs run script
+
+- CodeDeploy revision and rollbacks (retain the content)
