@@ -4667,15 +4667,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you do not have to manage hardware
 
 ### AWS OpsWorks
-<<<<<<< HEAD
-=======
 
 - there are **three services under the `OpsWorks` umbrella**
 
 * there is a **notion of a recipe**. This is a **unit for work** that **you want the service to perform**
 
 #### AWS OpsWorks Stacks
->>>>>>> 6d82ab40f64e87088f43ab023850d57463885acf
 
 - **in between Elastic Beanstalk** and **manual deployment**.
 
@@ -4961,17 +4958,15 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results to the _CodePipeline_**
 
-<<<<<<< HEAD
 - the worker **has to pool CodePipeline for tasks to perform**
 
 * you would use this for any 3rd party, proprietary tool that needs to be included in the pipeline.
-=======
+
 ##### Cross region actions
 
 - you can create cross region actions for **three action types: source, third-party and custom**
 
 * CodePipeline **copies artifacts from the build region to a given region automatically**
->>>>>>> 6d82ab40f64e87088f43ab023850d57463885acf
 
 ##### EventBridge / CloudWatch events integration
 
