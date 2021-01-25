@@ -735,7 +735,7 @@ An example for s3-prefix (folder)
 
 - does not cost anything for existing Config consumers.
 
-* uses the notion of **aggregator**. This aggregator is responsible for discovery and aggregation of compliance data.
+* uses the notion of **aggregator**. This aggregator is responsible for discovery and aggregation of compliance data **from AWS Configs enabled on other accounts**. You **still have to have AWS Config turned on on other accounts**
 
 - there is a **limit** for the amount of **aggregators** you can have. The **default limit is 50**
 
@@ -4821,9 +4821,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * to begin using the repository, **you have to generate credentials for it**
 
+- as best practice you should use `CodeCommit` as an IAM user
+
 ##### Triggers
 
-- can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates** to other developers.
+- can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates or lambda** to other developers.
 
 * **limited in scope**
 
@@ -4833,9 +4835,15 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **much more granular than _Triggers_**
 
-* they actually **use CloudWatch Events** to evaluate events
+* from the UI can **only** pick **SNS**
 
-- since the notifications use CloudWatch Events, **this is where you would integrate with CloudWatch Events**, not the _Triggers_ tab.
+- if you want **more targets - look into CloudWatch events** as the _Notifications_ feature is built ontop of them
+
+##### Protecting branches
+
+- you will need to **use IAM policy**
+
+* the IAM policy will most likely use **Condition with `codecommit:References`**
 
 #### CodeBuild
 
@@ -4868,6 +4876,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - there are **number of default CW metrics**. These include **no. total builds, failed builds, successful builds and the duration of builds**
 
+##### Buildspec file
+
+- you can **pull things from SSM and SecretsManager**
+
+* most of the phases has the `finally` block available to them. You will most likely use that block for cleanup
+
 #### CodeDeploy
 
 - Deploy packages to given services (like ElasticBeanstalk)
@@ -4897,6 +4911,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 ##### Deploying to Lambda service
 
 - you **do not have to store your artifacts in s3 if you are using CodeCommit**
+
+* you can either use **traffic shifting** or **canary deployment**
+
+- with **canary deployment** the traffic is **shifted in TWO increments**. So if you see something like `LambdaCanary10Percent10Minutes` that means that the lambda will be taking 10% of the traffic for 10 minutes, then ALL traffic will be shifted to it.
 
 ##### Validation hooks
 
@@ -4955,6 +4973,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - if you **create the _CodePipeline_ through the console**, **the wizard will create AWS managed CMK to encrypt the artifacts**. This is **not the case if you do it through the CLI**
 
 * you can create your own CMK and manage it yourself
+
+##### Creating ECR Image
+
+- you should use **helper scripts** to **aquire ECR credentials**. You should not be using environment variables
 
 ### CodeStar
 
@@ -5127,6 +5149,16 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 * there is also special **stack policy**. It **may seem like it's overlapping with _stack role_**. While this is **somewhat a case, you might want to allow users do 1 thing and the service itself other thing**.
   The **stack policy only applies on UPDATES**.
+
+#### Capabilities
+
+- depending on the value you provide, **it allows CloudFormation to create IAM resources**
+
+* it **has nothing to do with Stack Persmissions**
+
+- there are **two capabilities**: `CAPABILITY_IAM` or `CAPABILITY_NAMED_IAM`
+
+* this setting exists to prevent you from creating dangerous IAM roles. It forces you to look at what's being created
 
 #### Deletion Policy
 
