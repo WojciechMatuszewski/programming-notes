@@ -2165,6 +2165,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * using **AWS Marketplace** you can **register your API** and effectively **monetize your API using usage plans**.
 
+#### Canary (REST API only)
+
+- you can setup **canary deployment in APIGW**
+
+* to **get new deployment going**, **you have to either delete or promote canary**
+
 ### Load Balancers
 
 - different types:
@@ -4720,6 +4726,14 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you should **clone the entire stack** and **change DNS to the other stack**. Much more involved than EB but it works.
 
+#### Lifecycle events
+
+- each **layer has lifecycle events**
+
+* the **recipies run when those events happen**
+
+- overall, **there are 5 lifecycle events**. Mainly Setup, Configure, Deploy, UnDeploy and Shutdown
+
 ### WAF (Web Application Firewall)
 
 - **layer 7**.
@@ -4934,6 +4948,16 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * think of **alarms for deployment, triggers and such**
 
+##### Application specification files
+
+- used to **managing each deployment** along with **lifecycle event hooks**
+
+* current options are: **ECS, Lambda and EC2 (on prem as well)**
+
+- these allow you to specify **lambdas which will be invoked to check the deployment**
+
+* there are **multiple lifecycle events, not they differ based on the service**
+
 #### CodePipeline
 
 - enables orchestration of all the above
@@ -4951,6 +4975,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you can have **custom action types** within _CodePipeline_
 
 * those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results to the _CodePipeline_**
+
+- the worker **has to pool CodePipeline for tasks to perform**
+
+* you would use this for any 3rd party, proprietary tool that needs to be included in the pipeline.
 
 ##### Cross region actions
 
