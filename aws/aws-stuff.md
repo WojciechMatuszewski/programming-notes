@@ -751,7 +751,7 @@ An example for s3-prefix (folder)
 
 #### Notifications
 
-- **notifications** are available only for **SNS** for the **whole AWS Config**
+- **notifications** are available only for **SNS** for the **whole AWS Config**. This means that if you want to have **granular notifications, you should use CloudWatch events**
 
 #### Compliance
 
@@ -855,6 +855,8 @@ An example for s3-prefix (folder)
 - collect data about system properties, roles, etc.
 
 * can be visualized using `QuickSight` (**by sending data to s3 first**).
+
+- to **ensure** that you are **tracking all instances**, create a **periodic check with lambda and CloudWatch events**.
 
 #### Parameter Store
 
@@ -2596,6 +2598,12 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - you can also **attach IAM role to a specific task definition - task role**. This basically is a role attached to a specific container. Whenever you are dealing with **ECS - prefer task role rather than EC2 role**.
 
 * you can also **attach task execution role**. This is the role **used by ECS itself to pull images, publish logs, basically do stuff in your behalf**.
+
+#### Logging
+
+- **make sure** that you have the **`awslogs` driver enabled**
+
+* if you are **deploying on EC2, ensure that the instance can write to CloudWatch**
 
 ### EKS
 
@@ -4958,6 +4966,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * there are **multiple lifecycle events, not they differ based on the service**
 
+##### Canary deployment
+
+- you can create a _canary deployment_
+
+* the **_canary deployment_ option is only available for Lambdas and ECS**
+
 #### CodePipeline
 
 - enables orchestration of all the above
@@ -5314,11 +5328,15 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - you can create **alarms based on the _color_ of the resources**. In the console you can see checks that are _red_ or _yellow_
 
+* Trusted Advisor **will automatically refresh checks every 24hrs**. If you need more up to date checks, you have to refresh them yourself
+
 ##### Getting fresh updates
 
 - this involves running **lambda on a cron job, refreshing the _Trusted Advisor_ API**
 
 * you can refresh the results every 15 minutes or so
+
+- by **default** the Trusted Advisor **refreshes the checks every 24 hours**
 
 #### Exposed keys
 
