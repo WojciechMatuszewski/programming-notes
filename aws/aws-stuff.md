@@ -2877,9 +2877,11 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - this allow you to suspend asg processes
 
-* useful for where you want to resize your instance - thiswould require termination, thus asg would most likely spin a new instance.
+* useful for where you want to resize your instance - this would require termination, thus asg would most likely spin a new instance.
 
 - you can **even suspend health checks**.
+
+* another use case might be **suspening the ASG during the deployment**. This is due to the fact that when deployment and scale event is underway, the newly added instances (due to scaling) will have the latest **deployed** version of the app running. Often you will end up with 2 application versions in your ASG.
 
 #### Migration
 
