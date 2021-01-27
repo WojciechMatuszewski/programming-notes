@@ -4886,7 +4886,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 ##### Artifacts
 
-- you can tell CodeBuild to put artifacts to s3 for you
+- you can tell CodeBuild to put artifacts to s3 for you. **By default, CodeBuild will encrypt those artifacts**
 
 * **by default** the **service role of CodeBuild** gets **s3 star IAM permissions**
 
@@ -4895,6 +4895,14 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 ##### Build triggers
 
 - you can have **CRON expression** for **scheduled builds**
+
+##### Envioriment Variables
+
+- there are some **reserved environment variables**. For `CodeBuild`, they have a prefix of `CODEBUILD_`
+
+* you are **able to override / specify the reserved environment variables**, you should not do that though
+
+- you can either use **SSM or regular values** for your environment variables
 
 ##### Metrics
 
@@ -4945,12 +4953,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - when deploying with **lambda, using traffic shifts** there are **pre and post deploy hooks** you can use to validate your lambda.
 
 * there are also _validation hooks_ for **ecs**. There is a lot more of them than for lambda functions.
-
-##### Envioriment Variables
-
-- there are some **reserved environment variables**. For `CodeBuild`, they have a prefix of `CODEBUILD_`
-
-* you are **able to override / specify the reserved environment variables**, you should not do that though
 
 ##### Deployment Group
 
@@ -5413,6 +5415,14 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - control **access to the CMKs** in KMS. While there are other methods to do so, **you need to use Key Policies if you want to control the access**
 
 * the policies themselves are pretty similar to IAM policies
+
+### Key policies
+
+- the KMS key works a little bit differently in terms of IAM
+
+* **to grant some entity ability to do something with a given key, you have to explicitly add that policy to a given keys policy upon the key creation / update**. So a situation: I create a key and I leave permissions as blank. Even though I might have administrative role, I will not be able to delete that key.
+
+* usually the pattern here is to give `delete` / `PutPolicy` permissions to the `:root` (every entity in a given account), then `encrypt` / `decrypt` to lambdas and other applications
 
 ### AWS IOT
 
