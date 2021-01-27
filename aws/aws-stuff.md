@@ -2731,7 +2731,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 * can be **private or public**
 
-- you can **whitelist aws accounts when the AMI is private**
+- you can **whitelist aws accounts when the AMI is private**. This allows you to share the AMI between accounts without making the AMI public.
 
 * ami **does not contain instance type information**. Remember that the AMI also contains the AMI permissions.
 

@@ -277,6 +277,14 @@ Notable alarms are:
 
 * if you really need it, you can stream logs to a 3rd party service like logz.io
 
+### Flushing logs when an error occurred
+
+- sampling is nice, but what happens if an error occurs and the log trace was lost due to sampling?
+
+* use a **wrapper to flush all logs which are in-memory when an error occurred in your lambda function**
+
+- [this article demonstrates the idea](https://dev.to/tlaue/keep-your-cloudwatch-bill-under-control-when-running-aws-lambda-at-scale-3o40?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%23126)
+
 ## Distributed tracing
 
 ### `X-Ray`
