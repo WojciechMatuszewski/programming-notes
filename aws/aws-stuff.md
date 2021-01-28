@@ -4960,6 +4960,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * think of **alarms for deployment, triggers and such**
 
+- you are able to **edit the deployment group without any issues**. So going from blue-green to in-place is possible.
+
 ##### Application specification files
 
 - used to **managing each deployment** along with **lifecycle event hooks**
@@ -5562,7 +5564,7 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 
 - **applications can be divided into groups**. Groups can contain multiple servers.
 
-* this service is **free of charge**. Remember that the snapshots, and the underlying created resources will probably cost you some \$\$.
+* this service is **free of charge**. Remember that the snapshots, and the underlying created resources will probably cost you some $$.
 
 #### Database Migration Service
 

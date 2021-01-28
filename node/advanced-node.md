@@ -61,3 +61,14 @@ Course material from [node university](https://node.university/).
   This means that `__filename` , `__dirname` and others are **gone**
 
 - as an **alternative to CJS wrapper globals** consider using **`import.meta.XX`**
+
+## The `v8` API
+
+One neat trick I discovered with the v8 API is the fact that you can deeply clone an object without using the `JSON.stringify` stuff
+
+```ts
+function cloneDeep(values: Record<string, unknown>): Record<string, unknown> {
+  return v8.deserialize(v8.serialize(values));
+```
+
+Look at this! So nice. Also much more readable. I bet that with the `JSON.stringify` you will get a question about what is going on.
