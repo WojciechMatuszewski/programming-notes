@@ -6,8 +6,8 @@ React, by default batches your state updates. That is quite good, you probably h
 
 ```js
 function handleSomething() {
-    setValue(1);
-    setOtherValue(2);
+  setValue(1);
+  setOtherValue(2);
 }
 ```
 
@@ -50,18 +50,18 @@ So what you can do here is to **preload your chunk on user interaction**. Like _
 
 ```jsx
 function loadGlobe() {
-    return import("../globe");
+  return import("../globe");
 }
 const Globe = React.lazy(loadGlobe);
 
 function Component() {
-    return (
-        <div onFocus={loadGlobe} onMouseOver={loadGlobe}>
-            <React.Suspense fallback={<p>loading..</p>}>
-                {showGlobe && <Globe />}
-            </React.Suspense>
-        </div>
-    );
+  return (
+    <div onFocus={loadGlobe} onMouseOver={loadGlobe}>
+      <React.Suspense fallback={<p>loading..</p>}>
+        {showGlobe && <Globe />}
+      </React.Suspense>
+    </div>
+  );
 }
 ```
 
@@ -80,11 +80,11 @@ First would be to wrap the component in question in `React.Suspense` and toggle 
 
 ```jsx
 {
-    showGlobe && (
-        <React.Suspense fallback={<div>loading...</div>}>
-            <Globe />
-        </React.Suspense>
-    );
+  showGlobe && (
+    <React.Suspense fallback={<div>loading...</div>}>
+      <Globe />
+    </React.Suspense>
+  );
 }
 ```
 
@@ -94,9 +94,9 @@ So to prevent this, **do not toggle the `React.Suspense`, toggle the children**.
 
 ```jsx
 {
-    <React.Suspense fallback={<div>loading...</div>}>
-        {showGlobe && <Globe />};
-    </React.Suspense>;
+  <React.Suspense fallback={<div>loading...</div>}>
+    {showGlobe && <Globe />};
+  </React.Suspense>;
 }
 ```
 
@@ -127,7 +127,7 @@ You might be tempted to escape early (I know i'm) inside the `React.memo` compar
 
 ```js
 React.memo(Comp, (prev, current) => {
-    return prev.PROP == current.PROP;
+  return prev.PROP == current.PROP;
 });
 ```
 
@@ -143,12 +143,10 @@ So you want to create context for (hopefully) some part of your application. You
 const Context = React.createContext();
 
 function Provider({ children }) {
-    const [state, setState] = React.useState();
-    return (
-        <Context.Provider value={{ state, setState }}>
-            {children}
-        </Context.Provider>
-    );
+  const [state, setState] = React.useState();
+  return (
+    <Context.Provider value={{ state, setState }}>{children}</Context.Provider>
+  );
 }
 ```
 
@@ -160,10 +158,9 @@ What you can do here is to memoize the `value` that you pass onto the _provider_
 const Context = React.createContext();
 
 function Provider({ children }) {
-    const [state, setState] = React.useState();
-    const memoizedValue = React.useMemo(() => ({ state, setState }), [state]);
-    return <Context.Provider value={memoizedValue}>{children}
-    </Context.Provider>;
+  const [state, setState] = React.useState();
+  const memoizedValue = React.useMemo(() => ({ state, setState }), [state]);
+  return <Context.Provider value={memoizedValue}>{children}</Context.Provider>;
 }
 ```
 
@@ -206,6 +203,69 @@ This is more of a tip rather than technique. I think you will come to this reali
 > Place code as close to where it's relevant as possible
 
 That's all, basically avoid global state, and if you can, put the state as close (preferably in) the component that is consuming / changing that state. This will make it so that when that state changes, only that component re-renders, nothing more, nothing less.
+
+## Passing expensive component as a prop
+
+So you probably know, that React, will "re-render" (be aware of render phases!) any child component (unless it's memoized) upon state / props update in the parent component.
+
+A simple example
+
+```jsx
+function Child() {
+  console.log("child function invoked");
+  return null;
+}
+
+export default function App() {
+  const [, forceUpdate] = React.useReducer((s) => !s, false);
+
+  return (
+    <div>
+      <button onClick={forceUpdate}>click me</button>
+      <Child />
+    </div>
+  );
+}
+```
+
+Every time you click the button, you will see the `child function invoked` log message in your console.
+
+The **reason why** it's happening, is because **React will re-create the _prop object_ of the `Child` component every time the parent changes**.
+By the _prop object_ I mean the object that is created when JSX is parsed to the object representation.
+
+So let's say the `Child` is expensive to render in some way, or you want to reuse it in multiple places.
+Since we do not have `slots` per se (like in angular) you might want to pass it as a prop.
+
+Like this
+
+```jsx
+function Child() {
+  console.log("child function invoked");
+  return null;
+}
+
+function Parent({ child }) {
+  const [, forceUpdate] = React.useReducer((s) => !s, false);
+
+  return (
+    <div>
+      <button onClick={forceUpdate}>click me</button>
+      {child}
+    </div>
+  );
+}
+
+export default function App() {
+  return <Parent child={<Child />} />;
+}
+```
+
+So what will happen now? **You will only see 1 log in you console, no matter how many times you press the button**.
+This is because the `Child` component **props did not change because the `Child` is rendered in the `App`**. The App component in itself will not "change" at all.
+
+So this is a neat optimization technique you might use.
+
+Also do not be afraid of putting components as props. It's completely natural thing to do, especially if you know how JSX works under the hood.
 
 ## Profiling with `React.Profiler`
 
@@ -250,13 +310,13 @@ This is very important to remember especially when you are using `React.Context`
 
 ```jsx
 function App() {
-    const forceRerender = React.useReducer((x) => x + 1, 0)[1];
-    return (
-        <CounterProvider>
-            <Parent />
-            <button onClick={forceRerender}>Force</button>
-        </CounterProvider>
-    );
+  const forceRerender = React.useReducer((x) => x + 1, 0)[1];
+  return (
+    <CounterProvider>
+      <Parent />
+      <button onClick={forceRerender}>Force</button>
+    </CounterProvider>
+  );
 }
 ```
 
