@@ -1550,7 +1550,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Cross region failover
 
-- do not mistake this with Multi-AZ failover
+- do not mistake this with Multi-AZ failover, which promotes the read replica automatically
 
 * use CloudWatch alarm which will trigger lambda which updates R53, multi-region read replica will be promoted.
 
@@ -4914,6 +4914,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * most of the phases has the `finally` block available to them. You will most likely use that block for cleanup
 
+##### Quotas
+
+- the **maximum timeout** you can specify is **8 hrs**. That means that you can run relatively long running jobs on CodeBuild
+
 #### CodeDeploy
 
 - Deploy packages to given services (like ElasticBeanstalk)
@@ -5005,6 +5009,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you can create cross region actions for **three action types: source, third-party and custom**
 
 * CodePipeline **copies artifacts from the build region to a given region automatically**
+
+- **CodePipeline cannot invoke other CodePipeline directly**. You should look into creating a `source` action (s3) when it comes to cross region deployments.
+  If you really need to invoke other CodePipeline, look into custom actions with lambdas
 
 ##### EventBridge / CloudWatch events integration
 
@@ -5709,6 +5716,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 - the service name is `Health` within `CloudWatch events`.
 
 * this is also a great way of **knowing if your secret key was compromised (pushed to repo)**. This is because the `AWS Health` service tracks github repos.
+
+- you can also track **scheduled change events** like **RDS maintenance** using **CloudWatch events**
 
 ### AWS WorkLink
 
