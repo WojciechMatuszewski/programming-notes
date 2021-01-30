@@ -723,7 +723,7 @@ An example for s3-prefix (folder)
 
 * there is a const **per rule evaluation**.
 
-- with **custom rules** you have to have custom lambda written. This is the thing that will be reacting to config changes **and marking them as compliant or not**.
+- with **custom rules** you have to have **custom lambda** written. This is the thing that will be reacting to config changes **and marking them as compliant or not**.
 
 * the rule sends a **CloudWatch event**. You can intercept that event using **CloudWatch rules** and do smth with it.
 
@@ -913,6 +913,12 @@ An example for s3-prefix (folder)
 * whenever parameters change, you can call `UpdateStack` API and update your stack with new parameters
 
 - might be useful for **EC2 size / AMI configuration**.
+
+#### Configuration Compliance
+
+- scans the fleet of instances for patch compliance and configuration inconsistencies
+
+* it will **pull data** from **Patch Manager** and **State Manager**
 
 ### AppConfig
 
@@ -2277,7 +2283,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Access Logs
 
-- if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3 (sse-s3 by default)**. These allow you to get information about **individual requests** like IP address of the client, latencies etc.
+- if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3 (sse-s3 by default)**. These allow you to get information about **individual requests** like IP address of the client, **latencies** etc.
 
 * **access logs are not the same as error logs**.
 
@@ -5006,9 +5012,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 ##### Cross region actions
 
-- you can create cross region actions for **three action types: source, third-party and custom**
+- you **CAN NOT** create **cross region source, third-party and custom actions**
 
-* CodePipeline **copies artifacts from the build region to a given region automatically**
+* CodePipeline **copies artifacts from the build region to a given region automatically**. You **have to have the buckets defined beforehand**
 
 - **CodePipeline cannot invoke other CodePipeline directly**. You should look into creating a `source` action (s3) when it comes to cross region deployments.
   If you really need to invoke other CodePipeline, look into custom actions with lambdas
