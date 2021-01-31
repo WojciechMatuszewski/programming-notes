@@ -894,10 +894,9 @@ An example for s3-prefix (folder)
 
 - **RDS** secrets **can be rotated automatically** by the service itself
 
-* you can **manually rotate the secret** using a **lambda function**
+* you can **manually rotate the secret** using a **lambda function**. Be careful though, **always have at least 2 sets of users or credentials you are manually rotating through**. This is because **replacing the credentials for 1 entity might cause disruptions**. There is a **lag between the change you made in your lambda and the SecretsManager propagating this change**
 
-- when you **first** configure the **secrets rotation**, the **secret is rotated**. This means that the value of that secret is different than the initial value that you set that secret to.
-  This might cause confusion where you forget to update your application to actually use the `Secrets Manager` and you cannot connect to eg. a database.
+- when you **first** configure the **secrets rotation**, the **secret is rotated**. This means that the value of that secret is different than the initial value that you set that secret to. This might cause confusion where you forget to **update your application to actually use the `Secrets Manager` and you cannot connect to eg. a database.**
 
 #### Billing
 
@@ -3703,6 +3702,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 * this is usually the Kinesis variant everyone is talking about when then are talking about _Kinesis_
 
+###### Under the hood
+
+- at a **high level** a **Dynamo table is used to track your streams state**. This is true both for Lambda integration and the KCL.
+
+* there is a **concept of lease**. A Lease is a **collection of metadata** maintained in a given row of that table.
+
+- each **row corresponds to a shard** in your Kinesis stream.
+
 ###### Autoscalling
 
 - while there is **no native autoscalling functionality** you can deploy your own solution
@@ -4820,6 +4827,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **integrated with IAM**.
 
+* feels a bit abandoned
+
 ### Elasticsearch Service
 
 - it's **AWS implementation** of **ELK Stack**
@@ -4923,6 +4932,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 ##### Quotas
 
 - the **maximum timeout** you can specify is **8 hrs**. That means that you can run relatively long running jobs on CodeBuild
+
+##### Output artifacts
+
+- you can **change the name of the output artifacts in the artifacts section of the buildspec.yaml**
+
+* you can **specify the `Namespace`**. This `Namespace` **will add buildId to the path of the partifact** (not filename)
 
 #### CodeDeploy
 
@@ -5044,6 +5059,14 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - _CodeStar_ **ties all the Code services together**. This includes the pipelines and other stuff.
 
 * you configure it through the `template.yaml` file, which is basically the `SAM` file.
+
+- each **project has three roles**. These roles being: **owner, contributor and viewer**
+
+#### User profiles
+
+- CodeStar user profile is **associated with your IAM user**
+
+* you can **upload SSH public key** to be **associated with your profile**. Doing so will allow you to **connect to EC2 instances associated with CodeStar projects**
 
 ### Cognito
 
@@ -5348,6 +5371,8 @@ Stack sets allows you to create _stacks_ (basically resources) across different 
 - you can create **alarms based on the _color_ of the resources**. In the console you can see checks that are _red_ or _yellow_
 
 * Trusted Advisor **will automatically refresh checks every 24hrs**. If you need more up to date checks, you have to refresh them yourself
+
+- the **alerts are powered by the CloudWatch metrics which Trusted Advisor exposes**
 
 ##### Getting fresh updates
 
@@ -6054,17 +6079,11 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 - S3 encryption. Glacer encrypts by default
 
-- Network intrusion - Guard Duty (CloudTrial, VPC Flow Logs, DNS Query Logs)
-
 - CloudWatch consuming CloudTrail logs
 
 - AutoScaling lifecycle hooks and policies
 
 - standby states for ec2 instances within asg
-
-- ValidateService script after CodeBuild deployment finishes
-
-- Envioriment Variables in CodeBuild (and hooks)
 
 - automation vs run script
 
