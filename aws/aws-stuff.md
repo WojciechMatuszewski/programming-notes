@@ -3415,6 +3415,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - **by default** CloudWatch keeps the logs forever. **But after 15 months you cannot access them through console**.
   This means that if you **want to access your logs after **that period of time, you have to **use an API to retrieve the datapoints**
 
+###### Cross account log data sharing
+
+- you can **send logs to a destination in another account**
+
+* that **destination can only be Kinesis data stream**
+
+- very useful for **creating cross account logs harvesting**
+
 ##### Unified log agent
 
 - this is the **new tool for pushing LOGS AND METRICS to `CloudWatch logs`**.
@@ -4709,6 +4717,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * uses **declarative language for configuration**. You basically tell it what you want to happen, the service will figure the rest out
 
+##### Lifecycle hooks
+
+- there are **five lifecycle hooks** that you can listen. Mainly: **setup, configure, deploy, undeploy, shutdown**
+
+* the **configure event** is usefuly for **regenerating / changing configuration files**. The **event fires when an instance is created or destroyed**
+
 #### AWS OpsWorks for Chef Automate
 
 - _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy stuff
@@ -4995,13 +5009,19 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - these allow you to specify **lambdas which will be invoked to check the deployment**
 
-* there are **multiple lifecycle events, not they differ based on the service**
+* there are **multiple lifecycle events, they differ based on the service**
 
 ##### Canary deployment
 
 - you can create a _canary deployment_
 
 * the **_canary deployment_ option is only available for Lambdas and ECS**
+
+##### Health of the instances
+
+- there is **NO SUPPORT FOR ELB Health Checks**
+
+* your mechanism for **checking if the instance is healthy is the `ValidateService` hook**
 
 #### CodePipeline
 
