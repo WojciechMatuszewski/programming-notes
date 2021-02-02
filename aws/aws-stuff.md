@@ -1565,6 +1565,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * you can **stream** data **to Kinesis** if you are using **PostgreSQL**
 
+#### Notifications
+
+- you can have the RDS service sent you various notifications through SNS
+
+* these notifications are really specific, can be about failures or new resources being created
+
 ### Aurora
 
 - **SQL and PostgreSQ** compatible
@@ -2264,7 +2270,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **exposes DNS name**, but you **can assign static IP to it (EIP)**.
 
-- **cannot** have **SecurityGroup attached to it**. Again, this is because it's software based and you are assigning SGs to underlying network interfaces.
+- **cannot** have **SecurityGroup attached to it**. Again, this is **because it's software based** and you are **assigning SGs to underlying network interfaces**.
 
 * has **cross-zone load balancing disabled by default**.
 
@@ -5021,7 +5027,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - there is **NO SUPPORT FOR ELB Health Checks**
 
-* your mechanism for **checking if the instance is healthy is the `ValidateService` hook**
+* your mechanism for **checking if the instance is healthy is the `ValidateService` hook**.
+  \*\*This hook is only available for EC2
 
 #### CodePipeline
 
@@ -5225,7 +5232,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### CloudFormation Stack Set
 
-Stack sets allows you to create _stacks_ (basically resources) across different accounts and regions using the same _CloudFormation template_
+- allows you to **easly deploy stacks to multiple places at once**
+
+* you can **deploy stacks across accounts or OUs**
+
+- you can **specify in which accounts / OUs to deploy resources into**
 
 #### CloudFormation Change Set
 
