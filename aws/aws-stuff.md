@@ -3327,6 +3327,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * you can create a special `cron.yml` file which **sends POST requests to `localhost` on a period**.
 
+##### Configuration files
+
+- you should use `Dockerrun.aws.json` for all things related to docker
+
+* you should use `ebextensions` for any other configuration
+
 ### Monitoring Services
 
 #### CloudWatch
@@ -4914,6 +4920,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * the IAM policy will most likely use **Condition with `codecommit:References`**
 
+##### Encryption
+
+- the data that you store in the repo is **automatically encrypted at rest and in transit**
+
+* service is using **it's own CMK for crypto**. That **CMK is regional, it is shared between existing repos**
+
 #### CodeBuild
 
 - Build packages for deployment
@@ -5044,6 +5056,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you can setup automatic rollback options for your deployment group
 
 * the automatic rollback **can be triggered** when **deployment fails** or the **alarm thresholds are met**. Of course, you have to associate alarms with deployment group.
+
+##### CodeDeploy triggers
+
+- you can setup **triggers to fire to SNS topic**
+
+* these can **notify you about _Deployment events_ and _instance events_**
 
 #### CodePipeline
 
