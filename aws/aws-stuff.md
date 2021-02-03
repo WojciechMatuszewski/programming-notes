@@ -177,6 +177,14 @@
 
 * this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of space
 
+##### Storage copy issue
+
+- the bigger the image, the longer the _optimization_ phase
+
+* the things that you put into your container are split into 100 MB chunks, this is an side-effect of how Lambda service optimizes your container
+
+- when you are loading large datasets, it takes time, those chunks have to be downloaded. Lambda might timeout before the dataset is loaded
+
 ##### Lambda layers and extensions with container deployments
 
 - lambda layers are not directly supported with the container deployments
@@ -2299,6 +2307,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - **logs send to CloudWatch in 60sec interval IF there are reqests flowing through the load balancer**
 
 * this is not the same as `access logs`. **Access logs contains details about a single request**, the CloudWatch metrics give you **broader view on the ALB as a whole**.
+
+- the **`access logs` contain information about the latency**, but **if latency is your only concern** you be **much better of using CloudWatch native metrics for that**
 
 #### Health Checks
 
@@ -5027,8 +5037,13 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - there is **NO SUPPORT FOR ELB Health Checks**
 
-* your mechanism for **checking if the instance is healthy is the `ValidateService` hook**.
-  \*\*This hook is only available for EC2
+* your mechanism for **checking if the instance is healthy is the `ValidateService` hook**. **This hook is only available for EC2**
+
+##### Automatic rollbacks
+
+- you can setup automatic rollback options for your deployment group
+
+* the automatic rollback **can be triggered** when **deployment fails** or the **alarm thresholds are met**. Of course, you have to associate alarms with deployment group.
 
 #### CodePipeline
 
