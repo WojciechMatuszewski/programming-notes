@@ -17,19 +17,68 @@ import { setupServer } from "msw/node";
 const server = setupServer(rest.post("url", HANDLER));
 
 test("it works", () => {
-    // test stuff based on the HANDLER implementation
+  // test stuff based on the HANDLER implementation
 });
 
 test("edge case", () => {
-    server.use("url", SOME_EDGE_CASE_HANDLER);
-    // test
+  server.use("url", SOME_EDGE_CASE_HANDLER);
+  // test
 
-    // reset to globally defined handlers. You can also use `beforeEach` for this.
-    server.resetHandlers();
+  // reset to globally defined handlers. You can also use `beforeEach` for this.
+  server.resetHandlers();
 });
 ```
 
 The API is straightforward, it can work with `REST` and `GraphQL`, pretty nice!
+
+### Asserting the HTTP request properties
+
+There are 2 ways to do it, while I favour one of them, I think it's worth showing you both
+
+#### Asserting within a handlers body
+
+This method, in my opinion, is brittle, and I would not recommend using it. But you might find it useful for some situations.
+
+```jsx
+test("it works", () => {
+  server.use("url", (req, res, ctx) => {
+    expect(req.headers.get("authorization")).toEqual("TOKEN");
+    return res(ctx.json({ foo: "bar" }));
+  });
+
+  // making the http call
+
+  // making sure the assertion in the msw handler was made
+  expect.assertions(N);
+});
+```
+
+The main problem with this approach stems from the nature of how the `toEqual` (or any other predicate function) works.
+If there is a mismatch, the `toEqual` will throw an exception. Usually that exception is caught by _jest_ and is presented to you in a nicely formatted manner.
+Here, instead of _jest_ catching that exception, the _msw_ will do that for you. When that happens, the test will not fail, it will be the network call failing, most likely with 500 status code.
+This makes it hard to exactly pin-point what's wrong with your test.
+
+#### Saving the data to make the assertion later on
+
+This, in my opinion, is much a better way of asserting on things from the handler function.
+It will require you to introduce a mutable variable. This variable will be used to save the data from the handler.
+
+```jsx
+test("it works", () => {
+  let request;
+  server.use("url", (req, res, ctx) => {
+    request = req;
+    return res(ctx.json({ foo: "bar" }));
+  });
+
+  // making the http call
+
+  expect(request.headers.get("authorization")).toEqual("TOKEN");
+});
+```
+
+Now, whenever the assertion is not passing, the _jest_ will catch the exception and you will be greater with a friendly error message.
+While I'm not a fan of introducing that mutable variable, I think it's the best solution to the problem we are trying to solve here.
 
 ## Dreaded `act` function
 
@@ -39,16 +88,16 @@ You actually might not be, if you are using `@testing-library/react`, all the `f
 
 But let's say you are faced with the `act` warning - you know which one I'm talking about 😉
 
-So, _React_ is not performing operations synchronously. There is a _scheduler_ package involved. And this is completely fine. Since a lot of worked can be packed in one frame, you do not really notice the UI being updated incrementally.
+So, _React_ is not performing operations synchronously. There is a _scheduler_ package involved. And this is completely fine. Since a lot of work can be packed in one frame, you do not really notice the UI being updated incrementally.
 But guess what, your tests do!
 
 ```js
 function App() {
-    let [ctr, setCtr] = useState(0);
-    useEffect(() => {
-        setCtr(1);
-    }, []);
-    return ctr;
+  let [ctr, setCtr] = useState(0);
+  useEffect(() => {
+    setCtr(1);
+  }, []);
+  return ctr;
 }
 ```
 
@@ -56,9 +105,9 @@ This simple component will have probably two or more _units of work_. When you w
 
 ```js
 it("should render 1", () => {
-    const el = document.createElement("div");
-    ReactDOM.render(<App />, el);
-    expect(el.innerHTML).toBe("1"); // this fails!
+  const el = document.createElement("div");
+  ReactDOM.render(<App />, el);
+  expect(el.innerHTML).toBe("1"); // this fails!
 });
 ```
 
@@ -78,10 +127,10 @@ A sample of the `@jackfranklin/test-data-bot` API
 import { build, fake } from "@jackfranklin/test-data-bot";
 
 const fakeCoords = build({
-    fields: {
-        latitude: fake((f) => f.address.latitude()),
-        longitude: fake((f) => f.address.longitude()),
-    },
+  fields: {
+    latitude: fake((f) => f.address.latitude()),
+    longitude: fake((f) => f.address.longitude()),
+  },
 });
 ```
 
@@ -95,13 +144,13 @@ So, the file would look something like this:
 import { render as rtlRender } from "@testing-library/react";
 
 function render(ui, ...options) {
-    const Wrapper = ({ children }) => (
-        <MyProvider>
-            <MySecondProvider>{children}</MySecondProvider>
-        </MyProvider>
-    );
+  const Wrapper = ({ children }) => (
+    <MyProvider>
+      <MySecondProvider>{children}</MySecondProvider>
+    </MyProvider>
+  );
 
-    return rtlRender(ui, { wrapper: Wrapper, ...options });
+  return rtlRender(ui, { wrapper: Wrapper, ...options });
 }
 
 export * from "@testing-library/react";
@@ -119,15 +168,15 @@ const AppContext = React.createContext();
 AppContext.displayName = "AppContext";
 
 function AppProvider({ children, ...props }) {
-    const [state, setState] = React.useState();
+  const [state, setState] = React.useState();
 
-    const value = React.useMemo(() => ({ state, setState }), [state]);
+  const value = React.useMemo(() => ({ state, setState }), [state]);
 
-    return (
-        <AppContext.Provider value={value} {...props}>
-            {children}
-        </AppContext.Provider>
-    );
+  return (
+    <AppContext.Provider value={value} {...props}>
+      {children}
+    </AppContext.Provider>
+  );
 }
 ```
 
