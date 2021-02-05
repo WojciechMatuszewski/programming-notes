@@ -5110,6 +5110,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can create your own CMK and manage it yourself
 
+##### Lambda integration
+
+- you can invoke lambdas directly from CodePipeline
+
+* you can pass some data from the CodePipeline to the lambda payload through the _user parameters_
+
 ##### Creating ECR Image
 
 - you should use **helper scripts** to **aquire ECR credentials**. You should not be using environment variables
