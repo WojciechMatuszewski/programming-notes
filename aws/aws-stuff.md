@@ -1629,6 +1629,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * you can also target an individual instance using special instance ID endpoint.
 
+- this is **not HTTP-call based endpoint (same goes for writer endpoint), you still have to manage connections!**
+
 #### Multi-Master
 
 - you can have multiple **master instances**. That means that you have multiple instances which can **read and write**.
