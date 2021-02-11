@@ -1755,7 +1755,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * you can still **utilize normal endpoint just like using regular Aurora**. This might be useful when providing backwards compatibility.
 
-* operates within a VPCs
+* **operates within a VPCs**
 
 - instead of initializing a connection you connect to a **DATA API (shared proxy)**. This is quite **similar to RDS Proxy**.
 
