@@ -92,6 +92,85 @@ namespace NodeJS {
 
 That is all.
 
+### My augmentations does not work when I import something to the declaration file
+
+> By default when you start typing code in a new TypeScript file your code is in a global namespace
+
+This means that you can influence types (make augmentations) which apply globally.
+
+If you add an `import` statement to your declaration file though
+
+```ts
+import type fs from "fs";
+namespace NodeJS {
+  interface ProcessEnv {
+    MY_GLOBAL_ENV_VARIABLE: string;
+  }
+
+  interface global {
+    myGlobalFS: fs;
+  }
+}
+```
+
+It will not work, as in syntax like this
+
+```ts
+const test = global.myGlobalFS; // `myGlobalFS` is not defined on the global
+const globalVariable: string = process.env.MY_GLOBAL_ENV_VARIABLE; // `MY_GLOBAL_ENV_VARIABLE` is a string | undefined, not string
+```
+
+This is because **the act of adding an import, made the typings in the file module scoped**
+
+### Global scope and importing types
+
+What if you want to import types from some module and augment global namespace at the same time?
+
+Not everything is lost, there are 2 ways of doing so.
+
+1. Scope the import to the `namespace` / `module` declaration
+   Instead of using a _top-level_ import, use the import inside the declaration itself
+
+   ```ts
+   declare namespace NodeJS {
+     // You can also use `import type` syntax here
+     import fs from "fs";
+     interface Global {
+       globalReadStream: fs.ReadStream;
+     }
+   }
+
+   // in another file
+   global.globalReadStream; // ReadStream
+   ```
+
+2. Use the dynamic `import` syntax, also scoped to the `namespace` / `module` declaration
+
+   ```ts
+   declare namespace NodeJS {
+     interface Global {
+       globalReadStream: import("fs").ReadStream;
+     }
+   }
+
+   // in another file
+   global.globalReadStream; // ReadStream
+   ```
+
+### Do I have to write `declare XXX`
+
+You might have noticed that I'm using the `declare module` or `declare namespace` syntax while working with declaration files.
+
+Usually, you would use the `declare module` or `declare namespace` syntax to tell TypeScript compiler that a given variable / class etc.. is declared somewhere else, probably in a `.js` file.
+
+Since Node.js has it's own typings defined already, you can skip the `declare` keyword and rely on _declaration merging_ while augmenting Node.js globals, but it may not be the case for a 3rd party library that does not have TypeScript typings.
+
+```ts
+declare module "3rd-party-lib" {}
+```
+
+As a rule of thumb I'm always sticking to `declare module` syntax, just to make things consistent
+
 ### Typescript ignores my `d.ts` file
 
 First of all check if that file matches the `include` pattern that you specified within your `tsconfig`.
@@ -122,7 +201,7 @@ But, there are some use cases for them, mainly when you want to make sure that g
 So let's say you want to augment the `process.env` typings. This is done by creating a _declaration file_ and _extending the ProcessEnv interface_
 
 ```ts
-declare module NodeJS {
+declare namespace NodeJS {
   interface ProcessEnv {
     MY_VALUE: string;
   }
