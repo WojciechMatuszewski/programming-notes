@@ -55,10 +55,22 @@ The behavior is a little bit different when it comes to `async` handlers. There 
 
 ## EMF Connecting to the X-Ray daemon, wtf?
 
-This will happen to you whenever you run the logger locally and not set the envioriment override.
-The EMF logger will _probe_ given envioriments starting from the _Lambda_ one. If some envioriment variables cannot be found, the next one is _probed_.
+This will happen to you whenever you run the logger locally and not set the environment override.
+The EMF logger will _probe_ given environments starting from the _Lambda_ one. If some environment variables cannot be found, the next one is _probed_.
 
-It just so happens that the **default envioriment is using CloudWatch Agent**. Since you did not override anything, the default envioriment was selected.
+It just so happens that the **default environment is using CloudWatch Agent**. Since you did not override anything, the default environment was selected.
 
 This results in you having weird _cannot connect to..._ logs in the console.
-To let the logger know that it is running in the local envioriment, specify `process.env.AWS_EMF_ENVIRONMENT = "Local";`
+To let the logger know that it is running in the local environment, specify `process.env.AWS_EMF_ENVIRONMENT = "Local";`
+
+## Idempotency tokens (ClientRequest Tokens)
+
+While using the AWS SDK you might have noticed that there is this parameter called _ClientRequest Token_. This parameter is responsible for making your calls idempotent.
+If you are using the AWS CLI, the CLI is providing that tokens for you automatically.
+
+How this token should be created? You will probably need to combine input parameters into 1 value and compute a token based on that.
+Remember, if you provide the same token, the operation will basically be a noop one. The same (with some exceptions regarding WCU/RCU consumption on DDB calls) response will be returned as the original operation (I'm not sure about errors though).
+
+Some services implement a window, e.g. 10 minutes in the case of DDB _TransactWrite_ call, during which if you pass the same token, the operation is guaranteed to be idempotent.
+
+While _ClientRequest Tokens_ are not something that is exclusive to the Node.js SDK.
