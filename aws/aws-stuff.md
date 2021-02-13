@@ -67,11 +67,13 @@
 
 #### Provisioned Concurrency
 
-- you have to have a **function version** or an **alias that DOES NOT point to \$latest** to turn it on.
+- you have to have a **function version** or an **alias that DOES NOT point to $latest** to turn it on.
 
-* it will basically **keep concurrently X clones of your function ready** thus making cold starts obsolete.
+* it will basically **keep concurrently X clones of execution environments ready** thus making cold starts obsolete (unless you make more requests than you have provisioned for).
 
 - can be **autoscalled by using Application AutoScaling**. Do not mistake this with auto scaling groups.
+
+* Do not confuse this with **reserved capacity**. Here we are **provisioning workers**, in the other case we are **reserving the amount of time a lambda can be invoked**
 
 #### Inside VPC
 
