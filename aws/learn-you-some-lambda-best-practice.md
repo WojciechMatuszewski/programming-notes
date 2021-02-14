@@ -1,6 +1,6 @@
 # Lambda
 
-There is a difference between `exports =` and `module.exports =`. **Always preffer `module.exports` because it's the `module.exports` that gets returned**.
+There is a difference between `exports =` and `module.exports =`. **Always prefer `module.exports` because it's the `module.exports` that gets returned**.
 With `exports` you are mutating an `module.exports` and if there is an `exports` and `module.exports` within the same file, it's the `module.exports` that will be honoured.
 
 ## Invocation modes
@@ -11,7 +11,7 @@ With `exports` you are mutating an `module.exports` and if there is an `exports`
 
 - the _event_ model passes the payload to the internal SQS queue which is then consumed by _Lambda poller fleet_ and then passed to the execution environment
 
-### Execution envioriment
+### Execution environment
 
 - this is a worker running on EC2
 
@@ -90,10 +90,13 @@ With `exports` you are mutating an `module.exports` and if there is an `exports`
 - layers are versioned automatically, you can reference up to 5 layers.
 
 * when working with `node.js` you will have to set `NODE_PATH` environment variable:
+
   ```yml
   NODE_PATH: "./:/opt/node_modules"
   ```
+
   this is so that you can use both the root `node_modules` and the ones defined within your layers. A good explanation of `NODE_PATH`:
+
   > NODE_PATH is like the windows path environment variable. Whenever node can't find a file, it looks through the paths in the paths stored in the NODE_PATH variable.
 
 ## Provisioned Concurrency
@@ -202,7 +205,7 @@ This solution is not without downsites though:
 
 * SQS event source to Lambda: you manage the buffer and DQL
 
-- Stream event source to Lambda: you manage the bufffer, each shard is like a FIFO queue. With Stream data there is a concept of **poison pill**. This is where you cannot, for some reason, process batch of requests and due to this, you cannot make any progress.
+- Stream event source to Lambda: you manage the buffer, each shard is like a FIFO queue. With Stream data there is a concept of **poison pill**. This is where you cannot, for some reason, process batch of requests and due to this, you cannot make any progress.
 
 ## Secret Management
 
@@ -329,7 +332,7 @@ Notable alarms are:
 
   ```
   fields @timestamp, `x-correlation-id`
-  | filter `x-correlaction-id` = 'REQUEST_ID'
+  | filter `x-correlation-id` = 'REQUEST_ID'
   ```
 
 ![correlaction-ids](./assets/correlation-ids.png)
@@ -352,7 +355,7 @@ Notable alarms are:
 
 * use `Step Functions` only for **core business workflows**. They are expensive!. You could also use `Express workflows`.
 
-- CloudWatch charges per dimmension!. **DO NOT USE REQUEST_ID AS DIMMENSION!**.
+- CloudWatch charges per dimension!. **DO NOT USE REQUEST_ID AS DIMENSION!**.
 
 * `NAT Gateway` can be **very expensive**.
 
@@ -382,9 +385,10 @@ Notable alarms are:
 
 ## Security
 
-- **function policy**: think **what other service can invoke my function**
+- **function policy**: think **what other service can invoke my function**. The **function policy** is **also called resource policy**.
+  You would grant permissions to APIGW to invoke your function using this type of policy
 
-* **execution role**: think **what can this lambda do**.
+* **execution role**: think **what can this lambda do**. You would grant permissions for your lambda to eg. talk to DDB here.
 
 ## Networking
 
