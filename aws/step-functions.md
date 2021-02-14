@@ -26,7 +26,7 @@
 
 ## `Callbacks` vs `Activities`
 
-`Callbacks` are event based. With `activities` pooling is used for communication. You should **preffer `callbacks`**.
+`Callbacks` are event based. With `activities` pooling is used for communication. You should **prefer `callbacks`**.
 
 Keep in mind that with the `callback` you have access to the `context` object which contains useful information about the state machine itself (as well as the `task token`).
 
@@ -55,3 +55,27 @@ As you can see there is also `self-recursion` going on. This is to make sure tha
 
 Remember that the `startExecution` API is idempotent. This mean that you can use step functions to make sure you are processing stuff only once.
 You should consider using some kind of `ID` or `MD5` has for the execution ID.
+
+## Service Integrations
+
+- when a fields **ends with `.$`** this means that the **value can use the input or context**.
+
+  ```json
+  {
+    "Parameters": {
+      "ExecutionID.$": "$$.Execution.Id",
+      "SomethingFromInput.$": "$.valueFromInput"
+    }
+  }
+  ```
+
+- if you use `.$` on a field name, **you cannot combine paths with strings, it's all or nothing**
+
+  ```json
+  {
+    // NOT VALID
+    "pk.$": "KEY#$$.Execution.Id"
+  }
+  ```
+
+- you **cannot use `StartSyncExecution` with _regular_ step function**, you have to use the _express_ one for that
