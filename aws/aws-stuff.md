@@ -5538,6 +5538,14 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * usually the pattern here is to give `delete` / `PutPolicy` permissions to the `:root` (every entity in a given account), then `encrypt` / `decrypt` to lambdas and other applications
 
+### Encryption context
+
+- metadata you add while encrypting a piece of data
+
+* you can **create IAM conditions based on that metadata**
+
+- can be used **for tenant isolation purposes**. You can you **session policy with a condition for a given context key (eg. tenantId)**
+
 ### AWS IOT
 
 - **regional** service
