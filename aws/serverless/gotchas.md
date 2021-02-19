@@ -25,3 +25,34 @@ Please watch out whenever you reference the ARN of the logGroup anywhere.
 The **ARN provided by the CloudFormation has `*` at the end**. This **makes this ARN useless for some services**.
 
 I did not find any other way around this rather than computing the ARN manually.
+
+## My CloudWatch rules are not working
+
+Usually there are 2 causes for this
+
+1. Insufficient IAM permissions to invoke the target
+2. CloudTrial is not configured correctly
+3. Rule is not created in a correct region
+
+### Insufficient IAM permissions to invoke the target
+
+To properly configure the target for your _CloudWatch event rule_ you will need to specify a role that will be used when a given _rule_ is triggered.
+If you do that through the console, that role is automatically created for your. Some services, like _CloudWatch logs_ require you to specify _resource based policy_ along with the role.
+
+To debug the issues, I would suggest digging into _CloudTrial_ where you can filter API calls made by _events.amazonaws.com_.
+These will contain info why your event is not triggered - **but only if your filter pattern is correct**.
+
+### _CloudTrial_ is not configured correctly
+
+If your account lives within an _AWS organizations_ context, you might see a _CloudTrial_ already created for your account.
+This is most likely an _Organization CloudTrial_. These are pretty similar to the _Regular CloudTrial_ but in the context of events there is a significant difference.
+
+Mainly, **if you create _CloudWatch Rule_ that is based on events from _CloudTrial_ and the only _CloudTrial_ you see in your account is the _Organization CloudTrial_, your rule will not work**.
+You will see events in the _events history_ but your rule will not be triggered. You have to create _CloudTrial_ for your account to make your rules (that are based on _CloudTrial_) work.
+
+While working with events produced by **services that are global, your _CloudTrial_ has to include global services**.
+
+### Rule is not created in a correct region
+
+If your event is produced by a **service that operates globally**, eg. IAM, your rule **must live in us-east-1 region**.
+This is easy to overlook as we do not usually think in terms of regions.
