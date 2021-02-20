@@ -28,21 +28,21 @@ Simple example
 
 ```js
 function memoize(func) {
-    return function memoized() {
-        // we are doing it old school :D
-        var args = Array.prototype.slice.call(arguments);
-        // cache can be a closed over variable or variable on function itself
-        func.cache = func.cache || {};
+  return function memoized() {
+    // we are doing it old school :D
+    var args = Array.prototype.slice.call(arguments);
+    // cache can be a closed over variable or variable on function itself
+    func.cache = func.cache || {};
 
-        var cachedResult = func.cache[args];
+    var cachedResult = func.cache[args];
 
-        if (cachedResult != null) return cachedResult;
+    if (cachedResult != null) return cachedResult;
 
-        var computationResult = func.apply(this, args);
+    var computationResult = func.apply(this, args);
 
-        func.cache[args] = computationResult;
-        return computationResult;
-    };
+    func.cache[args] = computationResult;
+    return computationResult;
+  };
 }
 ```
 
@@ -94,11 +94,11 @@ event test this theory using _fake promise_.
 
 ```js
 function fakePromise() {
-    return {
-        then: function() {
-            console.log("IM CALLED");
-        },
-    };
+  return {
+    then: function () {
+      console.log("IM CALLED");
+    },
+  };
 }
 
 Promise.resolve(42).then(fakePromise);
@@ -209,7 +209,7 @@ There soon may be deprecated due to `webpack 5` releasing but did you know that 
 
 ```js
 const Tilt = React.lazy(() =>
-    import(/* webpackChunkName: "tilt", webpackPrefetch: true */ "../tilt")
+  import(/* webpackChunkName: "tilt", webpackPrefetch: true */ "../tilt")
 );
 ```
 
@@ -227,27 +227,6 @@ import expensiveWorkerized from "workerize-loader!./expensive";
 ```
 
 **BOOM!**. Thats all. Granted now methods exposed by `expensiveWorkerized` are _async_ but that should not be a problem.
-
-## Modern Event Listeners
-
-You can actually pass either a `boolean` value or an config `object` as a 3rd argument to `addEventListener`.
-
-### `Boolean` value
-
-The boolean value (by default `false`) has to do with `capturing` phase of a event life cycle. Specifying it as `true` will fire the event listener within a capture phase. **Capture phase is the phase there events bubble to target element**.
-This article explains it: https://javascript.info/bubbling-and-capturing
-
-### The config `object`
-
-Now, this is quite useful. You can specify 3 properties:
-
-- capture
-- once
-- passive
-
-`once` means that the **event listener will automatically remove itself after the first time it fires**. This is soo useful, you do not have to keep the reference anymore.
-
-`passive` is for performance gains. Granted these are probably insignificant, but, nevertheless you can specify those. With `passive` you tell the browser that you will not use `event.preventDefault`, in return you get those aforementioned performance optimizations.
 
 ## HTML Stuff
 

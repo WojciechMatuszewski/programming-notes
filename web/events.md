@@ -88,3 +88,18 @@ Now, when I click the element with text "Box 2", in my console I will see
 
 Despite me clicking the element with text "Box 2", only 1 listener was fired and it was not the one registered on that element.
 This is behavior might seem like a bug, but as always, is pretty logical when you are aware how the DOM event system works.
+
+## Configuration of the `addEventListener` API
+
+It turns out the third parameter of the `addEventListener` function is overloaded. It can be either a boolean or an object.
+With the object passed as a third parameter, you can configure
+
+- capture
+- once
+- passive
+
+`capture` is for specifying the phase under which the listener will be registered. Talked about this in the second above.
+
+`once` means that the **event listener will automatically remove itself after the first time it fires**. This is soo useful, you do not have to keep the reference anymore.
+
+`passive` is for performance gains. Granted these are probably insignificant, but, nevertheless you can specify those. With `passive` you tell the browser that you will not use `event.preventDefault`, in return you get those aforementioned performance optimizations.
