@@ -56,3 +56,13 @@ While working with events produced by **services that are global, your _CloudTri
 
 If your event is produced by a **service that operates globally**, eg. IAM, your rule **must live in us-east-1 region**.
 This is easy to overlook as we do not usually think in terms of regions.
+
+## I cannot get a hold of `Task.Token` when using sfn and Lambda integration
+
+I was recently surprised by this so here it goes.
+**To be able to specify the `Task.Token` within your `Parameters` you have to use `.waitForTaskToken` type of integration**.
+
+I have no idea why it is the case. When I tried specifying the whole `Context` with `.sync` (default) execution model,
+only input was there.
+
+Of course, it is written in the docs, so I cannot blame AWS, but either way it is kinda weird for me.
