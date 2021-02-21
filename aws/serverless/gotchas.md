@@ -66,3 +66,41 @@ I have no idea why it is the case. When I tried specifying the whole `Context` w
 only input was there.
 
 Of course, it is written in the docs, so I cannot blame AWS, but either way it is kinda weird for me.
+
+### Adding intermittent state to extract context details
+
+What if you do not want to use `.waitForTaskToken` semantics within your Lambda task and still have the access to the context object?
+In this case you will need to create intermittent `Pass` state which extracts the context object for your.
+
+The definitions for the workflow would look something like this
+
+```json
+{
+  "StartAt": "PreEvent",
+  "States": {
+    "PreEvent": {
+      "Type": "Pass",
+      "Parameters": {
+        "context.$": "$$"
+      },
+      "Next": "Event"
+    },
+    "Event": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${EventLambdaName}",
+        "Payload": {
+          "Input.$": "$.context.Task.Token"
+        }
+      },
+      "End": true
+    }
+  }
+}
+```
+
+Notice that I'm not using `$$` within the `Payload` block of the Lambda task.
+All the context is available to me because I've passed it to the previous `Pass` state as input (using the `Parameters` block)
+
+**Please note that I still do not have access to the `Task.Token` variable. It is only available when a given task is of type `.waitForTaskToken`**
