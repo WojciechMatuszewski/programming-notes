@@ -91,7 +91,7 @@ The definitions for the workflow would look something like this
       "Parameters": {
         "FunctionName": "${EventLambdaName}",
         "Payload": {
-          "Input.$": "$.context.Task.Token"
+          "Input.$": "$.context.Execution.Id"
         }
       },
       "End": true
