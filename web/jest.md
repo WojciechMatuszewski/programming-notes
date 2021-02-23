@@ -69,6 +69,9 @@ jest.mock("module", () => ({
 
 ## Async timers
 
+A very useful video as a refresher before reading this section
+https://www.youtube.com/watch?v=8eHInw9_U8k
+
 So it's 2k20 when writing this and we still are having problems with mocking timers inside async callbacks.
 
 ```js
