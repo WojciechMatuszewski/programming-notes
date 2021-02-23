@@ -77,6 +77,74 @@ const wait = () => new Promise((resolve) => setTimeout(resolve, 3000));
 
 The function above would be easy to test, the whole deal is to make sure you call the `advanceTimersByTime` or `clock.tickAsync` **AFTER** the _promise_ callback has been invoked.
 
+### `useFakeTimers('modern')` hangs my promises
+
+When you are testing asynchronous code which rely on timers, you have probably copied this snipped from StackOverflow
+
+```js
+const flushPromises = () => new Promise((r) => setImmediate(r));
+```
+
+Here I want to point out that there is nothing wrong with this snipped, but it is misleading.
+The callback that you specified within the `new Promise` call is called **synchronously** (the pattern that you see here is called _revealing constructor pattern_). You probably wanted to schedule a microtask which would call `setImmediate` did you?
+
+You probably did not. To properly schedule a callback to be executed in the _microtask queue_ you need to put it inside the `.then` block
+
+```js
+const microTask = (doWork) => Promise.resolve().then(doWork);
+```
+
+**Or even better, use the `queueMicrotask` API available in almost every browser and in Node.js**
+
+Either way, let's talk about `modern` implementation of `fakeTimers` API
+
+#### Why is my hack pending
+
+If you use the `flushPromises` function along with `jest.useFakeTimers('modern')`, your test function will time out.
+
+```js
+// within a test/it block
+jest.useFakeTimers("modern");
+
+await flushPromises(); // this will never complete!
+
+// stuff
+```
+
+This is because **the `modern` implementation of timers seem to mock ALL the timer-related functions**. This **also includes `setImmediate`**.
+So your function will never resolve since you cannot flush the `setImmediate` because you yielded out of the function when you used `await`. What a boomer.
+
+So what do you do?
+
+1. You could switch to `legacy` implementation of timers, but they might not be supported anymore at the time you are reading this
+
+2. Use methods exposed by the `timers` package
+
+The method no. 1 is self explanatory, so let us focus on the no. 2
+
+#### The `timers` package
+
+The `timers` package contains all the timer-related functions that are available to you globally.
+In our context, that package is of significance because **jest does not mock timers exposed by that package, jest ony mocks timers that live on the global object**.
+
+So in our case, we can import the non-mocked version of `setImmediate` which will actually be called (since it's not mocked).
+We can then `runAllTimers` within the callback of the non-mocked `setImmediate`
+
+#### The solution
+
+So bringing all the information you've read so far together. The solution to the issue
+
+```js
+import { setImmediate } from "timers";
+
+// within a test/it block
+setImmediate(() => jest.runAllTimers()); // actually runs, uses the non-mocked version of the `setImmediate` API
+
+// stuff
+```
+
+There you have it. How to stay on the more feature-rich implementation of timers and still be able to test async code that relies on timers.
+
 ### MSW delay timers
 
 But what if you have more complex example, like a webserver with a delay (you have to use the native `http` module because `msw` does not support timer mocks - it uses the `timer` module, LOL!)
