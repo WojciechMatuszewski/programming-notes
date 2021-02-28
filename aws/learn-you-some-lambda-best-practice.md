@@ -191,7 +191,9 @@ This solution is not without downsites though:
 
 ## Lambda Destinations
 
-- works only for **async / stream based invocations**. So SQS, SNS, Kinesis, DynamoDB streams ...
+- works only for **async / stream based invocations**. The **pool based invocations are NOT ASYNC!**.
+  This means that **destinations WILL NOT WORK for function wired up to eg. SQS**. You can find the full list of services that invoke the lambda asynchronously here
+  https://aws.amazon.com/blogs/architecture/understanding-the-different-ways-to-invoke-lambda-functions/
 
 * gives you much more information than DLQ, even provides you the stack trace.
 
