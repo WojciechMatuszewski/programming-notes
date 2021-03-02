@@ -1791,11 +1791,96 @@ type Test1 = CheckForNever<"hi">; // 0 => Ok.
 type Test2 = CheckForNever<never>; // never => Wtf?
 ```
 
-Tbh, I have no idea why it happens. The way the article describes is
+To understand what is happening, we need to talk about three things.
 
-> Once one of the types in your expression is `never` it will **poison** the rest of the expression to evaluate to `never`
+### `never` is a subtype of every type
 
-You can trick the type system into behaving as you first though (returning `1` when `never` is passed in) by checking on _touple types_
+While introducing the `never` type, Anders Hejlsberg wrote that the _never is subtype of every type_.
+Implication of this is that `never extends T` is always true, no matter what `T` is.
+
+### naked vs `clothed` type parameters
+
+Whenever you use conditional types, eg.
+
+```ts
+type ConditionalCheck<T> = T extends string ? true : false;
+
+type Result = ConditionalCheck<number>;
+```
+
+you pass _type parameters_ to the _type function_ (I'm not sure if this is an official name, but I like to think of it that way).
+
+The you pass _naked type parameter_ if that parameter is not wrapped within an other structure (in TS land). An example of a _clothed_ type parameter
+would be passing `[number]` as `T` to the _type function_.
+
+When conditional types are used with the _naked type parameter_, they are called _distributive conditional types_.
+The name sounds scary, but the underlying functionality is rather not that complicated. Let us jump in!
+
+### Distributive conditional types
+
+The notion of _distributive conditional types_ is best explained using an example.
+
+```ts
+type IsNumber<T> = T extends number ? true : false;
+
+type Test1 = IsNumber<number>; // => true
+
+type Test2 = IsNumber<number | string>; // => boolean
+```
+
+So why is the `Test2` boolean? Let us unpack what TypeScript is doing under the hood when `IsNumber<number | string>` is evaluated
+
+```ts
+type IsNumber<T> = T extends number ? true : false;
+
+type Test2 = IsNumber<number | string>;
+// Is the same as
+type Test2 = IsNumber<number> | IsNumber<string>;
+// Is the same as
+type Test2 = true | false;
+// Is the same as
+type Test2 = boolean;
+```
+
+Notice the transformation from `IsNumber<number | string>` to `IsNumber<number> | IsNumber<string>`. **This is called distributing over an union type**.
+If the `number | string` would be _clothed_, ie. wrapped in a type, the union of `IsNumber<number> | IsNumber<string>` would not be evaluated.
+
+So when you see _distributive conditional types_, just think of the underlying type parameter being split into multiple unions (or a single union if the type parameter is a singular type, eg. `number`)
+
+### Distributive conditional types and the `never` type
+
+What about `never` in this context? Going back to our original example
+
+```ts
+type CheckForNever<T> = T extends never ? 1 : 0;
+
+type Test1 = CheckForNever<"hi">; // 0 => Ok.
+type Test2 = CheckForNever<never>; // never => Wtf?
+```
+
+The `Test2` is evaluated to type `never` **due to the fact that when `never` is passed as a type parameter, TypeScript distributes over an empty union**.
+Since the union is _empty_ and there is nothing to distribute over, the result is a `never` type.
+
+This is not the case with other, less _special_ types like `number` or `string` (or others), where if you pass them as a type parameter, TypeScript distributes of a union with one member - that type.
+
+Here is a good mental model to think about the `never` type in terms of an union
+
+```ts
+type never = | // explicitly marked as an empty union. NOT VALID TS SYNTAX!
+
+type boolean = true | false
+type string = string // union with 1 member
+// ...
+```
+
+### The solution to our problem
+
+It should be clear to us that as long as we use the _naked_ `never` type in a conditional type context, the result will always be `never`.
+How can we express our intent without distributing over an empty union? (See _distributive conditional types_ if you are still unsure what that means)
+
+Well, we learned about _clothed_ types right? When a type parameter is a singular _clothed_ type, it will not be a subject to the _distribution_.
+
+With that information, all we have to do is to amend our existing snippet just a tiny bit
 
 ```ts
 type CheckForNever<T> = [T] extends [never] ? 1 : 0;
@@ -1803,3 +1888,14 @@ type CheckForNever<T> = [T] extends [never] ? 1 : 0;
 type Test1 = CheckForNever<"hi">; // 0 => Ok.
 type Test2 = CheckForNever<never>; // 1 => Ok.
 ```
+
+Notice that I opted to wrap the type parameter within the type function itself. I view it as an encapsulation mechanism, but you could also write it like so
+
+```ts
+type CheckForNever<T> = T extends [never] ? 1 : 0;
+
+type Test1 = CheckForNever<"hi">; // 0 => Ok.
+type Test2 = CheckForNever<[never]>; // 1 => Ok.
+```
+
+As long as the type parameter is wrapped at some point, the inner type will not be distributed and the "issue" with an empty union will not occur.

@@ -163,7 +163,7 @@ This is where you bypass compute layer (your lambda) and go directly to a servic
 
 You **should consider** using **service proxies** when you are **concerned about cold start overhead or a burst limit of lambda**.
 
-This solution is not without downsites though:
+This solution is not without downsides though:
 
 - you loose exponential backoff and retries (SDK is doing that for you)
 
