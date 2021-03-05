@@ -74,3 +74,68 @@ Remember, if you provide the same token, the operation will basically be a noop 
 Some services implement a window, e.g. 10 minutes in the case of DDB _TransactWrite_ call, during which if you pass the same token, the operation is guaranteed to be idempotent.
 
 While _ClientRequest Tokens_ are not something that is exclusive to the Node.js SDK.
+
+## SourceMaps - use them
+
+Adding sourcemaps to your lambda functions will help you while debugging. Instead of having to read cryptic stack traces, you will be able to pin-point the file where the issue is much faster.
+
+At the time of writing this, there are 2 ways you could add sourcemaps to lambda functions.
+
+1. Use the `source-map-support/register` with an `inline` or `external` source map
+
+2. Use the `--enable-source-maps` Node.js option
+
+The option no 1. seems to be a better choice since the `--enable-source-maps` is still experimental.
+
+### Adding `source-map-support/register` automatically
+
+The process of adding the import is very human-error prone. To ensure that you have sourcemaps hooked up within every handler you write, you will need to automate the process.
+
+I will be focusing on `aws-cdk` and `esbuild`. IMO there is no point building your infrastructure in any other way (maybe except using a different tool than `aws-cdk`)
+
+#### Unix commands magic
+
+Currently, the `aws-cdk` _NodeJSLambda_ construct does not allow you to write _plugins_ for `esbuild` (but `esbuild` supports plugin API).
+To automatically add the import we need, we have to do some manual work.
+
+```ts
+const outpath = `./dist/functions/${id}-${scope.node.uniqueId}`;
+
+try {
+  require.resolve("source-map-support");
+} catch (e) {
+  throw new Error(
+    "package `source-map-support` is required when using this Construct"
+  );
+}
+
+/**
+ * Add the `source-map-support/register import automatically to the handler
+ */
+
+// Create a copy of the original file (backup). This is so that we can preserve the code within the original `entrypoint` file.
+const entrypointBackup = `${props.entrypoint}.tmp`;
+execSync(`cp -fp '${props.entrypoint}' '${entrypointBackup}'`);
+
+// Add the import statement to the original handler
+execSync(
+  `echo 'import "source-map-support/register"' | cat - '${entrypointBackup}' > '${props.entrypoint}'`
+);
+
+const cmd = `npx esbuild --bundle --target=es2019 --platform=node ....MORE COMMANDS`;
+
+if (props.debug) {
+  console.log(cmd);
+}
+
+try {
+  childProcess.execSync(cmd);
+} finally {
+  // Replace the original handler with the backup (pre-transformation handler). The handler was compiled with the `source-map-support/register` import
+  execSync(`mv -f '${entrypointBackup}' '${props.entrypoint}'`);
+}
+```
+
+Here is a snippet that adds the import automatically, builds the handler with it, then replaces the handler with non-augmented code (without the import).
+
+Notice the `finally` block, it is crucial. We have to ensure that errors from `esbuild` are forwarded (thus no `catch` block is present) as well as we cleanup after ourselves.
