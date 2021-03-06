@@ -46,6 +46,7 @@ With `exports` you are mutating an `module.exports` and if there is an `exports`
 - there are 2 factors that pay a role when it comes to cold starts: **duration** and **frequency**. You should mainly **focus on duration** since **frequency is usually out of your control**.
 
 * look for **init duration** within **cloud watch logs** or an **initialization segment** within **XRay**.
+  If there is an `init duration` field within the `REPORT` section, the invocation was a cold start.
 
 - previous methods were only for a single function on a single invocation resolution. **Use lumigo-cli to see cold starts for all your functions on all your invocations**.
   > lumigo-cli analyze-cold-starts

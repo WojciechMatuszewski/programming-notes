@@ -62,14 +62,14 @@ That means that we have to use _casting_. This is possible due to the fact that 
 ```tsx
 // previous code
 type ButtonWithRef = <E extends React.ElementType = typeof defaultElement>(
-    props: ComponentProps<E>,
+  props: ComponentProps<E>
 ) => JSX.Element;
 
 const Button = React.forwardRef(
-    (props: ButtonBaseProps, ref: React.Ref<unknown>) => {
-        // code
-        // remember to pas `ref` to the <Element/>
-    },
+  (props: ButtonBaseProps, ref: React.Ref<unknown>) => {
+    // code
+    // remember to pas `ref` to the <Element/>
+  }
 ) as ButtonWithRef;
 ```
 
@@ -101,9 +101,23 @@ So whenever you write something like this
 
 ```tsx
 function Component() {
-    const myRef = React.useRef<HTMLDivElement>();
-    return <div ref={myRef} />;
+  const myRef = React.useRef<HTMLDivElement>();
+  return <div ref={myRef} />;
 }
 ```
 
 Consider using `null` as initial value - you will most likely never mutate the `current` property anyway, why would you in this case?
+
+### The union type within the ref type parameter
+
+We've talked about `ref` being immutable, but did you notice that I passed only a singular type as a `useRef` type parameter?
+
+When you specify a union of types
+
+```ts
+const myRef = React.useRef<HTMLDivElement | null>(null);
+```
+
+the _immutable_ semantics will no longer apply. You will be able to freely mutate the ref (given that the value you are setting the ref to adheres to the types)
+
+Overall, I think we should be as precise as possible while writing code, thus IMO, using _non-union_ types where you will not be mutating the `ref` is a good idea.
