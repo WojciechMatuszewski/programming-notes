@@ -67,6 +67,32 @@ jest.mock("module", () => ({
 }));
 ```
 
+## Mocking ES6 classes
+
+First of all, remember that the `class` syntax is just a syntactic sugar. In the end, everything lands on the `.prototype`.
+
+Sometimes, you will need to mock a property of a given class. You will most likely not want to explicitly create that class, if you do, the mock will not work (as you are mocking on a different instance than the code you are testing).
+What you should do in this situation, is to assign mocks for a given method. You can do it by assigning to a `.prototype` directly.
+
+```ts
+SomeClassImport.prototype.someMethod = jest.fn();
+```
+
+A good example would be `@aws-sdk/lib-dynamodb` (the v3 version of aws-sdk for Node.js).
+The `DocumentClient` is created using the `from` method
+
+```ts
+const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+```
+
+While testing, you will probably need to mock a given method, the `client` exposes.
+You can do so, by assigning the mock directly to a given `.prototype` property. You do not have to create instance of `DynamoDBDocumentClient`.
+
+```ts
+const mockFn = jest.fn().mockName("sendMock");
+DynamoDBDocumentClient.prototype.send = mockFn;
+```
+
 ## Async timers
 
 A very useful video as a refresher before reading this section
