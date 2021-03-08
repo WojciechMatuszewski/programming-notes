@@ -1899,3 +1899,79 @@ type Test2 = CheckForNever<[never]>; // 1 => Ok.
 ```
 
 As long as the type parameter is wrapped at some point, the inner type will not be distributed and the "issue" with an empty union will not occur.
+
+## Generics and Inference
+
+Whenever you use _generic type parameters_ with default types, TS compiler will (in most cases) to infer that _type parameter_ from the values that you provided
+
+To give you an example
+
+```ts
+function foo<T>(arg: T): T {
+  return arg;
+}
+
+foo(1); // 1
+foo("name"); // "name"
+```
+
+That is OK in most cases, but what happens if you want semantics like these to be at your disposal
+
+```ts
+type MyObj = {
+  code: "MY_CODE";
+};
+
+type BaseObj = {
+  code: string;
+};
+
+function foo<Obj extends BaseObj = MyObj>(obj: Obj): Obj {
+  return obj;
+}
+
+foo({ code: "MY_CODE" }); // Ok
+
+foo({ code: "SOMETHING_ELSE" }); // Should not be allowed, but is - through inference
+
+foo<{ code: "MY_CUSTOM_CODE" }>({ code: "MY_CUSTOM_CODE" }); // Ok
+
+foo<{ code: "MY_CUSTOM_CODE" }>({ code: "SOMETHING_ELSE" }); // Error as it should be
+```
+
+As you can see, with our naive implementation of `foo` function, one use-case was not met.
+The `foo({ code: "SOMETHING_ELSE" });` snippet is not producing TS errors because of _type parameter_ inference. TS compiler sees that you provide a `string`,
+thus the `code` type will be inferred as string.
+
+There is a way to make it work, mainly using the notion of lazy type evaluation.
+
+### Lazy type evaluation - prevent type parameter inference
+
+Sadly, there is no _intuitive_ or _native_ way to do this.
+
+There is ongoing GH thread. You can find it here.
+https://github.com/Microsoft/TypeScript/issues/14829
+
+We will be using the solution described in that thread, mainly https://github.com/Microsoft/TypeScript/issues/14829#issuecomment-504042546
+
+```ts
+type NoInfer<T> = [T][T extends any ? 0 : never];
+type MyObj = {
+  code: "MY_CODE";
+};
+
+type BaseObj = {
+  code: string;
+};
+
+function foo<Obj extends BaseObj = never>(
+  obj: [Obj] extends [never] ? MyObj : NoInfer<Obj>
+): [Obj] extends [never] ? MyObj : NoInfer<Obj> {
+  return obj;
+}
+```
+
+With that function declaration, every use-case should be fulfilled.
+
+As I mentioned, this _workaround_ is leveraging the fact that if a _type parameter_ is used in a context of conditional type, it will be evaluated lazily
+as in the inference will not occur.
