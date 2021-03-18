@@ -463,6 +463,16 @@ An example for s3-prefix (folder)
 
   This will make it so that every **user and role within 1234 account** have an access.
 
+#### Permissions boundary
+
+- **attaches to the entity**
+
+* additional safety net, it allows you to further restrict what a given role can do
+
+- might be useful while trying to prevent developers to create wide open permissions for resources like lambdas
+
+* it is used for **scoping permissions down, it does NOT provide permissions on its own**
+
 #### Groups
 
 - **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **override explicit allow**. So in general the nesting should be avoided.
