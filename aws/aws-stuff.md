@@ -1263,9 +1263,11 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - having multiple different statements in bucket policy can be painful. Especially when we are talking multiple users
 
-* _access points_ allow you to **create a designeted URL with a policy for a given user to request data from**
+* _access points_ allow you to **associate a special ARN and attach a bucket policy to it**. You can then specify that arn as a _bucketName_ while making requests with SDK
 
 - this way you **can have 1 policy per 1 user per 1 endpoint**
+
+* the **_bucket policy_ still applies**, that is **the resulting permissions are an intersection of the access point policy and the root bucket policy**
 
 #### Encryption
 
