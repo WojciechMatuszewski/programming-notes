@@ -30,6 +30,8 @@
 
 Keep in mind that with the `callback` you have access to the `context` object which contains useful information about the state machine itself (as well as the `task token`).
 
+So basically, think of the `callback` vs `activity` as `push` vs `pool` debate.
+
 ## Blue-green
 
 You should not use only `arn` for referencing lambda functions but also include function version. This is because **`step functions` are immutable!**.
