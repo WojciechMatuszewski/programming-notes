@@ -1211,21 +1211,51 @@ An example for s3-prefix (folder)
 
 - **by default only the account that created the bucket can do stuff with it**
 
-* when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
+* if you want to track **policy changes** use **CloudTrail**
 
-- **ACLs are legacy!**. They are attached to bucket or an object. Mainly used for **granting log delivery**. You **can** attach **object ACLS on per user basis using the CLI / API**. You are not able to do this using the console.
+##### ALCs
 
-* you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
+- **considered legacy** but I find it **relevant in day-to-day** job when it comes to s3
 
-- using **resource policy** you can **control access** to s3 resources, works on **identities you DO NOT control. THIS ALSO MEANS ANY IDENTITY**. When resource policy is used **specifically with s3**, it is known as **bucket policy**
+* **not granular**, with ACLs you can **grant permissions to AWS accounts and pre-defined groups**
 
-* you can enable **Server access logs** for S3. This will **provide you with detailed records for the requests made to the bucket**
+- to **identify the AWS accounts** you will be using something called **Canonical user ID**. The ID is basically an **obfuscated form of AWS account ID**.
+  to get your AWS account information, as well as your _Canonical user ID_, click on the dropdown with the account name and go to _Security Credentials_
 
-- with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group permissions to write to dest. bucket!**.
+* to **identify groups** you will be using **URIs**. These are looks something like `http://acs.amazonaws.com/groups/global/AuthenticatedUsers`
 
-* **bucket policies** and **ALC** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
+- they **can apply** both to **objects** as well as the **bucket itself**
 
-- if you want to track **policy changes** use **CloudTrail**
+###### Canned ACLS
+
+- **predefined permissions**, like a bundle so that you do not have to fiddle that much with ACLs
+
+##### Resource policy
+
+- when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
+
+* using **resource policy** you can **control access** to s3 resources, works on **identities you DO NOT control. THIS ALSO MEANS ANY IDENTITY**. When resource policy is used **specifically with s3**, it is known as **bucket policy**
+
+##### Bucket policy
+
+- **much more granular than ACLs**
+
+* allow you to **operate on _indentities_** so users, groups and roles
+
+- you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
+
+##### Endpoint policy
+
+- s3 endpoints allow you to have granular permissions (basically a bucket policy) for a narrow scope of your objects. This policy does not "pollute"
+  your main bucket policy because it's attached to the endpoint itself
+
+* you would **use this** if your **main bucket policy is getting out of hand**, as in it's getting too big or unmanageable
+
+- **the effective permissions are an intersection between the main bucket policy and the endpoint policy**
+
+###### Overall
+
+- **bucket policies** and **ALC** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
 
 So when to use what?
 
@@ -1237,17 +1267,24 @@ So when to use what?
 
 - by **exposing a role which can be assumed** by third party you are **making sure that YOU as a bucket owner stay as the owner of a given object**. This is why you would want to use _bucket policies_ when you do not control the identity.
 
-* **pre-signed urls** work **per object level**
+##### Presigned URLs
 
-- **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **made useless sometimes, when the permissions of signing identity changed**
+- **pre-signed urls** work **per object level**
 
-* you can use **referrer IAM condition** to **allow request from specific web pages**.
+* **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **made useless sometimes, when the permissions of signing identity changed**
+
+- you can use **referrer IAM condition** to **allow request from specific web pages**.
+
+* you can create **POST** or **PUT** signed urls. The **POST** version allow you to specify **conditions**. The conditions are pretty powerfull,
+  you can for example, assert on the size of the object being uploaded.
 
 ##### Access logs
 
 - **server access logs are delivered to another s3 bucket**
 
 * the **logs include all bucket / object events**
+
+- with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group permissions to write to dest. bucket!**.
 
 ##### Precedence
 
