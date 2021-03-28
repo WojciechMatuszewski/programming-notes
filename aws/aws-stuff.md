@@ -3628,7 +3628,8 @@ You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combina
 
 - Athena **can read data and write query results given encrypted data by KMS**
 
-* can **query data from CloudWatch, ELB logs, CloudTrail logs, Flow logs**
+* can **query data from CloudWatch, ELB logs, CloudTrail logs, Flow logs**. The native support is for s3, but there are
+  **data connectors** that allow you to run queries on other sources. The **data connectors** use AWS Lambda under the hood to run the queries.
 
 - is very **flexible** when it comes to **data, which it needs to process while querying**. It can be **structured / semi-structured / unstructured**
 
@@ -5452,6 +5453,15 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - **ETL code** can be written using **Python or Scala**
 
 * as the Load step of the ETL, you can load data to **Redshift, RDS, S3**
+
+#### Job bookmarks
+
+- A **checkpoint**, basically it tells the _AWS Glue_ what data it should process
+
+* You can pick three values:
+  - _Disabled_ (default): no checkpoint, every time you run the job, the whole data set is traversed
+  - _Enabled_: only traverse the added files
+  - _Pause_: you can pick files relatives to job, for example _I want to traverse files that the job 2 did not cover, unit and including job 4_
 
 #### Glue materialized views
 
