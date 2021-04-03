@@ -1,5 +1,78 @@
 # Language
 
+## Typed and untyped `nil`
+
+Have you ever tried to use a "plain" `nil` within your program? Like so
+
+```go
+package main
+func main() {
+  var x = nil
+  _ = x
+}
+```
+
+The above would fail with
+
+> use of untyped nil
+
+Interesting, right? But why is that the case. Well it turns out the `nil` has to have an underlying type.
+
+### `nil` as predefined value
+
+It turns out **`nil` is not a keyword!. It's is treated as predefined value**.
+That means that you can cause a lot of mayhem by doing
+
+```go
+package main() {
+  func main() {
+    var nil = errors.New("boom")
+  }
+}
+```
+
+This is similar to how you **were able to up to a certain point** break others _JavaScript_ programs by doing
+
+```js
+var undefined = "lol";
+```
+
+### Zero values of types
+
+The `nil` value is very useful for different types that we have in go
+
+- For _pointers_, methods can be called on nil receivers
+- For _slices_, `nil` is a perfectly valid zero value
+- For _maps_, `nil` is a perfect for read-only use case
+- For _channels_, `nil` is essential to some concurrency patterns (`nil` channel)
+- For _functions_, `nil` is just there for completeness sake
+- For _interfaces_, `nil` is used to signal that everything is fine (in the case of errors), or to use a default behavior
+
+### The typed `nil` gotcha
+
+The case where `nil != nil` is very particular and has to do with how _interfaces_ are represented.
+
+For the interface to equal to `nil`, the **interface type and the value has to be nil**.
+This means that a **`nil` pointer to an interface is not equal bare `nil`**
+
+```go
+var p *int
+var i interface{}
+
+i = p
+
+if i != nil {
+    fmt.Println("not a nil")
+}
+
+// Outputs `not a nil`
+```
+
+The output might be confusing, but if you think about, it makes sense.
+Here the interface is "backed" by pair of `(*int, nil)`, not a `(nil, nil)`. In such cases, it will never be equal to `nil`
+
+This can be especially problematic around returning errors, where you **should never return concrete error types, always return the `error` interface**.
+
 ## `errors.Unwrap` vs `errors.Cause`
 
 As you probably know, you should _wrap_ your errors to provide additional context to them.
