@@ -58,3 +58,5 @@ The _follow up_ can be really simple (and usually is). Just a list of things you
 One way to force yourself to listen very carefully, is to go to a meeting with a goal of explaining what was the meeting about to the other person.
 
 This tactic will make you sum up the meeting to a colleague or any other person that might be interested. It does not have to be formal, you can just ask to take some of their time and discuss the meeting (even better if there were on the same meeting).
+
+<!-- https://app.pluralsight.com/course-player?clipId=f1f53489-6039-4b22-9588-59b67343ce5c -->
