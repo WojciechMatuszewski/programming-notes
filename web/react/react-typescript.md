@@ -121,3 +121,38 @@ const myRef = React.useRef<HTMLDivElement | null>(null);
 the _immutable_ semantics will no longer apply. You will be able to freely mutate the ref (given that the value you are setting the ref to adheres to the types)
 
 Overall, I think we should be as precise as possible while writing code, thus IMO, using _non-union_ types where you will not be mutating the `ref` is a good idea.
+
+## Prop Patterns
+
+### Only one prop or the other, not both
+
+There are two ways to accomplish this. Through overloading or unions.
+
+Let us pretend we are designing a component that can be either _expanded_ or _collapsed_. How should we make it impossible for the user to pass an impossible state state properties?
+
+#### Using unions
+
+This way of handling such problems is definitely the most mainstream one.
+
+```tsx
+type Props =
+  | { expanded: boolean; collapsed?: never }
+  | { expanded?: never; collapsed: boolean };
+
+function Component(props: Props) {...}
+```
+
+Now, depending on the editor you are using, you will still get a code completion for the `never` properties.
+I would not sweat much about that, unless you are not using tsc before compilation, the consumer of the `Component`
+will not be able to pass the impossible state.
+
+#### Using overloading
+
+This technique will make sure you cannot even specify the `never` annotated prop - because there are no such properties.
+I would be in favour of this technique if the team I'm working with is comfortable with it.
+
+```tsx
+function Component(props: { expanded: boolean }): React.ReactNode;
+function Component(props: { collapsed: boolean }): React.ReactNode;
+function Component(props: { expanded: boolean } | { collapsed: boolean }) {}
+```

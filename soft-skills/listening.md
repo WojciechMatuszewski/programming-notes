@@ -59,4 +59,25 @@ One way to force yourself to listen very carefully, is to go to a meeting with a
 
 This tactic will make you sum up the meeting to a colleague or any other person that might be interested. It does not have to be formal, you can just ask to take some of their time and discuss the meeting (even better if there were on the same meeting).
 
-<!-- https://app.pluralsight.com/course-player?clipId=f1f53489-6039-4b22-9588-59b67343ce5c -->
+## Helping others to listen to you
+
+### Creating the right environment
+
+You are responsible for removing all possible distractions. Sometimes that means
+moving the conversation to a different place, sometimes asking someone to turn the TV off.
+
+### Be assertive not aggressive
+
+Sometimes people want to push their agenda on us. You most definitely heard someone saying "I really think you should ...".
+
+Of course, it's up to you to judge if the agenda the person is trying to push is a reasonable or not. If not, **politely say no, and repeat until the person gives up**. This way no relationship be harmed. You are not aggressive, just assertive.
+
+### Relay the message clearly
+
+- **Do not use jargon**
+
+- If you are not sure that the person understands, show them, walk them through
+
+- Be confident, even if you have to lie to yourself
+
+- Ask the audience questions, if they are not asking them, help them ask the questions, guide them to the answer
