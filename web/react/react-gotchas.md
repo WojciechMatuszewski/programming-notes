@@ -100,3 +100,82 @@ if (process.env.NODE_ENV != "production") {
   }, [wasControlled, isControlled]);
 }
 ```
+
+## Cleaning up Refs DOM handles
+
+Sometimes while we work with _Refs_, especially the ones that are bound to DOM elements, we
+attach handlers to them. Since we probably do not want to introduce memory leaks within our apps, we also clean after ourselves.
+
+You are, most likely, carrying out the cleanup process within the cleanup function of the `useEffect` hook.
+While doing so, you might be shooting yourself in a foot - here is how.
+
+Let's say the `useEffect` where you bind the events and are cleaning up after yourself looks as follows
+
+```jsx
+useEffect(() => {
+  ref.current.addEventListener("click", ...)
+
+  return () => {
+    ref.current.removeEventListener("click", ...)
+  }
+}, []);
+```
+
+If you are using linting rules for hooks, you will be greeted with an warning
+
+> [...] will likely have changed by the time this effect cleanup function runs. If this ref ...
+
+This is completely reasonable message to throw here as **cleanup function is ran after the new view was rendered**.
+This means that, exactly as the message said, the `ref` might have been mutated - could possibly be `null` since the element that _Ref_ is attached to,
+might no longer exist.
+
+I'm aware of two ways to handle this issue
+
+### Capturing the Ref value within the closure
+
+First solution would be to do what the linting rule is telling you to do - capture the `current` value of the _Ref_ within the cleanup function closure.
+
+```jsx
+useEffect(() => {
+  const capturedRef = ref.current
+  capturedRef.addEventListener("click", ...)
+
+  return () => {
+    capturedRef.removeEventListener("click", ...)
+  }
+}, []);
+```
+
+Here, the cleanup function will have access to the _Ref_ value that was not mutated by any changes.
+
+### Using `useCallback` and `callback Refs`
+
+This technique is lesser known, but very important in some situations - when we want to know the underlying _Ref_ changed (looking at you `useIntersectionObserver` hooks that are poorly written)
+
+```jsx
+
+const cleanupRef = useRef(() => {});
+
+const callbackRef = useCallback((ref) => {
+  if (!ref) {
+    cleanupRef.current()
+    cleanupRef = () => {}
+    return
+  }
+
+  const listener = () => {...}
+  ref.addEventListener("click", listener)
+  cleanupRef.current = () => ref.removeEventListener("click", listener)
+}, []);
+
+return <div ref={callbackRef} />;
+```
+
+It is **very important** that you use **`useCallback`** here. Otherwise you might be in for an infinite loop.
+
+As you can see, the complexity of this solution is a bit higher (at least from the _familiarity_ point of view) than the `useEffect` one.
+
+### Bottom line
+
+When I need to know that the underlying `ref` changed (remember that using `ref.current` on the useEffect array is pointless) I will reach out for the
+_callback refs_, otherwise I'm sticking with `useEffect` way of doing things.
