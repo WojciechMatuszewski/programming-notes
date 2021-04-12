@@ -122,6 +122,93 @@ the _immutable_ semantics will no longer apply. You will be able to freely mutat
 
 Overall, I think we should be as precise as possible while writing code, thus IMO, using _non-union_ types where you will not be mutating the `ref` is a good idea.
 
+## Event handlers and mistakes
+
+Let's say you pass a `fetchMore` function as a prop. Since `fetchMore` has complex parameter signature, and you do not really care about parameters (**but you would not want anyone to pass any parameters to it)**, you annotate it as `VoidFunction`.
+
+The `VoidFunction` annotation should make it impossible to call it parameters right?
+
+```tsx
+interface ComponentProps {
+  fetchMore: VoidFunction;
+}
+```
+
+Now within the `Component` someone attaches that `fetchMore` to a `onClick` handler, like so
+
+```tsx
+function Component({ fetchMore }: ComponentProps) {
+  return <button onClick={fetchMore}>OnClick</button>;
+}
+```
+
+You run the tests, and ... well, and _SyntheticEvent_ instance is passed to your `fetchMore` function. WTF?
+
+This is because **TypeScript will allow you to assign functions with no parameters to function that take parameters**.
+
+An example
+
+```ts
+const x = (a: number = 1): number => a;
+const y: () => number = x;
+```
+
+This will compile.
+
+As you could guess, this is what is going on here. TypeScript have no problems with the `onClick` passing the _SyntheticEvent_ instance to your function - it should be ignored in the first case right?
+
+### Getting clever with `never`
+
+Okay, let's use `never`. This should work right?
+
+```tsx
+interface ComponentProps {
+  fetchMore: (arg: never) => void;
+}
+
+function Component({ fetchMore }: ComponentProps) {
+  return <button onClick={fetchMore}>OnClick</button>;
+}
+```
+
+And the above compiles. WTF?
+
+Well, this is because the `never` is a bottom type. `never` extends any other type;
+
+```ts
+type Foo = [never] extends [React.MouseEvent] ? true : false; // true
+```
+
+As a side-note, if you are not sure why I used the `[]` here, please read up on _naked_ vs _clothed_ types.
+There is a section within `typescript-stuff.md` on it.
+
+### Improving the `never` solution
+
+To have the cake and eat it too, there is a small adjustment we need to do to our existing definition.
+
+```tsx
+interface ComponentProps {
+  fetchMore: (arg?: never) => void;
+}
+
+function Component({ fetchMore }: ComponentProps) {
+  // TypeScript error
+  return <button onClick={fetchMore}>OnClick</button>;
+}
+```
+
+Nice, now we can skip the `arg` parameter if we choose to invoke the prop directly (not using _point-free_ style, like inside the `Component`)
+and we achieved our result, the are certain that no parameter will be passed to the function.
+If someone were to try to pass anything, he would be greeted with TypeScript error :).
+
+To avoid TypeScript errors in our particular situation, the prop would have to be used as follows
+
+```tsx
+function Component({ fetchMore }: ComponentProps) {
+  return <button onClick={() => fetchMore()}>OnClick</button>;
+}
+```
+
 ## Prop Patterns
 
 ### Only one prop or the other, not both
