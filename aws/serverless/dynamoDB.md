@@ -10,21 +10,21 @@
 
 * there is an underlying cost for activating it.
 
-### PartiQL support
+## PartiQL support
 
 - you can use the _PartiSQL_ to read from your table
 
 * **can result in full table scans if you are not careful**. While you can do the famous `select * from WHERE = ...` expression, it will be costly
 
-### Data types
+## Data types
 
-#### Scalar Types
+### Scalar Types
 
 - exactly one value (string, number, binary, boolean and null)
 
 - **keys can only be string or number**
 
-#### Set Types
+### Set Types
 
 - multiple scalar values (string set, number set, binary set)
 
@@ -34,7 +34,7 @@ For example(**Each element of a given set must be the same type**):
 ["Apples", "Oranges", "Grapes"], [1, 2, 3, 4, 5, 6];
 ```
 
-#### Document Types
+### Document Types
 
 - complex structures with nested attributes (list or map)
 - no restriction on data types stored
@@ -59,11 +59,11 @@ Example with List:
 ["John", 1234, "Apples"];
 ```
 
-### Capacity Units
+## Capacity Units
 
 > This allows us to control performance at the table level.
 
-#### Throughput Capacity
+### Throughput Capacity
 
 - **1 capacity unit = 1 request/sec**
 - used to control read/write throughput
@@ -215,6 +215,21 @@ As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamod
     ```
 
 - there is **no `AND` keyword**. This keyword is present in `KeyConditionExpression`
+
+### Transactions
+
+The ability to perform transactional operations makes DDB really powerful.
+There is one caveat you might not be aware of first, that will definitely come into play if you heavily really on transactions.
+
+### Optimistic Concurrency Control (OOC)
+
+The DDB transactions works on the premise that multiple transactions can be performed without interfering each other.
+Whenever you do a transaction, a check is performed if another transaction is already "working" on a given entity. If so, an error will be thrown.
+
+You can retry the transaction, to be super safe you could pass the `ClientRequestToken` to ensure idempotency.
+
+If you design your tables correctly, you should not be having much issues with the way DDB handles concurrent transactions.
+Usually you can just retry the request, ensuring that you have valid _Condition Expressions_ in place.
 
 ## Consistency
 
