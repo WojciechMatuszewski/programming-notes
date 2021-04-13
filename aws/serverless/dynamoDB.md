@@ -221,7 +221,7 @@ As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamod
 The ability to perform transactional operations makes DDB really powerful.
 There is one caveat you might not be aware of first, that will definitely come into play if you heavily really on transactions.
 
-### Optimistic Concurrency Control (OOC)
+### Optimistic Concurrency Control (OCC)
 
 The DDB transactions works on the premise that multiple transactions can be performed without interfering each other.
 Whenever you do a transaction, a check is performed if another transaction is already "working" on a given entity. If so, an error will be thrown.
