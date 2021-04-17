@@ -8,12 +8,12 @@ This is where the notion of _lazy ref_ comes in. This **will feel weird** but be
 
 ```tsx
 function Component() {
-    const rootRef = React.useRef(null);
-    if (!rootRef) {
-        rootRef.current = SOME_VALUE;
-    }
+  const rootRef = React.useRef(null);
+  if (!rootRef) {
+    rootRef.current = SOME_VALUE;
+  }
 
-    // now I have mutable value I can use
+  // now I have mutable value I can use
 }
 ```
 
@@ -78,6 +78,44 @@ return data.names
 
 With that, your `current` key should hold the first resolved users 🤗
 
+## Latest Ref pattern
+
+You will most likely use this pattern when dealing with a `debounce` function (or anything where you call the provided callback really).
+
+The premise here is that we **do not want to re-render when the provided callback changes** but still
+want to use it within our logic with the certainty that we are calling the latest provided callback.
+
+Here is the pattern
+
+```jsx
+function Component({ providedCallback }) {
+  const callbackRef = React.useRef(providedCallback);
+
+  React.useLayoutEffect(() => {
+    callbackRef.current = providedCallback;
+  });
+}
+```
+
+We are using `useLayoutEffect` instead of the `useEffect` to ensure that we do the assignment before
+any other code within this component runs (since `useLayoutEffect` is synchronous)
+
+### Usage
+
+As I mentioned earlier, you will most likely use this pattern along with the `debounce` function, so here it is
+
+```jsx
+function useDebounce({callback, delay}) {
+  const callbackRef = React.useRef(callback)
+
+  React.useLayoutEffect(() => {
+    callbackRef.current = callback
+  })
+
+  return React.useCallback(debounce(...args) => callbackRef.current(...args), delay), [delay])
+}
+```
+
 ## `isMounted` and functional components
 
 While reading github issues I've noticed a that even Dan himself proposes this pattern:
@@ -113,18 +151,18 @@ This is where **Value/Dispatch Provider Pattern** shines.
 const StateContext = React.createContext();
 const DispatchContext = React.createContext();
 function reducer() {
-    // your reducer
+  // your reducer
 }
 
 return function Provider({ children }) {
-    const [state, dispatch] = React.useReducer(reducer, initialState);
-    return (
-        <StateContext.Provider value={state}>
-            <DispatchContext.Provider value={dispatch}>
-                {children}
-            </DispatchContext.Provider>
-        </StateContext.Provider>
-    );
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  return (
+    <StateContext.Provider value={state}>
+      <DispatchContext.Provider value={dispatch}>
+        {children}
+      </DispatchContext.Provider>
+    </StateContext.Provider>
+  );
 };
 ```
 
@@ -136,12 +174,11 @@ always the same.
 ```jsx
 // previous code
 function Provider({ children }) {
-    const [state, dispatch] = React.useReducer(reducer, initialState);
-    let value = { state, dispatch };
-    // Creating inline object here would be the same
-    // as creating a new variable like shown above.
-    return <SomeContext.Provider value={value}>{children}
-    </SomeContext.Provider>;
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  let value = { state, dispatch };
+  // Creating inline object here would be the same
+  // as creating a new variable like shown above.
+  return <SomeContext.Provider value={value}>{children}</SomeContext.Provider>;
 }
 ```
 
@@ -168,8 +205,8 @@ Let's use previous pattern to implement `safeDispatch`
 ```jsx
 const canDispatch = React.useRef(true);
 const safeDispatch = React.useCallback(
-    (...args) => canDispatch.current && dispatch(...args),
-    [],
+  (...args) => canDispatch.current && dispatch(...args),
+  []
 );
 
 React.useEffect(() => () => (canDispatch.current = false), []);
@@ -196,12 +233,12 @@ When you create context, especially with `useReducer` you might want to create h
 
 ```jsx
 function useCounter() {
-    const [state, dispatch] = React.useContext(CounterContext);
+  const [state, dispatch] = React.useContext(CounterContext);
 
-    const increment = () => dispatch("increment");
-    const decrement = () => dispatch("decrement");
+  const increment = () => dispatch("increment");
+  const decrement = () => dispatch("decrement");
 
-    return { increment, decrement };
+  return { increment, decrement };
 }
 ```
 
@@ -210,11 +247,11 @@ Well now you have to wrap then in `useCallback`
 
 ```jsx
 function useCounter() {
-    // code
+  // code
 
-    const increment = React.useCallback(() => dispatch("increment"));
+  const increment = React.useCallback(() => dispatch("increment"));
 
-    // code
+  // code
 }
 ```
 
@@ -224,7 +261,7 @@ Instead of creating the helper functions inside the _consumer hook_ or _provider
 
 ```js
 function increment(dispatch) {
-    dispatch("increment");
+  dispatch("increment");
 }
 ```
 
@@ -234,12 +271,12 @@ You would use it like so:
 
 ```jsx
 function Component({ prop }) {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    React.useEffect(() => {
-        increment(dispatch);
-        // increment is always stable!
-    }, [prop]);
+  React.useEffect(() => {
+    increment(dispatch);
+    // increment is always stable!
+  }, [prop]);
 }
 ```
 
@@ -252,11 +289,10 @@ and `React.cloneElement` combo.
 
 ```jsx
 function Counter({ children }) {
-    const [count, setCount] = React.useState(0);
-    return React.Children.map(
-        children,
-        (child) => React.cloneElement(child, { count }),
-    );
+  const [count, setCount] = React.useState(0);
+  return React.Children.map(children, (child) =>
+    React.cloneElement(child, { count })
+  );
 }
 ```
 
@@ -270,12 +306,12 @@ convention, they are passed to every child**.
 This can be used for styling purposes
 
 ```js
-const CardHeading = styled.div ``;
+const CardHeading = styled.div``;
 class Card {
-    static Heading = ({ children }) => <CardHeading>{children}</CardHeading>;
-    render() {
-        return this.props.children;
-    }
+  static Heading = ({ children }) => <CardHeading>{children}</CardHeading>;
+  render() {
+    return this.props.children;
+  }
 }
 ```
 
@@ -312,14 +348,14 @@ As an addition to _flexible compound components_ pattern you will often see an `
 
 ```jsx
 function useProvider() {
-    const context = React.useContext(ProviderContext);
-    if (!context) {
-        throw Error(
-            "`useProvider` cannot be used outside of the `ProviderContext`",
-        );
-    }
+  const context = React.useContext(ProviderContext);
+  if (!context) {
+    throw Error(
+      "`useProvider` cannot be used outside of the `ProviderContext`"
+    );
+  }
 
-    return context;
+  return context;
 }
 ```
 
@@ -342,24 +378,24 @@ This is you basically creating a bag with properties , which you spread on eleme
 
 ```jsx
 function useInput(initialValue = undefined) {
-    const [value, setValue] = React.useState(initialValue);
-    function onChange(e) {
-        setValue(e.currentTarget.value);
-    }
-    function resetValue() {
-        setValue(initialValue);
-    }
-    return {
-        // this is prop collection
-        inputProps: { value, onChange: setValue },
-        reset,
-    };
+  const [value, setValue] = React.useState(initialValue);
+  function onChange(e) {
+    setValue(e.currentTarget.value);
+  }
+  function resetValue() {
+    setValue(initialValue);
+  }
+  return {
+    // this is prop collection
+    inputProps: { value, onChange: setValue },
+    reset,
+  };
 }
 
 function Component() {
-    const { inputProps } = useInput();
-    // now as a consumer I do not have to worry about forgetting a prop
-    return <input type="text" {...inputProps} />;
+  const { inputProps } = useInput();
+  // now as a consumer I do not have to worry about forgetting a prop
+  return <input type="text" {...inputProps} />;
 }
 ```
 
@@ -371,11 +407,11 @@ This is more flexible version on the `Prop Collections` pattern. This is where y
 
 ```js
 function getInputProps({ onChange: suppliedOnChange, ...rest } = {}) {
-    return {
-        onChange: callAll(suppliedOnChange, onChange),
-        value,
-        ...rest,
-    };
+  return {
+    onChange: callAll(suppliedOnChange, onChange),
+    value,
+    ...rest,
+  };
 }
 ```
 
@@ -383,10 +419,10 @@ Now instead of returning `inputProps` you will return a function. This will allo
 
 ```jsx
 <input
-    type="text"
-    // much more flexible solution!
-    {...getInputProps({ onChange: () => console.log("changed") })}
-/>;
+  type="text"
+  // much more flexible solution!
+  {...getInputProps({ onChange: () => console.log("changed") })}
+/>
 ```
 
 The `getInputProps` is responsible for _pseudo-composing_ the `onChange` handlers.
@@ -400,59 +436,59 @@ You want to expose the ability for the user to integrate with your state and inf
 const callAll = (...fns) => (...args) => fns.forEach((fn) => fn && fn(...args));
 
 function toggleReducer(state, { type, initialState }) {
-    switch (
-        type
-        // code
-    ) {
-    }
+  switch (
+    type
+    // code
+  ) {
+  }
 }
 
 function useToggle({ initialOn = false, reducer = toggleReducer } = {}) {
-    const { current: initialState } = React.useRef({ on: initialOn });
-    const [state, dispatch] = React.useReducer(reducer, initialState);
-    const { on } = state;
+  const { current: initialState } = React.useRef({ on: initialOn });
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const { on } = state;
 
-    const toggle = () => dispatch({ type: useToggle.types.toggle });
-    const reset = () => dispatch({ type: useToggle.types.reset, initialState });
-    function getTogglerProps({ onClick, ...props } = {}) {
-        // code
-    }
+  const toggle = () => dispatch({ type: useToggle.types.toggle });
+  const reset = () => dispatch({ type: useToggle.types.reset, initialState });
+  function getTogglerProps({ onClick, ...props } = {}) {
+    // code
+  }
 
-    function getResetterProps({ onClick, ...props } = {}) {
-        return {
-            onClick: callAll(onClick, reset),
-            ...props,
-        };
-    }
-
+  function getResetterProps({ onClick, ...props } = {}) {
     return {
-        on,
-        reset,
-        toggle,
-        getTogglerProps,
-        getResetterProps,
+      onClick: callAll(onClick, reset),
+      ...props,
     };
+  }
+
+  return {
+    on,
+    reset,
+    toggle,
+    getTogglerProps,
+    getResetterProps,
+  };
 }
 // this will be very helpful
 useToggle.reducer = toggleReducer;
 // this is also quality of life improvement
 useToggle.types = {
-    toggle: "toggle",
-    reset: "reset",
+  toggle: "toggle",
+  reset: "reset",
 };
 
 function Usage() {
-    // So here we can manipulate external logic by ourselves
-    function toggleStateReducer(state, action) {
-        if (action.type === useToggle.types.toggle && timesClicked >= 4) {
-            return { on: state.on };
-        }
-        return useToggle.reducer(state, action);
+  // So here we can manipulate external logic by ourselves
+  function toggleStateReducer(state, action) {
+    if (action.type === useToggle.types.toggle && timesClicked >= 4) {
+      return { on: state.on };
     }
-    const { on, getTogglerProps, getResetterProps } = useToggle({
-        reducer: toggleStateReducer,
-    });
-    // other code
+    return useToggle.reducer(state, action);
+  }
+  const { on, getTogglerProps, getResetterProps } = useToggle({
+    reducer: toggleStateReducer,
+  });
+  // other code
 }
 ```
 
