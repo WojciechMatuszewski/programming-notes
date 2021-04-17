@@ -1,5 +1,57 @@
 # Serverless Gotchas
 
+## Lambda container freeze and connection reuse
+
+Let's say you are making an HTTP requests within your lambda function.
+You've heard that you should reuse connections to ensure performance.
+
+Your code might look as follows
+
+```js
+import https from "https";
+const agent = new https.Agent({ keepAlive: true });
+
+export const handler = () => {
+  https.get({ agent });
+  // .. rest of the code
+};
+```
+
+The code works, and is faster one some requests.
+You decide to turn on _X-Ray_ and orchestrate the agent so that you can see the traces.
+With that you notice that some requests are marked as "failed" with an error that says _Socket hang up_.
+
+Turns out this error is a natural consequence of how the Lambda container reuse works.
+
+### Lambda container reuse
+
+For performance reasons, Lambda will re-use the containers that run Lambdas code.
+The container can live up to 2 hours.
+
+Important part is that **Lambda Service will freeze the container after your code is done executing, that also includes all open connections**.
+Looking at our example, that would mean that the agent's underlying connection will also freeze.
+
+So the connection is frozen. Next request comes, the container is unfrozen. The Agent could not know if the connection is closed or not,
+because everything was frozen. Tries to make the request, the connection might be closed (in the error scenario is). If so, you will see the error being reported.
+
+### How others handle this
+
+To the best of my knowledge, other clients just retry when this happens.
+This seems to be a standard practice to do so.
+
+### X-Ray only shows the error
+
+This is a weirdness of X-Ray. From my experience, if you orchestrate the http client with X-Ray, the service will only
+show a trace for the first outgoing request. If that original request fails, and is successfully retried, the AWS Console, will still be displaying the failed request.
+
+### Potential solutions
+
+1. Retry the request and carry on
+
+2. Initialize the connection / agent within the handler
+
+3. Consider using RDS Proxy or Redis for connection management
+
 ## Logging EB events into the log group
 
 This might come in handy while debugging. Some target is not receiving events and you want to know how the payload looks like, maybe your filter pattern is not right?
