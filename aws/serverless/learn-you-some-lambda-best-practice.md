@@ -193,8 +193,10 @@ This solution is not without downsides though:
 ## Lambda Destinations
 
 - works only for **async / stream based invocations**. The **pool based invocations are NOT ASYNC!**.
-  This means that **destinations WILL NOT WORK for function wired up to eg. SQS**. You can find the full list of services that invoke the lambda asynchronously here
-  https://aws.amazon.com/blogs/architecture/understanding-the-different-ways-to-invoke-lambda-functions/
+
+- since the feature does not work for _pool based invocations_ the Lambdas invoked by SQS or DDB Streams or Kinesis will not have destinations available to them.
+
+- here is a helpful article that lists the Lambda invocation sources https://aws.amazon.com/blogs/architecture/understanding-the-different-ways-to-invoke-lambda-functions/
 
 * gives you much more information than DLQ, even provides you the stack trace.
 
@@ -226,7 +228,7 @@ This solution is not without downsides though:
 
 * you should **fetch secrets at runtime**, cache and invalidate the cache every few minutes.
 
-- if you are writting JS lambda, consider using `middy`. It is a great tool - easy to use, gets the job done!.
+- if you are writing JS lambda, consider using `middy`. It is a great tool - easy to use, gets the job done!.
 
 ## APIGW Throttling gotcha
 

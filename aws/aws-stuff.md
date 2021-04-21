@@ -1253,6 +1253,13 @@ An example for s3-prefix (folder)
 
 - **the effective permissions are an intersection between the main bucket policy and the endpoint policy**
 
+##### Block public access
+
+- can be enabled on the account or the bucket level. Account level should be preferred
+
+* overrules any ACLs and policies that you specify. If you have this enabled, objects will not be publicly accessible, no matter the policy or ALCs
+  that you have in place.
+
 ###### Overall
 
 - **bucket policies** and **ALC** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
@@ -1266,6 +1273,8 @@ So when to use what?
   - when **you DO NOT control the identity**
 
 - by **exposing a role which can be assumed** by third party you are **making sure that YOU as a bucket owner stay as the owner of a given object**. This is why you would want to use _bucket policies_ when you do not control the identity.
+
+* if you are doing anything serious (like you know, your day to day job stuff), encrypt everything. You can start the default SSE-S3.
 
 ##### Presigned URLs
 
@@ -1305,6 +1314,8 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 - this way you **can have 1 policy per 1 user per 1 endpoint**
 
 * the **_bucket policy_ still applies**, that is **the resulting permissions are an intersection of the access point policy and the root bucket policy**
+
+- you **have to use sigv4 to access objects through an _Access Point_**. I personally wish it was not the case as they do not support anonymous users.
 
 #### Encryption
 
