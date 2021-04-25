@@ -209,6 +209,52 @@ function Component({ fetchMore }: ComponentProps) {
 }
 ```
 
+### Form event handler
+
+Did you know you can actually pick the value of every input element of the form from the event that is passed to your `onSubmit` handler?
+You can even do it in a semi type-safe way - here is how.
+
+```tsx
+import * as React from "react";
+
+interface UserFormElements extends HTMLFormControlsCollection {
+  name: HTMLInputElement;
+  surname: HTMLInputElement;
+}
+
+interface UserForm extends HTMLFormElement {
+  readonly elements: UserFormElements;
+}
+
+export default function App() {
+  function onSubmit(event: React.FormEvent<UserForm>) {
+    event.preventDefault();
+
+    const { name, surname } = event.currentTarget.elements;
+
+    console.log(name.value, surname.value);
+  }
+
+  return (
+    <form onSubmit={onSubmit}>
+      <label htmlFor="name">Name</label>
+      <input id="name" type="text" placeholder="name" />
+      <br />
+      <label htmlFor="surname">Surname</label>
+      <input id="surname" type="text" placeholder="surname" />
+      <br />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+Notice the `HTMLFormElement` and `HTMLFormControlsCollection` types. I can easily extend them to type the values what my form is dealing with.
+In todays world, you will most likely never have to deal with raw forms like that, but either way I think it's worth knowing how to type them correctly.
+
+Here is an article you can refer to whenever someone, or you, makes a mistake.
+https://epicreact.dev/how-to-type-a-react-form-on-submit-handler/
+
 ## Prop Patterns
 
 ### Only one prop or the other, not both
