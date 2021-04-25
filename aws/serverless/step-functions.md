@@ -81,3 +81,8 @@ You should consider using some kind of `ID` or `MD5` has for the execution ID.
   ```
 
 - you **cannot use `StartSyncExecution` with _regular_ step function**, you have to use the _express_ one for that
+
+### DynamoDB integration
+
+Very useful but a bit "underpowered". Lacks the `Query` API that would open a door for a whole set of new use-cases.
+Think fan-out patterns after reading the DDB and much more.
