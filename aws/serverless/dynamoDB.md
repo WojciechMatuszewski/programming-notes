@@ -98,6 +98,23 @@ Since we are only doing operations inside _buckets_ it's pretty fast.
 These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key.
 They work _outside the buckets_. Global secondary indexes are **stored on their own partitions** (separate from the table).
 
+##### WCU and GSIs
+
+While the GSI enable you to create elaborate and powerful querying patterns, they also can cause issues in regarding to throttling and WCU / RCU consumption.
+
+With the RCU case, please remember that querying given GSI consumes a sum RCU in terms of all projected attribute sizes across all of the items returned. This usually is not a problem, but I've noticed that engineers often overlook this property of the GSI.
+
+The RCU case is similar to the RCU one. The total provisioned throughput cost of a write consists of the sum of write capacity units consumed by writing to the base table nad those consumed by updating the global secondary index.
+Imagine having 10 GSIs and writing an item that touches only half of them. You will be paying a lot more for a single write that you would have if the GSI were not there. This argument alone should makes us question each and every new GSI we plan to add, especially in the single table environment.
+
+##### Considerations for not creating GSIs
+
+You might decide to skip on creating a GSI and instead choose to use `Scan` API to perform ad-hoc querying.
+I would say this is a good pattern if you are certain that the cost of having those GSIs, and their influence on RCU / WCU consumption, would
+incur a non-trivial increase to your overall cost.
+
+A blog post on this topic https://roger20federer.medium.com/dynamodb-when-to-not-use-query-and-use-scan-61e4ab90c1df
+
 #### Sort Key
 
 Sort key enables _rich query capabilities_. **If you provided sort key (also called range key) your partition key (hash key) does not have to be unique**.
