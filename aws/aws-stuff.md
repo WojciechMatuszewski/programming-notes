@@ -1091,7 +1091,9 @@ An example for s3-prefix (folder)
   (region needs to differ)**.
 
 * S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
-  the Bucket. Then that uploaded object is **transferred automatically to your bucket**.
+  the Bucket (your downloads will also be faster). Then that uploaded object is **transferred automatically to your bucket**.
+  One thing to keep in mind that you will not always see the speed increase. It is dependant on where you are making the request from.
+  Maybe there is no edge pop near you?
 
 - S3 is a **tiered** storage
 
@@ -2036,11 +2038,15 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **removing** the **table from `global-tables` view DOES NOT delete the data**. If you really want to delete the data, you should remove it manually or just remove the table manually.
 
+* you should consider the cost of consistency. The writes to the other global table are more costly than normal writes. These are not done by you, but by the service itself.
+
 #### Encryption
 
 - tables can be encrypted
 
 * either **KMS(AWS Managed)** or **KMS (AWS owned)**
+
+- by default all tables are encrypted by the KMS provided by the aws
 
 #### IAM
 
