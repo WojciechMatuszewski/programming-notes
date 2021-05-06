@@ -98,6 +98,9 @@ Since we are only doing operations inside _buckets_ it's pretty fast.
 These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key.
 They work _outside the buckets_. Global secondary indexes are **stored on their own partitions** (separate from the table).
 
+The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different than the
+LSI / primary indexes
+
 ##### WCU and GSIs
 
 While the GSI enable you to create elaborate and powerful querying patterns, they also can cause issues in regarding to throttling and WCU / RCU consumption.
