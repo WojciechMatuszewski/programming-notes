@@ -101,6 +101,10 @@ They work _outside the buckets_. Global secondary indexes are **stored on their 
 The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different than the
 LSI / primary indexes
 
+> In a DynamoDB table, each key value must be unique. However, the key values in a global secondary index do not need to be unique.
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html
+
 ##### WCU and GSIs
 
 While the GSI enable you to create elaborate and powerful querying patterns, they also can cause issues in regarding to throttling and WCU / RCU consumption.
