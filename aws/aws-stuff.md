@@ -91,7 +91,7 @@
 
 - you can **use XRay for distributed tracing**.
 
-* remember that **X-Ray collects data of INCOMMING requests. Not only those made within / outside our service**
+* remember that **X-Ray collects data of INCOMING requests. Not only those made within / outside our service**
 
 - **X-Ray works in real-time**. Can be used for real-time monitoring.
 
@@ -114,6 +114,14 @@
 - you can also **perform some redirect logic , maybe check auth**.
 
 * **they are not executed in the edge location**. They are executed in the region closes to the edge location. This is why you have to be mindful of the region whenever you browse the logs.
+
+- these are **NOT running at the edge locations, they are run within the regional CloudFront caches**.
+
+#### CloudFront functions
+
+- these **actually run within the edge location**
+
+* **very constrained in terms of what they can do**. Full comparison table [available here](https://aws.amazon.com/blogs/aws/introducing-cloudfront-functions-run-your-code-at-the-edge-with-low-latency-at-any-scale/?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%23140)
 
 #### Event Source Mapping
 
@@ -2056,7 +2064,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Costs
 
-- you can levrage **reserved capacity for provisioned throughput** to save some \$\$.
+- you can leverage **reserved capacity for provisioned throughput** to save some \$\$.
 
 * this works very similarly to other offerings. You pay upfront and save in a long term.
 
@@ -2086,7 +2094,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 ##### S3 website endpoint vs S3 bucket as origin
 
-- you can use both s3 webstite endpoints (you have to have static website hosting enabled) or plain old s3 endpoint (the bucket itself)
+- you can use both s3 website endpoints (you have to have static website hosting enabled) or plain old s3 endpoint (the bucket itself)
 
 * when you are using **s3 website endpoint** as **origin** you **cannot create OAI**.
 
