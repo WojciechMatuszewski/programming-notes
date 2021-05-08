@@ -215,3 +215,7 @@ const cfnBucket = bucket.node.defaultChild as s3.CfnBucket;
 // Removing the `BucketName` property from the underlying CloudFormation template
 cfnBucket.addOverride("Properties.BucketName", undefined);
 ```
+
+## Additional resources
+
+- A great example on how to build a custom CDK resource https://www.youtube.com/watch?v=tDXE7S6J_AY
