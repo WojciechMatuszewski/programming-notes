@@ -4698,7 +4698,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### Resiliency
 
-- you can use **DQL per rule**
+- you can use **DQL per rule**. Please note that **this DLQ is only for the EventBridge communication with the underlying service**.
+  If your lambda throws an exception, the _EventBridge_ will not care. As far as it's concerned, the event was send successfuly.
 
 * you can specify **custom number of retires** as well as **time spent retrying**.
 
