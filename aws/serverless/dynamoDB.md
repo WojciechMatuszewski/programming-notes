@@ -59,9 +59,22 @@ Example with List:
 ["John", 1234, "Apples"];
 ```
 
-## Capacity Units
+## Capacity and performance
 
-> This allows us to control performance at the table level.
+You can use either _provisioned capacity_ or _on demand_ mode to control
+how many operations your table can handle.
+
+### On demand
+
+This mode might sound like a serverless dream come true. You pay only for what
+you use and you do not have to worry about scaling your throughput up or down.
+
+And in 99% of cases, this is exactly what is happening. But in that 1% of cases, you might want to "warm" or "pre-provision" internal DDB resources to handle given load.
+
+### Provisioned capacity
+
+Can you forecast the amount of read and write operations your application makes?
+If so, you might want to look into _provisioned capacity_ mode for cost optimization reasons. Before you do so, is the engineering time to make those calculations (and make sure that they are up to date) worth the effort?
 
 ### Throughput Capacity
 
@@ -210,9 +223,9 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-time-series.
 
 ### Aggregation
 
-In this example, what about aggregation? Because data has to be aggregated somehow.
+What about aggregation in regards to time series data? Because data has to be aggregated somehow.
 
-It is a best practice to run aggregation outside of the DynamoDB computation. In our example this means that we schedule a lambda function triggered by CloudWatch Events. We scan the table sharded table and sum up every minute or so.
+It is a best practice to run aggregation outside of the DynamoDB computation. In our example this means that we schedule a lambda function triggered by CloudWatch Events. We scan the sharded table and sum up every minute or so.
 
 As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamodb streams_ are timely ordered. To avoid throttling you can setup _batch window_ to have your function wait X seconds before being invoked. This should invoke your function whenever _batch window_ expires or the batch is _6 MB_ in size.
 
