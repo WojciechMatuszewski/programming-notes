@@ -2225,7 +2225,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * by default **AWS provides DDOS protection**
 
-- you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not CloudTrail!**. Remember, CloudTrial is about service calls made by identity within your AWS account.
+- you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not CloudTrail!**. Remember, CloudTrail is about service calls made by identity within your AWS account.
 
 * **access** to an APIGW can be **controlled using multiple means**:
   - **resource policies** which define **access to your API methods from source IPs or VPC Endpoints**
@@ -3577,7 +3577,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 * you can create **one trial** and **apply it to multiple regions**.
 
-- you **can trigger CloudWatch events usng CloudTrial events**. Pretty neat!.
+- you **can trigger CloudWatch events usng CloudTrail events**. Pretty neat!.
 
 * event are not delivered in real-time. There can be **up to 15mins delay**.
 
@@ -3603,7 +3603,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 ##### CloudTrail and CloudWatch
 
-- there is no automated way to have your logs delivered to `CloudTrial`.
+- there is no automated way to have your logs delivered to `CloudTrail`.
 
 * you have to **create a lambda that listens to s3 events**. That lambda will **log to cloudwatch while reading CloudTrail files**.
 
@@ -3620,6 +3620,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - by default **it exposes the ip of the person who is connecting**
 
 * you filter which traffic you want to log. It can be either rejected, accepted or both.
+
+#### Integration with EB
+
+- you can make `CloudTrail` send events to EventBridge, do achieve that you will need to setup a _trail_ in the region where you want to listen the events to.
+
+* for some services, this setup might not be necessary as they might already send events to both `CloudTrail` and `EventBridge`
 
 #### With `CloudWatch`
 
@@ -5870,7 +5876,7 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### AWS Guard Duty
 
-- ingest from FlowLogs, R53, CloudTrial, AI **Thread detection in terms of ACCOUNTS** etc to a centralized place
+- ingest from FlowLogs, R53, CloudTrail, AI **Thread detection in terms of ACCOUNTS** etc to a centralized place
 
 * you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **ingest from those invited accounts** (**if they accept**).
 
