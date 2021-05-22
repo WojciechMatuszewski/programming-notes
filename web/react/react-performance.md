@@ -40,6 +40,48 @@ React.useEffect(() => {
 
 Now you should see only 1 render happening :)
 
+### Internal modes of state
+
+You might think of React working in two modes when it comes to updating / computing your state. The _eager_ and _lazy_ mode.
+
+The lazy mode is the behavior you are most likely familiar with. It's when React batches your updates,
+all the state changes are reflected correctly because the computed state is different every time.
+
+But what happens if you set the state to the same value multiple times?
+
+```js
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    setCount(1);
+
+    setTimeout(() => {
+      setCount(1);
+    }, 1000);
+
+    setTimeout(() => {
+      setCount(1);
+    }, 2000);
+  }
+
+  console.log("render!");
+
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
+
+How many times you expect the "render!" to be printed in the console?
+
+> **React will cache the result of your state update, if the next computed state is the same, the render will be skipped**.
+
+Armed with that information, one might guess that the answer to my question would be twice. First for the initial render, second for the first state update to 1.
+
+That is a good guess, but sadly that is not the case. The heuristics of when the update is skipped are not completely known for me. During my testing, the "render!" was printed three times.
+
+All in all, this kind of information is not needed to use React, but I still find it valuable.
+How many times someone asked you why did this component "re-rendered" (or not) and you had no clue?
+
 ## Lazy loading
 
 Standard technique, using `React.lazy` and the `React.Suspense` is a standard thing to do.

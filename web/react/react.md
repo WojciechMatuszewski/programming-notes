@@ -94,7 +94,7 @@ Either way, when you are passing an object as a prop to a component which uses `
 <Component article={article} />;
 
 const Component = React.memo((article) => {
-    // still re-renders :CC
+  // still re-renders :CC
 });
 ```
 
@@ -105,7 +105,7 @@ So the problem is that `article` object. The _referential identity_ is not the s
 Yes, you could pass the second parameter to the `React.memo`, but you might also do something like this
 
 ```jsx
-<Component {...article} />;
+<Component {...article} />
 ```
 
 Why would this work? Well, know `React.memo` will be diffing between **primitives** (granted `article` does not have an object property). Since `React.memo` diffs between _primitives_, there is no referential identity to worry about.
@@ -135,7 +135,7 @@ Now, you might want to do something different than just place that `ref` on the 
 
 ```jsx
 const Component = React.forwardRef((props, ref) => {
-    return <div ref={ref}>Hi there</div>;
+  return <div ref={ref}>Hi there</div>;
 });
 ```
 
@@ -202,15 +202,15 @@ What you could do instead is to wrap the assignment with `useLayoutEffect`.
 
 ```ts
 const Component = React.forwardRef((props, ref) => {
-    const method = () => {};
+  const method = () => {};
 
-    React.useLayoutEffect(() => {
-        ref.current = {
-            method,
-        };
-    });
+  React.useLayoutEffect(() => {
+    ref.current = {
+      method,
+    };
+  });
 
-    return; // stuff
+  return; // stuff
 });
 ```
 
@@ -224,15 +224,15 @@ The simplest example would be with an `useEffect`
 
 ```jsx
 function FetchData() {
-    const [count, setCount] = React.useState(0);
+  const [count, setCount] = React.useState(0);
 
-    React.useEffect(() => {
-        setTimeout(() => {
-            setCount(count + 1);
-        }, 2000);
-    }, []);
+  React.useEffect(() => {
+    setTimeout(() => {
+      setCount(count + 1);
+    }, 2000);
+  }, []);
 
-    // increment by clicking a button
+  // increment by clicking a button
 }
 ```
 
@@ -248,20 +248,20 @@ So this would work
 
 ```jsx
 function FetchData() {
-    const [count, setCount] = React.useState(0);
-    const counterRef = React.useRef(count);
+  const [count, setCount] = React.useState(0);
+  const counterRef = React.useRef(count);
 
-    React.useEffect(() => {
-        counterRef.current = count;
-    });
+  React.useEffect(() => {
+    counterRef.current = count;
+  });
 
-    React.useEffect(() => {
-        setTimeout(() => {
-            setCount(count + 1);
-        }, 2000);
-    }, []);
+  React.useEffect(() => {
+    setTimeout(() => {
+      setCount(count + 1);
+    }, 2000);
+  }, []);
 
-    // increment by clicking a button
+  // increment by clicking a button
 }
 ```
 
@@ -308,9 +308,9 @@ Pay very close attention to the `CountersList`:
 
 ```jsx
 <div>
-    <button onClick={addCounter}>Add Counter</button>
-    {items.map(Counter)}
-</div>;
+  <button onClick={addCounter}>Add Counter</button>
+  {items.map(Counter)}
+</div>
 ```
 
 It seems like we are mapping over items and calling `Counter`, which is a function which returns `JSX`. So everything should work right?
@@ -365,7 +365,16 @@ So basically to avoid such errors, **which will probably cause unexpected bugs**
 
 ### Component gets invoked multiple times
 
-TODO: talk about `React.Strict`
+So you heard about this thing called `React.Strict` and that you should use it to see if your application is _concurrent mode_ ready.
+But now, you have noticed that some of your components re-render twice seemingly at random, **during development** (if this happens when running a production built there is either a bug in React or your application has issues).
+
+This behavior that you are noticing is intentional and, in fact, is the way your application is tested to see if it's ready for _concurrent mode_.
+
+This stems from the fact that, React might _suspend_ rendering of your component and re-initialize it in the future. If you have things that cause
+_side effects_ within your component, and they are not wrapped with `useEffect`, you will have problems when the _concurrent mode_ is live.
+So to flush those cases as early as possible, the `React.Strict` simulates the behavior of _time slicing_ without employing any magic that might be behind this feature.
+
+So if you evert wondered why your components are called at random during the development after you have added the `React.Strict` flag, now you know.
 
 ## SSR
 
@@ -397,10 +406,10 @@ Other solutions involve checking for a `window`.
 
 ```js
 function Component() {
-    if (window == undefined) {
-        return null;
-    }
-    return <div>Some content</div>;
+  if (window == undefined) {
+    return null;
+  }
+  return <div>Some content</div>;
 }
 ```
 
@@ -534,11 +543,11 @@ Ever wondered why this setup:
 
 ```js
 function Eager(v) {
-    return v;
+  return v;
 }
 const Component = ({ counter }) => {
-    const [count, setCount] = React.useState(Eager(counter));
-    return <pre>{count}</pre>;
+  const [count, setCount] = React.useState(Eager(counter));
+  return <pre>{count}</pre>;
 };
 ```
 
@@ -546,8 +555,8 @@ Or simply this:
 
 ```js
 const Component = ({ counter }) => {
-    const [count, setCount] = React.useState(counter);
-    return <pre>{count}</pre>;
+  const [count, setCount] = React.useState(counter);
+  return <pre>{count}</pre>;
 };
 ```
 
@@ -603,8 +612,8 @@ One crucial piece of code from this snippet is the following:
 
 ```ts
 return React.useCallback(
-    (...args: any[]) => callback.current.apply(void 0, args),
-    [],
+  (...args: any[]) => callback.current.apply(void 0, args),
+  []
 ) as T;
 ```
 
@@ -642,10 +651,10 @@ Usually I defined event `callbacks` following way:
 
 ```js
 React.useEffect(() => {
-    function listener() {}
+  function listener() {}
 
-    window.addEventListener("scroll", listener);
-    return () => window.removeEventListener("scroll", listener);
+  window.addEventListener("scroll", listener);
+  return () => window.removeEventListener("scroll", listener);
 }, []);
 ```
 
@@ -656,11 +665,11 @@ It turns out you can actually define `event listeners` outside `useEffect`.
 
 ```js
 function SomeComponent() {
-    function listener() {}
-    React.useEffect(() => {
-        window.addEventListener("scroll", listener);
-        return () => window.removeEventListener("scroll", listener);
-    }, []);
+  function listener() {}
+  React.useEffect(() => {
+    window.addEventListener("scroll", listener);
+    return () => window.removeEventListener("scroll", listener);
+  }, []);
 }
 ```
 
@@ -752,9 +761,9 @@ magic.
 
 ```js
 function wrapPromise(promise) {
-    let status = "pending";
-    let result;
-    // ...
+  let status = "pending";
+  let result;
+  // ...
 }
 ```
 
@@ -767,14 +776,14 @@ So
 ```js
 // ..
 let suspender = promise.then(
-    (r) => {
-        status = "success";
-        result = r;
-    },
-    (e) => {
-        status = "error";
-        result = e;
-    },
+  (r) => {
+    status = "success";
+    result = r;
+  },
+  (e) => {
+    status = "error";
+    result = e;
+  }
 );
 // ..
 ```
@@ -786,15 +795,15 @@ Notice it has, sort of, pretended the _promise resolution_ call before
 ```js
 // ..
 return {
-    read() {
-        if (status === "pending") {
-            throw suspender;
-        } else if (status == "error") {
-            throw result;
-        } else if (status == "success") {
-            return result;
-        }
-    },
+  read() {
+    if (status === "pending") {
+      throw suspender;
+    } else if (status == "error") {
+      throw result;
+    } else if (status == "success") {
+      return result;
+    }
+  },
 };
 ```
 
@@ -847,29 +856,29 @@ here:
 
 ```js
 export function createElement(type, config, children) {
-    let propName;
+  let propName;
 
-    // Reserved names are extracted
-    const props = {};
+  // Reserved names are extracted
+  const props = {};
 
-    if (config != null) {
-        // Handling ref and keys
-        // Assign props to prop object
+  if (config != null) {
+    // Handling ref and keys
+    // Assign props to prop object
+  }
+
+  // Transfer children to newly allocated props object
+
+  // Resolve default props
+  if (type && type.defaultProps) {
+    const defaultProps = type.defaultProps;
+    for (propName in defaultProps) {
+      if (props[propName] === undefined) {
+        props[propName] = defaultProps[propName];
+      }
     }
+  }
 
-    // Transfer children to newly allocated props object
-
-    // Resolve default props
-    if (type && type.defaultProps) {
-        const defaultProps = type.defaultProps;
-        for (propName in defaultProps) {
-            if (props[propName] === undefined) {
-                props[propName] = defaultProps[propName];
-            }
-        }
-    }
-
-    return ReactElement(/*stuff*/);
+  return ReactElement(/*stuff*/);
 }
 ```
 
@@ -901,23 +910,23 @@ Contrived Example
 
 ```jsx
 function ComponentWithRef() {
-    const counter = React.useRef(0);
+  const counter = React.useRef(0);
 
-    counter.current++;
+  counter.current++;
 
-    return null;
+  return null;
 }
 
 function App() {
-    const [_, setState] = React.useState(0);
+  const [_, setState] = React.useState(0);
 
-    return (
-        <React.Fragment>
-            <ComponentWithRef />
-            {/* set new object as state*/}
-            <button onClick={() => setState({})}>Click me</button>
-        </React.Fragment>
-    );
+  return (
+    <React.Fragment>
+      <ComponentWithRef />
+      {/* set new object as state*/}
+      <button onClick={() => setState({})}>Click me</button>
+    </React.Fragment>
+  );
 }
 ```
 
@@ -966,13 +975,13 @@ const initialState = { firstName: "Harry", familyName: "Potter" };
 const PersonContext = React.createContext(null);
 
 function PersonProvider({ children }) {
-    const [person, setPerson] = React.useState(initialState);
+  const [person, setPerson] = React.useState(initialState);
 
-    return (
-        <PersonContext.Provider value={[person, setPerson]}>
-            {children}
-        </PersonContext.Provider>
-    );
+  return (
+    <PersonContext.Provider value={[person, setPerson]}>
+      {children}
+    </PersonContext.Provider>
+  );
 }
 ```
 
@@ -980,18 +989,18 @@ Now lets say we have 2 components that display `firstName` and `familyName`
 
 ```jsx
 function DisplayFirstName() {
-    return (
-        <PersonContext.Consumer unstable_observedBits={0b1}>
-            {([person]) => <div>{person.firstName}</div>}
-        </PersonContext.Consumer>
-    );
+  return (
+    <PersonContext.Consumer unstable_observedBits={0b1}>
+      {([person]) => <div>{person.firstName}</div>}
+    </PersonContext.Consumer>
+  );
 }
 function DisplayFamilyName() {
-    return (
-        <PersonContext.Consumer unstable_observedBits={0b10}>
-            {([person]) => <div>{person.familyName}</div>}
-        </PersonContext.Consumer>
-    );
+  return (
+    <PersonContext.Consumer unstable_observedBits={0b10}>
+      {([person]) => <div>{person.familyName}</div>}
+    </PersonContext.Consumer>
+  );
 }
 ```
 
@@ -1038,9 +1047,9 @@ There is a reliable way to batch state update though that method is marked as
 
 ```javascript
 ReactDOM.unstable_batchedUpdates(() => {
-    setState(/**/);
-    setState(/**/);
-    setState(/**/);
+  setState(/**/);
+  setState(/**/);
+  setState(/**/);
 });
 ```
 
