@@ -82,6 +82,10 @@ That is a good guess, but sadly that is not the case. The heuristics of when the
 All in all, this kind of information is not needed to use React, but I still find it valuable.
 How many times someone asked you why did this component "re-rendered" (or not) and you had no clue?
 
+Resources:
+
+- _React Summit Remote Edition 2021_ talk by Adam Klein
+
 ## Lazy loading
 
 Standard technique, using `React.lazy` and the `React.Suspense` is a standard thing to do.
