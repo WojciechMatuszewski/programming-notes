@@ -95,18 +95,31 @@ Now, this would be fine and all, but whenever you when try to mutate that ref yo
 
 Now, this is weird right, should not all _refs_ be mutable? Well, yes, but...
 
-By defining an initial value as `null` you are signaling to the type system that **you will not modify that ref**. That **React owns that ref**. You would not want to mutate something that belongs to another party would you?
+If the **type that you have provided does not contain `null` and the initial value is `null`, you signal that you do not intent to modify the ref value**. This is so called **immutable ref, or DOM ref**.
 
-So whenever you write something like this
+In the previous example, I've used `HTMLDivElement`, but the notion of _immutable ref_ is not constrained to types related to the DOM nodes.
 
 ```tsx
-function Component() {
-  const myRef = React.useRef<HTMLDivElement>();
-  return <div ref={myRef} />;
-}
+const myRef = React.useRef<number>(null);
+myRef.current = 3; // TypeScript error
 ```
 
-Consider using `null` as initial value - you will most likely never mutate the `current` property anyway, why would you in this case?
+### How to you signal the mutable `ref` then?
+
+There are two cases that you have to consider:
+
+1. The initial value I want the `ref` to have is `null`.
+2. The initial value I want the `ref` to have is different than `null`.
+
+For the first case, include the `null` within the type definition of the `useRef`. So `React.useRef<number>(null)` becomes `React.useRef<number | null>(null)`
+
+For the second case, you do not have to change your code at all.
+
+```tsx
+const myRef = React.useRef<string>("hey");
+
+myRef.current = "hio";
+```
 
 ### The union type within the ref type parameter
 
