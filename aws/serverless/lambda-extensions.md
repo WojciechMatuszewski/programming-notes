@@ -34,6 +34,16 @@ There are two types of lambda extensions.
 With the release of lambda extensions, a new APIS were added so that the extension can talk to Lambda service.
 These are the _Logs API_ and the _Extensions API_. Of course, the _Runtime API_ was not changed, the external extension does not have the ability to talk to the runtime API.
 
+### Collecting logs
+
+- the extension can submit a _subscribe request_ so that the logs that the lambda service will push to cloudwatch are also pushed to a given endpoint
+
+- you are responsible for spinning the endpoint the lambda service will push the logs to
+
 ## Pricing
 
 The pricing model is the same as AWS Lambda.
+
+## Gotchas
+
+- The **extension initialization phase might influence the duration of the cold start**. This is because the _init_ phase of the execution environment is considered done only when the all three components (runtime, your lambda and the extension) are ready.

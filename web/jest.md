@@ -95,6 +95,79 @@ DynamoDBDocumentClient.prototype.send = mockFn;
 
 ## Async timers
 
+### Before you begin
+
+Before you embark on this journey, take a step back and see if you can refactor your code.
+Just to illustrate what I have in mind. Let us assume I'm performing an API call I want to add resiliency (retries and backoff) for.
+
+```js
+const pRetry = require("p-retry");
+const callTheAPI = require("./api");
+
+const getTheData = () => {
+  return pRetry(
+    async () => {
+      try {
+        return callTheAPI();
+      } catch (e) {
+        if (e.isRetryable) {
+          throw e;
+        }
+
+        throw new pRetry.AbortError(`Failed: ${e.message}`);
+      }
+    },
+    { retries: 3, forever: false, maxTimeout: 3000 }
+  );
+};
+```
+
+The callback of the `pRetry` function is relatively logic heavy. We should proceed with the unit tests and ensure that whatever that callback does, it behaves correctly and retries are indeed occurring right?
+
+Not necessarily, please consider refactoring the callback first.
+
+```js
+const pRetry = require("p-retry");
+const callTheAPI = require("./api");
+
+// For the lack of a better name
+const getTheDataCB = () => {
+  try {
+    return callTheAPI();
+  } catch (e) {
+    if (e.isRetryable) {
+      throw e;
+    }
+
+    throw new pRetry.AbortError(`Failed: ${e.message}`);
+  }
+};
+
+const getTheData = () => {
+  return pRetry(
+    async () => {
+      try {
+        return callTheAPI();
+      } catch (e) {
+        if (e.isRetryable) {
+          throw e;
+        }
+
+        throw new pRetry.AbortError(`Failed: ${e.message}`);
+      }
+    },
+    { retries: 3, forever: false, maxTimeout: 3000 }
+  );
+};
+```
+
+Now you have a chance to **test the `getTheDataCB` in isolation** as well as to **test the configuration of `pRetry`** without increasing complexity of your tests.
+If we were to skip this step, your test file would be "polluted" with lesser known constructs like `setImmediate`.
+
+If you are certain that it's not feasible to extract the logic from the callback in any meaningful way, let us proceed.
+
+### The hack
+
 A very useful video as a refresher before reading this section
 https://www.youtube.com/watch?v=8eHInw9_U8k
 
