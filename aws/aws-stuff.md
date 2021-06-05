@@ -4660,6 +4660,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can use **Message deduplication ID** to **ignore (5 mins period) messages that have been send to the queue multiple times**. This is only available for SQS FIFO.
 
+- if you are consuming the messages via lambda, **you can control the concurrency via the _Message Group ID_ on the FIFO queue**.
+  **The more groups are in flight, the more concurrent consumers of the messages in the queue**. This is a neat mechanism that allows you to make sure that you are processing the messages by a single consumer - by using only one _Message Group ID_ for all the messages.
+
+  > Total concurrency is equal to or less than the number of unique MessageGroupIds in the SQS FIFO queue
+
 #### DLQ
 
 - this is a **special queue which usually takes the events which were processed unsucessfuly**.
