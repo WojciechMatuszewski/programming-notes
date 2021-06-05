@@ -49,3 +49,9 @@ If you enable CSM for either the CLI or the SDK, an event will be send to a 3100
 
 I discovered this while looking on how could I reproduce the functionality of https://github.com/iann0036/iamlive
 Well, it turns out that tool is using just that exact technique!
+
+### Objectively better than CloudTrial
+
+CSM is a objectively better way of knowing what exactly is going on within your AWS account than CloudTrial.
+While the ergonomics of CSM are not up to pair, the level of visibility it gives you is unmatched.
+Personal recommendation: you probably need both tools, so use them in conjunction, not separation.
