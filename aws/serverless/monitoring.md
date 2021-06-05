@@ -40,3 +40,12 @@ There are 2 ways you can _raise_ an exception within our Lambda handler.
 Both methods will show up within the _Exceptions_ tab in `X-Ray` (granted you pick the right segment).
 
 Which one I would pick? Definitely no.1. It's less verbose, and allows you to unwind the stack pretty fast, instead of returning rejected promise up the stack.
+
+## CSM - client side monitoring
+
+This is so rad, it allows you to, based on the CLI or the SDK calls, tailor an IAM policy that is just enough for the operations that you were performing.
+
+If you enable CSM for either the CLI or the SDK, an event will be send to a 31000 UDP port. This event contains metadata about the operation. Here is a great article on the subject matter: https://cloudonaut.io/record-aws-api-calls-to-improve-iam-policies/
+
+I discovered this while looking on how could I reproduce the functionality of https://github.com/iann0036/iamlive
+Well, it turns out that tool is using just that exact technique!
