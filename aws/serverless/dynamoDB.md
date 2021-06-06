@@ -111,8 +111,8 @@ Since we are only doing operations inside _buckets_ it's pretty fast.
 These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key.
 They work _outside the buckets_. Global secondary indexes are **stored on their own partitions** (separate from the table).
 
-The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different than the
-LSI / primary indexes
+The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different than the LSI / primary indexes.
+You can also change the GSI value of the GSI pk and / or GSI sk without any restrictions. This is quite logical since otherwise it would not be possible to create _sparse indexes_.
 
 > In a DynamoDB table, each key value must be unique. However, the key values in a global secondary index do not need to be unique.
 
