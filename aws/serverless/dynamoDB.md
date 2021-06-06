@@ -144,7 +144,7 @@ You can think about it like putting things that have the same partition key in t
 
 - this an **alternative for filtering**. It works on an idea that when you scan / query you only pull the data from indexes
 
-- this is where you **create an LSI** on **attribute that sometimes is not present on some records**.
+- this is where you **create an LSI or a GSI** (most likely GSI) on **attribute that is not present on some items**.
 
 Picture orders within a restaurant. Some of the orders might be _open_ - indicating that the order is not yet fulfilled. Instead of using _Scan_ or creating a _Filter_ expression you could create a _sparse index_ on the _open_ attribute.
 

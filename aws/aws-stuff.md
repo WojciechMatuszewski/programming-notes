@@ -1946,7 +1946,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - the LSI **can be strongly consistent**
 
-* **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to tables WITHOUT LSI**
+* **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to parsitions created with GSI**
 
 #### ACID
 
