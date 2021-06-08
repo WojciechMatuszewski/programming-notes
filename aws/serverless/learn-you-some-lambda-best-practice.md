@@ -403,7 +403,7 @@ Notable alarms are:
 
 * lambda is **attached to a internal NAT** that **lives inside your vpc**.
 
-![lambda v2n](../assets/lambda-v2n.png)
+![lambda v2n](../../assets/lambda-v2n.png)
 
 - this is **why the VPC cold starts are no longer an issue**. It's because the **v2n gateway is created at create/update time** of given lambda.
 
@@ -419,9 +419,16 @@ Notable alarms are:
 
 - scripts or binaries that run alongside your lambda function
 
-* can be external or internal. An _internal extension_ will most likely run the lambda function and perform some work before that.
-  An _external extension_ will run alongside your lambda function in a separate process.
+* see the [extensions docs](./lambda-extensions.md) for more info
 
-- remember that you can make your node script executable by specifying the `#!/usr/bin/env node` header (file has to be without an extension).
+## Custom runtime
 
-* there is a pattern of spinning a local http server which the lambda function will reach out to for different stuff, like ssm parameters.
+What if your favorite way of writing lambdas is by using bash? Or maybe you want to do some funky stuff before your handler runs? All of this is possible with _custom runtimes_.
+
+### How does custom runtimes work
+
+Custom lambda runtimes act like a middle man between the handler and the _AWS Lambda Runtime_. You have your _bootstrap_ file (it has to be an executable named _boostrap_). That files should would then invoke your handler and communicate with the _AWS Lambda Runtime_ to relay results and errors.
+
+The communication between the _boostrap_ file and the _AWS Lambda runtime_ is an RPC communication between your runtime and the _AWS Lambda runtime_ (over HTTP layer).
+
+// todo
