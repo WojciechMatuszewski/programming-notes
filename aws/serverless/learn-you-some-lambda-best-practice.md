@@ -421,14 +421,19 @@ Notable alarms are:
 
 * see the [extensions docs](./lambda-extensions.md) for more info
 
+- the **GO 1.x does not support lambda extensions**, you have to use either **`provided` or `provided.al2` for the extensions to work**
+
 ## Custom runtime
 
 What if your favorite way of writing lambdas is by using bash? Or maybe you want to do some funky stuff before your handler runs? All of this is possible with _custom runtimes_.
 
-### How does custom runtimes work
+### How does custom runtime work
 
-Custom lambda runtimes act like a middle man between the handler and the _AWS Lambda Runtime_. You have your _bootstrap_ file (it has to be an executable named _boostrap_). That files should would then invoke your handler and communicate with the _AWS Lambda Runtime_ to relay results and errors.
+- they are like a middleman between _AWS Lambda Runtime_ and your handler
 
-The communication between the _boostrap_ file and the _AWS Lambda runtime_ is an RPC communication between your runtime and the _AWS Lambda runtime_ (over HTTP layer).
+* they coordinate the communication between the _AWS Lambda Runtime_ and your handler.
+  The communication between the AWS Part and your runtime is an RPC communication through on the HTTP layer
 
-// todo
+- your **custom runtime has to be an executable file named bootstrap**. This is a requirement on the AWS side of things
+
+* **does not work on all runtimes**
