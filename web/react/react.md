@@ -1026,10 +1026,9 @@ returning bits, basically creating so-called **bitmask**
 This is the mechanism used by redux and mobx to make sure they are only
 re-rendering something that changed!
 
-### BatchUpdates
+### Manually batching updates
 
-So by now you probably know that React batches updates (calls like `setState` or
-`setWhatever`[hooks])
+So by now you probably know that React batches updates that relates to state changes.
 
 The question is when is React doing that? Well, certainly not on every call
 because that would cause a lot of overhead.
@@ -1037,8 +1036,7 @@ because that would cause a lot of overhead.
 So React does that only in well knows methods like `componentDidUpdate` (and
 probably other life-cycle methods) and events callbacks (like `onClick`)
 
-But the more important thing is that **React does not batch state updates in
-async callbacks**. So anything in `setTimeout` or a `Promise` wont batch.
+But the more important thing is that **React does not batch state updates in async callbacks and non-browser handlers**. So anything in `setTimeout` or a `Promise` wont batch.
 
 There is a reliable way to batch state update though that method is marked as
 `_unstable`.
@@ -1054,3 +1052,17 @@ ReactDOM.unstable_batchedUpdates(() => {
 ```
 
 This will make it so only one `setState` will fire.
+
+### Automatic batching in React 18
+
+As of writing this, the _React 18 alpha_ was released. This version of React introduced _automatic batching_.
+With _automatic batching_ you no longer have to use the `unstable_batchUpdates` function. What's important here is that **there has to be a `createRoot` somewhere up the tree**.
+The above requirement makes me believe that the _automatic batching_ feature is leveraging the _time slicing_ concept which is pretty cool!
+
+Resources:
+
+- https://github.com/reactwg/react-18/discussions/21
+
+#### Opting out
+
+There is a way to mark a state update as _non batchable_ if you will. For this you will need to use the `flushSync` abstraction and wrap the call that updates the state with it.
