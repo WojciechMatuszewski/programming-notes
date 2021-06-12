@@ -229,6 +229,32 @@ It is a best practice to run aggregation outside of the DynamoDB computation. In
 
 As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamodb streams_ are timely ordered. To avoid throttling you can setup _batch window_ to have your function wait X seconds before being invoked. This should invoke your function whenever _batch window_ expires or the batch is _6 MB_ in size.
 
+### Selective write sharding
+
+_Write sharding_ is great at _expanding the key space_, but it does come with a drawback. How in the world are you suppose to know in which sharded partition given item resides?
+If you did not put any though into how the shard number is computed, this could be a problem. Imagine a table of customers and mobile phone providers.
+
+```txt
+PK                        SK     PHONE
+P#${PROVIDER_ID}#1        C#1    5222222
+P#${PROVIDER_ID}#2        C#2    6666666
+P#${OTHER_PROVIDER_ID}#3  C#3    7777777
+```
+
+To get a given customer knowing the ${PROVIDER_ID} and the customer number, you would have to issue parallel queries. This might be OK depending on the situation, but
+it would be neat to make sure this access is a simple `key:value` lookup.
+
+This is where the idea of _selective write sharding_ comes in. Instead of mindlessly sharding given partition, we could ensure that the ID of the shard can be computed given some information. In our case, we should be able to compute the shard ID if we know the customer phone number and the provider ID.
+
+```txt
+PK                                          SK     PHONE
+P#${PROVIDER_ID}#${HASH(PHONE) % 10}        C#1    5222222
+P#${PROVIDER_ID}#${HASH(PHONE) % 10}        C#2    6666666
+P#${OTHER_PROVIDER_ID}#${HASH(PHONE) % 10}  C#3    7777777
+```
+
+Now the shard ID is deterministic and derived from the customers phone number. Given the ${PROVIDER_ID} and the customers PHONE we are able to get that customer by performing a `key:value` lookup
+
 ## API
 
 - use `ConditionExpression` to fail specific operations. This can be used together with `Transactions (read / write)` to create powerful operations.
