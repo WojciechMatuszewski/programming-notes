@@ -76,3 +76,4 @@ You can pick and choose properties from those log groups and then create aggrega
 So now, the `requestId` is not so scary, you just pick it as a field upon which the _Contributor Insights_ will create an aggregate.
 
 Of course, this way of presenting information is mostly used for _count-based_ metrics. But either way it can be useful (you can achieve the same results by using _CloudWatch Insights_ but you would have to create a relatively complex query yourself).
+
