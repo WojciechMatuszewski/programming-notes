@@ -427,13 +427,20 @@ Notable alarms are:
 
 What if your favorite way of writing lambdas is by using bash? Or maybe you want to do some funky stuff before your handler runs? All of this is possible with _custom runtimes_.
 
-### How does custom runtime work
+### Custom runtime and Lambda Runtime API
 
-- they are like a middleman between _AWS Lambda Runtime_ and your handler
+- they are like a middleman between _AWS Lambda Runtime API_ and your handler. The Runtime API exposes an HTTP API that the runtime can use.
 
-* they coordinate the communication between the _AWS Lambda Runtime_ and your handler.
-  The communication between the AWS Part and your runtime is an RPC communication through on the HTTP layer
+* events that the runtime pooled are forwarded to your handler.
 
-- your **custom runtime has to be an executable file named bootstrap**. This is a requirement on the AWS side of things
+- for the go1.x runtime, there seems to be a proprietary mechanism of handling invocations.
+  That runtime does not use the runtime API. Instead the connection is accepted on a localhost with port specified by the `_LAMBDA_SERVER_PORT` environment variable.
 
-* **does not work on all runtimes**
+* the `aws-lambda-go` package constructs two clients, one for the "legacy" runtime and one for the one that supports Runtime API.
+  After that, given client is run based on what kind of environment variable is specified.
+
+- the _AWS Lambda Runtime API_ can be emulated. There exists an [aws-lambda-runtime-interface-emulator](https://github.com/aws/aws-lambda-runtime-interface-emulator) - an universal tool for emulating the Runtime API. You can also use `sam local invoke` command to streamline this process.
+
+* the language specific runtimes already have RIE built-in for local testing.
+
+- remember that RIE has to start before your runtime starts, thus you have to point RIE at a binary (or script). RIE will handle bootstrapping that binary.
