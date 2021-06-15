@@ -72,3 +72,8 @@ function cloneDeep(values: Record<string, unknown>): Record<string, unknown> {
 ```
 
 Look at this! So nice. Also much more readable. I bet that with the `JSON.stringify` you will get a question about what is going on.
+
+## Event loop and promises
+
+// TODO
+https://www.nearform.com/blog/optimise-node-js-performance-avoiding-broken-promises/?utm_campaign=Adventures%20in%20Nodeland&utm_medium=email&utm_source=Revue%20newsletter
