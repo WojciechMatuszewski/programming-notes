@@ -83,6 +83,8 @@ Remember about all the Node.js queues that exist? The _macrotask queue_ and the 
 
 The _native layer_ is nothing more than the place where _libuv_ resides and executes. It's the **_native layer_ functions that drain the _microtask queue_ and the _nextTick queue_, not the Node.js event loop!**.
 
+The _native layer_ **runs before the event loop starts**.
+
 ### When does native layer run
 
 The _native layer_ **runs in-between every event loop cycle**. When **_native layer_ runs, the event loop is BLOCKED**.
@@ -150,4 +152,68 @@ immediate
 6. Control is yielded back to the event loop, since the _timers queue_ is run before the _immediate queue_, we see the `timer` log first, then the `setImmediate` callback is invoked
 7. The _native layer_ gets to work, the last `then` callback is invoked.
 
-TODO : https://www.youtube.com/watch?v=yRyfr1Qcf34
+### More on promises
+
+- the `Promise.resolve` and `foo()` (where `foo` is an async function) is basically the same
+
+  ```js
+  new Promise((r) => {
+    console.log("synchronous resolve");
+    r();
+  });
+
+  // same as above
+  async function foo() {
+    console.log("also");
+  }
+  foo();
+  ```
+
+- `nextTick` means **at the end of the current JS execution**. The `nextTick` callback does not execute during the event loop but in the _native layer_.
+
+- the _native layer_ draining of queues can happen **multiple times per event loop tick**
+
+- one key thing to understand is that **promises are executed synchronously and resolved asynchronously**. This is why code similar to
+
+  ```js
+  async function foo() {
+    while (1) {}
+  }
+  ```
+
+  will block
+
+### Error handling
+
+Not handling errors correctly will result in **memory leaks** and problems with **file descriptors back-pressure problems**.
+
+The biggest lesson here is to **not mix callbacks and promises**. There are many Node.js APIs which default form do not work natively with promises - like `eventEmitter` or similar.
+
+#### Creating branches
+
+Defining the `.then` and `.catch` callbacks on the promise object is like creating different branches. If you are not careful this might trip you up.
+
+```js
+const p = new Promise((_, reject) => {
+  reject("boom");
+});
+
+p.then(console.log); // This branch is rejected, no error handler defined, thus an exception
+p.catch(console.log); // This branch is rejected, error handler defined, thus the error is logged
+```
+
+You might think that since we have defined a `.catch` handler on the promise, we are safe. This is far from the reality as if you run this code, an exception will be thrown to the runtime. This is because **we have created 2 branches out of the promise object, only one of those branches handles errors**.
+
+As an alternative, you could have used the `try / catch` construct. This is a safe way to ensure only 1 branch of execution is followed.
+
+```js
+const p = new Promise((_, reject) => {
+  reject("boom");
+});
+
+try {
+  await p;
+} catch (e) {
+  console.log(e);
+}
+```
