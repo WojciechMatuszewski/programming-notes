@@ -217,3 +217,22 @@ try {
   console.log(e);
 }
 ```
+
+### Evaluation
+
+You already know that the synchronous code within an `async` function is run synchronously. Remember though that **promises are resolved asynchronously**. This means that even though you might thrown an error within the `async` function, the status of the promise will still be `pending` till it's resolved.
+
+```js
+async function doRequest() {
+  throw new Error("boom");
+}
+
+function foo() {
+  const p = doRequest().then(() => console.log("works"));
+  // p is in `pending` state here, not `rejected`
+  return p;
+}
+
+// Without the `catch` callback defined, the error would have been forwarded to the runtime.
+foo().catch(console.log);
+```
