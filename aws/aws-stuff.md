@@ -2258,6 +2258,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you can add **custom headers to the responses**.
 
+* you can make the flow of the integration with lambda asynchronous. To do this, the integration **must be of `custom` type, not the `proxy` one**
+
 #### Usage Plans
 
 - enable you to create throttling / quota limits per key group. This **enables you to create a tier architecture for your API**, like `Bronze`, `Silver`, `Gold` tiers.
@@ -2269,6 +2271,16 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - you can setup **canary deployment in APIGW**
 
 * to **get new deployment going**, **you have to either delete or promote canary**
+
+#### HTTP vs REST
+
+- two variants of the API GATEWAY family
+
+* the **HTTP API has much better latency**
+
+- the **REST API supports more features** like request / response validation, asynchronous invocations for lambdas, usage keys etc...
+
+* **both seem to be getting updates to some extend but AFAIK the HTTP API should be preferred**
 
 ### Load Balancers
 
