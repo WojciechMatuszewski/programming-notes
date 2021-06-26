@@ -202,7 +202,22 @@ Mainly used with languages such as `Java`. There is a danger to couple `GraphQL`
 
 - try to **return entities which were affected by the mutation** in the **result of the mutation**. This will probably be a type which contains `payload` within it's name.
 
-- alaways design with domain in mind. Again, be as verbose as possible.
+- always design with domain in mind. Again, be as verbose as possible.
 
 - _update_ type mutations require tradeoffs. This is where you create an input with all fields optional, but some of them might be actually required on the entity are trying to update.
   This is where you might need to implement some validation on the backend to make sure user does not set required values as `null`s.
+
+## GraphQL query complexity
+
+Usually, most of the APIs you will deploy as part of your work (or work with) will have some rate-limiting applied to them.
+The reason is understandable - we would not want someone to DDOS our servers (there are servers in serverless).
+
+While this approach works quite well for REST APIs, it lacks flexibility when it comes to the GraphQL API.
+In GraphQL world, the query can be simple and very complex (even recursive). So if we were to apply the REST-style rate-limiting to those APIs, we could be throttling our users on operations that do not take that much time to compute on our time while also allowing them to DDOS us with very complex queries.
+
+All these problems could be solved by using a GraphQL query complexity analyzer. Each user is given a finite amount of "points". These points are spent doing operations and refilled on some basis. While this approach might sound like we are implementing a bucketing strategy to rate limiting, it's much more than that.
+
+The queries are evaluated based on their complexity, not how often they are made. Thus, simple queries cost less than mutations which cost less than very complex queries that involve pagination.
+
+Few open-source libraries allow you to get the complexity of a given query before it's executed and go from there. But they are not perfect.
+[IBM researched the topic](https://www.youtube.com/watch?v=5Xtw5XDIyFw) where they found that the open-source solutions do not work that well. Sadly, AFAIK, they did not open-source their solution.
