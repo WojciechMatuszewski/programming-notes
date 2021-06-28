@@ -4936,6 +4936,13 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * you can also **restrict** traffic **based on location**, **prevent SQL Injection**, all sorts of stuff.
 
+#### The experience
+
+- default rules provide a good starting point, but you will most likely need to turn some of
+  - one of such rules might be the `AWSManagedRulesAmazonIpReputationList`. This one might be causing you issues if you are using canaries
+
+* WAF and its resources do not have the concept of a `DeletionPolicy`. This means that, if you deploy a PR stacks, might have trouble cleaning up those resources
+
 ### AWS Shield
 
 - mainly for **creating protection against DDOS**.
