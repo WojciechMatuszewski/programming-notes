@@ -4943,6 +4943,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * WAF and its resources do not have the concept of a `DeletionPolicy`. This means that, if you deploy a PR stacks, might have trouble cleaning up those resources
 
+- Deleting the `WebACL` is not that easy. First you have to delete any rules that the `WebACL` is defining, then you need to make sure that
+  no other resource is associated with that `WebACL`
+
 ### AWS Shield
 
 - mainly for **creating protection against DDOS**.
