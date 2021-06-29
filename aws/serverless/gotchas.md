@@ -156,3 +156,27 @@ Notice that I'm not using `$$` within the `Payload` block of the Lambda task.
 All the context is available to me because I've passed it to the previous `Pass` state as input (using the `Parameters` block)
 
 **Please note that I still do not have access to the `Task.Token` variable. It is only available when a given task is of type `.waitForTaskToken`**
+
+## CFN is not resolving my secrets manager reference. Help
+
+I've recently encountered this at work and found the situation interesting, hope you find it interesting as well.
+
+Whenever you are working with services like `SecretsManager` or `ParameterStore` you most likely do not want to resolve their values statically whenever your `CloudFormation` template is created. Otherwise, these would be visible in plain text! Ideally, these would be resolved at deployment time by `CloudFormation` itself.
+
+Do carry out that process, `CloudFormation` uses references that looks similar to this one:
+
+```shell
+{{resolve:secretsmanager:arn:aws:secretsmanager:us-east-1:567235585022:secret:secret-RhKGCW}}
+```
+
+The idea is to these be visible in your `CloudFormation` template whenever it's created, then the service would take care of resolving them whenever a deployment happens. All good.
+
+At work, I was aware of this fact and thus I though that my template would be deployed nicely, without any issues. Sadly to my surprise, the resource I deployed, instead of resolved `SecretsManager` value, was passed the reference to that value. As if the `CloudFormation` decided not to resolve the reference in this particular case.
+
+**It turns out, the `CloudFormation` will resolve those references only in particular contexts**. That is **not all resources and their properties support the resolution of such references**. In my case, deploying custom resource and passing the reference as a property on the resource parameters, the resolution was not supported.
+
+I found [this documentation page](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/dynamic-references.html) very helpful. It clearly states that "Dynamic references for secure values, such as secretsmanager, aren't currently supported in custom resources.".
+
+### Solution to the problem
+
+TBD, I still have no idea :D
