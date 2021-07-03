@@ -5454,6 +5454,19 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * very useful when you are dealing with a situation where a resource that you want to create
   does not have `CloudFormation` support yet.
 
+#### Resource providers (resource types & CFN Registry)
+
+- the code that you are writting is executed inside a special CFN provided account, not yours
+
+* **using resource providers, you have all features of CFN at your disposal, that also includes drift detection**
+  **This is not the case with custom resouces**
+
+- compared to the custom resouces, if you are writing something more serious, it's a better choice
+
+#### CFN Modules
+
+- kke
+
 #### Wait Conditions
 
 - coordinate stack resource creation with something **that is external to your stack**.
@@ -5486,14 +5499,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
   - `cfn-hup`: **daemon which pools CF for changes**. If changed occured for a given CF block, runs scripts defined by you
   - `cfn-init`: used for **more complex user-init scripts**. Instead of writing scrips, you pass directives to a special program which is OS agnostic.
   - `cfn-signal`: used for `WaitConditions`, coordination between resources
-
-#### Custom resource types
-
-- you (or others) can create **custom CF resource types**
-
-* this is something you **upload to CF registry**
-
-- as a developer of such resource type, **you are responsible for implementing _create_, _delete_ and _update_ hooks**
 
 ### AWS Glue
 
