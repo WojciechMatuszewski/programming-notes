@@ -5463,9 +5463,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - compared to the custom resouces, if you are writing something more serious, it's a better choice
 
-#### CFN Modules
+#### Modules
 
-- kke
+- these are packages templates
+
+* their `Type` ends with a `MODULE` - it's very specific
 
 #### Wait Conditions
 
