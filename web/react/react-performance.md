@@ -368,3 +368,16 @@ function App() {
 
 In above snippet, your _context value_ might be _memoized_ but the `Parent` will still be _invoked_ (no commits to the DOM though) when the button is clicked.
 This is where the notion of **having `React.memo` in strategic parts of your app** comes in.
+
+## Expensive initial rendering
+
+https://itnext.io/improving-slow-mounts-in-react-apps-cff5117696dc
+
+While it would be ideal for the React to be more asynchronous when it comes to rendering (that is coming in React 18! Hurray for _time-slicing_), it's not the case at the moment.
+
+So what do you do when you are faced with a performance issues during during the rendering of your components?
+One solution of this would be to defer the rendering to the point where we know that the browser is ready to take in the work without us accidentally freezing the UI.
+
+The article I've linked contains a really neat way to do that. The solutions uses `window.requestIdleCallback` **with a timeout** to ensure that the callback where the computation of what should be rendered next actually happens.
+
+Pretty neat I would say!
