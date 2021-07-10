@@ -1,5 +1,29 @@
 # Cypress stuff
 
+## The asynchronous nature of the commands
+
+I believe that there are two main misconceptions people usually make whenever they start their adventure with Cypress.
+
+1. You can use `.then` chaining thus the commands are really promises.
+2. The other version of no 1. would be to assume that **some** commands are synchronous.
+
+Here is the kicker, **all `Cypress` commands are asynchronous, they are using promise-like structures under the hood**.
+Please take a note of the _promise-like_, **`Cypress` commands are NOT promises**. Native promise implementation does not have the concept of retry-ability. Imagine the `cy.get` not retrying, that would be horrible!
+
+Here is an example piece of code that a person who assumes no 2. would write.
+
+```js
+cy.visit("index.html");
+
+let username = null;
+
+cy.get("#username").then(($el) => (username = $el.text()));
+
+cy.log(username);
+```
+
+The `cy.log` will always print `null`. This is because the **`cy.get` is scheduled to be run and asynchronous**.
+
 ## The power of `cy.task`
 
 When you are first starting out with `Cypress` you might feel a bit constrained. You will quickly notice that you do not have access to the node environment (at least within you test block). **`Cypress` commands run inside the browser**.
@@ -22,8 +46,8 @@ Let's say you have the following
 
 ```js
 cy.get(".todo-list li") // command
-    .find("label") // command
-    .should("contain", "todo A"); // assertion
+  .find("label") // command
+  .should("contain", "todo A"); // assertion
 ```
 
 Let's say that the first `command` is successful and the `li` is found. This means that **only the second command will be retried until the assertion passes**. This is very important, let's say we are adding an item before executing the chain
@@ -32,8 +56,8 @@ Let's say that the first `command` is successful and the `li` is found. This mea
 cy.get(".new-todo").type("todo A{enter}"); // add item
 // What if there is a delay here and there already is an `li` within `todo-list`?
 cy.get(".todo-list li") // command
-    .find("label") // command
-    .should("contain", "todo A"); // assertion
+  .find("label") // command
+  .should("contain", "todo A"); // assertion
 ```
 
 If there already is an `li` within the `.todo-list` but with different label, and there is some delay between clicking _enter_ and `todo A` appearing, the whole chain will fail.
@@ -48,7 +72,7 @@ Instead of doing 2 commands, we can perform 1 command on the merged selector.
 
 ```js
 cy.get(".todo-list li label") // command, will be retried until the assertion passes (with timeout)
-    .should("contain", "todo A");
+  .should("contain", "todo A");
 ```
 
 This makes sure that we are executing the whole selector each time the `should` fails, not only looking at the label.
@@ -64,9 +88,9 @@ The deal here is to split the chain we had previously to ensure that all precond
 cy.get(".new-todo").type("todo A{enter}"); // add item
 
 cy.get(".todo-list li") // command
-    .should("have.length", 2) // assertion
-    .find("label") // command
-    .should("contain", "todo A"); // assertion
+  .should("have.length", 2) // assertion
+  .find("label") // command
+  .should("contain", "todo A"); // assertion
 ```
 
 Now, the first assertion will pass only if the item is actually added. Then we can proceed with our `label` assertion.
