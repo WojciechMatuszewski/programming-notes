@@ -1,7 +1,5 @@
 # GraphqlStuff
 
-- https://egghead.io/courses/graphql-query-language
-
 ## Enums
 
 Just like in typescript you can define enums (you probably only need constant enums in TypeScript).
