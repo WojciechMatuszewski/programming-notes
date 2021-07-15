@@ -77,7 +77,7 @@
 
 #### Inside VPC
 
-- **YOU CAN PLACE LAMBDA INSIDE A VPC SUBNET**. The **subnet HAS TO BE PRIVATE though**. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because **lambdas have ENI assigned that never gets public IP**.
+- **you can attach the lambda to a vpc**. Based on your needs, the associated subnets should be either private or public. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because **lambdas have ENI assigned that never gets public IP**.
 
 * since Lambdas needs ENI, you might hit **throttling when there are not enough ENIs for given lambda container**. The limit is **350 ENIs per region**. When that throttling happens you will se an `ec2` related throttling message.
 
@@ -226,6 +226,15 @@
 * is **different than bisect on error** because **with bisect on error one message might be processed multiple times**. Here we are **telling the pooler which message failed exactly**
 
 - **DOES NOT WORK WITH SQS**. You still have to use the pattern where you throw the messages that failed the processing
+
+#### Tracking the deployment state
+
+- it is possible to get the current state of a given function after performing the _create_ or _update_ operations
+
+* the state is needed because the lambda might not be ready to be invoked immiedietley after the operation.
+  The service might be creating resources on your behalf, that usually takes time
+
+- Refer to [this post](https://aws.amazon.com/blogs/compute/coming-soon-expansion-of-aws-lambda-states-to-all-functions/) for the additional info
 
 ### Step Functions
 
