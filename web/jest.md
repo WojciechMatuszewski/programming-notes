@@ -397,3 +397,85 @@ test("waiting", async () => {
 As you can see, there is not much to it. All you have to do is to let the callbacks be allocated to proper queues in the event loop phases and then call the `jest` timers API.
 
 The `Promise` callback it put inside the `microtask` queue which is checked before moving to a new _phase_. Inside that callback we are pushing a new callback into the _timers_ queue.
+
+## Custom reporters
+
+Time and time again, I'm amazed at how extensible jest is. The endless amount of options you can provide while configuring the test framework is a sight to behold.
+
+Recently I was faced with what I think is an interesting problem. Mainly: _how do we log only when the test failed?_.
+You can imagine running tests on CI. Since it's hard to debug on CI, it would be nice to have the usually silenced logs (logs are silenced not to pollute the CI logs whenever the test pass).
+
+The solution I ended up with is widely different than I would like (though it's much easier to comprehend). I've decided to enable the logs on CI for specific test suites. The vision of having them be "released" only whenever a given test case failed is still, to this day, very eluding to me, but I was not able to make it work.
+
+Here is the story of what I've tried and how I failed miserably in writing a custom reporter
+
+### What are custom reporters
+
+Whenever your test suite is done, jest prints summaries for a given test file. This is what I call a report.
+The report can be a local one (for a given test file) or a global one for the whole run.
+
+By writing a _custom reporter_ you can tap into that system and completely manipulate what's get printed (including the console logs, more on that later on).
+
+There are various reporters built by the community, one notable one is the _html reporter_ or any other coverage report that you have seen out there in the wild.
+
+### Building a custom reporter
+
+There are few things you have to consider while building custom reporters
+
+- **The reporter file is NOT passed to the _jest transformer_**. This means that **you will most likely have to write the reporter in plain JavaScript**. If you insist on writing it in TypeScript, have no fear. You can use intermediate JavaScript file that imports your reporter while using the `ts-node` _register_ API. [Here is an example of how one might do that](https://github.com/facebook/jest/issues/10105#issuecomment-678600189)
+
+- **Some of the _hooks_ do not fire unless you are using the _jest-circus_**. Please note that **this environment is used by default with jest versions 27 and up**
+
+- **Within some of the _hooks_ you do not have the ability to get the logs produced by a given test**. Sadly this was the reason I went for the solution I mentioned earlier as opposed to "releasing" logs whenever a given test case failed.
+
+- **By specifying the `reporters` option in jest configuration, you are overriding the default reporters**. Not a big deal as adding the default reporters is a one line change, but might be surprising to someone who is going through the process for the first time.
+
+- **Custom reporters (just like, I assume, other plugin-like jest features that you are able to extend) run in a different thread than your tests**.
+  This means that **you will not be able to persist a global state between your reporter and the test code**. For some this might be a complete blocker, for others now knowing that might result in a lot of time wasted (just like it was for me). Please keep this info in mind.
+
+With all the gotchas in mind, we are ready to start building our own custom jest reporter.
+
+First of, the configuration.
+
+```js
+module.exports = {
+  // Your config options
+  reporters: ["default", "PATH_TO_YOUR_REPORTER"],
+};
+```
+
+As I eluded earlier, the `default` reporter was added to preserve the "native" console behavior but sill have our reporter be included.
+I'm not 100% sure that the `default` reporter is the correct one that should be specified, I'm also not sure about the order of the items within the `reporters` array. As an inspiration you might want to look into the [_jest-clean-console-reporter_ package](https://github.com/jevakallio/jest-clean-console-reporter)
+
+Now the reporter file itself
+
+```js
+const { DefaultReporter, BaseReporter } = require("@jest/reporters");
+
+class MyReporter extends DefaultReporter {
+  constructor(globalConfig) {
+    super(globalConfig);
+  }
+
+  onTestResult(test, testResult, aggregatedResults) {
+    // Here the logs are available*
+  }
+
+  onTestCaseResult(test, testCaseResult) {
+    // No logs for you here :C
+  }
+
+  // Will not be fired unless you are using `jest-circus`
+  printTestFileHeader(_testPath, config, result) {
+    // Here the logs are available*
+  }
+
+  // other "hooks"
+}
+```
+
+I've listed the hooks I've tried.
+
+You might be wondering about the `*` I've put within the `onTestResult` and `onTestCaseResult`.
+During my investigation I've noticed that **the logs will NOT be available to you unless jest processes two or more test files during a test run**.
+I'm not sure if this a bug or a desired behavior of the framework. Either way, this behavior is another reason why I decided to ditch the idea of a custom reporter for my use-case.
