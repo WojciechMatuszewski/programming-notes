@@ -348,3 +348,34 @@ When using DDB you have 2 choices when it comes to what kind of DSL you are goin
 
 If I were you, I would always lean towards the native DSL. The native DSL guards you from doing silly things like scanning your whole table.
 It's much easier to write `SELECT * FROM ...` than to write `db.Scan(...)`. The latter version forces you to consciously use the `scan` API.
+
+### Conditions support and `batchWrite` API
+
+Single DDB `UpdateItem` and `PutItem` and `DeleteItem` operations fully support the conditions.
+The conditions are often used to, for example, create a new item if it does not yet exist.
+
+The `batchWrite` API is different though. While the names of the operations are the same, **the native `batchWrite` item API does not support conditions on the operations**. Here is an excerpt from the [AWS documentation regarding the topic](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html)
+
+> For example, you cannot specify conditions on individual put and delete requests, and BatchWriteItem does not return deleted items in the response.
+
+Here is the deal with `PartiQL` though, **the `batchExecuteStatement` API used within the context of `PartiQL` DOES support conditions on the operations - with limitations!**.
+
+The _with limitations_ part is very important. From my initial research, **the supported conditions have to contain an equality check on all key attributes**. Might be useful sometimes like removing / updating an item and making sure it exists in a process. Here is a very simple code in Go doing just that
+
+```go
+	out, err := client.BatchExecuteStatement(context.Background(), &dynamodb.BatchExecuteStatementInput{
+		Statements: []types.BatchStatementRequest{
+			{
+				Statement: aws.String("UPDATE testTable SET foo=1 WHERE id='4'"),
+			},
+		},
+	})
+```
+
+### The tweet
+
+This section was inspired by [this tweet](https://twitter.com/jeremy_daly/status/1281628318895415299).
+According to the Rick Houlihan answer the operation Jeremy tried to perform should be possible with `PartiQL`.
+I believe though, that it impossible to perform that action by using the `batchExecuteStatement` API - the main reason being the restriction regarding the _WHERE_ clause.
+
+As an alternative, the transaction API might be used, but it does not return the new data that you might have just updated.
