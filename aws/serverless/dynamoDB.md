@@ -337,3 +337,17 @@ So you have all the necessary information about sorting related things to use th
 * to ensure that you get the repo first and then the issues within the same query, you might look into prepending the `issues` SK with some arbitrary character, this would _push_ the `repo` entity up top
 
 - that character usually is `#` or `0`, depending on the use case and the structure of the data.
+
+## PartiQL
+
+When using DDB you have 2 choices when it comes to what kind of DSL you are going to use to perform your operations.
+
+1. Use the native DSL.
+
+2. Use the PartiQL SQL like syntax.
+
+If I were you, I would always lean towards the native DSL. The native DSL guards you from doing silly things like scanning your whole table.
+It's much easier to write `SELECT * FROM ...` than to write `db.Scan(...)`. The latter version forces you to consciously use the `scan` API.
+
+There are, just like with everything in life, some exceptions to the rule I'm proposing. **It turns out that the _PartiQL_ DSL can perform operations
+that are unavailable to the native DSL. One particular operation is a _batchWrite_ operation**. So before you head into a rabbit hole of trying to hack the native DSL, checkout the _PartiQL_ documentation.
