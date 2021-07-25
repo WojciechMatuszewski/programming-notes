@@ -136,9 +136,9 @@ async function main() {
 - You should read the condition from left to right and ask yourself: _does type X fits within type Y_.
 
 ```ts
-type q1 = 64 extends number ? true : false; // Does literal type 64 "include" type number? Sure.
+type q1 = 64 extends number ? true : false; // Does literal type 64 "is included" in a type number? Sure.
 
-type q2 = number extends 64 ? true : false; // Does number "include" a literal type 64  ? Nope. The number type also includes 63, 62 and other numbers
+type q2 = number extends 64 ? true : false; // Does number "is included" in a literal type 64  ? Nope. The number type also includes 63, 62 and other numbers
 ```
 
 ## `Extract` and `Exclude`
@@ -148,7 +148,7 @@ type q2 = number extends 64 ? true : false; // Does number "include" a literal t
 ```ts
 type Foo = number | string | object;
 
-type QueryResult = Extract<Foo, string>; // Does Foo "include" string? Sure, here are the results: string
+type QueryResult = Extract<Foo, string>; // Does Foo "is included" in a string? Sure, here are the results: string
 ```
 
 - the `Exclude` is the inverse of `Extract`.
@@ -158,3 +158,37 @@ type Foo = number | string | object;
 
 type QueryResult = Exclude<Foo, string>; // Please give me a type that DOES NOT "include" type string. Sure, here are the results: number | object
 ```
+
+## Interference with conditional types
+
+- The `infer` keyword can only be used within the context of a _conditional type expression_.
+
+- Used for obtaining a given type. Do not mix the `infer` keyword with the `typeof` keyword. The `infer` keyword is used within the context of generics with conditional types.
+
+```ts
+type PromiseResult<T> = T extends Promise<infer R> ? R : never;
+
+const booleanPromise = new Promise<boolean>((r) => r(true));
+
+type Result = PromiseResult<typeof booleanPromise>; // true;
+```
+
+- Please note that `infer` and _conditional types_ are not free in terms of performance.
+
+- One example given in the course was obtaining the type of the first constructor argument of a class.
+
+```ts
+type FirstConstructorArgType<C> = C extends {
+  new (arg: infer A, ...rest: any[]): any;
+}
+  ? A
+  : never;
+
+class MySuperClass {
+  constructor(firstParam: string, secondParam: string) {}
+}
+
+type Result = FirstConstructorArgType<typeof MySuperClass>;
+```
+
+Note that I've used the `typeof` instead of directly using the `MySuperClass`. It's the JavaScript class that is _newable_, not the type.
