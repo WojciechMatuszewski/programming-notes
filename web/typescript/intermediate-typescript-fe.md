@@ -90,3 +90,71 @@ const instance: Fruit = {} as any; // no error, it means that the Fruit is a typ
 - A way of obtaining a type from a _JavaScript value_
 
 ### The `keyof` operator
+
+- Used for retrieving keys of a given interface / type.
+
+- You **can use type primitives for narrowing the collection of keys**. For example `keyof Date & number` would yield all `Date` keys that are numbers.
+
+```ts
+type foo = {
+  1: number;
+  2: number;
+  bar: string;
+};
+
+type FooNumberKeys = keyof foo & number; // 1 | 2
+type FooStringKeys = keyof foo & string; // "bar"
+type FooKeys = keyof foo; // 1 | 2 | "bar"
+```
+
+### The `typeof` operator
+
+- Used for retrieving a type that describes a JavaScript value.
+
+- Mainly used for creating _type aliases_ for things that are not already described by types.
+
+```ts
+async function main() {
+  const apiResponse = await Promise.all([
+    fetch("http://example.com"),
+    Promise.resolve("white"),
+  ]);
+
+  type ApiResponseType = typeof apiResponse; // [Response, string]
+}
+```
+
+- Can be useful for things that are dynamic and change often. Instead of having to change the implementation and the underlying typings,
+  the `typeof` can be used. With the typings declared using `typeof`, the typings will be updated automatically as the implementation changes.
+
+## Conditional types
+
+- Ternary operators but used purely in TypeScript world.
+
+- Think of the `extends` keyword as a `>=` comparison (so _this type has to be AT LEAST this type_) and not as an equality check.
+
+- You should read the condition from left to right and ask yourself: _does type X fits within type Y_.
+
+```ts
+type q1 = 64 extends number ? true : false; // Does literal type 64 "include" type number? Sure.
+
+type q2 = number extends 64 ? true : false; // Does number "include" a literal type 64  ? Nope. The number type also includes 63, 62 and other numbers
+```
+
+## `Extract` and `Exclude`
+
+- The `Extract` utility type is like querying a given type and checking if it contains another type.
+
+```ts
+type Foo = number | string | object;
+
+type QueryResult = Extract<Foo, string>; // Does Foo "include" string? Sure, here are the results: string
+```
+
+- the `Exclude` is the inverse of `Extract`.
+
+```ts
+type Foo = number | string | object;
+
+type QueryResult = Exclude<Foo, string>; // Please give me a type that DOES NOT "include" type string. Sure, here are the results: number | object
+```
