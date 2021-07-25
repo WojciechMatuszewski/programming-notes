@@ -132,6 +132,10 @@ async function main() {
 - Ternary operators but used purely in TypeScript world.
 
 - Think of the `extends` keyword as a `>=` comparison (so _this type has to be AT LEAST this type_) and not as an equality check.
+  I've also found thinking in terms of narrowing down helpful:
+
+  - _Is the type on the left more specific than the type on the right?_
+  - _Is the type on the left more specialized flavour of the type on the right?_
 
 - You should read the condition from left to right and ask yourself: _does type X fits within type Y_.
 
@@ -192,3 +196,73 @@ type Result = FirstConstructorArgType<typeof MySuperClass>;
 ```
 
 Note that I've used the `typeof` instead of directly using the `MySuperClass`. It's the JavaScript class that is _newable_, not the type.
+
+## Index Access Types
+
+- Used for accessing part of a given type via an _index_.
+
+```ts
+type Foo = {
+  property: string;
+};
+
+type Accessed = Foo["property"]; // string
+```
+
+- Not to be mistaken with the _dot notation_. We are not operating on values here. Instead we operate on types.
+
+- **The key can be an union type**.
+
+## Mapped Types
+
+- Characterized by the usage of `in` keyword.
+
+```ts
+// Considered a mapped type
+type MyRecord = { [NameMattersCanBeReferenced in "apple" | "cherry"]: string };
+
+// Not considered a mapped type
+type MyDict = { [key_name_does_not_matter: string]: string };
+```
+
+### Key Mappings
+
+- Manipulate the keys during the mapping.
+
+- In terms of _type literals_ you have additional utility types at your disposal.
+
+```ts
+type CapitalizeKeys<T, K extends keyof T> = {
+  [Key in keyof T as Key extends K & string
+    ? `${Capitalize<Key>}`
+    : Key]: T[Key];
+};
+
+type Properties = {
+  prop1: string;
+  0: string;
+  prop2: number;
+};
+
+type Result = CapitalizeKeys<Properties, "prop1">; // {Prop1: string, 0: string, prop2: number}
+```
+
+### Filtering properties out
+
+- _Key Mappings_ can be used to filter keys.
+
+- **Filtering on the keys level is usually a much better solution than trying to annotate a property with `never`**.
+  This is because annotating with `never` does not work.
+
+```ts
+type OnlyFunctions<T> = {
+  [Key in keyof T as T[Key] extends Function ? Key : never]: T[Key];
+};
+
+type Foo = {
+  funcProp: Function;
+  numberProps: number;
+};
+
+type Result = OnlyFunctions<Foo>; // {funcProps: Function}
+```
