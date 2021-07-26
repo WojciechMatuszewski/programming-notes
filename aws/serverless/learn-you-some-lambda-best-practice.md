@@ -19,6 +19,44 @@ With `exports` you are mutating an `module.exports` and if there is an `exports`
 
 - given execution environment can be reused. It will be "alive" up to 8 hrs
 
+## Lambda extensions
+
+- scripts or binaries that run alongside your lambda function
+
+* see the [extensions docs](./lambda-extensions.md) for more info
+
+- the **GO 1.x does not support lambda extensions**, you have to use either **`provided` or `provided.al2` for the extensions to work**
+
+## Lambda runtime
+
+- wrapper the AWS provides that runs your handler.
+
+* in **Node.Js, your handler is wrapped with `try/catch` so the 'uncaughtException` and similar handlers will not fire!**.
+
+- if you have to dive really deep, the runtime you are using might be published on GitHub. At least that is the case for [Node.Js one](https://github.com/aws/aws-lambda-nodejs-runtime-interface-client) and many others.
+
+### Custom runtime
+
+What if your favorite way of writing lambdas is by using bash? Or maybe you want to do some funky stuff before your handler runs? All of this is possible with _custom runtimes_.
+
+### Custom runtime and Lambda Runtime API
+
+- they are like a middleman between _AWS Lambda Runtime API_ and your handler. The Runtime API exposes an HTTP API that the runtime can use.
+
+* events that the runtime pooled are forwarded to your handler.
+
+- for the go1.x runtime, there seems to be a proprietary mechanism of handling invocations.
+  That runtime does not use the runtime API. Instead the connection is accepted on a localhost with port specified by the `_LAMBDA_SERVER_PORT` environment variable.
+
+* the `aws-lambda-go` package constructs two clients, one for the "legacy" runtime and one for the one that supports Runtime API.
+  After that, given client is run based on what kind of environment variable is specified.
+
+- the _AWS Lambda Runtime API_ can be emulated. There exists an [aws-lambda-runtime-interface-emulator](https://github.com/aws/aws-lambda-runtime-interface-emulator) - an universal tool for emulating the Runtime API. You can also use `sam local invoke` command to streamline this process.
+
+* the language specific runtimes already have RIE built-in for local testing.
+
+- remember that RIE has to start before your runtime starts, thus you have to point RIE at a binary (or script). RIE will handle bootstrapping that binary.
+
 ## Tuning function memory
 
 - the more memory your lambda has and the longer is runs it will cost you more
@@ -414,33 +452,3 @@ Notable alarms are:
 - **specify multiple subnets** when you attach your lambda to a VPC.
 
 * use _Private Link_ for connecting to private services or other AWS services through _gateway_ or _interface_ endpoints
-
-## Lambda extensions
-
-- scripts or binaries that run alongside your lambda function
-
-* see the [extensions docs](./lambda-extensions.md) for more info
-
-- the **GO 1.x does not support lambda extensions**, you have to use either **`provided` or `provided.al2` for the extensions to work**
-
-## Custom runtime
-
-What if your favorite way of writing lambdas is by using bash? Or maybe you want to do some funky stuff before your handler runs? All of this is possible with _custom runtimes_.
-
-### Custom runtime and Lambda Runtime API
-
-- they are like a middleman between _AWS Lambda Runtime API_ and your handler. The Runtime API exposes an HTTP API that the runtime can use.
-
-* events that the runtime pooled are forwarded to your handler.
-
-- for the go1.x runtime, there seems to be a proprietary mechanism of handling invocations.
-  That runtime does not use the runtime API. Instead the connection is accepted on a localhost with port specified by the `_LAMBDA_SERVER_PORT` environment variable.
-
-* the `aws-lambda-go` package constructs two clients, one for the "legacy" runtime and one for the one that supports Runtime API.
-  After that, given client is run based on what kind of environment variable is specified.
-
-- the _AWS Lambda Runtime API_ can be emulated. There exists an [aws-lambda-runtime-interface-emulator](https://github.com/aws/aws-lambda-runtime-interface-emulator) - an universal tool for emulating the Runtime API. You can also use `sam local invoke` command to streamline this process.
-
-* the language specific runtimes already have RIE built-in for local testing.
-
-- remember that RIE has to start before your runtime starts, thus you have to point RIE at a binary (or script). RIE will handle bootstrapping that binary.
