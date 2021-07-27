@@ -47,3 +47,38 @@
   >Click here (not really descriptive)</a
 >
 ```
+
+## ARIA
+
+- Special attributes for your HTML attributes.
+
+- Jon talks about multiple ARIA attributes.
+
+- Jon talks about multiple ARIA roles states and properties.
+
+- ARIA can be used within CSS as selectors.
+
+### Live regions
+
+- Used to control how the screen reader will react whenever a given piece of content changes.
+
+- Think of Uber and the "click to search a driver" flow. If the driver is en-route to your place, the content of the tag changes and given the correct `aria-live` setting, will be read to the user.
+
+- Please note there is no way to implement fine-grained controls via pure HTML. The `aria-live` has only three settings. If you want to customize it more, like implementing a solution that reads to a screen reader every X seconds you would need to use JavaScript and hide/show some DOM elements.
+
+## Focus Management
+
+- Many popular sites like Twitter and Facebook have keyboard shortcuts defined.
+
+- _Skip links_ are great way to skip the cumbersome navigation through the navigation (or any repeated elements on the page).
+
+- The `tabindex` attribute is important for some interactions.
+
+- Tab trapping for modals and popups is a must.
+
+- Use 3rd party libraries for interactive and accessible elements. One such example would be the [`react aria` library](https://react-spectrum.adobe.com/react-aria/useDialog.html).
+
+### Skip link exercise takeaways
+
+- You can use `href` attribute to focus specific attributes on action using the `a` tag
+  For example `<a href = "#action">` upon clicking would focus an element with id of `action` (in the exercise that was a button).
