@@ -82,3 +82,22 @@
 
 - You can use `href` attribute to focus specific attributes on action using the `a` tag
   For example `<a href = "#action">` upon clicking would focus an element with id of `action` (in the exercise that was a button).
+
+## Visual considerations
+
+- Color contrast ratios matter for accessability compliance.
+
+- Most sites fail with forms where the only information about the form state (is it valid or not) is depicted by input border color.
+  Usually, this kind of visual feedback tells nothing people with disabilities. Add some kind of labels to your forms!
+
+## HTML Markup considerations
+
+- Validate your HTML from time to time.
+
+- Consider the language attribute for html tag.
+
+## `PrefersXX` APIs
+
+- Use the `prefers-reduced-motion` for animations.
+
+- Use the `prefers-color-scheme` for dark / light mode settings.
