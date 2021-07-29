@@ -94,3 +94,83 @@ cy.get(".todo-list li") // command
 ```
 
 Now, the first assertion will pass only if the item is actually added. Then we can proceed with our `label` assertion.
+
+## Aliases and context
+
+Whenever you create an alias within your test, the data that you have aliased will be available on the `this` object inside that particular test.
+
+Here is an example of what I'm talking about:
+
+```js
+it("adds numbers via aliases", () => {
+  cy.visit("public/index.html");
+  cy.get("[name=a]").invoke("val").then(parseInt).as("a");
+  cy.get("[name=b]")
+    .invoke("val")
+    .then(parseInt)
+    .as("b")
+    // A function declaration is crucial to ensure that `this` refers to the correct scope.
+    .then(function () {
+      cy.log(`a: ${this.a}, b: ${this.b}`);
+    });
+});
+```
+
+One important note here. **Please keep in mind the async nature of Cypress commands. Some of the aliases might not be available via `then` immediately.**. Please consult the [official documentation regarding this topic](https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context).
+
+An example of what I'm talking about:
+
+```js
+it("adds numbers via aliases", () => {
+  cy.visit("public/index.html");
+  cy.get("[name=a]").invoke("val").then(parseInt).as("a");
+  cy.get("[name=b]").invoke("val").then(parseInt).as("b");
+
+  // \/ WILL NOT WORK!
+  cy.log(`a: ${this.a}, b: ${this.b}`);
+});
+```
+
+### Sharing data between different test lifecycle hooks
+
+How many times have you seen code written in a similar fashion?
+
+```js
+let initialValue;
+
+beforeEach(() => {
+  cy.get("...")
+    .invoke("val")
+    .then((value) => {
+      initialValue = value;
+    });
+});
+
+test("...", () => {
+  // here I can reference the `initialValue`
+});
+```
+
+I've seen and written similar snippets many, many times.
+One might argue that there is nothing wrong with this approach, but we can do better whenever we use Cypress.
+
+To get rid of the naked `initialValue` declaration, let us use aliases to our advantage.
+
+```js
+beforeEach(() => {
+  cy.get("...").invoke("val").as("initialValue");
+});
+
+// That is one way to solve the problem
+test("...", () => {
+  cy.get("@initialValue");
+});
+
+// Using function declaration and the mocha context is another
+test("...", function () {
+  this.initialValue;
+});
+```
+
+Both approaches are fine by me. What is important is the fact that you are not using the naked declaration with assignment, but instead
+relying on the tools Cypress exposes.
