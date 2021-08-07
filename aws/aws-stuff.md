@@ -367,11 +367,11 @@ First thing first **you will need a role that will be shared along all your on p
 
 ##### `iam:PassRole`
 
-- this is a guardrail on the permissions to grant to other AWS services
+- This is a guardrail to ensure that users / resources with less privileged roles, cannot PASS more privilege roles to other resources / users
 
-* imagine having only some kind of limited role when you can create EC2 Instances. Without `iam:PassRole` you could assign an Administrator Access to the EC2, connect to it and, potentially, do damage.
+- Imagine a CI/CD scenario. The `Deployer` role is deploying a _CloudFormation_ template and will _pass role_ to _CloudFormation_ so that the service can create the resources. In this scenario, we have to grant the `Deployer` role to pass a more privileged role to the _CloudFormation_ service.
 
-- you can limit what kind of roles can can be _passed_ or limit things to specific service.
+- Another scenario around _EC2_. Imagine an `Will` user with very restrictive role attached to that user. There also exists an `Administrator` role that is very permissive. By default the `Will` will not be able to attach `Administrator` role to the launched instance. If given the _PassRole_ permissions however, he will be able do to it.
 
 #### Policies
 
