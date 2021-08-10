@@ -479,3 +479,106 @@ I've listed the hooks I've tried.
 You might be wondering about the `*` I've put within the `onTestResult` and `onTestCaseResult`.
 During my investigation I've noticed that **the logs will NOT be available to you unless jest processes two or more test files during a test run**.
 I'm not sure if this a bug or a desired behavior of the framework. Either way, this behavior is another reason why I decided to ditch the idea of a custom reporter for my use-case.
+
+## The unmockable code
+
+The title of this section might give you the feeling that we are going to talk about code that is badly written. Nothing further from the truth.
+It turns out you could have the code written well, but still be unable to mock certain parts of it. Let us explore how.
+
+Imagine there exists a file with similar structure in your codebase.
+
+```js
+export const lookupItemInDB = () => {
+  /* The contents of the function does not matter */
+};
+
+export const deleteItemInDB = () => {
+  /* The contents of the function does not matter */
+};
+
+export const deleteIfExistsInDB = (itemId) => {
+  /* Function logic... */
+
+  if (lookupItemInDB(itemId)) {
+    deleteItemInDB(itemID);
+  }
+
+  /* More logic... */
+};
+```
+
+Seems reasonable right? The `deleteIfExistsInDB` composes two other functions. The `lookupItemInDB` and `deleteItemInDB` are used in different places in your app, thus are exported.
+
+Now imagine you want to test the `deleteIfExistsInDB` function. Ideally, we would mock the `lookupItemInDB` and `deleteItemInDB` functions so that we have full control over what they return.
+
+```js
+jest.mock("./db.js", () => ({
+  ...jest.requireActual("./db.js"),
+  lookupItemInDB: jest.fn(),
+  deleteItemInDB: jest.fn(),
+}));
+
+test("will not delete item if it does not exist in DB", async () => {
+  /* Your test...*/
+});
+```
+
+I'm not doing anything crazy here. I'm mocking the two functions we should be mocking and using `requireActual` so that I'm able to import the _actual_ implementation of `deleteIfExistsInDB`.
+Now, we should be able to write the test and be on our way right? **Nope, the `lookupItemInDB` and `deleteItemInDB` will not be mocked!**. The reason being how mocking works in Jest.
+
+### How mocking works in Jest
+
+To understand why the `deleteIfExistsInDB` will be using the _non-mocked_ versions of the `lookupItemInDB` and `deleteItemInDB` we have to gain understanding how the Jest mocking system works.
+So here it is - **the Jest mocking system works on a module level**. This means that **mocking is tied to `require` or `import` statements**.
+
+### So why the mocking will not work here?
+
+In our case, the `deleteIfExistsInDB` function is not requiring the `lookupItemInDB` and `deleteItemInDB` functions, thus the mocking system has no way of, well, mocking these functions.
+They will be mocked within your test because you most likely will `require` or `import` them, but again that is not the case in the context of `deleteIfExistsInDB` function.
+
+### Solution
+
+There are two solutions you could use here.
+
+First and in my opinion **the easiest one** is to **move either `lookupItemInDB` and `deleteItemInDB` or `deleteIfExistsInDB` to a separate file**.
+This way the `deleteIfExistsInDB` will have to `require` or `import` the two functions it's based on. As discussed earlier, importing a module will let the Jest mocking system to kick in.
+
+Second and a bit more strange one is artificial code organization.
+Instead of relying on the `require` or `import` mechanisms, we could gather the functions we need to mock within an object, then mutate that object within the test file and monkey-patch the mocks.
+Here is how.
+
+```js
+export const lookupItemInDB = () => {
+  /* The contents of the function does not matter */
+};
+
+export const deleteItemInDB = () => {
+  /* The contents of the function does not matter */
+};
+
+export const bag = {
+  lookupItemInDB,
+  deleteItemInDB,
+};
+
+export const deleteIfExistsInDB = (itemId) => {
+  /* Function logic... */
+
+  if (bag.lookupItemInDB(itemId)) {
+    bag.deleteItemInDB(itemID);
+  }
+
+  /* More logic... */
+};
+```
+
+And in our test file.
+
+```js
+const { bag } = require("./db.js");
+bag.deleteItemInDB = jest.fn().mockImplementationOnce(/**/);
+/* more code */
+```
+
+If this feels weird to you, I completely get it, **it is weird**. I favour the first method of dealing with such situations as it's much more straightforward.
+Ultimately the decision is yours.
