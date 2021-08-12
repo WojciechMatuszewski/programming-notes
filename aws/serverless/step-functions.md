@@ -37,13 +37,28 @@ So basically, think of the `callback` vs `activity` as `push` vs `pool` debate.
 You should not use only `arn` for referencing lambda functions but also include function version. This is because **`step functions` are immutable!**.
 Imagine a scenario where you have some executions running and you update your lambda function code. If you use naked `arn` values, that execution will most likely fail due to lambda logic change.
 
+## DR Strategy
+
+Imagine the whole region going down while your execution is in progress. What should you do? Let us look at [this video](https://youtu.be/MqVqjn3sZVg?t=786) for answers.
+
+1. Have an event registry, most likely EventBridge, that would allow you to retry the failed event in another region
+2. You could move the execution data from CloudWatch logs to a different region and hydrate the state from there
+
+It is vital to have an active-active setup where the other region is exercised regularly. This way there will be no surprises while switching regions.
+In general there is no built in way of doing DR. It's a hard problem to solve for this service.
+
+## JSON Path expressions
+
+You would not believe how powerful the transformations you can do with ASL are. The StepFunctions support full JSON Path syntax.
+You can flatten array, filter them, map them. Here is a [video that showcases the power of JSON Path with StepFunctions](https://youtu.be/MqVqjn3sZVg?t=2015).
+
 ## Patterns
 
 ### `try-catch`
 
 You can wrap your whole workflow within a `Parallel` state. With that you do not have to duplicate error handling logic on every step but apply it to the whole `Parallel` state instead.
 
-Remember that you can also introduce retry logic on a single task level and mix and mach your options. Pretty powerfull overall.
+Remember that you can also introduce retry logic on a single task level and mix and mach your options. Pretty powerful overall.
 
 ### Saga
 
@@ -86,3 +101,28 @@ You should consider using some kind of `ID` or `MD5` has for the execution ID.
 
 Very useful but a bit "underpowered". Lacks the `Query` API that would open a door for a whole set of new use-cases.
 Think fan-out patterns after reading the DDB and much more.
+
+### Waiting for other tasks
+
+There are two ways you can orchestrate "waiting" for other services to finish their work during the StepFunction executions.
+
+One way is to use `.sync` suffix, another one is to use the `.waitForTaskToken` suffix. Let us explore both of them.
+
+#### The `.sync` suffix
+
+The StepFunctions service is able to make an asynchronous process seem synchronous. If you are familiar with JavaScript, it's almost like putting
+_await_ in front of the asynchronous function. The flow of the code seems synchronous, but in reality we are performing an asynchronous operation.
+
+How does it work? According to [this video](https://youtu.be/MqVqjn3sZVg?t=2464) the StepFunctions service will listen for a specific EventBridge event, and then handle it from there.
+
+First of all, [not every service support this kind of way of invoking it](https://docs.aws.amazon.com/step-functions/latest/dg/connect-supported-services.html).
+
+Next, you have to consider some caveats with how to handle tasks abortions. Please [refer to the docs](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html#connect-wait-token) - the _Run a Job_ section.
+
+#### The `.waitForTaskToken` suffix
+
+This, again, is to make an asynchronous process seem synchronous. But the difference between `.waitForTaskToken` and `.sync` is how much work YOU have to do.
+
+The `.waitForTaskToken` is designed to be generic. You have to notify the StepFunctions service that the task is done and the execution should continue (as opposed to the `.sync` suffix where it was the service who decided when the execution should continue).
+
+To signal to the service that the task is done, you will need to call `SendTaskSuccess` or `SendTaskFailure` that the StepFunctions API exposes.
