@@ -376,6 +376,43 @@ The _with limitations_ part is very important. From my initial research, **the s
 
 This section was inspired by [this tweet](https://twitter.com/jeremy_daly/status/1281628318895415299).
 According to the Rick Houlihan answer the operation Jeremy tried to perform should be possible with `PartiQL`.
+
 I believe though, that it impossible to perform that action by using the `batchExecuteStatement` API - the main reason being the restriction regarding the _WHERE_ clause.
 
 As an alternative, the transaction API might be used, but it does not return the new data that you might have just updated.
+
+## Cost considerations
+
+### Avoid keeping big blobs of data along small, frequently accessed ones in the same item
+
+Imagine a scenario where you have a table that keeps users profiles. The APP that your DDB is for allows the users to upload their photo.
+For historical reasons, the photos were stored as base64 encoded strings within the DDB, on the user profile item. Since the base64 string can grow up to 400kb, we have a problem.
+
+Apart from the obvious problem of having a 400kb limit on the item, **we are wasting money**.
+See, every time the **user profile is updated, DDB has to read the whole item in memory and THEN perform the update - you pay from the read and write**.
+
+> Even if you update just a subset of the item's attributes, UpdateItem will still consume the full amount of provisioned throughput (the larger of the "before" and "after" item sizes). https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ProvisionedThroughput.html
+
+With a big attribute of user photo present on the item, we will be paying way to much for a simple `UpdateItem` operation.
+There are **two ways of dealing with such situations**:
+
+1. Upload the user photo to s3 and keep the pointer to that object in DDB.
+2. Split the user profile item into two items, one that contains **only the image** and one that contains **all other attributes**.
+
+Both of them perform the same optimization - having the user profile item "weight" less, thus making each operation on that item cheaper.
+
+### Use TTL feature to purge unused data
+
+DDB exposes a feature where, given an attribute marked as "TTL" (the name of the attribute does not matter, you have to say which attribute is the "TTL attribute") items will be deleted when the TTL expires.
+
+It's not instantaneous though. There might be up to 48 hours of delay between "TTL" expiring and the item being deleted. This is due to the fact
+that the sweeper that runs the deletion is spun up on spare capacity of DDB (source: https://youtu.be/S02CRffcoX8?t=1368)
+
+### Mind the GSIs
+
+Depending on how your GSI is set up, you might be paying too much.
+
+Imagine a scenario where the GSI is set up to replicate 100% of the item attributes. Every time a new attribute is added, you will be paying for that
+GSI replication. There is a sweet spot where such replication makes sense, but only when you actually use that GSI frequently. **In other scenarios you might be better of doing scans!**.
+
+Here a workshop you can use to learn more https://github.com/robm26/cost
