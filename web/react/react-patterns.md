@@ -72,7 +72,6 @@ if (!firstUsersRef.current) {
   firstUsers.current = data;
 }
 
-
 return data.names
 ```
 
@@ -433,7 +432,10 @@ This is an implementation of _inversion of control_ principle. Your component / 
 You want to expose the ability for the user to integrate with your state and influence it as the user sees fit.
 
 ```jsx
-const callAll = (...fns) => (...args) => fns.forEach((fn) => fn && fn(...args));
+const callAll =
+  (...fns) =>
+  (...args) =>
+    fns.forEach((fn) => fn && fn(...args));
 
 function toggleReducer(state, { type, initialState }) {
   switch (
