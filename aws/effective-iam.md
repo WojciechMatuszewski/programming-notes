@@ -30,3 +30,39 @@ Taking notes while reading the [Effective IAM book](https://www.effectiveiam.com
 - Some services, like S3 has service-specific access control systems - in the S3 case _S3 Object ACLs_.
 
 - Achieving least privilege requires deep knowledge of AWS itself. Since AWS is vast, it's a quite a big ask.
+
+## Scale with security domains and a control loop
+
+- AWS Accounts could be used to create secure boundaries around resources.
+
+- As a rule of thumb: **create an AWS account for each major use case**. That might be a new team or a particular microservice.
+
+- Use AWS OUs for grouping accounts together.
+
+- After a while, you might want to start splitting your accounts even further, looking at the _delivery methods_ (like dev, preprod, prod).
+  Having such granularity will help you will cost management.
+
+- Use SCPs. They are great for governing global capabilities.
+
+- Use tools for generating policies. For example, to ensure that your organization can only use services that are PCI compliant, instead of manually checking, use the `aws-allowlister` or similar tools.
+
+## Simplify AWS security by using the best parts
+
+This chapter contains concrete recommendations and features you should focus on while implementing least privilege.
+
+- **Separate use cases using AWS accounts**. As eluded earlier, AWS accounts are great for creating secure boundaries.
+
+- **Control access to data with resource policies**. Resources that might be shared between accounts usually allow you to define a _resource policy_ on them. Use those! Instead of dealing with X roles and users, you know only need to be concerned with concrete resources.
+
+- **Take advantage of KMS, it's integrated with a lot of services**. The KMS service exposes you two ways of creating and managing keys.
+  I'm talking about **AWS managed CMK** and **Customer managed CMK**.
+
+- By using KMS, you can effectively retrofit IAM resource permissions for the service that does not support that feature.
+  All you have to do is to encrypt the data service is holding / reading, then apply the key policy on the CMK and you are done.
+
+- **Use IaC for controlling the IAM related things (and effectively all your cloud resources)**. This point does not need explanation.
+
+## Understand what your policies actually do
+
+- There are three AWS-native tools that can help you with that. Look into `AWS Policy Validator`, `AWS Access Analyzer` and `AWS IAM simulator`.
+  The `AWS IAM simulator` exposes an API, neat!
