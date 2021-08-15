@@ -20,3 +20,13 @@ Taking notes while reading the [Effective IAM book](https://www.effectiveiam.com
   This way you lessen the chance of making an error and making the permissions to permissive.
 
 - Use conditions. They exist, they are very useful.
+
+## Why AWS IAM is so difficult to use
+
+- AWS IAM has many features, so might say that there is too many features.
+
+- The way the permissions are resolved is complex. For example, one might grant access to the bucket via _Resource Policy_ or _Identity Policy_.
+
+- Some services, like S3 has service-specific access control systems - in the S3 case _S3 Object ACLs_.
+
+- Achieving least privilege requires deep knowledge of AWS itself. Since AWS is vast, it's a quite a big ask.
