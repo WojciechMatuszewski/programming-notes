@@ -138,3 +138,114 @@ reqNum.Add(1)
 ```
 
 This is a very powerful technique which enables you to improve observability in your app.
+
+## Handling errors from deferred functions
+
+We all have written similar code at one point or another
+
+```go
+func cleanup() error {
+  fmt.Println("cleanup")
+
+  return errors.New("boom")
+}
+
+func getMessage() (string, error) {
+  defer cleanup()
+
+  return "message", nil
+}
+
+func main() {
+  message, err := getMessage()
+  if err != nil {
+    // code
+  }
+}
+```
+
+The problem is that we are not handling the errors that the `cleanup` function produces.
+These are usually safe to ignore, like while working with files or similar scenarios, where an error returned from `file.Close()`
+would mean we are in deep trouble and that error is the least thing we should be worried about.
+
+But what if you know you _should_ be handling such errors, that they are not the same class of errors like those returned from `file.Close`?
+Well, I've seen people do this
+
+```go
+func cleanup() error {
+  fmt.Println("cleanup")
+
+  return errors.New("boom")
+}
+
+func getMessage() (message string, err error) {
+  defer func() {
+    err = cleanup()
+  }()
+
+  return "message", nil
+}
+
+func main() {
+  message, err := getMessage()
+  if err != nil {
+    // code
+  }
+}
+```
+
+And this is completely fine, **but this structure lurks a huge opportunity to make a mistake**.
+Let us change the code a bit to add call to another function within the `getMessage`.
+
+```go
+func cleanup() error {
+  fmt.Println("cleanup")
+
+  // Now this function does not return any errors.
+  return nil
+}
+
+func doAnotherThing() error {
+  fmt.Println("doing another thing")
+  return errors.New("boom")
+}
+
+func getMessage() (message string, err error) {
+  defer func() {
+    err = cleanup()
+  }()
+
+  err = doAnotherThing()
+
+  return "message", nil
+}
+
+func main() {
+  message, err := getMessage()
+  if err != nil {
+    // code
+  }
+
+}
+```
+
+If you run the code ... **the `if err != nil` code in the `main` function will never run!**.
+This is because the `cleanup` function overwritten the error since it's deferred. Oops!
+
+So to ensure that you do not make such mistakes, **always check for errors within deferred functions before assigning them to the _named returned values_**.
+
+```go
+func getMessage() (message string, err error) {
+  defer func() {
+    if tempErr = cleanup(); tempErr != nil {
+       err = tempErr
+    }
+  }()
+
+  err = doAnotherThing()
+
+  return "message", nil
+}
+```
+
+This section was inspired by [this article](https://trstringer.com/golang-deferred-function-error-handling/).

@@ -4728,6 +4728,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - one important thing to remember here is that **EB supports only 5 targets per rule**. This is something you should keep in mind while designing stuff.
 
+#### Rules
+
+- rules enable you to configure which **target** the **matched event** will be routed to.
+
+* there are **managed** and **stadard (custom)** rules. The managed ones are for _schema discovery_ and _event archive_.
+
 #### Resiliency
 
 - you can use **DQL per rule**. Please note that **this DLQ is only for the EventBridge communication with the underlying service**.
@@ -4736,6 +4742,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 * you can specify **custom number of retires** as well as **time spent retrying**.
 
 - when an **event is sent to rule DLQ**, the message is **annotated with additional info**. This should help you with debuging. Also remember to **always have a dlq per rule**.
+
+* remember that the **DLQ takes care of the EventBridge communication with other services**. The **EventBridge does not care if eg. your lambda function throws an error or not**. If that's the case, **you will sometimes need two DLQs - one for EB, one for the target itself**.
 
 #### Schema Registry
 
@@ -4784,6 +4792,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - you can **transform the event**. This of this picking and choosing which fields you want to forward to given service
 
 * you can **return static response** to given service. This of counting service
+
+#### Event Replay
+
+- the archive feature allows you to replay events from the archive
+
+* **the order in which the events are replied is random**
 
 #### Batching
 
