@@ -1,0 +1,47 @@
+# Leading with emotional intelligence
+
+Course source: `Leading with Emotional Intelligence` by `Jason Alba` on pluralsight
+
+## Understanding Emotional Intelligence
+
+### What is Emotional Intelligence
+
+- The definition is hard to define, it's subjective.
+
+* EQ has five basic principles or pillars if you will:
+
+  - Self-awareness
+  - Self-regulation
+  - Self-motivation
+  - Empathy
+  - Social skills
+
+- Someone with high EQ is someone who we like to be around, we like to work with.
+
+* Part of your job is to ensure that you are not a jerk.
+
+### Self-awareness
+
+- Means being aware of one's feelings as they occur.
+
+* Emotions should be treated differently than feelings. Feelings stem from emotions. Emotions are very temporary.
+
+- Have an understanding how you react in different situations. With that knowledge you can control your behavior.
+  You can be aware that this is how you feel and decide what to do next.
+
+### Empathy
+
+- Understanding emotions of another person.
+
+* Without empathy you might have a hard time working with others.
+
+- Be open to other people. Be aware of other people.
+
+### Win-win situations
+
+- Instead of thinking _win-lose_ where you manipulate others to gain advantage, think _win-win_.
+
+* It comes down to being genuine. Like really, stop trying to win all the things, stop thinking that only YOU can get something. There is plenty
+  of everything for everyone.
+
+## Making Better Decisions in Pressure Situations
