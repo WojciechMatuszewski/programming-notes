@@ -4753,7 +4753,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - this is a free service
 
-##### Schema Discovery
+#### Schema Discovery
 
 - is responsible for putting discovered schemas to schema registry
 
@@ -4824,6 +4824,19 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - one thing that _EventBridge_ is really good at is the decoupling
 
 * one pattern that is to relly on _CloudTrail_ to _EventBridge_ integration in some situations, rather than the native integrations between services. Think multiple buckets hooked into 1 lambda function (putEvent)
+
+#### API Destinations
+
+- send HTTP requests via EventBridge - no lambda needed!
+
+* unlike the SNS that can also send HTTP requests, the **EventBridge API Destinations handle authorization**.
+  That means that you can **sent request to endpoints guarded by OAuth, basic auth or API key auth**.
+
+- the **service will retry the request** and also allow you to **control throttling options**.
+
+* the credentials for the three variants of authorization are stored in secrets manager.
+
+- here is an [example of mine](https://github.com/WojciechMatuszewski/eb-destinations-example)
 
 ### Amazon MQ
 
