@@ -45,3 +45,15 @@ Course source: `Leading with Emotional Intelligence` by `Jason Alba` on pluralsi
   of everything for everyone.
 
 ## Making Better Decisions in Pressure Situations
+
+- Self regulation will help you with calming your emotions.
+
+* Self awareness is key and ties with self regulation.
+
+- Putting emotions and feeling into words might help you dealing with pressure.
+
+* Plan for the though situation. Preparation will help you greatly, for example taking care of ones physical needs.
+
+- Communicate the information with calm in mind. Do not skip details that should not be skipped, even if they are not a great news.
+
+## Improving Relationships through better EQ
