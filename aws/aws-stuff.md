@@ -2291,6 +2291,31 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **both seem to be getting updates to some extend but AFAIK the HTTP API should be preferred**
 
+- The CORS setup is a bit harder with REST APIs. The _OPTIONS_ call does not support multiple origins or dynamic origins (picked from the request headers). To enable multiple origins for REST APIs you have to create a lambda function to handle OPTIONS request.
+  That is not the case for HTTP APIs (you can configure multiple domains to be allowed there).
+
+#### CORS
+
+- use `cors.serverlessland.com` for getting help with cors. Great tool created by EDJ
+
+##### REST APIs
+
+- if specified via CFN, a _mock integration OPTIONS_ route is created. Since this is a mock integration,
+  **multiple origins are not supported by default**
+
+* to support multiple domains on the _OPTIONS_ level you need to create a lambda function to handle that request
+
+- **remember to add the necessary headers to your lambda response**
+
+##### HTTP APIs
+
+- much simpler to set up than for the REST APIs
+
+* supports multiple domains natively, without the need to use a custom lambda function
+
+- remember that there are multiple versions of the request and response payloads.
+  If you need to specify additional headers, use the v1 response payload.
+
 ### Load Balancers
 
 - different types:
