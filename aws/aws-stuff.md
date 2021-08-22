@@ -1918,6 +1918,12 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 * **to enable backups** you have to have **streams enabled**
 
+#### Keys
+
+- the **partition key is taken into the account when determining under which partion the item will be located**
+
+* the **hash key is NOT taken into the account when determining the partition**. It does have an effect on **how the items are sorted within a given partition**
+
 #### Reading
 
 - the **least ammount of RCU** you **can consume is 1**. It **does not matter if you specify Projection Expression**.
@@ -1956,6 +1962,9 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - the LSI **can be strongly consistent**
 
 * **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to parsitions created with GSI**
+
+- the [documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Partitions.html) states
+  > In a DynamoDB table, there is no upper limit on the number of distinct sort key values per partition key value. If you needed to store many billions of Dog items in the Pets table, DynamoDB would allocate enough storage to handle this requirement automatically.
 
 #### ACID
 
