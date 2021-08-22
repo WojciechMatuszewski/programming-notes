@@ -57,3 +57,12 @@ Course source: `Leading with Emotional Intelligence` by `Jason Alba` on pluralsi
 - Communicate the information with calm in mind. Do not skip details that should not be skipped, even if they are not a great news.
 
 ## Improving Relationships through better EQ
+
+- Mentoring and high EQ goes hand in hand
+
+* If you mentor and have high EQ? Man, you will get far
+
+- Knowing your "why" is crucial. It does not matter if its "I'm here to pay my bills" or "I'm here to save the world".
+  Intrinsic motivation is very important. Ask others about their "why".
+
+* Whats get tracked gets improved.
