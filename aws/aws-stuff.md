@@ -958,11 +958,15 @@ An example for s3-prefix (folder)
 
 ### AppConfig
 
-- somewhat an alternative to the `SSM`
+- think **SSM but with rolling deployment options** (including rollback)
 
-* think **SSM but with rolling deployment options** (including rollback)
+* there is a neat _extension_ which runs HTTP endpoint which acts as a caching layer between your lambda and the _AppConfig_ service
 
-- there is a neat _extension_ which runs HTTP endpoint which acts as a caching layer between your lambda and the _AppConfig_ service.
+- your **configuration** can be **validated against a _JSON Schema_**
+
+* the deployment of a configuration can be tied to an alarm. If the alarm fires, the deployment will be rolled back
+
+- there are multiple deployment strategies you could use. You could also create a custom one
 
 ### AWS Firewall Manager
 
