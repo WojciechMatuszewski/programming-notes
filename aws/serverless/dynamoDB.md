@@ -16,6 +16,8 @@
 
 * **can result in full table scans if you are not careful**. While you can do the famous `select * from WHERE = ...` expression, it will be costly
 
+- you can **apply granular IAM permissions** so that **you can deny any costly operations**. This is great feature and works similarly as granular DDB access through the document API.
+
 ## Data types
 
 ### Scalar Types

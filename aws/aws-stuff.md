@@ -1924,13 +1924,13 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Keys
 
-- the **partition key is taken into the account when determining under which partion the item will be located**
+- the **partition key is taken into the account when determining under which partition the item will be located**
 
 * the **hash key is NOT taken into the account when determining the partition**. It does have an effect on **how the items are sorted within a given partition**
 
 #### Reading
 
-- the **least ammount of RCU** you **can consume is 1**. It **does not matter if you specify Projection Expression**.
+- the **least amount of RCU** you **can consume is 1**. It **does not matter if you specify Projection Expression**.
 
 * one **RCU** is equal to **4KB**. That is **one strongly consistent read OR 2 eventually consistent reads**
 
@@ -1956,10 +1956,10 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### GSI
 
-- make sure to **project attributes that you use as an index**. Otherwise the **retrival will be costly!**
+- make sure to **project attributes that you use as an index**. Otherwise the **retrieval will be costly!**
 
 * you **cannot use strongly consistent reads** with **GSI**. If you find yourself in a situation where you need strongly consistent reads and different query pattern,
-  re-create the table (migrate the existingone).
+  re-create the table (migrate the existing one).
 
 #### LSI
 
@@ -1994,7 +1994,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you **can use TWO lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
 
-* while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that tabl
+* while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that table
 
 - items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
 
