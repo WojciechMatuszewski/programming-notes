@@ -2251,7 +2251,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **access** to an APIGW can be **controlled using multiple means**:
   - **resource policies** which define **access to your API methods from source IPs or VPC Endpoints**
-  * **IAM** can be **applied to entrie API or methods**
+  * **IAM** can be **applied to entire API or methods**
   - **authorizers**
   * **cognito**
 
@@ -2287,6 +2287,21 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - enable you to create throttling / quota limits per key group. This **enables you to create a tier architecture for your API**, like `Bronze`, `Silver`, `Gold` tiers.
 
 * using **AWS Marketplace** you can **register your API** and effectively **monetize your API using usage plans**.
+
+- your application can use an API Keys (and the Usage Plans) on multiple layers
+  - the UI layer: the request is sent with the API Key in the header
+  - the application / backend layer: **the API Key is returned along with the policy of the authorizer**.
+    This is quite nice since your users does not really have to know that you are using API Keys under the hood.
+
+#### Lambda authorizer
+
+- allows you to fully configure the way authorization is handled for your application
+
+* depending on the **result format version** you can **either return a policy (with optional usage plan id) or just true / false**
+
+- the **credentials the policy corresponds to** can be used for scoping permissions in the downstream services
+
+* adds metadata to the request object, the previously mentioned credentials could be found there
 
 #### Canary (REST API only)
 
