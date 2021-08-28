@@ -140,9 +140,9 @@ A blog post on this topic https://roger20federer.medium.com/dynamodb-when-to-not
 #### Sort Key
 
 Sort key enables _rich query capabilities_. **If you provided sort key (also called range key) your partition key (hash key) does not have to be unique**.
-You can think about it like putting things that have the same partition key in the bucket and sorting (_quering_) them by sort key.
+You can think about it like putting things that have the same partition key in the bucket and sorting (_querying_) them by sort key.
 
-### Spare Indexes
+### Sparse Indexes
 
 - this an **alternative for filtering**. It works on an idea that when you scan / query you only pull the data from indexes
 
@@ -269,13 +269,13 @@ Now the shard ID is deterministic and derived from the customers phone number. G
 
   - if you want to **perform multiple operations of the same _kind_** (multiple ADDs, multiple DELETEs) just separate those using `,`.
 
-    ```
+    ```text
     ADD #count :count, ADD #somethingElse :value
     ```
 
   - if you want to **perform multiple operations of different _kind_** (multiple ADDs with multiple DELETEs) you only need commas separating operations of the same _kind_
 
-    ```
+    ```text
     ADD #count :count, ADD #somethingElse :value DELETE #ids :ids
     ```
 
@@ -332,7 +332,7 @@ Regular _UUID_ will not do - it's not sortable. What you need is something that 
 
 So you have all the necessary information about sorting related things to use this attribute. Remember, _DynamoDB_, by default, always scans forward, that means in ascending manner.
 
-### Prepending arbitrary symbols
+### Pre-pending arbitrary symbols
 
 - sometimes you want to get the enmity and all the other entities that relates to the entity, think GitHub repo and issues for this repo
 
@@ -365,13 +365,13 @@ Here is the deal with `PartiQL` though, **the `batchExecuteStatement` API used w
 The _with limitations_ part is very important. From my initial research, **the supported conditions have to contain an equality check on all key attributes**. Might be useful sometimes like removing / updating an item and making sure it exists in a process. Here is a very simple code in Go doing just that
 
 ```go
-	out, err := client.BatchExecuteStatement(context.Background(), &dynamodb.BatchExecuteStatementInput{
-		Statements: []types.BatchStatementRequest{
-			{
-				Statement: aws.String("UPDATE testTable SET foo=1 WHERE id='4'"),
-			},
-		},
-	})
+ out, err := client.BatchExecuteStatement(context.Background(), &dynamodb.BatchExecuteStatementInput{
+  Statements: []types.BatchStatementRequest{
+   {
+    Statement: aws.String("UPDATE testTable SET foo=1 WHERE id='4'"),
+   },
+  },
+ })
 ```
 
 ### The tweet
@@ -410,11 +410,31 @@ DDB exposes a feature where, given an attribute marked as "TTL" (the name of the
 It's not instantaneous though. There might be up to 48 hours of delay between "TTL" expiring and the item being deleted. This is due to the fact
 that the sweeper that runs the deletion is spun up on spare capacity of DDB (source: https://youtu.be/S02CRffcoX8?t=1368)
 
-### Mind the GSIs
+### Filter or GSI
 
 Depending on how your GSI is set up, you might be paying too much.
 
 Imagine a scenario where the GSI is set up to replicate 100% of the item attributes. Every time a new attribute is added, you will be paying for that
 GSI replication. There is a sweet spot where such replication makes sense, but only when you actually use that GSI frequently. **In other scenarios you might be better of doing scans!**.
 
-Here a workshop you can use to learn more https://github.com/robm26/cost
+Developers new to _DynamoDB_ often hear "avoid scans, use GSI instead". This advice, while most likely given in a good intentions in mind, might lead to actually paying more for _DynamoDB_. Of course, the caveat is WHEN that statement holds true.
+
+I would firstly advise anyone to perform pricing calculations on their own and see the cost difference between performing a scan operation and the cost of "maintaining" a GSI (mind the GSI replication).
+
+**As a rule of thumb, the less the given access pattern is used, the more likely scan operation will be cheaper for you, but only if the GSI replication % is high**. Otherwise, **if the GSI replication % is very low (sparse index or just replicating keys), the GSI will most likely be cheaper**.
+
+### Consider _Provisioned Capacity_
+
+I get it. I really do. The _On Demand_ model is really tempting. It's the serverless dream right?
+Do not get me wrong, the _On Demand_ mode has it's place and time and you definitely **should use it**.
+
+But maybe, during the lifecycle of your application, you started noticing patterns. And I'm not talking about having increased traffic during christmas or similar. I'm talking a day-to-day traffic patterns. If that's the case, you might want to look into _Provisioned Capacity_ most likely coupled with _Auto Scaling_.
+
+#### Ramping up to avoid throttling
+
+The _Auto Scaling_ takes time to catch up, it's not perfect. When you have some scripts that perform a lot of operations,
+add logic so that the writes are spread and increase gradually.
+
+#### Update the _Provisioned Capacity_ settings before a big spike
+
+Usually done before big events that are very profitable for your business. In such critical moments, it's better to burn a bit more on a database, than to crash because of the load.
