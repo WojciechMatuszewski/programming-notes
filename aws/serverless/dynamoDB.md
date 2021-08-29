@@ -385,6 +385,12 @@ As an alternative, the transaction API might be used, but it does not return the
 
 ## Cost considerations
 
+### Measure before you optimize
+
+_DynamoDB_ is great. It allows you to pull the WCU/RCU information right from the operation you have just performed.
+There is an option within the SDK to get the `ReturnConsumedCapacity`. You can then send that information somewhere, maybe to your analytics pipeline,
+where you would chart the cost of each operation.
+
 ### Avoid keeping big blobs of data along small, frequently accessed ones in the same item
 
 Imagine a scenario where you have a table that keeps users profiles. The APP that your DDB is for allows the users to upload their photo.
