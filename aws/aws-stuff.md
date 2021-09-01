@@ -2251,9 +2251,9 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 * **access** to an APIGW can be **controlled using multiple means**:
   - **resource policies** which define **access to your API methods from source IPs or VPC Endpoints**
-  * **IAM** can be **applied to entire API or methods**
+  - **IAM** can be **applied to entire API or methods**
   - **authorizers**
-  * **cognito**
+  - **cognito**
 
 - you **can** actually **use VPC interface endpoint** with APIGW
 
@@ -2271,6 +2271,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - you probably know that lambda has 15min timeout max. But that timeout only applies to async invocations (reading from the queue and such) where user is not waiting for a response. **The default APIGW timeout is 29 seconds**. This can be **configured to be between 5 seconds and 29 seconds**. All you have to do is to **un-tick the "use default timeout option**
 
 * when timeout happens on APIGW level, the **error code will be 504**.
+
+#### Payload size
+
+- The limit of the **payload = body + headers** sent to the APIGW (either HTTP or REST) is 10 mb.
+  This is important as the **maximum payload for a sync lambda invoke is 6mb**. It's pretty common to have lambda frontend with APIGW.
+  If you hit the situation where you sent more than 6 mb to lambda, APIGW will return with status code of 413
 
 #### Responses
 
