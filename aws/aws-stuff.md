@@ -210,7 +210,7 @@
 
 - **state persists within the tumbling window**. The **max window you can set is 15 minutes**
 
-- for doing **agregation work**. Think of **calculating sales numbers for a 15 minute window**
+- for doing **aggregation work**. Think of **calculating sales numbers for a 15 minute window**
 
 - aggregation is preserved **per shard**
 
@@ -391,21 +391,21 @@ First thing first **you will need a role that will be shared along all your on p
 
 ##### Resource arn syntax
 
-There is a standard `arn` indentifier which is assigned to every resource
+There is a standard `arn` identifier which is assigned to every resource
 
-```
+```text
 arn:partition:service:region:account:resource
 ```
 
 You might be wondering why `s3` have `arn` defined as:
 
-```
+```text
 arn:aws:s3:::example_bucket
 ```
 
 This is very different from other services where you have to specify most (if not all parts of the syntax).
 
-It turns out that this is somewhat **service specyfic**. For global services you can skip the `region` part, and it just happens that for `s3` you can skip both `region` and `account`.
+It turns out that this is somewhat **service specific**. For global services you can skip the `region` part, and it just happens that for `s3` you can skip both `region` and `account`.
 
 ##### Resource Policy
 
@@ -1515,7 +1515,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 ### Snowball Edge
 
-- - big briefcase, **up to 80 TB** os **usable storage**.
+- big briefcase, **up to 80 TB** os **usable storage**.
 
 - there are **three versions**: **compute**, **storage optimized**, **compute optimized with GPU**.
 
@@ -1529,7 +1529,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - you **mail** a **psychical drive to AWS**. They make either an AMI, upload to s3, or EBS snapshot out of it.
 
-- you should **always prefer snow**. The I/E Disk you have to encrypt the drive manually, worry about the transporation etc...
+- you should **always prefer snow**. The I/E Disk you have to encrypt the drive manually, worry about the transportation etc...
 
 ### RDS (Relational Database Service)
 
@@ -1972,7 +1972,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - the LSI **can be strongly consistent**
 
-- **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to parsitions created with GSI**
+- **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to partitions created with GSI**
 
 - the [documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Partitions.html) states
   > In a DynamoDB table, there is no upper limit on the number of distinct sort key values per partition key value. If you needed to store many billions of Dog items in the Pets table, DynamoDB would allocate enough storage to handle this requirement automatically.
@@ -2005,7 +2005,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
 
-- the **throughput of the stream** is based on the **number of paritions** given table **has**. This is because, **the more paritions your table has** the more **underlying shards will be allocated for that table**
+- the **throughput of the stream** is based on the **number of partitions** given table **has**. This is because, **the more partitions your table has** the more **underlying shards will be allocated for that table**
 
 - DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do not use Kinesis directly
 
@@ -2235,7 +2235,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - Whats more **you can restrict access to a specific IP** using **WAF ACL and CloudFront**
 
-- You can also use **Geo Restriction**. This is **similar** to **R53 geolocation**, but you get the **benefit of CDN (speed)**.
+- You can also use **Geo Restriction**. This is **similar** to **R53 geol-ocation**, but you get the **benefit of CDN (speed)**.
 
 - **SNI** is a way to present **multiple certs to a client**. Client has to **pick which cert. it wants**. Some old browsers do not support this technology.
 
@@ -2485,7 +2485,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### CloudWatch
 
-- **logs send to CloudWatch in 60sec interval IF there are reqests flowing through the load balancer**
+- **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
 
 - this is not the same as `access logs`. **Access logs contains details about a single request**, the CloudWatch metrics give you **broader view on the ALB as a whole**.
 
@@ -2501,7 +2501,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Scaling Events (mainly AZRebalance)
 
-- this is where **ALB tries to rebalance spread of instances between AZs**.
+- this is where **ALB tries to rebalanced spread of instances between AZs**.
 
 - this event is quite important since **ALB can exceed, for a brief period of time, the maximum instances count within given group**. This is **due to the fact that new instances are launched first (without terminating the old ones)**.
 
@@ -2533,7 +2533,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **for some integrations** **alias record is FREE!**. You can use this technique to save costs. Remember that you can assign **www.something.com** as alias as well as the **naked domain (without www)**
 
-- when creating an alias it might show as ** A (alias)** or something like this. Do not be afraid. This is what R53 is doing under thee hood.
+- when creating an alias it might show as **A (alias)** or something like this. Do not be afraid. This is what R53 is doing under thee hood.
 
 ### Route53
 
@@ -2577,7 +2577,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - just remember that **TTL can bite YOUR ASS!**. **Whenever** you are **considering offloading the balancing to Route53** keep in mind the **TTL**. Since you **cannot attach ASG to Route53** there might be a **case where your instance is no longer there BUT TTL still routes to that IP**.
 
-- you can **nest routing strategies**. This is to create complex routing infrastrucure
+- you can **nest routing strategies**. This is to create complex routing infrastructure
 
 - an good **example** would be the need to create **latency based tree where leafs are based on weight**
 
@@ -2595,7 +2595,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you **cannot attach healthchecks** to a simple routing policy.
 
-##### Multivalue answer
+##### Multi-value answer
 
 - this routing strategy is for **multiple records (same name)** which routes to **multiple resources**. The **record have to be of the same type**.
 
@@ -2644,7 +2644,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - is based on the **latency between the user and AWS region NOT your service**.
 
-##### Geolocation
+##### Geo-location
 
 - **DNS resolver now only returns the records that match the name AND location**
 
@@ -2682,9 +2682,9 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **bidirectional** queries
 
-#### Transfering domains to R53
+#### Transferring domains to R53
 
-- there is a **fee** for transfering the domain.
+- there is a **fee** for transferring the domain.
 
 - you cannot transfer every domain to R53. **There is a list of domains you can transfer**.
 
@@ -2790,7 +2790,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - this is needed to force the underlying deployment to use the latest pushed image
 
-- you **might need to restart the ECS agent** when you use _Service Auto Scalling_
+- you **might need to restart the ECS agent** when you use _Service Auto Scaling_
 
 #### Security
 
@@ -2839,8 +2839,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
   - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
   - `/meta-data/`: has **many options**, IP etc..
 
-- remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you have some scripts that require internet access and you forgot to configure the access properly. **There is a way to make sure user scripts run on every reboot**. This link can help:
-  https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
+- remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you have some scripts that require internet access and you forgot to configure the access properly. **There is a way to make sure user scripts run on every reboot**.
+  This link can help: https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
 
 - **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have dedicated tenancy model on that instance.
 
@@ -2881,7 +2881,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
   capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
 
-- you **cannot sell unused CONVERTABLE on the market!**.
+- you **cannot sell unused CONVERTIBLE on the market!**.
 
 #### Health checks
 
@@ -2905,7 +2905,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can hibernate an instance. The **hibernation process is moving RAM data to EBS**. There are requirements for this to work
 
-  1. Your instance **cannot be a part of ASG or ECS**. You can always suspend ASG or move given instance into maintance mode.
+  1. Your instance **cannot be a part of ASG or ECS**. You can always suspend ASG or move given instance into maintenance mode.
   2. Your **root volume has to be EBS**
   3. The **EBS volume has to be large enough**
 
@@ -2957,7 +2957,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 #### Auto recovery
 
-- you can create **CloudWatch alarm** on `SstatusCheckFailed_System` metric and choose **Recover this instance** action.
+- you can create **CloudWatch alarm** on `StatusCheckFailed_System` metric and choose **Recover this instance** action.
 
 - the auto recovery will **preserve your instance id, IP Address, EIP, EBS attachments, all that stuff**.
 
@@ -2974,7 +2974,7 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 - you can launch underlying instances using 2 types of "templates", **launch templates** and **launch configurations**:
 
   - both are immutable, but you can create **versions of launch template**
-  - **launch template is newer and recommmended by AWS**. You should always **prefer launch template as it has more options**.
+  - **launch template is newer and recommended by AWS**. You should always **prefer launch template as it has more options**.
 
 - controls scaling, where instances are launched, etc
 
@@ -3623,7 +3623,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 ###### Log retention
 
 - **by default** CloudWatch keeps the logs forever. **But after 15 months you cannot access them through console**.
-  This means that if you **want to access your logs after **that period of time, you have to **use an API to retrieve the datapoints**
+  This means that if you **want to access your logs after** that period of time, you have to **use an API to retrieve the datapoints**
 
 ###### Cross account log data sharing
 
@@ -6243,7 +6243,7 @@ First of all remember that ASG determines the health of the instance using vario
 
 Now, there is a notion of **grace period on ASG**. This is the time it takes for your instances to boot up basically. **There may be point of time where health checks finish before the grace period**. This will mark your instance as unhealthy BUT **ASG will take no action until the grace period is over**.
 
-#### I lost my SSH Key, what now.
+#### I lost my SSH Key, what now
 
 There are 2 ways you can tackle this problem. First is using **Systems Manager Automation** with the **AWSSupport-ResetAccess document** to create a **new SSH key**.
 
