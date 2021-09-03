@@ -1999,8 +1999,6 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
-- you **can use TWO lambda functions for dynamoDB stream** but it's **not advisable**. You will face problems with **throttling** and so on. You should use 1 lambda function as a consumer and **implement fanout with kinesis** if you need it.
-
 - while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that table
 
 - items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
@@ -2015,13 +2013,13 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 ##### Dynamodb Streams fan-out
 
-- to combat the 2 lambda subscriber limit you can implement the fanout pattern
-
-- since you probably want to preserve the order, you will most likely **1 subscriber pushing to _Kinesis Data streams_**
+- if the trigger that is invoked by DDB is doing a lot of things, consider pushing the message to SNS and creating a fan-out architecture
 
 ##### Triggers
 
-- this is just a lambda function that is invoked whenever a stream event happens
+- lambda function that is invoked whenever a stream event happens
+
+- you can control the parallelization factor but beware of the throttling
 
 #### Integration with Kinesis Data Streams
 
