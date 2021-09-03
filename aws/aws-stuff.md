@@ -1943,7 +1943,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **separate hot and cold data**. This will help you with RCU provisioning.
 
-- you can **save some bandwith** with **projection expression**. Remember **entire row is pulled, but then data extracted by Dynamo**
+- you can **save some bandwidth** with **projection expression**. Remember **entire row is pulled, but then data extracted by Dynamo**
 
 - you will need to use **projections** on **LSi** and **GSI**.
 

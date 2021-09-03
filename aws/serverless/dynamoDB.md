@@ -296,6 +296,21 @@ You can retry the transaction, to be super safe you could pass the `ClientReques
 If you design your tables correctly, you should not be having much issues with the way DDB handles concurrent transactions.
 Usually you can just retry the request, ensuring that you have valid _Condition Expressions_ in place.
 
+### Transactions and other operations
+
+Imagine yourself performing a transaction that involves changing items A and B.
+At the same time, you kick-off a `GetItem` request for the item A and B. It turns out that the read operations may return different results, all is based on timing.
+
+- Both `GetItem` requests are run before the TransactWriteItems request.
+
+- Both `GetItem` requests are run after the TransactWriteItems request.
+
+- `GetItem` request for item A is run before the TransactWriteItems request. For item B the `GetItem` is run after TransactWriteItems.
+
+- `GetItem` request for item B is run before the TransactWriteItems request. For item A the `GetItem` is run after TransactWriteItems.
+
+Definitely interesting. [Rick Houlihan claims that he actually never used the transaction API](https://twitter.com/houlihan_rick/status/1430240266095669249)
+
 ## Consistency
 
 Usually, most of the `read` operations will be `eventually consistent`. This is due to the fact how DynamoDB is built.
