@@ -1343,6 +1343,7 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 - the **_bucket policy_ still applies**, that is **the resulting permissions are an intersection of the access point policy and the root bucket policy**
 
 - you **have to use sigv4 to access objects through an _Access Point_**. I personally wish it was not the case as they do not support anonymous users.
+  I repeat: **you cannot use the access point in the same way you would use a public s3 bucket with some static assets (accessing through browser without any credentials**
 
 #### Encryption
 
