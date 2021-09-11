@@ -1211,6 +1211,9 @@ An example for s3-prefix (folder)
 - When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on that object (thus creating a new version). Your **previous versions are still there!, you can view them within versions tab!**.
 
 - You can restore your deleted objects by **deleting a delete marker**.
+  This property makes it so that **whenever someone mentions the idea of _soft deletes_ you should think of _delete markers_**.
+
+- **The act of deleting the _delete marker_ is not replicated!**. But the **_delete markers_ can be replicated. It all depends on the replication settings**. Use [this documentation page](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-what-is-isnot-replicated.html) to guide you.
 
 - **you are still billed for old versions**. Event though there might a delete marker the object is not permanently deleted so you have to pay for the storage.
 
