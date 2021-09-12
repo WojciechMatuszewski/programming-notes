@@ -137,6 +137,11 @@ incur a non-trivial increase to your overall cost.
 
 A blog post on this topic https://roger20federer.medium.com/dynamodb-when-to-not-use-query-and-use-scan-61e4ab90c1df
 
+##### Provisioning capacity for an index
+
+If you have your table set to **provisioned capacity mode** you will be able to set capacity for a given GSI.
+This might come in handy in cases where you want to optimize costs or are very well informed about the access patterns.
+
 #### Sort Key
 
 Sort key enables _rich query capabilities_. **If you provided sort key (also called range key) your partition key (hash key) does not have to be unique**.

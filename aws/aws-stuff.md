@@ -1268,7 +1268,7 @@ An example for s3-prefix (folder)
 
 - **much more granular than ACLs**
 
-- allow you to **operate on _indentities_** so users, groups and roles
+- allow you to **operate on _identities_** so users, groups and roles
 
 - you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
 
@@ -1290,7 +1290,7 @@ An example for s3-prefix (folder)
 
 ###### Overall
 
-- **bucket policies** and **ALC** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
+- **bucket policies** and **ACL** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
 
 So when to use what?
 
