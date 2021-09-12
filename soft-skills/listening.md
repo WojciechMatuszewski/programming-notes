@@ -39,9 +39,7 @@ The power of clarifying questions is huge. Not only they help you cement the inf
 Some of the formulas
 
 > Do you mean to say ... ?
-
 > Are you saying that ... ?
-
 > Are you implying ... ?
 
 ### Follow up
