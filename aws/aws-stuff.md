@@ -2365,6 +2365,17 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **remember to add the necessary headers to your lambda response**
 
+###### Logging
+
+- there are two ways to log requests that come in and out of the API Gateway REST APIs
+
+  - the **access logs** contain the **metadata about who and how your API was accessed**
+  - the **execution logs provide the request / response info along with any kind of authorization metadata**
+
+- overall, **the executions logs provide much more information** but **the access logs might be helpful as well**
+
+- you will need to configure what gets logged within the access logs via special variables
+
 ##### HTTP APIs
 
 - much simpler to set up than for the REST APIs
@@ -2373,6 +2384,11 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - remember that there are multiple versions of the request and response payloads.
   If you need to specify additional headers, use the v1 response payload.
+
+###### Logging
+
+- there is only **ONE way to log requests that come in and out of the API Gateway HTTP APIs**
+  - the **access logs**. The configuration is exactly the same as in the case of REST APIs
 
 ### Load Balancers
 
