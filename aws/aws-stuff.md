@@ -5842,6 +5842,14 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - it has **different use-cases that Kinesis Analytics**. **Kinesis should be used for real-time or near real time stuff, that also applies to analytics**. With `IOT Analytics` data is stored long term.
 
+#### IOT MQTT
+
+- great **alternative** for **APIGW WebSockets**
+
+- to use them **you have to be authenticated(?)**
+  - I could not connect without any credentials
+  - The amplify pubsub library requires credentials, even if we are talking in not authenticated context
+
 ### AWS Proton
 
 - enables you to create **envioriment and service templates which are VERSIONED**
