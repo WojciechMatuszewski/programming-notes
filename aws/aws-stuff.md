@@ -1181,7 +1181,7 @@ An example for s3-prefix (folder)
 
 #### Consistency
 
-- **strong consistency Read after Write** for **PUTS**. Basically you can read immediately after
+- **strong consistency Read after Write** for **GET, PUT and LIST operations**. Basically you can read immediately after
   you write to a bucket
 
 - **Eventual Consistency** for **overwrite PUTS and DELETE**. Basically if you
@@ -1402,6 +1402,17 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 - replication is a **asynchronous process**.
 
 - **SSL** is **enabled by default** when using replication
+
+#### Data snapshots
+
+- for any kind of production usage, you should have versioning enabled. Sadly, versioning is no the same as the snapshot of the whole s3 bucket.
+
+* there is **no native way of creating s3 bucket snapshots**.
+
+- to create s3 snapshots, you will need to combine the **_DataSync_ and _AWS Backup_** services.
+  The _DataSync_ service will **push the s3 data into EFS**, then **the _AWS Backup_ can create a backup from EFS**.
+
+* the **_DataSync_ service can be very costly**. The AWS data transfer fees are pretty big, but you also will pay for s3 operations.
 
 #### Misc
 
@@ -5846,9 +5857,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - great **alternative** for **APIGW WebSockets**
 
-- to use them **you have to be authenticated(?)**
-  - I could not connect without any credentials
-  - The amplify pubsub library requires credentials, even if we are talking in not authenticated context
+- to use the **MQTT topics** you have to **have identity attached to your request**.
+  This means that you have to sign the request with the sigv4. Usually on the fronend this is done by using roles and Cognito, the library will sign the requests for you.
 
 ### AWS Proton
 
