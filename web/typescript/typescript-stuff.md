@@ -315,6 +315,28 @@ export function pluck<K extends keyof T, T>(array: T[], key: K): Array<T[K]>;
 
 [More on this topic](https://medium.com/hackernoon/testing-types-an-introduction-to-dtslint-b178f9b18ac8)
 
+## The `register` function
+
+The `ts-node` and similar tools expose a very neat mechanism that parses TypeScript files on the fly, at the very moment you `require` them!
+All you have to do is to use the `.register` function. Here is an example:
+
+```ts
+const tsNode = require("ts-node");
+
+tsNode.register({
+  transpileOnly: true,
+});
+```
+
+### Where would I use this?
+
+Imagine you want to load a file that is provided by a 3rd party, then execute that file. Of course, keeping all operations within the realm of JavaScript.
+
+Well, since you cannot execute TypeScript files, you will not be able to just import them into your script. You can execute JavaScript files, do not you?
+
+With the help of the `register` call, all of your imports will be transpiled by `ts-node`. This ensures that whatever you are importing
+is a valid JavaScript, without any types and other TypeScript features.
+
 ## Assert Signatures
 
 So with `type guards` you are returning `true` or `false`. This then determines
