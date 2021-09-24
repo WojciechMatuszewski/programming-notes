@@ -91,6 +91,36 @@ when it comes to errors.
 This one is coming from the `pkg/errors`. **It carries out the unwrapping recursively** which is a huge plus.
 Definitely will be using this one from now on.
 
+## Making sure given struct implements all methods of an interface
+
+I find it very odd (?) that in a language that is typed in a static manner (maybe that is the reason?) there is no `extends` clause.
+What the `extend` clause allows for, is to ensure that a given construct implements all methods of a given _interface_.
+Since there is no `extends` in Go, how one might ensure that given `struct` implements all methods of an `interface`?
+
+According to the [official Go FAQ](https://golang.org/doc/faq#guarantee_satisfies_interface) one will need to create a special variable that
+uses _type casting_ that `struct` on the `interface`.
+
+Here is an example:
+
+```go
+
+type Human interface {
+  speak()
+  drinkWater()
+}
+
+type Myself struct {}
+
+// Cast the `Myself` struct onto the `Human` interface.
+
+var _ Human = Myself{}
+
+```
+
+Since the `Myself` struct does not implement the `speak` and `drinkWater` methods the compiler will thrown an error.
+
+What is more, the same problem occurs when using _interfaces_ in Rust.
+
 ## `pprof` handlers
 
 If you are using the default multiplexer for your http server, the `ServeMux`
