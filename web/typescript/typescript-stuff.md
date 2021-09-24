@@ -1674,6 +1674,47 @@ savePerson(tooFew); // Error -> returns never
 savePerson(tooMany); // Error -> returns never
 ```
 
+### At least one item within the array
+
+You are probably familiar with multiple ways one might declare an _array_ type.
+
+```ts
+type ArrayOfNumbers1 = number[];
+
+type ArrayOfNumbers2 = Array<number>;
+```
+
+There is no semantic difference between these two declarations.
+They work the same apart from their combination with the `readonly` keyword (the `Array` cannot be used with `readonly`. To achieve the desired effect one need to use `ReadonlyArray`).
+
+The `number[]` and `Array<number>` can be assigned to variables holding empty arrays. I would argue that in most cases this is a desired outcome.
+
+```ts
+type ArrayOfNumbers1 = number[];
+
+const numbers: ArrayOfNumbers1 = [];
+```
+
+But what if I wanted to ensure that the `numbers` variable holds at least one number, in other worlds is not empty.
+Here is how one might do this.
+
+```ts
+type AtLeastOneNumber = [number, ...number[]];
+
+const emptyArray: AtLeastOneNumber = []; // error
+
+const exactlyOneNumber: AtLeastOneNumber = [1]; // ok
+const oneOreMoreNumbers: AtLeastOneNumber = [1, 2]; // ok
+```
+
+The _spread_ syntax does not have the same limitations as the one in JavaScript. You can spread first and then use a concrete type.
+
+```ts
+type LastString = [...number[], string];
+```
+
+Pretty cool!
+
 ## Optional Chaining && Null Coalescing
 
 As of writing this, these count as _future_.
