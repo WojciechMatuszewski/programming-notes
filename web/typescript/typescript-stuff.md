@@ -1753,7 +1753,7 @@ type Literal = "string";
 type Primitive = string;
 ```
 
-Usually, we do not want to _mutate_ anything, especially while working with objects and so on. Sine objects and arrays are mutable, typescript was wideing the type of the property to accommodate for that (also for `let` declarations)
+Usually, we do not want to _mutate_ anything, especially while working with objects and so on. Sine objects and arrays are mutable, typescript was widening the type of the property to accommodate for that (also for `let` declarations)
 
 ```ts
 const circle = {
