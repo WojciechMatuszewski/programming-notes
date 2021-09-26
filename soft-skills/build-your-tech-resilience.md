@@ -52,3 +52,50 @@ The way you should be giving feedback is to ensure that you put the emphasis on 
 > "Notice how you tried this new way, and you got closer."
 
 Much better. This kind of feedback feels warm, encouraging, even if it's negative.
+
+## Enhance your self-efficacy
+
+### What is it?
+
+It's the self belief that you can actually do the things you are asked to do.
+
+> Research indicates that self-efficacy is one of the most important influences in your ability to persist in learning and problem solving.
+
+### Sabotaging your progress
+
+Having low self-efficacy will sabotage your progress on the task and in life.
+With low self-efficacy, you will be hesitant to take up new challenges, you will be reluctant to finish what you have started.
+
+I really need to work on the notion of a "negative talk" and having severe doubts about my skills.
+While I believe skewing towards another extremum i.e., being super confident, is not good, finding a happy medium is a sweet spot. (it is not easy though when you are working with people from Google, Amazon and other big companies)
+
+### Self-confidence vs self-efficacy
+
+The rule of thumb is: _self-confidence_ applies generally, _self-efficacy_ applies locally, in a certain area.
+
+Both are needed to succeed. Of course, there needs to be an equilibrium between ones doubts and confidence, but I think it is safe to say that
+**you will not be as successful as you want without self-confidence and self-efficacy**.
+
+> Failure is a springboard for growth.
+
+And another goodie.
+
+> If you believe that you can become more capable, you'll keep going and recover from setbacks.
+
+### Preparation vs stress
+
+Have you ever were worried-sick before an exam? Or maybe you could not sleep because of that deadline?
+On the other hand, have you ever slept like a baby before an exam or important presentation?
+
+The key difference between those two things is **preparation**. If you are prepared, you know you did the work necessary to succeed.
+Of course, the less organized you were, the more negative self-talk you are going to experience, the more stress you will have to endure.
+
+## Improving self-efficacy
+
+There road to improving your _self-efficacy_ is not a complicated one but a long one. It is all in the psyche, and changes to that area of ourselves usually take time.
+
+You can start today by starting to be curious and stopping caring about what others think. Easier said than done right?
+Real talk, I know it is hard but it is not complicated. So many problems could be solved if only we cared less and were curious and open more.
+
+Next time you are faced with something new, stop thinking "Can I do this?" and start thinking "Oh nice, an opportunity to learn".
+You will not get fired, really (most likely, who fires someone when they fail at something they have not done before?)
