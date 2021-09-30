@@ -63,7 +63,7 @@
 
 - _Firecracker_ processes your lambdas I/O and network requests and sends them to the _Host kernel_
 
-- lives in a very limited guest envioriment
+- lives in a very limited guest environment
 
 #### Provisioned Concurrency
 
@@ -412,6 +412,10 @@ It turns out that this is somewhat **service specific**. For global services you
 Now we are in the domain of a given service / resource.
 
 - **IAM is not involved here**, control is **handled by a given service / resource**
+
+* the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using resource-based policy might be less latency heavy than using an identity-based policy**.
+  One might experience this while working with **APIGW + Lambda** where the **integration between the services could use either resource or identity based policies**.
+  Here is a [great article on this topic](https://medium.com/@lancers/low-hanging-fruit-to-reduce-api-gateway-to-lambda-latency-8109451e44d6)
 
 ###### Cross account
 
