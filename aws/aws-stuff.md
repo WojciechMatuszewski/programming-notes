@@ -4853,6 +4853,17 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - one important thing to remember here is that **EB supports only 5 targets per rule**. This is something you should keep in mind while designing stuff.
 
+#### Event size limits
+
+- the maximum event size payload that you can put into the bus is **256kb**.
+
+* this is most likely because the architecture underneath uses SQS.
+
+- this limit is not separate to the _EventBridge_ service. _StepFunctions_, _AWS Lambda async invocation_ all have the same limit.
+
+* just like in other services that have the same limit, if you ware working with larger payloads, upload the payload to S3, include the presigned URL
+  within the payload.
+
 #### Rules
 
 - rules enable you to configure which **target** the **matched event** will be routed to.
