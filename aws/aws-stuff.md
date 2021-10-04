@@ -4941,13 +4941,15 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you have to **batch manually, probably the inside the detail type**.
 
-#### Debugging
+#### Debugging / Observability
 
 - debugging is hard but possible
 
 - what I would suggest is to **make cloud watch log group as your target**. You will be able to see all the events!
 
-- you **cannot create the rule for cloudWatch log group through CF**. This is a mess :C
+- one approach would be to create a _catch-all_ rule that forwards the events to a log group.
+  Another would be to create additional log group target for each rule.
+  No matter which approach you pick **remember about the CloudWatch costs. Use the _input transformer_ to ensure you log only what you need**
 
 #### DLQ
 
