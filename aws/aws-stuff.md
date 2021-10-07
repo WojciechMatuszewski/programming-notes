@@ -423,6 +423,9 @@ Now we are in the domain of a given service / resource.
 
 - this is useful when you **want user to not give up his trusted account roles**.
 
+- in the cross account scenario **both the resource policy and the role has to allow for an operation**.
+  This is **in contrast to same-account scenario** where **only resource-policy OR the identity has to allow for an operation**.
+
 ##### Conditions
 
 - you can create elaborate conditional logic for a given policy
