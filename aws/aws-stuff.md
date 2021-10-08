@@ -356,9 +356,15 @@
     Actions:
       - sts:AssumeRole
       - sts:SetSourceIdentity
-    Principal (OR Resource):
+    Principal:
+      Service / AWS
       ..
     ```
+
+    **Remember that the `Principal` needs the permissions to do these actions.**.
+
+  - How the "stickiness" of the _SourceIdentity_ is preserved? [This article explains](https://aws.amazon.com/blogs/security/how-to-relate-iam-role-activity-to-corporate-identity/).
+    > After the role is assumed and the source identity set, the source identity cannot be changed for the duration of the assume role session.
 
 ##### Revoking Sessions
 
