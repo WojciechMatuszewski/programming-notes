@@ -346,6 +346,20 @@
 
 - when you are creating **cross account assume role stuff** you can **further protect the policy by adding externalId condition**. This **externalId can only be used when assuming via CLI / SDK**.
 
+- it is vital **to set the _SourceIdentity_** when assuming a role. The _SourceIdentity_ is a **sticky name that is preserved even in the case of many chains of `AssumeRole` calls**. This enables you to **identify who is operating as the assumed role**.
+  **Once the _SourceIdentity_ is set it's is not possible to change it in a given session**.
+
+  - to use the _SourceIdentity_ when assuming a role, the `AssumeRole` (trust policy) has to have the `sts:SetSourceIdentity` action enabled.
+
+    ```text
+    ...
+    Actions:
+      - sts:AssumeRole
+      - sts:SetSourceIdentity
+    Principal (OR Resource):
+      ..
+    ```
+
 ##### Revoking Sessions
 
 Since removing a policy from a role which is assumed can be destructive there is another way of removing assumed (short-term) credentials. That is **revoking a session**. This basically **ads a deny all policy for tokens granted before given date**. So you did not remove the permissions directly, only invalidated given tokens. Pretty sweat!
@@ -413,9 +427,14 @@ Now we are in the domain of a given service / resource.
 
 - **IAM is not involved here**, control is **handled by a given service / resource**
 
-* the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using resource-based policy might be less latency heavy than using an identity-based policy**.
-  One might experience this while working with **APIGW + Lambda** where the **integration between the services could use either resource or identity based policies**.
+* the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using resource-based policy might be less latency heavy than using an identity-based policy**. One might experience this while working with **APIGW + Lambda** where the **integration between the services could use either resource or identity based policies**.
   Here is a [great article on this topic](https://medium.com/@lancers/low-hanging-fruit-to-reduce-api-gateway-to-lambda-latency-8109451e44d6)
+
+- **some** services **do not support _Resource Policies_**. For example, **DynamoDB does not support resource policies**.
+
+  > Other services, such as Amazon S3, also support resource-based permissions policies. For example, you can attach a policy to an S3 bucket to manage access permissions to that bucket. DynamoDB doesn't support resource-based policies.
+
+  This means that **it is the identity that a given service assumes that has to have permissions enabled for DynamoDB**
 
 ###### Cross account
 
