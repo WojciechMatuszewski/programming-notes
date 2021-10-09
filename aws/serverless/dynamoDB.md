@@ -316,6 +316,25 @@ At the same time, you kick-off a `GetItem` request for the item A and B. It turn
 
 Definitely interesting. [Rick Houlihan claims that he actually never used the transaction API](https://twitter.com/houlihan_rick/status/1430240266095669249)
 
+### Transactions and WCU/RCU
+
+According to [this blog post](https://aws.amazon.com/blogs/database/optimize-amazon-dynamodb-transaction-resilience/) for any given operation within the transaction _DynamoDB_ will perform two read or write operations (depending on the underlying operation)
+
+> As DynamoDB transactional APIs perform two underlying reads or writes for every item in the transaction
+
+This makes sense since _DynamoDB_ uses _two-phase commit protocol_ where the data is first written/read to/from the storage nodes, then committed.
+All of these operations are, of course, not free. **For every operation that is within your transaction you have to count double the WCU/RCU**.
+
+I find this very fascinating as I never once though about WCU/RCU and the throttling with the _on-demand_ pricing mode. I guess I have not yet built an application that scaled to traffic that would be high enough to have to worry about it.
+
+### Transaction conflicts
+
+The bigger your transactions are, the more likely you will run into transaction conflicts. This is where there are multiple operations competing for the same "resource" within the _DynamoDB_ table.
+
+Imagine `PutItem` that operates on the item with `pk` of `1` and, at the same time, firing of a transaction that has the same operation.
+
+Note that _DynamoDB_ uses the notion of _optimistic concurrency control_ (OCC). This means that there might be multiple in-flight transactions at any given time. There is no possibility of deadlocks as discussed earlier, before deadlock can occur, you will get the transaction conflict error.
+
 ## Consistency
 
 Usually, most of the `read` operations will be `eventually consistent`. This is due to the fact how DynamoDB is built.
