@@ -382,7 +382,7 @@ The `batchWrite` API is different though. While the names of the operations are 
 
 Here is the deal with `PartiQL` though, **the `batchExecuteStatement` API used within the context of `PartiQL` DOES support conditions on the operations - with limitations!**.
 
-The _with limitations_ part is very important. From my initial research, **the supported conditions have to contain an equality check on all key attributes**. Might be useful sometimes like removing / updating an item and making sure it exists in a process. Here is a very simple code in Go doing just that
+The _with limitations_ part is very important. According to my initial research, **the supported conditions have to contain an equality check on all key attributes**. Might be useful sometimes like removing / updating an item and making sure it exists in a process. Here is a very simple code in Go doing just that
 
 ```go
  out, err := client.BatchExecuteStatement(context.Background(), &dynamodb.BatchExecuteStatementInput{
@@ -393,6 +393,14 @@ The _with limitations_ part is very important. From my initial research, **the s
   },
  })
 ```
+
+### The Update / Insert dilemma
+
+With the "regular" DynamoDB, one does not need to pick between an "update" and "insert" behavior. There is one operation that allows you to perform those operations - the `PutItem` API.
+
+That is not the case with the `PartiQL`, though. Here, we either update an existing item or insert a new item that does not exist.
+How would we know which one to choose? We most likely would need to perform a `SELECT` statement on a given item before performing the operation.
+All of this could be done with one statement in DDB by using `SET attribute = if_not_exists(attribute, :value)` update expressions.
 
 ### The tweet
 
