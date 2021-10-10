@@ -526,6 +526,8 @@ test(
 
     expect(Attributes!.ApproximateNumberOfMessages).toEqual(1);
     expect(Attributes!.ApproximateNumberOfMessagesNotVisible).toEqual(0);
+    // Depending on how your test is set up, you might need to remove the message you are making the assertions on.
+    // The message will not be automatically removed since we are pooling manually and with help of EventSourceMapping.
   },
   testTimeout
 );
@@ -543,14 +545,31 @@ Enter the [_AWS CDK provider framework_](https://docs.aws.amazon.com/cdk/api/lat
 Usually, we think about the _provider framework_ in the context of creating resources that are not supported by _CloudFormation_.
 But there is a hidden gem amongst the _provider framework_ API that will allow us to run the test assertions every X seconds – the [_asynchronous handler_](https://docs.aws.amazon.com/cdk/api/latest/docs/custom-resources-readme.html#aws-cdk-custom-resources).
 
-TODO:
+##### Benefits
 
-1. Explain the benefits of having your test written as infrastructure
+The main benefit of having your tests live very close to the infrastructure they test is that **your stack will not deploy if your test fail. Running the tests is NOT a separate command**.
 
-- Deployment fails when the tests fail
-- It is important to remember about the relationship between the test stack and the app stack (dependency)
+The setup I'm referring to is not complex. Here is the pseudo-code.
 
-2. Snippets of doing the tests
+```ts
+const appStack = new AppStack();
+
+const testStack = new TestStack(appStack);
+
+// Explicit over implicit
+testStack.addDependency(appStack);
+```
+
+##### Drawbacks
+
+The main drawback of this approach is that **your deployments will take longer**. Please note that I'm not referring your CI/CD pipeline.
+Since the tests are part of the infrastructure, your deploy step will take additional time.
+
+Another issue one might face is the issue with messed up _CloudFormation_ stacks. I personally never encountered this situation but I imagine it would be possible to end up in situation where _CloudFormation_ rollback is not possible?
+
+##### How
+
+[This repository](https://github.com/elthrasher/cdk-async-testing-example) contains all you need.
 
 ### Stream with _DynamoDB_ streams
 
