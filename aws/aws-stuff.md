@@ -1382,8 +1382,6 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 #### Encryption
 
-- **PER OBJECT** basis
-
 - there are multiple options:
 
   - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**. **You manage the AWS master key**.
@@ -1407,11 +1405,21 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 ##### SSE-KMS
 
-- **objects encrypted using individual KMS keys**
+- **objects encrypted using individual KMS keys** or **one KMS key per bucket**
 
 - **keys are stored within S3 object**
 
 - **decryption of the objects** requires you to have **both iam permissions for the S3 operation and the KMS key permission**. That is why it allows the separation of roles.
+
+##### Costs
+
+- you can really get burned by costs if you are not careful
+
+- **the worst thing you can do is to use SSE-KMS with per-object keys**. Remember that **each individual KMS key costs money!**
+
+- the **best thing you can do is to use SSE-S3**. The problem is here is that you are **trading customizability (you cannot control the key) with costs**
+
+- the **happy medium between costs and control is the SSE-KMS with BUCKET keys**.
 
 #### Replication
 
@@ -3328,7 +3336,7 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 - can be accessed by instances **spread across multiple VPCs using VPC peering**
 
-- the data is **distrubited accross multiple AZs**
+- the data is **distributed across multiple AZs**
 
 ##### Security
 
@@ -3364,6 +3372,17 @@ But most important information, remember **there are no so called snapshots when
 
 - because EFS gets a DNS name, you sometimes may hear a term: _mounting using FQDN_. This is nothing but just mounting using this DNS name.
 
+##### With AWS Lambda
+
+- you can integrate EFS with AWS Lambda.
+
+- this is a neat way of presenting a file system that is shared throughout many Lambda functions. **You can make your functions stateful!**
+
+- where would you use this? **If you ever need to download the same asset from S3 multiple times, it might be time you reach for EFS**.
+  Of course, **EFS mounts within a VPC so your Lambdas also has to be within a VPC**
+
+- I've used it to share video file across many Lambda functions.
+
 ##### DataSync
 
 - AWS says that **in theory you can mount EFS on prem** but that **requires really good connection**. Moreover the **traffic** itself **is not encrypted** so **VPN or Direct Connect is recommended**.
@@ -3397,7 +3416,7 @@ But most important information, remember **there are no so called snapshots when
 - there are **2 main throughput modes**
 
   - **busting mode** uses **credits** (recommended by AWS)
-  - **provisioned mode**: this is where you have **contant high throughput (not spikes)**
+  - **provisioned mode**: this is where you have **constant high throughput (not spikes)**
 
 - with **bursting mode** the **throughput of the storage grows with the storage size**. This usually is ok, but you might get throttled on unexpected spikes when the volume size is low.
 
