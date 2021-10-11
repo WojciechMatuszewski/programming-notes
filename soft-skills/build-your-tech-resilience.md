@@ -99,3 +99,20 @@ Real talk, I know it is hard but it is not complicated. So many problems could b
 
 Next time you are faced with something new, stop thinking "Can I do this?" and start thinking "Oh nice, an opportunity to learn".
 You will not get fired, really (most likely, who fires someone when they fail at something they have not done before?)
+
+## Exercising emotional intelligence
+
+Your emotional state has a significant impact on your work. When you feel down, unmotivated the code and outcomes you produce will most likely suffer.
+Having the ability to recognize negative emotions and drilling into their cause will help you along the way.
+
+How would that help you? Well, if you recognize that you are stressed or unmotivated, you can find a way to calm down faster.
+Instead of being in a perpetual state of anxiety, you tell your coworkers what is going on. The way you talk to them changes. Instead of speaking through emotions, you speak ABOUT the feelings.
+
+> Self-regulation. Self-regulation is your ability to control or redirect disruptive emotions and impulses. It's an essential skill in managing challenging situations such as deadlines and problems during code development or testing.
+
+> [...] **the technical knowledge alone will not move the team forward**
+
+> EQ has a significant impact on your interactions with your teammates and the overall success of the team. Even if your team is technically skilled, low EQ can damage morale.
+
+The last quote speaks to my mind. I feel guilty about putting my coworkers' moods down because I felt anxiety or other negative emotions.
+Acknowledging negative emotions and working through them has the surprising benefit of making the conversations more fruitful. Instead of blaming your colleague (or yourself) for writing this "bad" piece of code, you create a plan and attack with refactoring.
