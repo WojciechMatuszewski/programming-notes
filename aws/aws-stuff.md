@@ -3861,6 +3861,8 @@ You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combina
 
 - you can create the _table_ (so the **lens which you will look through**) **manually** or **using AWS Glue**
 
+- if you create the table via Query, **the manually created table will show up in the Glue console**
+
 ##### Athena Vs Redshift Spectrum
 
 Both of these tools can be used for DataLake querying, but, and that is very important, **you would use Athena when your data mostly lives on s3 and you DO NOT have to perform joins with other data sources**. This is a **complete opposite of RedshiftSpectrum** where you would **use Redshift Spectrum where you want to join s3 data with existing Redshift tables or create union products**.
@@ -3868,6 +3870,18 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 ##### Athena Vs EMR
 
 **Athena is only for querying** it does **not transform the data**. **EMR has capabilities of transforming the data**.
+
+##### Pricing considerations
+
+- note that you **have to pay for the API calls made behind the scenes to S3**
+
+- you pay for the bytes scanned, **can get quite expensive on large data sets**
+
+- you **should look into partitioning your data**. With data partitioned correctly, **you will pay less for your queries** because _Athena_ will need to **scan through less of the data**.
+
+##### Limitations
+
+- _Athena_ **does not support multi-line data structures**. Most of the analytics tools are optimized for reading lines and treating a single line as a single data entry. _Athena_ is no different.
 
 #### EMR (Elastic Map Reduce)
 
