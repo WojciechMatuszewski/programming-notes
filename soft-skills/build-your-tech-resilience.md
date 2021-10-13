@@ -116,3 +116,9 @@ Instead of being in a perpetual state of anxiety, you tell your coworkers what i
 
 The last quote speaks to my mind. I feel guilty about putting my coworkers' moods down because I felt anxiety or other negative emotions.
 Acknowledging negative emotions and working through them has the surprising benefit of making the conversations more fruitful. Instead of blaming your colleague (or yourself) for writing this "bad" piece of code, you create a plan and attack with refactoring.
+
+## Give and receive effective feedback
+
+I like the box metaphor the section is conveying. The feedback you give should be like a box containing useful tools to advance the other person forward. I think that the most important thing to consider is to be concrete and have specific examples of behaviors/things you wish to touch on. Of course, this type of feedback might not be for everyone.
+
+TODO: Deliver wise feedback in technical environments
