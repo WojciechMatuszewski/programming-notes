@@ -86,4 +86,4 @@
 
 ## QA
 
-- do not be afraid of friction with IAM. It takes time to know all the permissions, **do not use \***
+- do not be afraid of friction with IAM. It takes time to know all the permissions, **do not use the wildcard for permissions!**

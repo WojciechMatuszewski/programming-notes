@@ -1313,6 +1313,8 @@ An example for s3-prefix (folder)
 
 - **the effective permissions are an intersection between the main bucket policy and the endpoint policy**
 
+- remember that **s3 endpoints work in the context of the VPC. Do not confuse this feature with s3 access points**.
+
 ##### Block public access
 
 - can be enabled on the account or the bucket level. Account level should be preferred
@@ -1467,8 +1469,20 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 - these can be send to **SNS, SQS or Lambda**.
 
 - the events are **object based events**. If you want **all s3 events** you should:
+
   - create **`CloudTrail` for this bucket**
   - use **`CloudWatch rule` with `CloudTrail` integration** and select given destination.
+
+- be aware of the **delivery SLA**. You might be surprise to learn that
+  > Amazon S3 event notifications are designed to be delivered at least once. Typically, event notifications are delivered in seconds but can sometimes take a minute or longer.
+
+##### Filtering rules
+
+- you can filter the events via s3 notification filtering
+
+- **you cannot have overlapping filters**. This is a gotcha that a lot of people encounter
+
+- **use SNS fan-out pattern for multiple targets for single event**
 
 ### Storage Gateway
 

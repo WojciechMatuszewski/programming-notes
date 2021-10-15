@@ -121,4 +121,18 @@ Acknowledging negative emotions and working through them has the surprising bene
 
 I like the box metaphor the section is conveying. The feedback you give should be like a box containing useful tools to advance the other person forward. I think that the most important thing to consider is to be concrete and have specific examples of behaviors/things you wish to touch on. Of course, this type of feedback might not be for everyone.
 
-TODO: Deliver wise feedback in technical environments
+This section mentions the idea of a _wise feedback_. I would also call it _pragmatic_. Imagine yourself, you want to get better, what do you need to get better? Well for once you need to know what you suck at. The other part are the steps to take in order to get better. This is _wise feedback_.
+
+Giving a great feedback does not mean sugar coating. Speak the truth but do it with empathy in mind.
+
+### About code reviews
+
+The worst thing you can do is to approve a PR without really putting any effort into reviewing it.
+Doing the review itself is a bit better, but did you really do the review?
+
+- do you have an understanding of the requirements the code is trying to fulfill?
+- have you ran the branch locally?
+
+Without doing these things you are guessing.
+
+https://docs.microsoft.com/en-us/learn/modules/give-receive-effective-feedback/6-exchange-effective-feedback
