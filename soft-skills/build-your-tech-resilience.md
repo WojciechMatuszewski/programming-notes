@@ -135,4 +135,8 @@ Doing the review itself is a bit better, but did you really do the review?
 
 Without doing these things you are guessing.
 
-https://docs.microsoft.com/en-us/learn/modules/give-receive-effective-feedback/6-exchange-effective-feedback
+### On receiving feedback
+
+> It's important to recognize that issues in your work aren't a reflection of your personal worth
+
+todo: Grow your cognitive flexibility
