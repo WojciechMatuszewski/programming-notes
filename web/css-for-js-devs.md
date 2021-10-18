@@ -73,3 +73,10 @@ You might get away with it, but you might get stuck once you encounter a problem
 #### Width
 
 - TIL that you can specify `max-content`, `min-content` and `fit-content` as `width` properties. I though that these are available only in the context of CSS grid.
+
+## Flexbox
+
+- `flexbox` is all about thinking "how am I controlling the layout on THIS(single) axis.
+
+- The `align-items: baseline` is pretty interesting. It works similarly to the `flex-end` but in the relation to typography.
+  - Could be used in the context of inputs where the `label` text is huge and you want the input to be positioned at `baseline` of that.
