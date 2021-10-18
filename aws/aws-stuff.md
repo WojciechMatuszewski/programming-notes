@@ -5606,6 +5606,31 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **Resources section is mandatory**
 
+#### Resource identifiers
+
+- when working with _CloudFormation_ you will be dealing with two types of identifiers. **The _logical resource id_ and the _physical resource id_**.
+
+- about the _psychical resource id_
+
+  - you can only reference resources via their _physical resource id_.
+  - you can **assign the _psychical resource id_ directly via `name` property. The `name` property is not available on all resources**.
+  - the **change in _psychical resource id_ tells _CloudFormation_ whether the resource should be replaced or not**.
+  - **if the `name` property is not specified**, the _psychical resource id_ will be **automatically generated**.
+    To my best knowledge, _CloudFormation_ uses part of stack name as the basis for the generation.
+
+- about the _logical resource id_
+
+  - you declare them whenever you declare a resource within the template
+
+    ```yaml
+    Resources:
+      MY_LOGICAL_RESOURCE_ID:
+        Type: ...
+        Properties: ...
+    ```
+
+  - available for every resource.
+
 #### Intrinsic Functions
 
 - these can **only be used within specific parts of template**. These are:
