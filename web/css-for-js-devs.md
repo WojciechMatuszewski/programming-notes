@@ -55,3 +55,21 @@ You might get away with it, but you might get stuck once you encounter a problem
 - Think of `margin` property like **your personal space**. During the pandemic health authorities required us to stay 2 meters apart from each other.
 
   - Margin can have a negative value.
+
+### Flow Layout
+
+- You **cannot change** the **width** and the **heigh** of an an `inline` positioned element.
+
+  - When thinking about `inline` elements, think about "going with the flow".
+
+- The `block` positioned elements are greedy. They fill all available space unless told not to do so.
+
+- The `inline` positioned elements **can wrap**. Neat!
+
+- The `inline-block` positioning is interesting. For the **parent of the element, the element is considered to be `inline`**, but for the **element itself can be styled like a `block` positioned element**.
+  - This gives you the ability to **add `width` and `height` to the element**.
+  - One notable gotcha is that **the `inline-block` element does not wrap**.
+
+#### Width
+
+- TIL that you can specify `max-content`, `min-content` and `fit-content` as `width` properties. I though that these are available only in the context of CSS grid.
