@@ -80,3 +80,31 @@ You might get away with it, but you might get stuck once you encounter a problem
 
 - The `align-items: baseline` is pretty interesting. It works similarly to the `flex-end` but in the relation to typography.
   - Could be used in the context of inputs where the `label` text is huge and you want the input to be positioned at `baseline` of that.
+
+### Growing and shrinking
+
+- The `width` and `heigh` properties in the context of `flexbox` are more like suggestions. Items can shrink to their minimum `width`/`height` depending on the parent.
+
+  - **In the `flexbox` world there is the `flex-basis` property. This property acts as the `height`/`width` but overrides the `height`/`width` properties**.
+
+  - `flex-basis` is `flex-direction` agnostic. The `width` and `height` is not.
+
+- Think of the `flex-shrink` property as: "How quickly should the element shrink if there is no enough space for its normal width/height".
+  - `flex-shrink: 10` means that a given element will be _shrinking_ ten times faster than other elements.
+  - Have you ever been in a situation where a circle turns into an oval shape after the browser window gets small enough? Yup, we have all been there.
+    Instead of fiddling with CSS properties, set the `flex-shrink:0` on the element that you do not wan to get squished. Problem solved!
+
+### The "flex" shorthand
+
+- The `flex:1`. I've used it but I never truly understood it until now. The shorthand sets three properties.
+  - The `flex-grow:1`. This means "take all available space".
+  - The `flex-shrink:1`. This means "shrink at the rate of 1".
+  - The `flex-basis:0%`. This means "your width is 0%". As I eluded earlier, this property overrides `width`.
+
+### Constraints
+
+- Neat trick Josh is touching on is the usage of `flex-shrink` with a very high value. This will produce an effect where one element seem to be shrinking and the other is not.
+
+### Pro tip
+
+- In the context of `flex` **use `flex-basis` instead of `width`/`height`. Remember that the `flex-basis` overrides the `width`/`height` even if it comes BEFORE the `width`/`height` property**.
