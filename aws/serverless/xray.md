@@ -1,5 +1,31 @@
 # Everything I know about X-Ray
 
+## X-Ray daemon
+
+The _AWS X-Ray SDK_ does not sent the traces directly to _AWS X-Ray service_. It communicates with a background process (the daemon).
+This process is the one that communicates with _AWS X-Ray service_ and sends the traces. The [official _AWS X-Ray_ documentation explains the notion of an daemon very well](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html).
+
+**Some services run the daemon for you** – mainly the _AWS Lambda_ and _Elastic Beanstalk_. Note that these services offer native (service-level) integration with _AWS X-Ray_.
+
+If you are familiar with _AWS Lambda extensions_ it might seem that, in the context of _AWS Lambda_, the daemon is run as an extension. That might or might not be the case.
+I could not verify or deny that assumption.
+
+### Testing and X-Ray daemon
+
+Have you ever tried to run a test suite on a piece of code that has the _AWS X-Ray_ SDK imported?
+
+- How to reproduce the issue with daemon trying to send the data?
+
+\/ `Failed to get the current sub/segment from the context.` which makes sense. This is what the _X-Ray_ `AWSXray.setContextMissingStrategy("IGNORE_ERROR");` is for.
+
+```js
+import * as AWSXray from "aws-xray-sdk";
+
+export const add = async () => {
+  return AWSXray.captureAsyncFunc("addition", async () => 1);
+};
+```
+
 ## Missing traces
 
 Remember that _X-Ray_ samples your traces. Here is the [reference documentation about sampling](https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html#xray-concepts-sampling).
@@ -89,14 +115,4 @@ What about the `Tracing` configuration? What is the benefit of having it set to 
 - Apply the sampling rules automatically. Otherwise you would be using the default sampling rules which may or might not be sufficient for you.
   **Please note that changing sampling rules directly using the _X-Ray_ SDK will not work**. You cannot change the sampling rules the _AWS Lambda service_ applies.
 
-- _X-Ray_ daemon??
-
-  - Is this thing similar to AWS Lambda extension?
-  - https://github.com/aws/aws-xray-daemon
-  - https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html
-
-  - I think that the SDK uses the daemon regardless of environment(?). If that would not be the case, how come would we have issues with unit tests?
-
-- Is the `Tracing` setting really necessary? Could we possibly live without it?
-  - https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html
-  - I think the `Tracing` setting is just for sampling control and to being the Lambda segment (also respond with correct headers).
+TODO: The missing trace log
