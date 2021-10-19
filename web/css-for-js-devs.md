@@ -108,3 +108,30 @@ You might get away with it, but you might get stuck once you encounter a problem
 ### Pro tip
 
 - In the context of `flex` **use `flex-basis` instead of `width`/`height`. Remember that the `flex-basis` overrides the `width`/`height` even if it comes BEFORE the `width`/`height` property**.
+
+## Wrapping
+
+- Use the `flex-wrap` property to control the wrapping of the `flex` children. Wrapping will occur if the element cannot shrink anymore.
+
+- The `justify-content` applies the transformation **on the content as a whole** while the `align-items` applies the transformation **on individual item**.
+  This difference is subtle but noticeable on some occasions.
+
+## Grouping and gaps
+
+- Use the `gap` property instead of grouping elements. There is no need to artificially pollute the markup so that you can apply margins.
+  The `gap` property is pretty neat. The **space is applied only between the children**.
+
+## Ordering
+
+- Be mindful about the `flex-direction` property. It might seem like using this property could save you some logic regarding reversing elements.
+  This is not the case. **The `flex-direction` is purely visual. It does not affect the DOM layout**.
+
+- `flex-direction` can be very helpful in some situations. **One might use `-reverse` to control focus order without using `tabindex`**.
+  Utilizing the DOM placement and changing the visual ordering is much better than having artificial `tabindex` properties.
+
+## Flexbox Interactions
+
+- In the context of CSS, there are multiple _layout modes_. Given _layout mode_ **can, but does not have to, interact with other _layout mode_**.
+  For example, the `position:absolute` layout mode is not really compatible with `flex` layout mode.
+
+- Sometimes **mixing _layout modes_ can be very helpful**. You can do a lot with `position:sticky` declared on a `flex` child.
