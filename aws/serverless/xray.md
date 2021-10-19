@@ -10,21 +10,19 @@ This process is the one that communicates with _AWS X-Ray service_ and sends the
 If you are familiar with _AWS Lambda extensions_ it might seem that, in the context of _AWS Lambda_, the daemon is run as an extension. That might or might not be the case.
 I could not verify or deny that assumption.
 
-### Testing and X-Ray daemon
+## Testing
 
-Have you ever tried to run a test suite on a piece of code that has the _AWS X-Ray_ SDK imported?
+_AWS X-Ray_ needs the _root segment_ to function. Usually this "root" segment is derived automatically by _AWS X-Ray_ – it detects the context it is run in.
+Since the unit / integration tests most likely could be run locally on your machine _AWS X-Ray_ will not be able to automatically generate that "root" segment in that case.
 
-- How to reproduce the issue with daemon trying to send the data?
+By default, when the _root segment_ is not present an error will be thrown if you attempt to trace an SDK call or add a subsegment via manual tracing.
 
-\/ `Failed to get the current sub/segment from the context.` which makes sense. This is what the _X-Ray_ `AWSXray.setContextMissingStrategy("IGNORE_ERROR");` is for.
+> Failed to get the current sub/segment from the context.
 
-```js
-import * as AWSXray from "aws-xray-sdk";
+You will not be able to run your tests without either mocking the _AWS X-Ray_ SDK or configuring the `contextMissingStrategy`.
+I really recommend you do the latter. [Please refer to the documentation in regards to the implementation](https://github.com/aws/aws-xray-sdk-node/tree/master/packages/core#context-missing-strategy-configuration).
 
-export const add = async () => {
-  return AWSXray.captureAsyncFunc("addition", async () => 1);
-};
-```
+TODO: testing with the daemon
 
 ## Missing traces
 
@@ -115,4 +113,10 @@ What about the `Tracing` configuration? What is the benefit of having it set to 
 - Apply the sampling rules automatically. Otherwise you would be using the default sampling rules which may or might not be sufficient for you.
   **Please note that changing sampling rules directly using the _X-Ray_ SDK will not work**. You cannot change the sampling rules the _AWS Lambda service_ applies.
 
+### Using X-Ray tracing outside of the handler
+
 TODO: The missing trace log
+
+TODO: X-Ray not showing the second request correctly
+
+TODO: X-Ray lying when it comes to statuses
