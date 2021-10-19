@@ -80,6 +80,7 @@ You might get away with it, but you might get stuck once you encounter a problem
 
 - The `align-items: baseline` is pretty interesting. It works similarly to the `flex-end` but in the relation to typography.
   - Could be used in the context of inputs where the `label` text is huge and you want the input to be positioned at `baseline` of that.
+  - The `baseline` is pretty magical. You can make the elements aligned on a shared `baseline` even though they do not share the same container.
 
 ### Growing and shrinking
 
