@@ -110,19 +110,19 @@ You might get away with it, but you might get stuck once you encounter a problem
 
 - In the context of `flex` **use `flex-basis` instead of `width`/`height`. Remember that the `flex-basis` overrides the `width`/`height` even if it comes BEFORE the `width`/`height` property**.
 
-## Wrapping
+### Wrapping
 
 - Use the `flex-wrap` property to control the wrapping of the `flex` children. Wrapping will occur if the element cannot shrink anymore.
 
 - The `justify-content` applies the transformation **on the content as a whole** while the `align-items` applies the transformation **on individual item**.
   This difference is subtle but noticeable on some occasions.
 
-## Grouping and gaps
+### Grouping and gaps
 
 - Use the `gap` property instead of grouping elements. There is no need to artificially pollute the markup so that you can apply margins.
   The `gap` property is pretty neat. The **space is applied only between the children**.
 
-## Ordering
+### Ordering
 
 - Be mindful about the `flex-direction` property. It might seem like using this property could save you some logic regarding reversing elements.
   This is not the case. **The `flex-direction` is purely visual. It does not affect the DOM layout**.
@@ -130,9 +130,69 @@ You might get away with it, but you might get stuck once you encounter a problem
 - `flex-direction` can be very helpful in some situations. **One might use `-reverse` to control focus order without using `tabindex`**.
   Utilizing the DOM placement and changing the visual ordering is much better than having artificial `tabindex` properties.
 
-## Flexbox Interactions
+### Flexbox Interactions
 
 - In the context of CSS, there are multiple _layout modes_. Given _layout mode_ **can, but does not have to, interact with other _layout mode_**.
   For example, the `position:absolute` layout mode is not really compatible with `flex` layout mode.
 
 - Sometimes **mixing _layout modes_ can be very helpful**. You can do a lot with `position:sticky` declared on a `flex` child.
+
+## CSS Grid
+
+- In contrast to `flex` layout, the `grid` layout takes both axis into consideration.
+
+- There are some restrictions on what kind of layouts could be created with CSS Grid, but if your layout is a _grid_ you should be good.
+
+### Layout mode
+
+- **If you specify `display:grid` the children of that element will be rendered using _Grid_ layout**.
+  It works exactly the same as `display:flex` is.
+
+### Grid construction
+
+- Unlike in _flexbox_ the **sizes** for the columns and rows you specify **are not "suggestions"**.
+  In the _flexbox_ land we have talked about `flex-basis` and its relation to `width` and `height` properties.
+  We have also touched on the fact that these properties are a mere suggestions for the CSS engine. This is not the case here.
+
+- Even if you explicitly set number of rows and/or columns the browser might add additional rows and/or columns depending on the number of items within the parent.
+  This is where the **notion of _implicit_ and _explicit_ individual columns or rows** comes in.
+
+### Alignment
+
+- You can use the `justify-content` just like in _flexbox_ but the behavior might differ.
+
+- There is additional `justify-items` property that **works on the individual item level instead of the content as a whole**.
+  One might draw comparison between `justify-items` and `align-items` property from the _flexbox_ world.
+
+- When to use `xx-content` and `xx-items` properties?
+  - Use the `xx-content` properties when you want to **affect the grid structure as a whole**.
+  - Use the `xx-items` properties when you want to **affect the grid items**.
+
+### Grid Areas
+
+- The `grid-template-areas` property is super powerful. It allows you to explicitly create "slots" for each element.
+  Imagine drawing borders between countries. Neat stuff!
+
+### Tracks and Lines
+
+- TIL that you could have **negative values for grid columns and rows**. The `grid-row: 1/-1` is a complete valid declaration.
+  The negative values for columns and rows are very useful as **they always point to the last column / row**.
+  The analogy I see here is getting the last element from the array.
+
+  ```js
+  const arr = [1, 2, 3];
+
+  // First way of getting the last element
+  const lastElement_1 = arr[arr.length - 1];
+
+  // Second way of getting the last element. Just like negative grid column / row values
+  const lastElement_2 = arr.slice(-1)[0];
+  ```
+
+### Fluid Grids
+
+- The `minmax` function is very powerful. It allows you to specify `max-width` and `min-width` at the same time.
+  The benefit over the `max-width` and `min-width` is that **it composes with other functions**. One such function might be `repeat` CSS Grid function.
+
+- The `minmax` can be used in a _fluid context_. The `minmax(min(400px, 100%), 1fr)` is an example of such behavior.
+  Instead of using media queries to scale the `min` value of `minmax` I'm using the `min` function.
