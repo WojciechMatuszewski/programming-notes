@@ -52,6 +52,16 @@ According to my research, some of the clients are built differently than others.
 
 A good example of what I'm talking about is **the `DocumentClient`**. [Refer to this GitHub thread](https://github.com/aws/aws-xray-sdk-node/issues/23) for implementation details.
 
+## Confusing statuses
+
+Within the _AWS X-Ray_ console there is the `RESPONSE` column.
+You might think that if your API returns 4xx or 5xx the `RESPONSE` column will show those statuses. Sadly this is not the case.
+
+**In the context of _AWS Lambda_** the **`RESPONSE` column shows the status of the _AWS Lambda service_ and NOT the statusCode your API returned**.
+I'm not going to lie. This is quite confusing behavior that tripped me many times.
+
+You can read more about this issue (and other issues) in [this great blog post](https://theburningmonk.com/2017/06/aws-x-ray-and-lambda-the-good-the-bad-and-the-ugly/).
+
 ## Custom sampling
 
 It is completely possible to configure the sampling rules. **The sampling rules can even be configured PER network request path basis**.
@@ -211,9 +221,10 @@ const gotInstance = got.extend({
 const result = await gotInstance("URL", OPTIONS);
 ```
 
-TODO: The missing trace log
+With the _trace header_ not present at the time of making the request, _AWS X-Ray_ will be forced to create a new one.
+**This ensures that no matter what happens the retried request will be traced**.
 
-TODO: X-Ray lying when it comes to statuses
+TODO: The missing trace log
 
 ## Additional reading
 
