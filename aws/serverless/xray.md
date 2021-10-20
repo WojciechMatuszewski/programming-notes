@@ -22,7 +22,10 @@ By default, when the _root segment_ is not present an error will be thrown if yo
 You will not be able to run your tests without either mocking the _AWS X-Ray_ SDK or configuring the `contextMissingStrategy`.
 I really recommend you do the latter. [Please refer to the documentation in regards to the implementation](https://github.com/aws/aws-xray-sdk-node/tree/master/packages/core#context-missing-strategy-configuration).
 
-TODO: testing with the daemon
+### X-Ray daemon
+
+With the `contextMissingStrategy` or `AWS_XRAY_CONTEXT_MISSING` environment variable set you do not have to worry about the SDK trying to send data to the _AWS X-Ray daemon_.
+There is nothing else to disable in this context.
 
 ## Missing traces
 
@@ -114,6 +117,62 @@ What about the `Tracing` configuration? What is the benefit of having it set to 
   **Please note that changing sampling rules directly using the _X-Ray_ SDK will not work**. You cannot change the sampling rules the _AWS Lambda service_ applies.
 
 ### Using X-Ray tracing outside of the handler
+
+## X-Ray and retries
+
+From the observability perspective is is vital to have a holistic view on what is happening inside your application.
+As we all know, network operations might fail. In such case we usually retry the requests.
+
+_AWS X-Ray_ is not perfect in this department. You can visualize some of the retries but not in all occasions.
+Let us dig a little bit different.
+
+### Retrying AWS SDK calls
+
+First let us tackle the situation where **the parameters of the API call are invalid / API returned an error**.
+Here is one example.
+
+```js
+// db is instrumented via .captureAWSClient API
+return await db
+  .get({
+    TableName: "I do not exist",
+    Key: {
+      pk: "1",
+    },
+  })
+  .promise();
+```
+
+The `TableName` will not be accepted as a valid name of a table by _DynamoDB_ API.
+If you retry the request with a valid `TableName` **you will be able to see that visually in _AWS X-Ray_ console**.
+
+Let us switch to a situation where **the socket itself times out**.
+Here is an example simulating that.
+
+```js
+// ddb is instrumented with AWS X-Ray
+const db = new ddb.DocumentClient({
+  httpOptions: { timeout: 1 },
+  maxRetries: 3,
+  logger: {
+    log: console.log,
+  },
+});
+
+return await db
+  .get({
+    TableName: process.env.TABLE_NAME,
+    Key: {
+      pk: "1",
+    },
+  })
+  .promise();
+```
+
+In the **_CloudWatch_ logs you will see that the request was retried three times** – `[AWS dynamodb undefined 0.68s 3 retries] ...`.
+In the **_AWS X-Ray_ console you will only see a singular request annotated as "fault"**.
+
+### Retrying HTTP calls
 
 TODO: The missing trace log
 
