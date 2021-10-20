@@ -115,6 +115,7 @@ What about the `Tracing` configuration? What is the benefit of having it set to 
 
 - Apply the sampling rules automatically. Otherwise you would be using the default sampling rules which may or might not be sufficient for you.
   **Please note that changing sampling rules directly using the _X-Ray_ SDK will not work**. You cannot change the sampling rules the _AWS Lambda service_ applies.
+  The \*\*sampling rules the documentation mentions will kick-in only after
 
 ### Using X-Ray tracing outside of the handler
 
@@ -174,8 +175,46 @@ In the **_AWS X-Ray_ console you will only see a singular request annotated as "
 
 ### Retrying HTTP calls
 
+We have a bit more control when it comes to HTTP calls. That control will come in handy soon.
+
+If we were to instrument the `https` _NodeJs_ module as follows:
+
+```js
+import AWSXray from "aws-xray-sdk";
+AWSXray.captureHTTPsGlobal(https);
+```
+
+By default **when your request times and is retried _AWS X-Ray_ will not show another trace for the second request**.
+What you will see in the **console is the status from the first request – a "fault"**. This is very unfortunate and misleading.
+
+What if I want to see traces for all the request, even the ones that were a result of a retry?
+In this case **you have to delete the appended `X-Amzn-Trace-Id` header before retrying the request**. This header is the reason _AWS X-Ray_ thinks you are making the same request.
+
+Here is an example of doing so using the [`got` npm package](https://duckduckgo.com/?q=npm+got&t=brave&ia=software).
+
+```js
+import AWSXray from "aws-xray-sdk";
+AWSXray.captureHTTPsGlobal(https);
+
+import got from "got";
+
+const gotInstance = got.extend({
+  hooks: {
+    beforeRequest: [
+      (options) => {
+        delete options.headers["X-Amzn-Trace-Id"];
+      },
+    ],
+  },
+});
+
+const result = await gotInstance("URL", OPTIONS);
+```
+
 TODO: The missing trace log
 
-TODO: X-Ray not showing the second request correctly
-
 TODO: X-Ray lying when it comes to statuses
+
+## Additional reading
+
+- https://theburningmonk.com/2017/06/aws-x-ray-and-lambda-the-good-the-bad-and-the-ugly/
