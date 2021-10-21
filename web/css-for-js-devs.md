@@ -74,6 +74,11 @@ You might get away with it, but you might get stuck once you encounter a problem
 
 - TIL that you can specify `max-content`, `min-content` and `fit-content` as `width` properties. I though that these are available only in the context of CSS grid.
 
+### Reverting values
+
+- Use **`revert` to undo the properties you have set for a given property**.
+  - This is especially useful for **styling responsive websites** where you wish to undo or "undeclare" the property for a given viewport.
+
 ## Flexbox
 
 - `flexbox` is all about thinking "how am I controlling the layout on THIS(single) axis.
