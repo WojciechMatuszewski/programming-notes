@@ -196,3 +196,21 @@ You might get away with it, but you might get stuck once you encounter a problem
 
 - The `minmax` can be used in a _fluid context_. The `minmax(min(400px, 100%), 1fr)` is an example of such behavior.
   Instead of using media queries to scale the `min` value of `minmax` I'm using the `min` function.
+
+### Recipes
+
+- **Centering** works on similar basis to _Flexbox_.
+
+  - You could use the `align-content` and `justify-content` properties or set them to `center`.
+  - You could use **`place-content` shorthand**. This is a **shorthand for `align-content: center` and `justify-content:center`**.
+  - Please note that **`-place-content` only works in CSS Grid**.
+
+- **`sticky` positioning plays well with `grid`**.
+
+  - Depending on the layout you are working on **you might want to create a _sticky wrapper_ within a `grid` element.**.
+    This is because the `position:sticky` does not care about _CSS Grid lines_.
+
+- _CSS Grid_ offers a **neat way of creating _full bleed layouts_**. A _full bleed layout_ is the one where an image spans the whole page while the text is centered and constrained by some `ch` unit limit. There are some steps to creating one.
+  1. Have a parent declare flexible columns: `grid-template-columns: (1fr, min(30ch, 100%), 1fr)`.
+  2. Have all children be placed inside the second column: `.wrapper > * {grid-column:2}`
+  3. Have the _full bleed_ child take all columns: `.full-bleed {grid-column: 1 / -1}`. It uses the trick we have learned about earlier.
