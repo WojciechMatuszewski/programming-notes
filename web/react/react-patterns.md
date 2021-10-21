@@ -1,5 +1,54 @@
 # React patterns
 
+## Limiting the number of children
+
+There are two ways one might limit the number of children the component is passed in. **Please note that I'm not talking about the children structure, only the number of them**.
+
+**First** way of doing it is to **use the `React.Children.only`** API.
+The `React.Children.only` API will ensure that the `children` prop contains a **single _React element_**.
+
+```js
+const Component = ({ children }) => {
+  return React.Children.only(children);
+};
+
+const UsageOK = () => {
+  return (
+    <Component>
+      <p>I'm a single child</p>
+    </Component>
+  );
+};
+
+const UsageError = () => {
+  return (
+    // The `Component` will throw an error.
+    // Only single child is allowed to be passed.
+    // React.Children.only expected to receive a single React element child.
+    <Component>
+      <p>I'm the first child</p>
+      <p>I'm the second child</p>
+    </Component>
+  );
+};
+```
+
+The **second** way of doing it is a bit more flexible. Here, I'm referring to the **`React.Children.count`** API.
+This API is more flexible because it **returns the number of _React Elements_ that were passed as `children` prop**.
+
+Here is how I would create a component that restricted it's `children` prop to three _React Elements_.
+
+```js
+const Component = ({ children }) => {
+  const childrenCount = React.Children.count(children);
+  if (childrenCount > 3) {
+    throw new Error("only three or less children allowed");
+  }
+
+  return children;
+};
+```
+
 ## lazy ref pattern
 
 Sometimes you want to initialize the `useRef` value lazily. Now, with `useState` you can do that using the callback initializer, but `useRef` does not have that kind of API.
