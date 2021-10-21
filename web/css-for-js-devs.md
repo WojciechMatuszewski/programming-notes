@@ -143,6 +143,15 @@ You might get away with it, but you might get stuck once you encounter a problem
 
 - There are some restrictions on what kind of layouts could be created with CSS Grid, but if your layout is a _grid_ you should be good.
 
+### The `fr` unit
+
+- The `fr` unit means **some portion of available space**. The "some" part depends on the number between the `fr` unit.
+
+  - Given the following: `grid-template-columns: 1fr 1fr` – it means _two columns of the same width_.
+
+- The **`fr` has an implicit behavior when the `grid` element has no explicit height specified**.
+  - If that is the case, **the `fr` unit is the unit of the largest child**.
+
 ### Layout mode
 
 - **If you specify `display:grid` the children of that element will be rendered using _Grid_ layout**.
@@ -214,3 +223,12 @@ You might get away with it, but you might get stuck once you encounter a problem
   1. Have a parent declare flexible columns: `grid-template-columns: (1fr, min(30ch, 100%), 1fr)`.
   2. Have all children be placed inside the second column: `.wrapper > * {grid-column:2}`
   3. Have the _full bleed_ child take all columns: `.full-bleed {grid-column: 1 / -1}`. It uses the trick we have learned about earlier.
+
+### Managing Overflow
+
+- Remember that **while the `fr` relates to "available space" it also is related to its contents**.
+  If the child is very big, the `fr` unit will grow to "contain" it.
+
+- Setting `overflow` works but the **`overflow` property has to be set on direct grid child. It does not work on descendants**.
+
+- Another way of managing overflow is to **use the `minmax(0, X)` declaration**.
