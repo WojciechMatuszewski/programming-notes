@@ -1,5 +1,24 @@
 # CloudWatch
 
+## Latency percentile
+
+While using the _CloudWatch_ service you might encounter graphs with `p99` or `p50` axis.
+These are so called _percentiles_ and are very useful in gauging the performance of your system.
+
+In the **context of latency**, the **`p99` means that 99% requests are processed in less than the `p99` latency**.
+Here is an excerpt from the [_Google Cloud_ docs](https://cloud.google.com/spanner/docs/latency) that explains this topic very well.
+
+> 99th percentile latency: The maximum latency, in seconds, for the fastest 99% of requests. For example, if the 99th percentile latency is 2 seconds, then Cloud Spanner processed 99% of requests in less than 2 seconds.
+
+### Why should you care?
+
+Should not we be looking at the average? Why should I be concerned with 1% of requests that are slower than X?
+**In my opinion** the answer is: **it depends**.
+
+If you are just starting out and in the process of forming your business, you should not really care.
+In the contrary, **if the traffic to your service is high you should care**. This is because of the _economy of scale_.
+**The more users you have, the more customers will experience the worst case scenario latency**.
+
 ## CloudWatch Insights
 
 So you are on-call? You better know how to use this tool.
