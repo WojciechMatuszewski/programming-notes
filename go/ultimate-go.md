@@ -693,7 +693,7 @@ It is crucial to understand how `defer` works in terms of `closure` and the exec
 
 ```go
 defer fmt.Println("first in the code")
-defer fmt.Println("second in the code")
+defer fmt.Println("last in the code")
 ```
 
 will produce the following log:
@@ -715,8 +715,7 @@ defer fmt.Println("doing more work") // defer is evaluated right here
 fmt.Println("some other work")
 ```
 
-But the confusion usually comes when we use `defer` with functions (usually anonymous ones).
-When it comes to functions and defer, the same rules apply, BUT, **the code inside the defferred function is RUN WHEN DEFER RUNS!**.
+But the confusion usually comes when we use `defer` with functions (usually anonymous ones). When it comes to functions and defer, the same rules apply, BUT, **the code inside the deferred function is RUN WHEN DEFER RUNS!**.
 
 ```go
 fmt.Println("work")
