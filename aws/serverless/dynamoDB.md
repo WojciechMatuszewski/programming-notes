@@ -63,20 +63,39 @@ Example with List:
 
 ## Capacity and performance
 
-You can use either _provisioned capacity_ or _on demand_ mode to control
-how many operations your table can handle.
+You can use either _provisioned capacity_ or _on demand_ mode to control how many operations your table can handle.
 
 ### On demand
 
-This mode might sound like a serverless dream come true. You pay only for what
-you use and you do not have to worry about scaling your throughput up or down.
+This mode might sound like a serverless dream come true. You pay only for what you use and you do not have to worry about scaling your throughput up or down.
 
 And in 99% of cases, this is exactly what is happening. But in that 1% of cases, you might want to "warm" or "pre-provision" internal DDB resources to handle given load.
 
 ### Provisioned capacity
 
 Can you forecast the amount of read and write operations your application makes?
+
 If so, you might want to look into _provisioned capacity_ mode for cost optimization reasons. Before you do so, is the engineering time to make those calculations (and make sure that they are up to date) worth the effort?
+
+### Adaptive capacity
+
+You might have been thought to avoid hot partitions while designing your access patterns. This makes complete sense – the more throughput one partition gets, the less the other would get, right?
+
+To some extent, this is true, and it would be a very much valid concern if it were not for **adaptive capacity**. So what is _adaptive capacity_?
+
+The mode itself is very well described in [this AWS blog piece](https://aws.amazon.com/blogs/database/how-amazon-dynamodb-adaptive-capacity-accommodates-uneven-data-access-patterns-or-why-what-you-know-about-dynamodb-might-be-outdated/)
+
+> In practice, it is difficult to achieve perfectly uniform access. To accommodate uneven data access patterns, DynamoDB adaptive capacity lets your application continue reading and writing to hot partitions without request failures (as long as you don’t exceed your overall table-level throughput, of course).
+
+You might be wondering if there is any delay between the throttling happening and the _adaptive capacity_ kicking in. **It used to be the case that we would have to wait a bit for the _adaptive capacity_ to kick in, but it is no longer the case**. [Here is the announcement blog entry](https://aws.amazon.com/about-aws/whats-new/2019/05/amazon-dynamodb-adaptive-capacity-is-now-instant/) that talks about _adaptive capacity_ being instant.
+
+### Auto scaling
+
+While the _adaptive capacity_ concern was to ensure enough throughput is allocated for a given partition, the **role of the _auto scaling_ is to ensure your table has enough WCU/RCU to handle the load**.
+
+The _auto scaling_ feature **uses _AWS CloudWatch Alarms_ under the hood** to scale the WCU/RCU. This means that **there will be a delay (minutes) between the _auto scaling_ kicking in and the traffic increase**. Ideally your traffic would rise gradually, but this might not always be the case.
+
+If you are faced with **spike traffic loads**, the **_on demand_ capacity mode might be more suited for your use case**.
 
 ### Throughput Capacity
 
@@ -437,6 +456,12 @@ As an alternative, the transaction API might be used, but it does not return the
 _DynamoDB_ is great. It allows you to pull the WCU/RCU information right from the operation you have just performed.
 There is an option within the SDK to get the `ReturnConsumedCapacity`. You can then send that information somewhere, maybe to your analytics pipeline,
 where you would chart the cost of each operation.
+
+### Use Reserved Capacity
+
+AWS has a lot of services that enable you to pay an upfront fee in exchange for better prices on a given resource.
+The _AWS DynamoDB_ is no different. **If you are running _provisioned capacity mode_ consider using _reserved capacity_ along with _auto scaling_**.
+Such a combination is the most cost-effective way of using the service.
 
 ### Avoid keeping big blobs of data along small, frequently accessed ones in the same item
 
