@@ -216,6 +216,38 @@ const cfnBucket = bucket.node.defaultChild as s3.CfnBucket;
 cfnBucket.addOverride("Properties.BucketName", undefined);
 ```
 
+## Aspects
+
+Aspects can be used to perform some operation on all resources of a given type that are declared within the stack.
+
+Imagine trying to check if all buckets that you have declared are encrypted. Or maybe you would like to make sure your tags are consistent and manage them in a centralized place? **This is where _CDK aspects_ come in**.
+
+The API is very friendly, all you have to do is to implement the `visitor` interface.
+Here is an example from [CDK documentation](https://docs.aws.amazon.com/cdk/latest/guide/aspects.html)
+
+```ts
+class BucketVersioningChecker implements IAspect {
+  public visit(node: IConstruct): void {
+    // See that we're dealing with a CfnBucket
+    if (node instanceof s3.CfnBucket) {
+      // Check for versioning property, exclude the case where the property
+      // can be a token (IResolvable).
+      if (
+        !node.versioningConfiguration ||
+        (!Tokenization.isResolvable(node.versioningConfiguration) &&
+          node.versioningConfiguration.status !== "Enabled")
+      ) {
+        Annotations.of(node).addError("Bucket versioning is not enabled");
+      }
+    }
+  }
+}
+
+// Later, apply to the stack
+Aspects.of(stack).add(new BucketVersioningChecker());
+```
+
 ## Additional resources
 
 - A great example on how to build a custom CDK resource https://www.youtube.com/watch?v=tDXE7S6J_AY
+- Dos and donts in CDK https://www.youtube.com/watch?v=uvJrL0V1JW0&list=WL&index=6
