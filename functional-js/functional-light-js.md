@@ -25,15 +25,15 @@ Functions, by default (in JavaScript) return `undefined`
 // just because it uses a *function* keyword does not make it a function
 // Kyle calls it procedure
 function addNumbers(x = 0, y = 0, z = 0, w = 0) {
-    var total = x + y + z + w;
-    console.log(total);
+  var total = x + y + z + w;
+  console.log(total);
 }
 
 // it definitely has return keyword
 // is it a function?
 // not really :C
 function extraNumbers(x = 2, ...args) {
-    return addNumbers(x, 40, ...args);
+  return addNumbers(x, 40, ...args);
 }
 ```
 
@@ -53,7 +53,7 @@ The example below presents a true, in spirit, function.
 
 ```javascript
 function tuple(x, y) {
-    return [x + 1, y - 1];
+  return [x + 1, y - 1];
 }
 
 var [a, b] = tuple(...[5, 10]);
@@ -86,7 +86,7 @@ But what does that really mean?
 
 ```javascript
 function shippingRate() {
-    rate = (size + 1) * weight + speed;
+  rate = (size + 1) * weight + speed;
 }
 var rate;
 var size = 12;
@@ -125,13 +125,13 @@ and **has no side effects**.
 ```javascript
 // pure
 function addTwo(x, y) {
-    return x + y;
+  return x + y;
 }
 
 // impure
 function addAnother(x, y) {
-    // accessing z is an side effect!
-    return addTwo(x, y) + z;
+  // accessing z is an side effect!
+  return addTwo(x, y) + z;
 }
 ```
 
@@ -140,18 +140,18 @@ But does adding `z` really invalidates the function?
 ```javascript
 const z = 1;
 function addTwo(x, y) {
-    return x + y;
+  return x + y;
 }
 
 // this is pure function
 function addAnotherPure(x, y) {
-    return addTwo(x, y) + 1;
+  return addTwo(x, y) + 1;
 }
 // this, well by definition is impure but is it really
 // it does not cause any side effects
 // it does not use any side effects other that constant z
 function addAnother(x, y) {
-    return addTwo(x, y) + z;
+  return addTwo(x, y) + z;
 }
 ```
 
@@ -159,9 +159,9 @@ Kyle argues here that `addAnother` is not really impure. Since the semantics of 
 
 ```javascript
 function addAnother(z) {
-    return function addTwo(x, y) {
-        return x + y + z;
-    };
+  return function addTwo(x, y) {
+    return x + y + z;
+  };
 }
 addAnother(1)(20, 21);
 ```
@@ -315,7 +315,7 @@ Unrary function takes a single value
 
 ```javascript
 function increment(x) {
-    return x + 1;
+  return x + 1;
 }
 ```
 
@@ -335,9 +335,9 @@ _higher order function_ is a function which
 
 ```javascript
 function unary(fn) {
-    return function one(arg) {
-        return fn(arg);
-    };
+  return function one(arg) {
+    return fn(arg);
+  };
 }
 ```
 
@@ -351,7 +351,7 @@ What does that even mean?
 ```javascript
 // person parameter here is the 'point'
 getPerson(function onePerson(person) {
-    return renderPerson(person);
+  return renderPerson(person);
 });
 
 // so instead we can do
@@ -362,17 +362,17 @@ getPerson(renderPerson);
 
 ```javascript
 function isOdd(v) {
-    return v % 2 == 1;
+  return v % 2 == 1;
 }
 function isEven(v) {
-    return !isOdd(v);
+  return !isOdd(v);
 }
 
 // but we can improve this solution with
 function not(fn) {
-    return function negated(...args) {
-        return !fn(...args);
-    };
+  return function negated(...args) {
+    return !fn(...args);
+  };
 }
 
 var isEven = not(isOdd);
@@ -382,15 +382,15 @@ var isEven = not(isOdd);
 
 ```javascript
 function mod(y) {
-    return function forX(x) {
-        return x % y;
-    };
+  return function forX(x) {
+    return x % y;
+  };
 }
 
 function eq(y) {
-    return function forX(x) {
-        return x === y;
-    };
+  return function forX(x) {
+    return x === y;
+  };
 }
 
 /// How would we defined isOdd using point-free
@@ -399,14 +399,11 @@ var eq1 = eq(1);
 
 // 1 step
 function isOdd(x) {
-    return eq1(mod2(x));
+  return eq1(mod2(x));
 }
 
 // to make it completely point-free we can use composition
-var isOdd = compose(
-    eq1,
-    mod2,
-);
+var isOdd = compose(eq1, mod2);
 ```
 
 ## Closure
@@ -417,11 +414,11 @@ Example
 
 ```javascript
 function makeCounter() {
-    var counter = 0;
-    // increment is closed over counter variable
-    return function increment() {
-        return ++counter;
-    };
+  var counter = 0;
+  // increment is closed over counter variable
+  return function increment() {
+    return ++counter;
+  };
 }
 var c = makeCounter();
 // these are NOT pure function calls!
@@ -438,9 +435,9 @@ Given below snippet, when does the actual work of constructing the string occurs
 
 ```javascript
 function repeater(count) {
-    return function allTheAs() {
-        return "".padStart(count, "A");
-    };
+  return function allTheAs() {
+    return "".padStart(count, "A");
+  };
 }
 
 var A = repeater(10);
@@ -456,11 +453,11 @@ We deferred the work from line `7` to line `9`. That is called `lazy computation
 
 ```javascript
 function repeater(count) {
-    var str = "".padStart(count, "A");
-    // allTheAs is closing over str variable
-    return function allTheAs() {
-        return str;
-    };
+  var str = "".padStart(count, "A");
+  // allTheAs is closing over str variable
+  return function allTheAs() {
+    return str;
+  };
 }
 var A = repeater(10);
 A();
@@ -475,13 +472,13 @@ What if we could combine the best of both words?
 
 ```javascript
 function repeater(count) {
-    var str;
-    return function allTheAs() {
-        if (str == undefined) {
-            str = "".padStart(count, "A");
-        }
-        return str;
-    };
+  var str;
+  return function allTheAs() {
+    if (str == undefined) {
+      str = "".padStart(count, "A");
+    }
+    return str;
+  };
 }
 
 var A = repeater(10);
@@ -497,9 +494,9 @@ Before we said that to be functionally pure when using closure we **should not c
 
 ```javascript
 function repeater(count) {
-    return memoize(function allTheAs() {
-        return "".padStart(count, "A");
-    });
+  return memoize(function allTheAs() {
+    return "".padStart(count, "A");
+  });
 }
 var A = repeater(10);
 A();
@@ -588,28 +585,28 @@ This one is a bit harder since we cannot use spread and gather
 
 ```javascript
 function curry(fn) {
-    return function curried() {
-        var args = Array.prototype.slice.call(arguments);
-        if (fn.length <= args.length) {
-            return fn.apply(null, args);
-        }
-        // here we are appending previous arguments to currently passed ones
-        // we basically did this with .bind before
-        return function partiallyApplyCurriedArguments() {
-            return curried.apply(
-                null,
-                args.concat(Array.prototype.slice.call(arguments)),
-            );
-            // You could also if you really want use push here
-            // make a copy so not to mutate args variable
-            var argsToApply = args.slice();
-            Array.prototype.push.apply(
-                argsToApply,
-                Array.prototype.slice.call(arguments),
-            );
-            return curries.apply(null, argsToApply);
-        };
+  return function curried() {
+    var args = Array.prototype.slice.call(arguments);
+    if (fn.length <= args.length) {
+      return fn.apply(null, args);
+    }
+    // here we are appending previous arguments to currently passed ones
+    // we basically did this with .bind before
+    return function partiallyApplyCurriedArguments() {
+      return curried.apply(
+        null,
+        args.concat(Array.prototype.slice.call(arguments))
+      );
+      // You could also if you really want use push here
+      // make a copy so not to mutate args variable
+      var argsToApply = args.slice();
+      Array.prototype.push.apply(
+        argsToApply,
+        Array.prototype.slice.call(arguments)
+      );
+      return curries.apply(null, argsToApply);
     };
+  };
 }
 ```
 
@@ -626,13 +623,13 @@ Lets consider this not very functional example:
 
 ```javascript
 function minus2(x) {
-    return x - 2;
+  return x - 2;
 }
 function triple(x) {
-    return x * 3;
+  return x * 3;
 }
 function increment(x) {
-    return x + 1;
+  return x + 1;
 }
 
 var tmp = increment(4);
@@ -666,9 +663,9 @@ We can make a function which makes us a function composed of different functions
 
 ```javascript
 function composeThree(fn3, fn2, fn1) {
-    return function composed(v) {
-        return fn3(fn2(fn1(v)));
-    };
+  return function composed(v) {
+    return fn3(fn2(fn1(v)));
+  };
 }
 ```
 
@@ -691,13 +688,13 @@ We only should compose unary functions, otherwise it would be very hard to make 
 
 ```javascript
 function sum(x, y) {
-    return x + y;
+  return x + y;
 }
 function triple(x) {
-    return x * 3;
+  return x * 3;
 }
 function divBy(y, x) {
-    return x / y;
+  return x / y;
 }
 
 divBy(2, triple(sum(3, 5))); // 12
@@ -740,13 +737,13 @@ Simple implementation
 
 ```js
 function filter(predicate, arr) {
-    var newList = [];
-    for (let value of arr) {
-        if (predicate(elem)) {
-            newList.push(elem);
-        }
+  var newList = [];
+  for (let value of arr) {
+    if (predicate(elem)) {
+      newList.push(elem);
     }
-    return newList;
+  }
+  return newList;
 }
 ```
 
@@ -799,9 +796,9 @@ High-level API example
 
 ```js
 var transducer = compose(
-    // these functions might look scary but they are not that hard to write
-    mapReducer(add1),
-    filterReducer(isOdd),
+  // these functions might look scary but they are not that hard to write
+  mapReducer(add1),
+  filterReducer(isOdd)
 );
 transduce(transducer, sum, 0, [1, 2, 3, 4]);
 // or
@@ -814,22 +811,19 @@ Writing `mapReducer` and `filterReducer`
 
 ```js
 var mapReducer = curry(2, function mapReducer(mappingFn, combineFn) {
-    return function reducer(currentAccumulatorValue, v) {
-        return combineFn(currentAccumulatorValue, mappingFn(v));
-    };
+  return function reducer(currentAccumulatorValue, v) {
+    return combineFn(currentAccumulatorValue, mappingFn(v));
+  };
 });
 
 var filterReducer = curry(2, function filterReducer(predicateFn, combineFn) {
-    return function reducer(currentAccumulatorValue, v) {
-        if (predicateFn(v)) return combineFn(currentAccumulatorValue, v);
-        return list;
-    };
+  return function reducer(currentAccumulatorValue, v) {
+    if (predicateFn(v)) return combineFn(currentAccumulatorValue, v);
+    return list;
+  };
 });
 
-var transducer = compose(
-    mapReducer(add1),
-    filterReducer(isOdd),
-);
+var transducer = compose(mapReducer(add1), filterReducer(isOdd));
 // now we can use 1 reduce
 
 list.reduce(transducer(sum), 0);
@@ -858,20 +852,20 @@ Very basic implementation of `Just monad`:
 
 ```js
 function Just(val) {
-    return { map, chain, ap };
+  return { map, chain, ap };
 
-    function map(fn) {
-        return Just(fn(val));
-    }
+  function map(fn) {
+    return Just(fn(val));
+  }
 
-    // aka: bind, flatMap
-    function chain(fn) {
-        return fn(val);
-    }
+  // aka: bind, flatMap
+  function chain(fn) {
+    return fn(val);
+  }
 
-    function ap(anotherMonad) {
-        return anotherMonad.map(val);
-    }
+  function ap(anotherMonad) {
+    return anotherMonad.map(val);
+  }
 }
 ```
 
@@ -899,7 +893,7 @@ fortyOne.chain(identity); // 42
 var user1 = Just("kyle");
 var user2 = Just("susan");
 var tuple = curry(2, function tuple(x, y) {
-    return [x, y];
+  return [x, y];
 });
 var users = user1.map(tuple).ap(user2);
 
@@ -941,11 +935,11 @@ Armed with above code we can make safe property access function
 
 ```js
 Maybe.of(someObj)
-    // prop('something') returns a function which will return Just or Nothing
-    // chain prevents Monads from nesting
-    .chain(prop("something"))
-    .chain(prop("else"))
-    .chain(prop("entirely"));
+  // prop('something') returns a function which will return Just or Nothing
+  // chain prevents Monads from nesting
+  .chain(prop("something"))
+  .chain(prop("else"))
+  .chain(prop("entirely"));
 ```
 
 There are many more monads. Kyle showed only basic ones.
@@ -958,14 +952,14 @@ This is a very brief mention.
 var a = new Rx.Subject();
 
 setInterval(function everySecond() {
-    a.next(Math.random());
+  a.next(Math.random());
 }, 1000);
 
 var b = a.map(function double(v) {
-    return v * 2;
+  return v * 2;
 });
 
 b.subscribe(function onValue(v) {
-    console.log(v);
+  console.log(v);
 });
 ```

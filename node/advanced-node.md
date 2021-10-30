@@ -236,3 +236,44 @@ function foo() {
 // Without the `catch` callback defined, the error would have been forwarded to the runtime.
 foo().catch(console.log);
 ```
+
+## Gotcha with `Promise.race`
+
+There are a lot of tutorials on the subject of `Promise.race` and how it can be used to create a "timeout" behavior.
+
+A lot of those articles neglect one important detail that might cause a memory leak in your application.
+
+The detail I'm referring to is that you **should always clear any timeouts you have defined after `Promise.race` returns**.
+
+Here is a **bad example** from a blog post I've read recently.
+
+```js
+// Create a promise that rejects after
+// `timeout` milliseconds
+const throwOnTimeout = (timeout) =>
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Timeout")), timeout)
+  );
+
+const fetchWithTimeout = (url, options = {}) => {
+  const { timeout, ...remainingOptions } = options;
+  // if the timeout option is specified, race the
+  // fetch call
+  if (timeout) {
+    return Promise.race([
+      fetch(url, remainingOptions),
+      throwOnTimeout(timeout),
+    ]);
+  }
+  return fetch(url, remainingOptions);
+};
+```
+
+Notice that neither `fetchWithTimeout` nor `throwOnTimeout` attempts to clear the timeout defined in `throwOnTimeout`.
+So what will happen if the `fetch` is faster than the timeout?
+
+Well, first the good news - **if the `fetch` is faster than the `throwOnTimeout` you will get the `fetch` result**.
+It might seem like the promise defined in `throwOnTimeout` was ignored. Sadly this is not the case – this bring me to the bad news.
+
+The bad news is that **unless you explicitly cancel the timeout defined in `throwOnTimeout` the `setTimeout` callback will be executed regardless of the state of `fetch`**.
+Usually this is not a big deal. But in some cases some resources might be allocated in that callback. In such situation a memory leak is likely to occur.
