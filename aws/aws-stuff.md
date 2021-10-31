@@ -3784,8 +3784,6 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - you **can trigger CloudWatch events usng CloudTrail events**. Pretty neat!.
 
-- event are not delivered in real-time. There can be **up to 15mins delay**.
-
 ##### Log integrity
 
 - you can check the integrity of the log files using **cli**.
@@ -3835,6 +3833,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 #### With `CloudWatch`
 
 You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combination since you could create alarms for given metrics and have like a _pseudo_ analytics workflow where you are notified when something happens.
+
+#### Events delivery delay
+
+- event are not delivered in real-time. There can be **up to 15mins delay**.
+
+- to get around this **see if the event you are after is registered in _CloudWatch Events_ or _EventBridge_**.
+
+- **not all events** are **sent** to **either _CloudWatch Events_ or _EventBridge_**. This means that **in some circumstances you will have to bite the bullet and wait up to 15 min for the event**.
 
 ### Analytics
 
