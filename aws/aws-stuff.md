@@ -5057,6 +5057,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - here is an [example of mine](https://github.com/WojciechMatuszewski/eb-destinations-example)
 
+- here is a [great article](https://medium.com/lego-engineering/amazon-eventbridge-how-to-manage-api-connection-credentials-with-aws-secrets-manager-f773f7d2aac5) on how the _API Destinations_ and the _AWS Secrets Manager_ interact with each other.
+  - the TLDR is that the _EventBridge_ is eating the cost of calling the secrets manager.
+
 ### Amazon MQ
 
 - occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
