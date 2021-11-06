@@ -277,3 +277,55 @@ It might seem like the promise defined in `throwOnTimeout` was ignored. Sadly th
 
 The bad news is that **unless you explicitly cancel the timeout defined in `throwOnTimeout` the `setTimeout` callback will be executed regardless of the state of `fetch`**.
 Usually this is not a big deal. But in some cases some resources might be allocated in that callback. In such situation a memory leak is likely to occur.
+
+## Error handling and promises - the most important rules
+
+The most important set of rules that you can follow are the following.
+
+1. Always define a `catch` block at the end of the promise chain.
+2. **Make sure to re-throw errors caught by the `catch` block if a promise will be dependent upon**.
+
+Why is it important to re-throw the error?
+
+```js
+function foo() {
+  return getItemFromDB()
+    .them((item) => item.data)
+    .catch((e) => {
+      console.log(e);
+    });
+}
+
+foo()
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((e) => {
+    // logic
+  });
+```
+
+**If the do not return a rejected promise from the `catch` block, the `.then` handler on foo will be passed `undefined` value**.
+This is not what we want right?
+
+How to handle such situation?
+
+```js
+function foo() {
+  return getItemFromDB()
+    .them((item) => item.data)
+    .catch((e) => {
+      throw e;
+    });
+}
+
+foo()
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((e) => {
+    // logic
+  });
+```
+
+You can either return `Promise.reject` or re-throw the error. Now the program will be notified about the error coming from the `foo` function.
