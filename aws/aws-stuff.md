@@ -3810,6 +3810,12 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - you have to **create a lambda that listens to s3 events**. That lambda will **log to cloudwatch while reading CloudTrail files**.
 
+##### Across multiple accounts
+
+- there are two ways you could do this
+  - in the context of **AWS Organizations**, use the **Organization-wide Trail**. This way you do not have to deploy Trails per account.
+  - **outside** of the context of **AWS Organizations**, use **CloudFormation Stack-sets** to deploy a trail to each account.
+
 #### Flow Logs
 
 - monitors **metadata of the IP traffic to/from network interfaces within a VPC**
