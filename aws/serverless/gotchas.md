@@ -181,21 +181,21 @@ I found [this documentation page](https://docs.aws.amazon.com/AWSCloudFormation/
 
 TBD, I still have no idea :D
 
-## Many layers of retries
+## Many layers of AWS Lambda retries
 
 Your Lambda function could invoked asynchronously or synchronously depending on the service the event originates from.
 
 Lambda service might or might not retry the event if the handler fails.
 These kind of retries should not be confused with the retry policy that one can configure on the services that push events to the Lambda service.
 
-## APIGW synchronous invocation
+### APIGW synchronous invocation
 
 I would argue that this is the most common way your lambda function be invoked.
 Since the **invocation is synchronous, neither APIGW nor Lambda service will not retry your request for your if the handler fails**.
 
 It is completely up to caller on how to deal with the retries.
 
-## Asynchronous Lambda invocations
+### Asynchronous Lambda invocations
 
 Lambda can be invoked asynchronously, either directly via the API by specifying the `InvocationType` of `Event` (SQS queue is used underneath)
 or via various services like _SNS_, _S3_, _SES_, _CloudFormation_, _CloudWatch / EventBridge_, _AWS Config_, _AWS CodeCommit_.
@@ -204,7 +204,7 @@ or via various services like _SNS_, _S3_, _SES_, _CloudFormation_, _CloudWatch /
 
 One could specify the retry settings on the integration level as well. **These settings only apply to the event delivery and has nothing to do with how many times your handler is retried**.
 
-## Lambda + EventSourceMapping
+### Lambda + EventSourceMapping
 
 This is where the _EventSourceMapping_ pools for events from specified service. This type of integration is usually used whenever we are dealing with services that operate on the notion of a stream.
 
