@@ -3826,9 +3826,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 ##### CloudTrail and CloudWatch
 
-- there is no automated way to have your logs delivered to `CloudTrail`.
-
-- you have to **create a lambda that listens to s3 events**. That lambda will **log to cloudwatch while reading CloudTrail files**.
+- there is **no way to filter CloudTrail events when they are sent to CW log group**
 
 ##### Across multiple accounts
 
@@ -4038,6 +4036,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - **there is no need to configure shards!**, this setting is automatic and completely hidden from you.
 
 - you can **transform** the data before sending it to given service. This is done **by lambda function being invoked by the _Firehose_ service**.
+
+- there is **no native metric for delivery errors**. There are error logs you could enable (and apply metric filter on them).
+  - the service will retry the events based on the source/target configuration. Consult the docs for more info.
 
 ##### Kinesis Data Analytics
 
@@ -4528,6 +4529,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - you can use **Security Groups** to **control the access**
 
 - With **Interface Endpoints** you have to **manually select AZs** to make it **highly available**
+
+- uses **_AWS PrivateLink_** as the underlying technology
 
 #### IPV6
 
