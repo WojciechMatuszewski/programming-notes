@@ -51,14 +51,6 @@
 
 - this the **role assumed by lambda when invoked**
 
-#### Resource Role
-
-- **lambda** is **treated as a resource** so you can grant **resource-based policy to it**.
-
-- this is **especially useful** when **wanting to grant other account permissions to invoke your function**
-
-- you can allow your function to be invoked by a given lambda service which originates from given account
-
 #### Firecracker
 
 - _Firecracker_ processes your lambdas I/O and network requests and sends them to the _Host kernel_
@@ -71,7 +63,7 @@
 
 - it will basically **keep concurrently X clones of execution environments ready** thus making cold starts obsolete (unless you make more requests than you have provisioned for).
 
-- can be **autoscalled by using Application AutoScaling**. Do not mistake this with auto scaling groups.
+- can be **auto-scaled by using Application AutoScaling**. Do not mistake this with auto scaling groups.
 
 - Do not confuse this with **reserved capacity**. Here we are **provisioning workers**, in the other case we are **reserving the amount of time a lambda can be invoked**
 
@@ -154,6 +146,18 @@
     action: "lambda:InvokeFunction",
   });
   ```
+
+#### Environment variables
+
+- environment variables are **encrypted by KMS**
+
+- to use KMS, the **_Lambda service_ uses KMS grant on a key. The grant principal is the function execution role**
+
+- there might be problems if you remove the _execution role_. Here is [an article about it](https://www.lastweekinaws.com/blog/The-Sneaky-Weakness-Behind-AWS-Managed-KMS-keys/)
+
+- if you do not provide the key yourself, the service will use _AWS Managed_ key
+
+- environment variables **are decrypted for you in the console and at Lambda runtime level**
 
 #### Infinite loops and lambda
 
