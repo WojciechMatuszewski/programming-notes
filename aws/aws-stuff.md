@@ -1107,7 +1107,7 @@ An example for s3-prefix (folder)
 
 ### AWS Elemental
 
-- familiy of tools that have to do with live-streaming or video
+- family of tools that have to do with live-streaming or video
 
 - **Media Package** creates **video streams for multiple resolutions**
 
@@ -1486,6 +1486,14 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - **use SNS fan-out pattern for multiple targets for single event**
 
+### AWS DataSync
+
+- service for **copying stuff from one place to another**
+
+- could come in handy when **you want to copy files from S3 to somewhere**
+
+- works nicely with EFS
+
 ### Storage Gateway
 
 - prefer if you have any kind of integration with `on-prem`.
@@ -1526,7 +1534,7 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 The main difference is where the most of your files are stored. When we are talking about **cached volumes, most of your files are stored in s3**. There is a small cache buffer that holds the most accesed files.
 
-When using **stored volumes, all of the files are stored on prem and synced with s3 ansynchronously**.
+When using **stored volumes, all of the files are stored on prem and synced with s3 asynchronously**.
 
 Both offerings store underlying data as **EBS snapshots on s3**.
 
@@ -1542,7 +1550,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Tape Gateway
 
-- used to **either store the tapes within amazon** or **for achriving purposes eg. migrating to glacier**
+- used to **either store the tapes within amazon** or **for archiving purposes eg. migrating to glacier**
 
 ### FSx
 
@@ -1625,7 +1633,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - you **can target read replica** but you **CAN NOT target second-master (multi-az)**.
   You can use **R53 weighted policy for that**
 
-- you can **create private hosted zone on R53** with **multivalue answer** to **target multiple read replicas** with one DNS query.
+- you can **create private hosted zone on R53** with **multi-value answer** to **target multiple read replicas** with one DNS query.
 
 - **read replica can be cross region** - similarly to `Aurora`. This is very important to know!.
 
@@ -1635,7 +1643,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - data **synchronized asynchronously**
 
-- **master has to have backups enabled to be able toprocess.env.AWS_EMF_ENVIRONMENT = "Local";`**
+- **master has to have backups enabled to be able to process.env.AWS_EMF_ENVIRONMENT = "Local";`**
 
 #### Multi-AZ
 
@@ -3404,8 +3412,6 @@ But most important information, remember **there are no so called snapshots when
 - AWS says that **in theory you can mount EFS on prem** but that **requires really good connection**. Moreover the **traffic** itself **is not encrypted** so **VPN or Direct Connect is recommended**.
 
 - what you can do is to use **AWS DataSync**. This will **sync your on premise env with the EFS volume which you use within the AWS env.**.
-
-![img](./assets/efs-datasync.png)
 
 ##### Encryption
 
