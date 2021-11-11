@@ -188,6 +188,8 @@
 
 - this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of space
 
+- you can **reference container images residing in a different AWS account**.
+
 ##### Storage copy issue
 
 - the bigger the image, the longer the _optimization_ phase
