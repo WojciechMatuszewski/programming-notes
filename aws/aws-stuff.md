@@ -1462,6 +1462,14 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 * the **_DataSync_ service can be very costly**. The AWS data transfer fees are pretty big, but you also will pay for s3 operations.
 
+#### Object lock
+
+- for **creating _write-once-read-many_ (WORM)** store
+
+- the object can be locked indefinitely
+
+- mainly used for compliance and legal requirements
+
 #### Misc
 
 - there is something called **requester pays**. This is where the **person who downloads the object pays for the transfer**. this is **this feature can only be used with people who have an existing aws account**.
