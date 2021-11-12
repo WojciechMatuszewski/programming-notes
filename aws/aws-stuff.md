@@ -3832,17 +3832,37 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - make sure to enable capturing global actions as well.
 
-##### CloudTrail and CloudWatch
+##### CloudTrail and CloudWatch Events
 
-- there is **no way to filter CloudTrail events when they are sent to CW log group**
+- if you are interested in **reacting to API events** you **need to create a trail in a given account**. If you do not, **the API events will not be forwarded to _CloudWatch Events_**
 
-- if you are interested in **reacting to API events** you **need to create a trail in a given account**. If you do not, **the API events will not be forwarded to _CloudWatch Events_**.
+- please note that **CloudTrail is all about API calls**. **To my best knowledge** other services sent different events to _CW Events_ and _CloudTrail_
+
+- **mind the delivery delay**. From my experience, the _15 minute window_ is very inconsistent. Usually the events are delivered instantly, but sometimes you have to wait a bit
+
+- the **option to log CloudTrail events** has **nothing to do with CloudWatch Events integration**.
+
+- it seems to like like **organization-wide trail** will **not be sufficient for API events via _CW Events_**. For some reason having the organization-wide trail enabled in a member account is not causing the API events to be forwarded to the CloudWatch events
 
 ##### Across multiple accounts
 
 - there are two ways you could do this
   - in the context of **AWS Organizations**, use the **Organization-wide Trail**. This way you do not have to deploy Trails per account.
   - **outside** of the context of **AWS Organizations**, use **CloudFormation Stack-sets** to deploy a trail to each account.
+
+##### With `CloudWatch`
+
+- You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combination since you could create alarms for given metrics and have like a _pseudo_ analytics workflow where you are notified when something happens.
+
+- there is **no way to filter CloudTrail events when they are sent to CW log group**
+
+##### Events delivery delay
+
+- event are not delivered in real-time. There can be **up to 15mins delay**.
+
+- to get around this **see if the event you are after is registered in _CloudWatch Events_ or _EventBridge_**.
+
+- **not all events** are **sent** to **either _CloudWatch Events_ or _EventBridge_**. This means that **in some circumstances you will have to bite the bullet and wait up to 15 min for the event**.
 
 #### Flow Logs
 
@@ -3863,18 +3883,6 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can make `CloudTrail` send events to EventBridge, do achieve that you will need to setup a _trail_ in the region where you want to listen the events to.
 
 - for some services, this setup might not be necessary as they might already send events to both `CloudTrail` and `EventBridge`
-
-#### With `CloudWatch`
-
-You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combination since you could create alarms for given metrics and have like a _pseudo_ analytics workflow where you are notified when something happens.
-
-#### Events delivery delay
-
-- event are not delivered in real-time. There can be **up to 15mins delay**.
-
-- to get around this **see if the event you are after is registered in _CloudWatch Events_ or _EventBridge_**.
-
-- **not all events** are **sent** to **either _CloudWatch Events_ or _EventBridge_**. This means that **in some circumstances you will have to bite the bullet and wait up to 15 min for the event**.
 
 ### Analytics
 
