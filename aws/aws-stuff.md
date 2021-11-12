@@ -3794,7 +3794,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
   - **data events**: **resource operations** performed **on or within the resource**
   - **management events**:
 
-- **enabled by default for all new accounts**.
+- **enabled by default for all new accounts**. **You cannot delete or disable the "default" trail**.
 
 - **logs** can be **stored on S3 or can be pushed to CloudWatch**. Log files which are **stored on s3, are using SSE-S3 by default!**.
 
@@ -3803,6 +3803,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can create **one trial** and **apply it to multiple regions**.
 
 - you **can trigger CloudWatch events usng CloudTrail events**. Pretty neat!.
+
+##### Costs
+
+- the default trail is free
+
+- data events are expensive
+
+- the delivery to s3 on your **first trail in the account** is free
 
 ##### Log integrity
 
@@ -3827,6 +3835,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 ##### CloudTrail and CloudWatch
 
 - there is **no way to filter CloudTrail events when they are sent to CW log group**
+
+- if you are interested in **reacting to API events** you **need to create a trail in a given account**. If you do not, **the API events will not be forwarded to _CloudWatch Events_**.
 
 ##### Across multiple accounts
 
