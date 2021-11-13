@@ -444,6 +444,8 @@ All of this could be done with one statement in DDB by using `SET attribute = if
 
 ### WORM models with PartiQL
 
+[Inspiration – this Twitter thread](https://twitter.com/NoSQLKnowHow/status/1458139547527647239).
+
 It turns out that due to the distinct nature between the `Update` and `Insert` statements, one might use that to create a WORM data structure on top of _DynamoDB_.
 
 Let us consider the "regular" _DynamoDB_ API for a moment. The `putItem` API call can create a new item or override an existing item.
@@ -534,7 +536,7 @@ All of this information is vital for building WORM - _write once read many_ mode
 
 How might one build such a model?
 
-- Disallow all _DynamoDB_ API calls.
+- Disallow all _DynamoDB_ API calls. [This IAM policy might come in handy](https://github.com/aws-samples/aws-dynamodb-examples/blob/master/DynamoDBIAMPolicies/AmazonDynamoDBAppendOnlyAccess.json).
 - Disallow all PartiQL `Update` calls.
 - Use the `Insert` statements for the first write.
 - Use the `Select` statements for the writes.
