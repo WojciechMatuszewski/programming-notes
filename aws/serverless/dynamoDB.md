@@ -10,14 +10,6 @@
 
 * there is an underlying cost for activating it.
 
-## PartiQL support
-
-- you can use the _PartiSQL_ to read from your table
-
-* **can result in full table scans if you are not careful**. While you can do the famous `select * from WHERE = ...` expression, it will be costly
-
-- you can **apply granular IAM permissions** so that **you can deny any costly operations**. This is great feature and works similarly as granular DDB access through the document API.
-
 ## Data types
 
 ### Scalar Types
@@ -432,14 +424,6 @@ The _with limitations_ part is very important. According to my initial research,
  })
 ```
 
-### The Update / Insert dilemma
-
-With the "regular" DynamoDB, one does not need to pick between an "update" and "insert" behavior. There is one operation that allows you to perform those operations - the `PutItem` API.
-
-That is not the case with the `PartiQL`, though. Here, we either update an existing item or insert a new item that does not exist.
-How would we know which one to choose? We most likely would need to perform a `SELECT` statement on a given item before performing the operation.
-All of this could be done with one statement in DDB by using `SET attribute = if_not_exists(attribute, :value)` update expressions.
-
 ### The tweet
 
 This section was inspired by [this tweet](https://twitter.com/jeremy_daly/status/1281628318895415299).
@@ -448,6 +432,115 @@ According to the Rick Houlihan answer the operation Jeremy tried to perform shou
 I believe though, that it impossible to perform that action by using the `batchExecuteStatement` API - the main reason being the restriction regarding the _WHERE_ clause.
 
 As an alternative, the transaction API might be used, but it does not return the new data that you might have just updated.
+
+### The Update / Insert dilemma
+
+With the "regular" DynamoDB, one does not need to pick between an "update" and "insert" behavior. There is one operation that allows you to perform those operations - the `PutItem` API.
+
+That is not the case with the `PartiQL`, though. Here, we either update an existing item or insert a new item that does not exist.
+How would we know which one to choose? We most likely would need to perform a `SELECT` statement on a given item before performing the operation.
+
+All of this could be done with one statement in DDB by using `SET attribute = if_not_exists(attribute, :value)` update expressions.
+
+### WORM models with PartiQL
+
+It turns out that due to the distinct nature between the `Update` and `Insert` statements, one might use that to create a WORM data structure on top of _DynamoDB_.
+
+Let us consider the "regular" _DynamoDB_ API for a moment. The `putItem` API call can create a new item or override an existing item.
+
+This is not precisely the case with PartiQL. Here, the `Insert` statement will throw an error if the item we are trying to insert already exists.
+Let us look into an example to understand how it works.
+
+```go
+db := dynamodb.NewFromConfig(cfg)
+
+_, err = db.PutItem(
+  ctx,
+  &dynamodb.PutItemInput{
+    Item: map[string]types.AttributeValue{
+      "pk": &types.AttributeValueMemberS{
+        Value: "pk",
+      },
+      "property": &types.AttributeValueMemberS{
+        Value: "value",
+      },
+    },
+    TableName: aws.String("test-table"),
+  },
+)
+if err != nil {
+  panic(err)
+}
+
+_, err = db.ExecuteStatement(
+  ctx,
+  &dynamodb.ExecuteStatementInput{
+    Statement: aws.String(
+      // Watch out for the dashes and single quotes!
+      "INSERT INTO \"test-table\" value {'pk': 'pk', 'property': 'overwritten-value'}",
+    ),
+  },
+)
+// operation error DynamoDB: ExecuteStatement, https response error StatusCode: 400, RequestID: 2QNMCR7HRCVUVNK4VOJGGFQOIVVV4KQNSO5AEMVJF66Q9ASUAAJG, DuplicateItemException: Duplicate primary key exists in table
+if err != nil {
+  panic(err)
+}
+```
+
+As we can see, the `Insert` PartiQL statement failed due to the "duplicate primary key" error. If we swap the `Insert` to the `insertItem` API call, this will not be the case.
+
+```go
+db := dynamodb.NewFromConfig(cfg)
+
+_, err = db.PutItem(
+  ctx,
+  &dynamodb.PutItemInput{
+    Item: map[string]types.AttributeValue{
+      "pk": &types.AttributeValueMemberS{
+        Value: "pk",
+      },
+      "property": &types.AttributeValueMemberS{
+        Value: "value",
+      },
+    },
+    TableName: aws.String("test-table"),
+  },
+)
+if err != nil {
+  panic(err)
+}
+
+_, err = db.PutItem(
+  ctx,
+  &dynamodb.PutItemInput{
+    Item: map[string]types.AttributeValue{
+      "pk": &types.AttributeValueMemberS{
+        Value: "pk",
+      },
+      "property": &types.AttributeValueMemberS{
+        Value: "overwritten-value",
+      },
+    },
+    TableName: aws.String("test-table"),
+  },
+)
+// No error occurs. Multiple `PutItem` API calls overwrite the same item.
+if err != nil {
+  panic(err)
+}
+```
+
+All of this information is vital for building WORM - _write once read many_ models on top of _DynamoDB_.
+
+How might one build such a model?
+
+- Disallow all _DynamoDB_ API calls.
+- Disallow all PartiQL `Update` calls.
+- Use the `Insert` statements for the first write.
+- Use the `Select` statements for the writes.
+
+While this setup might not be a "true" WORM datastore, it might be sufficient for your needs.
+If you find this solution lacking, I would suggest looking into the [S3 Object Lock features](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html).
 
 ## Cost considerations
 
