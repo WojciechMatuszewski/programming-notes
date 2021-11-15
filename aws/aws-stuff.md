@@ -3857,6 +3857,10 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - it seems to like like **organization-wide trail** will **not be sufficient for API events via _CW Events_**. For some reason having the organization-wide trail enabled in a member account is not causing the API events to be forwarded to the CloudWatch events
 
+##### CloudTrail and EventBridge
+
+- **by default**, every _CloudTrail_ **puts all of its events on the default EventBridge bus**
+
 ##### Across multiple accounts
 
 - there are two ways you could do this
