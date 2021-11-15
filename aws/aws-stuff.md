@@ -3808,7 +3808,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - the default trail is free
 
-- data events are expensive
+- **data events are expensive**
 
 - the delivery to s3 on your **first trail in the account** is free
 
@@ -3825,6 +3825,19 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can **enable data events** to **have those events logged**.
 
 - logging **can be enabled per bucket and per function**
+
+##### Event Selectors
+
+- by default _CloudTrail_ will monitor every management and data event (if you enable those)
+
+- sometimes we only care about certain events for certain resources, this is where event selectors come in
+
+- event selectors **allow you to pick and choose which events (both management and data) to capture**
+
+- you can be quite granular, think - only capturing `GetObject` from a particular bucket prefix
+
+- **by using Event Selectors you can greatly increase the amount of services you can trigger via s3 object events**
+  - since those events will be available in EventBridge/CloudWatch events, you can do a lot of stuff here **like triggering a SFN when object is uploaded**.
 
 ##### Global events
 
