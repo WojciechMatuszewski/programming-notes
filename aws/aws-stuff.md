@@ -3861,6 +3861,9 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - **by default**, every _CloudTrail_ **puts all of its events on the default EventBridge bus**
 
+- since _EventBridge_ uses the same underlying technology as _CW Events_, the following applies
+  > Some occurrences in AWS services can be reported to EventBridge both by the service itself and by CloudTrail. For example, an Amazon EC2 API call that starts or stops an instance generates EventBridge events as well as events through CloudTrail.
+
 ##### Across multiple accounts
 
 - there are two ways you could do this
