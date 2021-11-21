@@ -23,6 +23,11 @@ return (
 );
 ```
 
+### Regarding the state updates
+
+Remember that with _React_ 18, the state updates are batched together. In previous versions in _React_, this was not necessarily always the case.
+The batching of state updates also applies to the callback of the `startTransition` function.
+
 ### The problem with `startTransition`
 
 The `startTransition` API is not flexible.
