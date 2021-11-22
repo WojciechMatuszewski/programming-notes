@@ -2,6 +2,18 @@
 
 Me learning about new features of React 18.
 
+## The problem with tearing
+
+Imagine you have a global store. With _React_ 17 and down, you can freely use the store without any issues.
+You update to _React_ 18 and observe a weird behavior, where tree parts have different store values. What gives?
+
+The answer lies in the fact that _React_ 18 uses _concurrent rendering_ technique. The technique is about yielding to the browser – i.e., "pausing" _React_ rendering. **If an update sneaks in between this "pause," one part of the tree might show different values!**
+
+### Why is it not a problem in _React_ 17?
+
+_React_ 17 is synchronous. There is no way for an update to sneak in when _React_ yields to the browser because no yielding occurs.
+That is why you have not observed this behavior yet.
+
 ## `startTransition` API
 
 The `startTransition` API is meant to be used for **updates that can be deferred**. The most important thing to note here is that
@@ -51,3 +63,9 @@ Here, the `deferredState` is a piece of state that might or might not cause a re
 By wrapping the `expensiveState` in the `useDeferredValue`, we tell _React_ to postpone updates to components that take this state if needed.
 
 Pretty good API if you ask me.
+
+## `useSyncExternalStore`
+
+It seems like the `useSyncExternalStore` is meant to be a drop-in replacement for _subscription-like_ hooks. The idea is to make sure tearing never happens.
+
+I did not find any concrete examples while reading the [discussion about the API](https://github.com/reactwg/react-18/discussions/86). A great excuse to dive into writing my own!
