@@ -2257,6 +2257,30 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - setting up **TTL 0** **does not mean NO caching**. It means that **CF will revalidate each viewer request with the origin**. That basically means that **CF will make a GET to an origin with a special header**. Then **origin signals CF if the origin changed or not**.
 
+##### Cache Behaviors
+
+- by default CloudFront provides sane defaults for the cache TTL
+
+- you can specify **per path (\*.img or /dupa) rules for cache TTL**
+
+- you **can get pretty complex since CloudFront gives you a lot of settings**.
+
+- you **attach cache policies to them**. You can create **your own cache policies** or **use the managed ones**
+
+##### Cache Key
+
+- this is how _CloudFront_ knows if the asset you are requesting is within a cache or not
+
+- _cache key_ is **created based on the request parameters** like **url or/and headers/cookies**
+
+- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that behavior**
+
+##### Caching content
+
+- **viable for APIs and assets / websites**
+
+- the **costs scale with the usage**. This might be a bad thing depending on your setup
+
 #### Protecting Content
 
 - **By default** every CloudFront distribution **comes with a default domain name**. That domain of course works for HTTP and HTTPS. You can register domain and replace it.
@@ -2272,7 +2296,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **OAI can be applied** to **S3, CloudFront, bucket policies**. **OAI origin cannot be a website address of s3 bucket (static website hosting)**.
 
-##### Signed URLS & Signed Cookies
+#### Signed URLS & Signed Cookies
 
 - **configured on BEHAVIOR LEVEL**
 
@@ -2280,7 +2304,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - the account that created the distribution will be, most likely, the trusted signer.
 
-###### Signed URLs
+##### Signed URLs
 
 - very similar mechanism to S3, you generate signed URL using your permissions.
 
@@ -2288,7 +2312,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - that is important is that **signed url allows access for only 1 object**.
 
-###### Signed Cookies
+##### Signed Cookies
 
 - cookies **extend the signed urls functionality** by giving you the ability to **grant permissions to groups of objects**
 
@@ -2297,24 +2321,6 @@ There are a few approaches when it comes to scaling with dynamoDB
 - your distribution have public-private key associated with it
 
 - the traffic between **origin location and destination** is **encrypted (on top of HTTPS) using that key pair**.
-
-#### Cache Behaviors
-
-- by default CloudFront provides sane defaults for the cache TTL
-
-- you can specify **per path (\*.img or /dupa) rules for cache TTL**
-
-- you **can get pretty complex since CloudFront gives you a lot of settings**.
-
-- you **attach cache policies to them**. You can create **your own cache policies** or **use the managed ones**
-
-#### Cache Key
-
-- this is how _CloudFront_ knows if the asset you are requesting is within a cache or not
-
-- _cache key_ is **created based on the request parameters** like **url or/and headers/cookies**
-
-- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that behavior**
 
 #### Restricting access to CloudFront distribution
 
