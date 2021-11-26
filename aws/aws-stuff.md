@@ -125,6 +125,18 @@
 
 - _Event Source Mapping_ uses **lambda execution role** for IAM permissions. This is why you have to specify that, for example, your function can read and delete messages from SQS
 
+##### Applying filters
+
+- you can **apply filters on data coming from the event source**
+
+  - As of writing this (26.11.2021) not every data source is supported. The supported data sources are: _DynamoDB_, _Kinesis_ and _SQS_
+
+- with the **ESM filters, you no longer have to implement filtering in a DDB stream lambda functions**.
+
+  - this is **huge in single-table design environments** where CDC Lambda function is invoked very often
+
+- the filters **use _EventBridge_ pattern-like filtering**.
+
 #### Lambda destinations
 
 - **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
