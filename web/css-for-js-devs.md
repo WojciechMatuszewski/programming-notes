@@ -9,7 +9,7 @@
   - The `rem` value is **relative to HTML tag font size**.
   - The `em` value is **relative to the current tag font size**.
 
-## Rendering logic 1
+## Rendering logic
 
 - **Some** CSS properties are inherited from the parent. A good example would be the `color` property. Please note that **the notion of property inheritance only applies to some properties**.
 
@@ -78,6 +78,34 @@ You might get away with it, but you might get stuck once you encounter a problem
 
 - Use **`revert` to undo the properties you have set for a given property**.
   - This is especially useful for **styling responsive websites** where you wish to undo or "undeclare" the property for a given viewport.
+
+## Understanding `z-index`
+
+It's hard for me to count all the occurrences of me wrestling with the `z-index` property. Things not stacking up correctly, setting the `z-index` to `9999` without seeing any results. Fun times.
+
+It turns out that if you learn a thing or two about how _stacking contexts_ work in CSS, you will be able to tame the `z-index` and stop desperately setting it to `9999` expecting results.
+
+- the `z-index` property creates so called **_stacking context_**.
+
+  - many **other CSS properties create the _stacking context_ as well**.
+
+- the **_stacking context_** is like a **container for the element children**.
+
+  - the **child cannot escape the _stacking context_ of it's parent!**
+
+  ```html
+  <header style="{{zIndex:" 1}}>Header</header>
+  <main style="{{zIndex:" 1}}>
+    <!-- -> does not matter, the children will never escape the parent. -->
+    <div style="{{zIndex:" 999}}></div>
+  </main>
+  ```
+
+- the **_stacking context_ is not correlated with _layers_**. The **_stacking context_ is purely CSS-related thing**.
+
+- to **"seal" children, you could use `isolation: "isolate"`**.
+  - works **the same way as if you were to set `z-index` to 1 on the element**
+  - ensures that **no `z-index` pollution occurs**
 
 ## Flexbox
 

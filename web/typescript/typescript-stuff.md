@@ -274,6 +274,17 @@ import type Foo, { Bar, Baz } from "module";
 // ^ this will fail
 ```
 
+### TypeScript 4.5 improvements
+
+The `import type` syntax is very helpful but it forces you to create "type-only" imports (which I'm a fan of).
+The TypeScript team decided to add "squashed type-only" import. The syntax is as follows
+
+```ts
+import {someFunc, type someFuncType} from './a'
+```
+
+The functionality and the intent stays the same, but instead of two import statements you do one.
+
 ## Testing
 
 What can we test in the realm of TypeScript? Code ? sure, but what about the
