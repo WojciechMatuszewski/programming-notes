@@ -560,6 +560,10 @@ An example for s3-prefix (folder)
 
 - remember that **IAM users are global!**
 
+- As [Ben Kehoe mentioned](https://twitter.com/ben11kehoe/status/1263876984062513154) IAM Users should be renamed to "IAM long-lived access keys"
+
+- you **should avoid using IAM Users if you can**. You can use the **AWS SSO for federated access with AWS Organizations**
+
 #### Tags
 
 - you can use `aws:PrincipalTag` to lookup tags **attached to an user or a role**.
