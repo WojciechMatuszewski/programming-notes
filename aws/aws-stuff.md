@@ -306,6 +306,8 @@
 
 - **explicit deny ALWAYS overrules ALLOW**. This is very important, especially when working with groups.
 
+- checkout https://awspolicygen.s3.amazonaws.com/js/policies.js for list of all IAM actions. Neat stuff!
+
 #### Real Identities
 
 - both **user and roles** are known as real identities. They both have **ARN** and **can be referenced in other areas of AWS**
