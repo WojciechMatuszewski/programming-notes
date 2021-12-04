@@ -179,3 +179,37 @@ As you can see, the complexity of this solution is a bit higher (at least from t
 
 When I need to know that the underlying `ref` changed (remember that using `ref.current` on the useEffect array is pointless) I will reach out for the
 _callback refs_, otherwise I'm sticking with `useEffect` way of doing things.
+
+## `useEffect` fires before pain event
+
+You probably heard that the `useEffect` should fire **some time** after the paint event. Here is an excerpt from the [React documentation](https://reactjs.org/docs/hooks-reference.html#useeffect).
+
+> Unlike componentDidMount and componentDidUpdate, the function passed to useEffect fires after layout and paint, during a deferred event.
+
+Many people stop here, but just after that, the docs state.
+
+> Although useEffect is deferred until after the browser has painted, it’s guaranteed to fire before any new renders. React will always flush a previous render’s effects before starting a new update.
+
+And this is where things get interesting. It means that **in theory**, the **`useEffect` can run before the paint event!**.
+
+Let us explore how.
+
+### State updates in `useLayoutEffect`
+
+If you update a piece of state in `useLayoutEffect` you will trigger a render. What has the guarantee of being flushed before a new render? That is right – the `useEffect`.
+
+```ts
+const [state, setState] = React.useState(1);
+
+React.useLayoutEffect(() => setState((state) => state + 1));
+// Will run before "paint" event \/
+React.useEffect(() => console.log("before Paint!"));
+```
+
+### This does not matter
+
+In the end, this is a technical minutia rather than something you need to be aware of. I would strongly recommend you follow the guidelines of "read/mutate DOM in `useLayoutEffect`, everything else – use `useEffect`".
+
+Remember, in the end, your code has to be straightforward. You could use the behavior I'm explaining here to merge some of your `useEffect` callbacks with the `useLayoutEffect` ones into one, but what's the point?
+
+Keep it simple.
