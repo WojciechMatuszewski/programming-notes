@@ -1496,17 +1496,24 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - using API, you can download **specific byte range** for a given object.
 
-#### Events
+#### Event notifications
 
 - these can be send to **SNS, SQS or Lambda**.
+
+- be aware of the **delivery SLA**. You might be surprise to learn that
+  > Amazon S3 event notifications are designed to be delivered at least once. Typically, event notifications are delivered in seconds but can sometimes take a minute or longer.
+
+##### Via CloudTrail
+
+- _CloudTrail_ will record s3 events, this **has nothing to do with `event notifications`**
 
 - the events are **object based events**. If you want **all s3 events** you should:
 
   - create **`CloudTrail` for this bucket**
+
   - use **`CloudWatch rule` with `CloudTrail` integration** and select given destination.
 
-- be aware of the **delivery SLA**. You might be surprise to learn that
-  > Amazon S3 event notifications are designed to be delivered at least once. Typically, event notifications are delivered in seconds but can sometimes take a minute or longer.
+- read my blog post https://dev.to/aws-builders/amazon-s3-to-aws-stepfunctions-pattern-4eog
 
 ##### Filtering rules
 
@@ -1515,6 +1522,18 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 - **you cannot have overlapping filters**. This is a gotcha that a lot of people encounter
 
 - **use SNS fan-out pattern for multiple targets for single event**
+
+#### Integration with EventBridge
+
+- instead of using `event notifications` one might send the events to the _EventBridge_ service
+
+- the integration **will send ALL bucket events to the EventBridge**
+
+- use the _EventBridge_ rich filtering capabilities. They are **much better than the `event notification` filtering capabilities**
+
+- the events are send to **the default event bus**. This is not ideal as there is a limited number of rules one might create on a given bus.
+
+- you **pay for published events**. Keep in mind that **publishing happens AFTER any rule is matched**
 
 ### AWS DataSync
 
@@ -4147,6 +4166,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - this involves a cloudwatch alarm and a lambda function which will do the scaling by using sdk
 
 - there are **api limits for the amount of time you can scale your stream**
+
+##### On-Demand mode
+
+- this is very close to a **serverless kinesis** but **not quite** there yet.
+
+- while **you do not have to manage shards**, you are still billed **per hour** with additional charges for data related things.
+
+- the **stream will scale** to the **maximum of double your biggest throughput**. Quite nice!
 
 ##### Parallelization factor
 

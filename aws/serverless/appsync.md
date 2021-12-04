@@ -14,22 +14,20 @@ An example for aws-cdk
 
 ```ts
 const likeATweetRequest = appsync.MappingTemplate.fromFile(
-    getMappingTemplatePath("Mutation.like.request.vtl"),
+  getMappingTemplatePath("Mutation.like.request.vtl")
 )
-    .renderTemplate()
-    .replace("LikesTable", props.likesTable.tableName)
-    .replace("TweetsTable", props.tweetsTable.tableName)
-    .replace("UsersTable", props.usersTable.tableName);
+  .renderTemplate()
+  .replace("LikesTable", props.likesTable.tableName)
+  .replace("TweetsTable", props.tweetsTable.tableName)
+  .replace("UsersTable", props.usersTable.tableName);
 
 likesTableDataSource.createResolver({
-    typeName: "Mutation",
-    fieldName: "like",
-    requestMappingTemplate: appsync.MappingTemplate.fromString(
-        likeATweetRequest,
-    ),
-    responseMappingTemplate: appsync.MappingTemplate.fromFile(
-        getMappingTemplatePath("Mutation.like.response.vtl"),
-    ),
+  typeName: "Mutation",
+  fieldName: "like",
+  requestMappingTemplate: appsync.MappingTemplate.fromString(likeATweetRequest),
+  responseMappingTemplate: appsync.MappingTemplate.fromFile(
+    getMappingTemplatePath("Mutation.like.response.vtl")
+  ),
 });
 
 // Add missing permissions
@@ -49,14 +47,14 @@ For the implementation itself, you can just add `__typename` as an attribute on 
 
 ```ts
 const newTweet = {
-    __typename: TweetTypes.TWEET,
-    id,
-    text,
-    creator: username,
-    createdAt: timestamp,
-    replies: 0,
-    likes: 0,
-    retweets: 0,
+  __typename: TweetTypes.TWEET,
+  id,
+  text,
+  creator: username,
+  createdAt: timestamp,
+  replies: 0,
+  likes: 0,
+  retweets: 0,
 } as const;
 
 await docClient.put({ TableName: "foo", Item: newTweet });
@@ -73,7 +71,7 @@ Or you can resolve the `__typename` dynamically within the .vtl template itself.
 #if($id == $username)
     $util.qr($result.put("__typename", "MyProfile"))
 #else
-    $util.qr($result.put("__typenam", "OtherProfile"))
+    $util.qr($result.put("__typename", "OtherProfile"))
 #end
 
 $util.toJson($context.result)
@@ -154,3 +152,64 @@ type Query {
 ```
 
 There is a bit more configuration to this approach, but I think the benefits heavily outweigh the negatives.
+
+## Depth limiting
+
+If you are not careful and your schema is recursive, an attacker might run costly queries against your endpoint.
+
+Imagine picking friends of a friend of a friend ... and so on. Such requests might fire expensive back-end computations, which will cause issues and high costs if unbounded.
+
+There are many ways of guarding against such behavior. Some resort to computing _query cost_. A user has a "currency" assigned and spends that "currency" making queries. Other solutions employ other heuristics.
+
+We can implement one of such heuristics in _AppSync_. I personally feel like this way of checking query complexity might not be sufficient for all but will most likely get the job done in 80% of scenarios.
+
+### The `selectionSetList` context attribute.
+
+One might use the `selectionSetList` VTL context attribute to determine the cost of a query. The first axis to look at would be the **length of the list**. The second would be **the depth of the queries contained in the list**.
+
+Here is an example `$context.info` variable that contains the `selectionSetList`
+
+```json
+{
+  "fieldName": "getPost",
+  "parentTypeName": "Query",
+  "variables": {
+    "postId": "123",
+    "authorId": "456"
+  },
+  "selectionSetList": [
+    "postId",
+    "title",
+    "secondTitle"
+    "content",
+    "author",
+    "author/authorId",
+    "author/name",
+    "secondAuthor",
+    "secondAuthor/authorId",
+    "inlineFragComments",
+    "inlineFragComments/id",
+    "postFragComments",
+    "postFragComments/id"
+  ],
+  "selectionSetGraphQL": "{\n  getPost(id: $postId) {\n    postId\n    title\n    secondTitle: title\n    content\n    author(id: $authorId) {\n      authorId\n      name\n    }\n    secondAuthor(id: \"789\") {\n      authorId\n    }\n    ... on Post {\n      inlineFrag: comments {\n        id\n      }\n    }\n    ... postFrag\n  }\n}"
+}
+```
+
+Looking at the `selectionSetList`, we can see that the maximum depth of the query is three (three levels of nesting). How can we programmatically probe for that information?
+
+[This blog post shows you how to do just that](https://robertbulmer.medium.com/aws-appsync-rate-and-max-depth-limiting-c536e5ba43d6).
+
+Here is the template.
+
+```vtl
+#set($selectionSetList = $ctx.info.selectionSetList)
+
+#foreach ($item in $selectionSetList)
+    #if($item.matches(".*/.*/./."))
+        $util.error("Error: Queries with more than 3 levels found. At level - $item")
+    #end
+#end#return($ctx.prev.result)
+```
+
+Not that scary, is not it?
