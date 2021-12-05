@@ -187,6 +187,50 @@ There are 2 solutions here:
 1. Rename your `d.ts` file
 2. Specify the `d.ts` file within the `file` block inside your `tsconfig`.
 
+### I cannot override method inside an interface
+
+**To my best knowledge**, overriding a method declared inside an interface is **not possible**. Why?
+
+Because TypeScript **will pick the "latest" evaluated interface** for that method signature.
+
+```ts
+interface Foo {
+  bar(): string;
+}
+
+interface Foo {
+  bar(): number;
+}
+
+declare const foo: Foo;
+
+const result = foo.bar();
+
+// result: number
+```
+
+Now, if I were to switch the interfaces.
+
+```ts
+interface Foo {
+  bar(): number;
+}
+
+interface Foo {
+  bar(): string;
+}
+
+declare const foo: Foo;
+
+const result = foo.bar();
+
+// result: string
+```
+
+Kind of makes sense does not it?
+
+It can be frustrating though – in situations where you want to override a 3rd party library interface property. **I do not have a good answer for doing that yet**.
+
 ## TripleSlash aka Reference
 
 You have seen them, the weird `/// <reference types|lib=...>` syntax. This is mostly relic of the past but still can be useful in day-to-day work.
