@@ -14,3 +14,11 @@ Now, instead of pursuing other interesting projects within your company, you are
 
 Instead of being a knowledge silo, spread the knowledge to people around you. Make sure they can operate the system just as well, if not better, than you.
 Would that mean giving them assignments that you deem interesting at first? Yes! The payoff? You are free from the shackles of your domain. You can switch projects – guilt-free!
+
+## Taxonomies fail at the edges
+
+We, engineers, like to keep things organized. We sometimes view the world as if it was black or white – the user is either a blogger or an advertiser, and so on.
+
+In reality, though, most of the things are intertwined. A blog can be written by multiple authors (collaboration). The blogger can also be an advertiser.
+
+It's up to you to find those relations as soon as possible. Otherwise, your system will not be flexible enough to handle them later. The refactoring of taxonomies takes **a lot** of time.
