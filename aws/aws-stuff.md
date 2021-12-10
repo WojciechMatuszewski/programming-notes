@@ -2185,6 +2185,9 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - the **TTL will also fire your lambda stream trigger**
 
+- if you have **DDB streams enabled**, the event that is pushed to your lambda **has additional `userIdentity`** data.
+  You should **use this data** to **tell that it was the Dynamo service** who **deleted the item, not you** or your code.g
+
 #### Partitions
 
 - **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
