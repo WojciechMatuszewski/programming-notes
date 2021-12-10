@@ -10,6 +10,16 @@
 
 * there is an underlying cost for activating it.
 
+## Storage layer
+
+- there are two options when it comes to storage layer (where your data resides). The `DynamoDB Standard` and the `DynamoDB Standard-IA`
+
+- you can **switch between them at will**
+
+- the **`DynamoDB Standard` has lower throughput costs** than the **`DynamoDB Standard-IA`**
+
+- the **`DynamoDB Standard-IA` has lower storage costs**
+
 ## Data types
 
 ### Scalar Types
@@ -557,6 +567,10 @@ where you would chart the cost of each operation.
 AWS has a lot of services that enable you to pay an upfront fee in exchange for better prices on a given resource.
 The _AWS DynamoDB_ is no different. **If you are running _provisioned capacity mode_ consider using _reserved capacity_ along with _auto scaling_**.
 Such a combination is the most cost-effective way of using the service.
+
+### Switch to Standard-IA
+
+Usually, the data we store is rarely accessed after some period of time. In that case, one way to save on storage would be to use the `DynamoDB Standard-IA` storage class. The `DynamoDB Standard-IA` has higher throughput costs but lower storage costs than the `DynamoDB Standard` class.
 
 ### Avoid keeping big blobs of data along small, frequently accessed ones in the same item
 
