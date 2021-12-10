@@ -572,6 +572,8 @@ Such a combination is the most cost-effective way of using the service.
 
 Usually, the data we store is rarely accessed after some period of time. In that case, one way to save on storage would be to use the `DynamoDB Standard-IA` storage class. The `DynamoDB Standard-IA` has higher throughput costs but lower storage costs than the `DynamoDB Standard` class.
 
+Remember that you can switch between the two at will (at least that's what I've read in the docs. As of writing this, I have yet to test the functionality myself).
+
 ### Avoid keeping big blobs of data along small, frequently accessed ones in the same item
 
 Imagine a scenario where you have a table that keeps users profiles. The APP that your DDB is for allows the users to upload their photo.
