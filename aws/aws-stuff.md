@@ -2186,7 +2186,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 - the **TTL will also fire your lambda stream trigger**
 
 - if you have **DDB streams enabled**, the event that is pushed to your lambda **has additional `userIdentity`** data.
-  You should **use this data** to **tell that it was the Dynamo service** who **deleted the item, not you** or your code.g
+  You should **use this data** to **tell that it was the Dynamo service** who **deleted the item, not you** or your code
 
 #### Partitions
 
