@@ -40,6 +40,52 @@ return (
 Remember that with _React_ 18, the state updates are batched together. In previous versions in _React_, this was not necessarily always the case.
 The batching of state updates also applies to the callback of the `startTransition` function.
 
+### Behavior in the context of network requests
+
+While many use-cases for the `startTransition` go beyond data fetching, the API can still enhance how users perceive loaders in the context of network requests.
+
+You are probably familiar with the issue where a loader is shown only for a split second. This creates not-so-great experiences for the user.
+
+We can wrap the code that updates the "network resource" we are currently working on with `startTransition` to combat this issue. Doing so will instruct `React` to "defer" state updates until the "network resource" is ready.
+
+```ts
+import { startTransition, useState } from "react";
+import { suspensify } from "suspensify";
+
+function fetchPokemon(id: number) {
+  return fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then((res) =>
+    res.json()
+  );
+}
+
+const initialPokemonResource = suspensify(() => fetchPokemon(1));
+
+// This component is wrapped with suspense boundary
+function PokemonDetail() {
+  const [pokemonResource, setPokemonResource] = useState(
+    initialPokemonResource
+  );
+
+  const pokemon = pokemonResource;
+  return (
+    <div>
+      {pokemon.name}
+      <br />
+      <button
+        onClick={() => {
+          // Defer the state update and the suspense placeholder till either this resource is "ready" or some time passed.
+          startTransition(() => {
+            setPokemonResource(suspensify(() => fetchPokemon(pokemon.id + 1)));
+          });
+        }}
+      >
+        Fetch
+      </button>
+    </div>
+  );
+}
+```
+
 ### The problem with `startTransition`
 
 The `startTransition` API is not flexible.
