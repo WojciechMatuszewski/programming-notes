@@ -5153,6 +5153,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
   Another would be to create additional log group target for each rule.
   No matter which approach you pick **remember about the CloudWatch costs. Use the _input transformer_ to ensure you log only what you need**
 
+- while adding artifical targets to test the event filtering works, how one might go about **seeing the output of the target rule?**.
+  - very **handy** when the **rule invokes another service**
+  - i would **recommend using _CloudTrail_** and **looking at the service event that the rule triggers**
+  - **to my best knowledge** there is **no other way to track success of the delivery** – apart from **CloudWatch metrics**.
+
 #### DLQ
 
 - you can set up DLQ for a given target of a rule
