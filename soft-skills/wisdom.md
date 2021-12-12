@@ -40,3 +40,5 @@ The more fallbacks you implement, the more complex your code becomes. You **shou
 ### Fallback considered harmful
 
 Sometimes the **fallback mechanism can do more harm than good**. Jacob Gabrielson, in his [Amazon Builder's Library post](https://aws.amazon.com/builders-library/avoiding-fallback-in-distributed-systems/), showcases how a fallback implemented for a particular feature caused the whole Amazon website to be down. Yikes!
+
+- TODO: Big ball of mud
