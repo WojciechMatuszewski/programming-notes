@@ -22,3 +22,21 @@ We, engineers, like to keep things organized. We sometimes view the world as if 
 In reality, though, most of the things are intertwined. A blog can be written by multiple authors (collaboration). The blogger can also be an advertiser.
 
 It's up to you to find those relations as soon as possible. Otherwise, your system will not be flexible enough to handle them later. The refactoring of taxonomies takes **a lot** of time.
+
+## Let it fail
+
+Have you ever found yourself implementing a fallback strategy on top of a fallback strategy? If so, you most likely introduced latent bugs into your application.
+
+How come?
+
+The biggest problem with fallbacks is that they themselves can fail as well! How do you handle the failure of a fallback? Adding another is going to lead to the same situation.
+
+The answer here is to **let it fail**.
+
+You are much more likely to successfully reboot a server or swap some disks than to implement a robust failure handling mechanism (**retries do not count as a fallback mechanism**).
+
+The more fallbacks you implement, the more complex your code becomes. You **should spend that effort making the thing you are writing the fallback for more resilient instead**.
+
+### Fallback considered harmful
+
+Sometimes the **fallback mechanism can do more harm than good**. Jacob Gabrielson, in his [Amazon Builder's Library post](https://aws.amazon.com/builders-library/avoiding-fallback-in-distributed-systems/), showcases how a fallback implemented for a particular feature caused the whole Amazon website to be down. Yikes!
