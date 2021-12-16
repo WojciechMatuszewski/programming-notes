@@ -6643,5 +6643,3 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - "Architecting your serverless applications for hyperscale"
 
 - "Inside a working serverless SaaS reference solution"
-  -
-d
