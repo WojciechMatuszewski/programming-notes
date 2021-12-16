@@ -250,6 +250,27 @@ This solution is not without downsides though:
 
 - Stream event source to Lambda: you manage the buffer, each shard is like a FIFO queue. With Stream data there is a concept of **poison pill**. This is where you cannot, for some reason, process batch of requests and due to this, you cannot make any progress.
 
+## Event Source Mapping
+
+- A **Lambda resource** that **reads** from an **event source** and then **invokes** the Lambda function
+
+- One might **specify filters** on the **level of Event Source Mapping**
+
+  - Remember struggling with DynamoDB streams filtering inside AWS Lambda? That is no longer the case. You can specify a filter on ESM and have your lambda be invoked only when necessary
+
+- Remember that **ESM is used** only with **services that Lambda reads events from**.
+
+  - DynamoDB
+  - Kinesis
+  - MQ
+  - SQS
+  - Kafka
+
+- You can **configure destinations on the Event Source Mapping**. Pretty neat!
+
+- The **Event Source Mapping invokes** your function **synchronously**. This is so that **the ESM can determine if your function failed or not**.
+  - If your function failed, the event batch might be split (depending on your configuration)
+
 ## Secret Management
 
 ### Storage
