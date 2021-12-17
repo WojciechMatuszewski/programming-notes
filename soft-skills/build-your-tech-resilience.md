@@ -139,4 +139,22 @@ Without doing these things you are guessing.
 
 > It's important to recognize that issues in your work aren't a reflection of your personal worth
 
-todo: Grow your cognitive flexibility
+## Grow your cognitive flexibility
+
+Cognitive flexibility is a measurement of how good are you are adjusting to different situations.
+
+Were you always written code THE particular way? What would happen if it were required of you to code in a different way? Would you be angry? Or maybe you would adjust just thinking and writing style?
+
+### Thinking outside of the box
+
+Cognitive flexibility is related to how much you can think "outside of the box". You do not have to be some kind of genius to solve problems! Sometimes all that is required is to take a step back to have a different perspective.
+
+In CS, we face multiple problems a day. We have developed ways of solving them – pair programming, speaking to a "duck," and others.
+
+Sometimes it's not even about the solution to the problem. If you can develop a **potential** solution, that is already a huge win. You can then filter that solution through the lens of your peers. This approach usually works wonders.
+
+### Taking a step back
+
+How often did you get stuck on a problem only to hammer on it away for more hours? I know I did, many times. Looking back, I should have let go of many things. Why did I not do that?
+
+For me, it was the inability to take a **step back** and reassess the situation. A new vantage point is a precious thing to have.
