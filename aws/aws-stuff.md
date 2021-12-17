@@ -141,7 +141,9 @@
 
 - **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
 
-- work only for **async** and **stream based invocations**. This is completely BS
+- works only for **async** and **stream based invocations**.
+  - if you need to setup **destinations of pool-based invocations** then you might be interested in **setting destinations on EventSourceMapping** itself.
+  - in these types of invocations, the **EventSourceMapping** controls the batching and pushing the events to your lambda
 
 #### Resource-based policies
 
@@ -1040,7 +1042,7 @@ An example for s3-prefix (folder)
 
 #### Uses
 
-- applying consistent WAF rules accros all accounts resources inside Organization
+- applying consistent WAF rules across all accounts resources inside Organization
 
 - notifying you when AWS Config resource is not-compliant and fixing that for you.
 
@@ -2414,6 +2416,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you **can** actually **use VPC interface endpoint** with APIGW
 
+- you **can disable the default APIGW endpoint**. This might be **useful when using a custom domain for your API**.
+
 #### Response Codes
 
 - **4xx means Client errors**. This is where WAF is blocking the request (403), or concurrency throttling happens (429).
@@ -2467,7 +2471,13 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - adds metadata to the request object, the previously mentioned credentials could be found there
 
 - can **return an APIGW API key**. If the **API key is associated with an usage plan**, then by returning it inside the authorizer, one can achieve per-tenant throttling.
-  - Please note that this method requires you to create an API key per-tentant. There is a limit of how many API keys can exist for a given APIGW.
+  - Please note that this method requires you to create an API key per-tenant. There is a limit of how many API keys can exist for a given APIGW.
+
+#### IAM Authentication and Authorization
+
+- for **internal service-to-service** communication, AWS recommends using **AWS Sigv4 means of authentication**
+
+- this method integrates well with other AWS services
 
 #### Canary (REST API only)
 
@@ -6648,3 +6658,5 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - "Inside a working serverless SaaS reference solution"
 
 - "Serverless security best practices"
+
+- "Best practices for building interactive applications with AWS Lambda"
