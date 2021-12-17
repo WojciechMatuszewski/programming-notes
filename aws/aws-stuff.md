@@ -963,27 +963,27 @@ An example for s3-prefix (folder)
 
 - **keys can be encrypted (secure string)** using **KMS**. They also have **versions, and history of edits**.
 
-- **scalable** and **serverless**.
+- **scalable** and **serverless**. **Free unless you use `secureString** type of parameters. Then you are paying for KMS operations
 
 - very useful for **distributing config inside ASG**
 
-#### Secrets Manager
-
-- while you can store secrets within `Parameter Store`, **`Secrets Manager` rotate the secrets (automatically or programatically)**;
-
-- this is an **ideal solution for passwords for DB for smth**.
-
-- if you need to **rotate secrets programatically**, you can do it by using **lambda**.
-
-- there is a **limit** when it comes to **size of the secret**, that is **65kb**.
-
 ##### Advanced Parameters
 
-- you can switch any standard parameter to advanced at any time. **You cannot go back from standart to advanced**
+- you can switch any standard parameter to advanced at any time. **You cannot go back from standard to advanced**
 
 - with advanced parameters your parameter can have **up to 8KB of size**. This is **twice the size of a regular one**.
 
 - with advanced parameters you can get **really granular per parameter policies**.
+
+#### Secrets Manager
+
+- while you can store secrets within `Parameter Store`, **`Secrets Manager` rotate the secrets (automatically or programmatically)**;
+
+- this is an **ideal solution for passwords for DB for smth**.
+
+- if you need to **rotate secrets programmatically**, you can do it by using **lambda**.
+
+- there is a **limit** when it comes to **size of the secret**, that is **65kb**.
 
 ##### Rotation
 
@@ -2465,6 +2465,9 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - the **credentials the policy corresponds to** can be used for scoping permissions in the downstream services
 
 - adds metadata to the request object, the previously mentioned credentials could be found there
+
+- can **return an APIGW API key**. If the **API key is associated with an usage plan**, then by returning it inside the authorizer, one can achieve per-tenant throttling.
+  - Please note that this method requires you to create an API key per-tentant. There is a limit of how many API keys can exist for a given APIGW.
 
 #### Canary (REST API only)
 
@@ -6643,3 +6646,5 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - "Architecting your serverless applications for hyperscale"
 
 - "Inside a working serverless SaaS reference solution"
+
+- "Serverless security best practices"
