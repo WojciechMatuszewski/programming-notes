@@ -210,3 +210,11 @@ This is where the _EventSourceMapping_ pools for events from specified service. 
 
 **Since it's the EventSourceMapping that invokes your function, it's the EventSourceMapping that controls the retries**.
 This means that the default behavior of asynchronous invocation retry does not apply here.
+
+## Role is invalid or cannot be assumed
+
+You will see this error whenever you first delete the CDK bootstrapped stack and **then** try to delete the stack deployed using the CDK (associated with the bootstrap stack you have just deleted).
+
+Remember that the CDK bootstrapping process creates the roles for the CloudFormation to assume when deploying your stack. You can change this behavior, and I've written an article on how to do that: https://dev.to/aws-builders/deploying-aws-cdk-apps-using-short-lived-credentials-and-github-actions-59g6
+
+How to get around this problem? The solution is **to re-create the IAM role with the same name**. Remember about the trust relationship – it has to point to the CloudFormation service.
