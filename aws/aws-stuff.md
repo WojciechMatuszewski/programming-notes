@@ -43,9 +43,14 @@
 
 #### Alias
 
-- alias can point to a **single version** or **2 lambda versions**.
+- alias can point to a **single version** or **two lambda versions**.
 
 - you would use **aliases for shifting traffic between versions**.
+
+- you can **specify the % of the traffic** that is distributed between given versions
+
+- you **cannot route** between **two different lambda function versions**
+  - you can only create the routing configuration in the context of the same lambda function
 
 #### Execution Role
 
