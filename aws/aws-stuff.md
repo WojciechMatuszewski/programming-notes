@@ -6670,4 +6670,4 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 - "Evolutionary AWS Lambda functions with hexagonal architecture" -> Meh
 
-- "Reliable scalability: How Amazon.com scales in the cloud" -> Meth
+- "Reliable scalability: How Amazon.com scales in the cloud" -> Meh
