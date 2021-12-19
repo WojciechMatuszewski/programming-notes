@@ -6656,12 +6656,18 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 ## re:Invent 2021 watched videos
 
-- "Best practices of advanced serverless developers"
+- "Best practices of advanced serverless developers" -> Worth
 
-- "Architecting your serverless applications for hyperscale"
+- "Architecting your serverless applications for hyperscale" -> Worth
 
-- "Inside a working serverless SaaS reference solution"
+- "Inside a working serverless SaaS reference solution" -> Worth
 
-- "Serverless security best practices"
+- "Serverless security best practices" -> Worth
 
-- "Best practices for building interactive applications with AWS Lambda"
+- "Best practices for building interactive applications with AWS Lambda" -> Worth
+
+- "SaaS architecture patterns: From concept to implementation" -> Worth
+
+- "Evolutionary AWS Lambda functions with hexagonal architecture" -> Meh
+
+- "Reliable scalability: How Amazon.com scales in the cloud" -> Meth
