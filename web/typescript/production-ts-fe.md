@@ -9,12 +9,12 @@ For example, this is how you could type a _type_ which allows only _json values_
 
 ```ts
 type JSONValue =
-    | number
-    | string
-    | null
-    | boolean
-    | JSONValue[]
-    | { [k: string]: JSONValue };
+  | number
+  | string
+  | null
+  | boolean
+  | JSONValue[]
+  | { [k: string]: JSONValue };
 ```
 
 Notice that I'm referring to `JSONValue` twice within it's declaration. Previously this was not allowed.
@@ -24,7 +24,7 @@ Notice that I'm referring to `JSONValue` twice within it's declaration. Previous
 This is pretty neat, I still have to play around with it but it allow you to basically create permutations of _string literals_.
 
 ```ts
-type Corner = `${'top' | 'bottom'}-${'left'|'right'}`
+type Corner = `${"top" | "bottom"}-${"left" | "right"}`;
 ```
 
 I think it main usage will be in automatically typing _query parameters_ for you. Since it works with generics, you can do a lot of cool stuff here.
@@ -75,19 +75,19 @@ Basically as a rule of thumb I would **always prefer `@ts-expect-error` over `@t
 
 ### Typing `try/catch` blocks
 
-As you probably know, the `error` that is passed to the `catch` block is of type `any`. This is suboptimal because you can basically _throw_ anything as an error (`React` throws `Promise` instances in concurrent mode).
+As you probably know, the `error` that is passed to the `catch` block is of type `any`. This is suboptimal because you can basically _throw_ anything as an error (`React` throws `Promise` while using the _resource-like data fetching_).
 
 There was a neat addition to TypeScript, where you can type the error that is passed to `catch` block as `unknown` and **only** `unknown`. This forces you to do necessary checks before accessing any properties on that error
 
 ```ts
 declare function somethingRisky(): number;
 try {
-    somethingRisky();
-    // e can literally be anything, strings, numbers, objects, you name it!
+  somethingRisky();
+  // e can literally be anything, strings, numbers, objects, you name it!
 } catch (e: unknown) {
-    if (e instanceof Error) {
-        console.log(e.stack);
-    }
+  if (e instanceof Error) {
+    console.log(e.stack);
+  }
 }
 ```
 
@@ -98,7 +98,7 @@ So, you are probably familiar with a notion of _type guard_. To give you an exam
 
 ```ts
 function isError(err: unknown): err is Error {
-    return err instanceof Error;
+  return err instanceof Error;
 }
 ```
 
@@ -106,7 +106,7 @@ With _type assertions_ or some might call them _assert signatures_ we will not r
 
 ```ts
 function assertIsError(err: unknown): asserts err is Error {
-    if (!(err instanceof Error)) throw new Error("not an error!");
+  if (!(err instanceof Error)) throw new Error("not an error!");
 }
 ```
 
@@ -116,17 +116,17 @@ So, let's say I want to mock the function that gets the feature flag value, I wo
 
 ```ts
 function assertIsCorrectName(name: string): asserts name is "MY_FEATURE_FLAG" {
-    if (!name == "MY_FEATURE_FLAG") {
-        throw new Error(`expected MY_FEATURE_FLAG, got: ${name}`);
-    }
+  if (!name == "MY_FEATURE_FLAG") {
+    throw new Error(`expected MY_FEATURE_FLAG, got: ${name}`);
+  }
 }
 
 jest
-    .spyOn(featureFlagService, "getFeatureFlag")
-    .mockImplementation((featureFlagName) => {
-        assertIsCorrectName(featureFlagName);
-        return true;
-    });
+  .spyOn(featureFlagService, "getFeatureFlag")
+  .mockImplementation((featureFlagName) => {
+    assertIsCorrectName(featureFlagName);
+    return true;
+  });
 ```
 
 This increases the confidence I have in my test suite. Every time I change the identifier for the feature flag, I should also be changing my tests.
@@ -245,8 +245,8 @@ Use _type guards_ with _assert signatures_. One neat trick Mike shown is how to 
 
 ```ts
 function isTypedArray<T>(
-    arg: any,
-    check: (val: any) => val is T,
+  arg: any,
+  check: (val: any) => val is T
 ): asserts arg is T[] {}
 ```
 

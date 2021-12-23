@@ -102,13 +102,13 @@ For more reading, please refer to [this blog post by Kent C. Dodds](https://kent
 
 ## My component renders multiple times. Help
 
-So you heard about this thing called `React.Strict` and that you should use it to see if your application is _concurrent mode_ ready.
+So you heard about this thing called `React.Strict` and that you should use it to see if your application is _concurrent features_ ready.
 But now, you have noticed that some of your components re-render twice seemingly at random, **during development** (if this happens when running a production built there is either a bug in React or your application has issues).
 
-This behavior that you are noticing is intentional and, in fact, is the way your application is tested to see if it's ready for _concurrent mode_.
+This behavior that you are noticing is intentional and, in fact, is the way your application is tested to see if it's ready for _concurrent features_.
 
 This stems from the fact that, React might _suspend_ rendering of your component and re-initialize it in the future. If you have things that cause
-_side effects_ within your component, and they are not wrapped with `useEffect`, you will have problems when the _concurrent mode_ is live.
+_side effects_ within your component, and they are not wrapped with `useEffect`, you will have problems when the _concurrent features_ are live.
 So to flush those cases as early as possible, the `React.Strict` simulates the behavior of _time slicing_ without employing any magic that might be behind this feature.
 
 So if you evert wondered why your components are called at random during the development after you have added the `React.Strict` flag, now you know.

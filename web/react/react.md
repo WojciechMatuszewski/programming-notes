@@ -599,9 +599,9 @@ getting new DOM (which can be the same as previous one)
 
 ## Future
 
-### Concurrent React
+### Concurrent features
 
-The biggest thing is that **concurrent react** can **partially render** a tree
+The biggest thing is that **while using concurrent features, React** can **partially render** a tree
 without committing to the DOM. And o boi this is huge.
 
 #### Tearing
@@ -609,7 +609,7 @@ without committing to the DOM. And o boi this is huge.
 With great power comes... great amount of bugs. This one is definitely interesting because there are multiple parts at play.
 Imagine your component are reading from a shared state. Whey rerender when that state changes but the render can take some time right?.
 
-Now imagine your tree re-rendering and then user decides to trigger the state update again. Naturally React (with concurrent mode) will yield to a browser because user did something. That will pause the rendering of SOME parts of your tree.
+Now imagine your tree re-rendering and then user decides to trigger the state update again. Naturally React (using _concurrent features_) will yield to a browser because user did something. That will pause the rendering of SOME parts of your tree.
 
 What is happening at that very moment? Some parts of your tree are already ready with PREVIOUS value from the state (pre-user interaction) and SOME are still to be rendered BUT the state already has a different value.
 
@@ -786,12 +786,12 @@ Bundle size bloating may occur when using destructuring and default values
 React team still have to asses different choices but one is almost certain that
 `.defaultProps` will go out of favour very soon.
 
-### Safe refs with Concurrent Mode
+### Safe refs with concurrent features
 
 So you already know the difference with `Rendering`, `Committing` and
 `Reconciliation`.
 
-The deal is that when `Concurrent Mode` is active React might call your function
+The deal is that when _concurrent features_ are active React might call your function
 (or your render method) multiple times.
 
 This is all and good but might cause some problems with mutable objects like
@@ -823,7 +823,7 @@ function App() {
 
 Ok, so now, whenever you click the button the component will rerender. Whenever
 you rerender the `counter.current` will increment. With 'normal' mode it works
-fine. But the problem occurs when you are using `Concurrent Mode` and React
+fine. But the problem occurs when you are using _concurrent features_ and React
 renders multiple times before committing.
 
 Then, instead of seeing your counter incremented once, you will probably see
