@@ -5831,16 +5831,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can specify the **UpdateReplacePolicy** to **ensure that no accidental deletions of the resources happen when CF changes**
 
-##### Change Set
-
-- proposed change for a specific stack. Others can be notified by SNS that such change set was setup.
-
-- it clearly lists the changes that are to be executed (also shows update behavior) when change set is executed.
-
-- you can either `execute` or `delete` it.
-
-- you can have granular permissions - junior members proposing changes , senior members deleting / executing them.
-
 #### CloudFormation Stack Set
 
 - allows you to **easly deploy stacks to multiple places at once**
@@ -5960,6 +5950,16 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
   - `cfn-hup`: **daemon which pools CF for changes**. If changed occured for a given CF block, runs scripts defined by you
   - `cfn-init`: used for **more complex user-init scripts**. Instead of writing scrips, you pass directives to a special program which is OS agnostic.
   - `cfn-signal`: used for `WaitConditions`, coordination between resources
+
+#### Cloud Control API
+
+- With AWS composed of multiple independent teams, the APIs can vary greatly from service to service. To combat this issue, _Cloud Control API_ was born.
+
+- The _Cloud Control API_ aims to give you a single source of truth for `CRUDL` operations for your resources
+
+- In reality some of the featues like _filtering_ are not supported
+
+- All in all, this is a step in a right direction
 
 ### AWS Glue
 
@@ -6700,3 +6700,7 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - "Evolutionary AWS Lambda functions with hexagonal architecture" -> Meh
 
 - "Reliable scalability: How Amazon.com scales in the cloud" -> Meh
+
+- "What’s new in serverless" -> Meh
+
+- "What's new with AWS CloudFormation and AWS CDK" -> Worth
