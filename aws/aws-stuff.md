@@ -4192,6 +4192,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - this is very close to a **serverless kinesis** but **not quite** there yet.
 
+  - you **still have to pay for the stream hour (along with other dimensions)**. This means that **leaving it off for a month will cost you about 30 USD**
+
 - while **you do not have to manage shards**, you are still billed **per hour** with additional charges for data related things.
 
 - the **stream will scale** to the **maximum of double your biggest throughput**. Quite nice!
@@ -5031,7 +5033,7 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
   > Total concurrency is equal to or less than the number of unique MessageGroupIds in the SQS FIFO queue
 
-#### DLQ
+##### DLQ
 
 - this is a **special queue which usually takes the events which were processed unsucessfuly**.
 
@@ -5039,13 +5041,21 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can **set that message will be transported to DQL whenever `recieveCount` is greated than ...**
 
-#### Redrive Policy
+##### Redrive Policy
 
 - this is the **policy used to determine when to move given msg to DLQ**
 
 - very often used with `ReceiveCount` attribute, like **specifying `maxReceiveCount`**.
 
 - you can redrive messages from DQL using [replay-aws-dlq](https://github.com/garryyao/replay-aws-dlq), you probably want to use `npx` for that.
+
+##### Integration with AWS Lambda
+
+- AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**
+
+- AWS [in their documentation page](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) recommends setting the following features to the following values
+  - AWS Lambda concurrency: to at least 5. I think this is because the initial concurrency of the _poller fleet_ is 5
+  - SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can retry the batch multiple times before the messages land in DLQ
 
 ### SES
 
