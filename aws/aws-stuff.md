@@ -282,6 +282,25 @@
 
 - there is a **limit in terms of number of entries in the execution history**. It's quite big - 25000. Avoid reaching it (split executions into multiple workflows if needed)
 
+#### Step Functions and idempotency
+
+- _Step Functions_ can be used to ensure service idempotency
+
+- Possible because the `startExecution` API is idempotent itself
+  - If you provide the same `executionId` parameter multiple times, an error will be thrown
+  - This mechanism is similar to how `TransactWriteItem` works in _DynamoDB_ with the `clientToken` attribute (do not mistake this with _atomic counters_ using `PutItem` API. The `PutItem` API is NOT idempotent)
+
+#### Step Functions and concurrency control
+
+- I've seen two ways the concurrency can be managed using _Step Functions_
+
+- The **first** approach is to use the `Map` state. The `Map` state takes in the `MaxConcurrency` parameter which controls how many concurrent _map operations_ are running at the same time.
+
+  - Note that **this way** of controlling concurrency only works for **iteration-like scenarios**.
+
+- Sometimes, you have to control the sum of concurrency of **separate** _Step Functions_ executions. This is where **the second** approach is useful.
+  - In this approach we are going to leverage [_DynamoDB_ with semaphores](https://aws.amazon.com/blogs/compute/controlling-concurrency-in-distributed-systems-using-aws-step-functions/)
+
 ### IAM
 
 - **IAM** is universal, **is global**, does not apply to regions
