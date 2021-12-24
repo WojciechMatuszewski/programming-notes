@@ -41,4 +41,16 @@ The more fallbacks you implement, the more complex your code becomes. You **shou
 
 Sometimes the **fallback mechanism can do more harm than good**. Jacob Gabrielson, in his [Amazon Builder's Library post](https://aws.amazon.com/builders-library/avoiding-fallback-in-distributed-systems/), showcases how a fallback implemented for a particular feature caused the whole Amazon website to be down. Yikes!
 
+## Improving anything but the bottleneck
+
+When tasked with "improvement" work, **always address the bottleneck first**. It might be the case that improving the bottleneck is not "fun" or "sexy", and you might procrastinate doing it by improving other parts of the code or the application. This approach is **very wrong**.
+
+In a great book called _Phoenix Project_, we have learned that we should focus all the improvements on the thing that makes our process, application slow (you get the idea). The more I think about it, the more it makes sense. Sadly this was not obvious to me at the start of my career.
+
+### Product work vs. technical minutia
+
+When picking what kind of task you should do next, always ask yourself, how can I increase the number of customers using our product. Why? **Because customers, or the work related to them, is often tied with your bottleneck**. If there were any bottlenecks, your product would be very popular. How do you identify the bottleneck? Sadly I cannot help you here as doing so requires a lot of context.
+
+Keep searching for bottlenecks and improve those, do not waste time on anything else.
+
 - TODO: Big ball of mud
