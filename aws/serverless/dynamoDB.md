@@ -312,7 +312,7 @@ Now the shard ID is deterministic and derived from the customers phone number. G
 The ability to perform transactional operations makes DDB really powerful.
 There is one caveat you might not be aware of first, that will definitely come into play if you heavily really on transactions.
 
-### Optimistic Concurrency Control (OCC)
+#### Optimistic Concurrency Control (OCC)
 
 The DDB transactions works on the premise that multiple transactions can be performed without interfering each other.
 Whenever you do a transaction, a check is performed if another transaction is already "working" on a given entity. If so, an error will be thrown.
@@ -322,7 +322,7 @@ You can retry the transaction, to be super safe you could pass the `ClientReques
 If you design your tables correctly, you should not be having much issues with the way DDB handles concurrent transactions.
 Usually you can just retry the request, ensuring that you have valid _Condition Expressions_ in place.
 
-### Transactions and other operations
+#### Transactions and other operations
 
 Imagine yourself performing a transaction that involves changing items A and B.
 At the same time, you kick-off a `GetItem` request for the item A and B. It turns out that the read operations may return different results, all is based on timing.
@@ -337,7 +337,7 @@ At the same time, you kick-off a `GetItem` request for the item A and B. It turn
 
 Definitely interesting. [Rick Houlihan claims that he actually never used the transaction API](https://twitter.com/houlihan_rick/status/1430240266095669249)
 
-### Transactions and WCU/RCU
+#### Transactions and WCU/RCU
 
 According to [this blog post](https://aws.amazon.com/blogs/database/optimize-amazon-dynamodb-transaction-resilience/) for any given operation within the transaction _DynamoDB_ will perform two read or write operations (depending on the underlying operation)
 
@@ -348,13 +348,27 @@ All of these operations are, of course, not free. **For every operation that is 
 
 I find this very fascinating as I never once though about WCU/RCU and the throttling with the _on-demand_ pricing mode. I guess I have not yet built an application that scaled to traffic that would be high enough to have to worry about it.
 
-### Transaction conflicts
+#### Transaction conflicts
 
 The bigger your transactions are, the more likely you will run into transaction conflicts. This is where there are multiple operations competing for the same "resource" within the _DynamoDB_ table.
 
 Imagine `PutItem` that operates on the item with `pk` of `1` and, at the same time, firing of a transaction that has the same operation.
 
 Note that _DynamoDB_ uses the notion of _optimistic concurrency control_ (OCC). This means that there might be multiple in-flight transactions at any given time. There is no possibility of deadlocks as discussed earlier, before deadlock can occur, you will get the transaction conflict error.
+
+#### Transactions spanning multiple services
+
+Imagine a scenario where the user checks out their cart. To carry out that operation successfully, we might need to perform multiple operations in a transaction-like manner:
+
+1. Checking the inventory
+2. Updating the global product count
+3. Other operations ...
+
+Like in the _Step Functions_ world, one might use the _Saga pattern_ with _DynamoDB Streams_ to achieve the desired result.
+
+The other service subscribes to the stream updates, then writes to the origin. The front end would poll (or get notified via WebSocket) the transaction status. The transaction itself is _asynchronous_ because it spans multiple services.
+
+[Check out this great video](https://youtu.be/IgFvWaSQaeg?t=1496) for a deep dive regarding this pattern.
 
 ## Consistency
 

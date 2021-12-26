@@ -5086,6 +5086,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**
 
+- What is interesting is that the API and the _pollers_ are deployed on AWS Lambda. This insight was shared in "Amazon builders’ library: Operational excellence at Amazon" re:Invent 2021 talk.
+
 - AWS [in their documentation page](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) recommends setting the following features to the following values
   - AWS Lambda concurrency: to at least 5. I think this is because the initial concurrency of the _poller fleet_ is 5
   - SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can retry the batch multiple times before the messages land in DLQ
@@ -6719,4 +6721,10 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 - "What's new with AWS CloudFormation and AWS CDK" -> Worth
 
-- "What’s new with Amazon DynamoDB"
+- "What’s new with Amazon DynamoDB" -> Worth
+
+- "Amazon builders’ library: Operational excellence at Amazon" -> Okeish
+
+- "DynamoDB deep dive: Advanced design patterns" -> Okeish
+
+- "Data modeling with Amazon DynamoDB" -> Worth but for beginners
