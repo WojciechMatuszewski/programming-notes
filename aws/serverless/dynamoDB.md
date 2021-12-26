@@ -356,6 +356,16 @@ Imagine `PutItem` that operates on the item with `pk` of `1` and, at the same ti
 
 Note that _DynamoDB_ uses the notion of _optimistic concurrency control_ (OCC). This means that there might be multiple in-flight transactions at any given time. There is no possibility of deadlocks as discussed earlier, before deadlock can occur, you will get the transaction conflict error.
 
+#### Transactions on high contention items
+
+The _DynamoDB_ transact API is great for items frequently read in parallel. If they are, you might face many "transaction conflict" errors.
+
+One solution here would be to retry, but as we all know, this type of solution can only carry us so far. A much better solution would be to use _DynamoDB_ streams. You update one part of the application, then the stream reader will update the second.
+
+What happens in the case of errors in the stream reader? Well, you would need to implement some kind of rollback mechanism. It might seem like it's a lot more work to do, but the chance of the stream reader failing is much lower than having your transaction fail due to high contention on the item itself.
+
+This is related to the _DynamoDB saga pattern_ that I write about in the next section.
+
 #### Transactions spanning multiple services
 
 Imagine a scenario where the user checks out their cart. To carry out that operation successfully, we might need to perform multiple operations in a transaction-like manner:
