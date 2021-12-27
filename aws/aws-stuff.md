@@ -6728,3 +6728,11 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - "DynamoDB deep dive: Advanced design patterns" -> Okeish
 
 - "Data modeling with Amazon DynamoDB" -> Worth but for beginners
+
+- "Building next-gen applications with event-driven architectures" -> Refresher on couple of services, Taco Bell architecture showcase. Meh
+
+- "Using events and workflows to build distributed applications" -> Shows how to use Step Functions, nothing special. Meh
+
+- "Building modern cloud applications? Think integration" -> Intersection between AWS services and integration patterns. Kind of worth
+
+- "Application integration patterns for microservices" -> A lot of examples with SQS and SNS. Talks about storage-first pattern (without naming it explicitly). Worth
