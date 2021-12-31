@@ -651,3 +651,47 @@ function Component({ defaultChecked }) {
 ```
 
 Now, I have to emphasize this, **use this pattern when you are dealing with the _reset_ functionality**. Well there might be other use cases, but I think that's the most common one.
+
+## Hooks encapsulation pattern
+
+We all, at least once, have written code that looks similar to the following snippet.
+
+```jsx
+function Component() {
+  const [stateVariable1, setStateVariable1] = useState("foo");
+  const [stateVariable2, setStateVariable2] = useState("bar");
+
+  // mixing `setStateVariable1` and `setStateVariable2` in various handlers
+
+  return <div>...</div>;
+}
+```
+
+Usually, I would have nothing against such setups, but after reading [this excellent blog post](https://kyleshevlin.com/use-encapsulation?ck_subscriber_id=1352906140), my perspective changed.
+
+The problem is that we are **creating a tiny spaghetti code** within our component body. The dependencies are somewhat hidden, leading to the increased cognitive effort required to understand what is going on within the code.
+
+It would be much better to use **custom hooks declared in the same file**.
+
+```jsx
+function Component() {
+  const [stateVariable1, setStateVariable1] = useState("foo");
+  const [stateVariable2, setStateVariable2] = useState("bar");
+
+  // mixing `setStateVariable1` and `setStateVariable2` in various handlers
+
+  return <div>...</div>;
+}
+
+function useStateVariable1({ dependency1, dependency2 }) {
+  return [...]
+}
+
+function useStateVariable2({ dependency1, dependency2 }) {
+  return [...]
+}
+```
+
+Even though I can't entirely agree with the author on how he writes the handlers (very liberate usage of `useCallback`), I second the idea of encapsulating the concerns fully.
+
+Please note that **this technique only applies to situations where there are multiple concerns encapsulated in the logic of the body of the component**. This is not a silver bullet, and **should not be used "by default"**.
