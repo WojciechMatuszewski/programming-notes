@@ -218,3 +218,27 @@ You will see this error whenever you first delete the CDK bootstrapped stack and
 Remember that the CDK bootstrapping process creates the roles for the CloudFormation to assume when deploying your stack. You can change this behavior, and I've written an article on how to do that: https://dev.to/aws-builders/deploying-aws-cdk-apps-using-short-lived-credentials-and-github-actions-59g6
 
 How to get around this problem? The solution is **to re-create the IAM role with the same name**. Remember about the trust relationship – it has to point to the CloudFormation service.
+
+## SQS message in DQL but my _AWS Lambda_ was not invoked?
+
+As good as the SQS and Lambda integration is, sometimes it can be configured to hinder the architecture rather than improve it. What I'm referring to was [very well put by Zack](https://zaccharles.medium.com/lambda-concurrency-limits-and-sqs-triggers-dont-mix-well-sometimes-eb23d90122e0) in his blog post.
+
+The main issue is that the **retrieve from the Lambda-managed poller fleet counts as a retrieve count on the SQS side of things**. This, of course, makes perfect sense. The problem arises when the developer who created the architecture is unaware of it.
+
+Picture this – the DLQ has some messages in it, but when you check the _sink Lambda_ logs, you do not see any logs related to the `messageId` that landed in the DQL. What happened here is that your _sink Lambda_ was most likely throttled, and the Lambda poller fleet could not invoke the function with the messages X times. This resulted in the retrieve count going over the limit and the messages landing in the DLQ.
+
+### How to guard against the over-polling?
+
+There are a couple of ways one might **guard** against the over-polling.
+
+1. Use _SQS FIFO_. This way, the concurrency of your Lambda can be tied to the number of distinct `messageGroupId` values.
+1. Use _AWS Kinesis_. This way, the concurrency of your Lambda can be connected to the number of shards.
+
+### AWS recommendations
+
+It would not be fair to talk about this issue without mentioning what AWS recommends we do about it. My take is that these are more mitigations rather than concrete solutions.
+
+Anyhow, you can get yourself familiar with them [on this documentation page](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html).
+The most important part is the one that talks about the `maxReceiveCount` configuration property.
+
+> If you configure reserved concurrency on your function, set a minimum of five concurrent executions to reduce the chance of throttling errors when Lambda invokes your function.
