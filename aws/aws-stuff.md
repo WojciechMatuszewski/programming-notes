@@ -3764,7 +3764,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - while a bit more complex I think these should be favourited, it will make sure that you are not overwhelmed with incidents.
 
-##### Insigths
+##### Insights
 
 - there are many flavours of `CloudWatch insights`, there are **Application**, **Container** and just **Insights**
 
@@ -3776,7 +3776,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - you can, just like with other metrics, create automatic dashboards.
 
-##### Alarams
+##### Alarms
 
 - they **react to given metric**
 
@@ -3786,11 +3786,11 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - you can switch to `n.viriginia` to get to billing dashboards
 
-- you can create **normal, cloudwatch alarams on those billing dashboars**. You can do it per service or overall.
+- you can create **normal, cloudwatch alarms on those billing dashboard**. You can do it per service or overall.
 
 ###### Monitoring spend
 
-- you have to enable **Billing ALERTS not Alarams** for you to be able to **track estimated AWS charges**
+- you have to enable **Billing ALERTS not Alarms** for you to be able to **track estimated AWS charges**
 
 - there is a **delay between incurring a charge and a AWS Budget notifications**
 
@@ -3827,7 +3827,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - EMF will handle up to 100 metrics per `JSON` blob.
 
-- use `properties` for data which has high cardinatlity. That means that there are a lot of potential unique `name/value` pairs. Remember that the `CloudWatch` can only store 10 dimmensions per metric.
+- use `properties` for data which has high cardinality. That means that there are a lot of potential unique `name/value` pairs. Remember that the `CloudWatch` can only store 10 dimensions per metric.
 
 - use `CloudWatch` insights for searching through the `properties` that you set using EMF.
 
@@ -3866,7 +3866,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - remember that you can **create rules NOT EVENTS! to schedule some actions**
 
-- you can even **make some actions based on events comming from different services**.
+- you can even **make some actions based on events coming from different services**.
 
 - you can create a rule which has multiple targets.
 
@@ -3881,6 +3881,22 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - these **dashboards can be cross accounts and cross region**.
   - if you want to make it work **cross account** you have to enable **sharing on each account that will make data available on the monitoring account**
   - if you want to make it work **cross region with a single account** you **do not have to do nothing**. It's **already built-in**.
+
+##### CloudWatch Evidently
+
+- LaunchDarkly "competitor"
+
+- has the notion of _experiments_, _features_ and _launches_
+
+- you can have metrics tied to a given _launch_. Think "how many people bought a given item with this special button enabled?"
+
+- the metrics for a given _launch_ can also track metrics from the RUM part of the CloudWatch offering
+
+- **as of writing this, the `@aws-cdk/aws-evidently-alpha` _AWS CDK_ package does not exist, one must use the L1 constructs**
+
+###### In comparison to LaunchDarkly
+
+- **to get the feature flags, you need to have AWS identity tied to the API call**
 
 #### CloudTrail
 
@@ -5010,6 +5026,13 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - you **have to response to a message within 15second window**, otherwise SNS will consider that request a failed attempt.
 
 - you should **read x-amz-sns-message-type header** to get necessary information with what you are dealing with. It could be either subscription confirmation request or a message.
+
+##### Batching
+
+- you **cannot batch on the receiver level**
+
+- you **CAN batch on the sender level**.
+  - use the [_PublishBatch_ API](https://docs.aws.amazon.com/sns/latest/api/API_PublishBatch.html), it will save you some $$!
 
 #### SQS
 
