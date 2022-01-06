@@ -5072,8 +5072,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **FIFO queues** allow for **ordering** but have **limited capacity**.
 
-- **FIFO queues are not supported for lambda integration**. Also, **with Lambda, max batch size = 10!**
-
 - you **cannot** **convert existing queue to FIFO**. You **have to create new one**.
 
 - **DOES NOT SUPPORT DELAY SECONDS**
@@ -5088,6 +5086,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
   **The more groups are in flight, the more concurrent consumers of the messages in the queue**. This is a neat mechanism that allows you to make sure that you are processing the messages by a single consumer - by using only one _Message Group ID_ for all the messages.
 
   > Total concurrency is equal to or less than the number of unique MessageGroupIds in the SQS FIFO queue
+
+- with the _message group ID_ parameter you have the guarantee that the messages from a given group were processed in order.
+  - **note that the batch that the lambda is provided might contain messages from different _message groups_!** but those messages are **"in order" when you look globally**
+  - **use the `SequenceNumber` attribute to sort the messages that you were given in lambda to ensure ordering**
+  - [link to a helpful video](https://youtu.be/8zysQqxgj0I?t=918)
 
 ##### DLQ
 
