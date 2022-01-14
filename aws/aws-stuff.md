@@ -2540,6 +2540,16 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - use `cors.serverlessland.com` for getting help with cors. Great tool created by EDJ
 
+#### Latency issues
+
+- while developing, you might have observed **high APIGW latency on rarely invoked endpoints**
+
+- this is **most likely** due to **overhead communication with _CloudFront_** and **the inability to reuse connections** for low-traffic endpoints
+
+- personally I've seen "cold starts" of APIGW **up to a second!**
+
+- during my investigation, I have found [this stackoverflow](https://stackoverflow.com/a/41914708) answer helpful
+
 ##### REST APIs
 
 - if specified via CFN, a _mock integration OPTIONS_ route is created. Since this is a mock integration,
@@ -5213,6 +5223,10 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - with `EventBridge` can create _cron_ schedules or invoke target at fixed rate. The **minimum granularity** is **1 minute**.
 
 - you **cannot use custom bus for cron / fixed rate schedule**.
+
+- the **cron expression** can be **scheduled for a particular point in time**.
+  - quite neat considering the alternatives: SQS delay or StepFunctions with "Wait" task.
+  - [link to the documentation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html#eb-cron-expressions)
 
 #### Event Manipulation
 
