@@ -1204,8 +1204,8 @@ An example for s3-prefix (folder)
 
   - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
-    - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redunantly on s3 standard**. You would use this for **data that can be replaced / replayed**.
-      While using this might seem like a good option, this **is not the cheapest solution, when it comes to storage, it is the chepest when it comes to the API usage though**.
+    - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redundantly on s3 standard**. You would use this for **data that can be replaced / replayed**.
+      While using this might seem like a good option, this **is not the cheapest solution, when it comes to storage, it is the cheapest when it comes to the API usage though**.
 
   - **S3-IA/S3 One Zone-IA** (**Infrequent Access**): for data that is accessed less
     frequently but requires rapid access when needed
@@ -1213,9 +1213,19 @@ An example for s3-prefix (folder)
   - **S3 Glacier / Glacier Deep Archive**: used for data archiving, where you would
     keep files for a long time.
 
+  - **S3 Glacier instant retrieval**: Very low cost, millisecond access for data accessed on per quoter access
+
   - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
 
 - **tiers** apply to **object**, **not a bucket!**
+
+#### Performance
+
+- the API **quotas** are **per prefix**. This means that you should **spread your load across various prefixes**
+
+#### Monitoring
+
+- use **S3 Storage Lens** to get insight into what is happening across your buckets
 
 #### Select
 
@@ -1354,6 +1364,20 @@ An example for s3-prefix (folder)
 
 - you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
 
+###### Identity vs Bucket Policy
+
+- **bucket policies** and **ACL** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
+
+So when to use what?
+
+- _identity policy_
+
+  - when **you control the identity**. That means **identities within your account**.
+
+- _bucket policy_ (resource policy)
+
+  - when **you DO NOT control the identity**
+
 ##### Endpoint policy
 
 - s3 endpoints allow you to have granular permissions (basically a bucket policy) for a narrow scope of your objects. This policy does not "pollute"
@@ -1372,23 +1396,15 @@ An example for s3-prefix (folder)
 - overrules any ACLs and policies that you specify. If you have this enabled, objects will not be publicly accessible, no matter the policy or ALCs
   that you have in place.
 
-###### Overall
+##### Cross-account
 
-- **bucket policies** and **ACL** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
+- **remember** that when doing anything related to **cross account resources** both **the identity and the resource policy has to allow for the action**
 
-So when to use what?
+- the usual problem with cross-account s3 set ups is that **the bucket owner might not have the access to uploaded objects, because, by default, it's the uploader who retains the ownership of the objects**
 
-- _identity policy_
+  - **historically** developers **used ACLs to make sure the bucket owner controls the access to objects**
 
-  - when **you control the identity**. That means **identities within your account**.
-
-- _bucket policy_ (resource policy)
-
-  - when **you DO NOT control the identity**
-
-- by **exposing a role which can be assumed** by third party you are **making sure that YOU as a bucket owner stay as the owner of a given object**. This is why you would want to use _bucket policies_ when you do not control the identity.
-
-- if you are doing anything serious (like you know, your day to day job stuff), encrypt everything. You can start the default SSE-S3.
+  - **ACLs become obsolete** when AWS introduced **S3 Object Ownership**. When applied the **bucket owner will automatically be assigned ownership of an object**
 
 ##### Presigned URLs
 
@@ -6776,3 +6792,5 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 - "Building modern cloud applications? Think integration" -> Intersection between AWS services and integration patterns. Kind of worth
 
 - "Application integration patterns for microservices" -> A lot of examples with SQS and SNS. Talks about storage-first pattern (without naming it explicitly). Worth
+
+- "AWS re:Invent 2021 - Deep dive on Amazon S3" -> Good talk. Refresher on many AWS S3 features. Worth
