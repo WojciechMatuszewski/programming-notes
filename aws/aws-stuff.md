@@ -142,6 +142,21 @@
 
 - the filters **use _EventBridge_ pattern-like filtering**.
 
+###### Filter gotchas
+
+- **batch size** and **batch window** settings are taken into consideration **after the filtering**
+
+- remember that **with SQS** if a **message does not match your filter it will be deleted from the queue**
+
+  - you did not consume the message so it is deleted
+
+- with **SQS you are still going to pay for the pulling even if your Lambda was not invoked**
+
+- do **not use multiple filters on the same SQS queue**. This is because **SQS is single receiver service**.
+  - two filtering rules means two pollers
+  - "When a message does not pass the filter it is not returned to the queue. The message will be considered complete, and will not be available to other consumers, including other Event Source Mappings, even if they have matching filters." (https://bitesizedserverless.com/bite/filter-dynamodb-event-streams-sent-to-lambda/)
+  - remember that **this only relates to SQS, Kinesis and DDB streams are "safe" in that regard**
+
 #### Lambda destinations
 
 - **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
