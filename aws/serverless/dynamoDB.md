@@ -388,6 +388,16 @@ When you have the same `PK`, items with that `PK` will be on the same partition.
 
 To make sure your reads are always targeting the `leader` node (where data is placed first) - you have to manually tell dynamo, on operation basis, to perform a `consistent read / write`.
 
+### Global Tables consistency
+
+As good as the _Global Tables_ feature of _DynamoDB_ might seem, We should only use it for "append-only" use-cases. In the end, the tables are regional, and the "global" part is the **asynchronous** replication between those tables.
+
+The biggest no-no when it comes to **atomic updates** is that the **transactions are not distributed**, meaning that you might have conflicts when someone performs operations on two tables in different regions at the same time.
+
+> Take for instance a simple counter that you want to increment by 1 and need strictly linear counts. If you use global tables, you basically need to say "x-region" is now my primary. However, if there is a network partition, you can't really failover to a different region and guarantee you didn't already issue a number on a count. So you can't safely failover and must halt operations
+
+For a in-depth explanation of how _DynamoDB Global Tables_ handle consistency, checkout this video: https://www.youtube.com/watch?v=fqxL3WQ53GM&t=645s
+
 ## Sorting
 
 ### Lexical sorting

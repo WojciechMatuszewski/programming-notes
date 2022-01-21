@@ -1034,6 +1034,14 @@ An example for s3-prefix (folder)
 
 - when you **first** configure the **secrets rotation**, the **secret is rotated**. This means that the value of that secret is different than the initial value that you set that secret to. This might cause confusion where you forget to **update your application to actually use the `Secrets Manager` and you cannot connect to eg. a database.**
 
+#### Replication
+
+- it is possible to **replicate secrets across regions via "replica secrets"**
+
+- the replication is **native to the service**
+
+- the replication **works with secret rotation**
+
 #### Billing
 
 - **SSM itself is free** but there are various services that have some cost:
