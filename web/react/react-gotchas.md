@@ -213,3 +213,12 @@ In the end, this is a technical minutia rather than something you need to be awa
 Remember, in the end, your code has to be straightforward. You could use the behavior I'm explaining here to merge some of your `useEffect` callbacks with the `useLayoutEffect` ones into one, but what's the point?
 
 Keep it simple.
+
+## `target` vs `currentTarget` in DOM events
+
+When attaching event listeners to DOM nodes, you get access to the event in its "synthetic" form. The "synthetic" event is wrapped by React cross-browser compatible form.
+
+While working with React events, many people get confused. The `event` variable contains reference to the `target` and `currentTarget` elements.
+The difference between those two is related to _event bubling_.
+
+The `currentTarget` is the element that the **event "bubbled" onto**. The `target` is the **original element the event was fired-off from**.
