@@ -6816,4 +6816,4 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 - "Application integration patterns for microservices" -> A lot of examples with SQS and SNS. Talks about storage-first pattern (without naming it explicitly). Worth
 
-- "AWS re:Invent 2021 - Deep dive on Amazon S3" -> Good talk. Refresher on many AWS S3 features. Worth
+- "Deep dive on Amazon S3" -> Good talk. Refresher on many AWS S3 features. Worth

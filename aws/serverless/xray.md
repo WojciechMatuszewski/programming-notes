@@ -92,7 +92,7 @@ import AWSXray from "aws-xray-sdk";
 AWSXray.setAWSWhitelist({ services: {} });
 ```
 
-According to my experimentation **, the above setting does not mean "disable tracing for all services"**.
+According to my experimentation, **the above setting does not mean "disable tracing for all services"**.
 The **tracing will still work if you instrument a service with _X-Ray_**.
 
 ```js
@@ -110,6 +110,11 @@ await sqs.sendMessage({...}).promise()
 What will not be "traced" are the **additional parameters**. In the case of _SQS_ that might be the name of the queue. For _DynamoDB_ that might be _TableName_.
 
 Overall I find this API a bit confusing. I would expect the trace not to be there. Maybe I'm doing something wrong?
+
+### Manual sampling
+
+There are various ways one could implement manual sampling. Why? because it gives you full control over what and when is traced.
+[Here is a link](https://github.com/aidansteele/go-xrayprofile) to a great example written in Go and [here is the Tweet](https://twitter.com/__steele/status/1483311757078990848) explaining why and how.
 
 ## With AWS Lambda
 
