@@ -86,6 +86,12 @@ function PokemonDetail() {
 }
 ```
 
+### Confusion around `startTransition`
+
+TODO: write about the fact that the callback passed to `startTransition` seem to be invoked multiple times(?).
+
+- Tested on production build as well.
+
 ### The problem with `startTransition`
 
 The `startTransition` API is not flexible.
@@ -109,6 +115,46 @@ Here, the `deferredState` is a piece of state that might or might not cause a re
 By wrapping the `expensiveState` in the `useDeferredValue`, we tell _React_ to postpone updates to components that take this state if needed.
 
 Pretty good API if you ask me.
+
+### Confusion around `useDeferredValue`
+
+After playing around with `useDeferredValue`, I concluded that I do not understand its functionality one bit.
+
+My main point of confusion is around how `useDeferredValue` relates to _Suspense boundraries_. To illustrate, let us look at an example.
+
+```tsx
+function App() {
+  const [value, setValue] = React.useState(1);
+  const deferredValue = React.useDeferredValue(value);
+
+  const isLoading = deferredValue !== value;
+  return (
+    <div>
+      <button
+        onClick={() => {
+          setValue((v) => v + 1);
+        }}
+      >
+        Next pokemon ({value + 1})
+      </button>
+      <div style={{ opacity: isLoading ? 0.4 : 1 }}>
+        <React.Suspense fallback={<span>Loading...</span>}>
+          <RenderPokemon id={deferredValue}></RenderPokemon>
+        </React.Suspense>
+      </div>
+    </div>
+  );
+}
+```
+
+The **`RenderPokemon` fetches data and suspends**. It uses the `deferredValue` as a prop to fetch a pokemon.
+What confuses me here is the **behavior of the `div` that has the `style` prop defined**. It lives outside of the _Suspense boundary_, but, despite that, it **holds onto the "stale" value just as if it was wrapped with `Suspense`**.
+
+If you click on the button several times, the `isLoading` prop will be `false` after a couple of milliseconds, **but the `div` will still have the `opacity` set to `0.4`**. The **`opacity` will not change until the `RenderPokemon` component catches up**.
+
+**It seems like passing the `deferredValue` as a prop to a component that suspends "entangles" the `deferredValue` with the "suspense context" of that component**.
+
+I have no ide why is that.
 
 ## `useSyncExternalStore`
 
