@@ -154,6 +154,10 @@ If you click on the button several times, the `isLoading` prop will be `false` a
 
 **It seems like passing the `deferredValue` as a prop to a component that suspends "entangles" the `deferredValue` with the "suspense context" of that component**.
 
+I found a clue regarding the behavior in the [_React Hooks in Action_ book](https://livebook.manning.com/book/react-hooks-in-action/chapter-13/59).
+
+> If React can successfully render a new UI with the new value, and no children suspend or delay rendering, the hook returns the new value, and React updates the UI. If the new value causes React to wait for a process to complete before finishing rendering, the hook returns the old value, and React displays the UI with the old value (while working in memory on the UI with the new value).
+
 I have no ide why is that.
 
 ## `useSyncExternalStore`
