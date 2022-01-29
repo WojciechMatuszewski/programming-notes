@@ -87,3 +87,5 @@ Session from O'REILLY live training.
 ### Duplicates
 
 - Duplicates do happen. You **should build your customers in a manner that can handle duplicate records**.
+
+Stopped at 107:06
