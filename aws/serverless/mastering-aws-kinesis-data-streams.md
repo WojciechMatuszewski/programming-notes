@@ -88,4 +88,59 @@ Session from O'REILLY live training.
 
 - Duplicates do happen. You **should build your customers in a manner that can handle duplicate records**.
 
-Stopped at 107:06
+## Reading data from the stream
+
+- **By default**, the **throughput is shared** between consumers.
+
+- Direct integration with Kinesis Data streams (like Firehose) also count as regular customers.
+
+- By means of **enhanced fan-out** your consumer **will have a dedicated throughput**.
+
+  - Note that **direct integrations cannot** uso EFO.
+
+  - Note that **it costs more** to run enhanced fan-out consumers.
+
+## AWS Lambda as stream consumer
+
+- You do not have to keep track of the position in the stream.
+
+- Extensive error handling and retry capabilities.
+
+- **Lambda function** is **NOT the same as Lambda service**
+
+  - _Event Source Mapping_ is **part of Lambda service**.
+
+  - _Event Source Mapping_ is **invoking your Lambda synchronously**.
+
+- Each **shard** equals **one concurrent Lambda invocation**
+
+  - One might use **parallelization factor** to configure the **Lambda concurrency per shard**.
+
+  - Each Lambda will get a subset of partition keys.
+
+  - **Using parallelization factor** makes **ordering within a shard not possible**.
+
+- You can have two consumers originating from the same Lambda.
+
+  - One for the "regular" consumer (shared throughput), one for the enhanced fan-out (direct throughput).
+
+  - Your **Lambda will be invoked twice**.
+
+- **Beware of the poison pill problem**.
+
+  - There are many error handling settings you can add to ESM.
+
+  - `maxRecordAge`, `bisectOnError`, `onFailure`(destination) or `reportBatchItemFailures` (NEW!).
+
+  - Remember that **you can mix and match the modes from above**.
+
+### Tumbling windows
+
+- You can **retain state within your Lambdas (per shard) in a window**
+
+- The **functionality is similar to _Kinesis Data Analytics_** but the **main difference** is that the **aggregation happens on the shard level**,
+  and **not on the stream level** like in the case of _Kinesis Data Analytics_.
+
+## Closing
+
+You can find [the slides HERE](https://on24static.akamaized.net/event/33/30/25/0/rt/1/documents/resourceList1643034520756/masteringkinesis1262211643034520135.pdf).
