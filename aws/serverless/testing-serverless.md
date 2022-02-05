@@ -385,6 +385,34 @@ Just like every _E2E_ test, the confidence gain from this test is insane
 2. Are the conditions specified in the handler correct?
 3. Can the user upload images to S3 using the data returned in the response?
 
+### Testing Step Functions flows
+
+I'm aware of three ways to test _Step Functions_ flows.
+
+1. Use the [local mocking capabilities](https://aws.amazon.com/blogs/compute/mocking-service-integrations-with-aws-step-functions-local/).
+1. Decompose a given task into multiple parameters that you could import to your IaC code and into your test code. Graham Allan talks about this technique [here].
+1. Test the whole thing end-to-end and assert on the [_Step Function_ execution history](https://grundlefleck.github.io/2022/01/12/how-using-the-same-programming-language-for-iac-made-a-step-function-testable.html).
+
+I would argue that you can use each of those methods in some scenarios. It all depends on the needs we have. What follows is me writing about each testing technique in more detail while giving guidance on using it.
+
+TODO: https://github.com/WojciechMatuszewski/testing-aws-step-functions
+
+#### Local mocking capabilities
+
+- Nice for `Pass` states that transform data
+- Not so nice for `Task` states that interact with AWS services
+- How to only test `Pass` states? Some kind of logic in ASL needed?
+
+#### Decomposing the `Task` state
+
+- Very nice for testing inputs to a particular AWS service.
+
+#### End-to-end testing
+
+- Slow
+- Gives you the most confidence
+- Use the execution history API to retrieve steps results
+
 ## Testing batch processing and streaming
 
 There is a lot to think about when it comes to batch processing and streams. I think the main gotchas are idempotency and ensuring that one _poison pill_ is will not cause our service to halt completely.
