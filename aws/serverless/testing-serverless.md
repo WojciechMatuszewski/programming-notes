@@ -399,19 +399,157 @@ TODO: https://github.com/WojciechMatuszewski/testing-aws-step-functions
 
 #### Local mocking capabilities
 
-- Nice for `Pass` states that transform data
-- Not so nice for `Task` states that interact with AWS services
-- How to only test `Pass` states? Some kind of logic in ASL needed?
+I have a somewhat strong opinion regarding mocking AWS services – I do not think that is a good idea (albeit it might be in the context of unit tests).
+
+So what would be, **in my opinion**, a good use-case for using the local mocking capabilities (_aws-stepfunctions-local_ Docker image)? In my mind, such an environment is **great for testing the steps that transform the data** – the `Pass` states.
+
+How many times have you got stuck on some kind of transformation? Maybe the [_intrinsic function_](https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html) syntax was wrong? Or maybe the `resultPath` or other parameters?
+
+##### An example
+
+I want to test a `Pass` state that concatenates two strings together using the `States.Format` function. The following is an _AWS CDK_ definition of the infrastructure we will be working with.
+
+```ts
+export class LocalTesting extends Construct {
+  public transformIncomingDataStep: aws_stepfunctions.Pass;
+
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+
+    this.transformIncomingDataStep = new aws_stepfunctions.Pass(
+      this,
+      "TransformIncomingDataStep",
+      {
+        parameters: {
+          payload: aws_stepfunctions.JsonPath.stringAt(
+            "States.Format('{} {}', $.firstName, $.lastName)"
+          ),
+        },
+      }
+    );
+
+    const machine = new aws_stepfunctions.StateMachine(this, "StateMachine", {
+      definition: this.transformIncomingDataStep,
+    });
+  }
+}
+```
+
+I made the `transformIncomingDataStep` public on purpose. As I eluded earlier, I'm only concerned with steps that transform data and do not directly interact with other AWS services.
+
+Writing the test for the `transformIncomingDataStep` will be a bit involved. We have to:
+
+1. Spin up the Docker container with the Step Functions local image.
+1. Create a Step Function that only contains the `transformIncomingDataStep` ASL.
+1. Run the Step Function.
+1. Assert on the result.
+
+Starting with the first point. I like to use the `testcontainers` package for Docker image orchestration in tests.
+
+```ts
+let container: StartedTestContainer | undefined;
+
+beforeAll(async () => {
+  container = await new GenericContainer("amazon/aws-stepfunctions-local")
+    .withExposedPorts(8083)
+    .start();
+}, 15_000);
+
+afterAll(async () => {
+  await container?.stop();
+}, 15_000);
+```
+
+And here is the test itself.
+
+```ts
+test("The `TransformIncomingDataStep` works as expected", async () => {
+  const testIdentifier = Buffer.from(
+    `${__filename}_${expect.getState().currentTestName}`
+  )
+    .toString("hex")
+    .replace(/\d/g, "");
+
+  const stack = new cdk.Stack();
+  const construct = new LocalTesting(stack, testIdentifier);
+
+  const stepFunctionsASL = construct.transformIncomingDataStep.toStateJson();
+
+  const sfnClient = new SFNClient({
+    endpoint: `http://localhost:${container?.getMappedPort(8083)}`,
+  });
+
+  const createSFNResult = await sfnClient.send(
+    new CreateStateMachineCommand({
+      definition: JSON.stringify({
+        StartAt: "TestingStep",
+        States: {
+          TestingStep: {
+            ...stepFunctionsASL,
+            End: true,
+          },
+        },
+      }),
+      name: testIdentifier,
+      roleArn: "arn:aws:iam::012345678901:role/DummyRole",
+    })
+  );
+
+  const machineARN = createSFNResult.stateMachineArn;
+
+  const sendPayloadResult = await sfnClient.send(
+    new StartExecutionCommand({
+      stateMachineArn: machineARN,
+      input: JSON.stringify({
+        firstName: "Wojtek",
+        lastName: "Matuszewski",
+      }),
+      name: testIdentifier,
+    })
+  );
+
+  await waitFor(async () => {
+    const getExecutionHistoryResult = await sfnClient.send(
+      new GetExecutionHistoryCommand({
+        executionArn: sendPayloadResult.executionArn,
+      })
+    );
+
+    const exitedState = getExecutionHistoryResult.events?.find(
+      (event) => event.type == "PassStateExited"
+    );
+
+    expect(exitedState).toBeDefined();
+    expect(exitedState?.stateExitedEventDetails?.output).toEqual(
+      JSON.stringify({ payload: "Wojtek Matuszewski" })
+    );
+  });
+}, 20_000);
+```
+
+To somewhat guarantee the uniqueness of different identifiers used within the test (Step Function `name` and the Execution `name`), I created the `testIdentifier` variable.
+
+While the test setup might feel bloated, remember that you only have to code for it once. In the long run, it will save you time as deploying the changes, running the state machine, looking at the AWS console is a time-consuming process.
 
 #### Decomposing the `Task` state
 
-- Very nice for testing inputs to a particular AWS service.
+When it comes to decomposing the `Task` states, the technique is similar to what we have done in the [Local mocking capabilities](#local-mocking-capabilities) section.
+
+Instead of the `Pass` state, we make the service API call parameters publicly accessible. [Graham Allan](https://twitter.com/Grundlefleck) already wrote an [excellent article](https://grundlefleck.github.io/2022/01/12/how-using-the-same-programming-language-for-iac-made-a-step-function-testable.html) on this topic. I recommend you check out and try the approach he is proposing!
 
 #### End-to-end testing
 
-- Slow
-- Gives you the most confidence
-- Use the execution history API to retrieve steps results
+Depending on the complexity of your Step Function, the end-to-end testing can either give you a lot of confidence in the code you are shipping or be a slow process that tests only a particular branch of the Step Functions logic.
+
+Speaking from experience, the more complex the unit of deployment is (in our case, a Step Function), the harder it is to test all possible scenarios and branches of the logic embedded within that unit.
+
+To test Step Functions flows end to end, we have to:
+
+- Assume a role that allows us to invoke and probe the given Step Function. This might be the role you use for deploying our development stack.
+- Start the Step Functions execution.
+- Assert on the execution history.
+
+The difficulty arises whenever a given Task depends on a response from some other service that we do not control. Suppose we cannot force a given response from that particular service. In that case, we might find ourselves in a situation where testing the given Step Function branch is impossible!
 
 ## Testing batch processing and streaming
 
