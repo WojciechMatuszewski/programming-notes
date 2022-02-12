@@ -242,3 +242,33 @@ Anyhow, you can get yourself familiar with them [on this documentation page](htt
 The most important part is the one that talks about the `maxReceiveCount` configuration property.
 
 > If you configure reserved concurrency on your function, set a minimum of five concurrent executions to reduce the chance of throttling errors when Lambda invokes your function.
+
+## EventBridge policies
+
+If you ever interacted with the EventBridge API, you know it is possible to specify the permissions on multiple levels.
+
+1. As a topmost property on the EventBridge rule
+2. As a property for a given target
+3. As a resource policy on the target, the EventBridge is targeting.
+
+One might think that specifying a wide enough permission on the topmost level would be enough to make everything work, right? (I'm not advocating for this practice. It isn't good IMO).
+
+Well, **wrong**. According to the [EventBridge documentation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-use-resource-based.html), there are some rules regarding which policy is used for a target.
+
+I have to admit that I'm a bit mad that they have decided to do permissions this way. I've wasted so much time debugging the SQS integration only to discover that my queue did not have a resource policy attached to it. (If the resource is not used in a cross-account manner, either the identity or the resource policy dictates the permissions).
+
+If you ever find yourself in a similar situation, **keep in mind how the EventBridge service interacts with IAM**.
+
+## Eventual consistency of some resources
+
+In distributed systems word, we cannot hide from eventual consistency. Some resources might only be available after certain period of "grace period".
+
+### SQS
+
+TIL that you have to wait 1 second after creating the queue to use it. If you delete the queue, you also have to wait 1 second after creating it again. [Check out the documentation for more info](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_CreateQueue.html).
+
+### EventBridge rules
+
+The EventBridge rule creation is eventually consistent, which means that it is possible to send a message to the bus only for it never to be delivered to its destination. I could not reproduce it myself, but the issue was confirmed by [Nicolas](https://twitter.com/NMoutschen) on AWS Community Builders on Slack.
+
+> and yeah, the EventBridge rule creations are eventually consistent, so I had to create the rules in advance
