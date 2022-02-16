@@ -6554,9 +6554,10 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 - you can also **transform your data**, albeit the capability to do so is a bit limited.
 
 - the **mapping from SaaS to your application** is handled in **one to one ratio**.
+
   - if the SaaS app has a lot of entities (billing, customer, etc) good luck!
 
-  
+- you **pay per flow and per amount of data transfered**.
 
 ### AWS Macie
 
