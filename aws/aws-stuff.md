@@ -6547,6 +6547,17 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - **users will always get the newest version of an app**.
 
+### AWS AppFlow
+
+- **create data pipeline with read/write capabilities**.
+
+- you can also **transform your data**, albeit the capability to do so is a bit limited.
+
+- the **mapping from SaaS to your application** is handled in **one to one ratio**.
+  - if the SaaS app has a lot of entities (billing, customer, etc) good luck!
+
+  
+
 ### AWS Macie
 
 - service **similar to AWS Inspector but for S3**.
