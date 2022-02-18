@@ -503,6 +503,10 @@ Now we are in the domain of a given service / resource.
 
   This means that **it is the identity that a given service assumes that has to have permissions enabled for DynamoDB**
 
+- remember that **the `Resource` or `NotResource` is a required field** for the _Resource Policy_ to work.
+  - you **might not get an error if you create one without it, but it will not work!**.
+  - this is **different** than in the **context of _Identity-based Policy_** where **the `Principal` field is implied, thus not necessary**.
+
 ###### Cross account
 
 - you can setup **cross account resource policies**.
@@ -607,9 +611,19 @@ An example for s3-prefix (folder)
 
 - you **should avoid using IAM Users if you can**. You can use the **AWS SSO for federated access with AWS Organizations**
 
-#### Tags
+#### Tags and ABAC
 
 - you can use `aws:PrincipalTag` to lookup tags **attached to an user or a role**.
+
+- **some services do not support ABAC** style of access control.
+
+  - to support ABAC the service has to **support tags and the `aws:PrincipalTag` IAM variable**.
+
+- the `aws:PrincipalTag` IAM variable is **attached at the moment of the `sts` call**.
+
+- **make sure** that the **resource policy has `Resource` field populated**. Otherwise **the resource policy will NOT work and be ignored silently!**.
+
+- ABAC is nice because it **pushes the access control very close to the resource**. Meaning that **it scales linearly with the amount of new resources** you have in your account.
 
 #### Certs
 
