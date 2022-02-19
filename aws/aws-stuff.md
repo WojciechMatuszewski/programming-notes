@@ -6021,6 +6021,22 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - compared to the custom resouces, if you are writing something more serious, it's a better choice
 
+#### Hooks
+
+- allows you to **proactively apply compliance checks** on resources
+
+  - whenever you update, delete or create a given resource
+
+- previously, all the compliance checks were performed on already deployed resource (AWS Config)
+
+  - this is not ideal as the resource might caused problems
+
+- works on the backbone of **CloudFormation registry**
+
+  - to develop, use the `cloudformation-cli` and the language plugin of your choice.
+
+  - [link to the blogpost](https://aws.amazon.com/blogs/mt/proactively-keep-resources-secure-and-compliant-with-aws-cloudformation-hooks/).
+
 #### Modules
 
 - these are packages templates
