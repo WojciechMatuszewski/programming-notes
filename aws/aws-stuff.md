@@ -6037,6 +6037,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
   - [link to the blogpost](https://aws.amazon.com/blogs/mt/proactively-keep-resources-secure-and-compliant-with-aws-cloudformation-hooks/).
 
+- as of writing this, the `cloudformation-cli-typescript-plugin` does not support Hooks.
+
+  - the types and bindings are not there.
+
+  - it seems to me that Java and Python versions are prioritized first.
+
 #### Modules
 
 - these are packages templates
