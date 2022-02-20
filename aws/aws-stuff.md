@@ -6001,9 +6001,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### Custom Resources
 
-- CF rather can creating a specific resource will **send event data to either lambda function or SNS topic**.
+- CFN rather can creating a specific resource will **send event data to either lambda function or SNS topic**.
 
-- CF expects that the remote entity **responds with a correct response**.
+- CFN expects that the remote entity **responds with a correct response**.
+
+- **considered legacy** since the introduction of **CFN _resource types_ (_resource providers_) and _modules_**.
+  - while this might be true, the Custom Resources are very convenient to create.
 
 ##### Lambda custom resources
 
@@ -6045,9 +6048,9 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### Modules
 
-- these are packages templates
+- these are packages templates.
 
-- their `Type` ends with a `MODULE` - it's very specific
+- their `Type` ends with a `MODULE` - it's very specific.
 
 #### Wait Conditions
 
