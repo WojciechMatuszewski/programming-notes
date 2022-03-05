@@ -93,6 +93,9 @@ What if your favorite way of writing lambdas is by using bash? Or maybe you want
   - If we are dealing with **new code being deployed**, the cold start will be **relatively long**
   - If we are dealing with **env update**, the cold start will be **relatively short**
 
+- according to [this article](https://dev.to/kylehigginson/analysing-cold-starts-on-node-lambda-3i05) the biggest contributor to the cold start is the AWS Lambda package size
+  - makes sense if you think about it
+
 ### Initialization time
 
 - **adding more memory (thus CPU) WILL NOT AFFECT THE SPEED OF THE INITIALIZATION**. This is because lambda is run at full power, always, at initialization.
