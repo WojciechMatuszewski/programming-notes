@@ -75,32 +75,27 @@ You should consider using some kind of `ID` or `MD5` has for the execution ID.
 
 ## Service Integrations
 
-- when a fields **ends with `.$`** this means that the **value can use the input or context**.
+AWS Step Functions expose two types of service integrations. The _optimized_ and the _sdk_ service integrations. The _optimized_ service integrations predate the _sdk_ ones but a couple of years.
 
-  ```json
-  {
-    "Parameters": {
-      "ExecutionID.$": "$$.Execution.Id",
-      "SomethingFromInput.$": "$.valueFromInput"
-    }
-  }
-  ```
+With the addition of the _sdk_ service integrations, you can wire up many AWS services together via AWS Step Functions. This was not the case with _optimized_ service integrations, as only a few of them exist.
 
-- if you use `.$` on a field name, **you cannot combine paths with strings, it's all or nothing**
+### Optimized integrations
 
-  ```json
-  {
-    // NOT VALID
-    "pk.$": "KEY#$$.Execution.Id"
-  }
-  ```
+The optimized service integrations are "deeper" in functionality than the sdk ones. A good example would be the AWS Lambda optimized integration, where the result is returned to you as JSON and not as an escaped string.
 
-- you **cannot use `StartSyncExecution` with _regular_ step function**, you have to use the _express_ one for that
+#### The differences between SDK and optimized integrations
 
-### DynamoDB integration
+- The SDK integrations expose the whole API of a given service. The optimized integrations are not.
 
-Very useful but a bit "underpowered". Lacks the `Query` API that would open a door for a whole set of new use-cases.
-Think fan-out patterns after reading the DDB and much more.
+- The optimized integrations are "deeper" – they have additional functionality, like parsing the results, baked in.
+
+- For some services, the error handling differs (depending on the service SDK). The optimized integrations will introspect the result and force the step to fail if the call fails, the SDK integration will return the response from the API, and if the status is not 4xx or 5xx, it will mark the step as successful (think AWS Lambda optimized vs sdk integration).
+
+### SDK integrations
+
+The SDK integration is a bare-bones way of calling the service API using the ASL language. There are no additional niceties, as in the case of optimized service integrations.
+
+With the SDK integrations, you have the whole service API surface to pick from. For example, you can perform the DynamoDB `Scan` or `Query` calls, which is impossible with optimized integration.
 
 ### Waiting for other tasks
 
