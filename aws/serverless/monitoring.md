@@ -10,6 +10,14 @@ To ensure that your metric is not laying to you, you should create at least 2 _d
 You could try using _EMF_ and instrumenting with `performance.now` within the handler of the function. While this might be what you want, you have to take into consideration, that this method will not capture the _init phase_ of your lambda function.
 Another solution would be to write a **custom _extension_**. With this you have access to the `init` phase (can be notified of it).
 
+## Buffer the _debug_ level logs
+
+To reduce the Amazon CloudWatch costs (from my experience, they are usually the bulk of the costs of a typical, low to medium traffic serverless application), you should reduce the number of logs you produce.
+
+Fewer logs mean less "noise" and lower costs. But what if we need those verbose logs because, for example, an error happened, and we need to debug the root cause fast?
+
+One technique that I'm aware of is to **buffer the verbose logs and release the buffer only when an error happens**. I've described this technique in [this blog post](https://dev.to/aws-builders/saving-on-aws-lambda-amazon-cloudwatch-logs-costs-51od). It gained some traction, so I think the implementation is somewhat worth your time.
+
 ## Metrics math
 
 This feature allows you to create metric out of multiple other metrics. You have _functions_ at your disposal.
@@ -53,5 +61,4 @@ Well, it turns out that tool is using just that exact technique!
 ### Objectively better than CloudTrial
 
 CSM is a objectively better way of knowing what exactly is going on within your AWS account than CloudTrial.
-While the ergonomics of CSM are not up to pair, the level of visibility it gives you is unmatched.
-Personal recommendation: you probably need both tools, so use them in conjunction, not separation.
+While the ergonomics of CSM are not up to pair, the level of visibility it gives you is unmatched. Personal recommendation: you probably need both tools, so use them in conjunction, not separation.
