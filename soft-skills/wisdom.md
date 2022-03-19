@@ -53,4 +53,16 @@ When picking what kind of task you should do next, always ask yourself, how can 
 
 Keep searching for bottlenecks and improve those, do not waste time on anything else.
 
+## The Product-Minded Software Engineer
+
+You can write the best code in the world, but your product might fail if your code is not helping customers use your product.
+
+This is where the notion of the _product-minded software engineer_ comes into the picture. If you are a product-minded software engineer, the technical decisions do not stem from technical minutia but rather concrete product needs.
+
+You have to **understand the business domain you are in** and have enough courage to ask the _why?_ questions during feature planning. Questions often provoke thinking deeply about a given subject – thinking deeply about a given topic can result in breakthroughs (usually the good ones).
+
+Consider reading [this great article](https://blog.pragmaticengineer.com/the-product-minded-engineer/) on becoming more product-minded in your day-to-day work.
+
+## TODO
+
 - TODO: Big ball of mud
