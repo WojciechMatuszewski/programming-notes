@@ -37,6 +37,8 @@
 
 - by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
 
+- up to 10GB of ephemeral storage (starting at 512 MB)
+
 #### Billing
 
 - executions are **billed by the millisecond**
@@ -2281,7 +2283,9 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Backups
 
-- you can **backup tables to s3**
+- you can **backup and export tables to s3**
+
+  - **exporting the table to s3** does **NOT consume read capacity**
 
 - the saved **backup contains table data + RCU/WCU units**
 
