@@ -269,14 +269,59 @@ const fetchWithTimeout = (url, options = {}) => {
 };
 ```
 
-Notice that neither `fetchWithTimeout` nor `throwOnTimeout` attempts to clear the timeout defined in `throwOnTimeout`.
-So what will happen if the `fetch` is faster than the timeout?
+Notice that neither `fetchWithTimeout` nor `throwOnTimeout` attempts to clear the timeout defined in `throwOnTimeout`. So what will happen if the `fetch` is faster than the timeout?
 
-Well, first the good news - **if the `fetch` is faster than the `throwOnTimeout` you will get the `fetch` result**.
-It might seem like the promise defined in `throwOnTimeout` was ignored. Sadly this is not the case – this bring me to the bad news.
+Well, first the good news - **if the `fetch` is faster than the `throwOnTimeout` you will get the `fetch` result**. It might seem like the promise defined in `throwOnTimeout` was ignored. Sadly this is not the case – this bring me to the bad news.
 
-The bad news is that **unless you explicitly cancel the timeout defined in `throwOnTimeout` the `setTimeout` callback will be executed regardless of the state of `fetch`**.
-Usually this is not a big deal. But in some cases some resources might be allocated in that callback. In such situation a memory leak is likely to occur.
+The bad news is that **unless you explicitly cancel the timeout defined in `throwOnTimeout` the `setTimeout` callback will be executed regardless of the state of `fetch`**. Usually this is not a big deal. But in some cases some resources might be allocated in that callback. In such situation a memory leak is likely to occur.
+
+### Using the `AbortSignal` API
+
+The `Promise.race` API can lead to memory leaks if not implemented properly. Luckily for us, we can use `AbortSignal` in Node to ensure no memory leak occurs whenever a given promise rejects or completes.
+
+The following is the code that implements a _race_ between a timeout and the request and utilizes the `AbortSignal` API to ensure that no memory leaks can occur.
+
+```js
+const { setTimeout } = require("timers/promises");
+
+const makeRequest = async ({ signal }) => {
+  // Makes the request...
+};
+
+const cancelTask = new AbortController();
+const cancelTimeout = new AbortController();
+
+const timeout = async () => {
+  try {
+    await setTimeout(1000, undefined, { signal: cancelTimeout.signal });
+    cancelTask.abort();
+  } catch {
+    return;
+  }
+};
+
+const task = async () => {
+  try {
+    await makeRequest({ signal: cancelTask.signal });
+  } finally {
+    cancelTimeout.abort();
+  }
+};
+
+const main = async () => {
+  Promise.race([timeout, task]);
+};
+
+main();
+```
+
+The **most crucial** thing to notice here is that the _task_ function cancels the _timeout_ function and vice-versa.
+
+This ensures that no matter the outcome of the _race_, all resources are cleaned up, and nothing is left hanging (like the `setTimeout` callback in the previous example).
+
+Please note that the `AbortSignal` API is available in Node 16+.
+
+Consult [this article](https://www.nearform.com/blog/using-abortsignal-in-node-js/) for more information.
 
 ## Error handling and promises - the most important rules
 
