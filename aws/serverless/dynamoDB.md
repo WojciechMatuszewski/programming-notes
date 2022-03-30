@@ -661,3 +661,31 @@ add logic so that the writes are spread and increase gradually.
 #### Update the _Provisioned Capacity_ settings before a big spike
 
 Usually done before big events that are very profitable for your business. In such critical moments, it's better to burn a bit more on a database, than to crash because of the load.
+
+## Data integrity
+
+As they often say, the data is the new gold. I support this statement as, in most cases, data drives any product forward (be it a customer, order, or any other data entity).
+
+How can we ensure we do not violate data integrity if data is so important?
+
+### Data types
+
+When writing to DynamoDB, you have to explicitly tell the service what the data type of a given attribute is. This alone does not guarantee protection against writing the wrong type of data for a given attribute, but it forces developers to at least think about it.
+
+I would say that the solution here would be to validate the data you will write against a JSONSchema. That should give you enough confidence.
+
+### Required fields
+
+Very similar to the previous point. Depending on the operation, you can use a JSONSchema (for create operations) or the DynamoDB conditions syntax (for update operations).
+
+### Use data-access layer
+
+You have to consider many things while working with data and databases. Would not it be nice to centralize all that logic into one module? Definitely.
+
+So, as they preach in most programming books – use the data-access layer and work on domain objects within your application and not the "raw" database objects.
+
+This approach will save you time and money in debugging time.
+
+### Resources
+
+- https://serverlessfirst.com/data-integrity-considerations-writing-to-dynamodb
