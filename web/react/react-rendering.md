@@ -112,3 +112,5 @@ _side effects_ within your component, and they are not wrapped with `useEffect`,
 So to flush those cases as early as possible, the `React.Strict` simulates the behavior of _time slicing_ without employing any magic that might be behind this feature.
 
 So if you evert wondered why your components are called at random during the development after you have added the `React.Strict` flag, now you know.
+
+TODO: write https://www.zhenghao.io/posts/react-rerender
