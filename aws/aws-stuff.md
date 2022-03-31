@@ -5310,13 +5310,23 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - what I would suggest is to **make cloud watch log group as your target**. You will be able to see all the events!
 
 - one approach would be to create a _catch-all_ rule that forwards the events to a log group.
+
   Another would be to create additional log group target for each rule.
   No matter which approach you pick **remember about the CloudWatch costs. Use the _input transformer_ to ensure you log only what you need**
 
 - while adding artifical targets to test the event filtering works, how one might go about **seeing the output of the target rule?**.
+
   - very **handy** when the **rule invokes another service**
+
   - i would **recommend using _CloudTrail_** and **looking at the service event that the rule triggers**
+
   - **to my best knowledge** there is **no other way to track success of the delivery** – apart from **CloudWatch metrics**.
+
+##### Event Sampling
+
+The EventBridge service does not support event sampling out of the box. To enable event sampling, one can cleverly utilize event filtering.
+
+[Thi blog post](https://dev.to/aws-builders/one-weird-trick-for-sampling-eventbridge-events-mlp) talks about just that. Consider giving it a read!
 
 #### DLQ
 
