@@ -228,7 +228,9 @@
 
 - this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of space
 
-- you can **reference container images residing in a different AWS account**.
+- you can **reference container images residing in a different AWS account**
+
+- **you pay for the INIT time** – this is not the case for zip-packaged functions.
 
 ##### Storage copy issue
 
@@ -3686,7 +3688,7 @@ Way of grouping EC2 instances.
   - **hot attached**: when instance is running
   - **warm attached**: when instance is stopped
   - **cold attached**: when instance is launched
-- with **mutliple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and not on the EC2 itself.
+- with **multiple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and not on the EC2 itself.
 
 ### AWS Batch
 
