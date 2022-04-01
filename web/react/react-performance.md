@@ -369,7 +369,7 @@ function App() {
 In above snippet, your _context value_ might be _memoized_ but the `Parent` will still be _invoked_ (no commits to the DOM though) when the button is clicked.
 This is where the notion of **having `React.memo` in strategic parts of your app** comes in.
 
-## Expensive initial rendering
+### Expensive initial rendering
 
 https://itnext.io/improving-slow-mounts-in-react-apps-cff5117696dc
 

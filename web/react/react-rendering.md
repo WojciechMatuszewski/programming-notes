@@ -113,4 +113,20 @@ So to flush those cases as early as possible, the `React.Strict` simulates the b
 
 So if you evert wondered why your components are called at random during the development after you have added the `React.Strict` flag, now you know.
 
-TODO: write https://www.zhenghao.io/posts/react-rerender
+## Render bail-out
+
+Knowing when React will bail-out of committing your component to the DOM is very handy in any optimization / performance-related work.
+
+For React to deem your component "unchanged" (React does not need to commit the result of invoking your component to the DOM), the component must meet the following criteria.
+
+- Your component is already mounted.
+
+- If your component consumes the React context, there were no context changes.
+
+- Your component itself did not schedule an update.
+
+- Your component props did not change.
+
+As you can see, the list is not short, but as long as you try your best to pass primitive props, avoid oversharing the React context, you should be good on that front.
+
+If you wish to learn more about the bail-out criteria and how React renders your components in depth, I suggest you read [this great article](https://www.zhenghao.io/posts/react-rerender). It explains the rendering mechanics much better than I ever could.
