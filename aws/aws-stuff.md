@@ -5358,6 +5358,28 @@ The EventBridge service does not support event sampling out of the box. To enabl
 - here is a [great article](https://medium.com/lego-engineering/amazon-eventbridge-how-to-manage-api-connection-credentials-with-aws-secrets-manager-f773f7d2aac5) on how the _API Destinations_ and the _AWS Secrets Manager_ interact with each other.
   - the TLDR is that the _EventBridge_ is eating the cost of calling the secrets manager.
 
+#### Event patterns
+
+- there is the **thin event** where you only store IDs and a minimal amount of metatada
+
+  - can create coupling between services as the receiver might need to fetch additional data from the sender
+
+  - minimal payloads have poor filtering capabilities
+
+  - easier to manage and think about in the grand scheme of things
+
+  - since the event is _thin_, you might need to send more of them
+
+- there is the **fat event** also known as **_Event-Carried State Transfer_**
+
+  - this is where you attach metadata as well as partial event data in the event itself
+
+  - better for filtering
+
+  - the payload can become bloated due to the increased amount of use-cases of different event consumers
+
+- more about EventBridge events – [this youtube video](https://www.youtube.com/watch?v=OLeL4B_iXxE).
+
 ### Amazon MQ
 
 - occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
