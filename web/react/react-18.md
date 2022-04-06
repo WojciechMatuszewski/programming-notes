@@ -172,3 +172,11 @@ I think [this GitHub comment](https://github.com/reactwg/react-18/discussions/12
 It seems like the `useSyncExternalStore` is meant to be a drop-in replacement for _subscription-like_ hooks. The idea is to make sure tearing never happens.
 
 I did not find any concrete examples while reading the [discussion about the API](https://github.com/reactwg/react-18/discussions/86). A great excuse to dive into writing my own!
+
+## My `fallback` prop in `React.Suspense` is not rendering
+
+After playing around with `useDeferredValue` and `useTransition`, you might have noticed that the `fallback` prop you pass to `React.Suspense` is only rendered "the first time" you change the application state.
+
+This is because **in a low-priority render, React will render previously committed UI instead of discarding it in favor of the `fallback` prop**. Imagine how annoying it would be for the UI to transition from `fallback` prop UI to the "proper" one – so many layout shifts!
+
+It is crucial to understand this concept as you might have been taught that React will always render the `fallback` prop while it suspends – that is not the case!
