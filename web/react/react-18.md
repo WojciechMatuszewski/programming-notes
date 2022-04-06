@@ -173,6 +173,32 @@ It seems like the `useSyncExternalStore` is meant to be a drop-in replacement fo
 
 I did not find any concrete examples while reading the [discussion about the API](https://github.com/reactwg/react-18/discussions/86). A great excuse to dive into writing my own!
 
+## `useId`
+
+Imagine you are using SSR. You create some ID in the body of the component and pass that ID as a prop. Since your component will be invoked twice (once on a server, once on a client), **you will most likely face hydration mismatches due to different ID values on the server and the client**.
+
+The following is the example usage of the `useId` hook.
+
+```jsx
+function Checkbox() {
+  const id = useId();
+  return (
+    <>
+      <label htmlFor={id}>Do you like React?</label>
+      <input type="checkbox" name="react" id={id} />
+    </>
+  );
+);
+```
+
+### How do they maintain the "stability"
+
+The million-dollar question is: how the hell do they maintain the stability of the ID between SSR render and hydration. The API is designed to be called inside the component body, so it must be called twice and return the same unique value.
+
+From what I was able to gather in [this PR](https://github.com/facebook/react/pull/22644), the **`useId` uses the components tree position (which should not change between SSR and hydration, to generate a stable identifier**. Literally 200 IQ move.
+
+## `useInsertionEffect`
+
 ## My `fallback` prop in `React.Suspense` is not rendering
 
 After playing around with `useDeferredValue` and `useTransition`, you might have noticed that the `fallback` prop you pass to `React.Suspense` is only rendered "the first time" you change the application state.
