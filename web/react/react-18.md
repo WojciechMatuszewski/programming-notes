@@ -116,13 +116,11 @@ By wrapping the `expensiveState` in the `useDeferredValue`, we tell _React_ to p
 
 Pretty good API if you ask me.
 
-### Confusion around `useDeferredValue`
+### How the `useDeferredValue` works
 
-After playing around with `useDeferredValue`, I concluded that I do not understand its functionality one bit.
+The behavior of the `useDeferredValue` can be confusing. How come the hook returns the "stale" value for some renders while returning the "up-to-date" version for others (see the example below)?
 
-My main point of confusion is around how `useDeferredValue` relates to _Suspense boundraries_. To illustrate, let us look at an example.
-
-```tsx
+```jsx
 function App() {
   const [value, setValue] = React.useState(1);
   const deferredValue = React.useDeferredValue(value);
@@ -147,18 +145,27 @@ function App() {
 }
 ```
 
-The **`RenderPokemon` fetches data and suspends**. It uses the `deferredValue` as a prop to fetch a pokemon.
-What confuses me here is the **behavior of the `div` that has the `style` prop defined**. It lives outside of the _Suspense boundary_, but, despite that, it **holds onto the "stale" value just as if it was wrapped with `Suspense`**.
+To understand how `useDeferredValue` works, we must understand one of the following: **React can now mark a render as "low priority" and return a "stale" value for that render for a given hook. In this case, the `useDeferredValue` hook**.
 
-If you click on the button several times, the `isLoading` prop will be `false` after a couple of milliseconds, **but the `div` will still have the `opacity` set to `0.4`**. The **`opacity` will not change until the `RenderPokemon` component catches up**.
+- The `setValue` update is a high-priority one.
 
-**It seems like passing the `deferredValue` as a prop to a component that suspends "entangles" the `deferredValue` with the "suspense context" of that component**.
+- The button text updates and the **`useDeferredValue` returns a "stale" value of the initial value (1)**.
 
-I found a clue regarding the behavior in the [_React Hooks in Action_ book](https://livebook.manning.com/book/react-hooks-in-action/chapter-13/59).
+- React "remembers" that the deferred value will need to transition to `1` in a later, low-priority render.
 
-> If React can successfully render a new UI with the new value, and no children suspend or delay rendering, the hook returns the new value, and React updates the UI. If the new value causes React to wait for a process to complete before finishing rendering, the hook returns the old value, and React displays the UI with the old value (while working in memory on the UI with the new value).
+- The `opacity` is applied as the `deferredValue` is NOT equal to `value`.
 
-I have no ide why is that.
+- React has nothing better to do, so it works on the deferred update.
+
+  - The `value` is set to two (after the first update).
+
+  - The `useDeferredValue` returns two (just like the `value`) in this render.
+
+  - Since we do not have results for `RenderPokemon` with `id` of 2 yet, **React suspens**. **Usually, this would cause the `fallback` to render, but since we are in the low-priority render, React can keep the previously committed result visible**.
+
+- React commits the result.
+
+I think [this GitHub comment](https://github.com/reactwg/react-18/discussions/129#discussioncomment-2440646) is the best explanation of this feature one can ever get.
 
 ## `useSyncExternalStore`
 
