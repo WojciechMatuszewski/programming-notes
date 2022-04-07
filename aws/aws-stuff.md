@@ -240,6 +240,11 @@
 
 - when you are loading large datasets, it takes time, those chunks have to be downloaded. Lambda might timeout before the dataset is loaded
 
+##### Lambda layers
+
+- Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your layers**
+  - You can find the list of the specific directory names for a given runtime here: https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path
+
 ##### Lambda layers and extensions with container deployments
 
 - lambda layers are not directly supported with the container deployments
