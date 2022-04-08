@@ -25,7 +25,7 @@
 
 - **IOPS** is a measurement of a **number of read / write operations per second**
 
-### Lambda
+### AWS Lambda
 
 - **LAMBDA IS HA by default! MULTI-AZ!**
 
@@ -166,6 +166,22 @@
 - works only for **async** and **stream based invocations**.
   - if you need to setup **destinations of pool-based invocations** then you might be interested in **setting destinations on EventSourceMapping** itself.
   - in these types of invocations, the **EventSourceMapping** controls the batching and pushing the events to your lambda
+
+#### Lambda function URLs
+
+- Previously, to expose your AWS Lambda function via an URL, you had to front it with either an ALB or APIGW.
+
+- With the Lambda Function URLs, you no longer have to use those services. You can expose your AWS Lambda function URL without the help of an ALB or APIGW.
+
+- Keep in mind that resource policies still apply. Depending on the authorization scheme you choose (IAM or None), you must ensure the resource policy is valid.
+
+- Using Lambda Function URL, you lose the niceties provided by APIGW like request validation, throttling, usage plans, and WAF support.
+
+  - Not all is lost, though. You can **front the Lambda Function URL with CloudFront**. This gives you the ability to use WAF but only on the CloudFront domain URL.
+
+  - When it comes to throttling, you could use the **reserved concurrency** feature of AWS Lambda. Not ideal, but an alternative nevertheless.
+
+- For more information, consult [this great article](https://lumigo.io/blog/aws-lambda-function-url-is-live/).
 
 #### Resource-based policies
 
