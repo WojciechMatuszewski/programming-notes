@@ -588,6 +588,28 @@ How might one build such a model?
 While this setup might not be a "true" WORM datastore, it might be sufficient for your needs.
 If you find this solution lacking, I would suggest looking into the [S3 Object Lock features](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html).
 
+## Analytics
+
+You might think that DynamoDB, a NoSQL database, might be unusable for any analytics use-cases. While there is SOME truth to that, it is not all doom and gloom.
+
+### Utilizing periodic `Scan` operations
+
+Depending on the size of your data, performing the `Scan` operation on your table might be a completely valid strategy. It all depends on the frequency and the size of your data.
+
+If you need to perform the `Scan` operation infrequently and the size of your data is relatively small, I would say that you should go for it. In most cases, you pay more for GSI replication than performing the `Scan` operation once in a while.
+
+### Export to S3
+
+You can also export your data in DynamoDB to S3 and use BI-specific tools on the exported data. The DynamoDB does not consume any RCU/WCU during the export operation because **the export is based on the PITR backup instead of the live data**.
+
+Remember that the export operation might take a while, even for tables with barely any data. One of my colleagues, Graham, raised [the question about the wait time on Twitter](https://twitter.com/Grundlefleck/status/1511359776478879752).
+
+### DynamoDB streams to Firehose to S3
+
+Ah, the "classic" data pipeline. Firehose is an excellent tool for putting stuff into S3. As long as your data is on S3, you can use Athena for BI things.
+
+You can find a blogpost regarding this architecture [here](https://aws.amazon.com/blogs/database/how-to-perform-advanced-analytics-and-build-visualizations-of-your-amazon-dynamodb-data-by-using-amazon-athena/).
+
 ## Cost considerations
 
 ### Measure before you optimize
