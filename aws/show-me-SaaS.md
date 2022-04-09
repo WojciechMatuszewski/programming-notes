@@ -39,3 +39,17 @@
 - It is nice to see the CloudFormation -> SNS pattern to wait for the deployment to finish.
 
   - It is a pity that CloudFormation does not support EventBridge thought.
+
+## Episode 4 - Designing Multi-Tenant Microservices
+
+- You might find your microservices split works differently for a single-tenant vs. multi-tenant environment.
+
+- Noisy neighbor problem is significant to handle in a multi-tenant environment.
+
+  - Distribution of load and profiling comes into play here.
+
+- It is important **not to leak** multi-tenancy into many layers of your code. Your code has to understand the relation between the request and the tenant. How contained can you make it?
+
+- Create small, reusable functions that deal with the tenancy. Use them inside your "main" code.
+
+- **Do NOT** create a microservice especially for handling the concept of a tenancy. It is hazardous to do so as that microservice becomes a singular point of failure. It is better to duplicate code than have such a microservice.
