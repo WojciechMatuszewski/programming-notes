@@ -5262,6 +5262,32 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - remember that the **DLQ takes care of the EventBridge communication with other services**. The **EventBridge does not care if eg. your lambda function throws an error or not**. If that's the case, **you will sometimes need two DLQs - one for EB, one for the target itself**.
 
+##### Event Replay
+
+- the archive feature allows you to replay events from the archive
+
+- **the order in which the events are replied is random**
+
+##### Cross-region capabilities
+
+- you can route events from one region to another, between different buses.
+
+- the **list of supported regions** is limited.
+
+- **remember** about the **resource / identity** policy combination needed for cross-region stuff on AWS.
+
+- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-cross-region-event-routing-with-amazon-eventbridge/).
+
+##### Global endpoints
+
+- managed endpoint with automatic failover to a secondary region (related to the _cross-region_ capabilities).
+
+- failover via R53 based on a special metric.
+
+- allows for _"Active/Archive"_ architectures.
+
+- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-global-endpoints-for-amazon-eventbridge/).
+
 #### Schema Registry
 
 - source of truth for events that flow through the EventBridge
@@ -5314,12 +5340,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you can **return static response** to given service. This of counting service
 
-#### Event Replay
-
-- the archive feature allows you to replay events from the archive
-
-- **the order in which the events are replied is random**
-
 #### Batching
 
 - there is **not build-in batching** like SQS
@@ -5350,12 +5370,6 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 The EventBridge service does not support event sampling out of the box. To enable event sampling, one can cleverly utilize event filtering.
 
 [Thi blog post](https://dev.to/aws-builders/one-weird-trick-for-sampling-eventbridge-events-mlp) talks about just that. Consider giving it a read!
-
-#### DLQ
-
-- you can set up DLQ for a given target of a rule
-
-- the EB will **annotate the message that is pushed to DLQ with basic error info**. This will allow you to debug stuff bettter
 
 #### Decoupling
 
