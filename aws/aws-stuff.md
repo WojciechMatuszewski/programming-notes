@@ -171,6 +171,8 @@
 
 - Previously, to expose your AWS Lambda function via an URL, you had to front it with either an ALB or APIGW.
 
+- **Completely free feature (included in the AWS Lambda pricing)**. Hook it up to CloudFront and you have the cheapest AWS Lambda-based API available to you.
+
 - With the Lambda Function URLs, you no longer have to use those services. You can expose your AWS Lambda function URL without the help of an ALB or APIGW.
 
 - Keep in mind that resource policies still apply. Depending on the authorization scheme you choose (IAM or None), you must ensure the resource policy is valid.
