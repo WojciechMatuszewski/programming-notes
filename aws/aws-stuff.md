@@ -4488,7 +4488,7 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Spectrum
 
-- this enables you to **query directly from data files on S3**.
+- this enables you to **query directly from data files on S3 and join it with your data stored in Redshift**.
 
 - this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
 
