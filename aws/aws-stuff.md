@@ -4138,7 +4138,7 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - Athena **can read data and write query results given encrypted data by KMS**
 
 - can **query data from CloudWatch, ELB logs, CloudTrail logs, Flow logs**. The native support is for s3, but there are
-  **data connectors** that allow you to run queries on other sources. The **data connectors** use AWS Lambda under the hood to run the queries.
+  **data connectors** that allow you to run queries on other sources **like RDS**. The **data connectors** use AWS Lambda under the hood to run the queries.
 
 - is very **flexible** when it comes to **data, which it needs to process while querying**. It can be **structured / semi-structured / unstructured**
 
