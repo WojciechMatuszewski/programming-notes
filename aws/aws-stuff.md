@@ -5290,6 +5290,12 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-global-endpoints-for-amazon-eventbridge/).
 
+- global endpoints are free (as in events are charged just as if they were pushed to EB by yourself). Remember that you are sending to two event buses with this architecture.
+
+- the routing happens at the DNS level, you have to provide `EndpointId` in the SDK.
+
+- the health-check is implemented via R53.
+
 #### Schema Registry
 
 - source of truth for events that flow through the EventBridge

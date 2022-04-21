@@ -53,3 +53,5 @@
 - Create small, reusable functions that deal with the tenancy. Use them inside your "main" code.
 
 - **Do NOT** create a microservice especially for handling the concept of a tenancy. It is hazardous to do so as that microservice becomes a singular point of failure. It is better to duplicate code than have such a microservice.
+
+## Episode 5 - Life in the SaaS Lane: Routing Multi-Tenant Traffic
