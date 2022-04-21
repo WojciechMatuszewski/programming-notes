@@ -55,3 +55,17 @@
 - **Do NOT** create a microservice especially for handling the concept of a tenancy. It is hazardous to do so as that microservice becomes a singular point of failure. It is better to duplicate code than have such a microservice.
 
 ## Episode 5 - Life in the SaaS Lane: Routing Multi-Tenant Traffic
+
+- Two ways to route tenants. The **Domain-driven routing** and the **Data-driven routing**.
+
+  - **Domain-driven** is the model Vercel promotes.
+
+  - **Data-driven** is the model where the routing information is present within the JWT token.
+
+- Your application might need to deploy a _routing infrastructure_ to handle the routing concerns.
+
+- These solutions relate to the **Data-driven routing**.
+
+- One also must consider how the support staff can get into a tenant environment for debugging / support cases.
+
+- Throttling is often part of the routing story.
