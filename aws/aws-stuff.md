@@ -522,6 +522,7 @@ Now we are in the domain of a given service / resource.
 - **IAM is not involved here**, control is **handled by a given service / resource**
 
 * the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using resource-based policy might be less latency heavy than using an identity-based policy**. One might experience this while working with **APIGW + Lambda** where the **integration between the services could use either resource or identity based policies**.
+
   Here is a [great article on this topic](https://medium.com/@lancers/low-hanging-fruit-to-reduce-api-gateway-to-lambda-latency-8109451e44d6)
 
 - **some** services **do not support _Resource Policies_**. For example, **DynamoDB does not support resource policies**.
@@ -531,8 +532,14 @@ Now we are in the domain of a given service / resource.
   This means that **it is the identity that a given service assumes that has to have permissions enabled for DynamoDB**
 
 - remember that **the `Resource` or `NotResource` is a required field** for the _Resource Policy_ to work.
+
   - you **might not get an error if you create one without it, but it will not work!**.
+
   - this is **different** than in the **context of _Identity-based Policy_** where **the `Principal` field is implied, thus not necessary**.
+
+- I have no checked it for other services, but **for AWS Lambda** you **cannot specify a resource policy that denies access**.
+
+  - The CloudFormation `AWS::Lambda::Permission` implies `Allow` and I could not find a way to change it.
 
 ###### Cross account
 
