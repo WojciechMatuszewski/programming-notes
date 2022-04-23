@@ -86,8 +86,8 @@ As an example, lets suppose you have such structure
 
 ```jsx
 <p>
-    Your movies list is empty<Link to={to}>Add some</Link>
-</p>;
+  Your movies list is empty<Link to={to}>Add some</Link>
+</p>
 ```
 
 This would result in screen readers reading it as:
@@ -101,11 +101,11 @@ We can fix it by using `aria-labelledby` and a simple `div` tag.
 
 ```jsx
 <div aria-labelledby="text link">
-    <span id="text">Your movies list is empty</span>
-    <Link to={to} id="link">
-        Add some
-    </Link>
-</div>;
+  <span id="text">Your movies list is empty</span>
+  <Link to={to} id="link">
+    Add some
+  </Link>
+</div>
 ```
 
 Now both of these elements would be read after each other, much better :).
@@ -119,10 +119,10 @@ Lets say your structure looks as follows:
 ```jsx
 <input id="id" type="text" />;
 {
-    helperText && <span>Helper text</span>;
+  helperText && <span>Helper text</span>;
 }
 {
-    errorText && <span>Error Text</span>;
+  errorText && <span>Error Text</span>;
 }
 ```
 
@@ -131,7 +131,7 @@ The problem with this structure is that `helperText` and `errorText` is not asso
 To fix the issue you should use `aria-describedby` attribute.
 
 ```jsx
-// the ids for helper and error text should be created dinamically
+// the ids for helper and error text should be created dynamically
 const helperTextID = helperText ? `${name}-helper` : ""
 const errorTextID = errorText && isInvalid ? `${name}-error}`: ""
 <input id = "id" type = "text" aria-describedby= {`${helperTextID} ${errorTextID}`}>
