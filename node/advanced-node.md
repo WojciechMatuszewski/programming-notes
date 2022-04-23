@@ -374,3 +374,17 @@ foo()
 ```
 
 You can either return `Promise.reject` or re-throw the error. Now the program will be notified about the error coming from the `foo` function.
+
+## Prefix-Only Core Modules
+
+Have you ever used the core `fs` package? What about `node:fs`. Are these two imports different?
+
+The `fs` and the `node:fs` are equivalent, and the latter represents the so-called _"Prefix-Only Core Module import"_. Why would Node.js maintainers bother having two ways of importing core modules?
+
+The reason is naming and mainly userland vs. core package names. Historically, trying to introduce a new core package, one had to think about userland naming clashes. The whole process could take months due to negotiations with userland package creators.
+
+With the `node:` prefix, this is not the case. Maintainers can freely introduce new packages without worrying about the naming clashes with the userland packages. What is more, having `node:` prefix makes it explicit that the package comes from Node.js core and not userland.
+
+The new `node:test` module **will only be available via the prefix import**, which is a shift in a direction for the `node:` prefix import policy – all other modules work without the `node:` prefix. In my opinion, this is a good change and an excellent direction to take. The more explicit we are, the better.
+
+You can read more about _"Prefix-Only Core Modules"_ in [this article](https://fusebit.io/blog/node-18-prefix-only-modules/?utm_source=ESnextNews.com)
