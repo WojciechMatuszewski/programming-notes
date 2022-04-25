@@ -38,23 +38,18 @@ As long as you communicate and focus on the higher-level problems, you should be
 
 ## Chapter 4: Design a rate limiter
 
-- My first thought was about rate limiting on the backend, but in fact we can also do it on the front end.
-  A good example of ambiguity that I should ask a question about.
+This chapter contains a lot of helpful information. I love it!
 
-- There are different rate algorithms used for rate limiting. The one I'm the most familiar with is the _token bucket_ one. Not from the implementation perspective, but from usage. This rate limiting algorithm is the most common in AWS (I think).
+First off, the rate-limiting might not only be implemented on the client or the server – we might want to introduce rate-limiting on different layers of the networking stack! There is no way I would have thought about it.
 
-  - One interesting thing here is that one might need to have multiple buckets for multiple API endpoints.
-    This one is also implemented within Amazon API Gateway!
+There are so many different ways to handle rate-limiting I was not aware (unsurprisingly) that there were so many different algorithms. I'm most familiar with the _token bucket_ algorithm that AWS uses for most, if not all, of its services.
 
-- Apart from the _token bucket_ algorithm there is also _leaking bucket_, _fixed window counter_, _sliding window log_, _sliding window counter_ and others.
+Some notes from the architecture part itself:
 
-- For the implementation, the author points to Redis and a request middleware. These are good choices, but I would have chosen DynamoDB as the data-layer solution.
+- Rate limiting implementation as a middleware between the client and the server.
 
-- To communicate back to the client about the rate limit rules (the amount, wait time and such) the author chose to use `X-Ratelimit` prefixed headers. Interesting.
+- Redis acts as a data layer for the rate-limiting rules and keeps the state of the logic. Redis has been a prevalent choice in this book so far.
 
-- Author points to two pitfalls that are really dangerous – the race condition and synchronization issues.
+- Rate limiting services might run in a distributed environment. If that is the case, the architecture must take **rate conditions** and **synchronization** issues into account.
 
-  - My mind was blown when the book introduced running Lua script inside Redis as a potential solution. Sorted sets in Redis seem more maintainable to me.
-  - The synchronization issue is wild. Especially with distributed rate limiters architecture. _Eventual consistency_ seems like a solution but it feels "off" to me to make rate limiting logic _eventually consistent_. I guess it is a matter of tradeoffs if you have such problems.
-
-- What we have considered so far is rate limiting on the 7th layer: the application one. One might implement rate limiting on different layers.
+- For resiliency, you might need to make your rate limiter _eventually consistent_ which feels a bit weird to me.
