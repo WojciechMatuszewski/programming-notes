@@ -53,3 +53,13 @@ Some notes from the architecture part itself:
 - Rate limiting services might run in a distributed environment. If that is the case, the architecture must take **rate conditions** and **synchronization** issues into account.
 
 - For resiliency, you might need to make your rate limiter _eventually consistent_ which feels a bit weird to me.
+
+## Chapter 5: Design consistent hashing
+
+This chapter is hefty on the theory side but important.
+
+Consistent hashing algorithms power data/load distribution across many different servers — something we take for granted these days.
+
+The chapter touches on the theory behind **_ring buffers_** and their role in load distribution. Interestingly, the first, quite sophisticated implementation was insufficient at providing good load distribution.
+
+The key takeaway is this: consistent hashing allows you to overcome the "celebrity" load problem. The consistent hashing mechanisms are used in various systems, not only databases or load balancers (Discord uses consistent hashing too).
