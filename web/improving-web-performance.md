@@ -2,7 +2,7 @@
 
 Course material from frontendmasters
 
-## Part 1 - Understading
+## Part 1 - Understanding
 
 ### Psychology of performance
 

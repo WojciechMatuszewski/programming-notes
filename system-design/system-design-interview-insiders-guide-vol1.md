@@ -63,3 +63,5 @@ Consistent hashing algorithms power data/load distribution across many different
 The chapter touches on the theory behind **_ring buffers_** and their role in load distribution. Interestingly, the first, quite sophisticated implementation was insufficient at providing good load distribution.
 
 The key takeaway is this: consistent hashing allows you to overcome the "celebrity" load problem. The consistent hashing mechanisms are used in various systems, not only databases or load balancers (Discord uses consistent hashing too).
+
+## Chapter 6: Design a key-value store
