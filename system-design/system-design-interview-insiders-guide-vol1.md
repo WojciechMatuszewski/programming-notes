@@ -65,3 +65,31 @@ The chapter touches on the theory behind **_ring buffers_** and their role in lo
 The key takeaway is this: consistent hashing allows you to overcome the "celebrity" load problem. The consistent hashing mechanisms are used in various systems, not only databases or load balancers (Discord uses consistent hashing too).
 
 ## Chapter 6: Design a key-value store
+
+- A single-server vs distributed key-value store
+
+  - Storing frequently accessed data in memory, rest on disc
+
+- In distributed environment, the CAP theorem becomes essential.
+
+  - CA systems are not really practical since network failures are common thing in a real world.
+  - CP systems sacrifice availability.
+  - AP systems sacrifice consistency. I think these are the most common.
+
+- The key is to fit either CA or CP systems into your use-case. Author presents an example of a banking system where CP systems are preferred.
+
+- For data partitioning, one might use the consistent hashing (hash ring with virtual nodes) technique.
+
+- Three modes of consistency.
+
+  - Strong consistency: you always get the latest results when reading.
+
+  - Eventual consistency: given enough time, you will get the latest results when reading.
+
+  - Weak consistency: you might not see the latest results at all.
+
+- Eventual and weak consistency forces the system to implement some kind of versioning scheme for concurrent writes (the strong consistency model rejects concurrent writes).
+
+- Author showcases how to resolve conflicts using _vendor clocks_ (apparently this mechanism is implemented inside DynamoDB). Quite fascinating.
+
+TODO: handling failures and such
