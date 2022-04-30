@@ -66,30 +66,29 @@ The key takeaway is this: consistent hashing allows you to overcome the "celebri
 
 ## Chapter 6: Design a key-value store
 
-- A single-server vs distributed key-value store
+The chapter starts with the single-server approach – suitable for meager traffic and storage requirements. The implementation might be an in-memory hash-table.
 
-  - Storing frequently accessed data in memory, rest on disc
+Since the characteristics of the single-server architecture do not fit most production systems, one has to consider building a distributed one. This is where most, if not all, complexity comes from.
 
-- In distributed environment, the CAP theorem becomes essential.
+The author begins with the **CAP theorem – a classical thesis about the _consistency_, _availability_, and _partition tolerance_**. The takeaway is that you cannot have all of them. You can only pick two.
 
-  - CA systems are not really practical since network failures are common thing in a real world.
-  - CP systems sacrifice availability.
-  - AP systems sacrifice consistency. I think these are the most common.
+- CA systems are not practical since network failures are common in the real world.
+- CP systems sacrifice availability.
+- AP systems sacrifice consistency. I think these are the most common.
 
-- The key is to fit either CA or CP systems into your use-case. Author presents an example of a banking system where CP systems are preferred.
+Since there is no one-fits-all solution, you as an engineer are responsible for understanding which model fits your needs.
 
-- For data partitioning, one might use the consistent hashing (hash ring with virtual nodes) technique.
+Next, the author looks at data partitioning and describes the previously mentioned **_hash ring_** in more detail. The _hash ring_ is a prevalent technique to ensure uniform data spread.
 
-- Three modes of consistency.
+Because of data replication needs, the system might or might not be strongly consistent. It all depends on the implementation. **The _coordinator_ component (in AWS land, would that be _the router_?)** is responsible for reading/writing to nodes.
 
-  - Strong consistency: you always get the latest results when reading.
+In a distributed word, one also must think about race conditions and data inconsistencies. The author suggests using **_versioning_ and \_vector clock_s** – a fascinating technique that keeps the changes in the form of vectors. Diffing the vectors allows the system to know that there is a conflict and resolve the conflict accordingly.
 
-  - Eventual consistency: given enough time, you will get the latest results when reading.
+Handling outages and failures differ depending on the severity of the failure. The first step is to know that the failure occurred – usually done by using the **_gossip protocol_**.
 
-  - Weak consistency: you might not see the latest results at all.
+Other nodes in the system handle temporary failures.
 
-- Eventual and weak consistency forces the system to implement some kind of versioning scheme for concurrent writes (the strong consistency model rejects concurrent writes).
+- Permanent failures require data syncing and diffing – Merkle trees come to the rescue in this situation.
+- Data center outages are usually taken care of via DNS and switching between different data centers.
 
-- Author showcases how to resolve conflicts using _vendor clocks_ (apparently this mechanism is implemented inside DynamoDB). Quite fascinating.
-
-TODO: handling failures and such
+Zooming in on the node itself, it is vital that it is independent of the other nodes, meaning it can carry out all the necessary functions – just like our single-server approach did.
