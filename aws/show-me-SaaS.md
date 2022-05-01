@@ -69,3 +69,31 @@
 - One also must consider how the support staff can get into a tenant environment for debugging / support cases.
 
 - Throttling is often part of the routing story.
+
+## Episode 6 - Tenant Isolation Strategies: Can't Touch This
+
+- What do we mean by saying _isolation_?
+
+  - Isolation means enforcing the rule that you cannot access other party resources.
+
+  - Authorization is smaller than isolation.
+
+- Tenant isolation models are often hard to change, whereas the authorization characteristics of the application can change fluently.
+
+- A couple of levels of isolation.
+
+  - **Full-stack isolation**. Very complex from an architectural standpoint.
+
+  - **Resource level isolation** (think only a database isolated to a given tenant). It is a bit easier to implement than the full-stack isolation, but it still might be complex.
+
+  - **Item level isolation**. Think DynamoDB leading keys policies.
+
+- You have to build different layers of security around the isolation story. You cannot rely on a single database statement with a `WHERE` clause.
+
+- Isolation can influence your technology choices.
+
+- Not every AWS service does not have an IAM condition suitable for tenant isolation.
+
+- In AWS land, one might use **dynamic policy generation** scoped to a given tenant. Use either APIGW authorizer (maybe even with an API key) or in-lambda assume role calls.
+
+  - You might need to deploy the compute with a broader scope that allows scoping down to a specific tenant.
