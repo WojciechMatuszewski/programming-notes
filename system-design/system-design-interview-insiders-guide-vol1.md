@@ -93,3 +93,41 @@ Other nodes in the system handle temporary failures.
 - Data center outages are usually taken care of via DNS and switching between different data centers.
 
 Zooming in on the node itself, it is vital that it is independent of the other nodes, meaning it can carry out all the necessary functions – just like our single-server approach did.
+
+## Chapter 7: Design a unique ID generator in distributed systems
+
+As was the case with the previous chapters, the author starts with a single-server solution and deems it unfit. I get it as using auto-incrementing ID in a single database in a distributed compute context sounds like a bad idea.
+
+I find it fascinating that there are many approaches to tackling this issue.
+
+- One could **use _multi-master replication_ with the database auto-increment feature**. The increment "tick" would be different in each database. This approach has elasticity issues. Imagine adding or removing a node. You would have to recalculate the IDs.
+
+- Another approach is to **use UUIDs**. Nodes generating those are entirely independent as the probability of the collision is very low. This approach is not without its problems – the UUIDs are usually 128 bits long, are not numeric, and do not "go up" with time.
+
+- Another approach is to use the **_ticket server_**. A technique introduced by Flicker. Funny enough, this approach uses the auto-increment feature of a given database. The ticket server works in a multi-node configuration with data synchronization. Pulling this architecture off is not a small feat!
+
+- A good approach for numeric IDs is the **Twitter snowflake approach** (the name is somewhat relevant to our culture). We split the ID into five parts, each with a different meaning – just like the IP packet?
+
+What follows is a deep dive into the **Twitter snowflake approach**. As with any ID generation algorithm, there is some period after which we expect the collision to happen. In this case, it's 69 years.
+
+Since part of the **Twitter snowflake approach** is computed based on a timestamp, one has to ensure that **all the machines involved in the ID generation have their clocks synchronized**. I'm not even surprised that [AWS has a service for this – the Time Sync Service](https://aws.amazon.com/about-aws/whats-new/2017/11/introducing-the-amazon-time-sync-service/)
+
+## Chapter 8: Design a URL shortener
+
+The author starts with an API design, first tacking the POST and GET routes.
+
+What follows is an elaboration on the differences between the 301 and 302 status codes.
+
+- 301 status code is a **permanent redirect** meaning that **the browser caches the response** and will NOT invoke the API in subsequent requests. I was not aware of that. Good to know. This status code should be **used when reducing the server load is essential**.
+
+- 302 status code is a **temporary redirect**, meaning that **the browser will NOT cache the response**. This is **useful when tracking is essential**.
+
+We would not be able to deploy the service and operate it efficiently without a good hashing function. The hashing function is responsible for "truncating" the long URL into a shorter one. As for the data storage layer – the author recommends a hash table **for small systems**. I'm not sure why the author did not pick a key:value store for real-life scenarios but instead decided to use a relational database.
+
+What follows is a description of different hashing techniques.
+
+- The **hash + collision resolution** solution uses a well-known hashing algorithm and detects the collisions by directly reaching the database. Not very efficient.
+
+- Another approach is the **base 62 conversion**, not based on the link but a unique ID. Quite fascinating. There is no way I would have come up with this idea alone. I would most likely try to generate the short URL based on the long URL.
+
+The author decided to go with the classic data layer and the caching layer frontend with an API for the architecture piece. The database and caching layers are widespread in this book.
