@@ -158,3 +158,27 @@ Another vital thing to keep in mind is the system's robustness.
 - Watch out for **spider traps** – websites that sole purpose is to trap your crawler in an infinite loop. One solution to this problem is to ignore URLs X characters long or more.
 
 - The system has to be extendable. You might need to add support for different file extensions later on!
+
+## Chapter 10: Design a notification system
+
+Notification systems are inherently complex due to different factors.
+
+- Notification could be delivered by email, push, or SMS message.
+
+- You have to gather contact information that relates to the notification.
+
+- In most systems, users can opt out of the notifications.
+
+To ensure scalability author suggests using multiple notification servers (an API to send notifications). The notification servers push messages to the outbound queues. Notification workers pull from the queues and process the notification. These components could be replaced by APIGW, SQS, and SNS in AWS land.
+
+- DLQ to handle errors.
+
+- Rate limiting (either on the API level or the workers level) to ensure we do not spam the user.
+
+- Dedupe mechanism (`messageDeduplicationId` in SQS?). TIL that SQS has an option to automatically dedupe messages by computing the SHA-256 hash of the body (regular queue).
+
+Realistically, you will also need to implement an analytics piece of the system. The notification system that does not deliver any open-rate metrics is useless.
+
+- For **email, SES provides basic open-rate metrics**.
+
+- You are out of luck for **push and SMS as SNS does not provide any open rate metrics**. While your app could listen to _push-click_ events, I'm not sure how to track the open rate of SMS messages.
