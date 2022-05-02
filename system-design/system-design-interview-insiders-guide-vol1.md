@@ -131,3 +131,29 @@ What follows is a description of different hashing techniques.
 - Another approach is the **base 62 conversion**, not based on the link but a unique ID. Quite fascinating. There is no way I would have come up with this idea alone. I would most likely try to generate the short URL based on the long URL.
 
 The author decided to go with the classic data layer and the caching layer frontend with an API for the architecture piece. The database and caching layers are widespread in this book.
+
+## Chapter 9: Design a web crawler
+
+Building a web crawler can be an excellent exercise in using concurrent features of your language of choice. One might think that creating a web crawler is relatively straightforward – you visit the page, collect URLs and move to the next page. As we will see, that is not the case.
+Do you want only to support HTML or maybe additional content types like `.pdf` or `.jpeg` files?
+
+- How do you handle malicious links?
+
+- How would you ensure that you do not make too many requests to a given website?
+
+- How do you parse invalid HTML? Remember – browsers are permissive when it comes to HTML syntax.
+
+- How do you handle duplicate content? There is a lot of duplicate content out there on the web.
+
+When traversing web pages and saving the links, you must choose between **DFS and BFS** algorithms (because the natural structure of the web is a graph). Since the **depth of the tree might be very large, you should favor the BFS algorithm**.
+Naive BFS implementation might lead to problems, like overflowing a given page with requests. The author suggests adding webpage ranking and the **_URL frontier_** to the mix to ensure our web crawler behaves like a good bot.
+
+The author suggests splitting the work between multiple workers. Each worker has its own FIFO queue containing **URLs in prioritized order**. One might implement a separate set of queues to ensure politeness (ensuring that the web crawler is not DDOSing websites).
+
+Another vital thing to keep in mind is the system's robustness.
+
+- Use **checksums or hashes to find duplicate web pages**.
+
+- Watch out for **spider traps** – websites that sole purpose is to trap your crawler in an infinite loop. One solution to this problem is to ignore URLs X characters long or more.
+
+- The system has to be extendable. You might need to add support for different file extensions later on!
