@@ -146,7 +146,8 @@ Do you want only to support HTML or maybe additional content types like `.pdf` o
 - How do you handle duplicate content? There is a lot of duplicate content out there on the web.
 
 When traversing web pages and saving the links, you must choose between **DFS and BFS** algorithms (because the natural structure of the web is a graph). Since the **depth of the tree might be very large, you should favor the BFS algorithm**.
-Naive BFS implementation might lead to problems, like overflowing a given page with requests. The author suggests adding webpage ranking and the **_URL frontier_** to the mix to ensure our web crawler behaves like a good bot.
+
+- Naive BFS implementation might lead to problems, like overflowing a given page with requests. The author suggests adding webpage ranking and the **_URL frontier_** to the mix to ensure our web crawler behaves like a good bot.
 
 The author suggests splitting the work between multiple workers. Each worker has its own FIFO queue containing **URLs in prioritized order**. One might implement a separate set of queues to ensure politeness (ensuring that the web crawler is not DDOSing websites).
 
