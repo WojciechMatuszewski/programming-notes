@@ -55,4 +55,130 @@ I thought React 18 would solve that problem for me, as the first pass of the Sus
 
 Having said that, this is much easier to achieve in React 18 because React 18 will not insert DOM nodes of the half-committed tree, so the structure of your HTML stays intact.
 
+### Making sure placeholders do not flash manually
+
+So, the scenario is as follows: you use the `lazy` API to code split your application. While testing the application locally, you have noticed these annoying "flashes" of the `placeholder` content. You are in your office, and the internet there is high-speed, so the bundles download in a split second.
+
+```jsx
+const LazyList = lazy(() => import("./List"));
+
+return (
+  <Suspense fallback={<p>Loading...</p>}>
+    <LazyList />
+  </Suspense>
+);
+```
+
+What can we do about it? We can do two things.
+
+1. Instead of rendering the `<p>Loading...</p>` we could render `null`. Users will not observe any "flash" of content because you render `null` as the fallback.
+
+2. Add artificial delay inside the callback function passed to the `lazy` function.
+
+The following is the first option.
+
+```jsx
+const LazyList = lazy(() => import("./List"));
+
+return (
+  <Suspense fallback={null}>
+    <LazyList />
+  </Suspense>
+);
+```
+
+Problem solved for high-speed connections, but what about slower ones? If it does take some time to download the `List` bundle, the user will not see any visual feedback that this is happening. Such experience might leave him confused and ask whether the application is working.
+
+To solve this particular problem, one might look into implementing the second point.
+
+```jsx
+const wait = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(undefined), ms);
+  });
+};
+
+const List = lazy(async () => {
+  const result = await Promise.all([wait(1000), import("./List")]);
+
+  return result[1];
+});
+
+return (
+  <Suspense fallback={null}>
+    <LazyList />
+  </Suspense>
+);
+```
+
+I think this implementation is an excellent compromise between _not rendering anything_ and _making sure the placeholder does not "flash"_.
+
+### When does placeholder throttling occurs
+
+> Before we start, know this – I'm not sure whether what I'm about to talk about is the so-called _placeholder throttling_. I've tried searching for an example but could not find any. I'm basing this section on my gut instinct and understanding of the React 18 features.
+
+If you have ever used the new `useTransition` (and the `startTransition` function) hook, you might have noticed that the old content stays on the screen while the new content loads. After a certain period (which is NOT configurable).
+
 ## Data fetching with Suspense
+
+Before we start, know this – I'm not sure whether what I'm about to talk about is the so-called _placeholder throttling_. I've tried searching for an example but could not find any. I'm basing this section on my gut instinct and understanding of the React 18 features.
+
+If you have ever used the new `useTransition` (and the `startTransition` function) hook, you might have noticed that the old content stays on the screen while the new content loads. After a certain period (which is NOT configurable), the new content "reveals" itself – all due to the _transitions_ and the ability to "render multiple screens at once".
+
+**React will "keep" the previous screen while rendering the next one. No `placeholder` is shown during this operation as React uses the "previous" screen as the placeholder**. I **think** this is the **_placeholder throttling_** that React team mentions in GitHub discussions.
+
+```jsx
+import { Suspense, lazy, useState, useTransition } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+
+const wait = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(undefined), ms);
+  });
+};
+
+const getComponentResource = () => {
+  const max = 1000;
+  const min = 200;
+  const delay = Math.random() * (max - min) + min;
+
+  return lazy(async () => {
+    const result = await Promise.all([
+      wait(delay),
+      Promise.resolve({ default: EagerList }),
+    ]);
+
+    return result[1];
+  });
+};
+
+function App() {
+  const [resource, setResource] = useState(() => getComponentResource());
+  const onNewResource = () => {
+    startTransition(setResource(getComponentResource()));
+  };
+
+  const [isPending, startTransition] = useTransition();
+
+  const Comp = resource;
+  return (
+    <div>
+      <button onClick={onNewResource}>New resource</button>
+      <div style={{ opacity: isPending ? 0.4 : 1 }}>
+        <ErrorBoundary fallback={<p>Error!</p>}>
+          <Suspense fallback={<p>Loading...</p>}>
+            <Comp />
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+    </div>
+  );
+}
+
+const EagerList = () => {
+  const number = Math.random();
+  return <div>{number}</div>;
+};
+```
+
+React will render the `fallback` prop when you first load the application since there is no "previous" screen to fall back to. **Upon clicking on the _New resource_ React will use the "previous" screen as the fallback**. Pretty neat!
