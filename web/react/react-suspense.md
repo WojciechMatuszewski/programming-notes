@@ -202,3 +202,29 @@ return (
 The application would still be reactive, and all the events would work. This is the "magic" (albeit I do not like this term in the context of software development).
 
 ## Data fetching and Suspense
+
+We have only considered code-splitting as the use case for the Suspense, but the Suspense API can also help us with data fetching and getting rid of these pesky `if(isLoading)` checks.
+
+The last time I checked, Suspense's internal implementation relied on throwing promises caught by the nearest Suspense boundary. If the library you are using supports Suspense, you can use that to your advantage!
+
+```jsx
+const User = () => {
+  const { data } = useFetchUser();
+
+  return <p>User name is {data.name}</p>;
+};
+
+const App = () => {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<p>Loading user...</p>}>
+        <User />
+      </Suspense>
+    </ErrorBoundary>
+  );
+};
+```
+
+Notice that I'm accessing the `data` as if the `useFetchUser` was synchronous. I'm able to do this because **React can now "pause" rendering of the `User` component until the `useFetchUser` resolves**. No more `if (isLoading)` checks. Now it's the role of the `fallback` prop on the `Suspense` component to take care of the loading for us. Pretty neat!
+
+One additional detail – notice the `ErrorBoundary`. If the `useFetchUser` fails, the error will propagate to the nearest `ErrorBoundary` (or crash your application).
