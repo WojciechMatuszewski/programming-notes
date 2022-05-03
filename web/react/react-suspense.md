@@ -117,10 +117,6 @@ I think this implementation is an excellent compromise between _not rendering an
 
 > Before we start, know this – I'm not sure whether what I'm about to talk about is the so-called _placeholder throttling_. I've tried searching for an example but could not find any. I'm basing this section on my gut instinct and understanding of the React 18 features.
 
-If you have ever used the new `useTransition` (and the `startTransition` function) hook, you might have noticed that the old content stays on the screen while the new content loads. After a certain period (which is NOT configurable).
-
-## Data fetching with Suspense
-
 Before we start, know this – I'm not sure whether what I'm about to talk about is the so-called _placeholder throttling_. I've tried searching for an example but could not find any. I'm basing this section on my gut instinct and understanding of the React 18 features.
 
 If you have ever used the new `useTransition` (and the `startTransition` function) hook, you might have noticed that the old content stays on the screen while the new content loads. After a certain period (which is NOT configurable), the new content "reveals" itself – all due to the _transitions_ and the ability to "render multiple screens at once".
@@ -155,7 +151,7 @@ const getComponentResource = () => {
 function App() {
   const [resource, setResource] = useState(() => getComponentResource());
   const onNewResource = () => {
-    startTransition(setResource(getComponentResource()));
+    startTransition(() => setResource(getComponentResource()));
   };
 
   const [isPending, startTransition] = useTransition();
@@ -182,3 +178,27 @@ const EagerList = () => {
 ```
 
 React will render the `fallback` prop when you first load the application since there is no "previous" screen to fall back to. **Upon clicking on the _New resource_ React will use the "previous" screen as the fallback**. Pretty neat!
+
+### "Previous" screen as the fallback
+
+I've alluded to the _transitions_ behavior in previous sections where React would keep the "previous" screen as the fallback. Let us consider what would happen if we were to have a single _Suspense boundary_ at the top of our application.
+
+```jsx
+return (
+  <ErrorBoundary fallback={<p>Error!</p>}>
+    <Suspense fallback={<p>Loading...</p>}>
+      <div>
+        <MoreComponents />
+        <button onClick={onNewResource}>New resource</button>
+        <div style={{ opacity: isPending ? 0.4 : 1 }}>
+          <Comp />
+        </div>
+      </div>
+    </Suspense>
+  </ErrorBoundary>
+);
+```
+
+The application would still be reactive, and all the events would work. This is the "magic" (albeit I do not like this term in the context of software development).
+
+## Data fetching and Suspense
