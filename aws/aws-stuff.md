@@ -6173,6 +6173,15 @@ The EventBridge service does not support event sampling out of the box. To enabl
   - `cfn-init`: used for **more complex user-init scripts**. Instead of writing scrips, you pass directives to a special program which is OS agnostic.
   - `cfn-signal`: used for `WaitConditions`, coordination between resources
 
+#### Refactoring stacks
+
+- **some (not all) resources** support **import operations**
+- if a resource supports the import operation, you can **move a given resource between stacks**
+  - to do that, you first need to remove the resource from the origin template – **remember about the deletion policy!**
+  - then you need to add that resource (name hardcoded) to the other template and carry out the **_import resources into stack_ CFN action**
+  - this is **not the same as exporting values from the CFN template!**
+- read more about this feature [here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/refactor-stacks.html).
+
 #### Cloud Control API
 
 - With AWS composed of multiple independent teams, the APIs can vary greatly from service to service. To combat this issue, _Cloud Control API_ was born.
