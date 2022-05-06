@@ -182,3 +182,20 @@ Realistically, you will also need to implement an analytics piece of the system.
 - For **email, SES provides basic open-rate metrics**.
 
 - You are out of luck for **push and SMS as SNS does not provide any open rate metrics**. While your app could listen to _push-click_ events, I'm not sure how to track the open rate of SMS messages.
+
+## Chapter 11: Design a news feed system
+
+- The critical component of any news feed system is the API, which allows the user to publish a "story" and allows the user to get their newsfeed.
+
+- To distribute the posts amongst all the user's friends, you might want to use a **graph database** to **hold a connection indicating a friendship relationship**.
+
+- One can distribute the news feed in two ways – via the **push or pull model**.
+
+  - The **pull model** is where the system computes the newsfeed in an on-demand fashion. We save a lot of computing time but lose on the speed of retrieval of the newsfeed.
+
+  - The **push model** is where the system computes the newsfeed just after someone creates a post. This makes the system \_near-realtime_but very compute-intensive.
+  - Usually **engineers prefer a hybrid approach** where **for some users pull model is used, for others, the push one**.
+
+- For the distribution mechanism itself, consider using a queue with a pool. Detaching the sending and computing the response plays a crucial role in creating a resilient system.
+
+- The author suggests hefty cache usage. I tend to agree since users are primarily interested in only the latest entries in the newsfeed view, expiring old entries (and keeping the cache size small) should be considered a good practice.
