@@ -199,3 +199,37 @@ Realistically, you will also need to implement an analytics piece of the system.
 - For the distribution mechanism itself, consider using a queue with a pool. Detaching the sending and computing the response plays a crucial role in creating a resilient system.
 
 - The author suggests hefty cache usage. I tend to agree since users are primarily interested in only the latest entries in the newsfeed view, expiring old entries (and keeping the cache size small) should be considered a good practice.
+
+## Chapter 12: Design a chat system
+
+- The author describes **three ways** that one **might retrieve the messages**.
+
+  - Via **polling** – a relatively wasteful method where the client asks for the messages via the HTTP protocol.
+
+  - Via **long polling** – better than the polling method, where the client **holds the connection open up to a certain threshold or until there are messages available**.
+
+  - Via **WebSocket** – the most efficient method of communication as it uses **push model for message delivery**.
+
+- In the case of a chat application, you will most likely use the WebSocket protocol only for the **stateful chat and presence servers**. Other API features could (and, in my opinion, should) be using the HTTP protocol.
+
+- I find the choice of a relational database for user metadata interesting. I'm not sure that I agree with this decision.
+
+  - The author proposes storing the messages (and data related to them) in a `kev:value` store, which I fully second.
+
+- In the context of chats (be it a group or 1-on-1 chat), the message identifier becomes a critical part of the design. For ordering, **cannot rely on the `created_at` timestamp as messages could be sent simultaneously**.
+
+- The system must take a **service discovery** into account to ensure low latency. We **would not want the user from the US connecting to European servers**.
+
+  - Since the chat servers are stateful, we have to have a way to synchronize messages between them – the author suggests using a message queue as a bridge between servers.
+
+  - In AWS land, one might use SQS + SNS or AppSync.
+
+- In the case of 1-on-1 chats, the synchronization mechanism via the queue sounds reasonable, but switching to the group chat use case makes this solution a bit ill-suited, in my opinion.
+
+  - Each user gets its own "inbox" (a synchronization queue). This approach might scale well with only a handful of users, but what about 100+ users?
+
+- Displaying the user status ("online" or "offline") also deserves some thought.
+
+  - In the case of the **logout and establishing a connection**, the logic is not that complex – **flip a flag in a `key:value` store**.
+
+  - For the case of **disconnection**, we must implement a heartbeat (users might lose connection multiple times a minute). One might implement this logic via **SQS and visibility delay**.
