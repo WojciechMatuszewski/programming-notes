@@ -259,3 +259,19 @@ Realistically, you will also need to implement an analytics piece of the system.
   - You could split data based on the first character, but you will soon realize that more words start with "a" than "z".
 
   - The author suggests **looking at historical data and sharding based on that**.
+
+## Chapter 14: Design youtube
+
+- The CDN costs would be high if you were to go with a regular AWS CloudFront pricing for serving videos for users (even for a relatively small application).
+
+- Transcoding the video to the proper formats is essential. Luckily for us, AWS has many services (the _Media_ family) that can help with that task.
+
+  - For transcoding, the author suggests using **DAG models, which resemble state machine tasks**. In the AWS world, I would use AWS StepFunctions.
+
+  - We use temporary storage for staging artifacts.
+
+- The author listed many streaming protocol formats. By looking at their names, it seems as if companies are found to create their streaming format for some reason.
+
+- To achieve **high parallelism, one might want to use queues as the events from the queue can be processed simultaneously**.
+
+- For **cost optimization, especially concerning the CDN**, consider **serving only specific videos via CDN**. We have already seen this **"hybrid" approach in the news feed system**.
