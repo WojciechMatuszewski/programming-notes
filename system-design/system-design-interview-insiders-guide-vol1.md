@@ -83,7 +83,7 @@ Next, the author looks at data partitioning and describes the previously mention
 
 Because of data replication needs, the system might or might not be strongly consistent. It all depends on the implementation. **The _coordinator_ component (in AWS land, would that be _the router_?)** is responsible for reading/writing to nodes.
 
-In a distributed word, one also must think about race conditions and data inconsistencies. The author suggests using **_versioning_ and \_vector clock_s** – a fascinating technique that keeps the changes in the form of vectors. Diffing the vectors allows the system to know that there is a conflict and resolve the conflict accordingly.
+In a distributed word, one also must think about race conditions and data inconsistencies. The author suggests using **_versioning_ and _vector locks_** – a fascinating technique that keeps the changes in the form of vectors. Diffing the vectors allows the system to know that there is a conflict and resolve the conflict accordingly.
 
 Handling outages and failures differ depending on the severity of the failure. The first step is to know that the failure occurred – usually done by using the **_gossip protocol_**.
 
@@ -233,3 +233,29 @@ Realistically, you will also need to implement an analytics piece of the system.
   - In the case of the **logout and establishing a connection**, the logic is not that complex – **flip a flag in a `key:value` store**.
 
   - For the case of **disconnection**, we must implement a heartbeat (users might lose connection multiple times a minute). One might implement this logic via **SQS and visibility delay**.
+
+## Chapter 13: Design a search autocomplete system
+
+- In any system, the data is the new gold. This rule is very much applicable to the system we are building. The **_data gathering service_** is crucial in the architecture.
+
+- Using **naive ranking by previous search count** might work for small systems, but it will not work for a massive system with many RPS.
+
+- The author suggests using **_trie data structure_** for storing the previous autocomplete results.
+
+  - The _trie data structure_ is a **tree-like** data structure optimized for string retrieval.
+
+  - You might want to optimize the initial algorithm to store the most common search queries for a given tree node.
+
+  - Interestingly, according to the author, **updating a single node is slower than re-creating the whole data structure**. Fascinating. I guess searching through branches is slower than creating them.
+
+- Depending on your needs – whether the search results should be "live" or not – you should update the tire data structure accordingly. Remember that updating it usually takes time and a lot of compute resources.
+
+- The _query service_ interacts directly with the tire database. Caching on this layer is essential as it increases the speed of the API.
+
+  - You should **employ a filter** before adding/retrieving the results. You would not want to save dangerous queries to your database.
+
+- Scaling the storage might be tricky. **Sharing** comes to mind as the solution, but what is the sharding heuristic?
+
+  - You could split data based on the first character, but you will soon realize that more words start with "a" than "z".
+
+  - The author suggests **looking at historical data and sharding based on that**.
