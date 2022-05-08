@@ -260,7 +260,7 @@ Realistically, you will also need to implement an analytics piece of the system.
 
   - The author suggests **looking at historical data and sharding based on that**.
 
-## Chapter 14: Design youtube
+## Chapter 14: Design Youtube
 
 - The CDN costs would be high if you were to go with a regular AWS CloudFront pricing for serving videos for users (even for a relatively small application).
 
@@ -275,3 +275,27 @@ Realistically, you will also need to implement an analytics piece of the system.
 - To achieve **high parallelism, one might want to use queues as the events from the queue can be processed simultaneously**.
 
 - For **cost optimization, especially concerning the CDN**, consider **serving only specific videos via CDN**. We have already seen this **"hybrid" approach in the news feed system**.
+
+## Chapter 15: Design Google Drive
+
+- The author starts with a single server that handles upload/download API. Good choice.
+
+  - The single server approach works well to a certain point. Up until the drive you save the data onto has space, everything seems ok :)
+
+- Synchronization conflicts can occur, especially since multiple users can edit the same document simultaneously.
+
+  - One might use **_the first version wins_ strategy** here. I'm not sure that is THE solution, but it is a solution nevertheless.
+
+- The author introduces the term **_block storage_** – a technology to store data files in cloud-based environments.
+
+  - The name comes from the fact that **a file can be split into several blocks**. Fascinating concept.
+
+- To **optimize the upload flow**, one might use a technique called **_delta sync_** where the storage solutions sync only the **modified blocks of the whole file**.
+
+  - Let us not forget about compression as well.
+
+- The author made a fascinating technical decision regarding the notification system – the client uses long polling instead of WebSockets.
+
+  - This choice seems odd to me. How would long polling work with millions of users using the product simultaneously? Is the cost of running a stateful WebSocket server bigger than the API costs?
+
+  - The choice has some merit since the communication is NOT bi-directional.
