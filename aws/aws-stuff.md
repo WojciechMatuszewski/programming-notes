@@ -570,6 +570,24 @@ An example for s3-prefix (folder)
 }
 ```
 
+- you can use multiple conditions for a single policy
+
+```json
+{
+  "Effect": "Deny",
+  "Action": ["sns:*"],
+  "Resource": "*",
+  "Condition": {
+    "StringNotEquals": {
+      "aws.ResourceAccount": ["xxx"]
+    },
+    "ForAllValues:StringNotEquals": {
+      "aws:CalledVia": ["cloudformation.amazonaws.com"]
+    }
+  }
+}
+```
+
 #### Managed Policies
 
 - **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
