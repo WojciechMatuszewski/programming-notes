@@ -6046,6 +6046,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you can specify the **UpdateReplacePolicy** to **ensure that no accidental deletions of the resources happen when CF changes**
 
+- when **deleting a resource**, the default behavior **for most resources** is to **first create the new resource and then delete the old one**. It is not the case for all resources – see [this Tweet](https://twitter.com/benbridts/status/1472934406100762626) for more information.
+
 #### CloudFormation Stack Set
 
 - allows you to **easly deploy stacks to multiple places at once**
