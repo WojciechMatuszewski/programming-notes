@@ -169,9 +169,40 @@ I think [this GitHub comment](https://github.com/reactwg/react-18/discussions/12
 
 ## `useSyncExternalStore`
 
-It seems like the `useSyncExternalStore` is meant to be a drop-in replacement for _subscription-like_ hooks. The idea is to make sure tearing never happens.
+It seems like the `useSyncExternalStore` is meant to be a drop-in replacement for _subscription-like_ hooks. The idea is to make sure tearing never happens. Let us write `useIntervalHook` that utilizes the `useSyncExternalStore`.
 
-I did not find any concrete examples while reading the [discussion about the API](https://github.com/reactwg/react-18/discussions/86). A great excuse to dive into writing my own!
+```jsx
+let now = new Date().toISOString();
+const subscribers = new Set();
+setInterval(() => {
+  now = new Date().toISOString();
+  subscribers.forEach((notify) => notify());
+}, 1000);
+
+const onSubscribe = (notify) => {
+  subscribers.add(notify);
+  return () => {
+    subscribers.delete(notify);
+  };
+};
+
+const onSnapshot = () => now;
+
+function App() {
+  const value = useSyncExternalStore(onSubscribe, onSnapshot);
+  return <div>{value}</div>;
+}
+```
+
+The `now` is the _external store_ value. The `setInterval` simulates changes. The `useSyncExternalStore` is a bridge between the _module scope_ and _React_ rendering lifecycle.
+
+---
+
+You might wonder why the `notify` function is not taking any parameters? Would not that be more straightforward? Instead, we have to create the `onSnapshot` function. The answer to this question lies in understanding how rendering works in React 18.
+
+Before React 18, the rendering was synchronous. If React started rendering the tree, it had to finish in one go. With React 18, that is no longer the case – the rendering is interruptable.
+
+Interruptable rendering means that, in extreme cases, if not taken into account, React could render part of your tree with state X and part of the tree with state Y (the update of the state happened in-between the interruption). To prevent such occurrences, as they relate to external stores, **instead of using the "live store value", React takes the "snapshot" value and performs the rendering cycle using that particular value for the whole process, even if it is interrupted**.
 
 ## `useId`
 
