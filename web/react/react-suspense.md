@@ -47,6 +47,39 @@ Next, we have **new features** like **_placeholder throttling_ and transitions**
 
 I'm most excited about **data fetching with Suspense** and **_placeholder throttling_**. All of these and more are the subject of further discussions below.
 
+### Effects and Suspense
+
+It turns out that **effects will NOT fire unless the Suspense boundary the component is wrapped with finishes suspending**. This is an important detail as it guarantees `useEffect` and `useLayoutEffect` stability.
+
+```jsx
+function MyComponent() {
+  const [finishedSuspending, setFinishedSuspending] = useState(false);
+
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <Suspender />
+      <Lifecycle onEffectFired={() => setFinishedSuspending(true)} />
+    </Suspense>
+  );
+}
+
+function Lifecycle({ onEffectFired }) {
+  useEffect(() => {
+    onEffectFired();
+  }, [onEffectFired]);
+
+  return null;
+}
+```
+
+This guarantee makes sense as it would suck if the effect would fire before React is done with the Suspense Boundary.
+
+#### Where would I use this fact
+
+[This video](https://www.youtube.com/watch?v=sOkgIa560qM) walks through one fascinating use case – rendering the `Suspense` component conditionality based on the lifecycle state (if it is a first "render" or not).
+
+The idea is that you could have a different "loading experience" if it is the first time you visit the application (one single big spinner) vs. when some of the resources are already available and when the data fetching is done in a given part of an application.
+
 ## Placeholder throttling
 
 When I first read about this "feature," my excitement levels were very high. How often have you used `Suspense` to lazy load your component, only for the `placeholder` prop to "flash" for a split second, creating a suboptimal experience? I'm describing a real issue on faster connections, where downloading JS takes a split second.
