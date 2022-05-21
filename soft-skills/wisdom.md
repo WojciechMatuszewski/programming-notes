@@ -63,7 +63,7 @@ You have to **understand the business domain you are in** and have enough courag
 
 Consider reading [this great article](https://blog.pragmaticengineer.com/the-product-minded-engineer/) on becoming more product-minded in your day-to-day work.
 
-## TODO
+## Big ball of mud
 
 _"Big ball of mud"_ systems are systems that lack architectural cohesiveness and lost the battle to the _code entropy_. Usually, they are not the result of poor developer skills. Rather they become these little "monsters" due to constant churn and time constraints. Unless refactored, they slowly rot to the point where they are unchangeable and unusable.
 
