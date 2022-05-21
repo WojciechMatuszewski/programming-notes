@@ -65,4 +65,8 @@ Consider reading [this great article](https://blog.pragmaticengineer.com/the-pro
 
 ## TODO
 
-- TODO: Big ball of mud
+_"Big ball of mud"_ systems are systems that lack architectural cohesiveness and lost the battle to the _code entropy_. Usually, they are not the result of poor developer skills. Rather they become these little "monsters" due to constant churn and time constraints. Unless refactored, they slowly rot to the point where they are unchangeable and unusable.
+
+Thinking and building systems with proper architectural decisions are expensive and time-consuming. Time and money forces are often much more powerful to the decision-makers.
+
+All too often the mantra when creating software goes like this: _"You need to deliver quality software on time and under budget. Therefore, focus first on features and functionality, then on architecture and performance"_. Of course, this approach **leads to the big ball of mud**.
