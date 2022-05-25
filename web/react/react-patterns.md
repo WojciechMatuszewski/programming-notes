@@ -695,3 +695,174 @@ function useStateVariable2({ dependency1, dependency2 }) {
 Even though I can't entirely agree with the author on how he writes the handlers (very liberate usage of `useCallback`), I second the idea of encapsulating the concerns fully.
 
 Please note that **this technique only applies to situations where there are multiple concerns encapsulated in the logic of the body of the component**. This is not a silver bullet, and **should not be used "by default"**.
+
+## Debouncing callbacks
+
+> Note that in React 18, you have `useDeferredValue` at your disposal – a much better way of debouncing a **synchronous** callback. Everything I write here still applies to the asynchronous callbacks.
+
+### The need
+
+You would like to apply a `debounce` on a callback. The callback can be passed to your component as a prop, or it could also be declared inline within the body of the component.
+
+No matter the situation, there are a lot of cases you need to consider before considering your code correct. Let us look closer at the edge cases and how to deal with them.
+
+### Single debounce instance
+
+The most critical part of correctly debouncing your functions is to **ensure that you operate on a single instance of the debounced function throughout the component lifecycle**. If you do not, **you could introduce a latent bug in your application, where the timer powering debounce is reset when your component re-renders** (a situation similar to the issues one might encounter while implementing the `useInterval` hook).
+
+In React, you have a couple of ways to ensure that you operate on a single instance of something – by utilizing either `useRef`, `useCallback`, or `useMemo`. What follows is an example usage of applying debounce to a callback via the `useMemo` hook.
+
+```jsx
+import debounce from "lodash.debounce";
+import { useMemo, useState } from "react";
+
+export default function App() {
+  const [inputValue, setInputValue] = useState("");
+
+  const onChange = useMemo(() => {
+    return debounce((e) => setInputValue(e.target.value), 200);
+  }, []);
+
+  return (
+    <div>
+      {inputValue}
+      <input type="text" onChange={onChange} />
+    </div>
+  );
+}
+```
+
+### The problem with `useRef`
+
+As I eluded earlier, one **could** use `useRef` to ensure we operate on a single, mutable instance of a given value throughout the component lifecycle. However, the **`useRef` is NOT a good candidate for the debounce implementation**. The reason is that **with `useRef`, every time your component re-renders, the `debounce` function is invoked again and again**, which re-creates it, resetting the underlying timers in the process.
+
+```jsx
+import debounce from "lodash.debounce";
+import { useRef, useState } from "react";
+
+export default function App() {
+  const [inputValue, setInputValue] = useState("");
+
+  const onChange = useRef(debounce((e) => setInputValue(e.target.value), 200));
+
+  return (
+    <div>
+      {inputValue}
+      <input type="text" onChange={onChange.current} />
+    </div>
+  );
+}
+```
+
+The implementation might seem harmless and make sense if you do not pay attention, but if you promote this code into production, **you have just introduced a potential latent bug into your system**.
+
+Let me swap the `debounce` call within the `useRef` to a wrapper function that logs whenever the underlying `debounce` is called.
+
+```jsx
+import debounce from "lodash.debounce";
+import { useRef, useState } from "react";
+
+const myDebounce = (...props) => {
+  console.log("Re-creating the debounce instance");
+  return debounce(...props);
+};
+
+export default function App() {
+  const [inputValue, setInputValue] = useState("");
+
+  const onChange = useRef(
+    myDebounce((e) => setInputValue(e.target.value), 200)
+  );
+
+  return (
+    <div>
+      {inputValue}
+      <input type="text" onChange={onChange.current} />
+    </div>
+  );
+}
+```
+
+**Every time the `inputValue` changes, the `console.log` fires** indicating that we do not work with a single instance of the `debounce`d callback – instead, we work with a single instance of the ref that contains a constantly changing instance of the `debounce`d callback!
+
+### The problem with `useCallback`
+
+Carrying out the same exercise we did before but swapping the `useRef` with `useCallback` shows very similar results.
+
+```jsx
+import debounce from "lodash.debounce";
+import { useCallback, useState } from "react";
+
+const myDebounce = (...props) => {
+  console.log("Re-creating the debounce instance");
+  return debounce(...props);
+};
+
+export default function App() {
+  const [inputValue, setInputValue] = useState("");
+
+  const onChange = useCallback(
+    myDebounce((e) => setInputValue(e.target.value), 200),
+    []
+  );
+
+  return (
+    <div>
+      {inputValue}
+      <input type="text" onChange={onChange} />
+    </div>
+  );
+}
+```
+
+Two problems here.
+
+1. **Like in the case of `useRef`, we re-create the `debounce`d function every time the component re-renders**.
+1. The linter complains -> `React Hook useCallback received a function whose dependencies are unknown. Pass an inline function instead.`
+
+We can eliminate the linter warnings by changing the implementation to the following.
+
+```jsx
+const onChange = useCallback(
+  (e) => myDebounce((e) => setInputValue(e.target.value), 200)(e),
+  []
+);
+```
+
+But, even with this modified form, we **still suffer from the initial problem of re-creating the `debounce`d function every time the component re-renders**.
+
+### The solution with `useMemo`
+
+The characteristics of the `useMemo` hook are a natural fit for what we are trying to accomplish. **Consider using `useMemo` when implementing a `debounce`d version of a given callback**.
+
+```jsx
+import debounce from "lodash.debounce";
+import { useMemo, useState } from "react";
+
+export default function App() {
+  const [inputValue, setInputValue] = useState("");
+
+  const onChange = useMemo(() => {
+    return debounce((e) => setInputValue(e.target.value), 200);
+  }, []);
+
+  return (
+    <div>
+      {inputValue}
+      <input type="text" onChange={onChange} />
+    </div>
+  );
+}
+```
+
+While the above solution works, it is not without its edge cases. In fact, you can shoot yourself in the foot pretty quickly here if you are not mindful of closures and the implications they might have.
+
+#### The `useMemo` closure problem
+
+```jsx
+const onChange = useMemo(() => {
+  return debounce((e) => setInputValue(e.target.value), 200);
+}, []);
+```
+
+In the previous example, I **explicitly create a "wrapper" function around the `setInputValue` call** – a deliberate effort to avoid problems with the stale `setInputValue` function. While the `setInputValue` function never changes, imagine a function that does change.
