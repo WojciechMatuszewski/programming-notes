@@ -865,4 +865,30 @@ const onChange = useMemo(() => {
 }, []);
 ```
 
-In the previous example, I **explicitly create a "wrapper" function around the `setInputValue` call** – a deliberate effort to avoid problems with the stale `setInputValue` function. While the `setInputValue` function never changes, imagine a function that does change.
+In the previous example, I **explicitly create a "wrapper" function around the `setInputValue` call** – a deliberate effort to avoid problems with the stale `setInputValue` function. While the `setInputValue` function never changes, imagine a function that does change. If I were NOT to create the "function wrapper", the callback function passed to the `debounce` would have been stale after it changes.
+
+An excellent example of a callback function that can change is a function our component receives from props. The following code snippet demonstrates this exact scenario.
+
+```jsx
+const callbackFromPropsRef = useRef(callbackFromProps);
+useEffect(() => {
+  callbackFromPropsRef.current = callbackFromProps;
+}, [callbackFromProps]);
+
+const onChange = useMemo(() => {
+  return debounce(callbackFromPropsRef.current, 200);
+}, []);
+```
+
+In this scenario, we create the `debounce`d function only once, but **the `debounce` callback will be stale (due to a closure) if the `callbackFromPropsRef.current` updates**. To make sure we always call the "latest" version of the `.current`, we must create a "wrapper function" around it, like so.
+
+```jsx
+const callbackFromPropsRef = useRef(callbackFromProps);
+useEffect(() => {
+  callbackFromPropsRef.current = callbackFromProps;
+}, [callbackFromProps]);
+
+const onChange = useMemo(() => {
+  return debounce((value) => callbackFromPropsRef.current(value), 200);
+}, []);
+```
