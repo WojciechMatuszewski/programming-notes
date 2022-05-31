@@ -324,7 +324,7 @@ The `import type` syntax is very helpful but it forces you to create "type-only"
 The TypeScript team decided to add "squashed type-only" import. The syntax is as follows
 
 ```ts
-import {someFunc, type someFuncType} from './a'
+import { someFunc, type someFuncType } from "./a";
 ```
 
 The functionality and the intent stays the same, but instead of two import statements you do one.
@@ -1897,6 +1897,23 @@ doWork(param);
 ```
 
 It would be super nice for _Typescript_ to complain here.
+
+What is interesting is that when you pass the parameters like so
+
+```ts
+type Props = {
+  key: string;
+};
+
+const doWork = (props: Props) => {};
+
+// TypeScript complains
+doWork({ key: "1", somethingElse: "2" });
+```
+
+TypeScript would complain.
+
+You can learn more about this behavior (and others, especially for `Object.keys`) in [this video](https://portal.gitnation.org/contents/understanding-types-as-sets).
 
 ## Testing for `never`
 

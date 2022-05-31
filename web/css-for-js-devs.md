@@ -104,7 +104,9 @@ It turns out that if you learn a thing or two about how _stacking contexts_ work
 - the **_stacking context_ is not correlated with _layers_**. The **_stacking context_ is purely CSS-related thing**.
 
 - to **"seal" children, you could use `isolation: "isolate"`**.
+
   - works **the same way as if you were to set `z-index` to 1 on the element**
+
   - ensures that **no `z-index` pollution occurs**
 
 ## Flexbox
