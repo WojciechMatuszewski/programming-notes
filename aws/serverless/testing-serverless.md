@@ -788,4 +788,4 @@ Otherwise, it's almost the same as previous tests.
 You can incorporate your E2E tests directly into the infrastructure and let CloudFormation handle the case when the tests fail – roll back the changes.
 As good as it might sound, the approach is not without drawbacks. Instead of having the test logs visible in your CI environment, we will have to use the CloudWatch console to view them – it might be a significant pain point since the CloudWatch console is not exactly lovely to work with.
 
-If you want to learn more about utilizing the provider framework for testing, consider [giving this talk a watch](https://youtu.be/s8tO-ymVQPg?t=8515) then, consult [this repository](https://github.com/WojciechMatuszewski/cdk-async-testing-example).
+If you want to learn more about utilizing the provider framework for testing, consider [giving this talk a watch](https://youtu.be/s8tO-ymVQPg?t=8515), then consult [this repository](https://github.com/WojciechMatuszewski/cdk-async-testing-example).
