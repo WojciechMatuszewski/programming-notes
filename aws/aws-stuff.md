@@ -1,6 +1,7 @@
 # AWS Stuff
 
-- **Principal** is a person or application that can make authenticated or anonymous request to perform an action on a system. **Often seen in-code in lambda authorizers**
+- **Principal** is a person or application that can make authenticated or anonymous request to perform an action on a
+  system. **Often seen in-code in lambda authorizers**
 
 - Security **in the cloud** is **your job**
 
@@ -33,9 +34,11 @@
 
 - **YOU CAN ATTACH SECURITY GROUP TO A LAMBDA**
 
-- lambdas **inbound connections are blocked**. When it comes to outbound, **outbound TCP/IP and UDP/IP sockets are supported**.
+- lambdas **inbound connections are blocked**. When it comes to outbound, **outbound TCP/IP and UDP/IP sockets are
+  supported**.
 
-- by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have access to resources running within private vpc**.
+- by default **lambda is within so called "No VPC" mode**. This means that (actually quite logically) it **will not have
+  access to resources running within private vpc**.
 
 - up to 10GB of ephemeral storage (starting at 512 MB)
 
@@ -52,7 +55,7 @@
 - you can **specify the % of the traffic** that is distributed between given versions
 
 - you **cannot route** between **two different lambda function versions**
-  - you can only create the routing configuration in the context of the same lambda function
+    - you can only create the routing configuration in the context of the same lambda function
 
 #### Execution Role
 
@@ -68,23 +71,30 @@
 
 - you have to have a **function version** or an **alias that DOES NOT point to $latest** to turn it on.
 
-- it will basically **keep concurrently X clones of execution environments ready** thus making cold starts obsolete (unless you make more requests than you have provisioned for).
+- it will basically **keep concurrently X clones of execution environments ready** thus making cold starts obsolete (
+  unless you make more requests than you have provisioned for).
 
 - can be **auto-scaled by using Application AutoScaling**. Do not mistake this with auto scaling groups.
 
-- Do not confuse this with **reserved capacity**. Here we are **provisioning workers**, in the other case we are **reserving the amount of time a lambda can be invoked**
+- Do not confuse this with **reserved capacity**. Here we are **provisioning workers**, in the other case we are **
+  reserving the amount of time a lambda can be invoked**
 
 #### Inside VPC
 
-- **you can attach the lambda to a vpc**. Based on your needs, the associated subnets should be either private or public. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your public subnet**. This is because **lambdas have ENI assigned that never gets public IP**.
+- **you can attach the lambda to a vpc**. Based on your needs, the associated subnets should be either private or
+  public. If you want to make sure that your lambda within VPC can access internet **place NAT gateway within your
+  public subnet**. This is because **lambdas have ENI assigned that never gets public IP**.
 
-- since Lambdas needs ENI, you might hit **throttling when there are not enough ENIs for given lambda container**. The limit is **350 ENIs per region**. When that throttling happens you will se an `ec2` related throttling message.
+- since Lambdas needs ENI, you might hit **throttling when there are not enough ENIs for given lambda container**. The
+  limit is **350 ENIs per region**. When that throttling happens you will se an `ec2` related throttling message.
 
 #### Monitoring
 
-- **CloudWatch metrics** are **somewhat limited**. They only include **info about errors, invocations, duration etc**.
+- **CloudWatch's metrics** are **somewhat limited**. They only include **info about errors, invocations, duration etc**.
 
-- for **memory usage information** you can either look into **CloudWatch logs** or you can **create metrics using metric filter (not provided by default)**. The metric filter is very useful if you want to have the graph that includes **allocated memory vs used memory**.
+- for **memory usage information** you can either look into **CloudWatch logs** or you can **create metrics using metric
+  filter (not provided by default)**. The metric filter is very useful if you want to have the graph that includes **
+  allocated memory vs used memory**.
 
 #### X-Ray
 
@@ -94,7 +104,8 @@
 
 - **X-Ray works in real-time**. Can be used for real-time monitoring.
 
-- X-Ray **does not sample every request**. This is quite important since that means that the data completeness is not guaranteed and it **should not be used as a audit mechanism**.
+- X-Ray **does not sample every request**. This is quite important since that means that the data completeness is not
+  guaranteed and it **should not be used as a audit mechanism**.
 
 ##### X-Ray daemon
 
@@ -106,13 +117,15 @@
 
 #### Lambda @Edge
 
-- **CloudFront will invoke your function when given event happens**. These are **events that has to do with request life-cycle @ CloudFront like origin request or smth like that**.
+- **CloudFront will invoke your function when given event happens**. These are **events that has to do with request
+  life-cycle @ CloudFront like origin request or smth like that**.
 
 - you can use it to **perform A/B testing, since you can mutate the request send by the user**
 
 - you can also **perform some redirect logic , maybe check auth**.
 
-- **they are not executed in the edge location**. They are executed in the region closes to the edge location. This is why you have to be mindful of the region whenever you browse the logs.
+- **they are not executed in the edge location**. They are executed in the region closes to the edge location. This is
+  why you have to be mindful of the region whenever you browse the logs.
 
 - these are **NOT running at the edge locations, they are run within the regional CloudFront caches**.
 
@@ -120,7 +133,8 @@
 
 - these **actually run within the edge location**
 
-- **very constrained in terms of what they can do**. Full comparison table [available here](https://aws.amazon.com/blogs/aws/introducing-cloudfront-functions-run-your-code-at-the-edge-with-low-latency-at-any-scale/?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%23140)
+- **very constrained in terms of what they can do**. Full comparison
+  table [available here](https://aws.amazon.com/blogs/aws/introducing-cloudfront-functions-run-your-code-at-the-edge-with-low-latency-at-any-scale/?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%23140)
 
 #### Event Source Mapping
 
@@ -130,17 +144,19 @@
 
 - services that use _event source mapping_: _DynamoDB_, _Kinesis_, _MQ_, _SQS_ and _managed Kafka_.
 
-- _Event Source Mapping_ uses **lambda execution role** for IAM permissions. This is why you have to specify that, for example, your function can read and delete messages from SQS
+- _Event Source Mapping_ uses **lambda execution role** for IAM permissions. This is why you have to specify that, for
+  example, your function can read and delete messages from SQS
 
 ##### Applying filters
 
 - you can **apply filters on data coming from the event source**
 
-  - As of writing this (26.11.2021) not every data source is supported. The supported data sources are: _DynamoDB_, _Kinesis_ and _SQS_
+    - As of writing this (26.11.2021) not every data source is supported. The supported data sources are: _DynamoDB_, _
+      Kinesis_ and _SQS_
 
 - with the **ESM filters, you no longer have to implement filtering in a DDB stream lambda functions**.
 
-  - this is **huge in single-table design environments** where CDC Lambda function is invoked very often
+    - this is **huge in single-table design environments** where CDC Lambda function is invoked very often
 
 - the filters **use _EventBridge_ pattern-like filtering**.
 
@@ -150,47 +166,60 @@
 
 - remember that **with SQS** if a **message does not match your filter it will be deleted from the queue**
 
-  - you did not consume the message so it is deleted
+    - you did not consume the message so it is deleted
 
 - with **SQS you are still going to pay for the pulling even if your Lambda was not invoked**
 
 - do **not use multiple filters on the same SQS queue**. This is because **SQS is single receiver service**.
 
-  - two filtering rules means two pollers
+    - two filtering rules means two pollers
 
-  - "When a message does not pass the filter it is not returned to the queue. The message will be considered complete, and will not be available to other consumers, including other Event Source Mappings, even if they have matching filters." [Read more here](https://bitesizedserverless.com/bite/filter-dynamodb-event-streams-sent-to-lambda/).
+    - "When a message does not pass the filter it is not returned to the queue. The message will be considered complete,
+      and will not be available to other consumers, including other Event Source Mappings, even if they have matching
+      filters." [Read more here](https://bitesizedserverless.com/bite/filter-dynamodb-event-streams-sent-to-lambda/).
 
-  - remember that **this only relates to SQS, Kinesis and DDB streams are "safe" in that regard**
+    - remember that **this only relates to SQS, Kinesis and DDB streams are "safe" in that regard**
 
 #### Lambda destinations
 
-- **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
+- **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and
+  then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
 
 - works only for **async** and **stream based invocations**.
-  - if you need to setup **destinations of pool-based invocations** then you might be interested in **setting destinations on Event Source Mapping** itself.
-  - in these types of invocations, the **Event Source Mapping** controls the batching and pushing the events to your lambda
+    - if you need to setup **destinations of pool-based invocations** then you might be interested in **setting
+      destinations on Event Source Mapping** itself.
+    - in these types of invocations, the **Event Source Mapping** controls the batching and pushing the events to your
+      lambda
 
 #### Lambda function URLs
 
-- Previously, to expose your AWS Lambda function via an URL, you had to front it with either an ALB or APIGW. That is no longer the case with Lambda function URLs.
+- Previously, to expose your AWS Lambda function via an URL, you had to front it with either an ALB or APIGW. That is no
+  longer the case with Lambda function URLs.
 
-- **Completely free feature (included in the AWS Lambda pricing)**. Hook it up to CloudFront and you have the cheapest AWS Lambda-based API available to you.
+- **Completely free feature (included in the AWS Lambda pricing)**. Hook it up to CloudFront and you have the cheapest
+  AWS Lambda-based API available to you.
 
-- Keep in mind that resource policies still apply. Depending on the authorization scheme you choose (IAM or None), you must ensure the resource policy is valid.
+- Keep in mind that resource policies still apply. Depending on the authorization scheme you choose (IAM or None), you
+  must ensure the resource policy is valid.
 
-- Using Lambda Function URL, you lose the niceties provided by APIGW like request validation, throttling, usage plans, and WAF support.
+- Using Lambda Function URL, you lose the niceties provided by APIGW like request validation, throttling, usage plans,
+  and WAF support.
 
-  - Not all is lost, though. You can **front the Lambda Function URL with CloudFront**. This gives you the ability to use WAF but only on the CloudFront domain URL.
+    - Not all is lost, though. You can **front the Lambda Function URL with CloudFront**. This gives you the ability to
+      use WAF but only on the CloudFront domain URL.
 
-  - When it comes to throttling, you could use the **reserved concurrency** feature of AWS Lambda. Not ideal, but an alternative nevertheless.
+    - When it comes to throttling, you could use the **reserved concurrency** feature of AWS Lambda. Not ideal, but an
+      alternative nevertheless.
 
-- Might be an excellent lift-and-shift platform for monolithic applications. Having said that, I would not recommend it unless you know what you are doing.
+- Might be an excellent lift-and-shift platform for monolithic applications. Having said that, I would not recommend it
+  unless you know what you are doing.
 
 - For more information, consult [this great article](https://lumigo.io/blog/aws-lambda-function-url-is-live/).
 
 #### Resource-based policies
 
-- when a service does not use the _event source mapping_ and underlying _execution role_, you have to specify the _resource-based policy_ so that the service can invoke your function directly.
+- when a service does not use the _event source mapping_ and underlying _execution role_, you have to specify the _
+  resource-based policy_ so that the service can invoke your function directly.
 
 - list of services that use this method of integration is much greater than the _event source mapping_ ones.
 
@@ -210,7 +239,8 @@
 
 - to use KMS, the **_Lambda service_ uses KMS grant on a key. The grant principal is the function execution role**
 
-- there might be problems if you remove the _execution role_. Here is [an article about it](https://www.lastweekinaws.com/blog/The-Sneaky-Weakness-Behind-AWS-Managed-KMS-keys/)
+- there might be problems if you remove the _execution role_. Here
+  is [an article about it](https://www.lastweekinaws.com/blog/The-Sneaky-Weakness-Behind-AWS-Managed-KMS-keys/)
 
 - if you do not provide the key yourself, the service will use _AWS Managed_ key
 
@@ -229,13 +259,15 @@
 
 - you will need to use an **alias**. The traffic **will be shifted by `CodeDeploy`**
 
-- just like a normal `CodeDeploy` deployment, there are **validation hooks** you can use to decide if your new alias is OK.
+- just like a normal `CodeDeploy` deployment, there are **validation hooks** you can use to decide if your new alias is
+  OK.
 
 #### EFS Integration
 
 - your lambda functions can integrate with EFS
 
-- there are some latency considerations. Reading large files will take a couple of seconds (might impact start performance)
+- there are some latency considerations. Reading large files will take a couple of seconds (might impact start
+  performance)
 
 - the benefit here is the _elasticity_ of the storage. Keep in mind that EFS can grow almost infinitely.
 
@@ -247,7 +279,8 @@
 
 - **your image has to communicate with lambda runtime**
 
-- this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of space
+- this is a good way of deploying code which is subject to heavy regulatory constrains or you need more than 250 MB of
+  space
 
 - you can **reference container images residing in a different AWS account**
 
@@ -257,20 +290,25 @@
 
 - the bigger the image, the longer the _optimization_ phase
 
-- the things that you put into your container are split into 100 MB chunks, this is an side-effect of how Lambda service optimizes your container
+- the things that you put into your container are split into 100 MB chunks, this is an side-effect of how Lambda service
+  optimizes your container
 
-- when you are loading large datasets, it takes time, those chunks have to be downloaded. Lambda might timeout before the dataset is loaded
+- when you are loading large datasets, it takes time, those chunks have to be downloaded. Lambda might timeout before
+  the dataset is loaded
 
 ##### Lambda layers
 
-- Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your layers**
-  - You can find the list of the specific directory names for a given runtime here: https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path
+- Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your
+  layers**
+    - You can find the list of the specific directory names for a given runtime
+      here: https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path
 
 ##### Lambda layers and extensions with container deployments
 
 - lambda layers are not directly supported with the container deployments
 
-- to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build with a image that contains the layer**
+- to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build
+  with a image that contains the layer**
 
 #### Tumbling windows
 
@@ -294,7 +332,8 @@
 
 - this allows you to **return which message failed in a given batch**
 
-- is **different than bisect on error** because **with bisect on error one message might be processed multiple times**. Here we are **telling the pooler which message failed exactly**
+- is **different than bisect on error** because **with bisect on error one message might be processed multiple times**.
+  Here we are **telling the pooler which message failed exactly**
 
 - **DOES NOT WORK WITH SQS**. You still have to use the pattern where you throw the messages that failed the processing
 
@@ -305,7 +344,9 @@
 - the state is needed because the lambda might not be ready to be invoked immiedietley after the operation.
   The service might be creating resources on your behalf, that usually takes time
 
-- Refer to [this post](https://aws.amazon.com/blogs/compute/coming-soon-expansion-of-aws-lambda-states-to-all-functions/) for the additional info
+- Refer
+  to [this post](https://aws.amazon.com/blogs/compute/coming-soon-expansion-of-aws-lambda-states-to-all-functions/) for
+  the additional info
 
 ### Step Functions
 
@@ -313,7 +354,8 @@
 
 - for **orchestrating serverless workflows**
 
-- you can create **manual steps** with step functions. This can be **whi le dealing with hybrid approach** where **there is some level of human interaction needed (like clicking a link)**
+- you can create **manual steps** with step functions. This can be **whi le dealing with hybrid approach** where **there
+  is some level of human interaction needed (like clicking a link)**
 
 - **does not** integrate with **Mechanical Turk**. You will need **SWF for that**.
 
@@ -325,26 +367,31 @@
 
 - handle exceptions with the `Catch` operator
 
-- there is a **limit in terms of number of entries in the execution history**. It's quite big - 25000. Avoid reaching it (split executions into multiple workflows if needed)
+- there is a **limit in terms of number of entries in the execution history**. It's quite big - 25000. Avoid reaching
+  it (split executions into multiple workflows if needed)
 
 #### Step Functions and idempotency
 
 - _Step Functions_ can be used to ensure service idempotency
 
 - Possible because the `startExecution` API is idempotent itself
-  - If you provide the same `executionId` parameter multiple times, an error will be thrown
-  - This mechanism is similar to how `TransactWriteItem` works in _DynamoDB_ with the `clientToken` attribute (do not mistake this with _atomic counters_ using `PutItem` API. The `PutItem` API is NOT idempotent)
+    - If you provide the same `executionId` parameter multiple times, an error will be thrown
+    - This mechanism is similar to how `TransactWriteItem` works in _DynamoDB_ with the `clientToken` attribute (do not
+      mistake this with _atomic counters_ using `PutItem` API. The `PutItem` API is NOT idempotent)
 
 #### Step Functions and concurrency control
 
 - I've seen two ways the concurrency can be managed using _Step Functions_
 
-- The **first** approach is to use the `Map` state. The `Map` state takes in the `MaxConcurrency` parameter which controls how many concurrent _map operations_ are running at the same time.
+- The **first** approach is to use the `Map` state. The `Map` state takes in the `MaxConcurrency` parameter which
+  controls how many concurrent _map operations_ are running at the same time.
 
-  - Note that **this way** of controlling concurrency only works for **iteration-like scenarios**.
+    - Note that **this way** of controlling concurrency only works for **iteration-like scenarios**.
 
-- Sometimes, you have to control the sum of concurrency of **separate** _Step Functions_ executions. This is where **the second** approach is useful.
-  - In this approach we are going to leverage [_DynamoDB_ with semaphores](https://aws.amazon.com/blogs/compute/controlling-concurrency-in-distributed-systems-using-aws-step-functions/)
+- Sometimes, you have to control the sum of concurrency of **separate** _Step Functions_ executions. This is where **the
+  second** approach is useful.
+    - In this approach we are going to leverage [_
+      DynamoDB_ with semaphores](https://aws.amazon.com/blogs/compute/controlling-concurrency-in-distributed-systems-using-aws-step-functions/)
 
 ### IAM
 
@@ -381,7 +428,8 @@
 
 #### Real Identities
 
-- both **user and roles** are known as real identities. They both have **ARN** and **can be referenced in other areas of AWS**
+- both **user and roles** are known as real identities. They both have **ARN** and **can be referenced in other areas of
+  AWS**
 
 - **groups ARE NOT REAL IDENTITIES**. You cannot login onto the group and such. This is such an organizational being.
 
@@ -401,7 +449,8 @@
 
 - allows you to set **Authentication attributes**: **Usernames, passwords, Access Keys, MFA and Password Policies**
 
-- **authentication** is the process there **you are being verified for being you, being that entity you present yourself as**
+- **authentication** is the process there **you are being verified for being you, being that entity you present yourself
+  as**
 
 ##### Service-linked Role
 
@@ -420,57 +469,73 @@
 
 - role which you can assume has two segments
 
-  - **trust policy**. This defines **who can assume a role**
-  - **policy document**. This is a standard policy
+    - **trust policy**. This defines **who can assume a role**
+    - **policy document**. This is a standard policy
 
 - **trust relationship** is **ONLY checked** when **assuming a role** (that usually happens once or infrequently)
 
 - assuming a role means **being a completely different identity, defined by assumed role**
 
-- under the hood **assuming a role means using completely new, temporary, credentials created with sts which are associated with the assumed role**
+- under the hood **assuming a role means using completely new, temporary, credentials created with sts which are
+  associated with the assumed role**
 
 - **all roles that could be assumed are automatically assumed**
 
-- **by default** newly created User has **implicit DENY** on all services. **You should assign roles to lift the implicit deny**
+- **by default** newly created User has **implicit DENY** on all services. **You should assign roles to lift the
+  implicit deny**
 
 - **assumed credentials** are **valid until the expiration date expires**
 
-- when you are creating **cross account assume role stuff** you can **further protect the policy by adding externalId condition**. This **externalId can only be used when assuming via CLI / SDK**.
+- when you are creating **cross account assume role stuff** you can **further protect the policy by adding externalId
+  condition**. This **externalId can only be used when assuming via CLI / SDK**.
 
-- it is vital **to set the _SourceIdentity_** when assuming a role. The _SourceIdentity_ is a **sticky name that is preserved even in the case of many chains of `AssumeRole` calls**. This enables you to **identify who is operating as the assumed role**.
+- it is vital **to set the _SourceIdentity_** when assuming a role. The _SourceIdentity_ is a **sticky name that is
+  preserved even in the case of many chains of `AssumeRole` calls**. This enables you to **identify who is operating as
+  the assumed role**.
   **Once the _SourceIdentity_ is set it's is not possible to change it in a given session**.
 
-  - to use the _SourceIdentity_ when assuming a role, the `AssumeRole` (trust policy) has to have the `sts:SetSourceIdentity` action enabled.
+    - to use the _SourceIdentity_ when assuming a role, the `AssumeRole` (trust policy) has to have
+      the `sts:SetSourceIdentity` action enabled.
 
-    ```text
-    ...
-    Actions:
-      - sts:AssumeRole
-      - sts:SetSourceIdentity
-    Principal:
-      Service / AWS
-      ..
-    ```
+      ```text
+      ...
+      Actions:
+        - sts:AssumeRole
+        - sts:SetSourceIdentity
+      Principal:
+        Service / AWS
+        ..
+      ```
 
-    **Remember that the `Principal` needs the permissions to do these actions.**.
+      **Remember that the `Principal` needs the permissions to do these actions.**.
 
-  - How the "stickiness" of the _SourceIdentity_ is preserved? [This article explains](https://aws.amazon.com/blogs/security/how-to-relate-iam-role-activity-to-corporate-identity/).
-    > After the role is assumed and the source identity set, the source identity cannot be changed for the duration of the assume role session.
+    - How the "stickiness" of the _SourceIdentity_ is
+      preserved? [This article explains](https://aws.amazon.com/blogs/security/how-to-relate-iam-role-activity-to-corporate-identity/)
+      .
+      > After the role is assumed and the source identity set, the source identity cannot be changed for the duration of
+      the assume role session.
 
 ##### Revoking Sessions
 
-Since removing a policy from a role which is assumed can be destructive there is another way of removing assumed (short-term) credentials. That is **revoking a session**. This basically **ads a deny all policy for tokens granted before given date**. So you did not remove the permissions directly, only invalidated given tokens. Pretty sweat!
+Since removing a policy from a role which is assumed can be destructive there is another way of removing assumed (
+short-term) credentials. That is **revoking a session**. This basically **ads a deny all policy for tokens granted
+before given date**. So you did not remove the permissions directly, only invalidated given tokens. Pretty sweat!
 
 ##### Assuming cross account role
 
 ##### Assuming EC2 Role
 
-You have to assign a role to a given instance. Then you can ssh into that instance and do stuff that that role allows you to do. This is possible because the `aws-cli` is able to obtain the short term credentials that the role provides. This is done by **querying an instance metadata role**.
+You have to assign a role to a given instance. Then you can ssh into that instance and do stuff that that role allows
+you to do. This is possible because the `aws-cli` is able to obtain the short term credentials that the role provides.
+This is done by **querying an instance metadata role**.
 `http://169.254.169.254/latest/urity-credentials/NAME_OF_THE_ROLE`
 
 ##### Assuming EC2 Role on premises
 
-First thing first **you will need a role that will be shared along all your on prem instances**. Assuming you've done that, you should be using `AWS CodeDeploy` along with `aws-codedeploy-session-helper` to safely fetch credentials to your machines. This is mainly because `CodeDeploy` allows you to tag your instances, track deployments and does a lot of things for you. This approach **involves a cron job**.
+First thing first **you will need a role that will be shared along all your on prem instances**. Assuming you've done
+that, you should be using `AWS CodeDeploy` along with `aws-codedeploy-session-helper` to safely fetch credentials to
+your machines. This is mainly because `CodeDeploy` allows you to tag your instances, track deployments and does a lot of
+things for you. This approach **involves a cron job**.
 
 ##### Switching Roles
 
@@ -480,11 +545,17 @@ First thing first **you will need a role that will be shared along all your on p
 
 ##### `iam:PassRole`
 
-- This is a guardrail to ensure that users / resources with less privileged roles, cannot PASS more privilege roles to other resources / users
+- This is a guardrail to ensure that users / resources with less privileged roles, cannot PASS more privilege roles to
+  other resources / users
 
-- Imagine a CI/CD scenario. The `Deployer` role is deploying a _CloudFormation_ template and will _pass role_ to _CloudFormation_ so that the service can create the resources. In this scenario, we have to grant the `Deployer` role to pass a more privileged role to the _CloudFormation_ service.
+- Imagine a CI/CD scenario. The `Deployer` role is deploying a _CloudFormation_ template and will _pass role_ to _
+  CloudFormation_ so that the service can create the resources. In this scenario, we have to grant the `Deployer` role
+  to pass a more privileged role to the _CloudFormation_ service.
 
-- Another scenario around _EC2_. Imagine an `Will` user with very restrictive role attached to that user. There also exists an `Administrator` role that is very permissive. By default the `Will` will not be able to attach `Administrator` role to the launched instance. If given the _PassRole_ permissions however, he will be able do to it.
+- Another scenario around _EC2_. Imagine an `Will` user with very restrictive role attached to that user. There also
+  exists an `Administrator` role that is very permissive. By default the `Will` will not be able to
+  attach `Administrator` role to the launched instance. If given the _PassRole_ permissions however, he will be able do
+  to it.
 
 #### Policies
 
@@ -494,7 +565,8 @@ First thing first **you will need a role that will be shared along all your on p
 
 - **explicit deny** always **overrides explicit allow**
 
-- **inline policies** should only be applied to a single user. They **should not** be used to **applying policies to multiple identities**. You should **use managed / custom policies for that!**.
+- **inline policies** should only be applied to a single user. They **should not** be used to **applying policies to
+  multiple identities**. You should **use managed / custom policies for that!**.
 
 - always **prefer explicit deny no matter what**. Use **conditions if necessary**.
 
@@ -516,7 +588,8 @@ arn:aws:s3:::example_bucket
 
 This is very different from other services where you have to specify most (if not all parts of the syntax).
 
-It turns out that this is somewhat **service specific**. For global services you can skip the `region` part, and it just happens that for `s3` you can skip both `region` and `account`.
+It turns out that this is somewhat **service specific**. For global services you can skip the `region` part, and it just
+happens that for `s3` you can skip both `region` and `account`.
 
 ##### Resource Policy
 
@@ -524,25 +597,33 @@ Now we are in the domain of a given service / resource.
 
 - **IAM is not involved here**, control is **handled by a given service / resource**
 
-* the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using resource-based policy might be less latency heavy than using an identity-based policy**. One might experience this while working with **APIGW + Lambda** where the **integration between the services could use either resource or identity based policies**.
+* the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using
+  resource-based policy might be less latency heavy than using an identity-based policy**. One might experience this
+  while working with **APIGW + Lambda** where the **integration between the services could use either resource or
+  identity based policies**.
 
-  Here is a [great article on this topic](https://medium.com/@lancers/low-hanging-fruit-to-reduce-api-gateway-to-lambda-latency-8109451e44d6)
+  Here is
+  a [great article on this topic](https://medium.com/@lancers/low-hanging-fruit-to-reduce-api-gateway-to-lambda-latency-8109451e44d6)
 
-- **some** services **do not support _Resource Policies_**. For example, **DynamoDB does not support resource policies**.
+- **some** services **do not support _Resource Policies_**. For example, **DynamoDB does not support resource policies**
+  .
 
-  > Other services, such as Amazon S3, also support resource-based permissions policies. For example, you can attach a policy to an S3 bucket to manage access permissions to that bucket. DynamoDB doesn't support resource-based policies.
+  > Other services, such as Amazon S3, also support resource-based permissions policies. For example, you can attach a
+  policy to an S3 bucket to manage access permissions to that bucket. DynamoDB doesn't support resource-based policies.
 
   This means that **it is the identity that a given service assumes that has to have permissions enabled for DynamoDB**
 
 - remember that **the `Resource` or `NotResource` is a required field** for the _Resource Policy_ to work.
 
-  - you **might not get an error if you create one without it, but it will not work!**.
+    - you **might not get an error if you create one without it, but it will not work!**.
 
-  - this is **different** than in the **context of _Identity-based Policy_** where **the `Principal` field is implied, thus not necessary**.
+    - this is **different** than in the **context of _Identity-based Policy_** where **the `Principal` field is implied,
+      thus not necessary**.
 
-- I have no checked it for other services, but **for AWS Lambda** you **cannot specify a resource policy that denies access**.
+- I have no checked it for other services, but **for AWS Lambda** you **cannot specify a resource policy that denies
+  access**.
 
-  - The CloudFormation `AWS::Lambda::Permission` implies `Allow` and I could not find a way to change it.
+    - The CloudFormation `AWS::Lambda::Permission` implies `Allow` and I could not find a way to change it.
 
 ###### Cross account
 
@@ -551,7 +632,8 @@ Now we are in the domain of a given service / resource.
 - this is useful when you **want user to not give up his trusted account roles**.
 
 - in the cross account scenario **both the resource policy and the role has to allow for an operation**.
-  This is **in contrast to same-account scenario** where **only resource-policy OR the identity has to allow for an operation**.
+  This is **in contrast to same-account scenario** where **only resource-policy OR the identity has to allow for an
+  operation**.
 
 ##### Conditions
 
@@ -561,7 +643,13 @@ An example for s3-prefix (folder)
 
 ```json
 {
-  "Condition": { "StringLike": { "s3:prefix": ["testuser/*"] } }
+  "Condition": {
+    "StringLike": {
+      "s3:prefix": [
+        "testuser/*"
+      ]
+    }
+  }
 }
 ```
 
@@ -569,7 +657,13 @@ An example for s3-prefix (folder)
 
 ```json
 {
-  "Condition": { "StringLike": { "s3:prefix": ["${aws:username}/*"] } }
+  "Condition": {
+    "StringLike": {
+      "s3:prefix": [
+        "${aws:username}/*"
+      ]
+    }
+  }
 }
 ```
 
@@ -578,14 +672,20 @@ An example for s3-prefix (folder)
 ```json
 {
   "Effect": "Deny",
-  "Action": ["sns:*"],
+  "Action": [
+    "sns:*"
+  ],
   "Resource": "*",
   "Condition": {
     "StringNotEquals": {
-      "aws.ResourceAccount": ["xxx"]
+      "aws.ResourceAccount": [
+        "xxx"
+      ]
     },
     "ForAllValues:StringNotEquals": {
-      "aws:CalledVia": ["cloudformation.amazonaws.com"]
+      "aws:CalledVia": [
+        "cloudformation.amazonaws.com"
+      ]
     }
   }
 }
@@ -593,7 +693,8 @@ An example for s3-prefix (folder)
 
 #### Managed Policies
 
-- **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
+- **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer
+  managed policy** and **aws managed policy**.
 
 - there are 2 notable managed policies: **AdministratorAccess** and **PowerUserAccess (this is for developers)**
 
@@ -603,18 +704,22 @@ An example for s3-prefix (folder)
 
 - think pushing, pulling, creating with `CodeCommit`.
 
-- **this very different than PowerUserAccess managed role**. This role allows for almost everything within every service.
+- **this very different than PowerUserAccess managed role**. This role allows for almost everything within every
+  service.
 
 #### Inline vs Managed Policies
 
-- **inline policies** can only be **used by one entity at the time**. You **cannot reuse the same inline policy for multiple identities (can be groups), you would have to create a new one, even if it's the same**.
+- **inline policies** can only be **used by one entity at the time**. You **cannot reuse the same inline policy for
+  multiple identities (can be groups), you would have to create a new one, even if it's the same**.
 
 #### Resource Based Policies
 
 - these are **special subset of policies** which are **attached to AWS Services**.
-  Think allowing _APIGW_ to invoke your lambda function. You would **add that policy on the target resource, not the source of the event**
+  Think allowing _APIGW_ to invoke your lambda function. You would **add that policy on the target resource, not the
+  source of the event**
 
-- they have **Principal field**. This is due to the fact that they are evaluated whenever some principal access given resource. IAM role / group policies does not have that because they are applied to principals from the beginning.
+- they have **Principal field**. This is due to the fact that they are evaluated whenever some principal access given
+  resource. IAM role / group policies does not have that because they are applied to principals from the beginning.
 
 - what is interesting is that you can **grant access to every identity within an account using :root suffix**.
 
@@ -646,7 +751,8 @@ An example for s3-prefix (folder)
 
 #### Groups
 
-- **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **override explicit allow**. So in general the nesting should be avoided.
+- **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **
+  override explicit allow**. So in general the nesting should be avoided.
 
 - they are **not a true identities**. A **virtual construct** to **help** you **manage your users**.
 
@@ -662,9 +768,11 @@ An example for s3-prefix (folder)
 
 - remember that **IAM users are global!**
 
-- As [Ben Kehoe mentioned](https://twitter.com/ben11kehoe/status/1263876984062513154) IAM Users should be renamed to "IAM long-lived access keys"
+- As [Ben Kehoe mentioned](https://twitter.com/ben11kehoe/status/1263876984062513154) IAM Users should be renamed to "
+  IAM long-lived access keys"
 
-- you **should avoid using IAM Users if you can**. You can use the **AWS SSO for federated access with AWS Organizations**
+- you **should avoid using IAM Users if you can**. You can use the **AWS SSO for federated access with AWS
+  Organizations**
 
 #### Tags and ABAC
 
@@ -672,45 +780,57 @@ An example for s3-prefix (folder)
 
 - **some services do not support ABAC** style of access control.
 
-  - to support ABAC the service has to **support tags and the `aws:PrincipalTag` IAM variable**.
+    - to support ABAC the service has to **support tags and the `aws:PrincipalTag` IAM variable**.
 
 - the `aws:PrincipalTag` IAM variable is **attached at the moment of the `sts` call**.
 
-- **make sure** that the **resource policy has `Resource` field populated**. Otherwise **the resource policy will NOT work and be ignored silently!**.
+- **make sure** that the **resource policy has `Resource` field populated**. Otherwise **the resource policy will NOT
+  work and be ignored silently!**.
 
-- ABAC is nice because it **pushes the access control very close to the resource**. Meaning that **it scales linearly with the amount of new resources** you have in your account.
+- ABAC is nice because it **pushes the access control very close to the resource**. Meaning that **it scales linearly
+  with the amount of new resources** you have in your account.
 
 #### Certs
 
 - this is a **legacy way of keeping certs**, before ACM was introduced.
 
-- sadly **you cannot migrate IAM certs to ACM directly**. You would have to **download them** and then **import to ACM**.
+- sadly **you cannot migrate IAM certs to ACM directly**. You would have to **download them** and then **import to ACM**
+  .
 
 ### AWS Organizations
 
-- **all accounts under organization** can **consolidate their bills** so that you have one **master bill, sum of all small bills**
+- **all accounts under organization** can **consolidate their bills** so that you have one **master bill, sum of all
+  small bills**
 
 - there can only be **one master account within organization**. The master account **CANNOT be restricted**
 
 - there can **only be one Root container**.
 
-- the **root container** can only be **controlled by master accounts and Service Control Policies**. If such controls are in place ,they apply to all OUs under the root and all member accounts under given OUs. **Root container / node** is the **account that has OUs underneath**.
+- the **root container** can only be **controlled by master accounts and Service Control Policies**. If such controls
+  are in place ,they apply to all OUs under the root and all member accounts under given OUs. **Root container / node**
+  is the **account that has OUs underneath**.
 
-- you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your master account should not hold any kind of resources.
+- you **can attach SCPS to master account** but **there will be no effect on master account**. As a good practice your
+  master account should not hold any kind of resources.
 
 #### Discounts
 
-- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all the usage adds up from your other accounts.
+- when using **consolidated billing** you can get **volume discounts**. For some **services like S3, EC2**, the more you
+  use them (the volume of data you hold), the less you pay. This is ideal scenario for consolidated billing since all
+  the usage adds up from your other accounts.
 
 #### Sharing
 
-- the **master account** can **turn off RI sharing** for **particular account or whole the whole organization**. There is no private mode or smth.
+- the **master account** can **turn off RI sharing** for **particular account or whole the whole organization**. There
+  is no private mode or smth.
 
 - for **EC2** the **type and the AZ must be the same**
 
-- for **DB instances all of the DB attributes must be the same (also the AZ)**: engine, instance class, deployment type, license model.
+- for **DB instances all of the DB attributes must be the same (also the AZ)**: engine, instance class, deployment type,
+  license model.
 
-- RI sharing **has to be enabled** for **accounts that purchase the instance, as well the accounts that need the benefit**.
+- RI sharing **has to be enabled** for **accounts that purchase the instance, as well the accounts that need the
+  benefit**.
 
 #### Invites
 
@@ -730,13 +850,15 @@ An example for s3-prefix (folder)
 
 ##### Accessing member accounts by using automatically created role
 
-- when you create an account within your organization, that account have `OrganizationAccountAccessRole` created automatically
+- when you create an account within your organization, that account have `OrganizationAccountAccessRole` created
+  automatically
 
 - that `OrganizationAccountAccessRole` role allows master accounts to assume it and access the member account
 
 ##### Accessing member accounts who you invited to organization
 
-- in contrast of creating accounts manually, whenever you invite an account, **`OrganizationAccountAccessRole` is NOT created automatically**.
+- in contrast of creating accounts manually, whenever you invite an account, **`OrganizationAccountAccessRole` is NOT
+  created automatically**.
 
 - what you should do is to **create a role within a member account with a trust relationship to a master account**.
 
@@ -746,29 +868,35 @@ An example for s3-prefix (folder)
 
 - **by default** the **root account has FullAWSAccess SCP attached**
 
-- they **do not really provide access**. They **restrict what you can do when you HAVE permissions**. Think of them as **boundaries**.
+- they **do not really provide access**. They **restrict what you can do when you HAVE permissions**. Think of them
+  as **boundaries**.
 
 - can be used as **blacklist** or a **whitelist**. The **syntax** is basically the same as IAM policies.
 
-- the **policy evaluation process** is as follows: first you take your iam permissions then you take SCPs. You **take union of permissions from your IAM and SCP, these are the permissions you effectively have**.
+- the **policy evaluation process** is as follows: first you take your iam permissions then you take SCPs. You **take
+  union of permissions from your IAM and SCP, these are the permissions you effectively have**.
 
 - you can have **multiple SCPs which apply**. In such case you take **union of every SCPs with your IAM permissions**.
 
-- remember that **SCP only apply to the accounts that are within given OU**. SCPs **do not apply to outside users (other accounts)**
+- remember that **SCP only apply to the accounts that are within given OU**. SCPs **do not apply to outside users (other
+  accounts)**
 
 - the SCPS can be **applied at Root, OU or Account level**. This is very important.
 
 ##### Deny List
 
-- by **default** SCPs are configured as **deny list**. This means that **everything is allowed AND IT'S UP TO US TO DENY THINGS WE WANT TO DENY**.
+- by **default** SCPs are configured as **deny list**. This means that **everything is allowed AND IT'S UP TO US TO DENY
+  THINGS WE WANT TO DENY**.
 
 ##### Allow List
 
-- reverse of `deny list`. This is where **everything is denied** and **it's up to us to allow things**. This is **usually a bad idea, as things can get messy**.
+- reverse of `deny list`. This is where **everything is denied** and **it's up to us to allow things**. This is **
+  usually a bad idea, as things can get messy**.
 
 #### OUs
 
-- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of the **OUs hierarchy there is root container**.
+- there are units called **Organization Units (OU)**. They **can host member accounts or other OUs**. At the top of
+  the **OUs hierarchy there is root container**.
 
 - can **only have one parent**
 
@@ -784,7 +912,8 @@ An example for s3-prefix (folder)
 
 - the all features mode **can be enabled on a existing organization**.
 
-- this mode **enables you to create Service Control Policies (SCPs)**. These, as described above, allow you to place restrictions on given OUs, member accounts or a root container.
+- this mode **enables you to create Service Control Policies (SCPs)**. These, as described above, allow you to place
+  restrictions on given OUs, member accounts or a root container.
 
 - this is **one way change**. When you enable this **you cannot switch back to only consolidated billing**.
 
@@ -792,17 +921,19 @@ An example for s3-prefix (folder)
 
 - this is where you can **see which services are used by accounts within Organization**.
 
-- **DO NOT** mistake this for AWS Config. Remember - AWS Config is for looking up different configurations on stuff and checking if they are meeting some requirements
+- **DO NOT** mistake this for AWS Config. Remember - AWS Config is for looking up different configurations on stuff and
+  checking if they are meeting some requirements
 
 #### Leaving the organization
 
-- **user has to have sufficient permissions to leave the organization**. I think the most **important here are the policies regarding billing**.
+- **user has to have sufficient permissions to leave the organization**. I think the most **important here are the
+  policies regarding billing**.
 
 #### Moving account between organizations
 
 - if you want to move an account between organizations you will need to
-  - have that **account leave the original organization (remember about the ROLES!)**
-  - **invite that account** to **new organization**
+    - have that **account leave the original organization (remember about the ROLES!)**
+    - **invite that account** to **new organization**
 
 #### Trusted Access
 
@@ -812,9 +943,11 @@ An example for s3-prefix (folder)
 
 #### RAM (Resource Access Manager)
 
-- allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use all-features**
+- allows you to **share resources within the organization OR WITH OTHER ACCOUNTS**. **Requires** you to **use
+  all-features**
 
-- you can share **a lot of stuff**. Most **notable are subnets and AMIs**. There are some **subnet-related services that CANNOT be placed inside a shared subnet**.
+- you can share **a lot of stuff**. Most **notable are subnets and AMIs**. There are some **subnet-related services that
+  CANNOT be placed inside a shared subnet**.
 
 - when you are working with RAM the key keyword is **trusted access**.
 
@@ -824,13 +957,15 @@ An example for s3-prefix (folder)
 
 - you can **generate reports**. These reports are a **.csv** file.
 
-- there are **AWS generated and Customer generated tags**. There **tags** can be **used to enhance the rapports (enable filtering)**
+- there are **AWS generated and Customer generated tags**. There **tags** can be **used to enhance the rapports (enable
+  filtering)**
 
 - reports **can be generated up to three times a day**
 
 - they are **delivered to s3 bucket**. That **bucket has to be owned by master account**.
 
-- to **have user-defined tags within cost allocation report** you have to make sure to **active given tags before generating a raport**.
+- to **have user-defined tags within cost allocation report** you have to make sure to **active given tags before
+  generating a raport**.
   All the tags here are named **cost allocation tags**.
 
 ##### Cost & Usage Report
@@ -853,7 +988,8 @@ An example for s3-prefix (folder)
 
 - mainly for setting up alarams and notifications if you go above certain threshold.
 
-- remember that **it takes up to 48hrs for all budget related information to be updated on your account**. That means that **some alerts might fire way after you crossed the threshold of your budget**.
+- remember that **it takes up to 48hrs for all budget related information to be updated on your account**. That means
+  that **some alerts might fire way after you crossed the threshold of your budget**.
 
 ### ACM
 
@@ -863,7 +999,8 @@ An example for s3-prefix (folder)
 
 - you are **not paying for using the certs themselves**
 
-- there are **two types of validation of the domain**. You can either **validate by DNS** or **by email**. With **DNS validation and Route53** you can easily **add DNS record through the console (not automatic)**
+- there are **two types of validation of the domain**. You can either **validate by DNS** or **by email**. With **DNS
+  validation and Route53** you can easily **add DNS record through the console (not automatic)**
 
 - uses **KMS under the hood for keys**
 
@@ -871,7 +1008,8 @@ An example for s3-prefix (folder)
 
 #### Existing certs
 
-- you can **import existing certs to ACM**. But for gods sake, remember that **imported certs cannot be auto-renewed by ACM**.
+- you can **import existing certs to ACM**. But for gods sake, remember that **imported certs cannot be auto-renewed by
+  ACM**.
 
 #### Private certs
 
@@ -879,15 +1017,18 @@ An example for s3-prefix (folder)
 
 #### Multi-region certs
 
-- you **can use** the **same SSL certificate from ACM in more than one region** but it **depends** on whether you are using **ELB or CloudFront**.
+- you **can use** the **same SSL certificate from ACM in more than one region** but it **depends** on whether you are
+  using **ELB or CloudFront**.
 
 - with **ELB** you have to **request a new cert for each region**.
 
-- with **CloudFront** you have to **request cert in n.virginia**. ACM certs within that region can be used for global cloudfront distributions.
+- with **CloudFront** you have to **request cert in n.virginia**. ACM certs within that region can be used for global
+  cloudfront distributions.
 
 #### Zone Apex certs
 
-- you **have to** request a certificate that **has your apex listed** if you want it to **work with `*.example.com` and `example.com`**
+- you **have to** request a certificate that **has your apex listed** if you want it to **work with `*.example.com`
+  and `example.com`**
 
 - the `*.example.com` certificate **does not cover zone apex domain!**.
 
@@ -907,7 +1048,8 @@ An example for s3-prefix (folder)
 
 ### AWS Config
 
-- so CloudTrail monitors API calls to AWS services (made by your account). AWS Config **monitors your AWS resources configurations**.
+- so CloudTrail monitors API calls to AWS services (made by your account). AWS Config **monitors your AWS resources
+  configurations**.
 
 - you have too **tick an additional checkbox** to **support monitoring global services (not only in a given region)**
 
@@ -919,7 +1061,8 @@ An example for s3-prefix (folder)
 
 - keep in mind that this tool **is NOT used for restricting anything. It merely watches over your resources over-time**
 
-- there is a notion of **relationships**. There are things that are tied **together**. **Think EBS volumes and EC2 instances**.
+- there is a notion of **relationships**. There are things that are tied **together**. **Think EBS volumes and EC2
+  instances**.
 
 #### Rules
 
@@ -928,7 +1071,8 @@ An example for s3-prefix (folder)
 
 - there is a const **per rule evaluation**.
 
-- with **custom rules** you have to have **custom lambda** written. This is the thing that will be reacting to config changes **and marking them as compliant or not**.
+- with **custom rules** you have to have **custom lambda** written. This is the thing that will be reacting to config
+  changes **and marking them as compliant or not**.
 
 - the rule sends a **CloudWatch event**. You can intercept that event using **CloudWatch rules** and do smth with it.
 
@@ -940,7 +1084,8 @@ An example for s3-prefix (folder)
 
 - does not cost anything for existing Config consumers.
 
-- uses the notion of **aggregator**. This aggregator is responsible for discovery and aggregation of compliance data **from AWS Configs enabled on other accounts**. You **still have to have AWS Config turned on on other accounts**
+- uses the notion of **aggregator**. This aggregator is responsible for discovery and aggregation of compliance data **
+  from AWS Configs enabled on other accounts**. You **still have to have AWS Config turned on on other accounts**
 
 - there is a **limit** for the amount of **aggregators** you can have. The **default limit is 50**
 
@@ -956,7 +1101,8 @@ An example for s3-prefix (folder)
 
 #### Notifications
 
-- **notifications** are available only for **SNS** for the **whole AWS Config**. This means that if you want to have **granular notifications, you should use CloudWatch events**
+- **notifications** are available only for **SNS** for the **whole AWS Config**. This means that if you want to have **
+  granular notifications, you should use CloudWatch events**
 
 #### Compliance
 
@@ -982,7 +1128,8 @@ An example for s3-prefix (folder)
 
 - can be used for **both Windows and Linux machines**
 
-- there is an **agent (baked into modern Windows or Linux AMIs)** which you can install. That means that **you can manage on-prem instances aswell!**.
+- there is an **agent (baked into modern Windows or Linux AMIs)** which you can install. That means that **you can
+  manage on-prem instances aswell!**.
 
 - there are **documents** which are basically **scripts (actions) that SSM can use to do stuff**.
 
@@ -991,11 +1138,14 @@ An example for s3-prefix (folder)
 #### Managed instances
 
 - to be able to use SSM **EC2 require IAM roles** and **on-prem instances require `activation`**.
-  Remember that **when you have instances managed on prem** they will have **`mi`(managed instance) prefix**. **AWS instances have `i` prefix attached**.
+  Remember that **when you have instances managed on prem** they will have **`mi`(managed instance) prefix**. **AWS
+  instances have `i` prefix attached**.
 
-- **activation on prem** is **done using single activation code**. You do not have to create separate code for every instance.
+- **activation on prem** is **done using single activation code**. You do not have to create separate code for every
+  instance.
 
-- instances are **integrated with `AWS Config`**. The `AWS Config` gets the inventory data, thus you can see a timeline of installed stuff.
+- instances are **integrated with `AWS Config`**. The `AWS Config` gets the inventory data, thus you can see a timeline
+  of installed stuff.
 
 - you will need to create a role for the managed instances SSM agent.
 
@@ -1009,7 +1159,8 @@ An example for s3-prefix (folder)
 
 - for **more complex scenarios like error handling** you should prefer using `Step Functions`.
 
-- can be used to **update your golden AMI**. This is done by launching an instance, running the user script, creating AMI from the instance and shutting the instance down.
+- can be used to **update your golden AMI**. This is done by launching an instance, running the user script, creating
+  AMI from the instance and shutting the instance down.
 
 #### Session Manager - Running commands on instances
 
@@ -1019,11 +1170,13 @@ An example for s3-prefix (folder)
 
 - you **instance** **has to have IAM role** that **enables SSM API on that instance**
 
-- you can have **IAM policies (attached to users / roles)** which futher enhance the security of your solution. You can **restrict access to a specific instances** while using `Session manager`, the action is `ssm:StartSession`.
+- you can have **IAM policies (attached to users / roles)** which futher enhance the security of your solution. You
+  can **restrict access to a specific instances** while using `Session manager`, the action is `ssm:StartSession`.
 
 #### Patch Manager
 
-- there is a concept of a **patch manager**. This tool enables you to **discover missing updates, update multiple or single instances**.
+- there is a concept of a **patch manager**. This tool enables you to **discover missing updates, update multiple or
+  single instances**.
 
 - there are multiple **patching strategies available**.
 
@@ -1051,7 +1204,8 @@ An example for s3-prefix (folder)
 
 - you could use it to update anti-malware definitions files, turn off / on ssh, RDP all that stuff
 
-- this is basically to make sure your instance is in a desired state. And if something happens to make it go back to that desired state
+- this is basically to make sure your instance is in a desired state. And if something happens to make it go back to
+  that desired state
 
 - can also be used to for **task automation on schedule**. This is done by creating an **association**.
 
@@ -1065,7 +1219,8 @@ An example for s3-prefix (folder)
 
 #### Parameter Store
 
-- it is quite important to remember that **SSM is public space endpoint (can be a interface endpoint)**. This means that your **EC2 instances have to have internet connectivity / interface endpoint within a vpc**.
+- it is quite important to remember that **SSM is public space endpoint (can be a interface endpoint)**. This means that
+  your **EC2 instances have to have internet connectivity / interface endpoint within a vpc**.
 
 - **secure storage** for **configuration data and secrets**
 
@@ -1073,7 +1228,8 @@ An example for s3-prefix (folder)
 
 - **keys can be encrypted (secure string)** using **KMS**. They also have **versions, and history of edits**.
 
-- **scalable** and **serverless**. **Free unless you use `secureString** type of parameters. Then you are paying for KMS operations
+- **scalable** and **serverless**. **Free unless you use `secureString** type of parameters. Then you are paying for KMS
+  operations
 
 - very useful for **distributing config inside ASG**
 
@@ -1087,7 +1243,8 @@ An example for s3-prefix (folder)
 
 #### Secrets Manager
 
-- while you can store secrets within `Parameter Store`, **`Secrets Manager` rotate the secrets (automatically or programmatically)**;
+- while you can store secrets within `Parameter Store`, **`Secrets Manager` rotate the secrets (automatically or
+  programmatically)**;
 
 - this is an **ideal solution for passwords for DB for smth**.
 
@@ -1099,9 +1256,14 @@ An example for s3-prefix (folder)
 
 - **RDS** secrets **can be rotated automatically** by the service itself
 
-- you can **manually rotate the secret** using a **lambda function**. Be careful though, **always have at least 2 sets of users or credentials you are manually rotating through**. This is because **replacing the credentials for 1 entity might cause disruptions**. There is a **lag between the change you made in your lambda and the SecretsManager propagating this change**
+- you can **manually rotate the secret** using a **lambda function**. Be careful though, **always have at least 2 sets
+  of users or credentials you are manually rotating through**. This is because **replacing the credentials for 1 entity
+  might cause disruptions**. There is a **lag between the change you made in your lambda and the SecretsManager
+  propagating this change**
 
-- when you **first** configure the **secrets rotation**, the **secret is rotated**. This means that the value of that secret is different than the initial value that you set that secret to. This might cause confusion where you forget to **update your application to actually use the `Secrets Manager` and you cannot connect to eg. a database.**
+- when you **first** configure the **secrets rotation**, the **secret is rotated**. This means that the value of that
+  secret is different than the initial value that you set that secret to. This might cause confusion where you forget
+  to **update your application to actually use the `Secrets Manager` and you cannot connect to eg. a database.**
 
 #### Replication
 
@@ -1114,9 +1276,9 @@ An example for s3-prefix (folder)
 #### Billing
 
 - **SSM itself is free** but there are various services that have some cost:
-  - **on prem instance management** is NOT free
-  - **advanced parameter store** is NOT free.
-  - **SSM automation** is NOT free.
+    - **on prem instance management** is NOT free
+    - **advanced parameter store** is NOT free.
+    - **SSM automation** is NOT free.
 
 #### With `CloudFormation`
 
@@ -1136,7 +1298,8 @@ An example for s3-prefix (folder)
 
 - think **SSM but with rolling deployment options** (including rollback)
 
-- there is a neat _extension_ which runs HTTP endpoint which acts as a caching layer between your lambda and the _AppConfig_ service
+- there is a neat _extension_ which runs HTTP endpoint which acts as a caching layer between your lambda and the _
+  AppConfig_ service
 
 - your **configuration** can be **validated against a _JSON Schema_**
 
@@ -1152,9 +1315,11 @@ An example for s3-prefix (folder)
 
 - allows you to create **WAF rules** that are **cross accounts** and **span multiple resources**.
 
-- it **requires you account to be within Organization**. You can create policies there for all accounts (newly joined inherit those)
+- it **requires you account to be within Organization**. You can create policies there for all accounts (newly joined
+  inherit those)
 
-- it **integrates with AWS Config**. So **whenever a new resource is created** Firewall Manager can **apply rules to that resource**
+- it **integrates with AWS Config**. So **whenever a new resource is created** Firewall Manager can **apply rules to
+  that resource**
 
 #### Uses
 
@@ -1164,34 +1329,40 @@ An example for s3-prefix (folder)
 
 ### AWS Service Catalog
 
-- **describes** all **services you offer**. Very **much like online store** but instead of buying eg. food **someone buys products you provide**.
+- **describes** all **services you offer**. Very **much like online store** but instead of buying eg. food **someone
+  buys products you provide**.
 
 - **region aware** service.
 
 - _Service Catalog_ **can be useful for Tags governance (making sure that resources have tags associated)**.
 
-- can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS NOT AVAILABLE!**
+- can have **triggers** for different events like product deployment etc. **Lambda trigger for product deployments IS
+  NOT AVAILABLE!**
 
 - there is a hierarchy, **_Portfolio_** contains many **_Products_** which are just _CloudFormation_ templates.
 
 #### Constraints
 
-- even if you as a **user do have a readonly access to aws**, you would still be **able to deploy a product from a portfolio** if the **provider provided deploy permissions on portfolio**.
+- even if you as a **user do have a readonly access to aws**, you would still be **able to deploy a product from a
+  portfolio** if the **provider provided deploy permissions on portfolio**.
 
-- it is **possible** to have **portfolio without launch constrains**. This means that **user IAM permissions will be used to deploy the product**.
+- it is **possible** to have **portfolio without launch constrains**. This means that **user IAM permissions will be
+  used to deploy the product**.
 
-- since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
+- since the **user is interacting with parameters from CloudFormation**, you as an portfolio admin can **place
+  constrains on those parameters**, like you can only deploy on t2.micro or t3.large or smth like that.
 
 - there are **multiple constrains available**:
-  - Launch
-  - Notification
-  - Template: limits the options of end users when they launch a product
-  - StackSet
-  - Tag Update
+    - Launch
+    - Notification
+    - Template: limits the options of end users when they launch a product
+    - StackSet
+    - Tag Update
 
 ### Access Advisor
 
-- will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM users console
+- will tell you **what services have the user access to** and also **when he accessed them**. This is a tab within IAM
+  users console
 
 ### AWS For Enterprise
 
@@ -1253,7 +1424,8 @@ An example for s3-prefix (folder)
 
 - **Media Store** is a **media-optimized origin store**. Cuts video latency
 
-- **Media Tailor** is for **placing ads inside a video**. This is **done BEFORE media delivery**. Also provides **metrics for those ads**
+- **Media Tailor** is for **placing ads inside a video**. This is **done BEFORE media delivery**. Also provides **
+  metrics for those ads**
 
 - **Media Package** is just a **package of these tools**
 
@@ -1267,47 +1439,55 @@ An example for s3-prefix (folder)
 
 - There is **unlimited** storage. Maximum file-size is 5 TB though.
 
-- **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
+- **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket
+  in (unless you specified CRR**.
 
 - By **default** uploaded objects **are NOT public**. You have to set them as public manually
 
-- **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon rewrote the partitioning mechanism for S3 and it does not longer require random prefixes for performance gains
+- **if amount of reads/writes is high** consider adding **logical or sequential naming to your S3 objects**. Amazon
+  rewrote the partitioning mechanism for S3 and it does not longer require random prefixes for performance gains
 
 - S3 has an **universal namespace**. That means that Bucket names has to be
   unique globally.
 
 - Object consists of:
 
-  - Key: simply the name of the object
-  - Value: data (bytes)
-  - Version ID: **S3 allows you to have multiple versions of a file**
-  - Metadata
-  - Sub-resources
+    - Key: simply the name of the object
+    - Value: data (bytes)
+    - Version ID: **S3 allows you to have multiple versions of a file**
+    - Metadata
+    - Sub-resources
 
 - Buckets can be **replicated to another account or to a different bucket
   (region needs to differ)**.
 
-- S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge locations** instead directly to
-  the Bucket (your downloads will also be faster). Then that uploaded object is **transferred automatically to your bucket**.
-  One thing to keep in mind that you will not always see the speed increase. It is dependant on where you are making the request from.
+- S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge
+  locations** instead directly to
+  the Bucket (your downloads will also be faster). Then that uploaded object is **transferred automatically to your
+  bucket**.
+  One thing to keep in mind that you will not always see the speed increase. It is dependant on where you are making the
+  request from.
   Maybe there is no edge pop near you?
 
 - S3 is a **tiered** storage
 
-  - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
+    - **S3 Standard**, stored across multiple devices and multiple facilities. **Standard can tolerate AZ failure**
 
-    - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redundantly on s3 standard**. You would use this for **data that can be replaced / replayed**.
-      While using this might seem like a good option, this **is not the cheapest solution, when it comes to storage, it is the cheapest when it comes to the API usage though**.
+        - **RRS (reduced redundancy)**: this one is designed for **non-critical data** that is **stored less redundantly
+          on s3 standard**. You would use this for **data that can be replaced / replayed**.
+          While using this might seem like a good option, this **is not the cheapest solution, when it comes to storage,
+          it is the cheapest when it comes to the API usage though**.
 
-  - **S3-IA/S3 One Zone-IA** (**Infrequent Access**): for data that is accessed less
-    frequently but requires rapid access when needed
+    - **S3-IA/S3 One Zone-IA** (**Infrequent Access**): for data that is accessed less
+      frequently but requires rapid access when needed
 
-  - **S3 Glacier / Glacier Deep Archive**: used for data archiving, where you would
-    keep files for a long time.
+    - **S3 Glacier / Glacier Deep Archive**: used for data archiving, where you would
+      keep files for a long time.
 
-  - **S3 Glacier instant retrieval**: Very low cost, millisecond access for data accessed on per quoter access
+    - **S3 Glacier instant retrieval**: Very low cost, millisecond access for data accessed on per quoter access
 
-  - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
+    - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically
+      place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
 
 - **tiers** apply to **object**, **not a bucket!**
 
@@ -1335,9 +1515,14 @@ An example for s3-prefix (folder)
 
 - **Glacier / Glacier Deep Archive** is an **immutable store**. That means that you cannot edit stuff once it's there.
 
-- **Glacier/Deep Archive** have something called **expedited retrieval**. This allows you to **get the data from glacier and not wait Days/hours/Months**. There is a catch though. The **expedited retrieval** is **using resources from shared pool of resources**. There might a case there those resources are unavailable. This is where **provisioned glacier capacity** is used. This **ensures that your expedited retrieval request will not be rejected**. But you have to **pay more (additionally for it)**
+- **Glacier/Deep Archive** have something called **expedited retrieval**. This allows you to **get the data from glacier
+  and not wait Days/hours/Months**. There is a catch though. The **expedited retrieval** is **using resources from
+  shared pool of resources**. There might a case there those resources are unavailable. This is where **provisioned
+  glacier capacity** is used. This **ensures that your expedited retrieval request will not be rejected**. But you have
+  to **pay more (additionally for it)**
 
-- **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **have to specify the amount of time the lock thingy is present**.
+- **S3 NON-Glacier** supports **object-lock**. This **along with versioning allows for immutable objects**, but you **
+  have to specify the amount of time the lock thingy is present**.
 
 - **used** by **virtual tape library** (underneath)
 
@@ -1357,11 +1542,14 @@ An example for s3-prefix (folder)
 
 ###### Vault Lock
 
-- you have **24hrs** after creation **to confirm that the lock you created meets your requirements**. If that's not the case **you can abort it** or **complete it**.
+- you have **24hrs** after creation **to confirm that the lock you created meets your requirements**. If that's not the
+  case **you can abort it** or **complete it**.
 
 - vault lock is **immutable**. **Once approved cannot be changed or deleted**.
 
-- you can **attach vault lock policies to the vault** eg. nobody can delete anything out of it (or use MFA). This is mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing deletes and such**
+- you can **attach vault lock policies to the vault** eg. nobody can delete anything out of it (or use MFA). This is
+  mainly used for **compliance controls and tightening restrictions on data access**. This is useful for **preventing
+  deletes and such**
 
 #### Consistency
 
@@ -1376,7 +1564,8 @@ An example for s3-prefix (folder)
 
 #### Consistency Gotchas
 
-- **404 get, upload, then get** will **result in eventual consistency**. This is due to **how internals of s3 work**. It seems like there is **some cache involved**.
+- **404 get, upload, then get** will **result in eventual consistency**. This is due to **how internals of s3 work**. It
+  seems like there is **some cache involved**.
 
 #### Limits
 
@@ -1390,18 +1579,27 @@ An example for s3-prefix (folder)
 
 - After **enabling** versioning, it **cannot be disabled**, only **suspended**
 
-- Remember that with versioning your previous versions persists on the bucket. This can lead to exponential growth of size when editing big files.
+- Remember that with versioning your previous versions persists on the bucket. This can lead to exponential growth of
+  size when editing big files.
 
-- When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on that object (thus creating a new version). Your **previous versions are still there!, you can view them within versions tab!**.
+- When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on
+  that object (thus creating a new version). Your **previous versions are still there!, you can view them within
+  versions tab!**.
 
 - You can restore your deleted objects by **deleting a delete marker**.
-  This property makes it so that **whenever someone mentions the idea of _soft deletes_ you should think of _delete markers_**.
+  This property makes it so that **whenever someone mentions the idea of _soft deletes_ you should think of _delete
+  markers_**.
 
-- **The act of deleting the _delete marker_ (OR ANY PARTICULAR VERSION) is not replicated!**. But the **_delete markers_ can be replicated. It all depends on the replication settings**. Use [this documentation page](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-what-is-isnot-replicated.html) to guide you.
+- **The act of deleting the _delete marker_ (OR ANY PARTICULAR VERSION) is not replicated!**. But the **_delete markers_
+  can be replicated. It all depends on the replication settings**.
+  Use [this documentation page](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-what-is-isnot-replicated.html)
+  to guide you.
 
-- **you are still billed for old versions**. Event though there might a delete marker the object is not permanently deleted so you have to pay for the storage.
+- **you are still billed for old versions**. Event though there might a delete marker the object is not permanently
+  deleted so you have to pay for the storage.
 
-- remember that **elements will be versioned from the moment you enable versioning**. **Any existing object will get the initial version of null**.
+- remember that **elements will be versioned from the moment you enable versioning**. **Any existing object will get the
+  initial version of null**.
 
 - you **cannot set versioning on object level**. Versioning is **always set on the bucket level**.
 
@@ -1409,9 +1607,11 @@ An example for s3-prefix (folder)
 
 #### Life-cycle rules
 
-- can be used to **transition objects to different TIER of storage after X amount of time**, this can be placed on current and previous versions.
+- can be used to **transition objects to different TIER of storage after X amount of time**, this can be placed on
+  current and previous versions.
 
-- With life-cycle there is notion of expiration. Basically your objects can be **expired after X amount of time**. Object can be in a _expired state_ where it will wait to be permanently deleted.
+- With life-cycle there is notion of expiration. Basically your objects can be **expired after X amount of time**.
+  Object can be in a _expired state_ where it will wait to be permanently deleted.
 
 - Can be used with **conjunction with versioning**.
 
@@ -1431,10 +1631,13 @@ An example for s3-prefix (folder)
 
 - **not granular**, with ACLs you can **grant permissions to AWS accounts and pre-defined groups**
 
-- to **identify the AWS accounts** you will be using something called **Canonical user ID**. The ID is basically an **obfuscated form of AWS account ID**.
-  to get your AWS account information, as well as your _Canonical user ID_, click on the dropdown with the account name and go to _Security Credentials_
+- to **identify the AWS accounts** you will be using something called **Canonical user ID**. The ID is basically an **
+  obfuscated form of AWS account ID**.
+  to get your AWS account information, as well as your _Canonical user ID_, click on the dropdown with the account name
+  and go to _Security Credentials_
 
-- to **identify groups** you will be using **URIs**. These are looks something like `http://acs.amazonaws.com/groups/global/AuthenticatedUsers`
+- to **identify groups** you will be using **URIs**. These are looks something
+  like `http://acs.amazonaws.com/groups/global/AuthenticatedUsers`
 
 - they **can apply** both to **objects** as well as the **bucket itself**
 
@@ -1444,9 +1647,11 @@ An example for s3-prefix (folder)
 
 ##### Resource policy
 
-- when you want to assign policies to the resources you do not control, you should be using **resource policies**, in this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
+- when you want to assign policies to the resources you do not control, you should be using **resource policies**, in
+  this case know as **bucket policies**. This policies **apply to any identities accessing this bucket**.
 
-- using **resource policy** you can **control access** to s3 resources, works on **identities you DO NOT control. THIS ALSO MEANS ANY IDENTITY**. When resource policy is used **specifically with s3**, it is known as **bucket policy**
+- using **resource policy** you can **control access** to s3 resources, works on **identities you DO NOT control. THIS
+  ALSO MEANS ANY IDENTITY**. When resource policy is used **specifically with s3**, it is known as **bucket policy**
 
 ##### Bucket policy
 
@@ -1454,28 +1659,34 @@ An example for s3-prefix (folder)
 
 - allow you to **operate on _identities_** so users, groups and roles
 
-- you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
+- you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN
+  YOUR ACCOUNT!, identities you control**.
 
 ###### Identity vs Bucket Policy
 
-- **bucket policies** and **ACL** suffer from the fact that **usually, the uploader is the owner of the object**. Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not granted to the owner while uploading given object**.
+- **bucket policies** and **ACL** suffer from the fact that **usually, the uploader is the owner of the object**.
+  Imagine giving someone permissions to upload (from another account eg.) and then you cannot delete that file. **You
+  can guard against that** by **creating resource policy** where you **deny any requests when full permissions were not
+  granted to the owner while uploading given object**.
 
 So when to use what?
 
 - _identity policy_
 
-  - when **you control the identity**. That means **identities within your account**.
+    - when **you control the identity**. That means **identities within your account**.
 
 - _bucket policy_ (resource policy)
 
-  - when **you DO NOT control the identity**
+    - when **you DO NOT control the identity**
 
 ##### Endpoint policy
 
-- s3 endpoints allow you to have granular permissions (basically a bucket policy) for a narrow scope of your objects. This policy does not "pollute"
+- s3 endpoints allow you to have granular permissions (basically a bucket policy) for a narrow scope of your objects.
+  This policy does not "pollute"
   your main bucket policy because it's attached to the endpoint itself
 
-- you would **use this** if your **main bucket policy is getting out of hand**, as in it's getting too big or unmanageable
+- you would **use this** if your **main bucket policy is getting out of hand**, as in it's getting too big or
+  unmanageable
 
 - **the effective permissions are an intersection between the main bucket policy and the endpoint policy**
 
@@ -1485,28 +1696,34 @@ So when to use what?
 
 - can be enabled on the account or the bucket level. Account level should be preferred
 
-- overrules any ACLs and policies that you specify. If you have this enabled, objects will not be publicly accessible, no matter the policy or ALCs
+- overrules any ACLs and policies that you specify. If you have this enabled, objects will not be publicly accessible,
+  no matter the policy or ALCs
   that you have in place.
 
 ##### Cross-account
 
-- **remember** that when doing anything related to **cross account resources** both **the identity and the resource policy has to allow for the action**
+- **remember** that when doing anything related to **cross account resources** both **the identity and the resource
+  policy has to allow for the action**
 
-- the usual problem with cross-account s3 set ups is that **the bucket owner might not have the access to uploaded objects, because, by default, it's the uploader who retains the ownership of the objects**
+- the usual problem with cross-account s3 set ups is that **the bucket owner might not have the access to uploaded
+  objects, because, by default, it's the uploader who retains the ownership of the objects**
 
-  - **historically** developers **used ACLs to make sure the bucket owner controls the access to objects**
+    - **historically** developers **used ACLs to make sure the bucket owner controls the access to objects**
 
-  - **ACLs become obsolete** when AWS introduced **S3 Object Ownership**. When applied the **bucket owner will automatically be assigned ownership of an object**
+    - **ACLs become obsolete** when AWS introduced **S3 Object Ownership**. When applied the **bucket owner will
+      automatically be assigned ownership of an object**
 
 ##### Presigned URLs
 
 - **pre-signed urls** work **per object level**
 
-- **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **made useless sometimes, when the permissions of signing identity changed**
+- **pre-signed urls** always **have the permission of the identity that signed the URL**. They **expire** or can be **
+  made useless sometimes, when the permissions of signing identity changed**
 
 - you can use **referrer IAM condition** to **allow request from specific web pages**.
 
-- you can create **POST** or **PUT** signed urls. The **POST** version allow you to specify **conditions**. The conditions are pretty powerfull,
+- you can create **POST** or **PUT** signed urls. The **POST** version allow you to specify **conditions**. The
+  conditions are pretty powerfull,
   you can for example, assert on the size of the object being uploaded.
 
 ##### Access logs
@@ -1515,7 +1732,8 @@ So when to use what?
 
 - the **logs include all bucket / object events**
 
-- with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group permissions to write to dest. bucket!**.
+- with **Server access logs** you can **write access logs to a different bucket**. Remember to **give Log Delivery group
+  permissions to write to dest. bucket!**.
 
 ##### Precedence
 
@@ -1525,35 +1743,45 @@ There is a precedence in which **acls** or **bucket policies** are evaluated.
 2. Does the bucket policy has the necessary permissions ?
 3. **If the bucket owner is not the owner of the object** does the **object acl** allow for the action?
 
-The step 3 is crucial. Remember that whenever you upload something to a bucket that is not yours, you can control how much access to the underlying object the bucket owner has.
+The step 3 is crucial. Remember that whenever you upload something to a bucket that is not yours, you can control how
+much access to the underlying object the bucket owner has.
 
 #### Access Points
 
 - having multiple different statements in bucket policy can be painful. Especially when we are talking multiple users
 
-- _access points_ allow you to **associate a special ARN and attach a bucket policy to it**. You can then specify that arn as a _bucketName_ while making requests with SDK
+- _access points_ allow you to **associate a special ARN and attach a bucket policy to it**. You can then specify that
+  arn as a _bucketName_ while making requests with SDK
 
 - this way you **can have 1 policy per 1 user per 1 endpoint**
 
-- the **_bucket policy_ still applies**, that is **the resulting permissions are an intersection of the access point policy and the root bucket policy**
+- the **_bucket policy_ still applies**, that is **the resulting permissions are an intersection of the access point
+  policy and the root bucket policy**
 
-- you **have to use sigv4 to access objects through an _Access Point_**. I personally wish it was not the case as they do not support anonymous users.
-  I repeat: **you cannot use the access point in the same way you would use a public s3 bucket with some static assets (accessing through browser without any credentials**
+- you **have to use sigv4 to access objects through an _Access Point_**. I personally wish it was not the case as they
+  do not support anonymous users.
+  I repeat: **you cannot use the access point in the same way you would use a public s3 bucket with some static assets (
+  accessing through browser without any credentials**
 
 #### Encryption
 
 - there are multiple options:
 
-  - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**. **You manage the AWS master key**.
-  - **SSE-KMS**: **keys** are **managed by KMS service**. It **allows for role separation** since **keys are stored in accounts KMS**
-  - **SSE-S3**: The **master key is within AWS**. Be careful with this one though. Since S3 has the key, when you make your bucket public, s3 will automatically decrypt the contents.
-    This is why you should **prefer SSE-KMS** whenever possible.
+    - **SSE-C**: **keys** are **stored by the customer**. It does **not allow for role separation**. **You manage the
+      AWS master key**.
+    - **SSE-KMS**: **keys** are **managed by KMS service**. It **allows for role separation** since **keys are stored in
+      accounts KMS**
+    - **SSE-S3**: The **master key is within AWS**. Be careful with this one though. Since S3 has the key, when you make
+      your bucket public, s3 will automatically decrypt the contents.
+      This is why you should **prefer SSE-KMS** whenever possible.
 
 - **no additional cost** for enabling encryption
 
-- there is something called **default encryption**. This will ensure that every object you put into a bucket will get encrypted. **You can use AES-256 or KMS**.
+- there is something called **default encryption**. This will ensure that every object you put into a bucket will get
+  encrypted. **You can use AES-256 or KMS**.
 
-- remember that **encryption only applies to objects uploaded AFTER the encryption was turned on**. Existing objects are NOT encrypted.
+- remember that **encryption only applies to objects uploaded AFTER the encryption was turned on**. Existing objects are
+  NOT encrypted.
 
 - you can **override the default encryption PER object basis when uploading**.
 
@@ -1569,21 +1797,25 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - **keys are stored within S3 object**
 
-- **decryption of the objects** requires you to have **both iam permissions for the S3 operation and the KMS key permission**. That is why it allows the separation of roles.
+- **decryption of the objects** requires you to have **both iam permissions for the S3 operation and the KMS key
+  permission**. That is why it allows the separation of roles.
 
 ##### Costs
 
 - you can really get burned by costs if you are not careful
 
-- **the worst thing you can do is to use SSE-KMS with per-object keys**. Remember that **each individual KMS key costs money!**
+- **the worst thing you can do is to use SSE-KMS with per-object keys**. Remember that **each individual KMS key costs
+  money!**
 
-- the **best thing you can do is to use SSE-S3**. The problem is here is that you are **trading customizability (you cannot control the key) with costs**
+- the **best thing you can do is to use SSE-S3**. The problem is here is that you are **trading customizability (you
+  cannot control the key) with costs**
 
 - the **happy medium between costs and control is the SSE-KMS with BUCKET keys**.
 
 #### Replication
 
-- s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled ON THE ORIGIN AND THE TARGET BUCKET to be able to enable CRR**
+- s3 enables you to turn on **cross region replication of given bucket**, but **you have to have versioning enabled ON
+  THE ORIGIN AND THE TARGET BUCKET to be able to enable CRR**
 
 - you **can** also **enable same region replication**
 
@@ -1591,13 +1823,15 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - when using replication **SOME THINGS DO NOT CARRY OVER to the CRR destination**:
 
-  - **lifecycle rules**
-  - any **existing objects before replication was enabled**. You can **change storage class of existing objects** to **force the replication to happen** though.
-    Please remember that it has to be **different storage class** in this case.
+    - **lifecycle rules**
+    - any **existing objects before replication was enabled**. You can **change storage class of existing objects**to **
+      force the replication to happen** though.
+      Please remember that it has to be **different storage class** in this case.
 
 - **it is possible** for an **object to change storage class and object permissions while in the process of CRR**
 
-- you can **override the owner of an object** when that object (due to CRR) is **going to another bucket**. This might be helpful to implement some kind of security measures
+- you can **override the owner of an object** when that object (due to CRR) is **going to another bucket**. This might
+  be helpful to implement some kind of security measures
 
 - replication is a **asynchronous process**.
 
@@ -1605,14 +1839,16 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 #### Data snapshots
 
-- for any kind of production usage, you should have versioning enabled. Sadly, versioning is no the same as the snapshot of the whole s3 bucket.
+- for any kind of production usage, you should have versioning enabled. Sadly, versioning is no the same as the snapshot
+  of the whole s3 bucket.
 
 * there is **no native way of creating s3 bucket snapshots**.
 
 - to create s3 snapshots, you will need to combine the **_DataSync_ and _AWS Backup_** services.
   The _DataSync_ service will **push the s3 data into EFS**, then **the _AWS Backup_ can create a backup from EFS**.
 
-* the **_DataSync_ service can be very costly**. The AWS data transfer fees are pretty big, but you also will pay for s3 operations.
+* the **_DataSync_ service can be very costly**. The AWS data transfer fees are pretty big, but you also will pay for s3
+  operations.
 
 #### Object lock
 
@@ -1624,7 +1860,8 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 #### Misc
 
-- there is something called **requester pays**. This is where the **person who downloads the object pays for the transfer**. this is **this feature can only be used with people who have an existing aws account**.
+- there is something called **requester pays**. This is where the **person who downloads the object pays for the
+  transfer**. this is **this feature can only be used with people who have an existing aws account**.
 
 - you can use **BitTorrent** to **distribute s3 content**.
 
@@ -1635,7 +1872,8 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 - these can be send to **SNS, SQS or Lambda**.
 
 - be aware of the **delivery SLA**. You might be surprise to learn that
-  > Amazon S3 event notifications are designed to be delivered at least once. Typically, event notifications are delivered in seconds but can sometimes take a minute or longer.
+  > Amazon S3 event notifications are designed to be delivered at least once. Typically, event notifications are
+  delivered in seconds but can sometimes take a minute or longer.
 
 ##### Via CloudTrail
 
@@ -1643,9 +1881,9 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - the events are **object based events**. If you want **all s3 events** you should:
 
-  - create **`CloudTrail` for this bucket**
+    - create **`CloudTrail` for this bucket**
 
-  - use **`CloudWatch rule` with `CloudTrail` integration** and select given destination.
+    - use **`CloudWatch rule` with `CloudTrail` integration** and select given destination.
 
 - read my blog post https://dev.to/aws-builders/amazon-s3-to-aws-stepfunctions-pattern-4eog
 
@@ -1663,9 +1901,11 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - the integration **will send ALL bucket events to the EventBridge**
 
-- use the _EventBridge_ rich filtering capabilities. They are **much better than the `event notification` filtering capabilities**
+- use the _EventBridge_ rich filtering capabilities. They are **much better than the `event notification` filtering
+  capabilities**
 
-- the events are send to **the default event bus**. This is not ideal as there is a limited number of rules one might create on a given bus.
+- the events are send to **the default event bus**. This is not ideal as there is a limited number of rules one might
+  create on a given bus.
 
 - you **pay for published events**. Keep in mind that **publishing happens AFTER any rule is matched**
 
@@ -1689,9 +1929,9 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 - There are 3 flavours of Storage Gateway
 
-  - **File Gateway** : used for storing files as object in S3 - **NFS, SMB** .
-  - **Volume Gateway**: used for storing copies of hard-disk drives in S3 - **iSCSI**.
-  - **Tape Gateway**: used to get rid of tapes - **iSCSI**, for use mainly with **backup software**.
+    - **File Gateway** : used for storing files as object in S3 - **NFS, SMB** .
+    - **Volume Gateway**: used for storing copies of hard-disk drives in S3 - **iSCSI**.
+    - **Tape Gateway**: used to get rid of tapes - **iSCSI**, for use mainly with **backup software**.
 
 - With **Volume Gateway** you can create **point-in-time backups as EBS snapshots**
 
@@ -1703,7 +1943,8 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 #### Volume Gateway
 
-- you **cannot directly access the data using S3 API**. You would need to **use File Gateway to have a native way of accessing your files**.
+- you **cannot directly access the data using S3 API**. You would need to **use File Gateway to have a native way of
+  accessing your files**.
 
 - you can **create snapshots from the volume**. These can be **turned into EBS snapshots**.
 
@@ -1715,7 +1956,8 @@ The step 3 is crucial. Remember that whenever you upload something to a bucket t
 
 ##### Cached vs Stored
 
-The main difference is where the most of your files are stored. When we are talking about **cached volumes, most of your files are stored in s3**. There is a small cache buffer that holds the most accesed files.
+The main difference is where the most of your files are stored. When we are talking about **cached volumes, most of your
+files are stored in s3**. There is a small cache buffer that holds the most accesed files.
 
 When using **stored volumes, all of the files are stored on prem and synced with s3 asynchronously**.
 
@@ -1727,7 +1969,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - the **latency might be higher than volume** if you **are not using cached gateway**.
 
-- when you have **tapes** `on-prem` **you can still use `File Gateway`**. The usage **depends on the need** (you might not want to archive but work with the data).
+- when you have **tapes** `on-prem` **you can still use `File Gateway`**. The usage **depends on the need** (you might
+  not want to archive but work with the data).
 
 - it uses underlying cache for files so that s3 is not queried all the time.
 
@@ -1781,7 +2024,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - there are **three versions**: **compute**, **storage optimized**, **compute optimized with GPU**.
 
-- the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at remote location** and then **transferring the data**.
+- the versions speak for themselves eg. **you would use compute optimized for performing machine learning analysis at
+  remote location** and then **transferring the data**.
 
 - with the `Snowball Edge` you can **upload stuff to s3 or perform some compute on the data**.
 
@@ -1791,15 +2035,18 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - you **mail** a **psychical drive to AWS**. They make either an AMI, upload to s3, or EBS snapshot out of it.
 
-- you should **always prefer snow**. The I/E Disk you have to encrypt the drive manually, worry about the transportation etc...
+- you should **always prefer snow**. The I/E Disk you have to encrypt the drive manually, worry about the transportation
+  etc...
 
 ### RDS (Relational Database Service)
 
 - AWS service for relational databases
 
-- multiple providers such as: `mysql` or `Oracle`. Please note that **RDS does not support Oracle RAC** and has **semi-support of RMAN**.
+- multiple providers such as: `mysql` or `Oracle`. Please note that **RDS does not support Oracle RAC** and has **
+  semi-support of RMAN**.
 
-- **RDS AUTO SCALING in terms of compute does not exist**. You have to provision an EC2 instance and **pay regardless of the db usage**. What is possible is **RDS storage auto scaling**
+- **RDS AUTO SCALING in terms of compute does not exist**. You have to provision an EC2 instance and **pay regardless of
+  the db usage**. What is possible is **RDS storage auto scaling**
 
 - RDS **can be in multi AZ configuration**
 
@@ -1816,7 +2063,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 - you **can target read replica** but you **CAN NOT target second-master (multi-az)**.
   You can use **R53 weighted policy for that**
 
-- you can **create private hosted zone on R53** with **multi-value answer** to **target multiple read replicas** with one DNS query.
+- you can **create private hosted zone on R53** with **multi-value answer** to **target multiple read replicas** with
+  one DNS query.
 
 - **read replica can be cross region** - similarly to `Aurora`. This is very important to know!.
 
@@ -1836,21 +2084,29 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **with multi-az deployments standby db only comes into play when your primary failed**.
 
-- when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over onto when main db is down due to patching os**.
+- when patching os on EC2, **with multi AZ config, patching is done first to standby in different AZ then failed over
+  onto when main db is down due to patching os**.
 
-- when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all costs, **create read replica** and **update the engine on the replica**. Then promote the replica. Remember that you have to update the **EngineVersion property** in CF
+- when **upgrading db engine**, **both master and slave** are **taken offline**. If you want to avoid downtime at all
+  costs, **create read replica** and **update the engine on the replica**. Then promote the replica. Remember that you
+  have to update the **EngineVersion property** in CF
 
-- since the **failover, just like master is within a VPC** you have to **make sure that the failover subnet routing rules are the same as master**. Otherwise you might have a situation where a failover happens and you cannot connect to your instance because routing rules are not configured correctly.
+- since the **failover, just like master is within a VPC** you have to **make sure that the failover subnet routing
+  rules are the same as master**. Otherwise you might have a situation where a failover happens and you cannot connect
+  to your instance because routing rules are not configured correctly.
 
 #### Maintenance
 
-- **with multi AZ enabled** any kind of **maintenance, security patching** is **performed** first on the **standby**. When multi AZ is not specified, this process will take DB offline.
+- **with multi AZ enabled** any kind of **maintenance, security patching** is **performed** first on the **standby**.
+  When multi AZ is not specified, this process will take DB offline.
 
 - takes place **during maintenance window, specified when creating a RDS db**
 
-- you can **defer** updates. Updates **marked as `required` cannot be deffered indefinetely.**. Updates **marked as `available` CAN be deffered indefinetely**.
+- you can **defer** updates. Updates **marked as `required` cannot be deffered indefinetely.**. Updates **marked
+  as `available` CAN be deffered indefinetely**.
 
-- when you **replace the `DBVersion`** both the **primary and secondary will be taken offline**. This is completely different behaviour than patching the underlying OS.
+- when you **replace the `DBVersion`** both the **primary and secondary will be taken offline**. This is completely
+  different behaviour than patching the underlying OS.
   To make sure your application still works, deploy the secondary stack with RR
 
 #### Encryption
@@ -1861,21 +2117,29 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - you **cannot encrypt existing DB**. You have to **create an snapshot and encrypt it** and build DB from that snapshot.
 
-- **read replicas** have to be encrypted with the **same key as source AS LONG AS THE Source and ReadReplica ARE IN THE SAME REGION**
+- **read replicas** have to be encrypted with the **same key as source AS LONG AS THE Source and ReadReplica ARE IN THE
+  SAME REGION**
 
 #### Backups and Restore
 
-- you can perform **manual database storage-level snapshots**. These **will NOT be destroyed when you terminate db, YOU have to delete it manually when you want**. You would most likely use **step functions and lambda** to carry out this task.
+- you can perform **manual database storage-level snapshots**. These **will NOT be destroyed when you terminate db, YOU
+  have to delete it manually when you want**. You would most likely use **step functions and lambda** to carry out this
+  task.
 
-- **automatic backups are also an option**. These have **retention period UP to 35 days**. You have to **specify backup window, backup window has a duration**.
+- **automatic backups are also an option**. These have **retention period UP to 35 days**. You have to **specify backup
+  window, backup window has a duration**.
 
 - **backups are incremental and they BACKUP THE DATA THAT IS ACTUALLY CONSUMED (existing within your db)**
 
-- **automatic backups** will **be deleted after the retention window, deleting db DOES NOT automatically delete backups**
+- **automatic backups** will **be deleted after the retention window, deleting db DOES NOT automatically delete
+  backups**
 
-- you can perform **point-in time recovery**. **RDS automatically performs transaction backups every 5 mins, stored on s3**.
+- you can perform **point-in time recovery**. **RDS automatically performs transaction backups every 5 mins, stored on
+  s3**.
 
-- when you **restore a RDS DB, you will actually be creating a brand new DB instance**. You basically have to setup it again, but this time you have data from a snapshot present. **Restored DB has it own CNAME, you have to remember about specifying the correct security group**
+- when you **restore a RDS DB, you will actually be creating a brand new DB instance**. You basically have to setup it
+  again, but this time you have data from a snapshot present. **Restored DB has it own CNAME, you have to remember about
+  specifying the correct security group**
 
 - **db manual snapshots can be copied between regions**
 
@@ -1901,7 +2165,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - your DB **can have security group associated with it**
 
-- this is especially useful to know whenever you want to **acces your DB within VPC**. Not using correct rules on the secuirt groups **can lead to connection issues**.
+- this is especially useful to know whenever you want to **acces your DB within VPC**. Not using correct rules on the
+  secuirt groups **can lead to connection issues**.
 
 #### Storage
 
@@ -1911,7 +2176,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Option Groups
 
-- since RDS can run multiple engines, **option groups** allow you to **specify which options of the underlying engines you want to use**.
+- since RDS can run multiple engines, **option groups** allow you to **specify which options of the underlying engines
+  you want to use**.
 
 - a good example for this would be **S3_INTEGRATION** while using **Oracle on RDS**.
 
@@ -1949,7 +2215,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - uses **subnet groups**. This is basically telling aurora to **which subnet to deploy to**.
 
-- **supports schema changes** through **fast DDL** (DDL are the operations that have to do with the tables and the structure)
+- **supports schema changes** through **fast DDL** (DDL are the operations that have to do with the tables and the
+  structure)
 
 #### Security
 
@@ -1969,7 +2236,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **they use the same storage**, so the **replication is synchronous**.
 
-- **you can target them for reads**. They **operate on between the realm of standby and Read-Replica in RDS**. You can create **up to 15 Readers**.
+- **you can target them for reads**. They **operate on between the realm of standby and Read-Replica in RDS**. You can
+  create **up to 15 Readers**.
 
 - **can be very easily added**
 
@@ -1979,7 +2247,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 ##### Reader Endpoint
 
-- this endpoint **maps to every reader within an instance (1 url)**. This is quite different than RDS since with RDS you can only target 1 read replica at one time (there is no 1 url that maps to every read replica).
+- this endpoint **maps to every reader within an instance (1 url)**. This is quite different than RDS since with RDS you
+  can only target 1 read replica at one time (there is no 1 url that maps to every read replica).
 
 - you can also target an individual instance using special instance ID endpoint.
 
@@ -1989,9 +2258,11 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - you can have multiple **master instances**. That means that you have multiple instances which can **read and write**.
 
-- this means that, **not like using RDS** where **you cannot scale writes**, here **using aurora you can scale writes** using **multi-master configuration**.
+- this means that, **not like using RDS** where **you cannot scale writes**, here **using aurora you can scale writes**
+  using **multi-master configuration**.
 
-- **ALL NODES OF `Aurora multi-master`** have to be **in the same region**. This makes DynamoDB only database that supports multi-region multi master configuration.
+- **ALL NODES OF `Aurora multi-master`** have to be **in the same region**. This makes DynamoDB only database that
+  supports multi-region multi master configuration.
 
 #### Parallel Query
 
@@ -2005,11 +2276,13 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - there are **15 tiers**
 
-- **failover will be automatically performed to other reader instances**. This will be **done much faster than the multi-az failover on other RDS types**
+- **failover will be automatically performed to other reader instances**. This will be **done much faster than the
+  multi-az failover on other RDS types**
 
 #### Scaling
 
-- **scaling for writes** means **increasing the size of the primary instance (the master) => scaling up** or **using multi-master**
+- **scaling for writes** means **increasing the size of the primary instance (the master) => scaling up** or **using
+  multi-master**
 
 - **scaling for reads** means **increasing the number of reader nodes => scaling out**
 
@@ -2029,7 +2302,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Backtrack
 
-- this somewhat compares with RDS and restoring from backup. With RDS new DB instance is created, no downtime occurs but you have to switch connection strings.
+- this somewhat compares with RDS and restoring from backup. With RDS new DB instance is created, no downtime occurs but
+  you have to switch connection strings.
   With Aurora, there is an DB outage but no new instance is created. Saves you some time in a long run.
 
 - has some cost associated with it, **you have to pay for storing the changes**
@@ -2038,7 +2312,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **rolls back the shared storage**
 
-- **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you creating a new instance
+- **YOU DO NOT HAVE TO CREATE NEW DB INSTANCE**, yes the db will be offline for a short period, but it will save you
+  creating a new instance
 
 - you can backtrack **up to 72hrs in time**
 
@@ -2064,7 +2339,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - you can **create cross-region clusters that act as cross-region replicas**
 
-- this is **logical / binlog replication**. It uses **network for the replication part** so there **might be some lag involved**.
+- this is **logical / binlog replication**. It uses **network for the replication part** so there **might be some lag
+  involved**.
 
 - you can create **readers** within that **cross-region cluster**
 
@@ -2082,7 +2358,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 ##### Crash recovery
 
-- Aurora will **automatically recover from crashing** on parallel threads. This means that **there is also no downtime "almost instantaneously"**.
+- Aurora will **automatically recover from crashing** on parallel threads. This means that **there is also no downtime "
+  almost instantaneously"**.
 
 - this is **not the case with RDS** which, when crashed, **usually takes up to 30 mins to recover**.
 
@@ -2102,22 +2379,27 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - used **for unpredictable loads and random surges of traffic**.
 
-- can **rapidly scale**. Behind the db **there are multiple warm instances ready to go**. Because it **uses shared storage component just like normal Aurora** these instances can be used for scaling quickly.
+- can **rapidly scale**. Behind the db **there are multiple warm instances ready to go**. Because it **uses shared
+  storage component just like normal Aurora** these instances can be used for scaling quickly.
 
-- the **instance itself exist within a single AZ**. In the event of failure, _Aurora Serverless_ will provision new instance in another AZ.
+- the **instance itself exist within a single AZ**. In the event of failure, _Aurora Serverless_ will provision new
+  instance in another AZ.
   Failover time will be longer than normal Aurora.
 
-- you can still **utilize normal endpoint just like using regular Aurora**. This might be useful when providing backwards compatibility.
+- you can still **utilize normal endpoint just like using regular Aurora**. This might be useful when providing
+  backwards compatibility.
 
 - **operates within a VPCs**
 
-- instead of initializing a connection you connect to a **DATA API (shared proxy)**. This is quite **similar to RDS Proxy**.
+- instead of initializing a connection you connect to a **DATA API (shared proxy)**. This is quite **similar to RDS
+  Proxy**.
 
 ##### Aurora Serverless v2 (2020)
 
 - can be a bit more expensive
 
-- scales much faster. There is less over-provisioning going on since the compute increments in 0.5 ACUs instead of doubling the ACUs
+- scales much faster. There is less over-provisioning going on since the compute increments in 0.5 ACUs instead of
+  doubling the ACUs
 
 - as of writing this, it does not support _DATA API_. This will probably come sooner than later since it's not even GA.
 
@@ -2133,7 +2415,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - you will need an EC2 instance to run int
 
-- one neat trick I saw is to scale this DB up when you have to perform some kind of operations. Then exports the results to Athenta for quering and scale down the database.
+- one neat trick I saw is to scale this DB up when you have to perform some kind of operations. Then exports the results
+  to Athenta for quering and scale down the database.
 
 ### QLDB (Quantum Ledger Database)
 
@@ -2195,7 +2478,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - the **partition key is taken into the account when determining under which partition the item will be located**
 
-- the **hash key is NOT taken into the account when determining the partition**. It does have an effect on **how the items are sorted within a given partition**
+- the **hash key is NOT taken into the account when determining the partition**. It does have an effect on **how the
+  items are sorted within a given partition**
 
 #### Reading
 
@@ -2205,7 +2489,8 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - **separate hot and cold data**. This will help you with RCU provisioning.
 
-- you can **save some bandwidth** with **projection expression**. Remember **entire row is pulled, but then data extracted by Dynamo**
+- you can **save some bandwidth** with **projection expression**. Remember **entire row is pulled, but then data
+  extracted by Dynamo**
 
 - you will need to use **projections** on **LSi** and **GSI**.
 
@@ -2215,29 +2500,35 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 #### Filtering
 
-- filtering **does not reduce the RCU consumed**. Similarly to Projection Expressions, **every table with given index is pulled, then it is filtered @Dynamodb**
+- filtering **does not reduce the RCU consumed**. Similarly to Projection Expressions, **every table with given index is
+  pulled, then it is filtered @Dynamodb**
 
 #### Cost
 
 - you are billed on **overall storage** and **RCU/WCU**
 
-- there is **minimal capacity** which is **1 RCU/WCU per second**. Free tier is **100 MB of storage and 5RCU/WCU - per month**.
+- there is **minimal capacity** which is **1 RCU/WCU per second**. Free tier is **100 MB of storage and 5RCU/WCU - per
+  month**.
 
 #### GSI
 
 - make sure to **project attributes that you use as an index**. Otherwise the **retrieval will be costly!**
 
-- you **cannot use strongly consistent reads** with **GSI**. If you find yourself in a situation where you need strongly consistent reads and different query pattern,
+- you **cannot use strongly consistent reads** with **GSI**. If you find yourself in a situation where you need strongly
+  consistent reads and different query pattern,
   re-create the table (migrate the existing one).
 
 #### LSI
 
 - the LSI **can be strongly consistent**
 
-- **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to partitions created with GSI**
+- **if you are using LSI, your partition can be up to 10 gb**. This **limit does not apply to partitions created with
+  GSI**
 
-- the [documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Partitions.html) states
-  > In a DynamoDB table, there is no upper limit on the number of distinct sort key values per partition key value. If you needed to store many billions of Dog items in the Pets table, DynamoDB would allocate enough storage to handle this requirement automatically.
+- the [documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Partitions.html)states
+  > In a DynamoDB table, there is no upper limit on the number of distinct sort key values per partition key value. If
+  you needed to store many billions of Dog items in the Pets table, DynamoDB would allocate enough storage to handle
+  this requirement automatically.
 
 #### ACID
 
@@ -2249,11 +2540,13 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 There are a few approaches when it comes to scaling with dynamoDB
 
-- **adaptive scaling**: where dynamo automatically allocate RCU/WCU to a given partition from the provisioned RCU/WCU pool of all partitions
+- **adaptive scaling**: where dynamo automatically allocate RCU/WCU to a given partition from the provisioned RCU/WCU
+  pool of all partitions
 
 - **auto scaling**: you specify the **upper and lower bounds of RCU/WCU**
 
-- **on demand scaling**: where you **do not have to set any limits / bounds for RCU/WCU**. DynamoDB will take care of provisioning those dynamically and adjusting to the
+- **on demand scaling**: where you **do not have to set any limits / bounds for RCU/WCU**. DynamoDB will take care of
+  provisioning those dynamically and adjusting to the
 
 #### Dynamo Streams
 
@@ -2261,21 +2554,31 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
-- while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that table
+- while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards
+  is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand
+  billing_, there might be a concurrency spike in lambdas reading off the stream for that table
 
-- items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower batches if you are populating the table with items from different "collections"**. Every item will be consumed though, your lambda will be invoked more times.
+- items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower
+  batches if you are populating the table with items from different "collections"**. Every item will be consumed though,
+  your lambda will be invoked more times.
 
-- the **throughput of the stream** is based on the **number of partitions** given table **has**. This is because, **the more partitions your table has** the more **underlying shards will be allocated for that table**
+- the **throughput of the stream** is based on the **number of partitions** given table **has**. This is because, **the
+  more partitions your table has** the more **underlying shards will be allocated for that table**
 
-- DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do not use Kinesis directly
+- DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do
+  not use Kinesis directly
 
 - **free if integrated with Lambda**, otherwise you **pay for `GetRecords` call**.
 
-- you can request **three different _view types_**. Usually you do not care because you are consuming the records via Lambda so there is no charge for the `GetRecords` call. If you were to consume the stream in a different way, it matters what you select. Imagine a "heavy" record being updated and you have selected the _New and old images_ option. To fill your batch, more `GetRecords` API calls will be needed, thus you will pay more.
+- you can request **three different _view types_**. Usually you do not care because you are consuming the records via
+  Lambda so there is no charge for the `GetRecords` call. If you were to consume the stream in a different way, it
+  matters what you select. Imagine a "heavy" record being updated and you have selected the _New and old images_ option.
+  To fill your batch, more `GetRecords` API calls will be needed, thus you will pay more.
 
 ##### Dynamodb Streams fan-out
 
-- if the trigger that is invoked by DDB is doing a lot of things, consider pushing the message to SNS and creating a fan-out architecture
+- if the trigger that is invoked by DDB is doing a lot of things, consider pushing the message to SNS and creating a
+  fan-out architecture
 
 ##### Triggers
 
@@ -2289,7 +2592,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - since Kinesis is used, **you have the ability to retain the CDC events up to a year**
 
-- technically you no longer have to write mapping code to put stuff into eg. Elastic Search. You can go Data Streams => Firehose => Elastic Search
+- technically you no longer have to write mapping code to put stuff into eg. Elastic Search. You can go Data Streams =>
+  Firehose => Elastic Search
 
 - **as of writing this, there is no CloudFormation support, only console or CLI**
 
@@ -2305,9 +2609,11 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - in addition to S3 events, _CloudTrail_ can monitor _DynamoDB data events_
 
-- since we are talking _CloudTrail_ here, you could use _EventBridge_ to listen to those events and publish to various sources, not only a lambda like in the case of native streams integration
+- since we are talking _CloudTrail_ here, you could use _EventBridge_ to listen to those events and publish to various
+  sources, not only a lambda like in the case of native streams integration
 
-- sadly, **by using _CloudTrail_ you loose the ordering and _exactly-one_ delivery semantics** and **batching capabilities**. One again, all of this is due to the fact that you will be using _EventBridge_ to consume those events
+- sadly, **by using _CloudTrail_ you loose the ordering and _exactly-one_ delivery semantics** and **batching
+  capabilities**. One again, all of this is due to the fact that you will be using _EventBridge_ to consume those events
 
 #### TTL
 
@@ -2324,9 +2630,14 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Partitions
 
-- **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of WCU/RCU available to the whole table.
+- **HOT partitions** are **thing of a past**. Before, you would need to ensure even distribution of reads/writes across
+  partitions. This is because WCU and RCU was distributed evenly. With that setup your _hot partition_ might end up
+  throttling and dropping requests. Now **with adaptive scaling** that no longer is the case. **Dynamo will
+  automatically given partitions WCU/RCU based on the number of traffic it receives**. It takes away from the pool of
+  WCU/RCU available to the whole table.
 
-- remember that **indexes take up space!**. This is quite important and something you have to consider while creating your 20th GSI ;p.
+- remember that **indexes take up space!**. This is quite important and something you have to consider while creating
+  your 20th GSI ;p.
 
 - **the more data** is within the database **the more partitions there are**.
 
@@ -2338,7 +2649,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you can **backup and export tables to s3**
 
-  - **exporting the table to s3** does **NOT consume read capacity**
+    - **exporting the table to s3** does **NOT consume read capacity**
 
 - the saved **backup contains table data + RCU/WCU units**
 
@@ -2350,25 +2661,31 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you **need to have streams enabled (new and old)**
 
-- this is a **master-master setup**. This means that you can use the table in other region as your new master. **all `global` tables replicate to each other**
+- this is a **master-master setup**. This means that you can use the table in other region as your new master. **
+  all `global` tables replicate to each other**
 
-- **removing** the **table from `global-tables` view DOES NOT delete the data**. If you really want to delete the data, you should remove it manually or just remove the table manually.
+- **removing** the **table from `global-tables` view DOES NOT delete the data**. If you really want to delete the data,
+  you should remove it manually or just remove the table manually.
 
-- you should consider the cost of consistency. The writes to the other global table are more costly than normal writes. These are not done by you, but by the service itself.
+- you should consider the cost of consistency. The writes to the other global table are more costly than normal writes.
+  These are not done by you, but by the service itself.
 
 ##### The `AWS::DynamoDB::GlobalTable` resource
 
-- This is a patch from the _DynamoDB_ table. This resource should be used (**my personal take**) as a replacement for the `DynamoDB::Table` resource
+- This is a patch from the _DynamoDB_ table. This resource should be used (**my personal take**) as a replacement for
+  the `DynamoDB::Table` resource
 
 - Added to support _Global tables_ in _CloudFormation_
 
 - If you **even think that you will need to support _Global tables_ you should use this construct**
 
-  - The main reason being is that the `DynamoDB::Table` APIs do not propagate all properties to other regions (like `PITR` configuration)
-  - You might end up in this awkward place where you need to turn some settings on the replica manually
+    - The main reason being is that the `DynamoDB::Table` APIs do not propagate all properties to other regions (
+      like `PITR` configuration)
+    - You might end up in this awkward place where you need to turn some settings on the replica manually
 
-- **Beware** that the **_Global Table_ CDK construct** is **NOT using this resource (they are using custom resources instead)**.
-  - This means that you might end up updating settings on the replica manually
+- **Beware** that the **_Global Table_ CDK construct** is **NOT using this resource (they are using custom resources
+  instead)**.
+    - This means that you might end up updating settings on the replica manually
 
 #### Encryption
 
@@ -2392,7 +2709,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 ### CloudFront
 
-- CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to caches.
+- CloudFront is a **CDN**. Takes content that exists in a central location and distributes that content globally to
+  caches.
 
 - These caches are located to your customers as close as possible.
 
@@ -2402,7 +2720,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - Origin is the name given for the thing from which content **originates from**.
 
-- can be **s3 bucket**, **web-server (ec2)**, **Amazon MediaStore**, **APIGW** or **other CloudFront distribution / www site**
+- can be **s3 bucket**, **web-server (ec2)**, **Amazon MediaStore**, **APIGW** or **other CloudFront distribution / www
+  site**
 
 - **Origin has to be accessible to the internet**
 
@@ -2416,13 +2735,16 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 ##### S3 website endpoint vs S3 bucket as origin
 
-- you can use both s3 website endpoints (you have to have static website hosting enabled) or plain old s3 endpoint (the bucket itself)
+- you can use both s3 website endpoints (you have to have static website hosting enabled) or plain old s3 endpoint (the
+  bucket itself)
 
 - when you are using **s3 website endpoint** as **origin** you **cannot create OAI**.
 
-- if you want to **restrict access when using s3 website endpoint** you should use **custom header which CF injects**, then **setup bucket policy which looks at that header**.
+- if you want to **restrict access when using s3 website endpoint** you should use **custom header which CF injects**,
+  then **setup bucket policy which looks at that header**.
 
-- **s3 static hosting DOES NOT SUPPORT HTTPS**. That means that you **cannot set `HTTP ONLY` as Origin Protocol Policy**.
+- **s3 static hosting DOES NOT SUPPORT HTTPS**. That means that you **cannot set `HTTP ONLY` as Origin Protocol Policy**
+  .
 
 #### Distributions
 
@@ -2430,12 +2752,13 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - There are **2 types of distributions**.
 
-  - Web
-  - RTMP (used for video streaming and such)
+    - Web
+    - RTMP (used for video streaming and such)
 
 - when using **RTMP distribution your data has to live on s3**
 
-- When you deploy CloudFront distribution your content is automatically deployed to edge location. You can specify which ones (limited to a country). If you are rich you can deploy to all edge locations
+- When you deploy CloudFront distribution your content is automatically deployed to edge location. You can specify which
+  ones (limited to a country). If you are rich you can deploy to all edge locations
 
 #### Cache
 
@@ -2443,9 +2766,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **Cache hit** means that when an user requested a resource (like a webpage), an edge location had that available
 
-- **Regional cache** is like a meta edge location. Basically second level cache, fallback when there is **no cache hit**. If it does not have a copy of a given content it **falls back to the origin** (origin fetch).
+- **Regional cache** is like a meta edge location. Basically second level cache, fallback when there is **no cache hit**
+  . If it does not have a copy of a given content it **falls back to the origin** (origin fetch).
 
-- setting up **TTL 0** **does not mean NO caching**. It means that **CF will revalidate each viewer request with the origin**. That basically means that **CF will make a GET to an origin with a special header**. Then **origin signals CF if the origin changed or not**.
+- setting up **TTL 0** **does not mean NO caching**. It means that **CF will revalidate each viewer request with the
+  origin**. That basically means that **CF will make a GET to an origin with a special header**. Then **origin signals
+  CF if the origin changed or not**.
 
 ##### Cache Behaviors
 
@@ -2463,7 +2789,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - _cache key_ is **created based on the request parameters** like **url or/and headers/cookies**
 
-- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that behavior**
+- you can **customize this behavior** using **_cache behaviors_** and **attaching _custom cache policy_ to that
+  behavior**
 
 ##### Caching content
 
@@ -2473,24 +2800,30 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Protecting Content
 
-- **By default** every CloudFront distribution **comes with a default domain name**. That domain of course works for HTTP and HTTPS. You can register domain and replace it.
+- **By default** every CloudFront distribution **comes with a default domain name**. That domain of course works for
+  HTTP and HTTPS. You can register domain and replace it.
 
-- You can restrict the access on two levels (**You can** restrict an access to S3 only but it's no the topic of CloudFront):
+- You can restrict the access on two levels (**You can** restrict an access to S3 only but it's no the topic of
+  CloudFront):
 
-  - on a CloudFront level, your bucket is still accessible though
-  - on a S3 and CloudFront level, you can only access the website using signed urls.
+    - on a CloudFront level, your bucket is still accessible though
+    - on a S3 and CloudFront level, you can only access the website using signed urls.
 
 - Restricting your CloudFront & S3 combo is done by creating **OAI**.
 
-- **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI identity**
+- **OAI** is an _identity_. That _identity_ can be used to restrict access to you S3 bucket. Now whenever user decides
+  to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI
+  identity**
 
-- **OAI can be applied** to **S3, CloudFront, bucket policies**. **OAI origin cannot be a website address of s3 bucket (static website hosting)**.
+- **OAI can be applied** to **S3, CloudFront, bucket policies**. **OAI origin cannot be a website address of s3 bucket (
+  static website hosting)**.
 
 #### Signed URLS & Signed Cookies
 
 - **configured on BEHAVIOR LEVEL**
 
-- there is a notion of **trusted signers**. These are **AWS Accounts** which hold **CloudFront key pairs** and are used to **sign urls**.
+- there is a notion of **trusted signers**. These are **AWS Accounts** which hold **CloudFront key pairs** and are used
+  to **sign urls**.
 
 - the account that created the distribution will be, most likely, the trusted signer.
 
@@ -2504,7 +2837,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 ##### Signed Cookies
 
-- cookies **extend the signed urls functionality** by giving you the ability to **grant permissions to groups of objects**
+- cookies **extend the signed urls functionality** by giving you the ability to **grant permissions to groups of
+  objects**
 
 ##### Field Level encryption
 
@@ -2514,15 +2848,19 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Restricting access to CloudFront distribution
 
-- you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and signed cookies**.
+- you can further place **restrictions** on **who can access content** available by CloudFront using **signed URLS and
+  signed cookies**.
 
-- The **mechanism is similar to that of s3**, but there is difference **who can manage the underlying key**. With CloudFront **you can protect custom origins, APIGW and static files**.
+- The **mechanism is similar to that of s3**, but there is difference **who can manage the underlying key**. With
+  CloudFront **you can protect custom origins, APIGW and static files**.
 
 - Whats more **you can restrict access to a specific IP** using **WAF ACL and CloudFront**
 
-- You can also use **Geo Restriction**. This is **similar** to **R53 geol-ocation**, but you get the **benefit of CDN (speed)**.
+- You can also use **Geo Restriction**. This is **similar** to **R53 geol-ocation**, but you get the **benefit of CDN (
+  speed)**.
 
-- **SNI** is a way to present **multiple certs to a client**. Client has to **pick which cert. it wants**. Some old browsers do not support this technology.
+- **SNI** is a way to present **multiple certs to a client**. Client has to **pick which cert. it wants**. Some old
+  browsers do not support this technology.
 
 #### Origin Groups (Failover)
 
@@ -2532,7 +2870,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Combining with R53 (multi-region)
 
-This will require 2 layers of DNS, one for the `CloudFront` itself (optional but still) and then an `latency-based` routing policy within `R53` as origin to `CloudFront` distribution.
+This will require 2 layers of DNS, one for the `CloudFront` itself (optional but still) and then an `latency-based`
+routing policy within `R53` as origin to `CloudFront` distribution.
 
 This way, CF will fetch the data from the **R53 latency-based resolved host**. This is pretty neat!.
 
@@ -2547,20 +2886,23 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **throttling** can be **configured at multiple levels** including **Global and Service Call**
 
-- you **can** setup **on premise integration**. You need to use **NLB and VPC link** to make it work. You would setup NLB within your VPC and connect to on prem through VPN or Direct Connect. Then that NLB would hit your on prem, APIGW would hit the NLB through VPC link
+- you **can** setup **on premise integration**. You need to use **NLB and VPC link** to make it work. You would setup
+  NLB within your VPC and connect to on prem through VPN or Direct Connect. Then that NLB would hit your on prem, APIGW
+  would hit the NLB through VPC link
 
 - you **can** setup **integration with public-facing internet (non-aws) endpoints**
 
 - by default **AWS provides DDOS protection**
 
-- you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not CloudTrail!**. Remember, CloudTrail is about service calls made by identity within your AWS account.
+- you **can** enable **access logs**. This will enable you to **see the IPs of people calling your API**. This is **not
+  CloudTrail!**. Remember, CloudTrail is about service calls made by identity within your AWS account.
 
 - **access** to an APIGW can be **controlled using multiple means**:
 
-  - **resource policies** which define **access to your API methods from source IPs or VPC Endpoints**
-  - **IAM** can be **applied to entire API or methods**
-  - **authorizers**
-  - **cognito**
+    - **resource policies** which define **access to your API methods from source IPs or VPC Endpoints**
+    - **IAM** can be **applied to entire API or methods**
+    - **authorizers**
+    - **cognito**
 
 - you **can** actually **use VPC interface endpoint** with APIGW
 
@@ -2571,20 +2913,24 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - **4xx means Client errors**. This is where WAF is blocking the request (403), or concurrency throttling happens (429).
 
 - **5xx means Server errors**. This is APIGW or the integration failing.
-  - **502 (Bad Gateway)** usually bad request, apigw got malformed response from eg. lambda.
-  - **503** is service unavailable
-  - **504: Integration failure** is the **timeout on APIGW level** - remember that the default one is 29 seconds
+    - **502 (Bad Gateway)** usually bad request, apigw got malformed response from eg. lambda.
+    - **503** is service unavailable
+    - **504: Integration failure** is the **timeout on APIGW level** - remember that the default one is 29 seconds
 
 #### Timeouts
 
-- you probably know that lambda has 15min timeout max. But that timeout only applies to async invocations (reading from the queue and such) where user is not waiting for a response. **The default APIGW timeout is 29 seconds**. This can be **configured to be between 5 seconds and 29 seconds**. All you have to do is to **un-tick the "use default timeout option**
+- you probably know that lambda has 15min timeout max. But that timeout only applies to async invocations (reading from
+  the queue and such) where user is not waiting for a response. **The default APIGW timeout is 29 seconds**. This can
+  be **configured to be between 5 seconds and 29 seconds**. All you have to do is to **un-tick the "use default timeout
+  option**
 
 - when timeout happens on APIGW level, the **error code will be 504**.
 
 #### Payload size
 
 - The limit of the **payload = body + headers** sent to the APIGW (either HTTP or REST) is 10 mb.
-  This is important as the **maximum payload for a sync lambda invoke is 6mb**. It's pretty common to have lambda frontend with APIGW.
+  This is important as the **maximum payload for a sync lambda invoke is 6mb**. It's pretty common to have lambda
+  frontend with APIGW.
   If you hit the situation where you sent more than 6 mb to lambda, APIGW will return with status code of 413
 
 #### Responses
@@ -2595,31 +2941,36 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you can add **custom headers to the responses**.
 
-- you can make the flow of the integration with lambda asynchronous. To do this, the integration **must be of `custom` type, not the `proxy` one**
+- you can make the flow of the integration with lambda asynchronous. To do this, the integration **must be of `custom`
+  type, not the `proxy` one**
 
 #### Usage Plans
 
-- enable you to create throttling / quota limits per key group. This **enables you to create a tier architecture for your API**, like `Bronze`, `Silver`, `Gold` tiers.
+- enable you to create throttling / quota limits per key group. This **enables you to create a tier architecture for
+  your API**, like `Bronze`, `Silver`, `Gold` tiers.
 
 - using **AWS Marketplace** you can **register your API** and effectively **monetize your API using usage plans**.
 
 - your application can use an API Keys (and the Usage Plans) on multiple layers
-  - the UI layer: the request is sent with the API Key in the header
-  - the application / backend layer: **the API Key is returned along with the policy of the authorizer**.
-    This is quite nice since your users does not really have to know that you are using API Keys under the hood.
+    - the UI layer: the request is sent with the API Key in the header
+    - the application / backend layer: **the API Key is returned along with the policy of the authorizer**.
+      This is quite nice since your users does not really have to know that you are using API Keys under the hood.
 
 #### Lambda authorizer
 
 - allows you to fully configure the way authorization is handled for your application
 
-- depending on the **result format version** you can **either return a policy (with optional usage plan id) or just true / false**
+- depending on the **result format version** you can **either return a policy (with optional usage plan id) or just true
+  / false**
 
 - the **credentials the policy corresponds to** can be used for scoping permissions in the downstream services
 
 - adds metadata to the request object, the previously mentioned credentials could be found there
 
-- can **return an APIGW API key**. If the **API key is associated with an usage plan**, then by returning it inside the authorizer, one can achieve per-tenant throttling.
-  - Please note that this method requires you to create an API key per-tenant. There is a limit of how many API keys can exist for a given APIGW.
+- can **return an APIGW API key**. If the **API key is associated with an usage plan**, then by returning it inside the
+  authorizer, one can achieve per-tenant throttling.
+    - Please note that this method requires you to create an API key per-tenant. There is a limit of how many API keys
+      can exist for a given APIGW.
 
 #### IAM Authentication and Authorization
 
@@ -2639,11 +2990,14 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - the **HTTP API has much better latency**
 
-- the **REST API supports more features** like request / response validation, asynchronous invocations for lambdas, usage keys etc...
+- the **REST API supports more features** like request / response validation, asynchronous invocations for lambdas,
+  usage keys etc...
 
 - **both seem to be getting updates to some extend but AFAIK the HTTP API should be preferred**
 
-- The CORS setup is a bit harder with REST APIs. The _OPTIONS_ call does not support multiple origins or dynamic origins (picked from the request headers). To enable multiple origins for REST APIs you have to create a lambda function to handle OPTIONS request.
+- The CORS setup is a bit harder with REST APIs. The _OPTIONS_ call does not support multiple origins or dynamic
+  origins (picked from the request headers). To enable multiple origins for REST APIs you have to create a lambda
+  function to handle OPTIONS request.
   That is not the case for HTTP APIs (you can configure multiple domains to be allowed there).
 
 #### CORS
@@ -2654,7 +3008,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - while developing, you might have observed **high APIGW latency on rarely invoked endpoints**
 
-- this is **most likely** due to **overhead communication with _CloudFront_** and **the inability to reuse connections** for low-traffic endpoints
+- this is **most likely** due to **overhead communication with _CloudFront_** and **the inability to reuse connections**
+  for low-traffic endpoints
 
 - personally I've seen "cold starts" of APIGW **up to a second!**
 
@@ -2673,8 +3028,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - there are two ways to log requests that come in and out of the API Gateway REST APIs
 
-  - the **access logs** contain the **metadata about who and how your API was accessed**
-  - the **execution logs provide the request / response info along with any kind of authorization metadata**
+    - the **access logs** contain the **metadata about who and how your API was accessed**
+    - the **execution logs provide the request / response info along with any kind of authorization metadata**
 
 - overall, **the executions logs provide much more information** but **the access logs might be helpful as well**
 
@@ -2692,21 +3047,22 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 ###### Logging
 
 - there is only **ONE way to log requests that come in and out of the API Gateway HTTP APIs**
-  - the **access logs**. The configuration is exactly the same as in the case of REST APIs
+    - the **access logs**. The configuration is exactly the same as in the case of REST APIs
 
 ### Load Balancers
 
 - different types:
 
-  - **classic load balancer: LEGACY!**
-  - **application load balancer** for HTTP/HTTPS stuff
-  - **network load balancer** for **connections that are NOT HTTP/HTTPS**
+    - **classic load balancer: LEGACY!**
+    - **application load balancer** for HTTP/HTTPS stuff
+    - **network load balancer** for **connections that are NOT HTTP/HTTPS**
 
 - allocated to **specific VPC** and **AZ inside that VPC**
 
 - **can operate inside multiple AZs**
 
-- you probably want to enable **cross zone balancing when balancing between multiple AZs**. **Without** this setting enabled, traffic is **distributed between the nodes in the AZ the load balancer resides**.
+- you probably want to enable **cross zone balancing when balancing between multiple AZs**. **Without** this setting
+  enabled, traffic is **distributed between the nodes in the AZ the load balancer resides**.
 
 - can have security groups attached
 
@@ -2714,20 +3070,25 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **can perform health checks**
 
-- there is a notion of **Target Groups (up to 1000 targets)**. This basically allows you to specify multiple EC2 instances without having to specify them explicitly.
+- there is a notion of **Target Groups (up to 1000 targets)**. This basically allows you to specify multiple EC2
+  instances without having to specify them explicitly.
   **In the context of EC2 Target Group usually points to a Auto Scaling Group**.
 
 - **target groups can be containers, EC2 instances or IP addresses**
 
 - load balancers **can balance** between **multiple target groups**
 
-- load balancer have **listeners (up to 10)**. This **enables** you to **authenticate using social providers through those listeners**.
+- load balancer have **listeners (up to 10)**. This **enables** you to **authenticate using social providers through
+  those listeners**.
 
 - **listeners** can have **roles**. This makes **content-based balancing possible**
 
-- ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application becomes `self-healing` meaning that if one instance fails it gets replaced and such.
+- ALB/NLB enable you to create **self-healing architecture**. If you are using **ALB/NLB + ASG combo** your application
+  becomes `self-healing` meaning that if one instance fails it gets replaced and such.
 
-- there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the instance**. **ALB will take care of mapping between instance port and container port**.
+- there is a notion of **dynamic host port mapping**. This allows you to for example **run multiple ecs tasks on the
+  same instance**. **When using** this feature **ECS will start containers with a random emphermal port exposed on the
+  instance**. **ALB will take care of mapping between instance port and container port**.
 
 #### ELB
 
@@ -2735,25 +3096,31 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - general term for **ALB or NLB or Classic Load**
 
-- to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of traffic to each node is dependant on number of resources assigned to the ELB node**.
+- to **balance between AZs**, ELB creates **Load balancer nodes** within **each AZ**. What is important is that **% of
+  traffic to each node is dependant on number of resources assigned to the ELB node**.
 
-- when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
+- when placed within a VPC **only nodes consume PRIVATE IP addresses**. The number of nodes depend on the amount of
+  picked AZs **but the ELB itself DOES NOT have reserved PRIVATE ip address**
 
-- you should **always refer to ELBs by FQDN**. That is because **there are multiple nodes of ELB (per AZ)** and that **DNS can correctly resolve to correct IP**.
+- you should **always refer to ELBs by FQDN**. That is because **there are multiple nodes of ELB (per AZ)** and that **
+  DNS can correctly resolve to correct IP**.
 
 - you **cannot route outbound traffic through ELB**.
 
-- you are **charged based on running time and traffic**. That means that even if there are no instances which ELB manage, it is still incurring costs.
+- you are **charged based on running time and traffic**. That means that even if there are no instances which ELB
+  manage, it is still incurring costs.
 
 #### Client Affinity (Sticky sessions)
 
-- you can enable **sticky sessions** on **ELB**. This feature makes it so that ALB tracks the client (for which sever it handed it off to). So it can keep **sending it back to the same server**.
+- you can enable **sticky sessions** on **ELB**. This feature makes it so that ALB tracks the client (for which sever it
+  handed it off to). So it can keep **sending it back to the same server**.
 
 - this is usually done by **setting a special cookie** or **tracing IP details (NLB)**
 
 #### ALB
 
-- work in **layer 7**. That means that they are **HTTP/HTTPS aware**. You can create rules based on url path and also based on the hostname itself (website1.site.com and website2.site.com).
+- work in **layer 7**. That means that they are **HTTP/HTTPS aware**. You can create rules based on url path and also
+  based on the hostname itself (website1.site.com and website2.site.com).
 
 - can have **multiple TSL/SSL Certs** using **SNI**
 
@@ -2777,15 +3144,19 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - they **do not modify incoming network packets in any shape of form**, so you **do not have to use proxy-protocol**
 
-- **can balance** on **UDP**. Remember that with **ALB there are 2 connections, one to ALB and one to target**. **NLB forwards the requests straight to instances**.
+- **can balance** on **UDP**. Remember that with **ALB there are 2 connections, one to ALB and one to target**. **NLB
+  forwards the requests straight to instances**.
 
 - **exposes DNS name**, but you **can assign static IP to it (EIP)**.
 
-- **cannot** have **SecurityGroup attached to it**. Again, this is **because it's software based** and you are **assigning SGs to underlying network interfaces**.
+- **cannot** have **SecurityGroup attached to it**. Again, this is **because it's software based** and you are **
+  assigning SGs to underlying network interfaces**.
 
 - has **cross-zone load balancing disabled by default**.
 
-- when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your application does not have to support x-forwarded-for header. But when you register your instances via IP, the underlying incoming IP address will be of the nlb nodes (private ip).
+- when you register instances VIA Instance ID, the underlying (incoming) IP address is preserved, in such case your
+  application does not have to support x-forwarded-for header. But when you register your instances via IP, the
+  underlying incoming IP address will be of the nlb nodes (private ip).
 
 - **supports IPv6**
 
@@ -2799,7 +3170,9 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Access Logs
 
-- if you **need more information** about the flow that goes through your load balancer you can use **access logs, DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3 (sse-s3 by default)**. These allow you to get information about **individual requests** like IP address of the client, **latencies** etc.
+- if you **need more information** about the flow that goes through your load balancer you can use **access logs,
+  DISABLED BY DEFAULT!**. Load balancer will **store those logs in s3 (sse-s3 by default)**. These allow you to get
+  information about **individual requests** like IP address of the client, **latencies** etc.
 
 - **access logs are not the same as error logs**.
 
@@ -2809,29 +3182,36 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **logs send to CloudWatch in 60sec interval IF there are requests flowing through the load balancer**
 
-- this is not the same as `access logs`. **Access logs contains details about a single request**, the CloudWatch metrics give you **broader view on the ALB as a whole**.
+- this is not the same as `access logs`. **Access logs contains details about a single request**, the CloudWatch metrics
+  give you **broader view on the ALB as a whole**.
 
-- the **`access logs` contain information about the latency**, but **if latency is your only concern** you be **much better of using CloudWatch native metrics for that**
+- the **`access logs` contain information about the latency**, but **if latency is your only concern** you be **much
+  better of using CloudWatch native metrics for that**
 
 #### Health Checks
 
 - load balancer health check **can be carried on HTTP, SSL, HTTPS, TCP** protocols
 
-- the **ELB type healthcheck** is often **preferred than the EC2 one**. This is due to the fact that `ELB` healthcheck actually checks the application and the `EC2` one just indicates that the instance did not crash.
+- the **ELB type healthcheck** is often **preferred than the EC2 one**. This is due to the fact that `ELB` healthcheck
+  actually checks the application and the `EC2` one just indicates that the instance did not crash.
 
-- you can change healthcheck type to EC2 when you want to ensure that your instance will not be terminated whenever you restart given EC2 instance.
+- you can change healthcheck type to EC2 when you want to ensure that your instance will not be terminated whenever you
+  restart given EC2 instance.
 
 #### Scaling Events (mainly AZRebalance)
 
 - this is where **ALB tries to rebalanced spread of instances between AZs**.
 
-- this event is quite important since **ALB can exceed, for a brief period of time, the maximum instances count within given group**. This is **due to the fact that new instances are launched first (without terminating the old ones)**.
+- this event is quite important since **ALB can exceed, for a brief period of time, the maximum instances count within
+  given group**. This is **due to the fact that new instances are launched first (without terminating the old ones)**.
 
 #### Target Groups
 
-- can be either **group of ec2 instances (usually accompanied with ASG)** or **lists of IPS**. This means that **by using IPS you can load balance with on-prem**.
+- can be either **group of ec2 instances (usually accompanied with ASG)** or **lists of IPS**. This means that **by
+  using IPS you can load balance with on-prem**.
 
-- with target groups you can **load balance resources within VPC with resources on on-prem**. To make it work you have to use **private-ip only target group** and have **Direct Connect to on-prem**.
+- with target groups you can **load balance resources within VPC with resources on on-prem**. To make it work you have
+  to use **private-ip only target group** and have **Direct Connect to on-prem**.
 
 ### DNS
 
@@ -2849,13 +3229,17 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **A/AAAA**: maps a **host, so a www...** into **ipv4(A) or ipv6(AAAA)**
 
-- **CNAME**: allows you to create **aliases (NOT THE SAME AS ALIAS RECORD)** to given **A/AAAA records**. **DOES NOT WORK ON NAKED DOMAINS (google.com vs www.google.com)**
+- **CNAME**: allows you to create **aliases (NOT THE SAME AS ALIAS RECORD)** to given **A/AAAA records**. **DOES NOT
+  WORK ON NAKED DOMAINS (google.com vs www.google.com)**
 
-- **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical service provided by AWS**. You **can use** on **apex zone (naked) records**.
+- **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical
+  service provided by AWS**. You **can use** on **apex zone (naked) records**.
 
-- **for some integrations** **alias record is FREE!**. You can use this technique to save costs. Remember that you can assign **www.something.com** as alias as well as the **naked domain (without www)**
+- **for some integrations** **alias record is FREE!**. You can use this technique to save costs. Remember that you can
+  assign **www.something.com** as alias as well as the **naked domain (without www)**
 
-- when creating an alias it might show as **A (alias)** or something like this. Do not be afraid. This is what R53 is doing under thee hood.
+- when creating an alias it might show as **A (alias)** or something like this. Do not be afraid. This is what R53 is
+  doing under thee hood.
 
 ### Route53
 
@@ -2873,11 +3257,13 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **private zones** are **associated with a given VPC**
 
-- there is a notion of **split view**. This basically means **creating the same names in both private and public zones**. **Inside a VPC, private zone always overrides public one**
+- there is a notion of **split view**. This basically means **creating the same names in both private and public zones**
+  . **Inside a VPC, private zone always overrides public one**
 
 - you are **charged monthly** for **hosted zones** and also for **resolver queries**.
 
-- you can still use R53 even if your domain is registered within a 3rd party provider. Just update the 3rd party DNS records to use R53 NS records.
+- you can still use R53 even if your domain is registered within a 3rd party provider. Just update the 3rd party DNS
+  records to use R53 NS records.
 
 #### Route53 Health Checks
 
@@ -2897,7 +3283,9 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Route53 routing
 
-- just remember that **TTL can bite YOUR ASS!**. **Whenever** you are **considering offloading the balancing to Route53** keep in mind the **TTL**. Since you **cannot attach ASG to Route53** there might be a **case where your instance is no longer there BUT TTL still routes to that IP**.
+- just remember that **TTL can bite YOUR ASS!**. **Whenever** you are **considering offloading the balancing to
+  Route53** keep in mind the **TTL**. Since you **cannot attach ASG to Route53** there might be a **case where your
+  instance is no longer there BUT TTL still routes to that IP**.
 
 - you can **nest routing strategies**. This is to create complex routing infrastructure
 
@@ -2907,7 +3295,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **single record** which routes to a **single resource**.
 
-- do not mistake this with multivalue. This is for a single record, you cannot have multiple records with the same name with this routing strategy.
+- do not mistake this with multivalue. This is for a single record, you cannot have multiple records with the same name
+  with this routing strategy.
 
 - that single record **can hold up to 8 IPs**.
 
@@ -2919,7 +3308,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 ##### Multi-value answer
 
-- this routing strategy is for **multiple records (same name)** which routes to **multiple resources**. The **record have to be of the same type**.
+- this routing strategy is for **multiple records (same name)** which routes to **multiple resources**. The **record
+  have to be of the same type**.
 
 - you can have **healthchecks** on **individual record**.
 
@@ -2935,8 +3325,10 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - there are **two record types**
 
-  - **primary**: the main record, for example webserver running on EC2. You probably want to create health check for that record
-  - **secondary**: the one that will take over if the health check on primary fails. This could be an s3 bucket for example. **Bucket name has to have the same name as the record name**
+    - **primary**: the main record, for example webserver running on EC2. You probably want to create health check for
+      that record
+    - **secondary**: the one that will take over if the health check on primary fails. This could be an s3 bucket for
+      example. **Bucket name has to have the same name as the record name**
 
 - if **primary record fails** traffic will be **resolved to secondary record**. The **name stays the same**
 
@@ -2970,7 +3362,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **DNS resolver now only returns the records that match the name AND location**
 
-- this mean that you can **have a case** where **you specify a record but `nslookup` returns no results**. That is because **the location does not match**.
+- this mean that you can **have a case** where **you specify a record but `nslookup` returns no results**. That is
+  because **the location does not match**.
 
 - **location** can be **a country , a region or default**. **Default matches everything**.
 
@@ -2978,7 +3371,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - this means you can **present different application with the same DNS name, based on location**
 
-- always **add a default rule**. This is to make sure **whenever DNS cannot pick the location** it will **fallback to the default rule**.
+- always **add a default rule**. This is to make sure **whenever DNS cannot pick the location** it will **fallback to
+  the default rule**.
 
 #### Route53 resolver
 
@@ -2986,9 +3380,13 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - allows you to **perform DNS lookups across DX or VPN and the other way around (bi-directional)**
 
-- this basically allows you to **create a hybrid cloud env.** where **some of your stuff is within VPC and some on-prem**. You might need to resolve DNS for some of the parts of your application to the stuff on-prem. Before all that you had to roll out your own dns resolver (probably within VPC) to be an intermediary between the AWS managed one and the one on premises.
+- this basically allows you to **create a hybrid cloud env.** where **some of your stuff is within VPC and some
+  on-prem**. You might need to resolve DNS for some of the parts of your application to the stuff on-prem. Before all
+  that you had to roll out your own dns resolver (probably within VPC) to be an intermediary between the AWS managed one
+  and the one on premises.
 
-- it is an **endpoint made of 1 or more ENI within a given VPC**. It **works for every VPC within a region (even if the VPC are not peered)**.
+- it is an **endpoint made of 1 or more ENI within a given VPC**. It **works for every VPC within a region (even if the
+  VPC are not peered)**.
 
 #### Inbound Endpoint
 
@@ -2998,7 +3396,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - this endpoint allows you to query **from your VPC to another network / VPC**
 
-- allows you to **forward DNS queries to other resolvers**. This can be useful for **forwarding DNS queries to your on-prem DNS resolvers**.
+- allows you to **forward DNS queries to other resolvers**. This can be useful for **forwarding DNS queries to your
+  on-prem DNS resolvers**.
 
 #### Inbound & Outbound
 
@@ -3018,15 +3417,18 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Man in the middle attacks
 
-- R53 **support DNSSEC only for domain registration**. It **DOES NOT SUPPORT DNSSEC FOR DNS service**. If you are worried about man in the middle attacks, use different provider.
+- R53 **support DNSSEC only for domain registration**. It **DOES NOT SUPPORT DNSSEC FOR DNS service**. If you are
+  worried about man in the middle attacks, use different provider.
 
 - another option is to **run your own DNS server on EC2**.
 
 #### Delegation sets
 
-- when you create a hosted zone, **by default**, that hosted zone will get **different set of name servers assigned**. This can be **problematic when you have to manage multiple hosted zones**.
+- when you create a hosted zone, **by default**, that hosted zone will get **different set of name servers assigned**.
+  This can be **problematic when you have to manage multiple hosted zones**.
 
-- you can create **reusable delegation sets (set of name servers)** which you can **use to create hosted zones with**. The **underlying name servers will always be the same (from the delegation set)**.
+- you can create **reusable delegation sets (set of name servers)** which you can **use to create hosted zones with**.
+  The **underlying name servers will always be the same (from the delegation set)**.
 
 #### DDOS
 
@@ -3060,7 +3462,8 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Task Definition
 
-- to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They are **logical group of containers running on your instance**
+- to run stuff you have to create **task definitions**. **Describes the task a.k.a service** you want to run. They
+  are **logical group of containers running on your instance**
 
 - with **tasks definitions** you can specify the **image, way of logging and resource caps**
 
@@ -3072,11 +3475,14 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - there are multiple network modes available: **none, bridge, awsvpc, host**. The **default is the bridge mode**.
 
-- if you want to assign **private & public IP (ENI)** use **awsvpc mode**. This will also **enable you to assign SG to a specific task if needed**.
+- if you want to assign **private & public IP (ENI)** use **awsvpc mode**. This will also **enable you to assign SG to a
+  specific task if needed**.
 
-- **hosts map directly to the host networking**. That means that you cannot use this if you want to run multiple apache instances on the same host, since each instance needs PORT 80.
+- **hosts map directly to the host networking**. That means that you cannot use this if you want to run multiple apache
+  instances on the same host, since each instance needs PORT 80.
 
-- **awsvpc** is the **only networking mode available for Fargate**. Be wary though, **instances have limits of ENI that could be attached to them**.
+- **awsvpc** is the **only networking mode available for Fargate**. Be wary though, **instances have limits of ENI that
+  could be attached to them**.
 
 - **bridge** uses **Docker's built-in virtual network**, it maps the container ports to EC2 ENI directly.
 
@@ -3104,9 +3510,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - **a bit more expensive than ECS itself since AWS is literally managing everything expect tasks for you**
 
-So with **ECS you have to have EC2 instances running**. But with **Fargate you really only care about the containers themselves**. You can wave deploying ASG goodbye. **Fargate is basically container as a service, you only define tasks and that is it**.
+So with **ECS you have to have EC2 instances running**. But with **Fargate you really only care about the containers
+themselves**. You can wave deploying ASG goodbye. **Fargate is basically container as a service, you only define tasks
+and that is it**.
 
-- a good usage of fargate would be **load testing**, where you have **docker image of test automation framework** deployed.
+- a good usage of fargate would be **load testing**, where you have **docker image of test automation framework**
+  deployed.
 
 #### Forcing new deployment
 
@@ -3118,11 +3527,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - with **awsvpc** network mode you can **attach security groups to ENIs**.
 
-- there is an **instance (ec2) role** that gives permissions to ECS agent to talk to ECS. This should be the first place where you look when ECS agents are not functioning correctly.
+- there is an **instance (ec2) role** that gives permissions to ECS agent to talk to ECS. This should be the first place
+  where you look when ECS agents are not functioning correctly.
 
-- you can also **attach IAM role to a specific task definition - task role**. This basically is a role attached to a specific container. Whenever you are dealing with **ECS - prefer task role rather than EC2 role**.
+- you can also **attach IAM role to a specific task definition - task role**. This basically is a role attached to a
+  specific container. Whenever you are dealing with **ECS - prefer task role rather than EC2 role**.
 
-- you can also **attach task execution role**. This is the role **used by ECS itself to pull images, publish logs, basically do stuff in your behalf**.
+- you can also **attach task execution role**. This is the role **used by ECS itself to pull images, publish logs,
+  basically do stuff in your behalf**.
 
 #### Logging
 
@@ -3150,25 +3562,30 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - EC2 instance has **metadata**. There are a lot of useful information there.
 
-- using **SPOT** instances there are different **behaviors you can configure** when your instance is about to get interrupted:
+- using **SPOT** instances there are different **behaviors you can configure** when your instance is about to get
+  interrupted:
 
-  - **stop**
-  - **hibernate**
+    - **stop**
+    - **hibernate**
 
 - **To get the metadata info CURL 169.254.169.254/latest/...**
 
-  - `/userdata`: your bootstrap script etc
-  - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
-  - `/meta-data/`: has **many options**, IP etc..
+    - `/userdata`: your bootstrap script etc
+    - `/dynamic/instance-identity`: stuff about the instance -> IP, instance size, type all that stuff
+    - `/meta-data/`: has **many options**, IP etc..
 
-- remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you have some scripts that require internet access and you forgot to configure the access properly. **There is a way to make sure user scripts run on every reboot**.
+- remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you
+  have some scripts that require internet access and you forgot to configure the access properly. **There is a way to
+  make sure user scripts run on every reboot**.
   This link can help: https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
 
-- **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have dedicated tenancy model on that instance.
+- **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have
+  dedicated tenancy model on that instance.
 
 - **EC2 instance can only have ONE IAM ROLE**
 
-- to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some configuration** for an EC2 like **security groups, AMI ids and such** .
+- to specify **launch parameters of EC2** you can use **launch templates**. This allow you to specify **some
+  configuration** for an EC2 like **security groups, AMI ids and such** .
 
 - you **can add/change** existing **IAM instance role** on a **running instance**
 
@@ -3178,11 +3595,14 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - **reserved**: capacity reservation, contract with AWS
 
-- **spot**: like a market, but for instances. Instances come for the reserve pool of instances AWS currently is sitting on.
+- **spot**: like a market, but for instances. Instances come for the reserve pool of instances AWS currently is sitting
+  on.
 
-- **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are using
+- **dedicated**: psychical machines **only for you**. Mainly used when you have strict licensing on software you are
+  using
 
-- there are also **Spot blocks**. This allows you to have an instance for a **specific X amount of time** using the spot pricing model.
+- there are also **Spot blocks**. This allows you to have an instance for a **specific X amount of time** using the spot
+  pricing model.
 
 #### Windows instances
 
@@ -3192,7 +3612,9 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 #### Reservations
 
-- sometimes there is not enough capacity for on-demand instances to be initialized within given region / AZ. This can be annoying whenever you are running ASG. Reservations enable you to make sure you can spin new instances whenever you want (by purchasing reservations).
+- sometimes there is not enough capacity for on-demand instances to be initialized within given region / AZ. This can be
+  annoying whenever you are running ASG. Reservations enable you to make sure you can spin new instances whenever you
+  want (by purchasing reservations).
 
 - **zonal RI** guarantee **capacity reservation** within given az
 
@@ -3200,8 +3622,10 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - **on-demand capacity reservation**. This is useful for a **short term availability guarantee**.
 
-- **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract for 1 year.
-  capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which will alert you if that happens!**
+- **scheduled reservations**: this is for tasks that are well, scheduled, daily monthly, whatever. You sign a contract
+  for 1 year.
+  capacity you can bid and buy, **when capacity is needed they will be taken away from you. There are mechanisms which
+  will alert you if that happens!**
 
 - you **cannot sell unused CONVERTIBLE on the market!**.
 
@@ -3209,27 +3633,32 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - There are different _health checks_:
 
-  - **System Status Check**: this checks the underlying hypervisor (virtualization tool)
+    - **System Status Check**: this checks the underlying hypervisor (virtualization tool)
 
-  - **Instance Status Check**: checking the EC2 instance itself
+    - **Instance Status Check**: checking the EC2 instance itself
 
 #### Tenancy
 
 - **Tenancy model**. This is something **somewhat different than ec2 pricing models**.
 
-  - **shared**: multiple costumers share the same piece of hardware (same rack, etc)
-  - **dedicated**: hardware your EC2 runs on is only yours, but you have to pay more. No other instance from other customer run on this host. **Underlying hardware can change when you stop/start an instance**
-  - **dedicated host**: this is basically like **dedicated but extra**. **Even if you stop/start your instance the underlying hardware stays the same**. You are not jumping between racks. You can pick on which underlying hardware you want to run!
+    - **shared**: multiple costumers share the same piece of hardware (same rack, etc)
+    - **dedicated**: hardware your EC2 runs on is only yours, but you have to pay more. No other instance from other
+      customer run on this host. **Underlying hardware can change when you stop/start an instance**
+    - **dedicated host**: this is basically like **dedicated but extra**. **Even if you stop/start your instance the
+      underlying hardware stays the same**. You are not jumping between racks. You can pick on which underlying hardware
+      you want to run!
 
 #### Hibernation
 
 - to enable hibernation your instance **must based on HVM AMI**.
 
-- you can hibernate an instance. The **hibernation process is moving RAM data to EBS**. There are requirements for this to work
+- you can hibernate an instance. The **hibernation process is moving RAM data to EBS**. There are requirements for this
+  to work
 
-  1. Your instance **cannot be a part of ASG or ECS**. You can always suspend ASG or move given instance into maintenance mode.
-  2. Your **root volume has to be EBS**
-  3. The **EBS volume has to be large enough**
+    1. Your instance **cannot be a part of ASG or ECS**. You can always suspend ASG or move given instance into
+       maintenance mode.
+    2. Your **root volume has to be EBS**
+    3. The **EBS volume has to be large enough**
 
 - you **cannot enable hibernation on a existing instance**. You have to tick a box during the creation.
 
@@ -3239,7 +3668,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - to do that **you create instance profile** which **acts like a container for IAM roles for a given instance**
 
-- **when** you **deploy EC2 instance** the **creation of instance profile IS HIDDEN from you**. It **happens behind the scenes**.
+- **when** you **deploy EC2 instance** the **creation of instance profile IS HIDDEN from you**. It **happens behind the
+  scenes**.
 
 #### Fleets
 
@@ -3247,9 +3677,11 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - it's **amazon who launches your instances**
 
-> With a single API call, now you can provision capacity across EC2 instance types and across purchase models to achieve desired scale, performance and cost.
+> With a single API call, now you can provision capacity across EC2 instance types and across purchase models to achieve
+> desired scale, performance and cost.
 
-- when using SPOT instances you should diversify across instance pools to avoid widespread interruptions. This makes it so that even when there is a demand on particular instance type your SPOT fleet will still live on.
+- when using SPOT instances you should diversify across instance pools to avoid widespread interruptions. This makes it
+  so that even when there is a demand on particular instance type your SPOT fleet will still live on.
 
 #### AMI
 
@@ -3257,11 +3689,13 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - can be **private or public**
 
-- you can **whitelist aws accounts when the AMI is private**. This allows you to share the AMI between accounts without making the AMI public.
+- you can **whitelist aws accounts when the AMI is private**. This allows you to share the AMI between accounts without
+  making the AMI public.
 
 - ami **does not contain instance type information**. Remember that the AMI also contains the AMI permissions.
 
-- you can have **an AMI based off instance store**. Instead of creating EBS snapshots, you have **files on s3 that gets referenced**.
+- you can have **an AMI based off instance store**. Instead of creating EBS snapshots, you have **files on s3 that gets
+  referenced**.
 
 #### Traffic Mirroring
 
@@ -3273,9 +3707,11 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - based on **public/private key** cryptography
 
-- when **migrating AMIs** you **do not have to import any kind of key**. You can **still use your downloaded `key-pair`** since it's the private part of the key.
+- when **migrating AMIs** you **do not have to import any kind of key**. You can **still use your
+  downloaded `key-pair`** since it's the private part of the key.
 
-- if you want to **completely wipe the key from the instance** you should just **terminate that instance**. There is a CLI command to delete the key, but **the CLI command does not delete the key from the instance itself**.
+- if you want to **completely wipe the key from the instance** you should just **terminate that instance**. There is a
+  CLI command to delete the key, but **the CLI command does not delete the key from the instance itself**.
 
 #### Auto recovery
 
@@ -3285,7 +3721,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 #### Networking (IPs and DNS)
 
-- when **restarting (stop / start)** **private DNS / IPs stay the same**. The **private DNS** has a shape of **ip-X-X-X-X.ec2.internal**
+- when **restarting (stop / start)** **private DNS / IPs stay the same**. The **private DNS** has a shape of **
+  ip-X-X-X-X.ec2.internal**
 
 - when **restarting without elastic IP assigned** **public IPs / DNS is reassigned (dynamic properties)**
 
@@ -3295,43 +3732,57 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can launch underlying instances using 2 types of "templates", **launch templates** and **launch configurations**:
 
-  - both are immutable, but you can create **versions of launch template**
-  - **launch template is newer and recommended by AWS**. You should always **prefer launch template as it has more options**.
+    - both are immutable, but you can create **versions of launch template**
+    - **launch template is newer and recommended by AWS**. You should always **prefer launch template as it has more
+      options**.
 
 - controls scaling, where instances are launched, etc
 
 - **can work with instances in multiple subnets**
 
-- instances inside auto scaling group can be monitored as an one entity. By default _Cloud Watch_ is monitoring every instance individually
+- instances inside auto scaling group can be monitored as an one entity. By default _Cloud Watch_ is monitoring every
+  instance individually
 
 - there are multiple versions of **ASG monitoring**
 
-  - **basic**: **5 minute granularity**, by default enabled by **creating ASG from a launch template or from the console**
-  - **detailed**: **1 minute granularity, cost additional**. By default enabled by **creating ASG by launch configuration created by CLI or by SDK**
+    - **basic**: **5 minute granularity**, by default enabled by **creating ASG from a launch template or from the
+      console**
+    - **detailed**: **1 minute granularity, cost additional**. By default enabled by **creating ASG by launch
+      configuration created by CLI or by SDK**
 
 - you can control the number of instances by manipulating three metrics:
 
-  - **Desired Capacity**: this is the number **ASG will try to maintain**
-  - **Min**
-  - **Max**
+    - **Desired Capacity**: this is the number **ASG will try to maintain**
+    - **Min**
+    - **Max**
 
-- there is a notion of **scaling policies**. These are **rules, things you want to happen when something regarding EC2 instances happen**, eg.
+- there is a notion of **scaling policies**. These are **rules, things you want to happen when something regarding EC2
+  instances happen**, eg.
 
 - there are **multiple types of scaling policies: step, simple, custom and target tracking**
 
-- with **target tracking policy (also sometimes refereed as dynamic scaling)** you **specify a scaling metric and a target value**. Think **scaling policy to keep the average CPU utilization of ASG at 40% or something like that**. It **uses CloudWatch alarms and metrics to take actions**.
+- with **target tracking policy (also sometimes refereed as dynamic scaling)** you **specify a scaling metric and a
+  target value**. Think **scaling policy to keep the average CPU utilization of ASG at 40% or something like that**.
+  It **uses CloudWatch alarms and metrics to take actions**.
 
-- the deal with **step scaling policies** is that you can create **multiple predicates for a given policy**. For example: **add 2 capacity unit when CPU hits 80% , add 2 capacity units when CPU hits 60%**.
+- the deal with **step scaling policies** is that you can create **multiple predicates for a given policy**. For
+  example: **add 2 capacity unit when CPU hits 80% , add 2 capacity units when CPU hits 60%**.
 
 - **REMEMBER THAT YOU HAVE TO LIST AZs YOU WANT YOU INSTANCES TO BE DEPLOYED INTO!!**
 
-- there is a notion of **health check grace period**. This is the **time** it takes to **spin up new instance**. This time of course is dependant on **bootstrap script** and **how much application code is in the AMI**.
+- there is a notion of **health check grace period**. This is the **time** it takes to **spin up new instance**. This
+  time of course is dependant on **bootstrap script** and **how much application code is in the AMI**.
 
-- **individual instances can be protected from scale events**. This is useful when you have a master node that cannot be terminated.
+- **individual instances can be protected from scale events**. This is useful when you have a master node that cannot be
+  terminated.
 
-- there is notion of **connection draining**. This is **done by ALB OR NLB**. When **terminating an instance ALB/NLB will wait for that period to pass**.
+- there is notion of **connection draining**. This is **done by ALB OR NLB**. When **terminating an instance ALB/NLB
+  will wait for that period to pass**.
 
-- **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that instance**. **ASG does not `listen` for ELB commands to terminate stuff (BY DEFAULT)**. This can be changed. **ASG CAN listen to ELB health checks if you set it up**. But always remember that it is the ASG that terminates stuff by default
+- **its the ASG who terminates things**. When a scaling even occurs **ELB simply stops sending traffic to that
+  instance**. **ASG does not `listen` for ELB commands to terminate stuff (BY DEFAULT)**. This can be changed. **ASG CAN
+  listen to ELB health checks if you set it up**. But always remember that it is the ASG that terminates stuff by
+  default
 
 - you can have **custom CloudWatch metrics trigger scale events**
 
@@ -3343,7 +3794,8 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - you can either use _AutoScalingReplacingUpdate_ or _AutoScalingRollingUpdate_
 
-- use **ReplacingUpdate** with **`willReplace: true`**. This deployment option works very **similar to the `immutable` option from EB**
+- use **ReplacingUpdate** with **`willReplace: true`**. This deployment option works very **similar to the `immutable`
+  option from EB**
 
 - there are more policies but these 2 are the most important
 
@@ -3366,24 +3818,26 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - which instance should be terminated and why.
 
-- you can have **multiple termination policies (even define all of them)**. There is an **order to which these policies are applied**. The order is **dictated by how you define your policies**.
+- you can have **multiple termination policies (even define all of them)**. There is an **order to which these policies
+  are applied**. The order is **dictated by how you define your policies**.
 
 - there are multiple termination policies, most of them are self explanatory:
-  - `OldestInstance`
-  - `NewestInstance`
-  - `OldestLaunchConfiguration`
-  - `OldestLaunchTemplate`: remember that **you should favour launch templates**.
-  - `ClosestToNextInstanceHour`
-  - `Default`: remmeber that **default will always apply first to AZ with the most instances**
+    - `OldestInstance`
+    - `NewestInstance`
+    - `OldestLaunchConfiguration`
+    - `OldestLaunchTemplate`: remember that **you should favour launch templates**.
+    - `ClosestToNextInstanceHour`
+    - `Default`: remmeber that **default will always apply first to AZ with the most instances**
 
 ###### Default termination policy
 
-- the `default` termination policy is will perform other termination policies based on given criteria. There is a flowchart for that
+- the `default` termination policy is will perform other termination policies based on given criteria. There is a
+  flowchart for that
 
 - the steps are
-  - `oldestLaunchConfiguration`
-  - `ClosestToNextInstanceHour`
-  - random instance
+    - `oldestLaunchConfiguration`
+    - `ClosestToNextInstanceHour`
+    - random instance
 
 ##### Instance Protection
 
@@ -3397,21 +3851,25 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - **instance protection** is **not the same** as **termination protection**. You can still
 
-  - **terminate it manually**
-  - use `terminate-instancees` comand
-  - you asg can also run `TerminateInstances` action.
+    - **terminate it manually**
+    - use `terminate-instancees` comand
+    - you asg can also run `TerminateInstances` action.
 
-- to make sure that your instance **will not be terminated event if marked as unhealthy** use **termination protection**.
+- to make sure that your instance **will not be terminated event if marked as unhealthy** use **termination protection**
+  .
 
 ##### Suspend processes
 
 - this allow you to suspend asg processes
 
-- useful for where you want to resize your instance - this would require termination, thus asg would most likely spin a new instance.
+- useful for where you want to resize your instance - this would require termination, thus asg would most likely spin a
+  new instance.
 
 - you can **even suspend health checks**.
 
-- another use case might be **suspening the ASG during the deployment**. This is due to the fact that when deployment and scale event is underway, the newly added instances (due to scaling) will have the latest **deployed** version of the app running. Often you will end up with 2 application versions in your ASG.
+- another use case might be **suspening the ASG during the deployment**. This is due to the fact that when deployment
+  and scale event is underway, the newly added instances (due to scaling) will have the latest **deployed** version of
+  the app running. Often you will end up with 2 application versions in your ASG.
 
 #### Migration
 
@@ -3423,12 +3881,13 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 #### Troubleshooting Rolling update
 
-- rolling update settings are set using the `Update Policy` setting. If those are not set correctly, you might encounter unexcepted results
+- rolling update settings are set using the `Update Policy` setting. If those are not set correctly, you might encounter
+  unexcepted results
 
 - there are 3 things you might want to do
-  - Configure `WaitOnResourceSignals` and `PauseTime` to avoid problems with success signals
-  - Configure `MinSuccessfulInstancesPercent` to avoid stack rollback
-  - Configure `SuspendProcesses`
+    - Configure `WaitOnResourceSignals` and `PauseTime` to avoid problems with success signals
+    - Configure `MinSuccessfulInstancesPercent` to avoid stack rollback
+    - Configure `SuspendProcesses`
 
 #### EBS (Elastic Block Store)
 
@@ -3438,15 +3897,18 @@ So with **ECS you have to have EC2 instances running**. But with **Fargate you r
 
 - persistent storage
 
-- **automatically replicated** within it's own, **single AZ**. This is on the contrary to EFS and so taking snapshots is highly recommended.
+- **automatically replicated** within it's own, **single AZ**. This is on the contrary to EFS and so taking snapshots is
+  highly recommended.
 
 - Different versions:
 
-  - **Provisioned IOPS** - the most io operations you can get (databases), most expensive. Recommended **when you need more than 16k IOPS**
-  - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers, databases).
-  - **EBS Magnetic** - previous generation HDD, infrequent access
-  - **Throughput Optimized HDD** - streaming, big data, log processing. All that stuff also taking costs into consideration.
-  - **General Purpose**
+    - **Provisioned IOPS** - the most io operations you can get (databases), most expensive. Recommended **when you need
+      more than 16k IOPS**
+    - **Cold HDD** - lowest cost, less frequently accessed workloads (file servers, databases).
+    - **EBS Magnetic** - previous generation HDD, infrequent access
+    - **Throughput Optimized HDD** - streaming, big data, log processing. All that stuff also taking costs into
+      consideration.
+    - **General Purpose**
 
 So the costs are **usually** **Provisioned > General Purpose > Throughput Optimized HDD > Cold HDD**.
 
@@ -3474,31 +3936,44 @@ This is quite important to know
 
 #### Snapshots
 
-- **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you want to make sure your data is secure.
+- **snapshots are incremental**. AWS only diffs whats changed **you can delete every, BUT NOT THE LAST SNAPSHOT** if you
+  want to make sure your data is secure.
 
-> If you make periodic snapshots of a volume, the snapshots are incremental. This means that only the blocks on the device that have changed after your last snapshot are saved in the new snapshot. Even though snapshots are saved incrementally, the snapshot deletion process is designed so that you need to retain only the most recent snapshot in order to restore the volume.
+> If you make periodic snapshots of a volume, the snapshots are incremental. This means that only the blocks on the
+> device that have changed after your last snapshot are saved in the new snapshot. Even though snapshots are saved
+> incrementally, the snapshot deletion process is designed so that you need to retain only the most recent snapshot in
+> order to restore the volume.
 
-- **snapshots** are created **in a given availability zone**. They are **replicated across multiple AZs automatically**. When you want to **restore from snapshot in a different AZ** you have to **copy the existing snapshot to a different AZ**. **When creating a snapshot** you can **pick the `root AZ per say**.
+- **snapshots** are created **in a given availability zone**. They are **replicated across multiple AZs automatically**.
+  When you want to **restore from snapshot in a different AZ** you have to **copy the existing snapshot to a different
+  AZ**. **When creating a snapshot** you can **pick the `root AZ per say**.
 
-- **EBS snapshots are automatically stored on S3**. These are **inaccessible to you inside S3 console, you can see then through EBS menu in EC2**.
+- **EBS snapshots are automatically stored on S3**. These are **inaccessible to you inside S3 console, you can see then
+  through EBS menu in EC2**.
 
-- the **volumes themselves NOT SNAPSHOTS** are **replicated within SINGLE AZ**. If that AZ goes down, the volume is not available.
+- the **volumes themselves NOT SNAPSHOTS** are **replicated within SINGLE AZ**. If that AZ goes down, the volume is not
+  available.
 
 - you can **create snapshots** either **manually**, **using LifeCycle Manager** or through **CloudWatch jobs**.
 
 - **retention policy DOES NOT carry over when copying.**
 
-- you **should not take use RAID and take snapshots**. This is due to the fact that snapshots are volume based. If multiple volumes are in-sync (by using RAID configuration) the snapshots would most likely be corrupted or have stale data.
+- you **should not take use RAID and take snapshots**. This is due to the fact that snapshots are volume based. If
+  multiple volumes are in-sync (by using RAID configuration) the snapshots would most likely be corrupted or have stale
+  data.
 
 #### LifeCycle Manager for EBS
 
-- creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGGED**
+- creating snapshots manually is ok but AWS can take care of this task for you. With `LifeCycle Manager` you can enable
+  creation of automated backups. BUT **YOUR VOLUME HAS TO BE TAGGED**
 
 - this **can be done across different DBS** like SQL or Oracle or other.
 
-- the **frequency can be UP TO 24hrs**. You can pick from the list of available frequencies **but the longest one only 24hrs**.
+- the **frequency can be UP TO 24hrs**. You can pick from the list of available frequencies **but the longest one only
+  24hrs**.
 
-- your volumes can have **multiple tags**. This means that **all policies specified for given tags will be in effect**. That means that you can have a volume where backups are done every 12hrs and every 24hrs.
+- your volumes can have **multiple tags**. This means that **all policies specified for given tags will be in effect**.
+  That means that you can have a volume where backups are done every 12hrs and every 24hrs.
 
 - underneath, it **probably uses `CloudWatch Events`** since they allow you to **directly call the EBS API**.
 
@@ -3510,7 +3985,8 @@ This is quite important to know
 
 #### Encryption
 
-- you need **specific instance type** to be able to **enable encryption of volumes**. **Not all** instances **support encrypted volumes**.
+- you need **specific instance type** to be able to **enable encryption of volumes**. **Not all** instances **support
+  encrypted volumes**.
 
 - **EBS root volume CAN be encrypted**
 
@@ -3520,7 +3996,8 @@ This is quite important to know
 
 - you **cannot remove encryption** from **an encrypted volume**.
 
-- you can only **change the encryption state** while **copying unencrypted snapshot of an unencrypted snapshot**. Note the **COPY** word. This is very important.
+- you can only **change the encryption state** while **copying unencrypted snapshot of an unencrypted snapshot**. Note
+  the **COPY** word. This is very important.
 
 - you **can change the KMS logistic (keys)** only when **copying encrypted snapshot of an encrypted snapshot**.
 
@@ -3528,11 +4005,13 @@ This is quite important to know
 
 - this setting is within **advanced settings** and basically makes it so that **you volume has more IO available to it**
 
-- it creates a dedicated connection between your instance and the EBS volume. Please keep in mind that you cannot scale infinitely with Raid 0. You will probably hit a throughput limit on your instance.
+- it creates a dedicated connection between your instance and the EBS volume. Please keep in mind that you cannot scale
+  infinitely with Raid 0. You will probably hit a throughput limit on your instance.
 
 #### EBS vs Instance Store
 
-- Instance Store a.k.a **Ephemeral storage**. The data lives on a rack where your virtual machine is booted. **If you reboot it, you WILL NOT loose the data**.
+- Instance Store a.k.a **Ephemeral storage**. The data lives on a rack where your virtual machine is booted. **If you
+  reboot it, you WILL NOT loose the data**.
 
 - when you **Stop/Start an instance** **instance store data will be lost**.
 
@@ -3541,21 +4020,26 @@ This is quite important to know
 - you **cannot create snapshots from instance store**
 
 - you **cannot create an AMI directly**. With **instance store** you can only create ami by:
-  - **creating bundle from root volume (using EC2 cli)**
-  - **uploading** that created bundle **to s3**
-  - then that **bundle is registered as AMI (from s3)**
+    - **creating bundle from root volume (using EC2 cli)**
+    - **uploading** that created bundle **to s3**
+    - then that **bundle is registered as AMI (from s3)**
 
 #### Restoring from an EBS
 
-When restoring from an EBS volume, **new volume will not immediately have maximum performance**. This is due to the fact that **not all data is copied instantly to a new volume**. The data is **copied lazily, when you attempt to read from a given resource**. This is why **sometimes, sys admins perform recursive lookup of all files on the volume, this will 'prime' them for real read operation**.
+When restoring from an EBS volume, **new volume will not immediately have maximum performance**. This is due to the fact
+that **not all data is copied instantly to a new volume**. The data is **copied lazily, when you attempt to read from a
+given resource**. This is why **sometimes, sys admins perform recursive lookup of all files on the volume, this will '
+prime' them for real read operation**.
 
 #### Changing The volume
 
-- **root** volume **can be changed without stopping the instance**. When it comes to which volume - it depends on the original volume itself.
+- **root** volume **can be changed without stopping the instance**. When it comes to which volume - it depends on the
+  original volume itself.
 
 #### Raid Configurations
 
-- use **RAID 0 for maximum performance**. Remember that with **RAID 0 preserves all capacity (n \* size of drives) but when you loose 1 drive you loose all the data**.
+- use **RAID 0 for maximum performance**. Remember that with **RAID 0 preserves all capacity (n \* size of drives) but
+  when you loose 1 drive you loose all the data**.
 
 - use **RAID 1 for maximum fault tolerance**. This is where your **data is mirrored between 2 volumes**
 
@@ -3569,11 +4053,13 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 #### EFS
 
-- you **only pay for what you use**, but the EFS in itself is **3 times more expensive than EBS** and **MUCH MORE (20x) expensive than s3**
+- you **only pay for what you use**, but the EFS in itself is **3 times more expensive than EBS** and **MUCH MORE (20x)
+  expensive than s3**
 
 - **E**lastic **F**ile **S**ystem (EFS)
 
-- **Similar to EBS**, but there is one **BIG DIFFERENCE**. EFS instance can be used by multiple EC2 instances, EBS volume can only be used by one EC2 instance.
+- **Similar to EBS**, but there is one **BIG DIFFERENCE**. EFS instance can be used by multiple EC2 instances, EBS
+  volume can only be used by one EC2 instance.
 
 - think of it as multiple EC2 instances having the same disk
 
@@ -3581,7 +4067,7 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 - just like s3 there are different tiers:
 
-  - infrequent access
+    - infrequent access
 
 - **can be accessed between multiple AZs**
 
@@ -3595,7 +4081,8 @@ When restoring from an EBS volume, **new volume will not immediately have maximu
 
 - **mount targets can have security groups associated with them**
 
-- you **cannot** restrict access **through ACL or IAM roles**. **USE SECURITY GROUPS** and **attach them to mount targets**.
+- you **cannot** restrict access **through ACL or IAM roles**. **USE SECURITY GROUPS** and **attach them to mount
+  targets**.
 
 ##### Compatibility
 
@@ -3611,7 +4098,8 @@ But most important information, remember **there are no so called snapshots when
 
 ##### Mount Points / Targets
 
-- there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same storage**. It **lives inside a subnet**.
+- there is a notion of **mount targets**. This is the think that **allows multiple EC2 instances to share the same
+  storage**. It **lives inside a subnet**.
 
 - this feature allows you to use the same **efs volume through different AZs**
 
@@ -3623,32 +4111,39 @@ But most important information, remember **there are no so called snapshots when
 
 - remember that during mounting you also control the encryption (in-transit).
 
-- because EFS gets a DNS name, you sometimes may hear a term: _mounting using FQDN_. This is nothing but just mounting using this DNS name.
+- because EFS gets a DNS name, you sometimes may hear a term: _mounting using FQDN_. This is nothing but just mounting
+  using this DNS name.
 
 ##### With AWS Lambda
 
 - you can integrate EFS with AWS Lambda.
 
-- this is a neat way of presenting a file system that is shared throughout many Lambda functions. **You can make your functions stateful!**
+- this is a neat way of presenting a file system that is shared throughout many Lambda functions. **You can make your
+  functions stateful!**
 
-- where would you use this? **If you ever need to download the same asset from S3 multiple times, it might be time you reach for EFS**.
+- where would you use this? **If you ever need to download the same asset from S3 multiple times, it might be time you
+  reach for EFS**.
   Of course, **EFS mounts within a VPC so your Lambdas also has to be within a VPC**
 
 - I've used it to share video file across many Lambda functions.
 
 ##### DataSync
 
-- AWS says that **in theory you can mount EFS on prem** but that **requires really good connection**. Moreover the **traffic** itself **is not encrypted** so **VPN or Direct Connect is recommended**.
+- AWS says that **in theory you can mount EFS on prem** but that **requires really good connection**. Moreover the **
+  traffic** itself **is not encrypted** so **VPN or Direct Connect is recommended**.
 
-- what you can do is to use **AWS DataSync**. This will **sync your on premise env with the EFS volume which you use within the AWS env.**.
+- what you can do is to use **AWS DataSync**. This will **sync your on premise env with the EFS volume which you use
+  within the AWS env.**.
 
 ##### Encryption
 
 - **by default** data is **not encrypted in transit /rest**.
 
-- to enable **encryption in transit** add a **special flag** when **mounting a volume**. This flag is **-o tls**. It uses TLS so no CMK required.
+- to enable **encryption in transit** add a **special flag** when **mounting a volume**. This flag is **-o tls**. It
+  uses TLS so no CMK required.
 
-- to eanble **encryption at rest** use **Amazon EFS mount helper**. This **can only be done during mounting**. So if you have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
+- to eanble **encryption at rest** use **Amazon EFS mount helper**. This **can only be done during mounting**. So if you
+  have an **existing volume**, you would need to **unmount it, specify the setting and mount it back again**
 
 - encryption **at rest has to be enabled before creating the file system**
 
@@ -3659,17 +4154,19 @@ But most important information, remember **there are no so called snapshots when
 ##### Performance
 
 - there are **2 main performance modes**
-  - **General Purpose**
-  - **MAX I/** - this one is the faster one but there is a **tradeoff of higher latencies for file metadata operations**
+    - **General Purpose**
+    - **MAX I/** - this one is the faster one but there is a **tradeoff of higher latencies for file metadata
+      operations**
 
 ##### Throughput
 
 - there are **2 main throughput modes**
 
-  - **busting mode** uses **credits** (recommended by AWS)
-  - **provisioned mode**: this is where you have **constant high throughput (not spikes)**
+    - **busting mode** uses **credits** (recommended by AWS)
+    - **provisioned mode**: this is where you have **constant high throughput (not spikes)**
 
-- with **bursting mode** the **throughput of the storage grows with the storage size**. This usually is ok, but you might get throttled on unexpected spikes when the volume size is low.
+- with **bursting mode** the **throughput of the storage grows with the storage size**. This usually is ok, but you
+  might get throttled on unexpected spikes when the volume size is low.
 
 - with **provisioned mode**, the **throughput is independent of storage size**.
 
@@ -3681,9 +4178,11 @@ Way of grouping EC2 instances.
 
 - EC2 are **very close to each other, single AZ**
 
-- you should try to **provision all your instances up front**. There is a limited space, and there might be a problem with adding an instance later on.
+- you should try to **provision all your instances up front**. There is a limited space, and there might be a problem
+  with adding an instance later on.
 
-- you **should consider** using **enhanced networking** so that you take full advantage of close proximity of instances. This is done to **speed up communication between the instances**, nothing more.
+- you **should consider** using **enhanced networking** so that you take full advantage of close proximity of instances.
+  This is done to **speed up communication between the instances**, nothing more.
 
 - you should consider this option for **small deployments**
 
@@ -3731,15 +4230,17 @@ Way of grouping EC2 instances.
 
 - has **interface ID**
 
-- can have ip addresses changed (multiple private addresses), **the number of ip pools are dependant on EC2 instance size / type**
+- can have ip addresses changed (multiple private addresses), **the number of ip pools are dependant on EC2 instance
+  size / type**
 
 - EC2 **can have multiple ENI's**. When instance is terminated **ONLY default eth0 is deleted BY DEFAULT**.
 
 - ENI can be **attached** in **different stage of life-cycle of EC2**.
-  - **hot attached**: when instance is running
-  - **warm attached**: when instance is stopped
-  - **cold attached**: when instance is launched
-- with **multiple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and not on the EC2 itself.
+    - **hot attached**: when instance is running
+    - **warm attached**: when instance is stopped
+    - **cold attached**: when instance is launched
+- with **multiple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and
+  not on the EC2 itself.
 
 ### AWS Batch
 
@@ -3759,7 +4260,8 @@ Way of grouping EC2 instances.
 
 - there is **no aggregate step at the end**. This is **different than EMR**.
 
-- your job might be **stuck in RUNNABLE state** when **the job does not have adequate permissions** or **you have reached EC2 limit** or **the jobs asked for more resources than the environment can provide**
+- your job might be **stuck in RUNNABLE state** when **the job does not have adequate permissions** or **you have
+  reached EC2 limit** or **the jobs asked for more resources than the environment can provide**
 
 ### SWF (Simple Workflow Service)
 
@@ -3779,12 +4281,15 @@ Way of grouping EC2 instances.
 
 - **no additional charge, you only pay for the resources which were provisioned**
 
-- usually used for **web application deployments (with RDS eg.)** or **capacity provisioning and load balancing of a website**
+- usually used for **web application deployments (with RDS eg.)** or **capacity provisioning and load balancing of a
+  website**
 
 - supports **multiple environments (dev, prod ...)**
 
-- **when you delete an application all the resources associated with it are gone too. That also applies to the databases!**.
-  You can make sure the data is still there by **creating DB snapshot** or **creating any parts of your application that you do not want to accidentally delete OUTSIDE Elastic Beanstalk env**.
+- **when you delete an application all the resources associated with it are gone too. That also applies to the
+  databases!**.
+  You can make sure the data is still there by **creating DB snapshot** or **creating any parts of your application that
+  you do not want to accidentally delete OUTSIDE Elastic Beanstalk env**.
 
 #### Deployments
 
@@ -3797,19 +4302,26 @@ Way of grouping EC2 instances.
 - **all at once**: **default** configuration, every instance is affected at once.
 
 - **rolling**: _Elastic Beanstalk_ splits instances into batches and **deploys a version into them, batch by batch**.
-  You may choose to add additional instances before the deployment itself and that would be called **rolling with additional batch**.
-  Be aware that with this deployment option, you will have a situation where clients are switching between application versions (Load balancer routing)
+  You may choose to add additional instances before the deployment itself and that would be called **rolling with
+  additional batch**.
+  Be aware that with this deployment option, you will have a situation where clients are switching between application
+  versions (Load balancer routing)
 
-- **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in a SEPARATE (temporary ASG)**.
+- **immutable**: _Elastic Beanstalk_ launches **full set of new instances running the new version of the application in
+  a SEPARATE (temporary ASG)**.
   This strategy is quite nice since clients **will not switch between different application versions**.
 
-- **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**. Before the introduction of per minute/hour billing this method was considered to be not very practical.
+- **blue/green**: _Elastic Beanstalk_ launches **new version to a separate env. and then switches the DNS**. Before the
+  introduction of per minute/hour billing this method was considered to be not very practical.
 
 #### Other deployment types
 
-- **minimum in-service deployment**: this one is **similar to rolling**, but the orchestration service is greedy and is always **trying to deploy to as many instances as possible** while **keeping the minimum healthy** (**rolling has set batches**).
+- **minimum in-service deployment**: this one is **similar to rolling**, but the orchestration service is greedy and is
+  always **trying to deploy to as many instances as possible** while **keeping the minimum healthy** (**rolling has set
+  batches**).
 
-- **canary**: **similar to blue-green** but **instead of being binary (either blue or green)** you **split traffic between green and blue**.
+- **canary**: **similar to blue-green** but **instead of being binary (either blue or green)** you **split traffic
+  between green and blue**.
   Usually you shift this traffic using **weighted routing or lambda aliases**.
 
 #### Updates
@@ -3818,11 +4330,13 @@ Way of grouping EC2 instances.
 
 - **in-place update** is **performing updates on live instances**
 
-- **disposable** is performing a **rolling update** where **new updates are brough up by terminating old ones (batches)**.
+- **disposable** is performing a **rolling update** where **new updates are brough up by terminating old ones (
+  batches)**.
 
 #### Deleting a stack
 
-- while deleting a stack you might face a problem where **SG created by `Beanstalk` is used as a dependency in other SG**
+- while deleting a stack you might face a problem where **SG created by `Beanstalk` is used as a dependency in other
+  SG**
 
 - this will result in a failure when trying to delete the environment
 
@@ -3858,37 +4372,47 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - **monitoring service** for applications, services, **monitors performance / what is happening WITH resources**
 
-- **by default** CloudWatch **pushes logs every 5 mins**. You can **enable Detailed Monitoring** which will enable **logging in 1 min intervals** but that solution **is a paid feature, per instance**
+- **by default** CloudWatch **pushes logs every 5 mins**. You can **enable Detailed Monitoring** which will enable **
+  logging in 1 min intervals** but that solution **is a paid feature, per instance**
 
-- the more frequently you publish metrics data the less they stay at that resolution. CloudWatch will after some time aggregate points to a metric with lower resolution eg. 60 secs => 5 mins and so on.
+- the more frequently you publish metrics data the less they stay at that resolution. CloudWatch will after some time
+  aggregate points to a metric with lower resolution eg. 60 secs => 5 mins and so on.
 
 - **namespace groups related metrics**
 
 ##### Metrics and dashboards
 
-- You can create **custom CloudWatch metrics**. This will enable you to **eg. monitor RAM on EC2**. With **custom CloudWatch metrics** you can setup **High Resolution metrics** which **will log up to 1 second intervals (the fastest possible)**.
+- You can create **custom CloudWatch metrics**. This will enable you to **eg. monitor RAM on EC2**. With **custom
+  CloudWatch metrics** you can setup **High Resolution metrics** which **will log up to 1 second intervals (the fastest
+  possible)**.
 
 - with **High Res metrics** alarms **will trigger in 10 secs intervals**. Image it triggering every second 😂
 
-- you can create dashboards from metrics. These **dashboards can be shared between accounts and / or within an organization**.
+- you can create dashboards from metrics. These **dashboards can be shared between accounts and / or within an
+  organization**.
 
-- you **can export dashboards to s3 (the data points)**. This is done **by using cli `get-metric-statistics` command / lambda + cloudwatch rule**.
+- you **can export dashboards to s3 (the data points)**. This is done **by using cli `get-metric-statistics` command /
+  lambda + cloudwatch rule**.
 
-- **dashboards** are used to **correlate data**. This is just a **fancy way of saying having multiple graphs near each other (as widgets)**.
+- **dashboards** are used to **correlate data**. This is just a **fancy way of saying having multiple graphs near each
+  other (as widgets)**.
 
 ###### Metrics math
 
 - instead of simply using _count_ and _threshold_ for your alerting, you can create expressions for better alerts
 
-- think creating an alert that _X out of Y request failed within given time window_, not _just X request failed in a given time window_
+- think creating an alert that _X out of Y request failed within given time window_, not _just X request failed in a
+  given time window_
 
-- while a bit more complex I think these should be favourited, it will make sure that you are not overwhelmed with incidents.
+- while a bit more complex I think these should be favourited, it will make sure that you are not overwhelmed with
+  incidents.
 
 ##### Insights
 
 - there are many flavours of `CloudWatch insights`, there are **Application**, **Container** and just **Insights**
 
-- the most important one being the `CloudWatch Insights`. This is a tool which allows you to filter the logs with expressions and other stuff.
+- the most important one being the `CloudWatch Insights`. This is a tool which allows you to filter the logs with
+  expressions and other stuff.
 
 ##### Billing dashboard
 
@@ -3926,20 +4450,23 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - can monitor:
 
-  - **CPU**
-  - **Network**
-  - **Disk**
-  - **Status check**
+    - **CPU**
+    - **Network**
+    - **Disk**
+    - **Status check**
 
-- for **non standard metrics like RAM usage** you can install **CloudWatch unified log agent** to push those to custom metric.
+- for **non standard metrics like RAM usage** you can install **CloudWatch unified log agent** to push those to custom
+  metric.
 
 - you would use **CloudWatch Logs** for creating **application-level alarms**. This could be number of errors and such.
 
 - you can **stream logs to lambda or Elasticsearch (uses lambda underneath)**.
 
-- you can **export logs directly to S3**. You have to remember though about permissions (`getBucketAcl`). Otherwise you will not be able to export the data, even though your bucket might be public.
+- you can **export logs directly to S3**. You have to remember though about permissions (`getBucketAcl`). Otherwise you
+  will not be able to export the data, even though your bucket might be public.
 
-- the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real time (buffered) use `Kinesis Firehose`**.
+- the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real
+  time (buffered) use `Kinesis Firehose`**.
 
 ###### Embedded metrics format
 
@@ -3947,14 +4474,16 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - EMF will handle up to 100 metrics per `JSON` blob.
 
-- use `properties` for data which has high cardinality. That means that there are a lot of potential unique `name/value` pairs. Remember that the `CloudWatch` can only store 10 dimensions per metric.
+- use `properties` for data which has high cardinality. That means that there are a lot of potential unique `name/value`
+  pairs. Remember that the `CloudWatch` can only store 10 dimensions per metric.
 
 - use `CloudWatch` insights for searching through the `properties` that you set using EMF.
 
 ###### Log retention
 
 - **by default** CloudWatch keeps the logs forever. **But after 15 months you cannot access them through console**.
-  This means that if you **want to access your logs after** that period of time, you have to **use an API to retrieve the datapoints**
+  This means that if you **want to access your logs after** that period of time, you have to **use an API to retrieve
+  the datapoints**
 
 ###### Cross account log data sharing
 
@@ -3978,9 +4507,11 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - there is notion of **events**, which basically provides **near instant stream of system events**
 
-- **events** have to do more with **what is happening on the instance (resource) level**. This could be **EC2 instance changed the state from pending to running** and such.
+- **events** have to do more with **what is happening on the instance (resource) level**. This could be **EC2 instance
+  changed the state from pending to running** and such.
 
-- you can configure **CloudWatch Events rules**. These allow you to run **scheduled jobs (cron)** and **invoke different targets (services like lambda or step functions (and many others))**.
+- you can configure **CloudWatch Events rules**. These allow you to run **scheduled jobs (cron)** and **invoke different
+  targets (services like lambda or step functions (and many others))**.
 
 ##### Rules
 
@@ -3992,15 +4523,18 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - you **cannot use `CloudWatch Alarms` as source**.
 
-- there are multiple predefined events but you can also **integrate with `CloudTrail`** to have access to **every event except `List`, `Get` or `Describe`**.
+- there are multiple predefined events but you can also **integrate with `CloudTrail`** to have access to **every event
+  except `List`, `Get` or `Describe`**.
 
 ##### Dashboards
 
 - you can create custom dashboards with given metrics from CloudWatch
 
 - these **dashboards can be cross accounts and cross region**.
-  - if you want to make it work **cross account** you have to enable **sharing on each account that will make data available on the monitoring account**
-  - if you want to make it work **cross region with a single account** you **do not have to do nothing**. It's **already built-in**.
+    - if you want to make it work **cross account** you have to enable **sharing on each account that will make data
+      available on the monitoring account**
+    - if you want to make it work **cross region with a single account** you **do not have to do nothing**. It's **
+      already built-in**.
 
 ##### CloudWatch Evidently
 
@@ -4008,11 +4542,13 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - has the notion of _experiments_, _features_ and _launches_
 
-- you can have metrics tied to a given _launch_. Think "how many people bought a given item with this special button enabled?"
+- you can have metrics tied to a given _launch_. Think "how many people bought a given item with this special button
+  enabled?"
 
 - the metrics for a given _launch_ can also track metrics from the RUM part of the CloudWatch offering
 
-- **as of writing this, the `@aws-cdk/aws-evidently-alpha` _AWS CDK_ package does not exist, one must use the L1 constructs**
+- **as of writing this, the `@aws-cdk/aws-evidently-alpha` _AWS CDK_ package does not exist, one must use the L1
+  constructs**
 
 ###### In comparison to LaunchDarkly
 
@@ -4024,12 +4560,13 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - different events can be logged:
 
-  - **data events**: **resource operations** performed **on or within the resource**
-  - **management events**:
+    - **data events**: **resource operations** performed **on or within the resource**
+    - **management events**:
 
 - **enabled by default for all new accounts**. **You cannot delete or disable the "default" trail**.
 
-- **logs** can be **stored on S3 or can be pushed to CloudWatch**. Log files which are **stored on s3, are using SSE-S3 by default!**.
+- **logs** can be **stored on S3 or can be pushed to CloudWatch**. Log files which are **stored on s3, are using SSE-S3
+  by default!**.
 
 - **event history** persists **up to 90 days**.
 
@@ -4070,7 +4607,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can be quite granular, think - only capturing `GetObject` from a particular bucket prefix
 
 - **by using Event Selectors you can greatly increase the amount of services you can trigger via s3 object events**
-  - since those events will be available in EventBridge/CloudWatch events, you can do a lot of stuff here **like triggering a SFN when object is uploaded**.
+    - since those events will be available in EventBridge/CloudWatch events, you can do a lot of stuff here **like
+      triggering a SFN when object is uploaded**.
 
 ##### Global events
 
@@ -4080,32 +4618,42 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 ##### CloudTrail and CloudWatch Events
 
-- if you are interested in **reacting to API events** you **need to create a trail in a given account**. If you do not, **the API events will not be forwarded to _CloudWatch Events_**
+- if you are interested in **reacting to API events** you **need to create a trail in a given account**. If you do
+  not, **the API events will not be forwarded to _CloudWatch Events_**
 
-- please note that **CloudTrail is all about API calls**. **To my best knowledge** other services sent different events to _CW Events_ and _CloudTrail_
+- please note that **CloudTrail is all about API calls**. **To my best knowledge** other services sent different events
+  to _CW Events_ and _CloudTrail_
 
-- **mind the delivery delay**. From my experience, the _15 minute window_ is very inconsistent. Usually the events are delivered instantly, but sometimes you have to wait a bit
+- **mind the delivery delay**. From my experience, the _15 minute window_ is very inconsistent. Usually the events are
+  delivered instantly, but sometimes you have to wait a bit
 
 - the **option to log CloudTrail events** has **nothing to do with CloudWatch Events integration**.
 
-- it seems to like like **organization-wide trail** will **not be sufficient for API events via _CW Events_**. For some reason having the organization-wide trail enabled in a member account is not causing the API events to be forwarded to the CloudWatch events
+- it seems to like like **organization-wide trail** will **not be sufficient for API events via _CW Events_**. For some
+  reason having the organization-wide trail enabled in a member account is not causing the API events to be forwarded to
+  the CloudWatch events
 
 ##### CloudTrail and EventBridge
 
 - **by default**, every _CloudTrail_ **puts all of its events on the default EventBridge bus**
 
 - since _EventBridge_ uses the same underlying technology as _CW Events_, the following applies
-  > Some occurrences in AWS services can be reported to EventBridge both by the service itself and by CloudTrail. For example, an Amazon EC2 API call that starts or stops an instance generates EventBridge events as well as events through CloudTrail.
+  > Some occurrences in AWS services can be reported to EventBridge both by the service itself and by CloudTrail. For
+  example, an Amazon EC2 API call that starts or stops an instance generates EventBridge events as well as events
+  through CloudTrail.
 
 ##### Across multiple accounts
 
 - there are two ways you could do this
-  - in the context of **AWS Organizations**, use the **Organization-wide Trail**. This way you do not have to deploy Trails per account.
-  - **outside** of the context of **AWS Organizations**, use **CloudFormation Stack-sets** to deploy a trail to each account.
+    - in the context of **AWS Organizations**, use the **Organization-wide Trail**. This way you do not have to deploy
+      Trails per account.
+    - **outside** of the context of **AWS Organizations**, use **CloudFormation Stack-sets** to deploy a trail to each
+      account.
 
 ##### With `CloudWatch`
 
-- You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combination since you could create alarms for given metrics and have like a _pseudo_ analytics workflow where you are notified when something happens.
+- You can send `CloudTrail` logs to `CloudWatch`. This might be a powerful combination since you could create alarms for
+  given metrics and have like a _pseudo_ analytics workflow where you are notified when something happens.
 
 - there is **no way to filter CloudTrail events when they are sent to CW log group**
 
@@ -4115,7 +4663,8 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 - to get around this **see if the event you are after is registered in _CloudWatch Events_ or _EventBridge_**.
 
-- **not all events** are **sent** to **either _CloudWatch Events_ or _EventBridge_**. This means that **in some circumstances you will have to bite the bullet and wait up to 15 min for the event**.
+- **not all events** are **sent** to **either _CloudWatch Events_ or _EventBridge_**. This means that **in some
+  circumstances you will have to bite the bullet and wait up to 15 min for the event**.
 
 #### Flow Logs
 
@@ -4133,9 +4682,11 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 #### Integration with EB
 
-- you can make `CloudTrail` send events to EventBridge, do achieve that you will need to setup a _trail_ in the region where you want to listen the events to.
+- you can make `CloudTrail` send events to EventBridge, do achieve that you will need to setup a _trail_ in the region
+  where you want to listen the events to.
 
-- for some services, this setup might not be necessary as they might already send events to both `CloudTrail` and `EventBridge`
+- for some services, this setup might not be necessary as they might already send events to both `CloudTrail`
+  and `EventBridge`
 
 ### Analytics
 
@@ -4166,11 +4717,14 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - Athena **can read data and write query results given encrypted data by KMS**
 
 - can **query data from CloudWatch, ELB logs, CloudTrail logs, Flow logs**. The native support is for s3, but there are
-  **data connectors** that allow you to run queries on other sources **like RDS**. The **data connectors** use AWS Lambda under the hood to run the queries.
+  **data connectors** that allow you to run queries on other sources **like RDS**. The **data connectors** use AWS
+  Lambda under the hood to run the queries.
 
-- is very **flexible** when it comes to **data, which it needs to process while querying**. It can be **structured / semi-structured / unstructured**
+- is very **flexible** when it comes to **data, which it needs to process while querying**. It can be **structured /
+  semi-structured / unstructured**
 
-- **if you really care about performance** consider **transforming the s3 objects** to **parquet format**. This is a special format that makes the querying much faster.
+- **if you really care about performance** consider **transforming the s3 objects** to **parquet format**. This is a
+  special format that makes the querying much faster.
 
 ##### Integration with Glue
 
@@ -4180,7 +4734,10 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 
 ##### Athena Vs Redshift Spectrum
 
-Both of these tools can be used for DataLake querying, but, and that is very important, **you would use Athena when your data mostly lives on s3 and you DO NOT have to perform joins with other data sources**. This is a **complete opposite of RedshiftSpectrum** where you would **use Redshift Spectrum where you want to join s3 data with existing Redshift tables or create union products**.
+Both of these tools can be used for DataLake querying, but, and that is very important, **you would use Athena when your
+data mostly lives on s3 and you DO NOT have to perform joins with other data sources**. This is a **complete opposite of
+RedshiftSpectrum** where you would **use Redshift Spectrum where you want to join s3 data with existing Redshift tables
+or create union products**.
 
 ##### Athena Vs EMR
 
@@ -4192,11 +4749,13 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you pay for the bytes scanned, **can get quite expensive on large data sets**
 
-- you **should look into partitioning your data**. With data partitioned correctly, **you will pay less for your queries** because _Athena_ will need to **scan through less of the data**.
+- you **should look into partitioning your data**. With data partitioned correctly, **you will pay less for your
+  queries** because _Athena_ will need to **scan through less of the data**.
 
 ##### Limitations
 
-- _Athena_ **does not support multi-line data structures**. Most of the analytics tools are optimized for reading lines and treating a single line as a single data entry. _Athena_ is no different.
+- _Athena_ **does not support multi-line data structures**. Most of the analytics tools are optimized for reading lines
+  and treating a single line as a single data entry. _Athena_ is no different.
 
 #### EMR (Elastic Map Reduce)
 
@@ -4212,14 +4771,15 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - It can use 2 types of storage to perform operations:
 
-  - HDFS: s3 is used to read and write the final data to **(supports both in-transit and and rest encryption)**
-  - EMR FS: s3 is used as primary data store to carry out all operations
+    - HDFS: s3 is used to read and write the final data to **(supports both in-transit and and rest encryption)**
+    - EMR FS: s3 is used as primary data store to carry out all operations
 
 - **HDFS literally can contain any kind of file format**.
 
 - **use for on-demand, ad-hoc, short-term tasks**
 
-- **master node can** be **sshed into**. You can **ssh into master node** and **use Hive to perform SQL like queryies on the data**.
+- **master node can** be **sshed into**. You can **ssh into master node** and **use Hive to perform SQL like queryies on
+  the data**.
 
 - usually has to do with **Spark** jobs.
 
@@ -4233,7 +4793,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - if **core node dies** you are facing **potenal data loss**.
 
-- **master node cannot be changed**. If you want **to change underlying instance, you would need to create new cluster**.
+- **master node cannot be changed**. If you want **to change underlying instance, you would need to create new cluster**
+  .
 
 - you should **prefer creating Cluster in the same region as the data you will be retrieving / storing**
 
@@ -4255,7 +4816,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **integrates with EMR**
 
-- basically it allows you to **simplify ETL jobs**, but if the thing that you want to do is not supported it **may seem limited**.
+- basically it allows you to **simplify ETL jobs**, but if the thing that you want to do is not supported it **may seem
+  limited**.
 
 - **job is relaying on EC2, AWS GLUE does not have this limitation**. It manages the lifecycle of EC2
 
@@ -4271,7 +4833,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - ingest big amounts of data in real-time.
 
-- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS or 365 DAYS**. That means when the data record reaches that 24h window it gets removed. Before that window you can read it, it will not get removed. This is why Kinesis is know for the **data immutability**.
+- you put data into a stream, **that stream contains storage with 24h expiry window, WHICH CAN BE EXTENDED TO 7 DAYS or
+  365 DAYS**. That means when the data record reaches that 24h window it gets removed. Before that window you can read
+  it, it will not get removed. This is why Kinesis is know for the **data immutability**.
 
 - stream can scale almost indefinitely, using **kinesis shards**
 
@@ -4281,7 +4845,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **you have to estimate the number of shards you will be using, you can change the amount later**
 
-- there is a notion of **kinesis partition key**. When sending events you can specify such key. This key is **used to sometimes guarantee the order of events**, but **mainly it acts as a `spreader` of things on the shards**
+- there is a notion of **kinesis partition key**. When sending events you can specify such key. This key is **used to
+  sometimes guarantee the order of events**, but **mainly it acts as a `spreader` of things on the shards**
 
 ##### KCL
 
@@ -4293,23 +4858,29 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ##### Kinesis Data Firehose
 
-- allows you to **store data from kinesis stream on persistent storage, IN NEAR REAL-TIME (minimum 1 min. interval)**. The `near real-time` is very important here.
-  Let's say you want to implement a search functionality `in real-time` using `ES`. You **would not use Firehose for that**, you would have to write a lambda function kinesis consumer. On the other hand, if the requirement was `near real-time`, it is completely ok to do it using `Firehose`.
+- allows you to **store data from kinesis stream on persistent storage, IN NEAR REAL-TIME (minimum 1 min. interval)**.
+  The `near real-time` is very important here.
+  Let's say you want to implement a search functionality `in real-time` using `ES`. You **would not use Firehose for
+  that**, you would have to write a lambda function kinesis consumer. On the other hand, if the requirement
+  was `near real-time`, it is completely ok to do it using `Firehose`.
 
 - it can **modify the data before storing it**. You should probably **transform the data to parqet format**.
 
 - **you do not have to specify capacity upfront**.
 
-- **data** can be **send to S3, Redshift, AWS ES, Splunk**. Remember that **FIREHOSE DOES NOT INTEGRATE WITH `QuickSight`**.
+- **data** can be **send to S3, Redshift, AWS ES, Splunk**. Remember that **FIREHOSE DOES NOT INTEGRATE
+  WITH `QuickSight`**.
 
 - very useful for **replayability and disaster recovery**. You can replay your events from s3 directly.
 
 - **there is no need to configure shards!**, this setting is automatic and completely hidden from you.
 
-- you can **transform** the data before sending it to given service. This is done **by lambda function being invoked by the _Firehose_ service**.
+- you can **transform** the data before sending it to given service. This is done **by lambda function being invoked by
+  the _Firehose_ service**.
 
-- there is **no native metric for delivery errors**. There are error logs you could enable (and apply metric filter on them).
-  - the service will retry the events based on the source/target configuration. Consult the docs for more info.
+- there is **no native metric for delivery errors**. There are error logs you could enable (and apply metric filter on
+  them).
+    - the service will retry the events based on the source/target configuration. Consult the docs for more info.
 
 ##### Kinesis Data Analytics
 
@@ -4331,11 +4902,14 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **processing** data **in near real-time**
 
-- you can use **Kinesis Scaling Utility** to **modify the number of shards**. While quite useful **this is not THAT cost effective**
+- you can use **Kinesis Scaling Utility** to **modify the number of shards**. While quite useful **this is not THAT cost
+  effective**
 
-- your targets can be **Kinesis Firehose** and **Kinesis Data Analytics** and even **Data Stream itself**. This enables you to create 0 code infrastructure.
+- your targets can be **Kinesis Firehose** and **Kinesis Data Analytics** and even **Data Stream itself**. This enables
+  you to create 0 code infrastructure.
 
-- normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a dedicated 2MB/s egress limit from a shard**.
+- normally, consumers contend with themselves on per shard basis. With enhanced fanout consumer, that **consumer gets a
+  dedicated 2MB/s egress limit from a shard**.
 
 - the **iteration logic** is handled **behind the scenes** using **DynamoDB tables**.
 
@@ -4343,7 +4917,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ###### Under the hood
 
-- at a **high level** a **Dynamo table is used to track your streams state**. This is true both for Lambda integration and the KCL.
+- at a **high level** a **Dynamo table is used to track your streams state**. This is true both for Lambda integration
+  and the KCL.
 
 - there is a **concept of lease**. A Lease is a **collection of metadata** maintained in a given row of that table.
 
@@ -4361,9 +4936,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - this is very close to a **serverless kinesis** but **not quite** there yet.
 
-  - you **still have to pay for the stream hour (along with other dimensions)**. This means that **leaving it off for a month will cost you about 30 USD**
+    - you **still have to pay for the stream hour (along with other dimensions)**. This means that **leaving it off for
+      a month will cost you about 30 USD**
 
-- while **you do not have to manage shards**, you are still billed **per hour** with additional charges for data related things.
+- while **you do not have to manage shards**, you are still billed **per hour** with additional charges for data related
+  things.
 
 - the **stream will scale** to the **maximum of double your biggest throughput**. Quite nice!
 
@@ -4381,13 +4958,15 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you should monitor **IteratorAge** to make sure you do not have any `poison pill` messages within your stream.
 
-- also worth moniroting **MillisBehindLatest**. High `MillisBehindLatest` can indicate that you are dropping records (**you cannot consume them fast enough**).
+- also worth moniroting **MillisBehindLatest**. High `MillisBehindLatest` can indicate that you are dropping records (**
+  you cannot consume them fast enough**).
 
 ##### Kinesis Video Streams
 
 - used for **ingestion and storage** of video / audio but also **can be** used as a **live video / audio source**.
 
-- you can view the live video using either **HLS** or **HTTP** but the **HLS option is preffered since it gives your direct URL, much easier**.
+- you can view the live video using either **HLS** or **HTTP** but the **HLS option is preffered since it gives your
+  direct URL, much easier**.
 
 - with **HLS** the live video format is **called archived video**. Pretty weird, no idea why.
 
@@ -4399,7 +4978,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can have **up to 5 enhanced fanout consumers per shard level**
 
-- Kinesis **pushes (instead of pooling operation done by the regular consumer)** data **to the enhanced fanout consumer** therefore that consumer does not have to pool the data.
+- Kinesis **pushes (instead of pooling operation done by the regular consumer)** data **to the enhanced fanout
+  consumer** therefore that consumer does not have to pool the data.
 
 - enhanced fanout consumer costs more (can be much more) than the regular consumers.
 
@@ -4407,9 +4987,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - unit of scale within Kinesis Data Streams
 
-- **getRecords** can **only be called 5 times per second per shard**. This means that you can have **up to 5 consumers per shard at maximum**
+- **getRecords** can **only be called 5 times per second per shard**. This means that you can have **up to 5 consumers
+  per shard at maximum**
 
-- data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool data once per 200ms**.
+- data is returned at **2 MB / second / shard** rate. That means that the **regular consumer** can **at maximum pool
+  data once per 200ms**.
 
 - there is a maximum of **1 MB of writes / second / shard**.
 
@@ -4417,9 +4999,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can either **split** or **merge** shards
 
-- when you want to merge two shards, you have to **ensure that they are adjencent to each other** (based on the hash key)
+- when you want to merge two shards, you have to **ensure that they are adjencent to each other** (based on the hash
+  key)
 
-- you **might end up with an extra shard while resharding**. This is caused by the **difference between `StartingHashKey` and `EndingHashKey` to be low**
+- you **might end up with an extra shard while resharding**. This is caused by the **difference
+  between `StartingHashKey` and `EndingHashKey` to be low**
 
 ###### AWS Kinesis library
 
@@ -4445,7 +5029,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **column-based database**
 
-- **you would store data here after the transactions (changes) has been made**, a good example is kinesis => firehose => redshift. Think of Redshift as **end-state repository**
+- **you would store data here after the transactions (changes) has been made**, a good example is kinesis => firehose =>
+  redshift. Think of Redshift as **end-state repository**
 
 - data should not change, column-based dbs are quite bad at handling changes
 
@@ -4457,9 +5042,12 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **automatically caches repeated queries**
 
-- you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **Usually** created **along with VPC endpoint gateway**
+- you can enable **Enhanced VPC Routing**. That means that **ALL operations** performed by **Redshift** will **go
+  through your VPC**. Very **useful when you want to make sure your traffic does not go into public internet**. **
+  Usually** created **along with VPC endpoint gateway**
 
-- **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the process it automatic.
+- **automatically caches SOME quires (results)**. It's up to internal Redshift logic switch query to cache but the
+  process it automatic.
 
 #### Distaster Recovery and HA
 
@@ -4471,9 +5059,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can restore given table or restore the whole cluster.
 
-- you can have **cross region snapshots**. If your snapshot is encrypted you will need to provide a **KMS grant** for RDS in the destination region.
+- you can have **cross region snapshots**. If your snapshot is encrypted you will need to provide a **KMS grant** for
+  RDS in the destination region.
 
-- Redshift can automatically **copy your snapshots to another region**. There is no action required from your perspective. Of course **you have to enable this feature**.
+- Redshift can automatically **copy your snapshots to another region**. There is no action required from your
+  perspective. Of course **you have to enable this feature**.
 
 #### Architecture
 
@@ -4491,7 +5081,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### Workload Managment Groups
 
-- with WML you can create a query queues based on priorities. This means that you can have a system **where short-queries do not get stuck before long-running queries**.
+- with WML you can create a query queues based on priorities. This means that you can have a system **where
+  short-queries do not get stuck before long-running queries**.
 
 #### Read Replicas
 
@@ -4506,9 +5097,9 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 - there is a potential deadlock going on.
 
 - when it comes to potential solutions, you should look for:
-  - **reducing MTU**. MTU is the size of a packet that can be transferred.
-  - **viewing STV_LOCKS and STL_TR_CONFLICT system tables**. This is done to see if there are any update conflicts.
-  - **using PG_CANCEL_BACKEND** to cancel any conflicting queries.
+    - **reducing MTU**. MTU is the size of a packet that can be transferred.
+    - **viewing STV_LOCKS and STL_TR_CONFLICT system tables**. This is done to see if there are any update conflicts.
+    - **using PG_CANCEL_BACKEND** to cancel any conflicting queries.
 
 #### Ingestion
 
@@ -4518,9 +5109,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - this enables you to **query directly from data files on S3 and join it with your data stored in Redshift**.
 
-- this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other analytics tools and the DataLake.
+- this is used when you have **DataLake on s3**. Redshift Spectrum then acts as intermediary tool between other
+  analytics tools and the DataLake.
 
-- **you need to have existing Redshift cluster to make it work!**. The **query is submitted to your cluster** but the query itself is run by AWS.
+- **you need to have existing Redshift cluster to make it work!**. The **query is submitted to your cluster** but the
+  query itself is run by AWS.
 
 ### Virtual Private Cloud (VPC)
 
@@ -4532,21 +5125,24 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - there are **5 reserved IPS**.
 
-  - network
-  - VPC router
-  - DNS
-  - Future
-  - Broadcast
+    - network
+    - VPC router
+    - DNS
+    - Future
+    - Broadcast
 
-- you can use **custom DNS (can be on-prem)** by changing **DHCP option set**. `DHCP` option sets contain information about **DNS servers**, **NTP servers** and so on.
+- you can use **custom DNS (can be on-prem)** by changing **DHCP option set**. `DHCP` option sets contain information
+  about **DNS servers**, **NTP servers** and so on.
 
 - VPC **cannot span multiple regions**.
 
 #### Scalling VPCs
 
-- previously you **had to over provision (still good practice though)** on your CIDR range to make sure that there is some room left for expansion
+- previously you **had to over provision (still good practice though)** on your CIDR range to make sure that there is
+  some room left for expansion
 
-- in late 2017 an option was added to **add secondary IPv4 address ranges (CIDRs) to VPC**. This allows you to expand your VPC
+- in late 2017 an option was added to **add secondary IPv4 address ranges (CIDRs) to VPC**. This allows you to expand
+  your VPC
 
 - note that **your CIDRS CANNOT OVERLAP**.
 
@@ -4566,9 +5162,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **FREE OF CHARGE AS LONG AS YOU ARE USING IT**
 
-- **elastic IP persists** even through **stopping and restarting an instance**. This is **not the case with 'auto-assign' public ip option**.
+- **elastic IP persists** even through **stopping and restarting an instance**. This is **not the case with '
+  auto-assign' public ip option**.
 
-- elastic IP allows you to **mask instance failure**. This is possible because **EIP is assigned to a given istance** so **when instance fails, you can re-map it to other instance**.
+- elastic IP allows you to **mask instance failure**. This is possible because **EIP is assigned to a given istance**
+  so **when instance fails, you can re-map it to other instance**.
 
 #### Internet Gateway
 
@@ -4582,7 +5180,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **DOES NOT TRANSLATE PRIVATE IPS**. It only translates the IP addresses of public IPs
 
-- **supports IPv6**. Since **IPV6 is globally public by default** there is something called **Egress Only IGW to control the privacy in IPv6 setting**.
+- **supports IPv6**. Since **IPV6 is globally public by default** there is something called **Egress Only IGW to control
+  the privacy in IPv6 setting**.
 
 #### Flow Logs
 
@@ -4612,7 +5211,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **local rules** have the **highest priority**
 
-- **local default rules cannot be edited!**. That means that unless you explicitly create a route table for a given subnet, the global route table will associate CIDR blocks with given subnets inside your VPC
+- **local default rules cannot be edited!**. That means that unless you explicitly create a route table for a given
+  subnet, the global route table will associate CIDR blocks with given subnets inside your VPC
 
 - **one route table** can be **associated with multiple subnets**. **One subnet** can **have only 1 route table**
 
@@ -4624,27 +5224,34 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **lives in a public subnet**.
 
-- has **elastic static IP address**. That Ip has to be assigned. This means that NAT gateway is an ideal solution where your IP needs to be whitelisted.
+- has **elastic static IP address**. That Ip has to be assigned. This means that NAT gateway is an ideal solution where
+  your IP needs to be whitelisted.
 
 - **converts SOURCES` private ip address** to its ip address
 
-- sends its traffic to **internet gateway**. Internet gateway will convert the **private static ip to public ip** and send it to the internet
+- sends its traffic to **internet gateway**. Internet gateway will convert the **private static ip to public ip** and
+  send it to the internet
 
-- basically it **allows** resources in your VPC which **do not have public IP** to **communicate with the internet, ONLY ONE WAY**
+- basically it **allows** resources in your VPC which **do not have public IP** to **communicate with the internet, ONLY
+  ONE WAY**
 
 - multiple **resources** inside VPC **share the same IP assigned to NAT-Gateway**
 
 - scale automatically
 
-- **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high availability create multiple NAT-Gateways within multiple subnets**
+- **ONLY HIGHLY AVAILABLE WITHIN SINGLE AZ**. It is placed in a single subnet in a single AZ. **For true high
+  availability create multiple NAT-Gateways within multiple subnets**
 
-- **session aware**, that means that responses to the request initialized by your resources inside VPC are allowed. What is disallowed are the requests initialized by outside sources.
+- **session aware**, that means that responses to the request initialized by your resources inside VPC are allowed. What
+  is disallowed are the requests initialized by outside sources.
 
-- it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use one NAT Gateway per subnet**
+- it **can reside in one subnet AND link multiple subnets IN THE SAME AZ**. Normally though **you probably should use
+  one NAT Gateway per subnet**
 
 - **CANNOT SEND TRAFFIC OVER VPC ENDPOINTS** or **VPC peering**
 
-- remember that NAT Gateway is only used to allow traffic to the internet (and back). You cannot connect with a specific instance yourself since the instances themselves do not have an ip address (assuming they live inside private subnet).
+- remember that NAT Gateway is only used to allow traffic to the internet (and back). You cannot connect with a specific
+  instance yourself since the instances themselves do not have an ip address (assuming they live inside private subnet).
 
 ##### Billing
 
@@ -4678,7 +5285,10 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **WORKS ON A SUBNET LEVEL**
 
-- **ephemeral ports** play a huge role here. These are **randomly selected ports to return traffic for a request**. This means that if I **send a HTTP request (port 80)** as an inbound rule I have to **specify ephemeral port rage on inbound rule**. Also remember that it's not only about communication with the internet. Since NACL are subnet level thingy it may be the case that you have to setup ephermal ports in multiple NACLs when talking between subnets.
+- **ephemeral ports** play a huge role here. These are **randomly selected ports to return traffic for a request**. This
+  means that if I **send a HTTP request (port 80)** as an inbound rule I have to **specify ephemeral port rage on
+  inbound rule**. Also remember that it's not only about communication with the internet. Since NACL are subnet level
+  thingy it may be the case that you have to setup ephermal ports in multiple NACLs when talking between subnets.
 
 - **they CANNOT REFERENCE Logical Resources**
 
@@ -4686,7 +5296,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **default** rule is an **asterix, which is an implicit deny** and **100 rule to allow all traffic**
 
-- remember that **NACL only look at IPS and protocols**. You **cannot use SG to filter based on url** or something similar.
+- remember that **NACL only look at IPS and protocols**. You **cannot use SG to filter based on url** or something
+  similar.
 
 #### Security Group
 
@@ -4694,13 +5305,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - there is an **default explicit deny on everything**
 
-- **remembers the relation between incoming and outgoing traffic**. If you ping and instance with security group attached it will be able to ping you back without having to specify outgoing allow.
+- **remembers the relation between incoming and outgoing traffic**. If you ping and instance with security group
+  attached it will be able to ping you back without having to specify outgoing allow.
 
-- is **attached to an ENI**. This means that **if your instance has multiple ENIs** you can have **multiple security groups on 1 instance**.
+- is **attached to an ENI**. This means that **if your instance has multiple ENIs** you can have **multiple security
+  groups on 1 instance**.
 
 - **changes** to security group **are instant**
 
-- security groups **are stateful**. That means when you **create an inbound rule, outbound rule is created** automatically.
+- security groups **are stateful**. That means when you **create an inbound rule, outbound rule is created**
+  automatically.
 
 - there are **no deny rules**. Security groups can only **specify allow rules**.
 
@@ -4708,25 +5322,32 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **All inbound traffic is blocked by default**
 
-- **security group can have other security groups as sources!**. This does not mean that we are _merging_ the rules. **Having other security group as source means that we are allowing traffic from instances ENI which are associated with that group!!!!!!!**
+- **security group can have other security groups as sources!**. This does not mean that we are _merging_ the rules. **
+  Having other security group as source means that we are allowing traffic from instances ENI which are associated with
+  that group!!!!!!!**
 
-- remember that **secutiy groups only look at IPS and protocols**. You **cannot use SG to filter based on url** or something similar.
+- remember that **secutiy groups only look at IPS and protocols**. You **cannot use SG to filter based on url** or
+  something similar.
 
 #### DNS in a VPC
 
 #### Resolution
 
-- the **DNS name of an instance** will **resolve to the public IP when reaching in public internet** and to the **private IP, when resolving within a VPC**
+- the **DNS name of an instance** will **resolve to the public IP when reaching in public internet** and to the **
+  private IP, when resolving within a VPC**
 
-- this **can be a problem** while **resolving from on-prem**. **Instead of going through a eg. VPN** you **will resolve to public interface**. (**unless using route53 resolver**)
+- this **can be a problem** while **resolving from on-prem**. **Instead of going through a eg. VPN** you **will resolve
+  to public interface**. (**unless using route53 resolver**)
 
 - you can use **private hosted zones** to **override public DNS endpoints**.
 
-- to make sure that the DNS is working within your VPC, **enable `enableDnsHostnames` and `enableDnsSupport`**. They are both set to **true by default**.
+- to make sure that the DNS is working within your VPC, **enable `enableDnsHostnames` and `enableDnsSupport`**. They are
+  both set to **true by default**.
 
 #### Peering
 
-- you **cannot use** **anothers VPC NAT Gateway**. So the setup where you have peered VPCs and one is trying to connect to the internet using others NAT Gateway will not work.
+- you **cannot use** **anothers VPC NAT Gateway**. So the setup where you have peered VPCs and one is trying to connect
+  to the internet using others NAT Gateway will not work.
 
 - **linking TWO!! VPCs together** (in a scalable way)
 
@@ -4740,9 +5361,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **VPC peer has to be accepted by the other side**
 
-- you will probably have to **check SG, NACL** to make sure it works. **Enabling peering DOES NOT MEAN that the connection is made**.
+- you will probably have to **check SG, NACL** to make sure it works. **Enabling peering DOES NOT MEAN that the
+  connection is made**.
 
-- VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
+- VPC peering **does NOT allow for _transitive routing_**. That means that if you want to **connect 3 VPCs** you have
+  to **create peering connection between every VPC**. You **cannot communicate with other VPC through peered VPC!**
 
 - works in **LAYER 3** of OSI model
 
@@ -4768,7 +5391,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can be **used for connecting multiple cloud providers**
 
-- this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **using VPN (Virtual Private Gateway and BGP on the transit gateway side)**
+- this is a **VPC that contain specific EC2 instances**. You **connect** to transit VPC **using VPN (Virtual Private
+  Gateway and BGP on the transit gateway side)**
 
 - the **connection IS NOT IPsec (vpc peering)**. This is due to routing issues.
 
@@ -4776,9 +5400,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 #### VPC Endpoints
 
-- there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by other AWS services without traversing public network**. **NO NATGW or IGW needed!**
+- there is a notion of **VPC endpoint**. This allows the **service that the endpoint points to** to be **accessed by
+  other AWS services without traversing public network**. **NO NATGW or IGW needed!**
 
-- **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct Connect and such!
+- **They can only be accessed within a VPC**. That means that you cannot access the endpoint through a VPN, Direct
+  Connect and such!
 
 - **private link is used underneath** for seamless connection to AWS services.
 
@@ -4827,7 +5453,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **allow only OUTBOUND traffic from IPV6 associated instance**.
 
-- **engress-only** means that it **only allows outbound IPV6 connections**. It's **stateful!**. Which means that it **allows elements in your VPC** to **receive the response back**.
+- **engress-only** means that it **only allows outbound IPV6 connections**. It's **stateful!**. Which means that it **
+  allows elements in your VPC** to **receive the response back**.
 
 #### Private Link
 
@@ -4837,7 +5464,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **highly available**
 
-- private link allows you to **share a service that YOU created, not only a AWS resource which is the case with Gateway/Interface endpoints**
+- private link allows you to **share a service that YOU created, not only a AWS resource which is the case with
+  Gateway/Interface endpoints**
 
 - **provider exposes NLB** and the **customer links VPC endpoint network interface to that NLB**
 
@@ -4873,13 +5501,15 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - if you specify **dynamic routing** the connection will use **BGP**.
 
-- if you specify **dynamic routing** both sides **can exchange routing information**. You **do not have to provide such information yourself, like in a static routing solution**
+- if you specify **dynamic routing** both sides **can exchange routing information**. You **do not have to provide such
+  information yourself, like in a static routing solution**
 
 - the **connection** occurs between **customer gateway** and **virtual private gateway (attached to VPC)**
 
 - you can **create multiple tunnels** to achieve **HA on AWS site**
 
-- you can create **multiple customer gateways** and **multiple tunnels** for **full HA**. This architecture **requires BGP**
+- you can create **multiple customer gateways** and **multiple tunnels** for **full HA**. This architecture **requires
+  BGP**
 
 - when you setup the connection the **peer identity authentication is established**
 
@@ -4891,7 +5521,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - this is the **default offering** - the thing that you setup within the console.
 
-- connection **can be of type "on demand"**. This means that the **connection will not be established unless there is some traffic**.
+- connection **can be of type "on demand"**. This means that the **connection will not be established unless there is
+  some traffic**.
 
 ##### Client VPN
 
@@ -4915,7 +5546,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **you have to tell AWS the IP of your router**
 
-- you can also specify **dynamic IP**. This will allow for **better communication in terms of IP discovery between your router and AWS VPC**. This is used mostly **when you have multiple Customer Gateway routers**
+- you can also specify **dynamic IP**. This will allow for **better communication in terms of IP discovery between your
+  router and AWS VPC**. This is used mostly **when you have multiple Customer Gateway routers**
 
 ##### Virtual Private Gateway
 
@@ -4927,7 +5559,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **HA by design**
 
-- you **can** have **route table attached** to it. This is qutie useful eg. when you want to route traffic to firewall first AND THEN to your instance.
+- you **can** have **route table attached** to it. This is qutie useful eg. when you want to route traffic to firewall
+  first AND THEN to your instance.
 
 ##### Site-to-site Connection
 
@@ -4949,7 +5582,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you are connecting to **DX (Direct Connect) Locations (psychically!) or Direct Connect Partner**.
 
-- **port speed is very specific**. If you are **ordering from AWS directly, you can pick 1 Gbps or 10Gbps**. If you **need something slower, reach out to Direct Connect Partners**
+- **port speed is very specific**. If you are **ordering from AWS directly, you can pick 1 Gbps or 10Gbps**. If you **
+  need something slower, reach out to Direct Connect Partners**
 
 - **used** when you **need FAST speed and low-latency connections**
 
@@ -4963,13 +5597,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **private VIFs** will **connect you to a specific VPC**. You **still need Virtual Private Gateway**
 
-- **transit VIF** will **connect to DirectConnect, which connects to Transit Gateway**. You can have **only 1 Transit VIF per Direct Connect**
+- **transit VIF** will **connect to DirectConnect, which connects to Transit Gateway**. You can have **only 1 Transit
+  VIF per Direct Connect**
 
-- you can have **up to 50 PUBLIC + PRIVATE VIFs** on a **single DirectConnect**. This might be a problem. This is where **the usage of DirectConnect Gateway come in**
+- you can have **up to 50 PUBLIC + PRIVATE VIFs** on a **single DirectConnect**. This might be a problem. This is
+  where **the usage of DirectConnect Gateway come in**
 
 ##### Direct Connect Gateway
 
-- allows you to **fan-out from a single private VIF** to **up to 10 VPCs**. This is super nice since **before that** **private VIF was region locked**.
+- allows you to **fan-out from a single private VIF** to **up to 10 VPCs**. This is super nice since **before that** **
+  private VIF was region locked**.
 
 - the **fanout from DCG** can be used **cross-region**.
 
@@ -4981,9 +5618,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - this setup basically means **setting up VPN connection over DirectConnect public VIF**
 
-- mainly used **for encryption**. What is because **Direct Connect does not encrypt** the data but **VPN does encrypt it**.
+- mainly used **for encryption**. What is because **Direct Connect does not encrypt** the data but **VPN does encrypt
+  it**.
 
-- remember that **DirectConnect routes are always favourited against VPN routes**. You can **change BGP route weight for adjustments**.
+- remember that **DirectConnect routes are always favourited against VPN routes**. You can **change BGP route weight for
+  adjustments**.
 
 ##### Combining Direct Connects
 
@@ -5003,7 +5642,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - allows you to **recognize faces from images**
 
-- allows you to **create Video Stream processors** which parse the video **consumed from Kinesis and output to other Kinesis stream**.
+- allows you to **create Video Stream processors** which parse the video **consumed from Kinesis and output to other
+  Kinesis stream**.
 
 - **DOES NOT RETURN IMAGE METADATA**
 
@@ -5019,15 +5659,18 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 ### AWS Backup
 
-- operates on a notion of **backup plans**. This is where you specify **how often you want to run the backup**, **whats the retention** and so on.
+- operates on a notion of **backup plans**. This is where you specify **how often you want to run the backup**, **whats
+  the retention** and so on.
 
 - you **can create backup plans from JSON files**
 
-- there are also some **options to configure the lifecycle, like moving backups to cold storage after X time after creation**.
+- there are also some **options to configure the lifecycle, like moving backups to cold storage after X time after
+  creation**.
 
 - there are also **backup rules, backup plan can have multiple rules**.
 
-- you can **assign multiple resources to the backup plan**. AWS Backup can work with **RDS (except Aurora), DynamoDB tables, EFS,EBS, Storage Gateway volumes**.
+- you can **assign multiple resources to the backup plan**. AWS Backup can work with **RDS (except Aurora), DynamoDB
+  tables, EFS,EBS, Storage Gateway volumes**.
 
 - you can create **on demand backups**.
 
@@ -5039,7 +5682,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - uses **cluster architecture**
 
-- works as any cache you expect to work. You get stuff, it's placed in cache, when you get it again you get it from the cache.
+- works as any cache you expect to work. You get stuff, it's placed in cache, when you get it again you get it from the
+  cache.
 
 - **read-heavy workloads or very low latency**
 
@@ -5057,9 +5701,11 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - supports **Redis** or **Memcached**
 
-- there is **no failover**. You **can run multi AZ** using so called **spread nodes mode**. **Think of this as ASG and EC2**, number of nodes can shirk and get bigger with time.
+- there is **no failover**. You **can run multi AZ** using so called **spread nodes mode**. **Think of this as ASG and
+  EC2**, number of nodes can shirk and get bigger with time.
 
-- you might have a **situation where only SOME of the requests are served by cache**. This is **probably due to the underlying instance being too small**.
+- you might have a **situation where only SOME of the requests are served by cache**. This is **probably due to the
+  underlying instance being too small**.
 
 #### Redis
 
@@ -5069,13 +5715,16 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - have **pub/sub** capabilities.
 
-- you can **backup existing data** and then **restore that data**. You could also **use AOF (append only file) and resotre from that file**.
+- you can **backup existing data** and then **restore that data**. You could also **use AOF (append only file) and
+  resotre from that file**.
 
 - supports **in-transit and at-rest encryption**
 
-- there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute any commands
+- there is an **AUTH for Redis** thingy that can require user to give a token (password) before allowing him to execute
+  any commands
 
-- has a **concept of read replicas just like RDS**. Similarly to Aurora **read replica can be promoted to master**. The **replication between nodes is ASYNCHRONOUS**
+- has a **concept of read replicas just like RDS**. Similarly to Aurora **read replica can be promoted to master**.
+  The **replication between nodes is ASYNCHRONOUS**
 
 ##### Clustered mode enabled
 
@@ -5111,7 +5760,8 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can be scaled vertically and horizontally, but when you **scale horizontally** you have to **create new cluster**.
 
-- **data** is **not automatically replicated betweeen the nodes**. You have to make sure that you are **sharding your keys to different nodes**.
+- **data** is **not automatically replicated betweeen the nodes**. You have to make sure that you are **sharding your
+  keys to different nodes**.
 
 ### Communication Between Services, Queues
 
@@ -5135,24 +5785,30 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - can have **resource policies** applied
 
-- **subscribers** can have **filters applied on the SNS topic**. The filtering itself is something named **filter policy**.
+- **subscribers** can have **filters applied on the SNS topic**. The filtering itself is something named **filter
+  policy**.
 
 ##### Non-Lambda integration
 
-- SNS can be integrated with lambda without much hussle, but there is more work to be done when you are not running your code within lambda.
+- SNS can be integrated with lambda without much hussle, but there is more work to be done when you are not running your
+  code within lambda.
 
-- your application has to be ready to **receive POST calls from SNS**. This means **doing things when SNS requires you to confirm the subscription**.
+- your application has to be ready to **receive POST calls from SNS**. This means **doing things when SNS requires you
+  to confirm the subscription**.
 
-- you **have to response to a message within 15second window**, otherwise SNS will consider that request a failed attempt.
+- you **have to response to a message within 15second window**, otherwise SNS will consider that request a failed
+  attempt.
 
-- you should **read x-amz-sns-message-type header** to get necessary information with what you are dealing with. It could be either subscription confirmation request or a message.
+- you should **read x-amz-sns-message-type header** to get necessary information with what you are dealing with. It
+  could be either subscription confirmation request or a message.
 
 ##### Batching
 
 - you **cannot batch on the receiver level**
 
 - you **CAN batch on the sender level**.
-  - use the [_PublishBatch_ API](https://docs.aws.amazon.com/sns/latest/api/API_PublishBatch.html), it will save you some $$!
+    - use the [_PublishBatch_ API](https://docs.aws.amazon.com/sns/latest/api/API_PublishBatch.html), it will save you
+      some $$!
 
 #### SQS
 
@@ -5160,9 +5816,12 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - **up to 256KB payload**
 
-- when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
+- when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X
+  seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that
+  message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
 
-- you can **change visibility timeout PER ITEM BASIS**. This might come in handy when you know some messages can take longer than usuall. This is **usually done by tagging such message using some kind of JSON header**.
+- you can **change visibility timeout PER ITEM BASIS**. This might come in handy when you know some messages can take
+  longer than usuall. This is **usually done by tagging such message using some kind of JSON header**.
 
 - **by default** your **standard queue** **DOES NOT PRESERVE THE ORDER**. You can also **have duplicates (sometimes)**.
 
@@ -5170,15 +5829,19 @@ Both of these tools can be used for DataLake querying, but, and that is very imp
 
 - you can have ASG react to number of messages inside the queue
 
-- you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
+- you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X
+  seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
 
 ##### Pooling
 
 - there is a notion of **pooling**.
-  - **short pooling**: up to **10 messages** at once. You **constantly have to check the queue**
-  - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **avoid empty API calls**
+    - **short pooling**: up to **10 messages** at once. You **constantly have to check the queue**
+    - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request
+      will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **
+      avoid empty API calls**
 
-Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection** is **always open**, it just waits for ANY message to be visible.
+Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection**
+is **always open**, it just waits for ANY message to be visible.
 
 - you can **control how long the long pooling takes** by **specifying ReceiveMessageWaitTimeSeconds attribute**
 
@@ -5198,25 +5861,34 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - you **HAVE TO use Message Group ID**. If you do not have multiple groups just just a single static one.
 
-- **Message Group ID** allows for **parallel consumption of batches**. If you need to preserve order within a given group, but those groups are independend, using message group ID **that is unique PER group of objects** can greatly speed up the processing time.
+- **Message Group ID** allows for **parallel consumption of batches**. If you need to preserve order within a given
+  group, but those groups are independend, using message group ID **that is unique PER group of objects** can greatly
+  speed up the processing time.
 
-- you can use **Message deduplication ID** to **ignore (5 mins period) messages that have been send to the queue multiple times**. This is only available for SQS FIFO.
+- you can use **Message deduplication ID** to **ignore (5 mins period) messages that have been send to the queue
+  multiple times**. This is only available for SQS FIFO.
 
-- if you are consuming the messages via lambda, **you can control the concurrency via the _Message Group ID_ on the FIFO queue**.
-  **The more groups are in flight, the more concurrent consumers of the messages in the queue**. This is a neat mechanism that allows you to make sure that you are processing the messages by a single consumer - by using only one _Message Group ID_ for all the messages.
+- if you are consuming the messages via lambda, **you can control the concurrency via the _Message Group ID_ on the FIFO
+  queue**.
+  **The more groups are in flight, the more concurrent consumers of the messages in the queue**. This is a neat
+  mechanism that allows you to make sure that you are processing the messages by a single consumer - by using only one _
+  Message Group ID_ for all the messages.
 
   > Total concurrency is equal to or less than the number of unique MessageGroupIds in the SQS FIFO queue
 
-- with the _message group ID_ parameter you have the guarantee that the messages from a given group were processed in order.
-  - **note that the batch that the lambda is provided might contain messages from different _message groups_!** but those messages are **"in order" when you look globally**
-  - **use the `SequenceNumber` attribute to sort the messages that you were given in lambda to ensure ordering**
-  - [link to a helpful video](https://youtu.be/8zysQqxgj0I?t=918)
+- with the _message group ID_ parameter you have the guarantee that the messages from a given group were processed in
+  order.
+    - **note that the batch that the lambda is provided might contain messages from different _message groups_!** but
+      those messages are **"in order" when you look globally**
+    - **use the `SequenceNumber` attribute to sort the messages that you were given in lambda to ensure ordering**
+    - [link to a helpful video](https://youtu.be/8zysQqxgj0I?t=918)
 
 ##### DLQ
 
 - this is a **special queue which usually takes the events which were processed unsucessfuly**.
 
-- normally each message has something called **`recieveCount`**. Whenerver you get message delivered that count is incremented
+- normally each message has something called **`recieveCount`**. Whenerver you get message delivered that count is
+  incremented
 
 - you can **set that message will be transported to DQL whenever `recieveCount` is greated than ...**
 
@@ -5226,17 +5898,22 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - very often used with `ReceiveCount` attribute, like **specifying `maxReceiveCount`**.
 
-- you can redrive messages from DQL using [replay-aws-dlq](https://github.com/garryyao/replay-aws-dlq), you probably want to use `npx` for that.
+- you can redrive messages from DQL using [replay-aws-dlq](https://github.com/garryyao/replay-aws-dlq), you probably
+  want to use `npx` for that.
 
 ##### Integration with AWS Lambda
 
-- AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**
+- AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and
+  then increases by 60 based on the number of messages in the queue**
 
-- What is interesting is that the API and the _pollers_ are deployed on AWS Lambda. This insight was shared in "Amazon builders’ library: Operational excellence at Amazon" re:Invent 2021 talk.
+- What is interesting is that the API and the _pollers_ are deployed on AWS Lambda. This insight was shared in "Amazon
+  builders’ library: Operational excellence at Amazon" re:Invent 2021 talk.
 
-- AWS [in their documentation page](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) recommends setting the following features to the following values
-  - AWS Lambda concurrency: to at least 5. I think this is because the initial concurrency of the _poller fleet_ is 5
-  - SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can retry the batch multiple times before the messages land in DLQ
+- AWS [in their documentation page](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) recommends setting the
+  following features to the following values
+    - AWS Lambda concurrency: to at least 5. I think this is because the initial concurrency of the _poller fleet_ is 5
+    - SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can
+      retry the batch multiple times before the messages land in DLQ
 
 ### SES
 
@@ -5260,9 +5937,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - does **not support FIFO ordering**
 
-- **NOT for high amounts of events per second**. You are billed per send an event. For case where you have a lot of events look into Kinesis.
+- **NOT for high amounts of events per second**. You are billed per send an event. For case where you have a lot of
+  events look into Kinesis.
 
-- one important thing to remember here is that **EB supports only 5 targets per rule**. This is something you should keep in mind while designing stuff.
+- one important thing to remember here is that **EB supports only 5 targets per rule**. This is something you should
+  keep in mind while designing stuff.
 
 #### Event size limits
 
@@ -5270,9 +5949,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 * this is most likely because the architecture underneath uses SQS.
 
-- this limit is not separate to the _EventBridge_ service. _StepFunctions_, _AWS Lambda async invocation_ all have the same limit.
+- this limit is not separate to the _EventBridge_ service. _StepFunctions_, _AWS Lambda async invocation_ all have the
+  same limit.
 
-* just like in other services that have the same limit, if you ware working with larger payloads, upload the payload to S3, include the presigned URL
+* just like in other services that have the same limit, if you ware working with larger payloads, upload the payload to
+  S3, include the presigned URL
   within the payload.
 
 #### Rules
@@ -5283,14 +5964,19 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### Resiliency
 
-- you can use **DQL per rule**. Please note that **this DLQ is only for the EventBridge communication with the underlying service**.
-  If your lambda throws an exception, the _EventBridge_ will not care. As far as it's concerned, the event was send successfuly.
+- you can use **DQL per rule**. Please note that **this DLQ is only for the EventBridge communication with the
+  underlying service**.
+  If your lambda throws an exception, the _EventBridge_ will not care. As far as it's concerned, the event was send
+  successfuly.
 
 - you can specify **custom number of retires** as well as **time spent retrying**.
 
-- when an **event is sent to rule DLQ**, the message is **annotated with additional info**. This should help you with debuging. Also remember to **always have a dlq per rule**.
+- when an **event is sent to rule DLQ**, the message is **annotated with additional info**. This should help you with
+  debuging. Also remember to **always have a dlq per rule**.
 
-- remember that the **DLQ takes care of the EventBridge communication with other services**. The **EventBridge does not care if eg. your lambda function throws an error or not**. If that's the case, **you will sometimes need two DLQs - one for EB, one for the target itself**.
+- remember that the **DLQ takes care of the EventBridge communication with other services**. The **EventBridge does not
+  care if eg. your lambda function throws an error or not**. If that's the case, **you will sometimes need two DLQs -
+  one for EB, one for the target itself**.
 
 ##### Event Replay
 
@@ -5306,7 +5992,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **remember** about the **resource / identity** policy combination needed for cross-region stuff on AWS.
 
-- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-cross-region-event-routing-with-amazon-eventbridge/).
+- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-cross-region-event-routing-with-amazon-eventbridge/)
+  .
 
 ##### Global endpoints
 
@@ -5316,9 +6003,11 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - allows for _"Active/Archive"_ architectures.
 
-- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-global-endpoints-for-amazon-eventbridge/).
+- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-global-endpoints-for-amazon-eventbridge/)
+  .
 
-- global endpoints are free (as in events are charged just as if they were pushed to EB by yourself). Remember that you are sending to two event buses with this architecture.
+- global endpoints are free (as in events are charged just as if they were pushed to EB by yourself). Remember that you
+  are sending to two event buses with this architecture.
 
 - the routing happens at the DNS level, you have to provide `EndpointId` in the SDK.
 
@@ -5344,7 +6033,8 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 - **EventBridge** has **more integrations**
 
-- **SQS** has much **longer retention period (up to 14 days)** whereas **EventBridge** will **hold messages up to 24hrs**.
+- **SQS** has much **longer retention period (up to 14 days)** whereas **EventBridge** will **hold messages up to
+  24hrs**.
 
 #### vs SNS
 
@@ -5362,13 +6052,14 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 
 #### Cron and fixed schedule
 
-- with `EventBridge` can create _cron_ schedules or invoke target at fixed rate. The **minimum granularity** is **1 minute**.
+- with `EventBridge` can create _cron_ schedules or invoke target at fixed rate. The **minimum granularity** is **1
+  minute**.
 
 - you **cannot use custom bus for cron / fixed rate schedule**.
 
 - the **cron expression** can be **scheduled for a particular point in time**.
-  - quite neat considering the alternatives: SQS delay or StepFunctions with "Wait" task.
-  - [link to the documentation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html#eb-cron-expressions)
+    - quite neat considering the alternatives: SQS delay or StepFunctions with "Wait" task.
+    - [link to the documentation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html#eb-cron-expressions)
 
 #### Event Manipulation
 
@@ -5391,27 +6082,33 @@ Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER T
 - one approach would be to create a _catch-all_ rule that forwards the events to a log group.
 
   Another would be to create additional log group target for each rule.
-  No matter which approach you pick **remember about the CloudWatch costs. Use the _input transformer_ to ensure you log only what you need**
+  No matter which approach you pick **remember about the CloudWatch costs. Use the _input transformer_ to ensure you log
+  only what you need**
 
-- while adding artifical targets to test the event filtering works, how one might go about **seeing the output of the target rule?**.
+- while adding artifical targets to test the event filtering works, how one might go about **seeing the output of the
+  target rule?**.
 
-  - very **handy** when the **rule invokes another service**
+    - very **handy** when the **rule invokes another service**
 
-  - i would **recommend using _CloudTrail_** and **looking at the service event that the rule triggers**
+    - i would **recommend using _CloudTrail_** and **looking at the service event that the rule triggers**
 
-  - **to my best knowledge** there is **no other way to track success of the delivery** – apart from **CloudWatch metrics**.
+    - **to my best knowledge** there is **no other way to track success of the delivery** – apart from **CloudWatch
+      metrics**.
 
 ##### Event Sampling
 
-The EventBridge service does not support event sampling out of the box. To enable event sampling, one can cleverly utilize event filtering.
+The EventBridge service does not support event sampling out of the box. To enable event sampling, one can cleverly
+utilize event filtering.
 
-[Thi blog post](https://dev.to/aws-builders/one-weird-trick-for-sampling-eventbridge-events-mlp) talks about just that. Consider giving it a read!
+[Thi blog post](https://dev.to/aws-builders/one-weird-trick-for-sampling-eventbridge-events-mlp) talks about just that.
+Consider giving it a read!
 
 #### Decoupling
 
 - one thing that _EventBridge_ is really good at is the decoupling
 
-- one pattern that is to relly on _CloudTrail_ to _EventBridge_ integration in some situations, rather than the native integrations between services. Think multiple buckets hooked into 1 lambda function (putEvent)
+- one pattern that is to relly on _CloudTrail_ to _EventBridge_ integration in some situations, rather than the native
+  integrations between services. Think multiple buckets hooked into 1 lambda function (putEvent)
 
 #### API Destinations
 
@@ -5426,34 +6123,37 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - here is an [example of mine](https://github.com/WojciechMatuszewski/eb-destinations-example)
 
-- here is a [great article](https://medium.com/lego-engineering/amazon-eventbridge-how-to-manage-api-connection-credentials-with-aws-secrets-manager-f773f7d2aac5) on how the _API Destinations_ and the _AWS Secrets Manager_ interact with each other.
-  - the TLDR is that the _EventBridge_ is eating the cost of calling the secrets manager.
+- here is
+  a [great article](https://medium.com/lego-engineering/amazon-eventbridge-how-to-manage-api-connection-credentials-with-aws-secrets-manager-f773f7d2aac5)
+  on how the _API Destinations_ and the _AWS Secrets Manager_ interact with each other.
+    - the TLDR is that the _EventBridge_ is eating the cost of calling the secrets manager.
 
 #### Event patterns
 
 - there is the **thin event** where you only store IDs and a minimal amount of metatada
 
-  - can create coupling between services as the receiver might need to fetch additional data from the sender
+    - can create coupling between services as the receiver might need to fetch additional data from the sender
 
-  - minimal payloads have poor filtering capabilities
+    - minimal payloads have poor filtering capabilities
 
-  - easier to manage and think about in the grand scheme of things
+    - easier to manage and think about in the grand scheme of things
 
-  - since the event is _thin_, you might need to send more of them
+    - since the event is _thin_, you might need to send more of them
 
 - there is the **fat event** also known as **_Event-Carried State Transfer_**
 
-  - this is where you attach metadata as well as partial event data in the event itself
+    - this is where you attach metadata as well as partial event data in the event itself
 
-  - better for filtering
+    - better for filtering
 
-  - the payload can become bloated due to the increased amount of use-cases of different event consumers
+    - the payload can become bloated due to the increased amount of use-cases of different event consumers
 
 - more about EventBridge events – [this youtube video](https://www.youtube.com/watch?v=OLeL4B_iXxE).
 
 ### Amazon MQ
 
-- occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's public by default.
+- occupies VPC, and only VPC. This is **different than SQS or SNS** where the service CAN be made private, but it's
+  public by default.
 
 - supports **topics** which are **comparable to SNS topics**.
 
@@ -5461,7 +6161,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - supports **virtual topics** which are basically **fanout pattern, but without using SQS and SNS at the same time**.
 
-- usually used when you have some internal requirements. This service is not well supported when it comes it IAM or CloudWatch.
+- usually used when you have some internal requirements. This service is not well supported when it comes it IAM or
+  CloudWatch.
 
 ### AWS Workspaces
 
@@ -5485,21 +6186,25 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - **stack** as **top level construct**. Type of system like dev, prod, test or a specific application.
 
-- **layers** represent **individual pieces of functionality** within a stack, something like ECS Cluster, RDS, or OpsWork Layer
+- **layers** represent **individual pieces of functionality** within a stack, something like ECS Cluster, RDS, or
+  OpsWork Layer
 
 - uses **Chef solo for configuration**
 
-- uses **declarative language for configuration**. You basically tell it what you want to happen, the service will figure the rest out
+- uses **declarative language for configuration**. You basically tell it what you want to happen, the service will
+  figure the rest out
 
 ##### Lifecycle hooks
 
 - there are **five lifecycle hooks** that you can listen. Mainly: **setup, configure, deploy, undeploy, shutdown**
 
-- the **configure event** is usefuly for **regenerating / changing configuration files**. The **event fires when an instance is created or destroyed**
+- the **configure event** is usefuly for **regenerating / changing configuration files**. The **event fires when an
+  instance is created or destroyed**
 
 #### AWS OpsWorks for Chef Automate
 
-- _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy stuff
+- _Chef Automate_ is a **managed _Chef_ server** for configuration, compliance. Basically swiss army knife of devopsy
+  stuff
 
 #### AWS OpsWorks for Puppet Enterprise
 
@@ -5513,24 +6218,26 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you **only have to tick 1 box to make it work**
 
-- if you want notifications about auto-healing you should **look into CloudWatch (events)**. There is no native ops-work integration when it comes to auto-healing and sns.
+- if you want notifications about auto-healing you should **look into CloudWatch (events)**. There is no native ops-work
+  integration when it comes to auto-healing and sns.
 
 #### Instances
 
 - there are multiple instance types:
 
-  - 24/7h instances
-  - load-based instances
-  - time-based instances
-    Combination of these should be used for scaling.
+    - 24/7h instances
+    - load-based instances
+    - time-based instances
+      Combination of these should be used for scaling.
 
 - there is a **simple wizard to create scalling scenarios**
 
 #### Updating instances
 
-- **updates** are **applied at the time of launching given instance**. There is **no automatic update process in place, you have to update your instances later on**. You can do that **in 2 ways**:
-  - **create and start new instances** to **replace your current ones**.
-  - **on Linux-based instances** you can **run `Update Dependencies stack command`**.
+- **updates** are **applied at the time of launching given instance**. There is **no automatic update process in place,
+  you have to update your instances later on**. You can do that **in 2 ways**:
+    - **create and start new instances** to **replace your current ones**.
+    - **on Linux-based instances** you can **run `Update Dependencies stack command`**.
 
 #### Blue-green deployments
 
@@ -5590,20 +6297,25 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - default rules provide a good starting point, but you will most likely need to turn some of
 
-  - one of such rules might be the `AWSManagedRulesAmazonIpReputationList`. This one might be causing you issues if you are using canaries
+    - one of such rules might be the `AWSManagedRulesAmazonIpReputationList`. This one might be causing you issues if
+      you are using canaries
 
-- WAF and its resources do not have the concept of a `DeletionPolicy`. This means that, if you deploy a PR stacks, might have trouble cleaning up those resources
+- WAF and its resources do not have the concept of a `DeletionPolicy`. This means that, if you deploy a PR stacks, might
+  have trouble cleaning up those resources
 
-- Deleting the `WebACL` is not that easy. First you have to delete any rules that the `WebACL` is defining, then you need to make sure that
+- Deleting the `WebACL` is not that easy. First you have to delete any rules that the `WebACL` is defining, then you
+  need to make sure that
   no other resource is associated with that `WebACL`
 
 ### AWS Shield
 
 - mainly for **creating protection against DDOS**.
 
-- while you could be doing this using NACL, the DDOS traffic would be dangerously close to your system (already entered your VPC). You should prefer to elivate the tread as far of your network as possible.
+- while you could be doing this using NACL, the DDOS traffic would be dangerously close to your system (already entered
+  your VPC). You should prefer to elivate the tread as far of your network as possible.
 
-- **offered for free for all AWS accounts automatically**. This is to keep base security level of all accounts within aws.
+- **offered for free for all AWS accounts automatically**. This is to keep base security level of all accounts within
+  aws.
 
 - it **covers different services than WAF**. One notable fact is that **it does not cover APIGW**
 
@@ -5611,7 +6323,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - gives you more **premium features** but costs **3k/month (costs of WAF included)**.
 
-- there is a concept of **cost protection**. This is where **when you incur a cost on R53, CloudFront and ELB during DDOS attack, you can get your money back**. Pretty neat.
+- there is a concept of **cost protection**. This is where **when you incur a cost on R53, CloudFront and ELB during
+  DDOS attack, you can get your money back**. Pretty neat.
 
 - with Shield Advanced you can **also protect Elastic IPs**.
 
@@ -5621,7 +6334,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - still ,**there is an underlying instance hosting the search domain**
 
-- **automatily scales VERTICALLY AND HORIZONTALLY (in that order)**. When scalling to multiple instances whe search index is partitioned into multiple instances.
+- **automatily scales VERTICALLY AND HORIZONTALLY (in that order)**. When scalling to multiple instances whe search
+  index is partitioned into multiple instances.
 
 - you can use **multi-AZ option for HA**.
 
@@ -5638,7 +6352,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 - for production workloads, ES can use **Multi-AZ**.
 
 - **integrates with IAM** for **resource, identity and IP-based policies**.
-  Identity based policies should be used to narrow down the scope to given sercices, while resource based are applied to the domain level.
+  Identity based policies should be used to narrow down the scope to given sercices, while resource based are applied to
+  the domain level.
 
 #### ELK stack
 
@@ -5646,7 +6361,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - **L** is for **Elasticsearch**
 
-- **K** is for **visualization**: Kibana. This is mainly used for **anything that is NOT analytics data**. For **analytics data** use `QuickSight`.
+- **K** is for **visualization**: Kibana. This is mainly used for **anything that is NOT analytics data**. For **
+  analytics data** use `QuickSight`.
 
 - **Kibana** also allows you to **share dashboards**.
 
@@ -5656,7 +6372,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - **hosted Git Repo**
 
-- you can also **use comments** just like you would on github. For the best experience **use comments feature when you are signed as IAM user** (not federated , or temp credentials).
+- you can also **use comments** just like you would on github. For the best experience **use comments feature when you
+  are signed as IAM user** (not federated , or temp credentials).
 
 - to begin using the repository, **you have to generate credentials for it**
 
@@ -5664,7 +6381,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 ##### Triggers
 
-- can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates or lambda** to other developers.
+- can have **up to 10 triggers defined**. Main use case would be to configure **SNS to send updates or lambda** to other
+  developers.
 
 - **limited in scope**
 
@@ -5698,10 +6416,12 @@ The EventBridge service does not support event sampling out of the box. To enabl
   This can happen when you are using `user data` to bootstrap the agent
   `wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install` (look at the region!)
 
-- when working with the buildspec, **do not define any env. variables that start with `CODE_BUILD`**. This prefix is reserved for internal use.
+- when working with the buildspec, **do not define any env. variables that start with `CODE_BUILD`**. This prefix is
+  reserved for internal use.
   Ignoring this advice might result in slower build speeds as that prefix also includes memory settings.
 
-- you can configure CodeBuild to have access to VPC. This will require you to specify VPC ID and SGs. Remember that **NAT GW or NAT instance** is **required**.
+- you can configure CodeBuild to have access to VPC. This will require you to specify VPC ID and SGs. Remember that **
+  NAT GW or NAT instance** is **required**.
 
 - there are **metrics** available inside **CloudWatch**. These are about build mainly, success, failure, all that stuff.
 
@@ -5727,7 +6447,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 ##### Metrics
 
-- there are **number of default CW metrics**. These include **no. total builds, failed builds, successful builds and the duration of builds**
+- there are **number of default CW metrics**. These include **no. total builds, failed builds, successful builds and the
+  duration of builds**
 
 ##### Buildspec file
 
@@ -5737,7 +6458,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 ##### Quotas
 
-- the **maximum timeout** you can specify is **8 hrs**. That means that you can run relatively long running jobs on CodeBuild
+- the **maximum timeout** you can specify is **8 hrs**. That means that you can run relatively long running jobs on
+  CodeBuild
 
 ##### Output artifacts
 
@@ -5765,9 +6487,11 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 ##### Deploying to ASG
 
-- it may happen that **scale out an event will occur during the deployment**. In such situations, **you will probably have 2 versions of your application running**.
+- it may happen that **scale out an event will occur during the deployment**. In such situations, **you will probably
+  have 2 versions of your application running**.
 
-- you should **suspend asg for the deployment period** or **redeploy your application again** after the initial deployment.
+- you should **suspend asg for the deployment period** or **redeploy your application again** after the initial
+  deployment.
 
 - you **can deploy based on tags** on the **underlying EC2 instances**
 
@@ -5777,11 +6501,14 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you can either use **traffic shifting** or **canary deployment**
 
-- with **canary deployment** the traffic is **shifted in TWO increments**. So if you see something like `LambdaCanary10Percent10Minutes` that means that the lambda will be taking 10% of the traffic for 10 minutes, then ALL traffic will be shifted to it.
+- with **canary deployment** the traffic is **shifted in TWO increments**. So if you see something
+  like `LambdaCanary10Percent10Minutes` that means that the lambda will be taking 10% of the traffic for 10 minutes,
+  then ALL traffic will be shifted to it.
 
 ##### Validation hooks
 
-- when deploying with **lambda, using traffic shifts** there are **pre and post deploy hooks** you can use to validate your lambda.
+- when deploying with **lambda, using traffic shifts** there are **pre and post deploy hooks** you can use to validate
+  your lambda.
 
 - there are also _validation hooks_ for **ecs**. There is a lot more of them than for lambda functions.
 
@@ -5813,13 +6540,15 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - there is **NO SUPPORT FOR ELB Health Checks**
 
-- your mechanism for **checking if the instance is healthy is the `ValidateService` hook**. **This hook is only available for EC2**
+- your mechanism for **checking if the instance is healthy is the `ValidateService` hook**. **This hook is only
+  available for EC2**
 
 ##### Automatic rollbacks
 
 - you can setup automatic rollback options for your deployment group
 
-- the automatic rollback **can be triggered** when **deployment fails** or the **alarm thresholds are met**. Of course, you have to associate alarms with deployment group.
+- the automatic rollback **can be triggered** when **deployment fails** or the **alarm thresholds are met**. Of course,
+  you have to associate alarms with deployment group.
 
 ##### CodeDeploy triggers
 
@@ -5831,19 +6560,22 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - enables orchestration of all the above
 
-- you can implement **manual approval step**. The **pipeline will wait 7 days** in that step, if not approved / rejected , pipeline will timeout.
+- you can implement **manual approval step**. The **pipeline will wait 7 days** in that step, if not approved / rejected
+  , pipeline will timeout.
 
 - you can integrate _CodePipeline_ with your github account by using either _OAuth_ or _personal access_ tokens.
 
 - you can run **stages in parallel** by using **run order** parameter.
 
-- remember that `CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild` invocations**.
+- remember that `CodePipeline` **orchestrates your pipeline**. That means that **it also handles `CodeBuild`
+  invocations**.
 
 ##### Custom action job workers
 
 - you can have **custom action types** within _CodePipeline_
 
-- those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results to the _CodePipeline_**
+- those **actions are executed by the worker**. The **worker pools _CodePipeline_ for any jobs**, then **returns results
+  to the _CodePipeline_**
 
 - the worker **has to pool CodePipeline for tasks to perform**
 
@@ -5853,9 +6585,11 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you **CAN NOT** create **cross region source, third-party and custom actions**
 
-- CodePipeline **copies artifacts from the build region to a given region automatically**. You **have to have the buckets defined beforehand**
+- CodePipeline **copies artifacts from the build region to a given region automatically**. You **have to have the
+  buckets defined beforehand**
 
-- **CodePipeline cannot invoke other CodePipeline directly**. You should look into creating a `source` action (s3) when it comes to cross region deployments.
+- **CodePipeline cannot invoke other CodePipeline directly**. You should look into creating a `source` action (s3) when
+  it comes to cross region deployments.
   If you really need to invoke other CodePipeline, look into custom actions with lambdas
 
 ##### EventBridge / CloudWatch events integration
@@ -5870,7 +6604,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you **have to have artifact store in the region the pipeline is defined**
 
-- if you **create the _CodePipeline_ through the console**, **the wizard will create AWS managed CMK to encrypt the artifacts**. This is **not the case if you do it through the CLI**
+- if you **create the _CodePipeline_ through the console**, **the wizard will create AWS managed CMK to encrypt the
+  artifacts**. This is **not the case if you do it through the CLI**
 
 - you can create your own CMK and manage it yourself
 
@@ -5896,7 +6631,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - CodeStar user profile is **associated with your IAM user**
 
-- you can **upload SSH public key** to be **associated with your profile**. Doing so will allow you to **connect to EC2 instances associated with CodeStar projects**
+- you can **upload SSH public key** to be **associated with your profile**. Doing so will allow you to **connect to EC2
+  instances associated with CodeStar projects**
 
 ### Cognito
 
@@ -5906,11 +6642,13 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - this is **where your users live**.
 
-- user pool is responsible for **authenticating the users**. It returns the tokens, these tokens can be exchanged for AWS credentials using Identity Pools.
+- user pool is responsible for **authenticating the users**. It returns the tokens, these tokens can be exchanged for
+  AWS credentials using Identity Pools.
 
 - user pool also **manages the overhead** of **handling SAML/Social sign in provider tokens**
 
-- you **do not have to exchange the tokens using Identity Pool for AWS credentials**. You **might want to control access to your backend resources using those credentials**. (eg. APIGW authorizers)
+- you **do not have to exchange the tokens using Identity Pool for AWS credentials**. You **might want to control access
+  to your backend resources using those credentials**. (eg. APIGW authorizers)
 
 ##### Resource servers
 
@@ -5920,7 +6658,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you can **set scope authorization on APIGW level**. You can have authorizer check those on per endpoint basis
 
-- these **will not be retrieved when you use amplify js library**. You need to use the _cognito endpoint_ (probably hosted UI). If you really need to get them programatically, you can try the _cognito-js_ library.
+- these **will not be retrieved when you use amplify js library**. You need to use the _cognito endpoint_ (probably
+  hosted UI). If you really need to get them programatically, you can try the _cognito-js_ library.
 
 #### Identity Pools
 
@@ -5928,13 +6667,15 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - identity pool is **responsible for exchaning user pool tokens for AWS credentials**
 
-- here you can **enable unathenticated access**. This is quite logical that this option is here since remember that Identity Pool is responsible for STS tokens.
+- here you can **enable unathenticated access**. This is quite logical that this option is here since remember that
+  Identity Pool is responsible for STS tokens.
 
 #### Multi-region
 
 - Cognito **is a regional service**. You will need to implement the replication yourself.
 
-- One solution I saw is to have **triggers write user data to DynamoDB global tables**. This is still not ideal as the user would have to have different passwords per region, but might be a **solution for active-passive** architecture.
+- One solution I saw is to have **triggers write user data to DynamoDB global tables**. This is still not ideal as the
+  user would have to have different passwords per region, but might be a **solution for active-passive** architecture.
 
 #### SAML
 
@@ -5946,15 +6687,17 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 #### Identity Brokers
 
-- sometimes your identity store might **not be compatible with SAML 2.0**. Then you will need to **create your own identity broker**
+- sometimes your identity store might **not be compatible with SAML 2.0**. Then you will need to **create your own
+  identity broker**
 
 - this usually works as follows
 
-  - identity broker check if user is already authenticated to your internal system
-  - calls _sts:AssumeRole_ or _sts:GetFederationToken_ to get the credentials
-  - passes those credentials to users (remember these are temporary credentials)
+    - identity broker check if user is already authenticated to your internal system
+    - calls _sts:AssumeRole_ or _sts:GetFederationToken_ to get the credentials
+    - passes those credentials to users (remember these are temporary credentials)
 
-- you **do not have to create a new user specially for this**. While working with `Identity Brokers` you should use **IAM role** that the federated user will assume.
+- you **do not have to create a new user specially for this**. While working with `Identity Brokers` you should use **
+  IAM role** that the federated user will assume.
 
 - remember that **your identity broker is talking to sts, NOT YOUR USERS!**.
 
@@ -5964,7 +6707,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - **SAML 2.0 => Active Directory**
 
-- **Web Identity** means getting the **initial key from FB, Google...** and **exchanging it** for **temporary credentials** within AWS. A **role is assumed after successful token verification**.
+- **Web Identity** means getting the **initial key from FB, Google...** and **exchanging it** for **temporary
+  credentials** within AWS. A **role is assumed after successful token verification**.
 
 ##### Active Directory
 
@@ -5972,13 +6716,16 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 ###### AWS Managed AD
 
-- **does not replicate users with on prem**. This is quite important. Users live in 2 different directories, one on prem and one in AWS.
+- **does not replicate users with on prem**. This is quite important. Users live in 2 different directories, one on prem
+  and one in AWS.
 
-- if you want to synchronize users, you should deploy **self managed AD** and use **replication between it and the on prem**. Then you would establish trust with AWS managed one.
+- if you want to synchronize users, you should deploy **self managed AD** and use **replication between it and the on
+  prem**. Then you would establish trust with AWS managed one.
 
 ###### AWS AD Connector
 
-- there are 2 versions, **small** and **large**. It **does not have user limits** BUT it has **performance and scalling limits**.
+- there are 2 versions, **small** and **large**. It **does not have user limits** BUT it has **performance and scalling
+  limits**.
 
 - usually recommended to small to medium companies
 
@@ -5986,7 +6733,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 ###### Simple AD
 
-- use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**. It **does not support MFA!**. It cannot serve as a proxy to your on-prem AD. It is a standalone solution.
+- use **Simple AD for low-cost, low-scale directory** with **Sambda 4-complatible applications**. It **does not support
+  MFA!**. It cannot serve as a proxy to your on-prem AD. It is a standalone solution.
 
 - there are **user and object limits**. Again, 2 versions: **small and large**. Basically **up to 5k users**.
 
@@ -6000,7 +6748,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - like Okta but AWS managed
 
-- there are multiple identity sources available for SSO - AD, IdP or SSO itself. **You can have only 1 identity source within this service**. You cannot mix and match multiple ones
+- there are multiple identity sources available for SSO - AD, IdP or SSO itself. **You can have only 1 identity source
+  within this service**. You cannot mix and match multiple ones
 
 ### CloudFormation
 
@@ -6008,36 +6757,38 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 #### Resource identifiers
 
-- when working with _CloudFormation_ you will be dealing with two types of identifiers. **The _logical resource id_ and the _physical resource id_**.
+- when working with _CloudFormation_ you will be dealing with two types of identifiers. **The _logical resource id_ and
+  the _physical resource id_**.
 
 - about the _psychical resource id_
 
-  - you can only reference resources via their _physical resource id_.
-  - you can **assign the _psychical resource id_ directly via `name` property. The `name` property is not available on all resources**.
-  - the **change in _psychical resource id_ tells _CloudFormation_ whether the resource should be replaced or not**.
-  - **if the `name` property is not specified**, the _psychical resource id_ will be **automatically generated**.
-    To my best knowledge, _CloudFormation_ uses part of stack name as the basis for the generation.
+    - you can only reference resources via their _physical resource id_.
+    - you can **assign the _psychical resource id_ directly via `name` property. The `name` property is not available on
+      all resources**.
+    - the **change in _psychical resource id_ tells _CloudFormation_ whether the resource should be replaced or not**.
+    - **if the `name` property is not specified**, the _psychical resource id_ will be **automatically generated**.
+      To my best knowledge, _CloudFormation_ uses part of stack name as the basis for the generation.
 
 - about the _logical resource id_
 
-  - you declare them whenever you declare a resource within the template
+    - you declare them whenever you declare a resource within the template
 
-    ```yaml
-    Resources:
-      MY_LOGICAL_RESOURCE_ID:
-        Type: ...
-        Properties: ...
-    ```
+      ```yaml
+      Resources:
+        MY_LOGICAL_RESOURCE_ID:
+          Type: ...
+          Properties: ...
+      ```
 
-  - available for every resource.
+    - available for every resource.
 
 #### Intrinsic Functions
 
 - these can **only be used within specific parts of template**. These are:
-  - resource properties
-  - outputs
-  - metadata attributes
-  - update policy attributes
+    - resource properties
+    - outputs
+    - metadata attributes
+    - update policy attributes
 
 #### Stack Updates
 
@@ -6047,9 +6798,12 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - when using CloudFormation documentation, look for `update requirements` for a given property.
 
-- you can specify the **UpdateReplacePolicy** to **ensure that no accidental deletions of the resources happen when CF changes**
+- you can specify the **UpdateReplacePolicy** to **ensure that no accidental deletions of the resources happen when CF
+  changes**
 
-- when **deleting a resource**, the default behavior **for most resources** is to **first create the new resource and then delete the old one**. It is not the case for all resources – see [this Tweet](https://twitter.com/benbridts/status/1472934406100762626) for more information.
+- when **deleting a resource**, the default behavior **for most resources** is to **first create the new resource and
+  then delete the old one**. It is not the case for all resources –
+  see [this Tweet](https://twitter.com/benbridts/status/1472934406100762626) for more information.
 
 #### CloudFormation Stack Set
 
@@ -6073,17 +6827,23 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you can **use nested stack outputs inside the root stack**
 
-- **recommended** when you want to **isolate information sharing (outputs) to a group, use nested stacks**. **Otherwise** if you want to **share information, export outputs** from a stack.
+- **recommended** when you want to **isolate information sharing (outputs) to a group, use nested stacks**. **
+  Otherwise** if you want to **share information, export outputs** from a stack.
 
 #### Stack Roles
 
-- **identity** who is creating given stack **needs permissions for the stack creation itself and any underlying resources that that stack creates**.
+- **identity** who is creating given stack **needs permissions for the stack creation itself and any underlying
+  resources that that stack creates**.
 
-- you can also create a specific **stack role**. That role will be **used by CF while creating resources**. In such case the underlying identity needs only permissions to create the stack itself, not the resources that that stack might create.
+- you can also create a specific **stack role**. That role will be **used by CF while creating resources**. In such case
+  the underlying identity needs only permissions to create the stack itself, not the resources that that stack might
+  create.
 
-- this allows for **separation of roles**. This works on the similarly to `change sets`. You can enable junior memebers to interact with the stack, modify some of the resources, but full managment of the stack can be off limits to them.
+- this allows for **separation of roles**. This works on the similarly to `change sets`. You can enable junior memebers
+  to interact with the stack, modify some of the resources, but full managment of the stack can be off limits to them.
 
-- there is also special **stack policy**. It **may seem like it's overlapping with _stack role_**. While this is **somewhat a case, you might want to allow users do 1 thing and the service itself other thing**.
+- there is also special **stack policy**. It **may seem like it's overlapping with _stack role_**. While this is **
+  somewhat a case, you might want to allow users do 1 thing and the service itself other thing**.
   The **stack policy only applies on UPDATES**.
 
 #### Capabilities
@@ -6102,13 +6862,15 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you can use **retain** or also **delete**. There is no such thing as `force delete`.
 
-- when you are dealing with s3, you should create a lambda function to empty the bucket first. This lambda function can be a **custom resource**.
+- when you are dealing with s3, you should create a lambda function to empty the bucket first. This lambda function can
+  be a **custom resource**.
 
 #### Drift Detection
 
 - allows you to detect changes compared to your reference template
 
-- this is useful when you want to see which department has modified resources created by your template (which should not happen)
+- this is useful when you want to see which department has modified resources created by your template (which should not
+  happen)
 
 #### Custom Resources
 
@@ -6117,7 +6879,7 @@ The EventBridge service does not support event sampling out of the box. To enabl
 - CFN expects that the remote entity **responds with a correct response**.
 
 - **considered legacy** since the introduction of **CFN _resource types_ (_resource providers_) and _modules_**.
-  - while this might be true, the Custom Resources are very convenient to create.
+    - while this might be true, the Custom Resources are very convenient to create.
 
 ##### Lambda custom resources
 
@@ -6139,23 +6901,24 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - allows you to **proactively apply compliance checks** on resources
 
-  - whenever you update, delete or create a given resource
+    - whenever you update, delete or create a given resource
 
 - previously, all the compliance checks were performed on already deployed resource (AWS Config)
 
-  - this is not ideal as the resource might caused problems
+    - this is not ideal as the resource might caused problems
 
 - works on the backbone of **CloudFormation registry**
 
-  - to develop, use the `cloudformation-cli` and the language plugin of your choice.
+    - to develop, use the `cloudformation-cli` and the language plugin of your choice.
 
-  - [link to the blogpost](https://aws.amazon.com/blogs/mt/proactively-keep-resources-secure-and-compliant-with-aws-cloudformation-hooks/).
+    - [link to the blogpost](https://aws.amazon.com/blogs/mt/proactively-keep-resources-secure-and-compliant-with-aws-cloudformation-hooks/)
+      .
 
 - as of writing this, the `cloudformation-cli-typescript-plugin` does not support Hooks.
 
-  - the types and bindings are not there.
+    - the types and bindings are not there.
 
-  - it seems to me that Java and Python versions are prioritized first.
+    - it seems to me that Java and Python versions are prioritized first.
 
 #### Modules
 
@@ -6169,7 +6932,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you could also track configuration process.
 
-- used internally when using **creation policies**. The `creation-policy` is the preffered way of using `wait conditions`.
+- used internally when using **creation policies**. The `creation-policy` is the preffered way of
+  using `wait conditions`.
 
 - it generates **presigned URL** which is used to **communicate that given resource is ready / was created**.
 
@@ -6183,31 +6947,39 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 #### Macros
 
-- similarly to `Custom Resouces` you create a lambda function. This lambda function will be used to **modify the template itself**.
+- similarly to `Custom Resouces` you create a lambda function. This lambda function will be used to **modify the
+  template itself**.
 
 #### Helper scripts
 
-- these are utilities provided by CloudFormation to **orchestrate, notify CF when changes happen to the underlying resources**
+- these are utilities provided by CloudFormation to **orchestrate, notify CF when changes happen to the underlying
+  resources**
 
 - mostly used by non-serverless components like EC2 (there you want your programs to report to CF during setup).
 
 - there are multiple helper scripts
-  - `cfn-hup`: **daemon which pools CF for changes**. If changed occured for a given CF block, runs scripts defined by you
-  - `cfn-init`: used for **more complex user-init scripts**. Instead of writing scrips, you pass directives to a special program which is OS agnostic.
-  - `cfn-signal`: used for `WaitConditions`, coordination between resources
+    - `cfn-hup`: **daemon which pools CF for changes**. If changed occured for a given CF block, runs scripts defined by
+      you
+    - `cfn-init`: used for **more complex user-init scripts**. Instead of writing scrips, you pass directives to a
+      special program which is OS agnostic.
+    - `cfn-signal`: used for `WaitConditions`, coordination between resources
 
 #### Refactoring stacks
 
 - **some (not all) resources** support **import operations**
 - if a resource supports the import operation, you can **move a given resource between stacks**
-  - to do that, you first need to remove the resource from the origin template – **remember about the deletion policy!**
-  - then you need to add that resource (name hardcoded) to the other template and carry out the **_import resources into stack_ CFN action**
-  - this is **not the same as exporting values from the CFN template!**
-- read more about this feature [here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/refactor-stacks.html).
+    - to do that, you first need to remove the resource from the origin template – **remember about the deletion
+      policy!**
+    - then you need to add that resource (name hardcoded) to the other template and carry out the **_import resources
+      into stack_ CFN action**
+    - this is **not the same as exporting values from the CFN template!**
+- read more about this
+  feature [here](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/refactor-stacks.html).
 
 #### Cloud Control API
 
-- With AWS composed of multiple independent teams, the APIs can vary greatly from service to service. To combat this issue, _Cloud Control API_ was born.
+- With AWS composed of multiple independent teams, the APIs can vary greatly from service to service. To combat this
+  issue, _Cloud Control API_ was born.
 
 - The _Cloud Control API_ aims to give you a single source of truth for `CRUDL` operations for your resources
 
@@ -6221,7 +6993,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - automatically provides resources for you
 
-- has an option to deploy a **crawler**. That crawler will **discover (scan) data and populate the Data Catalog**. This **data is usually s3**.
+- has an option to deploy a **crawler**. That crawler will **discover (scan) data and populate the Data Catalog**.
+  This **data is usually s3**.
 
 - with **Data Catalog** you can use **Athena / EMR / Redshift to query that catalog**.
 
@@ -6238,15 +7011,17 @@ The EventBridge service does not support event sampling out of the box. To enabl
 - A **checkpoint**, basically it tells the _AWS Glue_ what data it should process
 
 - You can pick three values:
-  - _Disabled_ (default): no checkpoint, every time you run the job, the whole data set is traversed
-  - _Enabled_: only traverse the added files
-  - _Pause_: you can pick files relatives to job, for example _I want to traverse files that the job 2 did not cover, unit and including job 4_
+    - _Disabled_ (default): no checkpoint, every time you run the job, the whole data set is traversed
+    - _Enabled_: only traverse the added files
+    - _Pause_: you can pick files relatives to job, for example _I want to traverse files that the job 2 did not cover,
+      unit and including job 4_
 
 #### Glue materialized views
 
 - allows you to replicate data from multiple data sources to another data source
 
-- with materialized views **you no longer have to implemented an _ElasticSearch_ connector!**. Materialized views **work with DynamoDB and _ElasticSearch_**.
+- with materialized views **you no longer have to implemented an _ElasticSearch_ connector!**. Materialized views **work
+  with DynamoDB and _ElasticSearch_**.
 
 ### AWS Trusted Advisor
 
@@ -6256,21 +7031,25 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - **shows you** when given service is **using more than a service limit**
 
-- what is very important is that **Trusted Advisor is more about accounts and IAM and unused resources**. This is something completely different than AWS Inspector which has to deal with EC2 instances mostly.
+- what is very important is that **Trusted Advisor is more about accounts and IAM and unused resources**. This is
+  something completely different than AWS Inspector which has to deal with EC2 instances mostly.
 
-- you can use **AWS Service Quotas** to change **service limits** that you imposed. This is **something that trusted advisor alone cannot do!**.
+- you can use **AWS Service Quotas** to change **service limits** that you imposed. This is **something that trusted
+  advisor alone cannot do!**.
 
 - it has **reports on underutilized resources which can greatly help with cost savings**.
 
 - you can refresh all or individual cheks. Checks might have different refresh intervals.
 
-- you can check **service limits page**. This page is free for all, you do not have to have business or enterprise level of support
+- you can check **service limits page**. This page is free for all, you do not have to have business or enterprise level
+  of support
 
 #### Notifications
 
 - the summary can be sent on a **weekly basis as an email**. This is a feature **built-in**
 
-- you can use **CloudWatch events** to listen on **Trusted Advisor** events. You **have to be in north-virginia**, otherwise you will not be able to create the rule.
+- you can use **CloudWatch events** to listen on **Trusted Advisor** events. You **have to be in north-virginia**,
+  otherwise you will not be able to create the rule.
 
 ##### Weekly emails
 
@@ -6280,9 +7059,11 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 ##### Alerts
 
-- you can create **alarms based on the _color_ of the resources**. In the console you can see checks that are _red_ or _yellow_
+- you can create **alarms based on the _color_ of the resources**. In the console you can see checks that are _red_ or _
+  yellow_
 
-- Trusted Advisor **will automatically refresh checks every 24hrs**. If you need more up to date checks, you have to refresh them yourself
+- Trusted Advisor **will automatically refresh checks every 24hrs**. If you need more up to date checks, you have to
+  refresh them yourself
 
 - the **alerts are powered by the CloudWatch metrics which Trusted Advisor exposes**
 
@@ -6302,7 +7083,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 #### Tiers
 
-- you do not have access to every pillar that `Trusted Advisor` is checking (Cost Optimization, Performance, Security, Fault Tolerance, Service Limits) if you are on a free plan.
+- you do not have access to every pillar that `Trusted Advisor` is checking (Cost Optimization, Performance, Security,
+  Fault Tolerance, Service Limits) if you are on a free plan.
 
 - the **Cost Optimization, Performance is available for those with AWS support plan**
 
@@ -6312,9 +7094,11 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - various ways of encryption, but mainly **Server-Side, Client-Side** encryption.
 
-- with **Server-Side encryption** the **decryption also happens on the Server**. This is pretty logical since we would not know how to decrypt something.
+- with **Server-Side encryption** the **decryption also happens on the Server**. This is pretty logical since we would
+  not know how to decrypt something.
 
-- With **KMS** you **can create User Keys** but that process is not necessary. **Depending on the encryption model** you could use **AWS Managed Service Keys in KMS**.
+- With **KMS** you **can create User Keys** but that process is not necessary. **Depending on the encryption model** you
+  could use **AWS Managed Service Keys in KMS**.
 
 #### Key Rotation
 
@@ -6330,19 +7114,24 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - CMK **never leaves the service**. That means that CMKS **never leave the region**. **CMK CANNOT be exported**
 
-- if you have appropriate persmissions - **resource policy on the CMK**, you can request KMS to encrypt and decrypt data using CMK.
+- if you have appropriate persmissions - **resource policy on the CMK**, you can request KMS to encrypt and decrypt data
+  using CMK.
 
 - you can create **regional CMK alias** that points to given key.
 
-- this key **usually not used for the encryption directly**. This is due to **size limit of 4kb that you want to encrypt**. For the encryption itself you should use **data encryption keys**.
+- this key **usually not used for the encryption directly**. This is due to **size limit of 4kb that you want to
+  encrypt**. For the encryption itself you should use **data encryption keys**.
 
-- can be created based on imported `Key Material`. Once created, underlying `Key Material` cannot be changed, you would have to create a new key.
+- can be created based on imported `Key Material`. Once created, underlying `Key Material` cannot be changed, you would
+  have to create a new key.
 
-- when you **delete the CMK** you **will not be able to decrypt your data back**. The deletion operation is considered dangerous
+- when you **delete the CMK** you **will not be able to decrypt your data back**. The deletion operation is considered
+  dangerous
 
 #### CMK Grants
 
-- allow you to **programatically delegate** the **use of CMK to other principals**. This is much better way of handling dynamic permissions than IAM.
+- allow you to **programatically delegate** the **use of CMK to other principals**. This is much better way of handling
+  dynamic permissions than IAM.
 
 - this action is only for **allowance**. Grants **cannot be used to explicitly deny access**.
 
@@ -6356,15 +7145,18 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you can **import your own key material**. You would do that if you have custom compliance requirements.
 
-- they can be **rotated**. The **period** of the rotation **depends if it's AWS Managed (3 years) or Customer Manager (1 year)**
+- they can be **rotated**. The **period** of the rotation **depends if it's AWS Managed (3 years) or Customer Manager (1
+  year)**
 
 #### Data encryption Keys
 
 - created based on a **request to KMS based on a SPECIFIC CMK**.
 
-- you get **2 versions of this key**. One is **encrypted** and one is in a **plain text** format. You should **encrypt with plain text (discard after)**
+- you get **2 versions of this key**. One is **encrypted** and one is in a **plain text** format. You should **encrypt
+  with plain text (discard after)**
 
-- control **access to the CMKs** in KMS. While there are other methods to do so, **you need to use Key Policies if you want to control the access**
+- control **access to the CMKs** in KMS. While there are other methods to do so, **you need to use Key Policies if you
+  want to control the access**
 
 - the policies themselves are pretty similar to IAM policies
 
@@ -6372,9 +7164,12 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - the KMS key works a little bit differently in terms of IAM
 
-- **to grant some entity ability to do something with a given key, you have to explicitly add that policy to a given keys policy upon the key creation / update**. So a situation: I create a key and I leave permissions as blank. Even though I might have administrative role, I will not be able to delete that key.
+- **to grant some entity ability to do something with a given key, you have to explicitly add that policy to a given
+  keys policy upon the key creation / update**. So a situation: I create a key and I leave permissions as blank. Even
+  though I might have administrative role, I will not be able to delete that key.
 
-- usually the pattern here is to give `delete` / `PutPolicy` permissions to the `:root` (every entity in a given account), then `encrypt` / `decrypt` to lambdas and other applications
+- usually the pattern here is to give `delete` / `PutPolicy` permissions to the `:root` (every entity in a given
+  account), then `encrypt` / `decrypt` to lambdas and other applications
 
 ### Encryption context
 
@@ -6382,7 +7177,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you can **create IAM conditions based on that metadata**
 
-- can be used **for tenant isolation purposes**. You can you **session policy with a condition for a given context key (eg. tenantId)**
+- can be used **for tenant isolation purposes**. You can you **session policy with a condition for a given context key (
+  eg. tenantId)**
 
 ### AWS IOT
 
@@ -6392,26 +7188,32 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - IOT devices have to be **registered** and then **can communicate with Device Gateway**
 
-- **Device Gateway** creates **device shadows**. This is a **logcal representation of a device (it's state)**. Other **application can communicate with shadows**.
+- **Device Gateway** creates **device shadows**. This is a **logcal representation of a device (it's state)**. Other **
+  application can communicate with shadows**.
 
-- IOT devices can also **read from their shadow**. This is quite useful when **an application want to send data TO a given device** eg. update it's state.
+- IOT devices can also **read from their shadow**. This is quite useful when **an application want to send data TO a
+  given device** eg. update it's state.
 
-- **Device Gateway publishes to MQTT topic**. You can subscribe to this topic and create **IOT Rules**. Rules just like CloudWatch rules can have triggers and do stuff like **pushing to kinesis, adding to dynamodb etc..**
+- **Device Gateway publishes to MQTT topic**. You can subscribe to this topic and create **IOT Rules**. Rules just like
+  CloudWatch rules can have triggers and do stuff like **pushing to kinesis, adding to dynamodb etc..**
 
-- to lower the cost you can use **Basic Indest**. This allows **your IOT device to skip going through the Topic and publish directly to a rule instead**.
+- to lower the cost you can use **Basic Indest**. This allows **your IOT device to skip going through the Topic and
+  publish directly to a rule instead**.
 
 #### IOT Analytics
 
 - ingegrates with `Quicksight`.
 
-- it has **different use-cases that Kinesis Analytics**. **Kinesis should be used for real-time or near real time stuff, that also applies to analytics**. With `IOT Analytics` data is stored long term.
+- it has **different use-cases that Kinesis Analytics**. **Kinesis should be used for real-time or near real time stuff,
+  that also applies to analytics**. With `IOT Analytics` data is stored long term.
 
 #### IOT MQTT
 
 - great **alternative** for **APIGW WebSockets**
 
 - to use the **MQTT topics** you have to **have identity attached to your request**.
-  This means that you have to sign the request with the sigv4. Usually on the fronend this is done by using roles and Cognito, the library will sign the requests for you.
+  This means that you have to sign the request with the sigv4. Usually on the fronend this is done by using roles and
+  Cognito, the library will sign the requests for you.
 
 ### AWS Proton
 
@@ -6467,13 +7269,17 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 #### Migration Strategies
 
-- **rehost (lift and shift)**: usually done using SMS for large legacy applications. Usually quick. After the migration part you might look into re-architecting the solution. This is due to the fact that re-architecting is usually easier within the cloud environment.
+- **rehost (lift and shift)**: usually done using SMS for large legacy applications. Usually quick. After the migration
+  part you might look into re-architecting the solution. This is due to the fact that re-architecting is usually easier
+  within the cloud environment.
 
-- **replatform (lift, tinker and shift)**: this is where you make a few optimizations (easy ones), like migrating your service to managed one like elastic beanstalk
+- **replatform (lift, tinker and shift)**: this is where you make a few optimizations (easy ones), like migrating your
+  service to managed one like elastic beanstalk
 
 - **repurchase (drop and shop)**: this is a decision to move to a different product
 
-- **refactor / re-architect**: most expensive solution and quite dangerous one. Usually driven by a strong business need.
+- **refactor / re-architect**: most expensive solution and quite dangerous one. Usually driven by a strong business
+  need.
 
 - **retire**
 
@@ -6503,7 +7309,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - this is basically **an OVA (runs virtual machine)** and collects the data
 
-- when you cannot use Connector or Agent, **another approach would be to use import data via json template to migration hub directly**.
+- when you cannot use Connector or Agent, **another approach would be to use import data via json template to migration
+  hub directly**.
 
 #### Discovery Service
 
@@ -6519,17 +7326,20 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - you **actually need VMware / Hyper-V or Azure system to use it**.
 
-- used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download thus **SMS connector is needed aswell**.
+- used to **actually migrate on prem VMware stuff**. SMS is **agentless**, there is no agent to download thus **SMS
+  connector is needed aswell**.
 
 - **CMK** is **regional**. This is worth knowing especially when encrypting EBS snapshots or EBS volumes.
 
 - **replicates to an AMI** and can also **auto generate CloudFormation templates**
 
-- when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
+- when **migrating lots of servers** these can be **grouped into applications**. When doing so **SMS will generates
+  AMIs, create CloudFormation templates** and **launch them in a coordiated fashion**.
 
 - **applications can be divided into groups**. Groups can contain multiple servers.
 
-- this service is **free of charge**. Remember that the snapshots, and the underlying created resources will probably cost you some $$.
+- this service is **free of charge**. Remember that the snapshots, and the underlying created resources will probably
+  cost you some $$.
 
 #### Database Migration Service
 
@@ -6537,27 +7347,31 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 - uses **Schema Conversion Tool underneath**
 
-- DMS enables you to **read and write to encrypted sources**. Data is **propagated in a decrypted form** but it **uses SSL for encryption in transit**.
+- DMS enables you to **read and write to encrypted sources**. Data is **propagated in a decrypted form** but it **uses
+  SSL for encryption in transit**.
 
 - there are **3 steps for migration**:
 
-  - **allocate a replication instance** which performs all the processes for the migration
-  - **specify source and a target DB**
-  - **create a task or set of task** to define **which tables and replication processess** you wan to use.
+    - **allocate a replication instance** which performs all the processes for the migration
+    - **specify source and a target DB**
+    - **create a task or set of task** to define **which tables and replication processess** you wan to use.
 
 - the **replication instance should be created within DMS console**
 
-- you can define **JSON transformation rules** or **Selection rules**. Basically **transforming and/or filtering** the **data when migrating**.
+- you can define **JSON transformation rules** or **Selection rules**. Basically **transforming and/or filtering**the **
+  data when migrating**.
 
 - you **do not have to create replication instance**. DMS **will do that for you (task)**
 
 - you can **migrate multiple sources to one and vice versa**
 
-- DMS is fast, and there might be a problem with your service throttling the migration by DMS (Good example would be Amazon ES).
+- DMS is fast, and there might be a problem with your service throttling the migration by DMS (Good example would be
+  Amazon ES).
 
 ##### Encryption
 
-- **by default** DMS **encrypts your data at rest (replication instance)** using **KMS by default**. It can also **use CMK if you specify one**.
+- **by default** DMS **encrypts your data at rest (replication instance)** using **KMS by default**. It can also **use
+  CMK if you specify one**.
 
 #### VM Import / Export
 
@@ -6583,7 +7397,8 @@ The EventBridge service does not support event sampling out of the box. To enabl
 
 These systems are used to **detect and prevent intrusions** from gettiing to your resources.
 
-- usually **implemented** by **installing IDS agent on every instance within your VPC** or by creating a **reverse proxy layer** which **has IDP agents installed**.
+- usually **implemented** by **installing IDS agent on every instance within your VPC** or by creating a **reverse proxy
+  layer** which **has IDP agents installed**.
 
 ### AWS Artifact
 
@@ -6599,7 +7414,9 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### AWS Global Accelerator
 
-- this like **global pseudo-route53 with a sparkle of load balancer which allways returns 2 IPS for your costumers**. This is so that then user device caches the IP and disaster occurs it does not route to the service that is not working. The **returned IP is the same** but **the routing logic is within Global Accelerator**
+- this like **global pseudo-route53 with a sparkle of load balancer which allways returns 2 IPS for your costumers**.
+  This is so that then user device caches the IP and disaster occurs it does not route to the service that is not
+  working. The **returned IP is the same** but **the routing logic is within Global Accelerator**
 
 - gives you **2 anycast IPS**
 
@@ -6617,7 +7434,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 #### VS Route53
 
-- **GA** has **multi-region failover** which **does not rely on DNS**. This is huge since **you do not have to worry about DNS cache**
+- **GA** has **multi-region failover** which **does not rely on DNS**. This is huge since **you do not have to worry
+  about DNS cache**
 
 - **GA** also **uses AWS backbone network**. This is the same technology as CloudFront. R53 does not work on that layer.
 
@@ -6633,17 +7451,20 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - ingest from FlowLogs, R53, CloudTrail, AI **Thread detection in terms of ACCOUNTS** etc to a centralized place
 
-- you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **ingest from those invited accounts** (**if they accept**).
+- you can **invite other accounts to guard duty**. With this setting, Guard Duty will also **ingest from those invited
+  accounts** (**if they accept**).
 
 - it's usually **preferred for instances that have access to the internet**
 
-- has **deep integration with CloudWatch**. You can use **CloudWatch events** to trigger lambda or sns when guard duty notices something.
+- has **deep integration with CloudWatch**. You can use **CloudWatch events** to trigger lambda or sns when guard duty
+  notices something.
 
 - will detect if someone is mining bitcoin on your machines (since it's scanning flow/vpc logs)
 
 ### Amazon Inspector
 
-- used for **security monitoring of EC2 instances**. Please keep in mind that it **only tackles security stuff, LEAVE STATE CHANGES TO AWS CONFIG!**
+- used for **security monitoring of EC2 instances**. Please keep in mind that it **only tackles security stuff, LEAVE
+  STATE CHANGES TO AWS CONFIG!**
 
 - scans for **vulnerabilities and not IAM issues**
 
@@ -6668,13 +7489,15 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 ### Health dashboard
 
-- normal dashboard for AWS health is a bit too global. The `Health dashboard` is a dashboard which is presonalized for you.
+- normal dashboard for AWS health is a bit too global. The `Health dashboard` is a dashboard which is presonalized for
+  you.
 
 - you can **subscribe to changes** using **CloudWatch events**.
 
 - the service name is `Health` within `CloudWatch events`.
 
-- this is also a great way of **knowing if your secret key was compromised (pushed to repo)**. This is because the `AWS Health` service tracks github repos.
+- this is also a great way of **knowing if your secret key was compromised (pushed to repo)**. This is because
+  the `AWS Health` service tracks github repos.
 
 - you can also track **scheduled change events** like **RDS maintenance** using **CloudWatch events**
 
@@ -6682,7 +7505,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - **AWS Managed VPN app but for mobile**
 
-- WorkLink **makes sure** that the **data is never cached / stored on the real device**. This is great when you are worried that something might leak.
+- WorkLink **makes sure** that the **data is never cached / stored on the real device**. This is great when you are
+  worried that something might leak.
 
 - you can **use your existing browser** but **the pages are rendered on AWS** and **send to you as SVG** 😲
 
@@ -6714,7 +7538,7 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - the **mapping from SaaS to your application** is handled in **one to one ratio**.
 
-  - if the SaaS app has a lot of entities (billing, customer, etc) good luck!
+    - if the SaaS app has a lot of entities (billing, customer, etc) good luck!
 
 - you **pay per flow and per amount of data transfered**.
 
@@ -6722,7 +7546,8 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - service **similar to AWS Inspector but for S3**.
 
-- using **ML and CloudTrail logs it can notify you when something is wrong with your S3 bucket (or data inside that bucket)**
+- using **ML and CloudTrail logs it can notify you when something is wrong with your S3 bucket (or data inside that
+  bucket)**
 
 - it can also **tell you how is accessing sensible files most often**.
 
@@ -6742,9 +7567,11 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - by default AWS organizes stuff around services, like dynamodb or lambda
 
-- you can create a resource group which organizes stuff as you want. You can have EC2 along with lambda listed within a console
+- you can create a resource group which organizes stuff as you want. You can have EC2 along with lambda listed within a
+  console
 
-- mainly for overview purposes, but you can **group by tags** so you there is a possibility for more sophisticated setups.
+- mainly for overview purposes, but you can **group by tags** so you there is a possibility for more sophisticated
+  setups.
 
 - you can attach IAM policies to resource groups.
 
@@ -6758,81 +7585,112 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 #### Migrating from MongoDB
 
-Since mongo is a nosql tech. one might choose **DocumentDB** or **DynamoDB**. It depends on the requirements and the question. Either way **not RDS!**.
+Since mongo is a nosql tech. one might choose **DocumentDB** or **DynamoDB**. It depends on the requirements and the
+question. Either way **not RDS!**.
 
 #### Copying AMI between regions
 
-You **can copy both EBS-backed or instance-store-backed AMIs**. **AMIs with encrypted snapshot can also be copied**. **IAM RELATED STUFF IS NOT COPIED**.
+You **can copy both EBS-backed or instance-store-backed AMIs**. **AMIs with encrypted snapshot can also be copied**. **
+IAM RELATED STUFF IS NOT COPIED**.
 
 #### Copying AMI in the same region
 
-This is mainly done to **encrypt root volumes**. You would create an AMI copy within the same region and encrypt the volume while doing the copying.
+This is mainly done to **encrypt root volumes**. You would create an AMI copy within the same region and encrypt the
+volume while doing the copying.
 
 #### Restricting Access to s3 resources
 
 Use `pre-signed` `s3` urls.
-If you are distributing through `CloudFront` create `IAO` and associate that `IAO` with your distribution. Then modify permissions on `s3` to only allow OAI to access those files.
+If you are distributing through `CloudFront` create `IAO` and associate that `IAO` with your distribution. Then modify
+permissions on `s3` to only allow OAI to access those files.
 
 #### EBS and encrypting a volume on a running instance
 
-So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a volume or a snapshot**. You have to **either create an encrypted volume and copy data to it or take a snapshot, encrypt it, and create a new encrypted volume from the snapshot**,
+So you would like to avoid downtime on your EC2 instance. **There is no direct way to change the encryption state of a
+volume or a snapshot**. You have to **either create an encrypted volume and copy data to it or take a snapshot, encrypt
+it, and create a new encrypted volume from the snapshot**,
 Then you can either swap the volumes or restore volume from newly created snapshot.
 
 #### EBS and Volume termination
 
-There is a **DeleteOnTermination** attribute. **By default root EBS volume will be deleted on instance termination (they have the DeleteOnTermination protection tick on)**. This can be **changed using DeleteOnTermination attribute**. Other **non-root volumes will be NOT deleted by default**. Again **this can be changed by changing the DeleteOnTermination attribute**.
+There is a **DeleteOnTermination** attribute. **By default root EBS volume will be deleted on instance termination (they
+have the DeleteOnTermination protection tick on)**. This can be **changed using DeleteOnTermination attribute**.
+Other **non-root volumes will be NOT deleted by default**. Again **this can be changed by changing the
+DeleteOnTermination attribute**.
 
 #### Cross VPC EFS
 
-You can easily mount EFS on EC2 instances within a different VPC using **vpc peering or transit gateway**. Remember that you can **mount helper for encryption in transit**.
+You can easily mount EFS on EC2 instances within a different VPC using **vpc peering or transit gateway**. Remember that
+you can **mount helper for encryption in transit**.
 
 #### Last resort of Scaling RDS Horizontally (Sharding)
 
-There is a couple of ways to scale the RDS. When you are out of options or it makes sense️™️ you might consider sharding. **Sharding is the process of splitting the database into smaller database and using some kind of router to route queries to specific databases**. As you can image this can be quite admin-heavy process when it comes to AWS.
+There is a couple of ways to scale the RDS. When you are out of options or it makes sense️™️ you might consider
+sharding. **Sharding is the process of splitting the database into smaller database and using some kind of router to
+route queries to specific databases**. As you can image this can be quite admin-heavy process when it comes to AWS.
 
 #### Adding Encryption to an RDS db
 
-**You cannot add encryption to an existing RDS db**. What you have to do is to **create db snapshot and encrypt it**. From that snapshot you can create a copy of your DB.
+**You cannot add encryption to an existing RDS db**. What you have to do is to **create db snapshot and encrypt it**.
+From that snapshot you can create a copy of your DB.
 
 #### Custom metrics on EC2
 
-**By default** CloudWatch monitors **CPU, Disk and Network**. If you need RAM metrics for example you can **install CloudWatch agent on a EC2** which will **push data to custom CloudWatch metrics**.
+**By default** CloudWatch monitors **CPU, Disk and Network**. If you need RAM metrics for example you can **install
+CloudWatch agent on a EC2** which will **push data to custom CloudWatch metrics**.
 
 #### Troubleshooting EC2 instances in ASG
 
-First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that are in standby state**
+First thing you need to do is to **place the instance in a standby state**. When in **standby state**, the instance will
+be **detached from ELB and target group, it is still part of ASG though**. If you do not want ASG to continue the
+scaling processes you can **suspend ASG scaling processes**. Keep in mind that you are **still billed for the ec2 that
+are in standby state**
 
 #### ELB pass-through
 
-When you want to achieve pass-through on load balancers you usually want end-to-end encryption when it comes to traffic. Normally, traffic is decrypted at load-balancer level. But sometimes you need end-to-end encryption for compliance reasons. Then **you need to use either classic LB or NLB**. This is because these have some awareness on **layer 4**. This is important since **when you want end-to-end encryption you need to use TCP instead of HTTPS**.
+When you want to achieve pass-through on load balancers you usually want end-to-end encryption when it comes to traffic.
+Normally, traffic is decrypted at load-balancer level. But sometimes you need end-to-end encryption for compliance
+reasons. Then **you need to use either classic LB or NLB**. This is because these have some awareness on **layer 4**.
+This is important since **when you want end-to-end encryption you need to use TCP instead of HTTPS**.
 That means that **ALB is not capable of handling that traffic** since it only knows how to handle layer 7 stuff.
 
 #### Terminating SSL certs on the webservers
 
-This one is not that popular but still might be revelant. Normally when you setup a HTTPs listener on ALB the SSL in terminated there. We do not want that.
+This one is not that popular but still might be revelant. Normally when you setup a HTTPs listener on ALB the SSL in
+terminated there. We do not want that.
 
-What you can do is to **setup NLB with TCP listeners** and **put webservers behind that NLB**. This will make it so that the traffic is in a passthrough mode (**as descrbied above**). The certs then can be handled at the webservers.
+What you can do is to **setup NLB with TCP listeners** and **put webservers behind that NLB**. This will make it so that
+the traffic is in a passthrough mode (**as descrbied above**). The certs then can be handled at the webservers.
 
 Another approach you might take is to **use Route53 with multivalue routing**.
 
 #### Getting Source IP with ELB
 
-With **ALB/Classic** you can use **X-Forwarded-For** header. But beware that **this only works for HTTP/HTTPs**. When you are dealing with **eg. TCP** you should **enable Proxy Protocol if you are using Classic ELB (NLB uses proxy protocol by default)**. It **prepends info about clients IP before the actual data**. **Proxy Protocol cannot be added using a console. YOU HAVE TO USE CLI**
+With **ALB/Classic** you can use **X-Forwarded-For** header. But beware that **this only works for HTTP/HTTPs**. When
+you are dealing with **eg. TCP** you should **enable Proxy Protocol if you are using Classic ELB (NLB uses proxy
+protocol by default)**. It **prepends info about clients IP before the actual data**. **Proxy Protocol cannot be added
+using a console. YOU HAVE TO USE CLI**
 
-Please also **keep in mind that NLB just forwards the traffic**. So **This is not a problem with NLB**. There is a good article on how to make it HA.
+Please also **keep in mind that NLB just forwards the traffic**. So **This is not a problem with NLB**. There is a good
+article on how to make it HA.
 https://aws.amazon.com/blogs/security/how-to-add-dns-filtering-to-your-nat-instance-with-squid/
 
 #### Egress HTTP URL rules (DNS Filtering)
 
-Within the AWS there are multiple tools to control egress traffic. You have route tables, security groups, NACLs, Ingress only IGW and so on.
-But what happens when you want to control the HTTP URL traffic? Well to do so you should implement a **proxy server**. This server would be reponsible for
+Within the AWS there are multiple tools to control egress traffic. You have route tables, security groups, NACLs,
+Ingress only IGW and so on.
+But what happens when you want to control the HTTP URL traffic? Well to do so you should implement a **proxy server**.
+This server would be reponsible for
 for **dns filtering**.
 
-For the implementation, the **aws does not provide such tool out of the box**. You probably should **look into Squid (open source)**. You can **install Squid on NAT Instance** but be aware that **this solution is not HA by default**.
+For the implementation, the **aws does not provide such tool out of the box**. You probably should **look into Squid (
+open source)**. You can **install Squid on NAT Instance** but be aware that **this solution is not HA by default**.
 
 #### Accessing VPC Endpoints
 
-Remember that **VPC Endpoints can only be accessed inside the VPC**. That means that if you have a VPN connection or Direct Connect to your VPC you have to use some kind of proxy. Usually you would use **EC2 to be a proxy for your s3 requests**
+Remember that **VPC Endpoints can only be accessed inside the VPC**. That means that if you have a VPN connection or
+Direct Connect to your VPC you have to use some kind of proxy. Usually you would use **EC2 to be a proxy for your s3
+requests**
 
 #### EC2 reports unhealthy but no ASG event takes place
 
@@ -6842,21 +7700,28 @@ First of all remember that ASG determines the health of the instance using vario
 - health checks provided by ELB
 - custom health checks
 
-Now, there is a notion of **grace period on ASG**. This is the time it takes for your instances to boot up basically. **There may be point of time where health checks finish before the grace period**. This will mark your instance as unhealthy BUT **ASG will take no action until the grace period is over**.
+Now, there is a notion of **grace period on ASG**. This is the time it takes for your instances to boot up basically. **
+There may be point of time where health checks finish before the grace period**. This will mark your instance as
+unhealthy BUT **ASG will take no action until the grace period is over**.
 
 #### I lost my SSH Key, what now
 
-There are 2 ways you can tackle this problem. First is using **Systems Manager Automation** with the **AWSSupport-ResetAccess document** to create a **new SSH key**.
+There are 2 ways you can tackle this problem. First is using **Systems Manager Automation** with the **
+AWSSupport-ResetAccess document** to create a **new SSH key**.
 
-The **other one** requires you to **stop the instance**, **detach the root volume** and **modify `authorized_keys file**.
+The **other one** requires you to **stop the instance**, **detach the root volume** and **modify `authorized_keys file**
+.
 
 #### Enabling SSH with SG and NACL
 
 #### Changing instance type inside ASG
 
-**YOU CANNOT EDIT EXISTING LAUNCH CONFIGURATION**. You have to create a **new launch configuration with new instance type**. To make sure that all of your instances are using this new launch configuration **terminate old instances**. New one will get added using new launch configuration.
+**YOU CANNOT EDIT EXISTING LAUNCH CONFIGURATION**. You have to create a **new launch configuration with new instance
+type**. To make sure that all of your instances are using this new launch configuration **terminate old instances**. New
+one will get added using new launch configuration.
 
-**Instead of creating new launch configuration** you **can** also **suspend the scaling process** and **restart existing instances after specificizing new instance type**. This is also a solution but seems pretty meh tbh.
+**Instead of creating new launch configuration** you **can** also **suspend the scaling process** and **restart existing
+instances after specificizing new instance type**. This is also a solution but seems pretty meh tbh.
 
 #### ELB and Route53
 
@@ -6864,7 +7729,8 @@ You should use simple `ipv4` and alias.
 
 #### Different IAM roles per container on ECS or Fargate
 
-Since **task definitions allow you to specify IAM roles** you should edit those and setup the IAM roles correctly. The launch type does not matter in this case as **either EC2 or Fargate launch type** support that option.
+Since **task definitions allow you to specify IAM roles** you should edit those and setup the IAM roles correctly. The
+launch type does not matter in this case as **either EC2 or Fargate launch type** support that option.
 
 #### EC2 immediately going from pending to terminated on restart
 
@@ -6887,9 +7753,12 @@ There are a couple of steps but always remember about key player here: **Egress-
 
 #### Exposing your dockerized microservices through APIGW
 
-APIGW is great. It allows for caching, throttling, rate limiting etc. You would not want to implement these features all over again within your ECS / EKS cluseters. You can expose your microservices using APIGW and ALB or NLB (depending on the requirements).
+APIGW is great. It allows for caching, throttling, rate limiting etc. You would not want to implement these features all
+over again within your ECS / EKS cluseters. You can expose your microservices using APIGW and ALB or NLB (depending on
+the requirements).
 
-All you have to do is put APIGW in front of the load balancer and set the **integration as HTTP proxy**. (this is the default serverless framework method). With PROXY integration you can set endpoint URL as the ALB dns name.
+All you have to do is put APIGW in front of the load balancer and set the **integration as HTTP proxy**. (this is the
+default serverless framework method). With PROXY integration you can set endpoint URL as the ALB dns name.
 
 #### Disaster Recovery on AWS
 
@@ -6903,33 +7772,47 @@ How much data can we lose? This is the duration in-between data snapshots, backu
 
 ##### Backup & Resotre
 
-This is the **low-cost** solution. You mainly use S3 as a backup service and then you start new services using those backups. Nothing is on standy.
+This is the **low-cost** solution. You mainly use S3 as a backup service and then you start new services using those
+backups. Nothing is on standy.
 This **technique is used mainly where RTO and RPO is measured in hours**
 
 ##### Pilot Light
 
-This is **also low cost but more expensive than Backup & Restore**. This is where you have **only the most critical parts (eg. a database) of your system proviosioned somewhere**. It is running and **that part of the system WILL be scalled to support your whole load when disaster occurs**.
+This is **also low cost but more expensive than Backup & Restore**. This is where you have **only the most critical
+parts (eg. a database) of your system proviosioned somewhere**. It is running and **that part of the system WILL be
+scalled to support your whole load when disaster occurs**.
 This **technique used mainly where RTO and RPO is measured in 10s of minutes**
 
 ##### Warm Standby
 
-This is where **your whole system is in place, just SCALLED DOWN**. Recovery is pretty similar to Pilot Light where **you scale up the standy to accomodate for prod traffic**.
+This is where **your whole system is in place, just SCALLED DOWN**. Recovery is pretty similar to Pilot Light where **
+you scale up the standy to accomodate for prod traffic**.
 
 ##### Multi-Site
 
-This is the **active-active approach (the most expensive one)**. You basically **have 2 prod envs active at all times**. With that you usually have **R53 in front, you can quickly switch the traffic**.
+This is the **active-active approach (the most expensive one)**. You basically **have 2 prod envs active at all times**.
+With that you usually have **R53 in front, you can quickly switch the traffic**.
 
 ### Other
 
-- **blue / green deployment** is where you switch between one version. Used to move traffic between 2 versions of our stack (blue and green). You can freely switch between them. This is **usually conducted by Route53 weighted policy (1 and 0)**
+- **blue / green deployment** is where you switch between one version. Used to move traffic between 2 versions of our
+  stack (blue and green). You can freely switch between them. This is **usually conducted by Route53 weighted policy (1
+  and 0)**
 
 #### Proxy
 
-You can think of a `man-in-the-middle` when someone is talking about proxies. Sometimes `proxy` will speak on your behalf, sometimes it will just handle the initial connection. Proxy types:
+You can think of a `man-in-the-middle` when someone is talking about proxies. Sometimes `proxy` will speak on your
+behalf, sometimes it will just handle the initial connection. Proxy types:
 
-- **Half Proxy**: this type handles the initial setup. It initializes the connection to the backend, proxy passes that to the client. After that it just forwards the traffic, it may do some NAT work but nothing more sophisticated going on here. It's usually useful for discovery purposes, like checking at the connection state where to route the client, then letting the requests pass.
+- **Half Proxy**: this type handles the initial setup. It initializes the connection to the backend, proxy passes that
+  to the client. After that it just forwards the traffic, it may do some NAT work but nothing more sophisticated going
+  on here. It's usually useful for discovery purposes, like checking at the connection state where to route the client,
+  then letting the requests pass.
 
-- **Full Proxy**: this type is the `mediator` between the backend and the client. It establishes a connection with a backend and any client requests stop on the proxy, they do not go directly to the backend (or through proxy to the backend). This pattern usually means that the `proxy` is doing some sophisticated work. This is where **ALB and NLB** are. They are full proxies.
+- **Full Proxy**: this type is the `mediator` between the backend and the client. It establishes a connection with a
+  backend and any client requests stop on the proxy, they do not go directly to the backend (or through proxy to the
+  backend). This pattern usually means that the `proxy` is doing some sophisticated work. This is where **ALB and NLB**
+  are. They are full proxies.
 
 #### Terminology
 
@@ -6939,15 +7822,18 @@ You can think of a `man-in-the-middle` when someone is talking about proxies. So
 
 #### AWS DDoS Resiliency
 
-First of all you should think about **minimizing the blast area**. This has to do with having most of you infrastructe within a private subnets.
+First of all you should think about **minimizing the blast area**. This has to do with having most of you infrastructe
+within a private subnets.
 
-Next, your architecture should be able to **absorb the DDOS attack**. As weird as this might seem, with scallable architecture, you will have more time to think and adjust during the attack.
+Next, your architecture should be able to **absorb the DDOS attack**. As weird as this might seem, with scallable
+architecture, you will have more time to think and adjust during the attack.
 
-- **Autoscalling and ELB**
+- **Autoscaling and ELB**
 - **Utilize CloudFront**
 - use the **Enhanced Networking** when using EC2 instances
 
-Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do that. **R53 with private DNS records**, **CF with OAI and Georestrictions** and finally **WAF for filtering traffic**.
+Next, think about **safeguarding exposed & hard to scale resources**. There are a few tools which enable you to do
+that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and finally **WAF for filtering traffic**.
 
 ## re:Invent 2021 watched videos
 
@@ -6979,12 +7865,16 @@ Next, think about **safeguarding exposed & hard to scale resources**. There are 
 
 - "Data modeling with Amazon DynamoDB" -> Worth but for beginners
 
-- "Building next-gen applications with event-driven architectures" -> Refresher on couple of services, Taco Bell architecture showcase. Meh
+- "Building next-gen applications with event-driven architectures" -> Refresher on couple of services, Taco Bell
+  architecture showcase. Meh
 
-- "Using events and workflows to build distributed applications" -> Shows how to use Step Functions, nothing special. Meh
+- "Using events and workflows to build distributed applications" -> Shows how to use Step Functions, nothing special.
+  Meh
 
-- "Building modern cloud applications? Think integration" -> Intersection between AWS services and integration patterns. Kind of worth
+- "Building modern cloud applications? Think integration" -> Intersection between AWS services and integration patterns.
+  Kind of worth
 
-- "Application integration patterns for microservices" -> A lot of examples with SQS and SNS. Talks about storage-first pattern (without naming it explicitly). Worth
+- "Application integration patterns for microservices" -> A lot of examples with SQS and SNS. Talks about storage-first
+  pattern (without naming it explicitly). Worth
 
 - "Deep dive on Amazon S3" -> Good talk. Refresher on many AWS S3 features. Worth

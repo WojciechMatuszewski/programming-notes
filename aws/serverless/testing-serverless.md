@@ -2,13 +2,13 @@
 
 ## Introduction
 
-Testing. One of my favorite things to do actually. The more software I write, the more I love writing tests. Features are the things that put food on our tables, but the tests... the tests are the things that keep everything in check, in order.
+Testing. One of my favorite things to do. The more software I write, the more I love writing tests. Features are the things that put food on our tables, but the tests are the things that keep everything in check and in order.
 
 Many of you are probably familiar with the notion of _unit tests_. These are small, **fast**, tests that check if a given _unit_, be it a function or a _Component_, works correctly.
 
-When it comes to serverless, we still have _unit tests_, but they play lesser role in overall testing story. With us using managed services more and more, it's the _integration_ and _end to end_ tests that matter the most. 100% of coverage on your lambda handler is almost worth nothing if it cannot get the data from _DynamoDB_ because of missing IAM permissions.
+When it comes to serverless, we still have _unit tests_, but they play a lesser role in the overall testing story. With us using managed services more and more, it's the _integration_ and _end to end_ tests that matter the most. 100% of coverage on your lambda handler is almost worth nothing if it cannot get the data from _DynamoDB_ because of missing IAM permissions.
 
-This file contains all the knowledge I have about testing serverless apps. We are going to start at the most basic level, I'm talking a simple API with _API Gateway_ and _DynamoDB_, and end at _SQS_ and other batch processing services.
+This file contains all the knowledge I have about testing serverless apps. We will start at the most basic level. I'm talking a simple API with _API Gateway_ and _DynamoDB_, and end at _SQS_ and other batch processing services.
 
 ## Testing simple APIS
 
@@ -18,7 +18,7 @@ This is where everything makes sense. We have our simple architecture with _API 
 
 **This section assumes that you have nothing (PR scope) deployed to the cloud**.
 
-Even though we are writing _unit tests_ here, I would strongly advice you **against mocking anything**. If you want to test the _integration_ with the _DynamoDB_ you can do that in the _integration test_.
+Even though we are writing _unit tests_ here, I strongly advise you **against** mocking anything\*\*. If you want to test the _integration_ with _DynamoDB_, you can do that in the _integration test_.
 
 Let's say your handler looks like this
 
@@ -780,9 +780,12 @@ test(
 );
 ```
 
-Sadly, the `aws-testing-library` does not have a matcher for a specific log group, so I had to write my own code for that.
-Otherwise it's almost exactly the same as previous tests.
+Sadly, the `aws-testing-library` does not have a matcher for a specific log group, so I had to write my code for that.
+Otherwise, it's almost the same as previous tests.
 
-## Random notes
+## Using the CDK provider framework
 
-- Look for ways to split your lambdas. Use asynchronous communication whenever possible (_DynamoDB streams_, _SQS_ etc)
+You can incorporate your E2E tests directly into the infrastructure and let CloudFormation handle the case when the tests fail – roll back the changes.
+As good as it might sound, the approach is not without drawbacks. Instead of having the test logs visible in your CI environment, we will have to use the CloudWatch console to view them – it might be a significant pain point since the CloudWatch console is not exactly lovely to work with.
+
+If you want to learn more about utilizing the provider framework for testing, consider [giving this talk a watch](https://youtu.be/s8tO-ymVQPg?t=8515) then, consult [this repository](https://github.com/WojciechMatuszewski/cdk-async-testing-example).
