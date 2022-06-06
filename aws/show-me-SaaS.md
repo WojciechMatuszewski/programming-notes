@@ -117,3 +117,5 @@
 - Gathering metrics in one place is important from an operational standpoint. This is where the notion of **single pane of glass** comes from – having all your easily accessible in one place.
 
   - One of the **key metrics** is the **cost per tenant**. You need to make sure that you are making some money.
+
+- Metrics are the lifeblood of big SaaS companies. When you are starting, you have to push to make metrics a high priority of your business. If you ignore this aspect, you might have problems growing your application later.
