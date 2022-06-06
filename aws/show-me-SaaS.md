@@ -97,3 +97,23 @@
 - In AWS land, one might use **dynamic policy generation** scoped to a given tenant. Use either APIGW authorizer (maybe even with an API key) or in-lambda assume role calls.
 
   - You might need to deploy the compute with a broader scope that allows scoping down to a specific tenant.
+
+## Episode 7 – SaaS metrics: Shaping your SaaS architecture with data
+
+- We should inject the aspect of tenancy in all log statements.
+
+- Each application should be tracking product metrics and the developer metrics. Combining those two will give you a holistic view of your application.
+
+- Metrics on a micro-service level are pretty important. It is vital to understand how tenants use a given micro-service.
+
+  - Customers communicate by feature usage. If a given feature is not used, it is a strong signal that you should focus on something else.
+
+  - > How many features are actually in use?
+
+    That is impossible to know if you are not instrumenting (at a particular scale).
+
+- When it comes to observability and instrumentation, tooling is critical. You have to have the tooling to drill into details for a specific tenant.
+
+- Gathering metrics in one place is important from an operational standpoint. This is where the notion of **single pane of glass** comes from – having all your easily accessible in one place.
+
+  - One of the **key metrics** is the **cost per tenant**. You need to make sure that you are making some money.
