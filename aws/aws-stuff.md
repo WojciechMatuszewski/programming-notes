@@ -1792,13 +1792,12 @@ much access to the underlying object the bucket owner has.
 
 ##### Costs
 
-- you can really get burned by costs if you are not careful
+- you can really get **burned by costs** if you are not careful, especially if you perform a **a lot of PUT operations** – they are quite expensive!
 
 - **the worst thing you can do is to use SSE-KMS with per-object keys**. Remember that **each individual KMS key costs
   money!**
 
-- the **best thing you can do is to use SSE-S3**. The problem is here is that you are **trading customizability (you
-  cannot control the key) with costs**
+- the **best thing you can do is to use SSE-S3**. The problem is here is that you are **trading customizability (you cannot control the key) with costs**
 
 - the **happy medium between costs and control is the SSE-KMS with BUCKET keys**.
 
