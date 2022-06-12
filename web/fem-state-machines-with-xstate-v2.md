@@ -34,4 +34,56 @@
 
 - The order of action execution is NOT surprising – a huge plus!
 
-<!-- Finished on actions solution -->
+- The ability to `rise` an event as a globally exported function is a plus.
+
+- During the solution walkthrough, I've noticed that David changed the `target` from `loading` to `.loading`. I understand the underlying purpose of the change, but it seems weird to me. Luckily this syntax is well documented [here](https://xstate.js.org/docs/guides/ids.html#relative-targets).
+
+## Context
+
+- The `context` property is a container for global data that one might need to access in the state machine.
+
+- You can partially update the `context`. The API is quite lovely!
+
+- You can think of the `context` as part of the state machine state. At least, that is the usage the `context` exercise presents.
+
+### Exercise
+
+- I like the `assign` API, but I can also see how, in large machines, the globally available `context` can get unwieldy — something to keep an eye for in terms of complexity.
+
+## Guarded Transitions
+
+- By default, if an event occurs and a given state has a transition to the next state the event points to, the transition will occur.
+
+  - That is fine unless you want to ensure that you can only transition from a given state when a given condition is met – this is where the _guarded transition_ help.
+
+### Exercise
+
+- When David started to explain the difference between the `guards` and the conditionals we could, in theory, use in the `assign` statements, the concept of guards clicked with me.
+
+  - We COULD define conditionals inside the `assign` statements, but then we would be lying about the fact that the state of our machine changes.
+
+  - The guards prevent the state from changing. The state machine will NOT emit a transition if the guard statement returns false.
+
+  - That is not the case. If we used conditionals inside the `assign` statements, the state machine would emit the transition event.
+
+## Compound States
+
+- _Compound States_ is a grouping of states within another state.
+
+  - You can think of two "root" states of _sleeping_ and _awake_ and then multiple groups of states that live "under" those two "root" states.
+
+### Exercise
+
+- With multiple levels of nesting, it can be pretty hard to have a holistic view of the state machine. This is where visualization tools come in handy.
+
+- The more you nest, the more complex the state machine becomes. You might want to consider splitting state machines into multiple smaller ones, then merging them into one "master" state machine.
+
+- As is the theme with _xstate_, there are multiple ways to get the current state of the machine. You can use `tags`, `can`, or `matches`—an interesting choice of an API.
+
+## Overall thoughts
+
+- So many ways to do the same thing!
+
+  - I understand that the current API shape is the result of many incremental changes, but I would greatly appreciate it if there were not three ways to define a state or an action.
+
+- The _xstate_ is very powerful and makes you feel like you are writing a bug-free code. Can there be bugs? Sure! But I feel like by using state machines, there is a lesser chance of introducing one.
