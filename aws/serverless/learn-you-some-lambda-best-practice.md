@@ -491,6 +491,28 @@ When, during each invocation, you pull that idempotency key, check if it is ther
 
 That is the basic idea. But as we all know, things are usually more complicated than they initially seem. Ensuring your Lambda function is idempotent is no exception. Let us look at some of the edge cases next.
 
+### Data accumulation
+
+Depending on the number of incoming requests, saving an _idempotency token_ for each request could be costly. You first have to incur the costs of retrieving and writing it into the database, then the storage cost.
+
+We cannot do anything about the reading and writing part. These costs are "fixed". But, we can do something about the storage costs – **have some way of deleting old _idempotency tokens_**.
+
+A **common approach** I saw was the **DynamoDB TTL feature**. It works great, but you must remember that **DynamoDB TTL cannot be used for time-sensitive use-cases**. The **documentation mentions that the item WILL be deleted in a span of 48hrs and NOT when a timestamp is considered "old"**.
+
+To make sure you have your cake and eat it too, **perform a conditional GET on the TTL attribute**. This way, you will never fetch stale _idempotency tokens_ while also reaping the benefit of the auto-cleanup capabilities of DynamoDB.
+
+### Same request, different action
+
+Consider a case where you want to buy a pair of t-shirts. You forgot to increment the count in the shopping cart and bought only one. You quickly make another request to buy a second. The t-shirt is the same, so you performed the same request from the backend's perspective (we do not account for any time-related properties here).
+
+If this case is not considered, the idempotency mechanism might kick in, resulting in a noop request and the response from the previous request returned to you. That would be pretty bad – you would have a false sense that you have ordered the right amount of t-shirts.
+
+That is why you **should NOT base your idempotency key solely on the incoming data** or you should **invalidate a given idempotency key after a short time**. If you were to ask me for a preference, I would say the first option is the best one. The client would send a **_client token_ along with the request**. That **_client token_ could then be used as a "seed" for the _idempotency token_**.
+
+This way, when the client sends the same payload but with a different _client token_, we can treat it as a separate request, even if it happens right after we have created and persisted the _idempotency token_ for the first request.
+
+### TODO: Locking
+
 ### Additional reading
 
 - [AWS Compute article](https://aws.amazon.com/blogs/compute/handling-lambda-functions-idempotency-with-aws-lambda-powertools/)
