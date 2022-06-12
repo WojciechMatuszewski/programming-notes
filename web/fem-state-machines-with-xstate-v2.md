@@ -80,6 +80,32 @@
 
 - As is the theme with _xstate_, there are multiple ways to get the current state of the machine. You can use `tags`, `can`, or `matches`—an interesting choice of an API.
 
+## Parallel States
+
+- Parallel states allow you to "split" your state machine into multiple working features. For example, David presents two "regions" in our state machine – one that controls the player and the other that controls the volume.
+
+- The feature of a parallel state is similar to having two separate state machines. Sometimes it does not make sense to split a state machine into two state machines – that might lead to unnecessary complexity.
+
+### Exercise
+
+- More nesting!
+
+- Great for organizing different states.
+
+## Final States
+
+- Somewhere where the machine ends. There is no more "work" to do.
+
+- There is a difference between the "root" machine final state and the compound state final state.
+
+- Adding an explicit _final_ state is, in my mind, a good practice. It signals that there is no more work to do for a given "event path".
+
+### Exercise
+
+- I have to admit that the state machine is getting quite complex.
+
+- I wonder how much code we would have to write to have the same functionality as we currently have, but without using the state machine. Probably less, but we would risk having logic-related bugs in our code.
+
 ## Overall thoughts
 
 - So many ways to do the same thing!
