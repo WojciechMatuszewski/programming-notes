@@ -513,6 +513,9 @@ This way, when the client sends the same payload but with a different _client to
 
 ### TODO: Locking
 
+### TODO: Idempotency when a service fails
+
 ### Additional reading
 
 - [AWS Compute article](https://aws.amazon.com/blogs/compute/handling-lambda-functions-idempotency-with-aws-lambda-powertools/)
+- [This article](https://adrianhesketh.com/2020/11/27/idempotency-and-once-only-processing-in-lambda-part-2)
