@@ -511,11 +511,36 @@ That is why you **should NOT base your idempotency key solely on the incoming da
 
 This way, when the client sends the same payload but with a different _client token_, we can treat it as a separate request, even if it happens right after we have created and persisted the _idempotency token_ for the first request.
 
-### TODO: Locking
+### Locking
 
-### TODO: Idempotency when a service fails
+Imagine a situation where you invoke the same AWS Lambda function with the same parameters quickly. So quickly that the first invocation did not manage to finish by the time you performed the second one.
+
+From the idempotency standpoint, the requests are the same, so ideally, we would process only one request and then return with a response immediately for the second. But that is impossible since we might not have the result from the first invocation when the second one is inbound.
+
+As such, we have a problem – we can process the second request independently from the first one, causing the downstream to process the same payload twice, or **we can return an error from the second request, allowing the first one to finish**.
+
+Since, in this case, correctness is more important than speed, we will most likely pick the latter. And to know that some other request is in-flight, we could **leverage locking mechanism on some attribute**. In the DynamoDBs case, that would mean **first saving a record indicating that the work for a given _idempotency token_ is in progress**, then **releasing the lock when the work is done**.
+
+[AWS Powertools for Python](https://awslabs.github.io/aws-lambda-powertools-python/latest/utilities/idempotency/#handling-concurrent-executions-with-the-same-payload) and [AWS Powertools for Java](https://awslabs.github.io/aws-lambda-powertools-java/utilities/idempotency/#handling-concurrent-executions-with-the-same-payload) use the approach I've described above. What is great about it is that you can safely retry the operation when the system raises the "operation in progress elsewhere" exception.
+
+### Idempotency when a service fails
+
+Depending on the invocation method (either synchronous or asynchronous), your Lambda function might get executed multiple times. By default, for **asynchronous events** if the Lambda function fails, the service will **retry two times** before giving up. For **stream-based invocations**, the amount of retries **depends on the data expiry or your configuration**.
+
+Either way, you should keep the characteristics I've listed above in mind while adding idempotency to your service. Do not be surprised when your AWS Lambda is re-executed.
+
+### Idempotency and errors
+
+When using the locking technique, it is **crucial to make sure that we do not have orphaned locks**. If we do, we risk denying the customer of our API to perform a given request (the subsequent request will fail at the "check if I can acquire a lock" step).
+
+To ensure we do not have orphaned locks, we **have to delete any lock-related entries when an unexcepted error happens within the code that should be idempotent**. You can do this in multiple ways – by an asynchronous process that runs on a schedule or directly in the AWS Lambda function. What matters is that you keep this edge case in mind.
+
+Remember, **the more code you have in your "this should be idempotent" function, the bigger the chance for an exception or a bug**. That is why **you should keep your idempotent operations very granular** – like reaching out to 3rd party API or saving to a database. Do **NOT include validation or other compute as part of the idempotent operation flow**.
+
+The last thing you want is for 3rd party API call to succeed, only for other instructions to fail, triggering the deletion of the lock.
 
 ### Additional reading
 
 - [AWS Compute article](https://aws.amazon.com/blogs/compute/handling-lambda-functions-idempotency-with-aws-lambda-powertools/)
 - [This article](https://adrianhesketh.com/2020/11/27/idempotency-and-once-only-processing-in-lambda-part-2)
+- [This GitHub issue](https://github.com/awslabs/aws-lambda-powertools-roadmap/issues/28)
