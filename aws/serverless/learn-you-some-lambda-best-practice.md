@@ -533,7 +533,7 @@ Either way, you should keep the characteristics I've listed above in mind while 
 
 When using the locking technique, it is **crucial to make sure that we do not have orphaned locks**. If we do, we risk denying the customer of our API to perform a given request (the subsequent request will fail at the "check if I can acquire a lock" step).
 
-To ensure we do not have orphaned locks, we **have to delete any lock-related entries when an unexcepted error happens within the code that should be idempotent**. You can do this in multiple ways – by an asynchronous process that runs on a schedule or directly in the AWS Lambda function. What matters is that you keep this edge case in mind.
+To ensure we do not have orphaned locks, we **have to delete any lock-related entries when an unexpected error happens within the code that should be idempotent**. You can do this in multiple ways – by an asynchronous process that runs on a schedule or directly in the AWS Lambda function. What matters is that you keep this edge case in mind.
 
 Remember, **the more code you have in your "this should be idempotent" function, the bigger the chance for an exception or a bug**. That is why **you should keep your idempotent operations very granular** – like reaching out to 3rd party API or saving to a database. Do **NOT include validation or other compute as part of the idempotent operation flow**.
 
