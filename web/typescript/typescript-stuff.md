@@ -2110,3 +2110,69 @@ With that function declaration, every use-case should be fulfilled.
 
 As I mentioned, this _workaround_ is leveraging the fact that if a _type parameter_ is used in a context of conditional type, it will be evaluated lazily
 as in the inference will not occur.
+
+## Type branding
+
+Imagine you have a function that converts EURO to USD. Here is how one might write the type declaration for this function.
+
+```ts
+declare function euroToUSD(euro: number): number;
+```
+
+You most likely want to ensure that the `euro` parameter is not a negative number. If it is, we could throw an error (or gracefully convert it to a positive number, which might make it impossible to find potential bugs in our code).
+
+```ts
+function euroToUSD(euro: number): number {
+  if (euro < 0) {
+    throw new Error("Cannot be a negative number");
+  }
+
+  // Logic...
+}
+```
+
+From the developer ergonomics perspective, would it not be nice to have TypeScript do some of the work of checking whether something is a positive number for us? Enter **type branding**. The concept is similar to Go type aliases, where you can create more specific versions of a type derived from the base type.
+
+```go
+type MyCustomIntType = int
+```
+
+The `MyCustomIntType` **is NOT** the same as the `number` type. They are different, even though the base type is the same. The compiler will not let you pass a regular `int` type where the `MyCustomIntType` is required. Sadly, TypeScript does not have a native way to represent "different" types that derive from the same base type.
+
+```ts
+type MyCustomNumber = number;
+let foo: MyCustomNumber = 3;
+let bar: number = 3;
+
+foo = bar; // OK, but it should throw an error
+```
+
+But, do not lose hope! We can still make it work. Almost as if we had the same type aliases Go has – by **branding the derivative type using a unique identifier**.
+
+```ts
+type MyCustomNumber = number & { __brand: "MyCustomNumber" };
+let foo = 3 as MyCustomNumber;
+let bar: number = 3;
+
+foo = bar; // Error!
+```
+
+Of course, the ergonomics of the type branding are not ideal. You have to cast the underlying value to a given type. But, with some casting, we now have quasi Go (and possibly other languages) type aliases working.
+
+Now, we can go back to our `euroToUSD` function definition and apply the type branding technique we have just learned about.
+
+```ts
+type Euro = number & { __brand: "Euro" };
+declare function euroToUSD(euro: Euro): number;
+```
+
+For ultimate type safety, you can scope the returned value as well!
+
+```ts
+type Euro = number & { __brand: "Euro" };
+type USD = number & { __brand: "USD" };
+
+declare function euroToUSD(euro: Euro): USD;
+```
+
+Remember that you will have to cast the returned value to the `USD` type. Otherwise TypeScript will yell at you that it is impossible to convert a `number` to `USD`,
