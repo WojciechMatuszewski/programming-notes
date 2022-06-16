@@ -70,3 +70,15 @@ _"Big ball of mud"_ systems are systems that lack architectural cohesiveness and
 Thinking and building systems with proper architectural decisions are expensive and time-consuming. Time and money forces are often much more powerful to the decision-makers.
 
 All too often the mantra when creating software goes like this: _"You need to deliver quality software on time and under budget. Therefore, focus first on features and functionality, then on architecture and performance"_. Of course, this approach **leads to the big ball of mud**.
+
+## Premature pessimisation
+
+We often talk about the concept of _premature opitmization_ –there is no point in optimizing the code unless you need to optimize it. This sounds good until your site loads after 30 seconds or a call to a database take a minute to finish.
+
+If that happened to your codebase, you witnessed the [**premature pessimization**](https://stackoverflow.com/questions/15875252/premature-optimization-and-premature-pessimization-related-to-c-coding-standar) with your own eyes – people quote the idea of _premature optimization_ as means of writing code that is not performing well (it does not have to perform great).
+
+Where you should focus on are the interfaces and the underlying data structures. If you have those right, you will likely never be in a situation where your system is unusable. With the correct and well-defined interfaces and data structures, you can optimize all you want later on.
+
+Of course, that does not mean we should swing the pendulum to the other side and optimize everything we possibly could. If we were to do that, we would not get anything done.
+
+Focus on the interfaces and the data structures. You will not regret it.
