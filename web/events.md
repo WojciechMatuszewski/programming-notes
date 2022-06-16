@@ -103,3 +103,22 @@ With the object passed as a third parameter, you can configure
 `once` means that the **event listener will automatically remove itself after the first time it fires**. This is soo useful, you do not have to keep the reference anymore.
 
 `passive` is for performance gains. Granted these are probably insignificant, but, nevertheless you can specify those. With `passive` you tell the browser that you will not use `event.preventDefault`, in return you get those aforementioned performance optimizations.
+
+## Canceling the event listeners
+
+When you first encounter the `AbortController` API, you will most likely read about its ability to cancel network requests. And this is great! It allows us to eliminate the "flickering state" issues when fetching in `useEffect` with a dependency array.
+
+But **the `AbortController` can also be used with event listeners!** (and even in your custom code, but that is beyond this entry). By passing the `signal` to the `addEventListeners` you can later "detach" or "remove" the underlying listener whenever you call `.abort`.
+
+```js
+const controller = new AbortController();
+const { signal } = controller;
+
+window.addEventListener("resize", () => fire(), { signal });
+
+controller.abort(); // remove the listener
+```
+
+Notice that I've created a new instance of the listener in the `addEventListener` callback. **With the `AbortController` API, you do not have to worry about the referential equality of the callbacks!**. Pretty neat if you ask me.
+
+- You can read more about many other `AbortController` use cases [here](https://whistlr.info/2022/abortcontroller-is-your-friend/).
