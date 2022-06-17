@@ -2666,15 +2666,23 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - Added to support _Global tables_ in _CloudFormation_
 
-- If you **even think that you will need to support _Global tables_ you should use this construct**
+- If you **even think that you will need to support _Global tables_ you should use the `AWS::DynamoDB::GlobalTable` resource**
 
   - The main reason being is that the `DynamoDB::Table` APIs do not propagate all properties to other regions (
     like `PITR` configuration)
+
   - You might end up in this awkward place where you need to turn some settings on the replica manually
 
 - **Beware** that the **_Global Table_ CDK construct** is **NOT using this resource (they are using custom resources
   instead)**.
+
   - This means that you might end up updating settings on the replica manually
+
+- It is **possible to migrate from `DynamoDB::Table` to `DynamoDB::GlobalTable`** without data loss.
+
+  - Done by **importing existing resources into your CloudFormation stack**
+
+  - You can read more about the migration [here](https://medium.com/jamf-engineering/update-an-existing-dynamodb-table-resource-to-be-a-globaltable-resource-be64fab24b78).
 
 #### Encryption
 
