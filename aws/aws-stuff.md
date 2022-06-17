@@ -164,6 +164,8 @@
 
 - **batch size** and **batch window** settings are taken into consideration **after the filtering**
 
+  - _batch size_ – how many messages till I invoke the target, _batch window_ – how long to wait till invoking the target OR for the _batch size_ to fill.
+
 - remember that **with SQS** if a **message does not match your filter it will be deleted from the queue**
 
   - you did not consume the message so it is deleted
