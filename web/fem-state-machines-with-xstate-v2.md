@@ -106,6 +106,38 @@
 
 - I wonder how much code we would have to write to have the same functionality as we currently have, but without using the state machine. Probably less, but we would risk having logic-related bugs in our code.
 
+## History states
+
+- A way to "stash" the last state the machine was in when transitioning between compound states.
+
+- The history states can be nested deeply. A given history state can point to a state that itself is a compound state with a history state.
+
+### Exercise
+
+- I'm very much a fan of the exercise. The example was concrete and very relatable. We needed to implement a feature where the player preserves its state when the user switches songs.
+
+  - You would not want to instantly play a new song when the user had paused the previous one.
+
+## Actor model
+
+- Actor is an entity that can receive and send events to other actors to whom he has reference to.
+
+  - You can also spawn other actors with an actor.
+
+  - Think of actors as humans. You can send an event to someone to who you have the telephone number to.
+
+### Exercise
+
+- David skipped the spawning part, which I'm grateful for as there is a lot to take in.
+
+  - Excellent example of having an async or other actions invoked.
+
+## Testing
+
+- Since most of the functions of the state machine are pure, they should be easy to test.
+
+- I find the **`@xstate/test` fascinating library**. It should help with testing complex widgets and UIs. You represent the test cases as a state machine, then the library takes over and traverses the state machine in all possible ways.
+
 ## Overall thoughts
 
 - So many ways to do the same thing!
