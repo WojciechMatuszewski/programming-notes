@@ -5973,6 +5973,12 @@ is **always open**, it just waits for ANY message to be visible.
 
 - there are **managed** and **stadard (custom)** rules. The managed ones are for _schema discovery_ and _event archive_.
 
+- you can have **up to FIVE targets per a given rule**.
+
+  - if you **need more targets**, **consider targetting SNS and using fan-out from there**
+
+  - more reading [here](https://www.readysetcloud.io/blog/allen.helton/how-to-avoid-serverless-limits/).
+
 #### Resiliency
 
 - you can use **DQL per rule**. Please note that **this DLQ is only for the EventBridge communication with the
