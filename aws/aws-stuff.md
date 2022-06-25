@@ -1429,7 +1429,7 @@ An example for s3-prefix (folder)
 
 - Data is spread between multiple devices and facilities
 
-- There is **unlimited** storage. Maximum file-size is 5 TB though.
+- There is **unlimited** storage **with a maximum file size of 5 TB**
 
 - **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket
   in (unless you specified CRR**.
