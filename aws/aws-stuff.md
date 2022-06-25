@@ -7518,6 +7518,18 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 - you can also track **scheduled change events** like **RDS maintenance** using **CloudWatch events**
 
+#### Health API
+
+- you can hit a special API endpoint to check whether any AWS-related incidents might affect your AWS account
+
+- only **available to business and enterprise support customers** — a weird requirement.
+
+  - if incorporated into a CI/CD pipeline, you could make sure that you deploy when services are healthy
+
+  - it might be cumbersome to relay on an API call for your deployment (the API call might fail), but I think the benefit outweighs the risk in this particular case
+
+- read more about the Health API [here](https://aws.amazon.com/blogs/devops/build-health-aware-ci-cd-pipelines/)
+
 ### AWS WorkLink
 
 - **AWS Managed VPN app but for mobile**
