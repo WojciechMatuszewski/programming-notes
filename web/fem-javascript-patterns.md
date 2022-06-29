@@ -212,4 +212,99 @@ My advice is: do not use HOC components unless you need to.
 
 > From a TypeScript perspective, HOC components are perfect for training your TypeScript skills. It is not easy to correctly add typings for a HOC.
 
-<!-- Finished part 4 29:00 -->
+### Render props pattern
+
+The way HOC passes down properties to the components is implicit and might lead to collisions if multiple HOC components are applied to a given component. To solve this problem, we use the _render props_ pattern.
+
+```js
+function Sizer({ children }) {
+  return children({ height: 400, width: 300 });
+}
+
+// Usage
+function Comp() {
+  return (
+    <Sizer>
+      {({ height, width }) => {
+        return <div style={{ width, height }} />;
+      }}
+    </Sizer>
+  );
+}
+```
+
+You can pass the properties using the `children` prop (as in the last snippet) or have specific `renderX` named properties. It is up to you.
+
+Overall, the _render props_ pattern is one of my favorite. Sometimes, you might see people saying developers could replace his pattern with hooks. I cannot disagree more – the _render props_ pattern provides much more than composition. It allows for a concept called "slots", where certain pieces of JSX are rendered in certain places inside a given component.
+
+```js
+function Layout({ renderBody, renderAside, renderFooter }) {
+  return (
+    <main>
+      {renderAside()}
+      {renderBody()}
+      {renderFooter()}
+    </main>
+  );
+}
+```
+
+### Hooks pattern
+
+Hooks allow you to express multiple lifecycle hooks in a singular function. So they can completely replace the _container_ component from the container/presentational component pattern.
+
+Make sure you keep the "rules of hooks" in mind.
+
+### Provider pattern
+
+If you ever need to share values (they might be "reactive") with multiple components across your app (the components have to be in a parent-child hierarchy), the `React.Context` API is the thing you will most likely use.
+
+```js
+const StateContext = React.createContext(null);
+const StateProvider = ({ children }) => {
+  const [state, setState] = React.useState(1);
+
+  return (
+    <StateContext.Provider value={state}>{children}</StateContext.Provider>
+  );
+};
+
+const Comp = () => {
+  const state = React.useContext(StateContext);
+  // logic ...
+};
+```
+
+Many articles discuss the context API and how to use it effectively. The most important thing you must remember is that the context API allows you to stop drilling props through multiple child components, as would most likely be the case with the "container" component.
+
+### Compound pattern
+
+The compound components pattern showcases the power of the composition and the `context` API. You have one "root" component that manages the state and the children components that read from that state. The combination of the "root" and the children's components compounds into a given UI behavior.
+
+```js
+import React from "react";
+import { FlyOut } from "./FlyOut";
+
+export default function SearchInput() {
+  return (
+    <FlyOut>
+      <FlyOut.Input placeholder="Enter an address, city, or ZIP code" />
+      <FlyOut.List>
+        <FlyOut.ListItem value="San Francisco, CA">
+          San Francisco, CA
+        </FlyOut.ListItem>
+        <FlyOut.ListItem value="Seattle, WA">Seattle, WA</FlyOut.ListItem>
+        <FlyOut.ListItem value="Austin, TX">Austin, TX</FlyOut.ListItem>
+        <FlyOut.ListItem value="Miami, FL">Miami, FL</FlyOut.ListItem>
+        <FlyOut.ListItem value="Boulder, CO">Boulder, CO</FlyOut.ListItem>
+      </FlyOut.List>
+    </FlyOut>
+  );
+}
+```
+
+In this case, the `FlyOut` is the "root". The rest of the components are the child components grouped together. The grouping is a convention, you do not have to group components this way, but such grouping makes it very explicit that these should be used together.
+
+**Notice that you can change the order in which the children of the `Flyout` render in any way you desire**. This is the **most significant benefit over static props**. My rule of thumb is the following: **always favor compound components over static props (especially arrays)**.
+
+<!-- Finished part 5 33:28 -->
