@@ -307,4 +307,78 @@ In this case, the `FlyOut` is the "root". The rest of the components are the chi
 
 **Notice that you can change the order in which the children of the `Flyout` render in any way you desire**. This is the **most significant benefit over static props**. My rule of thumb is the following: **always favor compound components over static props (especially arrays)**.
 
-<!-- Finished part 5 33:28 -->
+## Performance patterns
+
+### Bundling, compiling, minifying, tree-shaking
+
+All of these are pretty standard nowadays. One interesting point is that SWC and esbuild are bundlers, minifies, and compilers in one. If you remember webpack and its configuration, it used to be the case that you had to configure tools for each of these functions separately.
+
+### Static Import
+
+This is your traditional way of importing modules via the `import foo from 'bar'` statements. The bundler might or might not _tree-shake_ the dead code (the effectiveness varies).
+
+### Dynamic Import
+
+This is the pattern where you utilize the `import('...')` syntax. Using the dynamic import syntax, you signal to the bundler that you **do not** want to include the code from that module into the bundle initially. Instead, a separate bundle is created.
+
+Remember that the return value is a `Promise` that you need to resolve to get the module's contents. In React, you would most likely use `Suspense` here.
+
+### Import on Visibility
+
+The _dynamic import_ pattern allows you to control **when** you push the bundle to the user. You might do it when the user interacts with a given element or scrolls to a specific element on the page.
+
+A word of advice: use a library to handle the `IntersectionObserver` API. It is easy to make mistakes and not detach the observer when the element changes, leading to memory leaks.
+
+### Route-base Splitting
+
+Instead of having a single big bundle that encompasses the code for the whole application, you might want to split the code on a per-route basis.
+
+An application view is a good separation point for code. Sometimes we only use specific libraries on a given page, so there is no need to include that code on every page.
+
+Use the _dynamic import_ pattern alongside a router library.
+
+### Browser hints
+
+You can add various keywords and attributes to the `script` tag to control how the browser loads the resource. One of the more popular ones is `prefetch` which tells the browser to `prefetch` the resource if there is a bandwidth for it, and `preload`, which is a more aggressive version of `prefetch` where the browser will always `preload` the resource.
+
+Start on [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Prefetch) and go from there.
+
+## Rendering patterns
+
+### Client-Side Rendering
+
+All the rendering happens in the browser. Until the JavaScript is loaded, you only see the "app shell", which in most cases is not meaningful (from my experience, a "loading" view).
+
+Hydration might take a long time, and if your bundle is big (and let us not kid ourselves – it is), the page will not be interactive for a relatively long period.
+
+The **most significant** tradeoff with rendering on the client is the negative effect on SEO. Your page might rank lower than pages rendered with meaningful content from the start.
+
+### Static Rendering
+
+Here, we are singing the pendulum to the other side – trying to generate as much meaningful HTML as possible at build time. A huge benefit to the SEO but might be cumbersome for deployment – imagine generating many pages during build time (it can take a while).
+
+The **main issue** with static rendering is that the content might get out of date quickly. If that is the case, if you do not have a way to regenerate the content quickly (see the next technique), you will have to **re-deploy the whole website**.
+
+### Incremental Static Regeneration (ISR)
+
+What if you want to prerender only some of your pages, for example, the homepage, and then render the HTML for others on demand?
+This is where the ISR comes in handy. Instead of rendering all the pages at build time, you can do that only for the subset of pages.
+The rest of the pages will be rendered dynamically when a user requests the page.
+
+If you decide on using the ISR, you should also consider adding correct cache headers alongside the HTML website payload – you would not want to generate the HTML **every time** a given user visits your page.
+
+### Server-Side Rendering (SSR)
+
+What if we must personalize the HTML you generate for a given page for a particular user? In such a scenario, you cannot create that HTML at build time because you do not have enough context to do it properly.
+
+Using SSR means generating a **personalized HTML** when a given user requests the page. This might take a while, but the response contains meaningful HTML, so your page will have an illusion of loading faster.
+
+### Streaming SSR
+
+Imagine that you could respond quickly with bits of HTML instead of waiting for the full personalized HTML to be generated – this is how the streaming SSR works.
+
+This architecture is the backbone of React Server-Side components and will most likely be the go-to rendering pattern moving forward.
+
+## More resources
+
+- [`patterns.dev`](https://www.patterns.dev/)
