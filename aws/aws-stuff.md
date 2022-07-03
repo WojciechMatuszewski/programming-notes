@@ -2632,6 +2632,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **the more data** is within the database **the more partitions there are**.
 
+- DynamoDB **will automatically partition** your data if a given partition **grows more than 10GB in size, UNLESS we are talking about LSI**. The **created partitions persist, even if you deleted the data from your table**.
+
+  - The **more partitions, the more throughput your table can handle**.
+
+  - A side-effect of this is that you **can pre-warm your table to handle much greater traffic by writing a lot of data into it**. Think **load testing**.
+
 #### SDK
 
 - when using **SDK**, it **automatically retries (calls are eventually consistent) unless retry queue is too large**.
