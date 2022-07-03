@@ -361,7 +361,7 @@ The **main issue** with static rendering is that the content might get out of da
 
 ### Incremental Static Regeneration (ISR)
 
-What if you want to prerender only some of your pages, for example, the homepage, and then render the HTML for others on demand?
+What if you want to pre-render only some of your pages, for example, the homepage, and then render the HTML for others on demand?
 This is where the ISR comes in handy. Instead of rendering all the pages at build time, you can do that only for the subset of pages.
 The rest of the pages will be rendered dynamically when a user requests the page.
 
