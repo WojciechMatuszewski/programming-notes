@@ -30,4 +30,26 @@ Notes from [this workshop](https://frontendmasters.com/workshops/semantics-selec
 
   Means _"select all elements that are descendants of the ul element"_.
 
-<!-- Finished part 1 -->
+- Some of the selectors the instructor showed us:
+
+  - The **direct child selector** -> `>`
+
+  - The **general sibling selector** -> `~` (the siblings can be separated by multiple elements).
+
+  - The **direct sibling selector** -> `+` (the siblings must NOT be separated by any other elements).
+
+We also went through some of the attribute-based selectors. It is pretty helpful to remind yourself of their existence.
+
+- The attribute selector -> `[attribute_name]` (the `attribute_name` MUST be present on the element). Think `href` on the `a` tag.
+
+- The attribute value selector -> `[attribute_name="attribute_value"]`. Think `href` on the `a` tag with a specific value.
+
+- You might also select based on **parts of the value** by using the **substring selector** -> `[attribute_name*="attribute_value"]`.
+
+One cannot forget about the _pseudo children selectors_ (the `nth-child` and so on). Here are a few notable ones.
+
+- `nth-children(even)` or `nth-child(odd)`. Pretty sweet! I used to do the magic `2n+1` thingy for those before.
+
+- `nth-children(2n+1)` -> **start with the first element, then, select every second after that**. I like substituting the `n` with real numbers like 0, 1, 2...
+
+- `nth-last-child` -> **instead of starting from the top, start from the bottom**. You can apply the same modifiers as in previous examples. I have never used this one before.
