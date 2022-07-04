@@ -30,6 +30,8 @@ Notes from [this workshop](https://frontendmasters.com/workshops/semantics-selec
 
   Means _"select all elements that are descendants of the ul element"_.
 
+### Child selectors
+
 - Some of the selectors the instructor showed us:
 
   - The **direct child selector** -> `>`
@@ -37,6 +39,8 @@ Notes from [this workshop](https://frontendmasters.com/workshops/semantics-selec
   - The **general sibling selector** -> `~` (the siblings can be separated by multiple elements).
 
   - The **direct sibling selector** -> `+` (the siblings must NOT be separated by any other elements).
+
+### Attribute-based selectors
 
 We also went through some of the attribute-based selectors. It is pretty helpful to remind yourself of their existence.
 
@@ -46,6 +50,8 @@ We also went through some of the attribute-based selectors. It is pretty helpful
 
 - You might also select based on **parts of the value** by using the **substring selector** -> `[attribute_name*="attribute_value"]`.
 
+### Pseudo-children selectors
+
 One cannot forget about the _pseudo children selectors_ (the `nth-child` and so on). Here are a few notable ones.
 
 - `nth-children(even)` or `nth-child(odd)`. Pretty sweet! I used to do the magic `2n+1` thingy for those before.
@@ -53,3 +59,11 @@ One cannot forget about the _pseudo children selectors_ (the `nth-child` and so 
 - `nth-children(2n+1)` -> **start with the first element, then, select every second after that**. I like substituting the `n` with real numbers like 0, 1, 2...
 
 - `nth-last-child` -> **instead of starting from the top, start from the bottom**. You can apply the same modifiers as in previous examples. I have never used this one before.
+
+### Description lists
+
+From what I could gather, the _description lists_ are for grouping `key:value` pairs of content. Think categories and items that belong to a given category.
+
+To style the _description lists_, the `grid` type of layout should most likely be the "go-to" as it nicely works with the `key:value` pair model of the elements within the _description list_.
+
+<!-- Finished part 3 22:16 -->
