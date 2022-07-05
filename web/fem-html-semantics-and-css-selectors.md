@@ -66,4 +66,40 @@ From what I could gather, the _description lists_ are for grouping `key:value` p
 
 To style the _description lists_, the `grid` type of layout should most likely be the "go-to" as it nicely works with the `key:value` pair model of the elements within the _description list_.
 
-<!-- Finished part 3 22:16 -->
+The instructor discussed the difference between the `first-child` and the `first-of-type` selectors in this section. The **`first-child` selects the first child of a given element**. The **`first-of-type` selects the first type of a given element within a given element (it does not have to be a first child)**.
+
+```html
+<div>
+  <span>foo</span> span::first-child OK, span::first-of-type OK
+  <h1>bar</h1>
+  h1::first-of-type OK, h1::first-child NOPE
+</div>
+```
+
+### Menu lists
+
+- The **`menu` element is designed to wrap interactive elements, like buttons, but NOT LINKS!**. Very useful to know. I was in a situation where I wrapped multiple buttons with `div` instead of the `menu` tag.
+
+  - The **`menu` tag is a new list type, like the `ol` or `ul`**. To properly wrap the buttons with the `menu` tag, you would do something like the following.
+
+  ```html
+  <menu>
+    <li><button>First</button></li>
+    <li><button>Second</button></li>
+    <li><button>Third</button></li>
+  </menu>
+  ```
+
+### Takeaways from the exercise
+
+- The `dl` is quite powerful, and if you know that the tag exists, you will most likely use it more often than not.
+
+- Do not forget about the `article` or `section` tags – they are there for a reason. Remember – the `article` is for content that makes sense even if you were to pull it out of the website. The `section` is for content that would not make sense in such a scenario (it is more contextual).
+
+## Parts of the Web Page
+
+- You **can use `header` and `footer` tags inside the `article` tag**.
+
+- `div` and `span` elements do not mean anything.
+
+<!-- Finished part 5 16:30 -->
