@@ -102,4 +102,51 @@ The instructor discussed the difference between the `first-child` and the `first
 
 - `div` and `span` elements do not mean anything.
 
-<!-- Finished part 5 16:30 -->
+- Proper usage of `section` and `article` tags is very powerful. It makes the HTML more readable.
+
+### Pseudoclasses – `is()`, `where()`, `not()`, `has()`
+
+- The `:is` and `:where` selectors are used to eliminating repetition that sometimes you have to deal with when selecting multiple children of a given element.
+
+  ```cs
+  :is(article) h2,h3,h4,h5,h6 {
+    color: var(--fire-red)
+  }
+
+  // the same as \/
+  article h2, article h3, article h4, article h5, article h6 {
+    color:var(--fire-red)
+  }
+  ```
+
+  - The only difference between the `:is` and `:where` selectors is the specificity. The **`:where` selector has a specificity of 0, whereas the `:is` adheres to the regular specificity rules of selectors**.
+
+- The instructor showed a fascinating use of the newly `:has` selector – specifying the number of columns based on the list items. Consider the following.
+
+  ```css
+  ul:has(li:nth-child(6)) {
+    columns: 2;
+  }
+
+  ul:has(li:nth-child(11)) {
+    columns: 3;
+  }
+  ```
+
+  Pretty amazing stuff if you ask me.
+
+## Inheritance
+
+- Some properties pass their properties to their children – for example, the `color` property.
+
+  - You can view the complete list of properties that inherit [here](https://www.w3.org/TR/CSS21/propidx.html)
+
+- The `:root` selector is the `html` selector. We usually define variables within that selector to ensure we can access them globally.
+
+  - Keep in mind that **the `:root` has a higher specificity than the "bare" `html` selector**. Because of that, people usually use the `:root` instead of the `html` selector.
+
+- For properties that do not inherit, you can **force inheritance programmatically via the `YOUR_PROPERTY: inherit`**.
+
+  - For the inheritance to work, **you have to have a direct parent-child relationship**. The `:inherit` declaration must be defined on the immediate child.
+
+Finished day 2 part 1 35:52
