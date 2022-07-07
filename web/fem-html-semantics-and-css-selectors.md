@@ -149,4 +149,32 @@ The instructor discussed the difference between the `first-child` and the `first
 
   - For the inheritance to work, **you have to have a direct parent-child relationship**. The `:inherit` declaration must be defined on the immediate child.
 
-Finished day 2 part 1 35:52
+- Inheritance is excellent, but sometimes you might want to **turn the inheritance off**. Luckily, some properties can help you with that.
+
+  - Use **`all: initial` to strip ALL inherited properties**. This also means the styles inherited by the browser agent!
+
+  - Use **`all: revert` to "revert" any custom inherited properties**. Use this one to _revert_ to the original browser agent styles.
+
+  - You can also use these values for specific properties, like `color` or `font-family`.
+
+## Cascade
+
+- The cascade mechanism (the order in which the styles are evaluated) affects and can overwrite rules with very high specificity.
+
+### Layers
+
+- Layers are a container of CSS rules. You can programmatically order the layers the way you want, giving you control over the cascade mechanism (in the author land).
+
+  ```cs
+  @layer addme, standard
+
+  @layer standard {
+    // definition
+  }
+
+  @layer addme {
+    // definition
+  }
+  ```
+
+  The `addme` layer will be evaluated first, despite being second in the CSS file.
