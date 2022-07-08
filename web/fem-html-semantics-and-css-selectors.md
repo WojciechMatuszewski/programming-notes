@@ -22,9 +22,9 @@ Notes from [this workshop](https://frontendmasters.com/workshops/semantics-selec
 
 - **To capture the hierarchical nature of CSS**, one might want to **read CSS selectors from right to left**.
 
-  ```cs
+  ```css
   ul a {
-  color: red
+    color: red;
   }
   ```
 
