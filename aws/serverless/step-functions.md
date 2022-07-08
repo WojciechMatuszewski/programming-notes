@@ -2,27 +2,27 @@
 
 - `Express Workflows` delivers _at-least-once_ workflow execution.
 
-* `Express Workflows` does not support _activities_ and _callback_ patterns.
+- `Express Workflows` does not support _activities_ and _callback_ patterns.
 
 - There is no visual information within AWS Console UI that the state was retried.
 
-* be wary when implementing `Task` as `Catch` clauses. The input will be the error object, not the initial input that caused the _exception_.
+- be wary when implementing `Task` as `Catch` clauses. The input will be the error object, not the initial input that caused the _exception_.
 
 - `Choice` is very powerful, use it!
 
-* when using `Parallel` watch out for duplicate names. The **state names have to be unique globally, not per branch**.
+- when using `Parallel` watch out for duplicate names. The **state names have to be unique globally, not per branch**.
 
 - with `Parallel` any failure with _cancel_ any other branches that might or might not be affected by the failure.
 
-* remember that the **output from the `Parallel` state will be an array!**.
+- remember that the **output from the `Parallel` state will be an array!**.
 
 - you can control the concurrency of `Map` type, use `MaxConcurrency` parameter.
 
-* you can start execution of state machine using `API Gateway`. Please note that the invocation is async, you will not get the response back.
+- you can start execution of state machine using `API Gateway`. Please note that the invocation is async, you will not get the response back.
 
 - you can invoke your step functions when **reacting to `CloudTrail` events** with `CloudWatch`. Imagine someone uploading file to s3 and then invoking your workflow!.
 
-* you have to create `Activities` a head of time. They are very similar to `callback` pattern.
+- you have to create `Activities` a head of time. They are very similar to `callback` pattern.
 
 ## `Callbacks` vs `Activities`
 
@@ -97,13 +97,13 @@ The SDK integration is a bare-bones way of calling the service API using the ASL
 
 With the SDK integrations, you have the whole service API surface to pick from. For example, you can perform the DynamoDB `Scan` or `Query` calls, which is impossible with optimized integration.
 
-### Waiting for other tasks
+## Waiting for other tasks
 
 There are two ways you can orchestrate "waiting" for other services to finish their work during the StepFunction executions.
 
 One way is to use `.sync` suffix, another one is to use the `.waitForTaskToken` suffix. Let us explore both of them.
 
-#### The `.sync` suffix
+### The `.sync` suffix
 
 The StepFunctions service is able to make an asynchronous process seem synchronous. If you are familiar with JavaScript, it's almost like putting
 _await_ in front of the asynchronous function. The flow of the code seems synchronous, but in reality we are performing an asynchronous operation.
@@ -114,10 +114,16 @@ First of all, [not every service support this kind of way of invoking it](https:
 
 Next, you have to consider some caveats with how to handle tasks abortions. Please [refer to the docs](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html#connect-wait-token) - the _Run a Job_ section.
 
-#### The `.waitForTaskToken` suffix
+### The `.waitForTaskToken` suffix
 
 This, again, is to make an asynchronous process seem synchronous. But the difference between `.waitForTaskToken` and `.sync` is how much work YOU have to do.
 
 The `.waitForTaskToken` is designed to be generic. You have to notify the StepFunctions service that the task is done and the execution should continue (as opposed to the `.sync` suffix where it was the service who decided when the execution should continue).
 
 To signal to the service that the task is done, you will need to call `SendTaskSuccess` or `SendTaskFailure` that the StepFunctions API exposes.
+
+## Creating loops to check for status
+
+Sometimes, you might need to halt the machine execution until a given resource changes status. It might happen that you cannot integrate that resource with the `waitForTaskToken` logic and have to implement the pooling logic manually.
+
+In such scenarios, you need to create a loop in the state machine definition. You can read more about such a machine [here](https://docs.aws.amazon.com/step-functions/latest/dg/tutorial-create-iterate-pattern-section.html#create-iterate-pattern-step-3).
