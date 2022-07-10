@@ -83,7 +83,7 @@ element[alt] {
 - you can query by exact value
 
 ```css
-element[alt='some image description'] {
+element[alt="some image description"] {
 }
 ```
 
@@ -94,7 +94,7 @@ element[alt='some image description'] {
 /*
     match all element that has alt which starts with: "some"
 */
-element[alt|='some'] {
+element[alt|="some"] {
   /*
   <element lang = "some-us">
   <element lang = "some">
@@ -106,9 +106,9 @@ element[alt|='some'] {
   query
 
 ```css
-element[alt$='some'],
-element[alt*='some'],
-element[alt^='some'] {
+element[alt$="some"],
+element[alt*="some"],
+element[alt^="some"] {
 }
 ```
 
@@ -134,7 +134,7 @@ And many more, just read the docs...
 For example:
 
 ```css
-input[type='checkbox']:checked + label {
+input[type="checkbox"]:checked + label {
   color: red;
 }
 ```
@@ -227,7 +227,7 @@ the DOM, you cannot highlight it.
 p::before,
 p::after {
   /*required!!!*/
-  content: '';
+  content: "";
   display: block;
   width: 50px;
   height: 50px;
@@ -276,3 +276,71 @@ These can be use to detect if a CSS feature is available on given browser.
 ```
 
 Pretty cool stuff!.
+
+## CSS Variables
+
+CSS Variables allow you to declare different values, which you can use later in your CSS definitions. **Keep in mind that you can scope the visibility of variables, like in any other programming language**.
+
+To declare a _global variable_, use the `:root` scope.
+
+```html
+<style>
+  :root {
+    --my-color: black;
+  }
+
+  button {
+    background: var(--my-color);
+  }
+</style>
+```
+
+To declare a _scoped variable_, declare the variable inside a given scope.
+
+```html
+<style>
+  :root {
+    --my-color: black;
+  }
+
+  button {
+    background: var(--my-color);
+  }
+
+  .page {
+    --my-color: blue;
+  }
+
+  .page button {
+    background: var(--my-color);
+  }
+</style>
+```
+
+It is possible to **declare a fallback for a given variable**. Think using`??` syntax in JavaScript.
+
+```css
+.page button {
+  background: var(--i-do-not-exist, black);
+}
+```
+
+### CSS Properties and type-safety
+
+Experimental, at the time of writing this, syntax that allows you to **explicitly state the type and the inheritance semantics of a given property**. It is pretty magical. Check this out.
+
+```css
+@property --my-color {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: black;
+}
+
+button {
+  background: var(--my-color);
+}
+```
+
+Notice the **`syntax` property**. This example says that the `--my-color` variable can only contain values valid for _color-related_ properties. If that is not the case, **and you have used JavaScript to register the property**, the browser will throw an error.
+
+In my opinion, the most compelling use-case for these is that **you can animate values of the properties in pure CSS!**. That is not the case with "regular" CSS properties.
