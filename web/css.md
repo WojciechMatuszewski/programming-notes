@@ -344,3 +344,49 @@ button {
 Notice the **`syntax` property**. This example says that the `--my-color` variable can only contain values valid for _color-related_ properties. If that is not the case, **and you have used JavaScript to register the property**, the browser will throw an error.
 
 In my opinion, the most compelling use-case for these is that **you can animate values of the properties in pure CSS!**. That is not the case with "regular" CSS properties.
+
+## Cascade layers
+
+Have you ever had problems with CSS selectors' specificity? In the end, most of us gave up and added the `!important` to the rule (or if it is evil, declare the property as a transition which will override the `!important`). You are not alone, and the web community has your back! – enter _cascade layers_.
+
+```css
+/* If I were to remove this line, all the buttons would be black. */
+@layer declared_second, declared_first;
+
+/* Due to the explicit ordering definition, the buttons are red. */
+@layer declared_first {
+  button {
+    background: red;
+  }
+}
+
+@layer declared_second {
+  button {
+    background: black;
+  }
+}
+```
+
+Another nice thing about cascade layers is that they are **declared only once** and **if declared again, they merge the inside content**.
+
+```css
+@layer declared_second, declared_first;
+@layer declared_first {
+  button {
+    background: red;
+  }
+}
+
+@layer declared_second {
+  button {
+    background: black;
+  }
+}
+
+/* Now the buttons have a red background with a blue text color. */
+@layer declared_first {
+  button {
+    color: blue;
+  }
+}
+```
