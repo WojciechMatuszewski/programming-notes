@@ -2176,3 +2176,9 @@ declare function euroToUSD(euro: Euro): USD;
 ```
 
 Remember that you will have to cast the returned value to the `USD` type. Otherwise TypeScript will yell at you that it is impossible to convert a `number` to `USD`,
+
+## Multiple `tsconfig.json` files and VS Code
+
+As of the time of writing this, **VS Code DOES NOT support custom `tsconfig` file names**. If you wish to have a configuration with multiple `tsconfig.json` files which utilize the _project references_, you **need** to have **at least one `tsconfig.json` somewhere in your project** for the VS Code to pick your configuration up.
+
+It is very frustrating, I know, but it is a limitation that I'm very much in doubt is lifted anytime soon.
