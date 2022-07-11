@@ -237,3 +237,30 @@ After playing around with `useDeferredValue` and `useTransition`, you might have
 This is because **in a low-priority render, React will render previously committed UI instead of discarding it in favor of the `fallback` prop**. Imagine how annoying it would be for the UI to transition from `fallback` prop UI to the "proper" one – so many layout shifts!
 
 It is crucial to understand this concept as you might have been taught that React will always render the `fallback` prop while it suspends – that is not the case!
+
+## Offscreen component
+
+With the `useTransition` API, you can mark a given update as a _low priority_. But what about marking the rendering of the whole sub-tree as _low priority_? This is where we could use the `Offscreen` component.
+
+> Keep in mind that the API is _unstable_ and will most likely change.
+
+```jsx
+function Component() {
+  const [hidden, setHidden] = useState(true);
+
+  return (
+    <div>
+      <button onClick={() => setHidden((_) => !_)}>toggle</button>
+      <Offscreen mode={hidden ? "hidden" : "visible"}>
+        <MyInitiallyHiddenUI />
+      </Offscreen>
+    </div>
+  );
+}
+```
+
+- The tree is **hidden via the CSS**.
+
+- React **renders the tree wrapped by the `Offscreen` component with the lowest priority**.
+
+- Allows you to **"prepare the UI" before revealing it to the user**. It works well with Suspense.
