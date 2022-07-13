@@ -3054,6 +3054,18 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - there is only **ONE way to log requests that come in and out of the API Gateway HTTP APIs**
   - the **access logs**. The configuration is exactly the same as in the case of REST APIs
 
+###### Service integrations
+
+- There are various _integration types_: The **Lambda function**, **HTTP**, **MOCK**, **AWS Service** and **VPC Link** integration.
+
+- Interestingly, connecting the AWS Lambda function to API Gateway can be done in two ways: using the _AWS Lambda function_ or _AWS Service_ integration type. Here are the differences between those two.
+
+  - The **AWS Lambda function as AWS Service** integration allows us to **use a full breath of the VTL** mapping capabilities – **we have the _Integration Response_ transformation step at our disposal**!
+
+    - Using the service integration might allow us to move some of the transformation logic out of the AWS Lambda function and into the APIGW Gateway (via the VTL transforms).
+
+  - The **AWS Lambda function Proxy** integration is **the most common one**, where **the API Gateway forwards all data directly to and from your function**. You have no way to manipulate the payload/response via the VTL.
+
 ### Load Balancers
 
 - different types:
