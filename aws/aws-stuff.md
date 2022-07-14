@@ -4503,6 +4503,15 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real
   time (buffered) use `Kinesis Firehose`**.
 
+###### Subscription filters
+
+- a way to forward your CW logs into either AWS Lambda function or Kinesis
+
+  - keep in mind that **it might get expensive to do so**
+
+- in principle, **if you want to transfers the logs into a destination** and you do **not care about CW**,
+  **it will be cheaper** to **avoid CW altogether**.
+
 ###### Embedded metrics format
 
 - instead of using the sdk to synchronously put metrics data, just log `JSON` data in specified format.
