@@ -6052,9 +6052,19 @@ is **always open**, it just waits for ANY message to be visible.
 
 - source of truth for events that flow through the EventBridge
 
+  - the **schema registry is not only for your custom events, you can find other AWS services events there as well!**
+
 - you can generate code bindings
 
 - this is a free service
+
+##### Custom Schema Registry
+
+- this is where you **manually declare event shapes**
+
+- note that **this has NOTHING to do with the _schema discovery_ feature**
+
+  - creating a _custom schema registry_ is **much more cost efficient than relying on schema discovery**
 
 #### Schema Discovery
 
