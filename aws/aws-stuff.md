@@ -3034,7 +3034,12 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - there are two ways to log requests that come in and out of the API Gateway REST APIs
 
   - the **access logs** contain the **metadata about who and how your API was accessed**
+
+    - you can **stream access logs directly to Firehose**
+
   - the **execution logs provide the request / response info along with any kind of authorization metadata**
+
+    - execution logs **can only be streamed into CloudWatch**
 
 - overall, **the executions logs provide much more information** but **the access logs might be helpful as well**
 
@@ -3052,6 +3057,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 ###### Logging
 
 - there is only **ONE way to log requests that come in and out of the API Gateway HTTP APIs**
+
   - the **access logs**. The configuration is exactly the same as in the case of REST APIs
 
 ###### Service integrations
