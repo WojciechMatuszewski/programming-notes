@@ -2749,7 +2749,12 @@ There are a few approaches when it comes to scaling with dynamoDB
   then **setup bucket policy which looks at that header**.
 
 - **s3 static hosting DOES NOT SUPPORT HTTPS**. That means that you **cannot set `HTTP ONLY` as Origin Protocol Policy**
-  .
+
+##### Origin shield
+
+- another layer of caching, this time **between the POP / regional edge-cache and the origin server**
+
+- used to **"collapse" regional caches** so that requests from different parts of europe do not trigger your origin multiple times (think making a request from Ireland and Frankfurt)
 
 #### Distributions
 
