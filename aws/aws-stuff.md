@@ -685,10 +685,13 @@ An example for s3-prefix (folder)
 
 #### Managed Policies
 
-- **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer
-  managed policy** and **aws managed policy**.
+- **managed policies can be applied to multiple identities at once**. There are 2 versions of managed policy: **customer managed policy** and **aws managed policy**.
 
 - there are 2 notable managed policies: **AdministratorAccess** and **PowerUserAccess (this is for developers)**
+
+- the **AWS Managed policies might not grant least-privilege permissions for a given use-case**. Use them more as a starting point and not as a final policy.
+
+  - it is quite understandable why is that the case: they have to cater to all the customers and all possible use-cases. As they say _"if you stand for nothing you fall for everything"_.
 
 ##### SERVICE_PowerUser managed role
 

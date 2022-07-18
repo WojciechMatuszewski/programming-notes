@@ -264,3 +264,39 @@ function Component() {
 - React **renders the tree wrapped by the `Offscreen` component with the lowest priority**.
 
 - Allows you to **"prepare the UI" before revealing it to the user**. It works well with Suspense.
+
+### An example use case
+
+So far, I've seen only one use case for the `Offscreen` component (bear in mind that the API is experimental). Folks at [replay.io](https://www.replay.io/) use the `Offscreen` API to "cache" the result of the rendering of some of the components. Check out [this video](https://www.loom.com/share/69b18fb36bfb4ab6b70a2bda49afa499). Around the 4:45 mark, Brian talks about using the `Offscreen` API.
+
+```tsx
+function App() {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setVisible(!visible)}>Toggle</button>
+      <Offscreen mode={visible ? "visible" : "hidden"}>
+        <VeryHeavyComponent id="with-offscreen" />
+      </Offscreen>
+      {/* Always rendered first. The render wrapped with Offscreen is marked as low prio. */}{" "}
+      <VeryHeavyComponent id="pure" />
+    </div>
+  );
+}
+
+function fib(n) {
+  if (n <= 1) return 1;
+  return fib(n - 1) + fib(n - 2);
+}
+
+function VeryHeavyComponent({ id }) {
+  useMemo(() => fib(40), []);
+  useEffect(() => {
+    console.log(`heavy mounted ${id}`);
+    return () => {
+      console.log(`heavy unmounted ${id}`);
+    };
+  }, [id]);
+  return <div>Heavy!</div>;
+}
+```
