@@ -2921,13 +2921,24 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - you **can disable the default APIGW endpoint**. This might be **useful when using a custom domain for your API**.
 
+#### Request models (payload validation)
+
+- you can use _"models"_ to validate the incoming payload
+
+- usable in both _proxy_ and _non-proxy_ integrations
+
+- just like with pretty much every service, there are pitfalls you might want to avoid. [This blog post](https://rboyd.dev/089999bf-b973-42ed-9796-6167539269b8) describes them nicely
+
 #### Response Codes
 
 - **4xx means Client errors**. This is where WAF is blocking the request (403), or concurrency throttling happens (429).
 
 - **5xx means Server errors**. This is APIGW or the integration failing.
+
   - **502 (Bad Gateway)** usually bad request, apigw got malformed response from eg. lambda.
+
   - **503** is service unavailable
+
   - **504: Integration failure** is the **timeout on APIGW level** - remember that the default one is 29 seconds
 
 #### Timeouts
