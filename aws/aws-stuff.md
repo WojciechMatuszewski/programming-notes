@@ -1434,8 +1434,9 @@ An example for s3-prefix (folder)
 
 - There is **unlimited** storage **with a maximum file size of 5 TB**
 
-- **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket
-  in (unless you specified CRR**.
+- **S3 IS NOT A GLOBAL SERVICE**. It has a universal namespace but the **data stays in the region you created the bucket in (unless you specified CRR**.
+
+  - The global namespace (enforcing name uniqueness) is what makes the "global API endpoints" work (remember that you can access S3 via the regional and _global_ endpoint).
 
 - By **default** uploaded objects **are NOT public**. You have to set them as public manually
 
