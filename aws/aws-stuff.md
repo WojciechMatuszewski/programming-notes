@@ -343,7 +343,7 @@
 
 - it is possible to get the current state of a given function after performing the _create_ or _update_ operations
 
-- the state is needed because the lambda might not be ready to be invoked immiedietley after the operation.
+- the state is needed because the lambda might not be ready to be invoked immediately after the operation.
   The service might be creating resources on your behalf, that usually takes time
 
 - Refer
@@ -355,9 +355,9 @@
 - **Synchronous** invocation – you are responsible for handling errors.
 
 - **Asynchronous** invocation – uses SQS under the hood. Will **retry FUNCTION errors twice**. You can (and probably should) set up a DLQ.
-  **When throttled, will retry up to 6 hours**. After the 6 hours pass, your event is either dropped or moved into the DLQ.
+  **When throttled, will retry up to 6 hours**. After the 6 hours pass, your event is either dropped or moved into the DLQ. Remember that you can **use Lambda destinations with async invokes**.
 
-- **ESM** invocation – this is where you can set filtering, batching and so on. It is **not the same as asynchronous** invocation, as the ESM invokes the AWS Lambda function synchronously (after it received the data from the source).
+- **ESM** invocation – this is where you can set filtering, batching and so on. It is **not the same as asynchronous** invocation, as the ESM invokes the AWS Lambda function synchronously (after it received the data from the source). Remember that **you can use Lambda destinations with stream-based ESM invokes**.
 
 ### Step Functions
 
