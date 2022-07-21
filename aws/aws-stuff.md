@@ -350,6 +350,15 @@
   to [this post](https://aws.amazon.com/blogs/compute/coming-soon-expansion-of-aws-lambda-states-to-all-functions/) for
   the additional info
 
+#### Invocation models
+
+- **Synchronous** invocation – you are responsible for handling errors.
+
+- **Asynchronous** invocation – uses SQS under the hood. Will **retry FUNCTION errors twice**. You can (and probably should) set up a DLQ.
+  **When throttled, will retry up to 6 hours**.
+
+- **ESM** invocation – this is where you can set filtering, batching and so on. It is **not the same as asynchronous** invocation, as the ESM invokes the AWS Lambda function synchronously (after it received the data from the source).
+
 ### Step Functions
 
 - **state machines as a service**
