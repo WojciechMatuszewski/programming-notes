@@ -1311,6 +1311,12 @@ An example for s3-prefix (folder)
 
 - there are multiple deployment strategies you could use. You could also create a custom one
 
+#### AppConfig Extensions
+
+- A powerful concept where you can **react to events emitted by the service**.
+- The **events reflect a given service resource lifecycle**.
+- I'm surprised that they are NOT integrated with AWS Lambda, but EventBridge, SNS, SQS, and Jira (?).
+
 ### AWS Firewall Manager
 
 - this a **regional service**
@@ -2518,9 +2524,11 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - make sure to **project attributes that you use as an index**. Otherwise the **retrieval will be costly!**
 
-- you **cannot use strongly consistent reads** with **GSI**. If you find yourself in a situation where you need strongly
-  consistent reads and different query pattern,
-  re-create the table (migrate the existing one).
+- you **cannot use strongly consistent reads** with **GSI**. If you find yourself in a situation where you need strongly consistent reads and different query pattern, re-create the table (migrate the existing one).
+
+  - you cannot do that due to the fact that the data in GSI is replicated across various nodes. Imagine waiting for all those nodes to confirm the write – it could potentially take a long time.
+
+  - according to [this blog post](https://www.alexdebrie.com/posts/dynamodb-eventual-consistency/#eventual-consistency-on-global-secondary-indexes) the GSI data replication uses a queue that sits between the "main table" and the GSI partitions.
 
 #### LSI
 
@@ -2679,6 +2687,12 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you should consider the cost of consistency. The writes to the other global table are more costly than normal writes.
   These are not done by you, but by the service itself.
+
+- due to **replication lag** you **might have issues with read/write consistency**. Keep that in mind.
+
+  - read more about Global Tables consistency [here](https://www.alexdebrie.com/posts/dynamodb-eventual-consistency/#eventual-consistency-on-dynamodb-global-tables).
+
+  - Whatever you do, **do not make an assumption about the maximum time it takes Dynamo to replicate your data**. Any assumption you make and bake into your system will most likely be wrong!
 
 ##### The `AWS::DynamoDB::GlobalTable` resource
 
