@@ -121,3 +121,77 @@ Taking notes while reading [this document](https://docs.aws.amazon.com/wellarchi
   - Encryption at rest is the name of the game.
 
 ### Reliability
+
+#### Foundations
+
+- Throttling plays a vital role in ensuring your service is reliable.
+
+  - You can implement throttling via the **reserved concurrency** settings of **API keys and usage plans** (remember that the API keys should not be used as an authorization mechanism).
+
+  - Throttling can also be helpful in an event where your architecture creates an infinite loop of requests.
+
+- In the context of AWS Lambda, **keep in mind that the maximum AWS Lambda function concurrency is shared between all the functions in your account in a given region**.
+
+- If you find yourself in a situation where throttling is an issue, **consider moving your workload to an asynchronous model**. In such a model, you have much more control over the concurrency (for example, via the Amazon Kinesis streams by increasing the shard count and changing the parallelization factor).
+
+#### Failure management
+
+- The problem with synchronous workflows is that you do not have many options on how to handle the failure. You have to retry and, if the issue persists, yield to the user with an error message.
+
+  - With asynchronous or stream-based workflows, you can deploy DLQs or use _destinations_. There, the failed piece of work (the payload) could be inspected and corrected.
+
+  - **Do not forget to set maximum retry attempts or similar settings** when integrating with other services to implement error handling. The last thing you want is for your event to be gone.
+
+- One of the most robust patterns for error-handling is **the saga pattern**. The pattern is based on having the orchestrator (in this case, a state machine) handle the partial failures and rollback the committed work.
+
+#### Limits
+
+- Limits are there for a reason. Understand them, and have them in the back of your mind when you architect.
+
+  - If you have problems with limits, consider moving to asynchronous flows where you have control over how much throughput the system can process.
+
+### Performance efficiency
+
+#### Selection
+
+##### APIGW
+
+- Know the **difference between the regional and edge optimized** APIs.
+
+  - Use **regional if you want to use your own Cloudfront distribution**.
+
+  - The document says that the regional APIGW enables HTTP2 by default. Intriguingly, this is not the default setting for Cloudfront distributions.
+
+##### AWS Lambda
+
+- TIL that **AWS Lambda integrates with Application Auto Scaling**. You can use Application Auto Scaling to manage provisioned concurrency.
+
+- This section contains a convenient decision tree that should help you do decide whether your AWS Lambda function should be inside a VPC or not (hint: it most likely should not).
+
+##### AWS Step Functions
+
+- Know the difference between the express and the standard step machine workflows.
+
+  - The most surprising fact from this section is that **the express workflows have UNLIMITED state transitions**. I rarely see a quota of "unlimited" – a very bold statement from AWS.
+
+- Keep in mind that, for both the standard and the express workflows, you can enable publishing logs to AWS CloudWatch. Of course, **this will increase the cost of operating the service**.
+
+#### Optimize
+
+##### APIGW
+
+- Use **data compression along with correct content-encoding headers**. I think this feature of APIGW is often overlooked.
+
+##### AWS Lambda
+
+- Since you will most likely integrate with AWS Lambda, it is **vital that you tune the timeout settings of the function correctly**.
+
+  - It cannot be too long as that might lead to unnecessary compute time during errors (if the timeout were lower, the function execution would have been killed sooner).
+
+  - It cannot be too short as that would create a risk where some of the work is dropped.
+
+  - If relevant, AWS documents those gotchas in a given "integration guide" (for example, the SQS one).
+
+- Remember about the "basic" stuff like per-container caching (initialization) and the fact that **AWS Lambda extensions might slow your function down as the resources the function is allocated with are shared between the function and the extension**.
+
+- Consider using the **RDS Proxy** for connection polling.
