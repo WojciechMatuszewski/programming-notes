@@ -2719,6 +2719,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
   - You can read more about the migration [here](https://medium.com/jamf-engineering/update-an-existing-dynamodb-table-resource-to-be-a-globaltable-resource-be64fab24b78).
 
+    - You mind find this command useful: `npm run cdk synth -- --no-version-reporting --no-path-metadata --no-asset-metadata`. It will produce a CFN template without any CDK metadata and other stuff.
+
 #### Encryption
 
 - tables can be encrypted
