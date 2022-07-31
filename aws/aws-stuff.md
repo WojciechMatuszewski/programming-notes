@@ -6897,6 +6897,14 @@ Consider giving it a read!
 
   - available for every resource.
 
+#### Events
+
+- you can **pipe CFN events to either SNS or EventBridge**
+
+- remember that with the EventBridge you have much more flexibility in terms of event filtering
+
+  - with SNS you most likley would need to have a lambda wired up to the topic to do the filtering
+
 #### Intrinsic Functions
 
 - these can **only be used within specific parts of template**. These are:
