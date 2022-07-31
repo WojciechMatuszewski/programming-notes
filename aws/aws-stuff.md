@@ -61,6 +61,16 @@
 
 - this the **role assumed by lambda when invoked**
 
+- there is this new **`lambda:SourceFunctionArn` condition** that you might want to apply.
+
+  - I find [the documentation](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html#permissions-executionrole-source-function-arn) a bit misleading. It mentions that the `lambda:SourceFunctionArn` condition could be used in _"any AWS resource that might be the target of a Lambda function invocation"_. The problem is that when I've tried to apply that condition to the bucket policy, I got an error saying that such condition does not exist.
+
+    - I've also tried the API (via CloudFormation) and got the same result.
+
+    - interestingly, in the documentation, they use the "account" principal instead of the resource
+
+    - I could not find any code on GitHub that would use this condition. One article I could find was in Japanese and used the `lambda:SourceFunctionArn` in the context of the AWS Lambda execution role.
+
 #### Firecracker
 
 - _Firecracker_ processes your lambdas I/O and network requests and sends them to the _Host kernel_
