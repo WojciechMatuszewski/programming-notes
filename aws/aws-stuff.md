@@ -3020,8 +3020,7 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - allows you to fully configure the way authorization is handled for your application
 
-- depending on the **result format version** you can **either return a policy (with optional usage plan id) or just true
-  / false**
+- depending on the **result format version** you can **either return a policy (with optional usage plan id) or just true/false**
 
 - the **credentials the policy corresponds to** can be used for scoping permissions in the downstream services
 
@@ -3029,8 +3028,15 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 - can **return an APIGW API key**. If the **API key is associated with an usage plan**, then by returning it inside the
   authorizer, one can achieve per-tenant throttling.
+
   - Please note that this method requires you to create an API key per-tenant. There is a limit of how many API keys
     can exist for a given APIGW.
+
+- keep in mind that there are **two variants of the authorizers**. There is the **`TOKEN` and the `REQUEST`** authorizers.
+
+  - the main difference between those is that the **`REQUEST` authorizer event contains much more information and NOT only the value of a given header** – like in the case of the `TOKEN` authorizer.
+
+  - **mind the authorizer caching strategy**. The `REQUEST` based authorizer requires you to pick which request parameters you want to choose as your cache key. There is nothing to choose from in the case of the `TOKEN` type authorizer as onl the token could be used as the cache key.
 
 #### IAM Authentication and Authorization
 
