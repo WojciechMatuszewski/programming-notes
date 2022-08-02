@@ -71,6 +71,8 @@
 
     - I could not find any code on GitHub that would use this condition. One article I could find was in Japanese and used the `lambda:SourceFunctionArn` in the context of the AWS Lambda execution role.
 
+    - It seems like I'm not the only one who had troubles with this feature (or at least understanding how the feature works). See [this tweet](https://twitter.com/theburningmonk/status/1554246541694717952).
+
 #### Firecracker
 
 - _Firecracker_ processes your lambdas I/O and network requests and sends them to the _Host kernel_
