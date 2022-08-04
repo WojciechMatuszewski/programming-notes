@@ -1518,9 +1518,21 @@ An example for s3-prefix (folder)
 
 - the API **quotas** are **per prefix**. This means that you should **spread your load across various prefixes**
 
+- a neat optimization is to create multiple prefixes and then parallelize reads across them (very similar, if not the same, as sharding)
+
+- here is an [official AWS guide pertaining to S3 optimization](https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance-guidelines.html)
+
 #### Monitoring
 
 - use **S3 Storage Lens** to get insight into what is happening across your buckets
+
+##### Inventory
+
+- a service that will **expose various metadata about a given bucket**
+
+- the **data is updated on a given frequency basis**
+
+- mostly for analytics, I would not use this as an alternative to Athena or S3 select
 
 #### Select
 
