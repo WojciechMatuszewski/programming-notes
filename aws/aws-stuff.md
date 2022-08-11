@@ -73,6 +73,8 @@
 
     - It seems like I'm not the only one who had troubles with this feature (or at least understanding how the feature works). See [this tweet](https://twitter.com/theburningmonk/status/1554246541694717952).
 
+    - **[Here is a confirmation that it only works in the context of identity policies](https://youtu.be/Ud0QmTCBhps?t=168)**.
+
 #### Firecracker
 
 - _Firecracker_ processes your lambdas I/O and network requests and sends them to the _Host kernel_
@@ -3002,10 +3004,13 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Payload size
 
-- The limit of the **payload = body + headers** sent to the APIGW (either HTTP or REST) is 10 mb.
-  This is important as the **maximum payload for a sync lambda invoke is 6mb**. It's pretty common to have lambda
-  frontend with APIGW.
-  If you hit the situation where you sent more than 6 mb to lambda, APIGW will return with status code of 413
+- The limit of the **payload = body + headers** sent to the APIGW (either HTTP or REST) is 10 mb. This is important as the **maximum payload for a sync lambda invoke is 6 mb**. It's pretty common to have lambda frontend with APIGW.
+
+- If you hit the situation where you sent more than 6 mb to lambda, APIGW will return with status code of 413
+
+- If **your return more than 6 MiB from AWS Lambda, APIGW will respond with 502 "Internal Server Error"**
+
+- There are some nuances regarding text encoding and how they influence the payload size. **[Read more them here](https://zaccharles.medium.com/deep-dive-lambdas-response-payload-size-limit-8aedba9530ed)**
 
 #### Responses
 
@@ -7044,24 +7049,23 @@ Consider giving it a read!
 
 - allows you to **proactively apply compliance checks** on resources
 
+- an addition or alternative to tools like CFN guard or CDK aspects or CDK nag
+
   - whenever you update, delete or create a given resource
+
+  - it **seems to me** as **if they work similar to the CDK aspects or CDK nag**
+
+    - of course, using the native integration (not framework dependant) is better
 
 - previously, all the compliance checks were performed on already deployed resource (AWS Config)
 
-  - this is not ideal as the resource might caused problems
+  - not ideal, it might be too late if the resource is already deployed
 
 - works on the backbone of **CloudFormation registry**
 
   - to develop, use the `cloudformation-cli` and the language plugin of your choice.
 
   - [link to the blogpost](https://aws.amazon.com/blogs/mt/proactively-keep-resources-secure-and-compliant-with-aws-cloudformation-hooks/)
-    .
-
-- as of writing this, the `cloudformation-cli-typescript-plugin` does not support Hooks.
-
-  - the types and bindings are not there.
-
-  - it seems to me that Java and Python versions are prioritized first.
 
 #### Modules
 
