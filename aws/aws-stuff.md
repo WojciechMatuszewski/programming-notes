@@ -5940,6 +5940,8 @@ or create union products**.
 
 - **up to 256KB payload**
 
+  - if you need to transport bigger payloads, **upload the event to S3 first, then send the pointer to S3** as the event
+
 - when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X
   seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that
   message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
