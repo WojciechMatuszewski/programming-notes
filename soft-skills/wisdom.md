@@ -82,3 +82,13 @@ Where you should focus on are the interfaces and the underlying data structures.
 Of course, that does not mean we should swing the pendulum to the other side and optimize everything we possibly could. If we were to do that, we would not get anything done.
 
 Focus on the interfaces and the data structures. You will not regret it.
+
+## It starts with empathy
+
+> Consider watching [this video](https://www.youtube.com/watch?v=VLfjooAKOqg).
+
+How many times did you judge a person based on yours, maybe inaccurate, judgment? If your teammate is underperforming, you might think he is lazy, stupid, or unmotivated (I'm guilty of this). How often have you said the same to yourself while looking at your performance?
+
+In such situations, consider looking at what is happening through the lens of empathy. **Replace your judgments with curiosity**. If you do that, you will likely arrive at a different explanation of a situation.
+
+So, next time you or someone you work with is underperforming, instead of judging, ask, "Hey, what is going on? How can I help".
