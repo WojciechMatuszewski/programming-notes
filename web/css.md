@@ -1,5 +1,11 @@
 # CSS
 
+## Spacing
+
+Instead of trying to memorize the order of the sides in the `padding` or `margin` properties, use **`padding-inline` (left-right) and `padding-block` (top-down)**. The same applies to margins. One has to swap the `padding` for margin.
+
+There is an additional benefit to using these properties instead of the "regular" `margin` and `padding` properties. **They take the `writing-mode`, `direction`, and `text-orientation` property into the account**, which makes your code more reusable.
+
 ## Selectors
 
 ### Specificity
