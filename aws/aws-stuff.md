@@ -7069,6 +7069,10 @@ Consider giving it a read!
 
   - [link to the blogpost](https://aws.amazon.com/blogs/mt/proactively-keep-resources-secure-and-compliant-with-aws-cloudformation-hooks/)
 
+  - at the time of writing this, **CFN hooks are only available to Java and Python languages**
+
+    - you CAN pick another language, but the CLI will not generate bindings for this language
+
 #### Modules
 
 - these are packages templates.
