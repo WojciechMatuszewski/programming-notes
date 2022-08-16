@@ -6886,6 +6886,12 @@ Consider giving it a read!
 
 - you have an **app that uses AWS**. With **Cognito you can create identity for users, even guest role!**
 
+#### WAF and Cognito
+
+- you can integrate WAF with Cognito to protect your UserPool and IdentityPool endpoints
+
+- think geofencing or adding captchas
+
 #### AWS SSO
 
 - like Okta but AWS managed
