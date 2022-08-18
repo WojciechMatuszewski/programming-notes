@@ -2747,6 +2747,20 @@ There are a few approaches when it comes to scaling with dynamoDB
 
     - You mind find this command useful: `npm run cdk synth -- --no-version-reporting --no-path-metadata --no-asset-metadata`. It will produce a CFN template without any CDK metadata and other stuff.
 
+##### Two versions of the Global Tables
+
+- Just like there are multiple versions of AppSync templates and IAM policy documents, there are two versions of the DynamoDB Global Tables
+
+- It is possible to migrate from one to another
+
+- AWS Recommends to use the `2019.11.21` version. Read more [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables.DetermineVersion.html).
+
+  - For me, **the biggest difference between the old and the new versions is the TTL behavior**. The old version of the Global Tables **forced you to set TTL only on the primary, not on replicas**. This **requirement is gone in the new version**.
+
+  - This begs a question: how in the world I never heard of this. I guess I was pretty lucky.
+
+- AWS CDK supports the new version via the `replicationRegions` property (they still are using the `AWS::DynamoDB::Table` resource).
+
 #### Encryption
 
 - tables can be encrypted
