@@ -2588,8 +2588,6 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Dynamo Streams
 
-- dynamo **streams** **hold** data for **24 hrs**.
-
 - the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
 - while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards
@@ -2604,7 +2602,7 @@ There are a few approaches when it comes to scaling with dynamoDB
   more partitions your table has** the more **underlying shards will be allocated for that table**
 
 - DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do
-  not use Kinesis directly
+  not use Kinesis directly.
 
 - **free if integrated with Lambda**, otherwise you **pay for `GetRecords` call**.
 
@@ -2612,6 +2610,14 @@ There are a few approaches when it comes to scaling with dynamoDB
   Lambda so there is no charge for the `GetRecords` call. If you were to consume the stream in a different way, it
   matters what you select. Imagine a "heavy" record being updated and you have selected the _New and old images_ option.
   To fill your batch, more `GetRecords` API calls will be needed, thus you will pay more.
+
+##### Pushing data to Kinesis Data Streams
+
+- you can either use the "native" DynamoDB streams or push the data to Kinesis
+
+- **use Kinesis integration when you need more throughput**. Keep in mind that the "native" streams support only two consumers per shard.
+
+  - I could not find official docs on this topic, but it seems like a shard corresponds to a single partition.
 
 ##### Dynamodb Streams fan-out
 
@@ -4594,8 +4600,9 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can **export logs directly to S3**. You have to remember though about permissions (`getBucketAcl`). Otherwise you
   will not be able to export the data, even though your bucket might be public.
 
-- the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real
-  time (buffered) use `Kinesis Firehose`**.
+- the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for \*\*near-real
+
+  time (buffered) use `Kinesis Firehose`\*\*.
 
 ###### Subscription filters
 
