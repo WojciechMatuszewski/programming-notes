@@ -1514,6 +1514,8 @@ An example for s3-prefix (folder)
   - **S3 Intelligent-Tiering**: this is **great for unknown or unpredictable access patterns**. Will **automatically
     place** your files in **most optimized storage option**. There is a **monthly cost for using this option**
 
+    - Within the Intelligent-Tiering there are **storages classes that resample the ones storage classes EXCEPT for no access charges**.
+
 - **tiers** apply to **object**, **not a bucket!**
 
 #### Performance
@@ -1535,6 +1537,10 @@ An example for s3-prefix (folder)
 - the **data is updated on a given frequency basis**
 
 - mostly for analytics, I would not use this as an alternative to Athena or S3 select
+
+- you can **integrate the inventory export with AWS Batch or AWS Batch + AWS Lambda**
+
+  - this way you do not have to use `ListObjects` API to get the list of all objects to perform operations on them, the S3 Inventory will provide you the list.
 
 #### Select
 
