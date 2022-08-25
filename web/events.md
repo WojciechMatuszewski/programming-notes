@@ -104,6 +104,13 @@ With the object passed as a third parameter, you can configure
 
 `passive` is for performance gains. Granted these are probably insignificant, but, nevertheless you can specify those. With `passive` you tell the browser that you will not use `event.preventDefault`, in return you get those aforementioned performance optimizations.
 
+### Class as the listener
+
+It turns out, instead of a function, one can specify a class as a second parameter to the `addEventListener` function.
+This might come in handy when you want to ensure referential equality needed for **cleaning up** the listener.
+
+Learn more about the _class as the listener_ [here](https://www.stefanjudis.com/today-i-learned/addeventlistener-accepts-functions-and-objects/?utm_source=stefanjudis).
+
 ## Canceling the event listeners
 
 When you first encounter the `AbortController` API, you will most likely read about its ability to cancel network requests. And this is great! It allows us to eliminate the "flickering state" issues when fetching in `useEffect` with a dependency array.
