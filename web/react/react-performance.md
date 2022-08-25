@@ -242,6 +242,35 @@ export function AppWithProviders() {
 }
 ```
 
+### `useContext` as implicit props
+
+Think about the `useContext` as "implicit" props. **Every time the context changes, your component will re-render, even if it uses `React.memo`**.
+
+So, the following piece of code:
+
+```ts
+const GreetUser = React.memo(() => {
+  const user = React.useContext(UserContext);
+  if (!user) {
+    return "Hi there!";
+  }
+  return `Hello ${user.name}!`;
+});
+```
+
+It could be thought of as the following piece of code:
+
+```ts
+const GreetUser = React.memo(({ user }) => {
+  if (!user) {
+    return "Hi there!";
+  }
+  return `Hello ${user.name}!`;
+});
+```
+
+If you consider the `React.Context` as _implicit_ props, the notion of "context breaks memoization" makes sense.
+
 ## State Colocation
 
 This is more of a tip rather than technique. I think you will come to this realization the more code you write. So here it goes:
@@ -366,8 +395,7 @@ function App() {
 }
 ```
 
-In above snippet, your _context value_ might be _memoized_ but the `Parent` will still be _invoked_ (no commits to the DOM though) when the button is clicked.
-This is where the notion of **having `React.memo` in strategic parts of your app** comes in.
+In above snippet, your _context value_ might be _memoized_ but the `Parent` will still be _invoked_ (no commits to the DOM though) when the button is clicked. This is where the notion of **having `React.memo` in strategic parts of your app** comes in.
 
 ### Expensive initial rendering
 
