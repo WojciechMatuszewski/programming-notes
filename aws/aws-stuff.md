@@ -2596,9 +2596,10 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
-- while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards
-  is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand
-  billing_, there might be a concurrency spike in lambdas reading off the stream for that table
+- while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand
+  billing_, there might be a concurrency spike in lambdas reading off the stream for that table.
+
+  - to **get the number of shards**, use the **`DescribeStream API`**.
 
 - items are put onto a shard **based on their partition key**. The **`batchSize` and `batchWindow` might yield lower
   batches if you are populating the table with items from different "collections"**. Every item will be consumed though,
