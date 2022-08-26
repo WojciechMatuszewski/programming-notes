@@ -1403,9 +1403,9 @@ To fix this we introduce another type: `KeyAt`
 ```typescript
 type KeyAt<Obj, K extends string> = Obj extends HasKey<K> ? Obj[K] : never;
 interface SomeInterface {
-  wojtek: 'ala 123'
+  wojtek: "ala 123";
 }
-KeyAt<SomeInterface, 'wojtek'> // 'ala 123', literal type!
+KeyAt<SomeInterface, "wojtek">; // 'ala 123', literal type!
 ```
 
 This allows us to _pluck a given type_ out of object. This makes sure that
@@ -2182,3 +2182,34 @@ Remember that you will have to cast the returned value to the `USD` type. Otherw
 As of the time of writing this, **VS Code DOES NOT support custom `tsconfig` file names**. If you wish to have a configuration with multiple `tsconfig.json` files which utilize the _project references_, you **need** to have **at least one `tsconfig.json` somewhere in your project** for the VS Code to pick your configuration up.
 
 It is very frustrating, I know, but it is a limitation that I'm very much in doubt is lifted anytime soon.
+
+### Scoping given `compilerOptions` to a set of files`
+
+Let us imagine you want to add the [`noUncheckedIndexedAccess`](https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess) option to your TypeScript config.
+
+One might want to add it **only to application files** and **skip the test files**. The application files where a runtime bug could cause the website to crash. We do not care about runtime issues within the test files – a failing test is not a user-facing issue.
+
+**First**, create **a separate `tsconfig` file**. In my case, I will name mine `tsconfig.jest.json`. The "test only" `tsconfig` file would extend the base `tsconfig`. Inside that "test only" file, I'm going **to disable the `noUncheckedIndexedAccess` setting**.
+
+```
+{
+ "extends" ...,
+"compilerOptions": {
+  "noUncheckedIndexedAccess": false,
+....
+},
+include: [ALL_TEST_FILES, ALL_APPLICATION_FILES]
+}
+```
+
+Next, **add the `noUncheckedIndexedAccess` to the root `tsconfig.json` and EXCLUDE all test files**. This way, TypeScript will not scream at you whenever you do not explicitly perform null-checks when accessing array items in your test files.
+
+That's all
+
+#### The problem
+
+Notice that, in the previous example, we "downgraded" the strictness of the type checker for a subset of files. **The reverse would NOT be possible**.
+
+Since the `tsconfig.jest.json` must also include the application files (you are testing the application files after all), specifying `noUncheckedIndexedAccess` for the "test only" config would automatically apply it to the application files. This would likely result in many TypeScript errors forcing you to adopt the `noUncheckedIndexedAccess` in the whole codebase.
+
+The inverse (the example above) is possible because the application files have "stricter" type settings than the test files.
