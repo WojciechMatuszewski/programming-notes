@@ -4607,9 +4607,10 @@ Sometimes it can happen that your runtime is not supported by ElasticBeanstalk b
 - you can **export logs directly to S3**. You have to remember though about permissions (`getBucketAcl`). Otherwise you
   will not be able to export the data, even though your bucket might be public.
 
-- the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for \*\*near-real
+- the **s3 export is one time operation**. For **real time, use `Kinesis Data streams` or `Lambda`** for **near-real time (buffered) use `Kinesis Firehose`**.
 
-  time (buffered) use `Kinesis Firehose`\*\*.
+- the **logs that you import manually via the SDK calls might not show up in the Cloudwatch Insights**.
+  - something one of the people on the AWS Builders Slack channel stumbled upon
 
 ###### Subscription filters
 
