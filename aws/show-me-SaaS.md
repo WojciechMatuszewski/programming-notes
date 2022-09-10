@@ -1,5 +1,18 @@
 # Notes from "Show Me SaaS" show
 
+## Glossary
+
+- Shuffle sharding: relates to the _noisy neighbor_ problem and the _shared resource_ model in SaaS applications.
+  This process exists to prevent resource contention in architectures that might experience a _noisy neighbor_ problem.
+
+  > You can learn more about shuffle sharding [in this video](https://www.twitch.tv/videos/1578416865?filter=archives&sort=time).
+
+  - Simple sharding: randomly distribute tenants across a couple of resources. Assign a single tenant to a single resource.
+
+  - Shuffle sharding: randomly assign a single tenant to multiple resources. This is where the term "shuffle" comes from – think randomly shuffling a deck of cards and picking four out of 52 resources. The resources which you assign to a tenant A might overlap in some percentage with the resources assigned to the tenant B.
+
+    Shuffle sharding enables you to dynamically re-balance the assignment to resources. Imagine that the resource RA is overloaded. We can ensure that other tenants use other resources RB, RC... assigned to them.
+
 ## Episode 2 – Inside SaaS Identity
 
 - Knowing who you are as a user, connecting that to the tenancy model, and flowing that information through the application.
