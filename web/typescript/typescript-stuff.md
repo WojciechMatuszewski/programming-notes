@@ -2,6 +2,43 @@
 
 ## `tsconfig.json`
 
+### Multiple `tsconfig.json` files and VS Code
+
+As of the time of writing this, **VS Code DOES NOT support custom `tsconfig` file names**. If you wish to have a configuration with multiple `tsconfig.json` files which utilize the _project references_, you **need** to have **at least one `tsconfig.json` somewhere in your project** for the VS Code to pick your configuration up.
+
+It is very frustrating, I know, but it is a limitation that I'm very much in doubt is lifted anytime soon.
+
+#### Scoping given `compilerOptions` to a set of files
+
+Let us imagine you want to add the [`noUncheckedIndexedAccess`](https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess) option to your TypeScript config.
+
+One might want to add it **only to application files** and **skip the test files**. The application files where a runtime bug could cause the website to crash. We do not care about runtime issues within the test files – a failing test is not a user-facing issue.
+
+**First**, create **a separate `tsconfig` file**. In my case, I will name mine `tsconfig.jest.json`. The "test only" `tsconfig` file would extend the base `tsconfig`. Inside that "test only" file, I'm going **to disable the `noUncheckedIndexedAccess` setting**.
+
+```
+{
+ "extends" ...,
+"compilerOptions": {
+  "noUncheckedIndexedAccess": false,
+....
+},
+include: [ALL_TEST_FILES, ALL_APPLICATION_FILES]
+}
+```
+
+Next, **add the `noUncheckedIndexedAccess` to the root `tsconfig.json` and EXCLUDE all test files**. This way, TypeScript will not scream at you whenever you do not explicitly perform null-checks when accessing array items in your test files.
+
+That's all
+
+#### The problem
+
+Notice that, in the previous example, we "downgraded" the strictness of the type checker for a subset of files. **The reverse would NOT be possible**.
+
+Since the `tsconfig.jest.json` must also include the application files (you are testing the application files after all), specifying `noUncheckedIndexedAccess` for the "test only" config would automatically apply it to the application files. This would likely result in many TypeScript errors forcing you to adopt the `noUncheckedIndexedAccess` in the whole codebase.
+
+The inverse (the example above) is possible because the application files have "stricter" type settings than the test files.
+
 ### `esModuleInterop` shenanigans
 
 The whole purpose of this option is to enable you to write `ESM` compliant imports when you are using `CJS` modules.
@@ -395,9 +432,7 @@ is a valid JavaScript, without any types and other TypeScript features.
 ## Assert Signatures
 
 So with `type guards` you are returning `true` or `false`. This then determines
-the outcome of the type.
-
-But `assert signatures` **are quite different**
+the outcome of the type. But `assert signatures` **are quite different**.
 
 ### Different schematics
 
@@ -421,6 +456,17 @@ function isDefined<T>(x: T): asserts x is NonNullable<T> {
 
 The signature differs greatly and there is actually more to the
 `assert signatures` signature than presented here.
+
+On top of that, the **assert-type functions cannot be using the arrow function syntax**.
+
+```ts
+const assertValue = (value: boolean): asserts value => {
+  // ...
+};
+```
+
+I'm not sure why is this the case. It seems to have something to do with _control flow analysis_, but I'm not 100% sure.
+See [this link](https://github.com/microsoft/TypeScript/issues/34523) for more info.
 
 ### Two types of Assert Signatures
 
@@ -472,6 +518,57 @@ console.log(0 ?? "something"); // 0
 
 This can help in cases where you have valid non-truthy values as your _guardian
 values_ but you still want to check for `null` and `undefined`
+
+## Getting the type out of the array.
+
+Let us say you have are working with the following array.
+
+```ts
+type PossibleCombinations = ["foo", "bar"] | ["baz", "quix"];
+```
+
+How would you go about getting all the values as type union from the `PossibleCombinations` type? You could use the index operator, like so.
+
+```ts
+type AllValues = PossibleCombinations[0 | 1];
+```
+
+That would work, but if the length of the arrays are different, you might be in trouble.
+
+```ts
+type PossibleCombinations = ["foo", "bar"] | ["baz", "quix"] | ["a", "b", "c"];
+type AllValues = PossibleCombinations[0 | 1 | 2]; // the union contains `undefined` type
+```
+
+Since the size of the arrays varies, we cannot use hardcoded indexes. For this, **use the `number` keyword**.
+
+```ts
+type PossibleCombinations = ["foo", "bar"] | ["baz", "quix"] | ["a", "b", "c"];
+type AllValues = PossibleCombinations[number]; // union of all the values
+```
+
+The `number` keyword here is the **union of all the possible numbers**. You can **think of the `number` keyword as the "numeric index" of a given type**.
+
+So, the `AllValues` is a _type at a numeric index of the `PossibleCombinations` type_.
+
+### Another example
+
+The example above was a bit contrived. Most of the time we do not have to deal with union of arrays with unknown lengths.
+In most cases, the type definition you have to deal with would look like similar to the following.
+
+```ts
+type People = { name: string; age: number }[];
+```
+
+How can we extract the _inner_ type from the `People` array type? – there are at least three ways I'm aware of.
+
+```ts
+type Person_v1 = People[0]; // Works because all the items in the array are the same.
+type Person_v2 = People[number];
+type Person_v3 = People extends Array<infer Inner> ? Inner : never;
+```
+
+I'm leaning towards the first two options. The last one is a bit of an overkill if you ask me.
 
 ## Logical assignment operator
 
@@ -1945,8 +2042,7 @@ type Result = ConditionalCheck<number>;
 
 you pass _type parameters_ to the _type function_ (I'm not sure if this is an official name, but I like to think of it that way).
 
-The you pass _naked type parameter_ if that parameter is not wrapped within an other structure (in TS land). An example of a _clothed_ type parameter
-would be passing `[number]` as `T` to the _type function_.
+The you pass _naked type parameter_ if that parameter is not wrapped within an other structure (in TS land). An example of a _clothed_ type parameter would be passing `[number]` as `T` to the _type function_.
 
 When conditional types are used with the _naked type parameter_, they are called _distributive conditional types_.
 The name sounds scary, but the underlying functionality is rather not that complicated. Let us jump in!
@@ -1978,6 +2074,7 @@ type Test2 = boolean;
 ```
 
 Notice the transformation from `IsNumber<number | string>` to `IsNumber<number> | IsNumber<string>`. **This is called distributing over an union type**.
+
 If the `number | string` would be _clothed_, ie. wrapped in a type, the union of `IsNumber<number> | IsNumber<string>` would not be evaluated.
 
 So when you see _distributive conditional types_, just think of the underlying type parameter being split into multiple unions (or a single union if the type parameter is a singular type, eg. `number`)
@@ -2111,7 +2208,7 @@ With that function declaration, every use-case should be fulfilled.
 As I mentioned, this _workaround_ is leveraging the fact that if a _type parameter_ is used in a context of conditional type, it will be evaluated lazily
 as in the inference will not occur.
 
-## Type branding
+## Type branding (AKA _opaque types_)
 
 Imagine you have a function that converts EURO to USD. Here is how one might write the type declaration for this function.
 
@@ -2176,40 +2273,3 @@ declare function euroToUSD(euro: Euro): USD;
 ```
 
 Remember that you will have to cast the returned value to the `USD` type. Otherwise TypeScript will yell at you that it is impossible to convert a `number` to `USD`,
-
-## Multiple `tsconfig.json` files and VS Code
-
-As of the time of writing this, **VS Code DOES NOT support custom `tsconfig` file names**. If you wish to have a configuration with multiple `tsconfig.json` files which utilize the _project references_, you **need** to have **at least one `tsconfig.json` somewhere in your project** for the VS Code to pick your configuration up.
-
-It is very frustrating, I know, but it is a limitation that I'm very much in doubt is lifted anytime soon.
-
-### Scoping given `compilerOptions` to a set of files`
-
-Let us imagine you want to add the [`noUncheckedIndexedAccess`](https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess) option to your TypeScript config.
-
-One might want to add it **only to application files** and **skip the test files**. The application files where a runtime bug could cause the website to crash. We do not care about runtime issues within the test files – a failing test is not a user-facing issue.
-
-**First**, create **a separate `tsconfig` file**. In my case, I will name mine `tsconfig.jest.json`. The "test only" `tsconfig` file would extend the base `tsconfig`. Inside that "test only" file, I'm going **to disable the `noUncheckedIndexedAccess` setting**.
-
-```
-{
- "extends" ...,
-"compilerOptions": {
-  "noUncheckedIndexedAccess": false,
-....
-},
-include: [ALL_TEST_FILES, ALL_APPLICATION_FILES]
-}
-```
-
-Next, **add the `noUncheckedIndexedAccess` to the root `tsconfig.json` and EXCLUDE all test files**. This way, TypeScript will not scream at you whenever you do not explicitly perform null-checks when accessing array items in your test files.
-
-That's all
-
-#### The problem
-
-Notice that, in the previous example, we "downgraded" the strictness of the type checker for a subset of files. **The reverse would NOT be possible**.
-
-Since the `tsconfig.jest.json` must also include the application files (you are testing the application files after all), specifying `noUncheckedIndexedAccess` for the "test only" config would automatically apply it to the application files. This would likely result in many TypeScript errors forcing you to adopt the `noUncheckedIndexedAccess` in the whole codebase.
-
-The inverse (the example above) is possible because the application files have "stricter" type settings than the test files.
