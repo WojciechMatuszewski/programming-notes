@@ -1288,8 +1288,7 @@ interface Artist {
 
 ## Function Overloads
 
-You can provide different implementations based on the arguments that we supply.
-It makes stuff more readable
+You can provide different implementations based on the arguments that we supply. It makes stuff more readable.
 
 ```typescript
 // these are virtual, they will get compiled away
@@ -1303,6 +1302,9 @@ function reverse<T>(dataToReverse: string | T[]): string | T[] {
   return dataToReverse.slice().reverse();
 }
 ```
+
+It is **important to put your "narrowest" definition on the top**. Overloads are read from the top to bottom.
+If you were to reverse this rule, the code using the overloading function will always land on the "widest" overload, making the DX bad (the "widest" overloads are usually there as a fallback).
 
 ## Declare keyword
 
@@ -2134,7 +2136,7 @@ As long as the type parameter is wrapped at some point, the inner type will not 
 
 ## Generics and Inference
 
-Whenever you use _generic type parameters_ with default types, TS compiler will (in most cases) to infer that _type parameter_ from the values that you provided
+Whenever you use _generic type parameters_ with default types, TS compiler will (in most cases) to infer that _type parameter_ from the values that you provided.
 
 To give you an example
 
@@ -2171,11 +2173,9 @@ foo<{ code: "MY_CUSTOM_CODE" }>({ code: "MY_CUSTOM_CODE" }); // Ok
 foo<{ code: "MY_CUSTOM_CODE" }>({ code: "SOMETHING_ELSE" }); // Error as it should be
 ```
 
-As you can see, with our naive implementation of `foo` function, one use-case was not met.
-The `foo({ code: "SOMETHING_ELSE" });` snippet is not producing TS errors because of _type parameter_ inference. TS compiler sees that you provide a `string`,
-thus the `code` type will be inferred as string.
+As you can see, with our naive implementation of `foo` function, one use-case was not met. The `foo({ code: "SOMETHING_ELSE" });` snippet is not producing TS errors because of _type parameter_ inference. TS compiler sees that you provide a `string`, thus the `code` type will be inferred as string.
 
-There is a way to make it work, mainly using the notion of lazy type evaluation.
+In other worlds, **the TS compiler will always expand the generic parameter to the widest possible type available**.
 
 ### Lazy type evaluation - prevent type parameter inference
 
@@ -2205,8 +2205,37 @@ function foo<Obj extends BaseObj = never>(
 
 With that function declaration, every use-case should be fulfilled.
 
-As I mentioned, this _workaround_ is leveraging the fact that if a _type parameter_ is used in a context of conditional type, it will be evaluated lazily
-as in the inference will not occur.
+As I mentioned, this _workaround_ is leveraging the fact that if a _type parameter_ is used in a context of conditional type, it will be evaluated lazily as in the inference will not occur.
+
+### Type narrowing
+
+Sometimes all you work with is a "narrow" type, but you want TS to infer the most strict type possible – think a `string[]` and a tuple of strings.
+
+For this case, consider using **the `F.Narrow` function from `ts-toolbelt`**.
+
+```ts
+const makeRouter3 = <TConfig extends Record<string, { search?: string[] }>>(
+  config: TConfig
+) => {
+  return config;
+};
+
+const t = makeRouter3({ foo: { search: ["bar", "baz"] } });
+t.foo["search"]; // string[]
+```
+
+With `F.Narrow` the situation changes.
+
+```ts
+const makeRouter3 = <TConfig extends Record<string, { search?: string[] }>>(
+  config: F.Narrow<TConfig>
+) => {
+  return config;
+};
+
+const t = makeRouter3({ foo: { search: ["bar", "baz"] } });
+t.foo["search"]; // ["bar", "baz"]
+```
 
 ## Type branding (AKA _opaque types_)
 
