@@ -5960,8 +5960,19 @@ or create union products**.
 - you **cannot batch on the receiver level**
 
 - you **CAN batch on the sender level**.
+
   - use the [_PublishBatch_ API](https://docs.aws.amazon.com/sns/latest/api/API_PublishBatch.html), it will save you
     some $$!
+
+##### PII or PHI data
+
+> You can learn more about this feature [here](https://aws.amazon.com/blogs/compute/introducing-message-data-protection-for-amazon-sns/).
+
+- In some industries you might be working with PII or PHI data. In most cases, you do not want to send that data anywhere.
+
+- SNS has a similar capability to the [Amazon Macie](https://aws.amazon.com/macie/) – you can scan SNS payloads for sensentive data.
+
+- This feature can **prevent you from pushing to the topic if you set it to do so**. Pretty nice!
 
 #### SQS
 
