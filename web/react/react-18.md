@@ -174,6 +174,7 @@ It seems like the `useSyncExternalStore` is meant to be a drop-in replacement fo
 ```jsx
 let now = new Date().toISOString();
 const subscribers = new Set();
+
 setInterval(() => {
   now = new Date().toISOString();
   subscribers.forEach((notify) => notify());
@@ -203,6 +204,51 @@ You might wonder why the `notify` function is not taking any parameters? Would n
 Before React 18, the rendering was synchronous. If React started rendering the tree, it had to finish in one go. With React 18, that is no longer the case – the rendering is interruptable.
 
 Interruptable rendering means that, in extreme cases, if not taken into account, React could render part of your tree with state X and part of the tree with state Y (the update of the state happened in-between the interruption). To prevent such occurrences, as they relate to external stores, **instead of using the "live store value", React takes the "snapshot" value and performs the rendering cycle using that particular value for the whole process, even if it is interrupted**.
+
+### The usefulness of `useSyncExternalStore`
+
+It turns out the `useSyncExternalStore` hook is useful in the global context and not only for a library maintainers. In particular, [this blog post](https://thisweekinreact.com/articles/useSyncExternalStore-the-underrated-react-api#link2) has two examples which really speak to me.
+
+Here is one for the scroll position state.
+
+```jsx
+import { useSyncExternalStore } from "react";
+
+const useOptimizedScroll = (selector = () => null) => {
+  const subscribe = (notify) => {
+    window.addEventListener("scroll", notify);
+    return () => {
+      window.removeEventListener("scroll", notify);
+    };
+  };
+
+  const getSnapshot = () => {
+    /**
+     * If the selector returns the same value multiple times, the React will NOT update the subscriber.
+     * Only unique values count.
+     */
+    return selector(window.scrollY);
+  };
+
+  return useSyncExternalStore(subscribe, getSnapshot);
+};
+
+function App() {
+  const scrollPosition = useOptimizedScroll((value) => {
+    return Math.floor(value / 100) * 100;
+  });
+
+  return (
+    <div style={{ height: "300vh" }}>
+      <div style={{ position: "fixed" }}>{scrollPosition}</div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+The alternative being using `useRef` and `useState`. I would say the `useSyncExternalState` version is much easier to reason about (especially since the pub-sub model is so widely used).
 
 ## `useId`
 
