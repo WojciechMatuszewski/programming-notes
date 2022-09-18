@@ -6164,8 +6164,7 @@ is **always open**, it just waits for ANY message to be visible.
 
 - **remember** about the **resource / identity** policy combination needed for cross-region stuff on AWS.
 
-- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-cross-region-event-routing-with-amazon-eventbridge/)
-  .
+- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-cross-region-event-routing-with-amazon-eventbridge/).
 
 ##### Global endpoints
 
@@ -6175,8 +6174,7 @@ is **always open**, it just waits for ANY message to be visible.
 
 - allows for _"Active/Archive"_ architectures.
 
-- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-global-endpoints-for-amazon-eventbridge/)
-  .
+- [more info in this blog post](https://aws.amazon.com/blogs/compute/introducing-global-endpoints-for-amazon-eventbridge/).
 
 - global endpoints are free (as in events are charged just as if they were pushed to EB by yourself). Remember that you
   are sending to two event buses with this architecture.
@@ -6245,7 +6243,13 @@ is **always open**, it just waits for ANY message to be visible.
 
 #### Event Manipulation
 
-- you can **transform the event**. This of this picking and choosing which fields you want to forward to given service
+- you can **transform the event**. This of this picking and choosing which fields you want to forward to given service.
+
+  - one very hardy transformation you could do is to **apend a newline to the event while integrating with Firehose**.
+
+    - historically this was done by using an AWS Lambda function. Later, kinesis introduced an "automatic" way of doing that (no AWS Lambda required). The catch is **that enabling this functionality [costs money](https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning.html)**.
+
+    - instead of paying additional Kinesis charges, you [can do it via the EventBridge transformer](https://dev.to/slootjes/logging-eventbridge-events-to-s3-with-firehose-2hkc).
 
 - you can **return static response** to given service. This of counting service
 
