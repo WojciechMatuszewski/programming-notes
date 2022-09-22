@@ -8,7 +8,7 @@
 
 - you can view graphs on access patterns for your database
 
-* there is an underlying cost for activating it.
+- there is an underlying cost for activating it.
 
 ## Storage layer
 
@@ -139,7 +139,7 @@ You can also change the GSI value of the GSI pk and / or GSI sk without any rest
 
 > In a DynamoDB table, each key value must be unique. However, the key values in a global secondary index do not need to be unique.
 
-https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html
+<https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html>
 
 ##### WCU and GSIs
 
@@ -156,7 +156,7 @@ You might decide to skip on creating a GSI and instead choose to use `Scan` API 
 I would say this is a good pattern if you are certain that the cost of having those GSIs, and their influence on RCU / WCU consumption, would
 incur a non-trivial increase to your overall cost.
 
-A blog post on this topic https://roger20federer.medium.com/dynamodb-when-to-not-use-query-and-use-scan-61e4ab90c1df
+A blog post on this topic <https://roger20federer.medium.com/dynamodb-when-to-not-use-query-and-use-scan-61e4ab90c1df>
 
 ##### Provisioning capacity for an index
 
@@ -247,7 +247,7 @@ This is where you have a row describing some time-based entry, maybe a measureme
 
 In this pattern you have **separate tables** for **current, previous and much older sets**. This way you can allocate appropriate RCU / WCU values to given tables.
 
-https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-time-series.html
+<https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-time-series.html>
 
 ### Aggregation
 
@@ -287,7 +287,7 @@ Now the shard ID is deterministic and derived from the customers phone number. G
 
 - use `ConditionExpression` to fail specific operations. This can be used together with `Transactions (read / write)` to create powerful operations.
 
-* you can use logical operators like `AND` with `ConditionExpression` to create powerful conditions.
+- you can use logical operators like `AND` with `ConditionExpression` to create powerful conditions.
 
 ### UpdateExpression
 
@@ -396,7 +396,7 @@ The biggest no-no when it comes to **atomic updates** is that the **transactions
 
 > Take for instance a simple counter that you want to increment by 1 and need strictly linear counts. If you use global tables, you basically need to say "x-region" is now my primary. However, if there is a network partition, you can't really failover to a different region and guarantee you didn't already issue a number on a count. So you can't safely failover and must halt operations
 
-For a in-depth explanation of how _DynamoDB Global Tables_ handle consistency, checkout this video: https://www.youtube.com/watch?v=fqxL3WQ53GM&t=645s
+For a in-depth explanation of how _DynamoDB Global Tables_ handle consistency, checkout this video: <https://www.youtube.com/watch?v=fqxL3WQ53GM&t=645s>
 
 ## Sorting
 
@@ -430,7 +430,7 @@ So you have all the necessary information about sorting related things to use th
 
 - sometimes you want to get the enmity and all the other entities that relates to the entity, think GitHub repo and issues for this repo
 
-* to ensure that you get the repo first and then the issues within the same query, you might look into prepending the `issues` SK with some arbitrary character, this would _push_ the `repo` entity up top
+- to ensure that you get the repo first and then the issues within the same query, you might look into prepending the `issues` SK with some arbitrary character, this would _push_ the `repo` entity up top
 
 - that character usually is `#` or `0`, depending on the use case and the structure of the data.
 
@@ -632,13 +632,12 @@ Remember that you can switch between the two at will (at least that's what I've 
 
 ### Avoid keeping big blobs of data along small, frequently accessed ones in the same item
 
-Imagine a scenario where you have a table that keeps users profiles. The APP that your DDB is for allows the users to upload their photo.
-For historical reasons, the photos were stored as base64 encoded strings within the DDB, on the user profile item. Since the base64 string can grow up to 400kb, we have a problem.
+Imagine a scenario where you have a table that keeps users profiles. The APP that your DDB is for allows the users to upload their photo. For historical reasons, the photos were stored as base64 encoded strings within the DDB, on the user profile item. Since the base64 string can grow up to 400kb, we have a problem.
 
 Apart from the obvious problem of having a 400kb limit on the item, **we are wasting money**.
 See, every time the **user profile is updated, DDB has to read the whole item in memory and THEN perform the update - you pay from the read and write**.
 
-> Even if you update just a subset of the item's attributes, UpdateItem will still consume the full amount of provisioned throughput (the larger of the "before" and "after" item sizes). https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ProvisionedThroughput.html
+> Even if you update just a subset of the item's attributes, UpdateItem will still consume the full amount of provisioned throughput (the larger of the "before" and "after" item sizes). <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ProvisionedThroughput.html>
 
 With a big attribute of user photo present on the item, we will be paying way to much for a simple `UpdateItem` operation.
 There are **two ways of dealing with such situations**:
@@ -648,12 +647,18 @@ There are **two ways of dealing with such situations**:
 
 Both of them perform the same optimization - having the user profile item "weight" less, thus making each operation on that item cheaper.
 
+#### Splitting items and global tables
+
+Be aware of the eventual consistency when using the "split-item" pattern and global tables. Since you have to issue multiple writes to update an item associated with a single identity, there might be a point in time when some parts of the item are in inconsistent state (The `name` item is up to date, but the `surname` item write is still in-flight).
+
+I've written about this topic [on the Stedi blog](https://www.stedi.com/blog/how-to-ensure-cross-region-data-integrity-with-amazon-dynamodb-global-tables).
+
 ### Use TTL feature to purge unused data
 
 DDB exposes a feature where, given an attribute marked as "TTL" (the name of the attribute does not matter, you have to say which attribute is the "TTL attribute") items will be deleted when the TTL expires.
 
 It's not instantaneous though. There might be up to 48 hours of delay between "TTL" expiring and the item being deleted. This is due to the fact
-that the sweeper that runs the deletion is spun up on spare capacity of DDB (source: https://youtu.be/S02CRffcoX8?t=1368)
+that the sweeper that runs the deletion is spun up on spare capacity of DDB (source: <https://youtu.be/S02CRffcoX8?t=1368>)
 
 ### Filter or GSI
 
@@ -710,4 +715,4 @@ This approach will save you time and money in debugging time.
 
 ### Resources
 
-- https://serverlessfirst.com/data-integrity-considerations-writing-to-dynamodb
+- <https://serverlessfirst.com/data-integrity-considerations-writing-to-dynamodb>

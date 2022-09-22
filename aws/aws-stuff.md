@@ -317,7 +317,7 @@
 - Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your
   layers**
   - You can find the list of the specific directory names for a given runtime
-    here: https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path
+    here: <https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path>
 
 ##### Lambda layers and extensions with container deployments
 
@@ -449,7 +449,7 @@
 
 - **explicit deny ALWAYS overrules ALLOW**. This is very important, especially when working with groups.
 
-- checkout https://awspolicygen.s3.amazonaws.com/js/policies.js for list of all IAM actions. Neat stuff!
+- checkout <https://awspolicygen.s3.amazonaws.com/js/policies.js> for list of all IAM actions. Neat stuff!
 
 #### Real Identities
 
@@ -622,7 +622,7 @@ Now we are in the domain of a given service / resource.
 
 - **IAM is not involved here**, control is **handled by a given service / resource**
 
-* the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using
+- the resource-based policy **WILL NOT require the STS assume role calls**. This means that on **some occasions, using
   resource-based policy might be less latency heavy than using an identity-based policy**. One might experience this
   while working with **APIGW + Lambda** where the **integration between the services could use either resource or
   identity based policies**.
@@ -1353,8 +1353,7 @@ An example for s3-prefix (folder)
 
 ### AWS Service Catalog
 
-- **describes** all **services you offer**. Very **much like online store** but instead of buying eg. food **someone
-  buys products you provide**.
+- **describes** all **services you offer**. Very **much like online store** but instead of buying eg. food **someone buys products you provide**.
 
 - **region aware** service.
 
@@ -1364,6 +1363,8 @@ An example for s3-prefix (folder)
   NOT AVAILABLE!**
 
 - there is a hierarchy, **_Portfolio_** contains many **_Products_** which are just _CloudFormation_ templates.
+
+- you can track the usage of the _portfolio_ via the CloudTrail events as [depicted in this article](https://aws.amazon.com/blogs/architecture/maintain-visibility-over-the-use-of-cloud-architecture-patterns/).
 
 #### Constraints
 
@@ -1382,6 +1383,24 @@ An example for s3-prefix (folder)
   - Template: limits the options of end users when they launch a product
   - StackSet
   - Tag Update
+
+### AWS Control Tower
+
+- A service which helps you with managing accounts at scale
+
+  - an AWS alternative to [org-formation](https://github.com/org-formation/org-formation-cli)
+
+- It embeds AWS best practices related to AWS organizations and OUs.
+
+#### AWS Landing Zone
+
+- Related to the AWS Control Tower is the AWS Landing zone – a service / feature for creating and managing multiple accounts.
+
+  - Note that **it does not have anything to do with AWS Organizations**. It seems like the AWS Landing Zone is only concerned with accounts.
+
+- You can use the AWS Landing Zone through AWS Control Tower or as a standalone solution.
+
+  - Similarly to the AWS Control Tower, the AWS Landing Zone embeds best practices into the accounts you have created (for example creating a centralized accounts for logging and such).
 
 ### Access Advisor
 
@@ -1884,12 +1903,12 @@ much access to the underlying object the bucket owner has.
 - for any kind of production usage, you should have versioning enabled. Sadly, versioning is no the same as the snapshot
   of the whole s3 bucket.
 
-* there is **no native way of creating s3 bucket snapshots**.
+- there is **no native way of creating s3 bucket snapshots**.
 
 - to create s3 snapshots, you will need to combine the **_DataSync_ and _AWS Backup_** services.
   The _DataSync_ service will **push the s3 data into EFS**, then **the _AWS Backup_ can create a backup from EFS**.
 
-* the **_DataSync_ service can be very costly**. The AWS data transfer fees are pretty big, but you also will pay for s3
+- the **_DataSync_ service can be very costly**. The AWS data transfer fees are pretty big, but you also will pay for s3
   operations.
 
 #### Object lock
@@ -1927,7 +1946,7 @@ much access to the underlying object the bucket owner has.
 
   - use **`CloudWatch rule` with `CloudTrail` integration** and select given destination.
 
-- read my blog post https://dev.to/aws-builders/amazon-s3-to-aws-stepfunctions-pattern-4eog
+- read my blog post <https://dev.to/aws-builders/amazon-s3-to-aws-stepfunctions-pattern-4eog>
 
 ##### Filtering rules
 
@@ -3707,7 +3726,7 @@ and that is it**.
 - remember that the **user data scripts are run only once (when instance is created)**. This can bite you whenever you
   have some scripts that require internet access and you forgot to configure the access properly. **There is a way to
   make sure user scripts run on every reboot**.
-  This link can help: https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/
+  This link can help: <https://aws.amazon.com/premiumsupport/knowledge-center/execute-user-data-ec2/>
 
 - **stopping and starting an instance will MOST LIKELY result in data loss on instance store**. Unless you have
   dedicated tenancy model on that instance.
@@ -6113,12 +6132,12 @@ is **always open**, it just waits for ANY message to be visible.
 
 - the maximum event size payload that you can put into the bus is **256kb**.
 
-* this is most likely because the architecture underneath uses SQS.
+- this is most likely because the architecture underneath uses SQS.
 
 - this limit is not separate to the _EventBridge_ service. _StepFunctions_, _AWS Lambda async invocation_ all have the
   same limit.
 
-* just like in other services that have the same limit, if you ware working with larger payloads, upload the payload to
+- just like in other services that have the same limit, if you ware working with larger payloads, upload the payload to
   S3, include the presigned URL
   within the payload.
 
@@ -7888,7 +7907,7 @@ using a console. YOU HAVE TO USE CLI**
 
 Please also **keep in mind that NLB just forwards the traffic**. So **This is not a problem with NLB**. There is a good
 article on how to make it HA.
-https://aws.amazon.com/blogs/security/how-to-add-dns-filtering-to-your-nat-instance-with-squid/
+<https://aws.amazon.com/blogs/security/how-to-add-dns-filtering-to-your-nat-instance-with-squid/>
 
 #### Egress HTTP URL rules (DNS Filtering)
 
