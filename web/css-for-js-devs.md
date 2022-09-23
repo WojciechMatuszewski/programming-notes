@@ -1,269 +1,85 @@
-# CSS for JS devs
+# CSS for JS developers
 
-## Fundamentals
+## Module 0 - Fundamentals Recap
 
-- I was not sure about the difference between _pseudo-elements_ and _pseudo-classes_. The difference is that _pseudo-elements_ target "sub-elements" within a given element. On the flipside, the _pseudo-classes_ target the elements' specific state.
-  The syntax is also a bit different. For the _pseudo-elements_ we use `::`, for the _pseudo-classes_ we use `:`
+### Anatomy of a _Style Rule_
 
-- The difference between `rem` and `em` values. Here is the difference:
-  - The `rem` value is **relative to HTML tag font size**.
-  - The `em` value is **relative to the current tag font size**.
+Let us dissect the following rule.
 
-## Rendering logic
+```css
+p {
+  margin: 32px;
+}
+```
 
-- **Some** CSS properties are inherited from the parent. A good example would be the `color` property. Please note that **the notion of property inheritance only applies to some properties**.
+- We call the **whole thing** a **rule**.
+- We call the `p` a **the selector**.
+- We call the `margin: 32px` a **declaration**.
+- We call the `margin` a **property**.
+- We call the `px` an **unit**.
 
-- The `inherit` property allows you to **manually force inheritance for a given property**.
+### Media Queries
 
-- Josh presents a neat JavaScript analogue to how the CSS specificity works
+It just so happens that the most popular _media feature_ overlaps with a quite popular css _property_ (the `max-width` or `min-width`). You **cannot** use css properties with `@media` syntax.
 
-  ```js
-  const appliedStyles = {
-    ...inheritedStyles,
-    ...tagStyles,
-    ...classStyles,
-    ...idStyles,
-    ...inlineStyles,
-    ...importantStyles,
-  };
+```css
+@media (max-width: 300px) {} /* valid */
+@media (font-size: 32px) {} /* invalid */
+```
+
+### Selectors
+
+#### Pseudo-classes
+
+They offer you a way to **style the element based on its internal (browser) state**. There is a bunch of them for a given element (see MDN). The most popular ones are `:hover`, `:focus` and `:checked`.
+
+#### Pseudo elements
+
+Instead of targeting the state of a given element, **they target sub-elements of a given HTML element**. You have probably used them already. Rules such as `input::placeholder` or `input::before` are examples of rules for _pseudo-elements_.
+
+We call them **_pseudo-elements_ because they target things in the DOM we did NOT explicitly define with HTML tags**.
+
+#### Combinators
+
+These lets you target elements in a hierarchical fashion. One could **target direct children via the `>` combinator**. Or maybe you fancy **to target all descendants of a given element by utilizing a whitespace between tags (`ul li`)**. There are tons and tons of other combinators which are extremely useful.
+
+### Color
+
+There are many ways to represent colors in CSS, some notable ones are:
+
+1. Using the direct color name, like `color: red`.
+2. Using the HEX codes, like `color: #FF0000`;
+3. Using the RGB scheme, like `color: rgb(255,0, 0)`.
+4. Using the HSL scheme, like `color: hsl(0deg 100% 50%)`. Notice that there are no commas in-between the values. Weird.
+
+### Units
+
+There are many units one can use. Here are some notable ones:
+
+1. The `em` unit which **is relative to the parent font size**.
+
+2. The `rem` unit which **is relative to the ROOT font size**. By default, the root HTML font size is `16px`.
+
+  You should not be setting the `html` tag font size explicitly. Doing so **will override the default font size of the user settings**. Instead, use percentages!
+
+  ```css
+  html {
+    font-size: 120%;
+  }
   ```
 
-  Later he argues that one does not even need to be aware of the _specificity cascade_. I second his opinion. With modern tooling and auto-generated selectors, it is seldom an issue.
+3. The `px` unit which **is NOT relative to anything**.
 
-- I've been using `display:block` and `display:inline` without putting any though to it so far. Josh cements my knowledge about those.
-  - `block` property means _stacked on top of each other_.
-  - `inline` property means _in-line_. Just like people standing in a queue.
+4. The `%` unit. This unit does not work for font sizes.
 
-### The Box Model
+[This article](https://www.joshwcomeau.com/css/surprising-truth-about-pixels-and-accessibility/#introduction) tackles the question when should one use `rems` and when one should reach for `px` units. The **bottom line is to use `rem` when you want your element to scale with users default font size, otherwise consider using `px`**.
 
-Not understanding the _box model_ is like not understanding what a _closure_ is.
-You might get away with it, but you might get stuck once you encounter a problem that requires its understanding.
+### Typography
 
-- The `box-sizing` property changes how the overall `width` and `height` of the element is calculated.
+Fonts are very important – they can make or break a given website. In web, we have so called _font families_. The name stems from the fact that each font has multiple variants we could use.
 
-  - The `content-box` property tells the CSS engine to **add** the padding/border calculations to the width/height of the element.
-  - The `border-box` property tells the CSS engine to **subtract** the padding/border calculations to the width/height of the element.
+For the the font-related properties, the most common are `font-weight`, `font-size` and `line-height`.
 
-  The rule of thumb is to always have `border-box` on each element. It makes the calculations so much simpler as this is how we usually think of width and height.
+1. **If your font family does not have the specified `font-weight`, the browser will try to "bold" the characters automatically**. Usually, such attempt ends with a weird-looking font. Before using given `font-weight` value, ensure that the font you are using supports it!
 
-- The `padding` property is like the stuffing that your jacked comes with.
-
-  - I always forget what number corresponds to which side in the `padding: 0 0 0 0` rule. Think of a clock: `top right bottom left`.
-
-- In the `border` section I was surprised to learn that creating element with _double border_ does not require 2 HTML tags. There is the `border: double` property.
-
-- Think of `margin` property like **your personal space**. During the pandemic health authorities required us to stay 2 meters apart from each other.
-
-  - Margin can have a negative value.
-
-### Flow Layout
-
-- You **cannot change** the **width** and the **heigh** of an an `inline` positioned element.
-
-  - When thinking about `inline` elements, think about "going with the flow".
-
-- The `block` positioned elements are greedy. They fill all available space unless told not to do so.
-
-- The `inline` positioned elements **can wrap**. Neat!
-
-- The `inline-block` positioning is interesting. For the **parent of the element, the element is considered to be `inline`**, but for the **element itself can be styled like a `block` positioned element**.
-  - This gives you the ability to **add `width` and `height` to the element**.
-  - One notable gotcha is that **the `inline-block` element does not wrap**.
-
-#### Width
-
-- TIL that you can specify `max-content`, `min-content` and `fit-content` as `width` properties. I though that these are available only in the context of CSS grid.
-
-### Reverting values
-
-- Use **`revert` to undo the properties you have set for a given property**.
-  - This is especially useful for **styling responsive websites** where you wish to undo or "undeclare" the property for a given viewport.
-
-## Understanding `z-index`
-
-It's hard for me to count all the occurrences of me wrestling with the `z-index` property. Things not stacking up correctly, setting the `z-index` to `9999` without seeing any results. Fun times.
-
-It turns out that if you learn a thing or two about how _stacking contexts_ work in CSS, you will be able to tame the `z-index` and stop desperately setting it to `9999` expecting results.
-
-- the `z-index` property creates so called **_stacking context_**.
-
-  - many **other CSS properties create the _stacking context_ as well**.
-
-- the **_stacking context_** is like a **container for the element children**.
-
-  - the **child cannot escape the _stacking context_ of it's parent!**
-
-  ```html
-  <header style="{{zIndex:" 1}}>Header</header>
-  <main style="{{zIndex:" 1}}>
-    <!-- -> does not matter, the children will never escape the parent. -->
-    <div style="{{zIndex:" 999}}></div>
-  </main>
-  ```
-
-- the **_stacking context_ is not correlated with _layers_**. The **_stacking context_ is purely CSS-related thing**.
-
-- to **"seal" children, you could use `isolation: "isolate"`**.
-
-  - works **the same way as if you were to set `z-index` to 1 on the element**
-
-  - ensures that **no `z-index` pollution occurs**
-
-## Flexbox
-
-- `flexbox` is all about thinking "how am I controlling the layout on THIS(single) axis.
-
-- The `align-items: baseline` is pretty interesting. It works similarly to the `flex-end` but in the relation to typography.
-  - Could be used in the context of inputs where the `label` text is huge and you want the input to be positioned at `baseline` of that.
-  - The `baseline` is pretty magical. You can make the elements aligned on a shared `baseline` even though they do not share the same container.
-
-### Growing and shrinking
-
-- The `width` and `heigh` properties in the context of `flexbox` are more like suggestions. Items can shrink to their minimum `width`/`height` depending on the parent.
-
-  - **In the `flexbox` world there is the `flex-basis` property. This property acts as the `height`/`width` but overrides the `height`/`width` properties**.
-
-  - `flex-basis` is `flex-direction` agnostic. The `width` and `height` is not.
-
-- Think of the `flex-shrink` property as: "How quickly should the element shrink if there is no enough space for its normal width/height".
-  - `flex-shrink: 10` means that a given element will be _shrinking_ ten times faster than other elements.
-  - Have you ever been in a situation where a circle turns into an oval shape after the browser window gets small enough? Yup, we have all been there.
-    Instead of fiddling with CSS properties, set the `flex-shrink:0` on the element that you do not wan to get squished. Problem solved!
-
-### The "flex" shorthand
-
-- The `flex:1`. I've used it but I never truly understood it until now. The shorthand sets three properties.
-  - The `flex-grow:1`. This means "take all available space".
-  - The `flex-shrink:1`. This means "shrink at the rate of 1".
-  - The `flex-basis:0%`. This means "your width is 0%". As I eluded earlier, this property overrides `width`.
-
-### Constraints
-
-- Neat trick Josh is touching on is the usage of `flex-shrink` with a very high value. This will produce an effect where one element seem to be shrinking and the other is not.
-
-### Pro tip
-
-- In the context of `flex` **use `flex-basis` instead of `width`/`height`. Remember that the `flex-basis` overrides the `width`/`height` even if it comes BEFORE the `width`/`height` property**.
-
-### Wrapping
-
-- Use the `flex-wrap` property to control the wrapping of the `flex` children. Wrapping will occur if the element cannot shrink anymore.
-
-- The `justify-content` applies the transformation **on the content as a whole** while the `align-items` applies the transformation **on individual item**.
-  This difference is subtle but noticeable on some occasions.
-
-### Grouping and gaps
-
-- Use the `gap` property instead of grouping elements. There is no need to artificially pollute the markup so that you can apply margins.
-  The `gap` property is pretty neat. The **space is applied only between the children**.
-
-### Ordering
-
-- Be mindful about the `flex-direction` property. It might seem like using this property could save you some logic regarding reversing elements.
-  This is not the case. **The `flex-direction` is purely visual. It does not affect the DOM layout**.
-
-- `flex-direction` can be very helpful in some situations. **One might use `-reverse` to control focus order without using `tabindex`**.
-  Utilizing the DOM placement and changing the visual ordering is much better than having artificial `tabindex` properties.
-
-### Flexbox Interactions
-
-- In the context of CSS, there are multiple _layout modes_. Given _layout mode_ **can, but does not have to, interact with other _layout mode_**.
-  For example, the `position:absolute` layout mode is not really compatible with `flex` layout mode.
-
-- Sometimes **mixing _layout modes_ can be very helpful**. You can do a lot with `position:sticky` declared on a `flex` child.
-
-## CSS Grid
-
-- In contrast to `flex` layout, the `grid` layout takes both axis into consideration.
-
-- There are some restrictions on what kind of layouts could be created with CSS Grid, but if your layout is a _grid_ you should be good.
-
-### The `fr` unit
-
-- The `fr` unit means **some portion of available space**. The "some" part depends on the number between the `fr` unit.
-
-  - Given the following: `grid-template-columns: 1fr 1fr` – it means _two columns of the same width_.
-
-- The **`fr` has an implicit behavior when the `grid` element has no explicit height specified**.
-  - If that is the case, **the `fr` unit is the unit of the largest child**.
-
-### Layout mode
-
-- **If you specify `display:grid` the children of that element will be rendered using _Grid_ layout**.
-  It works exactly the same as `display:flex` is.
-
-### Grid construction
-
-- Unlike in _flexbox_ the **sizes** for the columns and rows you specify **are not "suggestions"**.
-  In the _flexbox_ land we have talked about `flex-basis` and its relation to `width` and `height` properties.
-  We have also touched on the fact that these properties are a mere suggestions for the CSS engine. This is not the case here.
-
-- Even if you explicitly set number of rows and/or columns the browser might add additional rows and/or columns depending on the number of items within the parent.
-  This is where the **notion of _implicit_ and _explicit_ individual columns or rows** comes in.
-
-### Alignment
-
-- You can use the `justify-content` just like in _flexbox_ but the behavior might differ.
-
-- There is additional `justify-items` property that **works on the individual item level instead of the content as a whole**.
-  One might draw comparison between `justify-items` and `align-items` property from the _flexbox_ world.
-
-- When to use `xx-content` and `xx-items` properties?
-  - Use the `xx-content` properties when you want to **affect the grid structure as a whole**.
-  - Use the `xx-items` properties when you want to **affect the grid items**.
-
-### Grid Areas
-
-- The `grid-template-areas` property is super powerful. It allows you to explicitly create "slots" for each element.
-  Imagine drawing borders between countries. Neat stuff!
-
-### Tracks and Lines
-
-- TIL that you could have **negative values for grid columns and rows**. The `grid-row: 1/-1` is a complete valid declaration.
-  The negative values for columns and rows are very useful as **they always point to the last column / row**.
-  The analogy I see here is getting the last element from the array.
-
-  ```js
-  const arr = [1, 2, 3];
-
-  // First way of getting the last element
-  const lastElement_1 = arr[arr.length - 1];
-
-  // Second way of getting the last element. Just like negative grid column / row values
-  const lastElement_2 = arr.slice(-1)[0];
-  ```
-
-### Fluid Grids
-
-- The `minmax` function is very powerful. It allows you to specify `max-width` and `min-width` at the same time.
-  The benefit over the `max-width` and `min-width` is that **it composes with other functions**. One such function might be `repeat` CSS Grid function.
-
-- The `minmax` can be used in a _fluid context_. The `minmax(min(400px, 100%), 1fr)` is an example of such behavior.
-  Instead of using media queries to scale the `min` value of `minmax` I'm using the `min` function.
-
-### Recipes
-
-- **Centering** works on similar basis to _Flexbox_.
-
-  - You could use the `align-content` and `justify-content` properties or set them to `center`.
-  - You could use **`place-content` shorthand**. This is a **shorthand for `align-content: center` and `justify-content:center`**.
-  - Please note that **`-place-content` only works in CSS Grid**.
-
-- **`sticky` positioning plays well with `grid`**.
-
-  - Depending on the layout you are working on **you might want to create a _sticky wrapper_ within a `grid` element.**.
-    This is because the `position:sticky` does not care about _CSS Grid lines_.
-
-- _CSS Grid_ offers a **neat way of creating _full bleed layouts_**. A _full bleed layout_ is the one where an image spans the whole page while the text is centered and constrained by some `ch` unit limit. There are some steps to creating one.
-  1. Have a parent declare flexible columns: `grid-template-columns: (1fr, min(30ch, 100%), 1fr)`.
-  2. Have all children be placed inside the second column: `.wrapper > * {grid-column:2}`
-  3. Have the _full bleed_ child take all columns: `.full-bleed {grid-column: 1 / -1}`. It uses the trick we have learned about earlier.
-
-### Managing Overflow
-
-- Remember that **while the `fr` relates to "available space" it also is related to its contents**.
-  If the child is very big, the `fr` unit will grow to "contain" it.
-
-- Setting `overflow` works but the **`overflow` property has to be set on direct grid child. It does not work on descendants**.
-
-- Another way of managing overflow is to **use the `minmax(0, X)` declaration**.
+2. The `line-height` accepts an _unitless_ value (as well as a value with an unit). **You should prefer the _unitless_ variant** as it scales with user zoom settings.
