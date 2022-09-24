@@ -83,3 +83,65 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 1. **If your font family does not have the specified `font-weight`, the browser will try to "bold" the characters automatically**. Usually, such attempt ends with a weird-looking font. Before using given `font-weight` value, ensure that the font you are using supports it!
 
 2. The `line-height` accepts an _unitless_ value (as well as a value with an unit). **You should prefer the _unitless_ variant** as it scales with user zoom settings.
+
+## Rendering Logic 1
+
+### Built-in Declarations and Inheritance
+
+- Certain CSS properties inherit values from the parent HTML tag.
+
+  - **Most of the properties that inherit are typography-related**. Think the `color`, `font-size`, `text-shadow` properties.
+
+  - You can think of inheritance in CSS as similar to the prototypal-inheritance in JavaScript.
+
+  - You can **force inheritance** by using the `inherit` property value.
+
+### The cascade
+
+- The name CSS expands to _Cascading Style Sheets_. The _cascading_ part means that, the order in which you declare the rules matter.
+
+  - Think of the _cascade_ as analogy to merging different objects in JavaScript.
+
+    ```js
+    const result = {
+      ...pStyles,
+      ...aStyles
+    }
+    ```
+
+  - When determining the end-result, one has to also take into the account the **specificity of a given CSS selector**.
+    While important when you write vanilla JS, if you use modern tooling, you do not really have to know the specificity of a given selector.
+
+### Directions
+
+- There is the **`block` direction (think lego blocks stacked on top of each other)**, and there is the **`inline` direction (think people standing in a line)**.
+
+  - The above holds true for English and vast majority of other languages, but it's not exactly true for the arabic and some of the Asian languages.
+
+  - You might want to consider **using the `margin-block-start`, `margin-block-end`, `margin-inline-start` and `margin-inline-end`** properties to style margins. These are universal and will adjust accordingly based on the direction of the document.
+
+### The Box Model
+
+- The box model describes **how big a given element will be**.
+
+  - The box model **describes how the content, `padding`, `border` and `margin`** interact with each other.
+
+- By default, the browsers specify the `box-sizing` to have a value of `content-box`.
+
+  - This means that, the `width` and `height` of the child does not take into the account the padding and the margin of that element.
+
+  - Since the behavior described above might be confusing, one can use the `box-sizing: border-box` declaration.
+
+    - The `border-box` means that `width` and the `height` properties should account for padding, margin and border properties of a given element.
+
+#### Padding
+
+- The **_inner space_ of a given element**.
+
+  - You have your usual suspects of `padding-left` and such, but **you should also consider using the logical properties like `padding-block` or `padding-block-start` or `padding-inline-start` and so on**.
+
+- For padding, **use `px` rather than other units**. You most likely do not want the padding to change alongside the text size.
+
+- To **remember the shortcut notation, imagine a clock. Start from the `12:00` and go clock-wise**.
+
+  - So the definition like `padding: 10px 20px` means `10px` for up/down and `20px` for right and left.
