@@ -145,3 +145,77 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 - To **remember the shortcut notation, imagine a clock. Start from the `12:00` and go clock-wise**.
 
   - So the definition like `padding: 10px 20px` means `10px` for up/down and `20px` for right and left.
+
+#### Border
+
+- Use **`currentColor` to "synchronize" the border color with the color of the text**.
+
+  - The neat thing about the `currentColor` is that it can be used in any property which accepts a color.
+
+- It is **common to not understand the difference between the `outline` and the `border`**.
+
+  - The **`border` affects the layout, the `outline` does not!**.
+
+- You should never disable the `outline` property. It breaks the navigation with the keyboard (there is no visual feedback when navigating).
+
+#### Margin
+
+- Think of the margin as the "personal space" of a given element. Margin does not account for the element width and height in the `border-box` model.
+
+- The syntax of `margin` property is the same as the `padding` one. **Consider using the logical properties of `margin-block-start` and so on**.
+
+- A single most important difference between the `margin` and the `padding` properties is the fact that, **with margin you can use negative values like `-32px`**.
+
+  - This allows you to "escape" the parent box (think stretched images inside an article).
+
+  - On the subject of stretched content, there are two possible solutions for the layout described above.
+
+    1. Use the `calc` on the `img` tag.
+
+        ```css
+        img {
+          margin: 0 -32px;
+          <!-- using with 100% will NOT work as the width is calculated based on the parent -->
+          width: calc(100% + 64px);
+        }
+        ```
+
+    2. Wrap the `img` with a `div` and let the `div` do the "escaping".
+
+        ```css
+        img {
+          width: 100%;
+        }
+
+        .img-container {
+          margin: 0 -32px;
+        }
+        ```
+
+### Flow layout
+
+- There are 7 layout modes, the most notable ones are the _flow layout_, _flexbox_ and the _grid_.
+
+  - **Most (the exception being for `img`, `video`, `canvas` and `button` tags) _inline_ elements ignore properties that could effect the layout of the page**.
+
+    - Try using a `width: 300px` on a `span`. If you did not change the default browser styles, the `width` will be ignored!
+
+- The _block_ elements do not spare space, they will fill all the available space.
+
+  - There is a way to "contain" a block element with `width: fit-content` declaration.
+
+- The **browser treats _inline_ elements as typography. This means that they have a "magic" bottom space" attached to them**.
+
+  - The reason kind of makes sense for text – this ensures that the text is not crammed. But it does not make sense for the `img` tag.
+
+- The **`inline-block` elements behave as _inline_ for the parent, but they accept _block_ element properties**.
+
+  - This allows you to provide a margins and other properties to the element, but still have it flow _inline_.
+
+  - Keep in mind that **`inline-block` elements do not wrap**.
+
+#### Width Algorithms
+
+- You have the _percentage-based_, _unit-based_ and _logical-based_ attributes at your disposal.
+
+  - The **`fit-content`, `max-content` and `min-content`** are really useful. Keep in mind that `min-content` means the _smallest possible given the longest child_.
