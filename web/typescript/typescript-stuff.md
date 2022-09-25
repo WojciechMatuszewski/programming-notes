@@ -217,7 +217,7 @@ If that's the case, we are dealing with something very strange that I've discove
 You **have a file named the same way as you `d.ts` file**, eg. `env.ts` and `env.d.ts` file.
 The way typescript works is that **the `env.d.ts` file will be ignored since typescript things it was derived from `env.ts` file**. Pretty strange right?
 
-https://github.com/microsoft/TypeScript/issues/31397#issuecomment-492269754
+<https://github.com/microsoft/TypeScript/issues/31397#issuecomment-492269754>
 
 There are 2 solutions here:
 
@@ -267,6 +267,36 @@ const result = foo.bar();
 Kind of makes sense does not it?
 
 It can be frustrating though – in situations where you want to override a 3rd party library interface property. **I do not have a good answer for doing that yet**.
+
+## "Loose" autocomplete
+
+> Check out [this tip](https://www.totaltypescript.com/tips/create-autocomplete-helper-which-allows-for-arbitrary-values).
+
+Sometimes you might want to have a property which can take either a well defined value or any value of a given type. In such situations, ideally, we want to keep the autocomplete functionality we have, when the type is scoped to only a couple of well-defined values.
+
+```js
+function getFontSize(size: "sm" | "xs" ) {
+  // Here I would like to also allow for `any` size where I fallback to some value
+}
+```
+
+One way to do that, would be to expand the `size` prop to accept the `string` type.
+
+```js
+function getFontSize(size: "sm" | "xs" | string ) {
+}
+```
+
+The **problem with this approach is that we are going to loose autocomplete**. TypeScript will **expand the `size` to accept strings**. There is no way to provide autocomplete on "all" strings.
+
+The **solution is to scope the `string` type**, by omitting the well-defined values.
+
+```js
+function getFontSize(size: "sm" | "xs" | Omit<string, "sm" | "xs"> ) {
+}
+```
+
+Now, the autocomplete works as expected. It's either `sm`, `xs` or all the strings (except the `sm` or `xs` value).
 
 ## TripleSlash aka Reference
 
@@ -519,7 +549,7 @@ console.log(0 ?? "something"); // 0
 This can help in cases where you have valid non-truthy values as your _guardian
 values_ but you still want to check for `null` and `undefined`
 
-## Getting the type out of the array.
+## Getting the type out of the array
 
 Let us say you have are working with the following array.
 
@@ -2182,9 +2212,9 @@ In other worlds, **the TS compiler will always expand the generic parameter to t
 Sadly, there is no _intuitive_ or _native_ way to do this.
 
 There is ongoing GH thread. You can find it here.
-https://github.com/Microsoft/TypeScript/issues/14829
+<https://github.com/Microsoft/TypeScript/issues/14829>
 
-We will be using the solution described in that thread, mainly https://github.com/Microsoft/TypeScript/issues/14829#issuecomment-504042546
+We will be using the solution described in that thread, mainly <https://github.com/Microsoft/TypeScript/issues/14829#issuecomment-504042546>
 
 ```ts
 type NoInfer<T> = [T][T extends any ? 0 : never];
