@@ -287,6 +287,30 @@
 
 - the benefit here is the _elasticity_ of the storage. Keep in mind that EFS can grow almost infinitely.
 
+#### Layers
+
+- External code that you can pull into your AWS Lambda environment.
+
+- Not very relevant in the JavaScript ecosystem (apart from brining 3rd party binaries) – we can bundle pretty much anything nowadays.
+
+- There are **AWS provided and "custom" layers**.
+
+  - The "custom" layers are mostly distributed via the AWS Lambda Layer ARN.
+
+  - You can (and I think you must) attach some IAM permissions to your Layer. If you want to share your Layer with a 3rd party, you have to grant their account access to the layer.
+
+- Keep in mind that layers are immutable. If you update the layer, you have to update your AWS Lambda configuration to use the newest version.
+
+- You **want to use Layers for things that rarely change**.
+
+- **Layers are regional, if you want to share your Layer, and your layer is popular, you will have to deploy this Layer to every region**.
+
+##### Pulling the layer from the ARN
+
+- You can pull the layer from the ARN. These are usually layers published by others and they have sufficient permissions attached to the layer which enable you to use that layer.
+
+- **When you use the layer, AWS pulls that layer into your account**. This means that **if the external layer were to be deleted, your function will still work as expected**.
+
 #### Container deployments
 
 - you can package your lambda code as a container image and push that to ECR
@@ -314,10 +338,8 @@
 
 ##### Lambda layers
 
-- Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your
-  layers**
-  - You can find the list of the specific directory names for a given runtime
-    here: <https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path>
+- Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your layers**
+  - You can find the list of the specific directory names for a given runtime here: <https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path>
 
 ##### Lambda layers and extensions with container deployments
 
