@@ -219,3 +219,58 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 - You have the _percentage-based_, _unit-based_ and _logical-based_ attributes at your disposal.
 
   - The **`fit-content`, `max-content` and `min-content`** are really useful. Keep in mind that `min-content` means the _smallest possible given the longest child_.
+
+#### Height Algorithms
+
+- As opposed to width, the default behavior for `height` on block elements is to be as small as possible, while also containing the whole content.
+
+- Keep in mind that percentage-based unit is relative to the parent.
+
+  - This plays a key role when setting the "page wrapper" height to `100%` – it might not work out of the box. Usually, this is caused by not setting the explicit height on the `html` and `body` (can also be percentage-based).
+
+### Margin collapse
+
+#### Rules of margin collapse
+
+- **Only vertical margins collapse (in vertical-writing mode)**. I did not know that.
+
+- **Margins only collapse in the _flow_ layout**. If you specify the `display: flex` on the parent, the margins will NOT collapse. TIL
+
+- The bigger margin wins.
+
+- Margins **must be "touching" in order for them to collapse (padding, border and other in-between elements will make elements NOT touch)**. This is very interesting. It means that, the following WILL NOT collapse
+
+    ```html
+    <p style = {{margin-bottom: 20px}}>
+      foo
+    </p>
+    <br/>
+    <p style = {{margin-top: 20px}}>
+      bar
+    </p>
+    ```
+
+  But, the following WILL collapse
+
+    ```html
+    <div>
+    <p style = {{margin-bottom: 20px}}>
+      foo
+    </p>
+    </div>
+    <p style = {{margin-top: 20px}}>
+      bar
+    </p>
+    ```
+
+  The biggest takeaway here is that **margin is used to create a space between sibling elements, even if it means "transferring" margin to the parent**.
+
+- The margin of `0px` is going to collapse. An element with no `margin` property is considered to a `0px` margin.
+
+#### Using Margin Effectively
+
+A lot of people in JavaScript ecosystem advocate for completely ditching the `margin` property. This sounds reasonable and doable in the era of _component driven_ frameworks like React or Vue.
+
+### Workshop
+
+There is a lot of thing you can do with only margin, padding and some colors.
