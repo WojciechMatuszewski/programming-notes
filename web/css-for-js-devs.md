@@ -274,3 +274,63 @@ A lot of people in JavaScript ecosystem advocate for completely ditching the `ma
 ### Workshop
 
 There is a lot of thing you can do with only margin, padding and some colors.
+
+## Rendering logic II
+
+- When **you set the `position` to `static` you tell the browser to NOT use the _positioned_ layout**.
+
+  - You could achieve the same effect by using the `initial` value.
+
+### Relative positioning
+
+- Kicks in when you set the `position` property to `relative`.
+
+- Gives you **the ability to use additional CSS properties**. These are the **`top`, `left`, `right` and `bottom`**.
+
+  - They can take both positive and negative values (akin to the margin), but **using them DOES NOT impact the layout like setting a margin does**.
+
+- You can **apply the relative positioning to both block and inline elements**. This makes it possible to move inline elements around. You could not do that with margin.
+
+### Absolute positioning
+
+- Kicks in when you set the `position` property to `absolute`.
+
+  - **Using the `position: absolute` declaration WILL affect the layout**.
+
+  - Using the `position: absolute` will **pull the element out of the flow layout**.
+
+- Gives you **the ability to use additional CSS properties**. These are the **`top`, `left`, `right` and `bottom`**.
+
+  - They can take both positive and negative values.
+
+- The values for `top` and so on, are **calculated based on the containing block (more on this below), not the flow position as in the case of `relative` positioning**.
+
+#### Centering Trick
+
+- Remember how in the flow layout, the `margin: auto` only worked horizontally? It turns out, that, for **`absolute` positioned elements, the `margin: auto` works horizontally as well as vertically**.
+
+  - This enables you to center the `absolute` element inside the containing block.
+
+    ```css
+    .box {
+      width: 100px;
+      height: 100px;
+      margin: auto;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+    ```
+
+  - Keep in mind that, for this trick to work, **the element has to have a well-defined size**.
+
+### Containing blocks
+
+- The `absolute` positioned elements **are contained by elements with positioned layout OR the initial containing block – the viewport**.
+
+  - In most cases, **people wrap the `absolute` positioned elements with `relative` positioned parents, but using `fixed`, `static` or even `absolute` positioned elements will also do**.
+
+  - The `absolute` positioned elements **ignores all parents until it find either the one with positioned layout or the initial containing block**.
+
+### Stacking Contexts
