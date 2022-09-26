@@ -174,17 +174,6 @@ Matches element that has no content, is self closing or contains only a comment.
 
 Not really supported. Works like `:empty` but can contain whitespace.
 
-### `:not`
-
-Well supported. The gotcha is that the **selector inside parenthesis must be
-simple**. By simple we mean no combinators and spaces.
-
-```css
-element: not(img); /*ok*/
-div: not(.someClass); /*can be also an id*/
-div: not(ul li); /*will not work, there is a space, it's not a simple selector*/
-```
-
 ### `:matches`
 
 This one is wild. Look at the syntax
@@ -196,7 +185,61 @@ element: matches(#home, .someClass, [title]);
 Pretty neat huh? This one is almost like `querySelectorAll`. Of course this
 would be too good to be true. **Support for this is quite meh**.
 
-## Pseudo elements
+## Pseudo-classes
+
+### The `:is` and `:where`
+
+The `:is` and `:where` selectors are used to eliminating repetition that sometimes you have to deal with when selecting multiple children of a given element.
+
+  ```css
+  :is(article) h2,h3,h4,h5,h6 {
+    color: var(--fire-red)
+  }
+
+  // the same as \/
+  article h2, article h3, article h4, article h5, article h6 {
+    color:var(--fire-red)
+  }
+  ```
+
+The only difference between the `:is` and `:where` selectors is the specificity. The **`:where` selector has a specificity of 0, whereas the `:is` adheres to the regular specificity rules of selectors**.
+
+### The `:has`
+
+The `:has` selector enables you to **style the parent based on it's the children**. This is a groundbreaking change in how we think about CSS. Since always, the CSS rules had to obey the _cascading_ semantics – you could not "go back" to the parent.
+
+The following is an example of the `:has` selector where we specify the number of columns based on the list items.
+
+  ```css
+  ul:has(li:nth-child(6)) {
+    columns: 2;
+  }
+
+  ul:has(li:nth-child(11)) {
+    columns: 3;
+  }
+  ```
+
+Pretty amazing stuff.
+
+### `:focus-visible`
+
+The `:focus-visible` uses browser UA heuristics to determine when to display the focus outline. **This is not the case with the "regular" `:focus` pseudo-class** which is "dumb" in that regard. You **might have needed this to disable the focus outline on link clicks**.
+
+In fact, most (if not all) of the browsers, migrated from `:focus` to `:focus-visible` in their UA styles.
+Did you notice that, if you click a link, the focus outline is not there? **But if you use the keyboard, the focus outline is visible?**. This is the `:focus-visible` pseudo-class in action.
+
+### `:not`
+
+Well supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators and spaces.
+
+```css
+element: not(img); /*ok*/
+div: not(.someClass); /*can be also an id*/
+div: not(ul li); /*will not work, there is a space, it's not a simple selector*/
+```
+
+## Pseudo-elements
 
 ### `::first-letter`
 

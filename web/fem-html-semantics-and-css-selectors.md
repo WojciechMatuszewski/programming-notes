@@ -104,11 +104,11 @@ The instructor discussed the difference between the `first-child` and the `first
 
 - Proper usage of `section` and `article` tags is very powerful. It makes the HTML more readable.
 
-### Pseudoclasses – `is()`, `where()`, `not()`, `has()`
+### Pseudo-classes – `is()`, `where()`, `not()`, `has()`
 
 - The `:is` and `:where` selectors are used to eliminating repetition that sometimes you have to deal with when selecting multiple children of a given element.
 
-  ```cs
+  ```css
   :is(article) h2,h3,h4,h5,h6 {
     color: var(--fire-red)
   }
