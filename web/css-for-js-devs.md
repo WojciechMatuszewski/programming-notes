@@ -334,3 +334,55 @@ There is a lot of thing you can do with only margin, padding and some colors.
   - The `absolute` positioned elements **ignores all parents until it find either the one with positioned layout or the initial containing block**.
 
 ### Stacking Contexts
+
+- There are many factors which influence how elements stack on top of each other. Most notable are the **layout mode and the DOM order** and the **`z-index`** value.
+
+  - As a rule of thumb, the **_positioned_ elements will always render on top of non-positioned ones**.
+
+- The famous **`z-index` property only works with _positioned_ elements and grid/flex children**.
+
+  - The **value of the `z-index` is compared relative to all the elements in a given stacking context**. A very important nuance to understand as this is the reason you sometimes find yourself bumping the `z-index` to a very high value to no avail.
+
+    ```html
+    <header zIndex = "2" position="relative">
+      My header
+    </header>
+
+    <main zIndex = "1" position="relative">
+      <div zIndex = "999999">VeryHigh</div>
+    </main>
+    ```
+
+  The `VeryHigh` **will NEVER overlay on top of the `My header`**. The `999999` is very high, but it only is comparable to other `zIndex` values inside the `main`.
+
+- There are many ways one could go about creating the stacking context. The **most common way I've seen is to use the `position: relative` and `z-index: SOME_NUMBER` declarations**. You can find the full [list here](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context).
+
+#### Managing z-index
+
+- To avoid "`z-index` wars" you **should create stacking contexts when necessary**.
+
+  - As noted previously, there are multiple ways one could do that, but **the best way to avoid the "`z-index` wars" is to not use the `z-index` at all!**.
+
+  - To **create a stacking context without using the `z-index` property, use the `isolation: isolate` declaration**.
+
+- Another very **useful thing you could do is to set the `isolation: isolate` on the `#root` element of your React application**. This guarantees that any modals (injected via portals) which render at the level of the `#root` element do not overlap with any elements from within the application itself.
+
+### Fixed positioning
+
+- The `position: fixed` declaration makes the element **behave as if `absolute` but it will also follow you when you scroll**.
+
+  - As opposed to the `absolute` positioned elements which are bounded by their _positioned parents_, the **`fixed` elements are contained by the viewport**.
+
+- You can **"break" the `fixed` position by applying transforms on the parent**.
+
+### Overflow
+
+- Make sure you configure your Mac to always show scroll bars. This way you will avoid a situation where a scroll bar is hidden for you, but visible for someone on a Windows machine.
+
+- The `overflow: auto` is very smart, use it.
+
+#### Horizontal Overflow
+
+- For images, **which behave as `inline` elements by default** use the `white-space: nowrap` declaration.
+
+  - Now, that I understand that `inline` elements are really treated like typography, I understand why `white-space: nowrap` works here.
