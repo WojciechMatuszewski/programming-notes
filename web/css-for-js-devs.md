@@ -386,3 +386,52 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - For images, **which behave as `inline` elements by default** use the `white-space: nowrap` declaration.
 
   - Now, that I understand that `inline` elements are really treated like typography, I understand why `white-space: nowrap` works here.
+
+#### Positioned Layout
+
+- Keep the concept of _containing blocks_ in mind. If you grasp that concept, you will know, for example, why a given element peeks outside of its parent, even though the parent has `overflow: hidden` declaration! (it is because the parent is NOT using positioned layout).
+
+- The **`fixed` positioned** elements will **always escape overflow**. This is because the `fixed` positioned elements are contained by the "initial containing block" and not by the parent with some kind of CSS property.
+
+### Sticky Positioning
+
+- The **most important** thing to keep in mind regarding `sticky` position is the fact that **`sticky` positioned elements CANNOT leave the bounds of their parent**.
+
+  - If your parent is the height of the `sticky` positioned elements, no matter how hard you try, the element will not "stick" – it has no space!
+
+- The `sticky` position "hijacks" the `top`, `left`, `right` and `bottom` properties to make them work differently than in the case of other `position: XX` declarations.
+
+  - In `sticky` case these positions denote when a given element should "stick" (how much space from the corners of the PARENT ELEMENT!).
+
+### Hiding content
+
+- There are many ways to hide content using CSS, the most notable ones are `display: none`, `visibility: hidden` and `opacity` declarations.
+
+  - The `display: none` will **make it so that the element is effectively removed from the DOM (even though they are physically still there)**. You cannot see it, you cannot click it, you cannot interact with it.
+
+  - The `visibility: hidden` is less strict than the `display: none` counterpart. The **element will NOT be visible, but it will still take the space in the layout**, but **you will not be able to interact with that element, just like in the case of `display: none`**.
+
+  - And finally, the `opacity`. Here, **you still can interact with elements**. You should not use this property for hiding content but rather for animations.
+
+#### Accessibility considerations
+
+- To **hide the content from the screen, but make it available to screen readers, use the `visuallyHidden` trick**.
+
+  ```js
+    const visuallyHidden = {
+      position: 'absolute',
+      overflow: 'hidden',
+      clip: 'rect(0 0 0 0)',
+      height: '1px',
+      width: '1px',
+      margin: '-1px',
+      padding: 0,
+      border: 0,
+    }
+  ```
+
+  - Using `aria-label` is okay as well.
+
+- If you want to **hide the content from screen readers, but keep it visible on the screen** use the `aria-hidden` attribute.
+
+TODO: the workshop
