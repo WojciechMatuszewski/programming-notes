@@ -434,4 +434,8 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - If you want to **hide the content from screen readers, but keep it visible on the screen** use the `aria-hidden` attribute.
 
-TODO: the workshop
+## Modern Component Architecture
+
+### Component Libraries
+
+#### Breadcrumbs
