@@ -439,3 +439,42 @@ There is a lot of thing you can do with only margin, padding and some colors.
 ### Component Libraries
 
 #### Breadcrumbs
+
+- It appears that screen readers will read out the contents of the `&:before` and `&:after` pseudo-classes.
+
+  - That is why, in the example, the `/` is created via the CSS shape, and not via the `content` property.
+
+  - Very interesting.
+
+#### Button
+
+- Changing how the `outline` looks and feels is **very powerful mechanism for creating "multiple borders" effect**.
+
+  - Check out the `outline-offset` property!
+
+  - You can also leverage the `box-shadow` property to create three borders inside a single element.
+
+#### Dynamic tags
+
+- AKA polymorphic components, AKA the `as` prop.
+
+- If you want to learn more about _polymorphic components_, check out my notes about them in the `react-typescript` file.
+
+  - It is hard to create a good, fully typed, polymorphic `Box` component.
+
+### Single Source of Styles
+
+- The ability to refer to the components within the emotion styles rocks! Check this out.
+
+  ```jsx
+  const TextLink = styled.a`
+    color: blue;
+    text-decoration: none;
+  `;
+
+  const Figure = styled.figure`
+    ${TextLink} {
+      color: black;
+      text-decoration: underline;
+    }
+  ```

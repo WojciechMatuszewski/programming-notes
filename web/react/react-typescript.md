@@ -266,7 +266,7 @@ Notice the `HTMLFormElement` and `HTMLFormControlsCollection` types. I can easil
 In todays world, you will most likely never have to deal with raw forms like that, but either way I think it's worth knowing how to type them correctly.
 
 Here is an article you can refer to whenever someone, or you, makes a mistake.
-https://epicreact.dev/how-to-type-a-react-form-on-submit-handler/
+<https://epicreact.dev/how-to-type-a-react-form-on-submit-handler/>
 
 ## Prop Patterns
 
