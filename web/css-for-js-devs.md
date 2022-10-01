@@ -478,3 +478,17 @@ There is a lot of thing you can do with only margin, padding and some colors.
       text-decoration: underline;
     }
   ```
+
+### Workshop
+
+#### Progress bar
+
+- A handy trick of using the `overflow: hidden` declaration to ensure border radius is consistent, even if the element overflows.
+
+#### Select
+
+- Josh used a very interesting technique – he hid the native select (using the `opacity` property) and then put a "presentational" bit on top of it.
+
+  - All of this would not be necessary if we could style the caret of the `select`. Damn you browser styles!
+
+  - You can **remove the caret with the `appearance` property**.
