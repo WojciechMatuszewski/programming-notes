@@ -3091,10 +3091,25 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 - you can make the flow of the integration with lambda asynchronous. To do this, the integration **must be of `custom`
   type, not the `proxy` one**
 
+#### API Keys
+
+- opaque tokens you can use **with combination of usage plans** to enforce throttling and quotas for your API.
+
+- these **should NOT be used for authentication or authorization**.
+
+  - they never expire
+
+  - they are not encrypted
+
 #### Usage Plans
 
-- enable you to create throttling / quota limits per key group. This **enables you to create a tier architecture for
-  your API**, like `Bronze`, `Silver`, `Gold` tiers.
+- enable you to create throttling / quota limits per key group. This **enables you to create a tier architecture for your API**, like `Bronze`, `Silver`, `Gold` tiers.
+
+- you can **associate an API key with an usage plan**.
+
+  - if you return the API key in the authorizer, the user who is using that API key will also use a given usage plan.
+
+  - **keep in mind that, if you use Cognito, you have to implement the Authorizer on your own**. You must return a given API key to the authorizer and you cannot do it with the built-in Cognito authorizer.
 
 - using **AWS Marketplace** you can **register your API** and effectively **monetize your API using usage plans**.
 
