@@ -492,3 +492,59 @@ There is a lot of thing you can do with only margin, padding and some colors.
   - All of this would not be necessary if we could style the caret of the `select`. Damn you browser styles!
 
   - You can **remove the caret with the `appearance` property**.
+
+## Flexbox
+
+- Another layout mode, **very relevant, even in the context of CSS Grid**.
+
+- Deals with **a single axis, be it the Y or X axis**.
+
+- You apply the `flexbox` value to the `display` property.
+
+  - If you do so, **this will affect the children of a given element and not the element with the `display: flexbox` declaration**.
+
+### Directions and Alignment
+
+- You can set the **primary axis by using the `flex-direction` property**. By default, it has a value of `row`.
+
+  - To control how elements align in relation to **primary axis**, use the `justify-content` property.
+
+  - To control how elements align in relation to **secondary axis**, use the `align-items` property.
+
+#### Alignment tricks
+
+- Use the **`baseline` value** to align text in relation to the biggest text in a given row.
+
+  - Do not be afraid of nesting `flexbox` declarations. For example, if you wish to use `baseline` and then center the elements, yoy have to nest the `flexbox` declarations.
+
+- Use the `align-self` (secondary axis) to manipulate a given child.
+
+  - Keep in mind that **`justify-self` (primary axis) DOES NOT exist**.
+
+### Growing and shrinking
+
+- In **the `flexbox` model, the `width` and the `height` properties are more like suggestions (by default)**. The element can shrink to a size which is less than the `width`.
+
+  - Since, depending on the `flex-direction` you operate on different axis, **use flex-basis instead of `width` or `height` as it takes into the account the `flex-direction` property**.
+
+- The `flex-shrink` controls how much a given element will shrink in relation to other elements. Keep in mind that **the shrinking only happens up to a `min-content` threshold!**. After that, the box will overflow.
+
+  - You can achieve a neat effect where it seems like some elements start to shrink first, by using a very high `flex-shrink` value. It is an illusion. Remember that the setting is a ratio, other elements are shrinking as well, it is just that they shrink very slowly.
+
+- Using the `flex-grow` will cause the element to **consume a ratio of available space**. If no other elements have that property, it will consume all available space.
+
+#### The "flex" shorthand
+
+- The `flex: 1` declaration **is NOT a shorthand for `flex-grow: 1`**.
+
+  - It is a combination of three properties, and in the nutshell, it **allows you to ensure that children share the same amount of space** (the `flex-grow: 1` also takes the content into the account, so despite setting the `flex-grow:1` on all children, you might end up with different widths).
+
+    - The `flex: 1` expands to the following.
+
+      ```css
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0%;
+      ```
+
+      The `flex-basis` is crucial here. If the width is 0, then we can evenly distribute space, even if the content of the children is different.
