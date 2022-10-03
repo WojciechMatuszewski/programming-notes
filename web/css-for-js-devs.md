@@ -548,3 +548,54 @@ There is a lot of thing you can do with only margin, padding and some colors.
       ```
 
       The `flex-basis` is crucial here. If the width is 0, then we can evenly distribute space, even if the content of the children is different.
+
+#### Constraints
+
+- Keep in mind that **you can still use the `max/min-width` and `max/min-height` to your advantage**.
+
+  - The `flex-basis` operates akin to `width/height` but it will respect the `min/max` values.
+
+- Using the `flex-shrink` trick (with a very high value) comes in handy in many layouts.
+
+#### Shorthand Gotchas
+
+- It is vital to understand what the `flex: 1` declaration really means. If you do not, you might try to write the following.
+
+    ```css
+    .item {
+      flex: 1;
+      width: 200px;
+    }
+    ```
+
+    In this case, **the `width` is ignored as `flex-basis` (0px) will ALWAYS win**. This is a rare case where the order of the declarations does not matter.
+
+    What you ought to do, in such situation, is the following.
+
+    ```css
+    .item {
+      flex: 1 1 200px;
+    }
+    ```
+
+    Now, the `flex-basis` is set to `200px`. As it should have been.
+
+### Wrapping
+
+- With `flex-wrap: wrap` you can re-create the behavior of _inline positioned_ elements.
+
+### Groups and gaps
+
+- Use **the `gap` property to create gaps between items**. This property is supported in all major browsers
+
+- Use `margin-left/right: auto` to separate groups of items from each other. As an alternative, you could wrap items with `div` tags, but that pollutes the markup.
+
+### Ordering
+
+- You can **manipulate the visual order of the elements by using either the `-reverse` properties on `flex-direction` or `order` property**.
+
+  - Keep in mind that **this is visual order ONLY!. If you wish to create different "tabbing" order, you have to modify the DOM**.
+
+    - Modifying how elements sit in the DOM and using the `order` or similar property is very powerful. It allows you to create experiences, where visually, the elements are aligned left to right, but the tabbing starts from the right (think aside and a list of articles).
+
+### Flexbox interactions
