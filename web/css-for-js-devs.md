@@ -599,3 +599,23 @@ There is a lot of thing you can do with only margin, padding and some colors.
     - Modifying how elements sit in the DOM and using the `order` or similar property is very powerful. It allows you to create experiences, where visually, the elements are aligned left to right, but the tabbing starts from the right (think aside and a list of articles).
 
 ### Flexbox interactions
+
+- When there is a **conflict between the layout modes, the _positioned_ layout always wins**.
+
+  - This means that, a `fixed` positioned child will not participate in a flex layout.
+
+  - There is an **exception for `relative` and `sticky` _positioned_ layout**.
+
+- The **margin collapse does not work for flex layout**.
+
+  - It only works for _flow_ layout so `block`, `inline` or `inline-block`.
+
+- The `z-index` property works in flexbox just as it is working for _positioned_ layout.
+
+### Recipes
+
+- Using `flex: 1` or `flex: 2` and manipulating proportions can come in quite handy.
+
+- Using `align-self` to "pull" the content in a `flex-direction: row` layout is crucial when using sticky positioning.
+
+- Using `align-items` or `justify-content` **works with children that overflow the parent container** which is quite amazing.
