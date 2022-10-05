@@ -440,6 +440,14 @@
   - In this approach we are going to leverage [_
     DynamoDB_ with semaphores](https://aws.amazon.com/blogs/compute/controlling-concurrency-in-distributed-systems-using-aws-step-functions/)
 
+#### Limitations
+
+- The biggest limitation is the **amount of history states per a given execution**. The limit is 25k.
+
+  - Keep in mind that **state transition is NOT the same as history event**, some state transitions might produce multiple history events.
+
+  - AWS recommends **spinning another SFN execution** which carries the work from the initial execution.
+
 ### IAM
 
 - **IAM** is universal, **is global**, does not apply to regions
