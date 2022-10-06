@@ -619,3 +619,11 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - Using `align-self` to "pull" the content in a `flex-direction: row` layout is crucial when using sticky positioning.
 
 - Using `align-items` or `justify-content` **works with children that overflow the parent container** which is quite amazing.
+
+### Workshop
+
+- Using the additional `Side` element to center the nav menu, even though there is a logo in the nav as well was very clever.
+
+- If you want to **use _baseline_ alignment and also have the children at the center** you can either manually center the elements via the padding, or add another flex wrapper.
+
+- The combination of `min-width` and `flex:1` is powerful. Use it to create "grid-like" layouts especially if you cannot use CSS grid for some reason (of course, the best solution would be to use CSS grid).
