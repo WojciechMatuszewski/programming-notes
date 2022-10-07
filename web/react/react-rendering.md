@@ -42,11 +42,9 @@ export default function App() {
 }
 ```
 
-The output will be "Hello". This means that **in theory, we can 'render' our components by directly calling the _component functions_**.
-As with most things in tech, this type of "rendering" has a big drawback, which might lead to subtle (or not very subtle) bugs.
+The output will be "Hello". This means that **in theory, we can 'render' our components by directly calling the _component functions_**. As with most things in tech, this type of "rendering" has a big drawback, which might lead to subtle (or not very subtle) bugs.
 
-I'm referring to how hooks _bind_ to a given component instance and how this process breaks down whenever we call the _component function_ directly.
-Let us look at an example where calling a React _function component_ leads to an application crash.
+I'm referring to how hooks _bind_ to a given component instance and how this process breaks down whenever we call the _component function_ directly. Let us look at an example where calling a React _function component_ leads to an application crash.
 
 ```jsx
 import { Fragment, useReducer, useState } from "react";
@@ -102,13 +100,12 @@ For more reading, please refer to [this blog post by Kent C. Dodds](https://kent
 
 ## My component renders multiple times. Help
 
-So you heard about this thing called `React.Strict` and that you should use it to see if your application is _concurrent features_ ready.
-But now, you have noticed that some of your components re-render twice seemingly at random, **during development** (if this happens when running a production built there is either a bug in React or your application has issues).
+So you heard about this thing called `React.Strict` and that you should use it to see if your application is _concurrent features_ ready. But now, you have noticed that some of your components re-render twice seemingly at random, **during development** (if this happens when running a production built there is either a bug in React or your application has issues).
 
 This behavior that you are noticing is intentional and, in fact, is the way your application is tested to see if it's ready for _concurrent features_.
 
-This stems from the fact that, React might _suspend_ rendering of your component and re-initialize it in the future. If you have things that cause
-_side effects_ within your component, and they are not wrapped with `useEffect`, you will have problems when the _concurrent features_ are live.
+This stems from the fact that, React might _suspend_ rendering of your component and re-initialize it in the future. If you have things that cause _side effects_ within your component, and they are not wrapped with `useEffect`, you will have problems when the _concurrent features_ are live.
+
 So to flush those cases as early as possible, the `React.Strict` simulates the behavior of _time slicing_ without employing any magic that might be behind this feature.
 
 So if you evert wondered why your components are called at random during the development after you have added the `React.Strict` flag, now you know.
@@ -130,3 +127,23 @@ For React to deem your component "unchanged" (React does not need to commit the 
 As you can see, the list is not short, but as long as you try your best to pass primitive props, avoid oversharing the React context, you should be good on that front.
 
 If you wish to learn more about the bail-out criteria and how React renders your components in depth, I suggest you read [this great article](https://www.zhenghao.io/posts/react-rerender). It explains the rendering mechanics much better than I ever could.
+
+### What "render" means
+
+When reading articles about React you will often see the word "render" used in many different contexts. Some people think about the "render" as the act of changing the DOM (incorrect). Some think of "render" as invoking the _render_ method (or the function component), which is the correct way of thinking about that term.
+
+So, keep in mind that the **word "render" does not actually mean changing the DOM, that part is called the "commit"**. The word "render" refers to a React phase where React extracts the output of your components. Since invoking a JS function is usually much less expensive than committing stuff to a DOM, this will most likely be a fast operation.
+
+The takeaway is **not to fear the amount of "renders", instead focus on SLOW "renders" instead**. If the computation in your component takes a couple of seconds, no wonder your application feels slow.
+
+> Learn more about different [phases here](https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/#render-and-commit-phases).
+
+### Rendering with React 18
+
+The React 18 introduces _interruptible renders_. This allows React to **pause the "render" work and yield back to the browser, making the "render" asynchronous**. Having said that, the **"commit" part (so changing the DOM) is still synchronous**.
+
+Also, take note that **one could also schedule "renders" in the "commit" phase**. These are **synchronous renders** as you most likely manipulated the DOM directly. If React would keep the asynchronous nature of the "render" here, you might end up with a flash of weird-looking DOM as your changes were not fully applied yet.
+
+To schedule a synchronous "render" during the "commit" phase, use the `useLayoutEffect` hook.
+
+> TODO: <https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/#improving-rendering-performance>
