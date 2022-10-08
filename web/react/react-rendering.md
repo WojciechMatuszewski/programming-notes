@@ -145,5 +145,3 @@ The React 18 introduces _interruptible renders_. This allows React to **pause th
 Also, take note that **one could also schedule "renders" in the "commit" phase**. These are **synchronous renders** as you most likely manipulated the DOM directly. If React would keep the asynchronous nature of the "render" here, you might end up with a flash of weird-looking DOM as your changes were not fully applied yet.
 
 To schedule a synchronous "render" during the "commit" phase, use the `useLayoutEffect` hook.
-
-> TODO: <https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/#improving-rendering-performance>

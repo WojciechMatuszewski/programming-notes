@@ -210,11 +210,57 @@ function Provider({ children }) {
 }
 ```
 
-Remember that the `setState` is stable, just like the `dispatch` from `useReducer`.
-
-Now, the state has to change for the consumers to re-render. This is what we really wanted from the begging.
+Remember that the `setState` is stable, just like the `dispatch` from `useReducer`. Now, the state has to change for the consumers to re-render. This is what we really wanted from the beginning.
 
 Combine this with the _value/dispatch provider_ pattern and you are on your way to create a performant context provider :).
+
+### Memoizing inside the "Provider" component
+
+> That React Component Right Under Your Context Provider Should Probably Use `React.memo`
+
+Why? To avoid re-rendering the whole part of the tree, but you might be already taking advantage of this by using `props.children` instead of rendering a component directly.
+
+So, the following snippet is okay.
+
+```ts
+function ChildComponent() {
+    return <GrandchildComponent />
+}
+
+const MemoizedChildComponent = React.memo(ChildComponent);
+
+function ParentComponent() {
+    const [a, setA] = useState(0);
+    const [b, setB] = useState("text");
+
+    const contextValue = {a, b};
+
+    return (
+      <MyContext.Provider value={contextValue}>
+        <MemoizedChildComponent />
+      </MyContext.Provider>
+    )
+}
+```
+
+And so is this one (I would argue this one is even better).
+
+```tsx
+function ParentComponent({children}) {
+    const [a, setA] = useState(0);
+    const [b, setB] = useState("text");
+
+    const contextValue = {a, b};
+
+    return (
+      <MyContext.Provider value={contextValue}>
+      {children}
+      </MyContext.Provider>
+    )
+}
+```
+
+If we call the `setA`, in both cases, the children will NOT re-render. In the first scenario, the component is memoized, so React will skip it, in the second, the `children` has the same reference so React will skip it as well!
 
 ### When NOT to use `React.useMemo`
 
@@ -305,8 +351,7 @@ export default function App() {
 
 Every time you click the button, you will see the `child function invoked` log message in your console.
 
-The **reason why** it's happening, is because **React will re-create the _prop object_ of the `Child` component every time the parent changes**.
-By the _prop object_ I mean the object that is created when JSX is parsed to the object representation.
+The **reason why** it's happening, is because **React will re-create the _prop object_ of the `Child` component every time the parent changes**. By the _prop object_ I mean the object that is created when JSX is parsed to the object representation.
 
 So let's say the `Child` is expensive to render in some way, or you want to reuse it in multiple places.
 Since we do not have `slots` per se (like in angular) you might want to pass it as a prop.
@@ -365,23 +410,33 @@ The notion of `wrap` and `trace` is pretty similar to X-Ray traces.
 
 This can bite you in the ass one day. Remember, when using `React.memo` on the component that takes `children` that `React.memo` will do nothing. `React.memo` **does only shallow compare**, have you looked into how the `ReactElement` obj. looks like? 👍.
 
-One thing you might do is to `memoize` the `children` themselves before passing them as prop
+### The `children` prop
 
-```jsx
-function Component({ children }) {
-  const MemoizedChildren = React.useMemo(() => children, []);
-  return <MemoizedComponent>{MemoizedChildren}</MemoizedComponent>;
+Sometimes, **by utilizing the children prop** you can skip the re-render of the whole children tree. This works, because **React will NOT re-render a given part of the tree if the children return the same exact reference to given elements**.
+
+In short, if you have a component similar to the following:
+
+```tsx
+function SomeProvider({ children }) {
+  const [counter, setCounter] = useState(0);
+
+  return (
+    <div>
+      <button onClick={() => setCounter(counter + 1)}>Count: {counter}</button>
+      <OtherChildComponent />
+      {children}
+    </div>
+  );
 }
 ```
 
-But this is pretty bad. In such situations you such probably **reach for second argument within `React.memo`**.
+React will **skip re-rendering the "children" part of the tree if we update the `counter`**. This is a **good way to stop the "render children recursively" behavior** of React. Note that we **would still re-render children part of the tree if the parent of the `SomeProvider` re-rendered**. That is because, then, the `children` has a new reference, so the `===` equality check returns false.
 
 ## Rendering behavior
 
-https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/
+<https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/>
 
-I think the most important thing to remember is that **`React` will render all child components unconditionally just because parent re-rendered!**
-This is very important to remember especially when you are using `React.Context`.
+I think the most important thing to remember is that **`React` will render all child components unconditionally just because parent re-rendered!**. It is crucial to remember especially when you are using `React.Context`.
 
 ```jsx
 function App() {
@@ -399,7 +454,7 @@ In above snippet, your _context value_ might be _memoized_ but the `Parent` will
 
 ### Expensive initial rendering
 
-https://itnext.io/improving-slow-mounts-in-react-apps-cff5117696dc
+<https://itnext.io/improving-slow-mounts-in-react-apps-cff5117696dc>
 
 While it would be ideal for the React to be more asynchronous when it comes to rendering (that is coming in React 18! Hurray for _time-slicing_), it's not the case at the moment.
 
