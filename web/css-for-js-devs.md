@@ -627,3 +627,103 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - If you want to **use _baseline_ alignment and also have the children at the center** you can either manually center the elements via the padding, or add another flex wrapper.
 
 - The combination of `min-width` and `flex:1` is powerful. Use it to create "grid-like" layouts especially if you cannot use CSS grid for some reason (of course, the best solution would be to use CSS grid).
+
+## Responsive and Behavioral CSS
+
+### Working with Mobile Devices
+
+- Nowadays, the phones most people use, have _high DPI_ screens. This means that `1px` in CSS does not necessarily correspond to `1px` on a screen – it could be `3px` or even more depending on the DPI of the screen.
+
+- There is also this special `meta` tag which relates to how should mobile devices render your webpage.
+
+    ```html
+    <meta
+      name = "viewport"
+      content="width=device-width, initial-scale=1">
+    ```
+
+  This will tell the mobile browser to match the viewport width with the device width and set the "zoom" to 1 (so the default).
+
+#### Mobile testing
+
+- Browser emulation can only do so much. To gain confidence that your webpage works as expected on mobile devices, you need to test it on... mobile devices.
+
+- There are a lot of services which offer access to different mobile phones. The most popular one is BrowserStack.
+
+### Media Queries
+
+- Both _mobile-first_ and _desktop-first_ approaches makes sense. It all depends on the circumstances.
+
+#### Other Queries
+
+- Using the `:hover` **might not be what you want for mobile devices**. Depending on the browser, **tapping on an element might trigger the hover state and the second tap will trigger the click**.
+
+  - There are tools to **only apply hover on devices with mouse/trackpads**. To do so, use the following media query.
+
+    ```css
+    @media (hover: hover) and (pointer: fine) {
+      button:hover {
+        text-decoration: underline;
+      }
+    }
+    ```
+
+    This reads: _when there is a hover state, and the pointer device is mouse or trackpad_.
+
+- There is another group of media queries: the **preference-based media queries**. These gained a lot of traction in recent years.
+
+  ```css
+  @media (prefers-reduced-motion: no-preference) {}
+
+  @media (prefers-color-scheme: dark) {}
+  ```
+
+### Breakpoints
+
+- Use breakpoints to provide consistent experience across different mobile / tablet and desktop devices.
+
+- When used with CSS in JS, you can interpolate the media queries into your styles.
+
+- **Consider using `rem`s as your media query values instead of `px`**. The main advantage is that, when user changes the default font size, your website will behave accordingly.
+
+### CSS Variables
+
+- Note that **CSS Variables inherit from the parent (where they were declared)**.
+
+  - You can have "global" or "local" CSS variables, it all depends on where you declare the variable.
+
+  - In articles you will often see CSS variables declared on **`:root` which is an alias for `html`**.
+
+  - You **can disable the inheritance by using the `@property` query, but it is NOT widely supported in all browsers yet**.
+
+    ```css
+    @property --text-color {
+      syntax: '<color>';
+      inherits: false;
+      initial-value: black;
+    }
+    ```
+
+- The `var` function **takes in the second parameter which acts as a _default value_**. This is pretty neat if you are **setting the CSS variables dynamically**.
+
+  ```css
+  .btn {
+    padding: var(--inner-spacing, 16px);
+  }
+  ```
+
+  - Keep in mind that **CSS variables are accessible via JavaScript**.
+
+  - You can also **change the value of the CSS variable using a media query** which is pretty neat!
+
+    ```css
+    :root {
+      --spacing: 16px;
+    }
+
+    @media (min-width: 600px) {
+      :root {
+        --spacing: 32px;
+      }
+    }
+    ```
