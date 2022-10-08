@@ -58,7 +58,7 @@ There are many units one can use. Here are some notable ones:
 
 1. The `em` unit which **is relative to the parent font size**.
 
-2. The `rem` unit which **is relative to the ROOT font size**. By default, the root HTML font size is `16px`.
+2. The `rem` unit which **is relative to the ROOT font size**. **By default**, the root HTML font size is `16px` (this can be changed in the settings).
 
   You should not be setting the `html` tag font size explicitly. Doing so **will override the default font size of the user settings**. Instead, use percentages!
 
@@ -727,3 +727,57 @@ There is a lot of thing you can do with only margin, padding and some colors.
       }
     }
     ```
+
+#### Variable fragments
+
+- Since CSS variables **are composable**, they allow you to get rid of a lot of repetition.
+
+  - All of this is possible because the CSS variables are **evaluated when used, and NOT when defined**.
+
+### The Magic of Calc
+
+- You can do math with CSS, using the `calc` property.
+
+  - TIL that **you can mix units with `calc`**.
+
+    ```css
+    body {
+      width: calc(50% + 32px);
+      height: calc(24 / 16 * 1rem);
+    }
+    ```
+
+### Viewport units
+
+- From the previous section (the one about CSS variables and the `@property` rule) you might think that **CSS is a strongly-typed language**. That is **indeed the fact!**.
+
+  - There are many units you can register – `<color>` or `<length>` and so on.
+
+  - The _viewport units_ are of `<length>` type.
+
+- The most frequently used are the `vh` and `vw` units.
+
+  - They are not without their problems – **they do not work well on mobile where the viewport resizes when the address bar disappears**.
+
+  - Luckily there are **other similar _viewport units_ which are dynamic in nature**. Read more about them [here](https://blog.webdevsimplified.com/2022-08/css-viewport-units/).
+
+    - Sadly, [the browser support is not that great](https://caniuse.com/viewport-unit-variants).
+
+### Clamping values
+
+- The `clamp` value allows you to **create fluid layouts** where the `max/min-width/height` properties are not used.
+
+  - This is cool because you **can combine the `clamp` with `min/max-width/height` for the ultimate responsive layout**.
+
+    ```css
+    .wrapper {
+      width: clamp(
+        /* minimum */ 500px,
+        /* ideal */ 65%,
+        /* maximum */ 800px
+      );
+      max-width: 100%;
+    }
+    ```
+
+    The `.wrapper` will never be longer than either `800px` or `100%` which is very handy for "full width" layouts.
