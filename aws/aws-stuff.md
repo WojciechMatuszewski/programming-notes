@@ -7214,8 +7214,13 @@ Consider giving it a read!
 
 #### Macros
 
-- similarly to `Custom Resouces` you create a lambda function. This lambda function will be used to **modify the
-  template itself**.
+- similarly to `Custom Resouces` you create a lambda function. This lambda function will be used to **modify the template itself**.
+
+  - You declare Macros as a `AWS::CloudFormation::Macro` resource, the resource takes in the AWS Lambda Function ARN.
+
+  - To use the Macro, you include the logical resource name inside the `Transform` block.
+
+- if you ever used the AWS SAM, then you have already used Macros, mainlu the `AWS::Serverless` macro specified in the `Transform` block.
 
 #### Helper scripts
 
