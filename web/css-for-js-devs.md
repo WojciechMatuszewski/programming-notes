@@ -781,3 +781,56 @@ There is a lot of thing you can do with only margin, padding and some colors.
     ```
 
     The `.wrapper` will never be longer than either `800px` or `100%` which is very handy for "full width" layouts.
+
+### Scrollburglars
+
+- Use a **dev tools snippet to detect which element overflows the parent**, it will save you A LOT of time.
+
+  - Read how to add a snippet to your dev tools [here](https://developer.chrome.com/docs/devtools/javascript/snippets/#create).
+
+  - Use the following snippet:
+
+    ```javascript
+      const findOverflows = () => {
+        const documentWidth = document.documentElement.offsetWidth;
+        document.querySelectorAll('*').forEach(element => {
+          const box = element.getBoundingClientRect();
+          if (box.left < 0 || box.right > documentWidth) {
+              console.log(element);
+              element.style.border = '1px solid red';
+          }
+        });
+      };
+
+      findOverflows();
+    ```
+
+### Responsive Typography
+
+- As a rule of thumb, **you should not change the root font size**. Let the user do that.
+
+- Depending on the content and its place (whether the text sits in a footer, or is a heading), first and foremost, we want to ensure that text is readable.
+
+- **By default, iOS will zoom in forms if their font size is less than `16px`**.
+
+  - You probably want to avoid this effect.
+
+#### Fluid Typography
+
+- With `clamp` you **can scale the size of the text depending on the viewport size** which is quite nice as it allows you to make heading scale with the viewport.
+
+  - Depending solely on `vw` and `vh` does not cover **the case where the user uses the browser zoom feature**. To make your text scale accordingly, mix an unit which scales with zoom.
+
+    ```css
+    h1 {
+      font-size: clamp(
+        1.5rem,
+        4vw + 1rem /* 1rem scales with browser zoom */,
+        3rem
+      )
+    }
+    ```
+
+    We do not have to use `calc` here as `clamp` will automatically perform the conversion between units for us.
+
+- **Use** these techniques **for headings rather than the body text**. The body text is already at a good size at its default.
