@@ -834,3 +834,25 @@ There is a lot of thing you can do with only margin, padding and some colors.
     We do not have to use `calc` here as `clamp` will automatically perform the conversion between units for us.
 
 - **Use** these techniques **for headings rather than the body text**. The body text is already at a good size at its default.
+
+### Fluid Design
+
+- With fluid approach **you cannot apply styles conditionally** which might be a deal breaker in some circumstances.
+
+  - Think a situation where you have to amend the `border-radius` property on mobile devices.
+
+- The responsive approach only reacts to viewport changes, the **fluid approach reacts to the container changes**.
+
+  - This drawback will become less relevant once [container queries are live](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries).
+
+- In the end it boils down to what is suitable for each situation. Keep in mind that it is better to be more verbose than to be clever.
+
+### Workshop
+
+- It seems like the `calc` support for `@media` **is spotty or non-existent**. I could not find a definitive answer, but it appears that it is not widely supported.
+
+  - Instead of using `calc`, use interpolation to perform operations.
+
+  - Of course there is a limitation that, without `calc`, you cannot perform operations with different units.
+
+TODO: Exercise 3 and up
