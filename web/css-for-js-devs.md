@@ -855,4 +855,67 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   - Of course there is a limitation that, without `calc`, you cannot perform operations with different units.
 
-TODO: Exercise 3 and up
+## Typography and Images
+
+### Text Rendering
+
+- Different browsers might display text a bit differently due to how they implement the _kerning algorithm_.
+
+- _WebKit_ is a browser rendering engine created by Apple, and used in Safari and all mobile iOS browsers.
+
+#### Text Overflow
+
+- The default algorithm looks for _soft wrap opportunities_ (whitespace and `-`) characters. If found, it will break the word at that character.
+
+  - You **could use HTML entities (`&nbsp;` and similar) characters to produce "non-breaking whitespace"**.
+
+    - These can come in very handy when must ensure words stay together, like `10 USD`.
+
+      ```html
+      <p>
+          That sandwich costs $10&nbsp;USD
+      </p>
+      ```
+
+- TIL that there is an alternative text layout algorithm created by Adobe. It uses JavaScript to modify the HTML in a way that, arguably, is more appealing to the eye.
+
+- It turns out **there is an alternative for `word-break` called `overflow-wrap`**.
+
+  - I've always used the `word-break` and the `break-word` value which is **deprecated**.
+
+  - Instead of using `word-break: break-word` one should use `word-break: normal` or `overflow-wrap: anywhere`.
+
+- One can **use `hyphens: auto` to ensure that the browser adds the hyphens where a word break occurred**.
+
+- Remember that you have to use `overflow: hidden` declaration for **single-line ellipsis**.
+
+  - **Multi-line ellipsis is a bit more complicated, but still doable**.
+
+    ```css
+    p {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+    ```
+
+  - **Multi-line ellipsis should ONLY be used with _flow layout_**. If you use it with flex/grid layout modes, the result might not be what you expect.
+
+### Print-style Layouts
+
+- Yet another layout mode – the **Multi-Column Layout** allows you to split content into even columns.
+
+  ```css
+  .wrapper {
+    columns: 3;
+    column-gap: 16px;
+    break-inside: avoid; /* Ensures that a given child is not broken in-between columns */
+  }
+  ```
+
+- While `float` property is pretty niche, **it is the `float` property that allows you to wrap the text around an image or other blocks**.
+
+  - You **cannot do that with any other layout mode / property**.
+
+  - The **combination of `float:left` and `p::first-letter` allows you to create a book-like first sentence** where the first letter is bigger and "tucked" around the rest of the sentence.
