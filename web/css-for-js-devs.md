@@ -919,3 +919,101 @@ There is a lot of thing you can do with only margin, padding and some colors.
   - You **cannot do that with any other layout mode / property**.
 
   - The **combination of `float:left` and `p::first-letter` allows you to create a book-like first sentence** where the first letter is bigger and "tucked" around the rest of the sentence.
+
+### Masonry Grid with Columns
+
+- The _masonry_ layout was popularized by sites like Unsplash and Pinterest
+
+- It is **not possible to create a robust _masonry_ layout without using JavaScript at this very moment**. We can get close, but not quite there.
+
+  - To get to "maybe good enough" state, you should use the `columns` property.
+
+### Text Styling
+
+- The **`1ch` is equal to the width of the `0` character, at the current font size**
+
+  - For the longest time, I though that the `1ch` corresponds to a single character rather than a width of a certain character.
+
+  - This means that **if you set `max-width: 50ch` that does not mean the element will wrap at 50 characters**. It all depends on the `0` character width. You might end up with more characters than 50.
+
+  - In the end it does not matter than much. As long as your paragraphs are between 50-75 characters range, you should be good.
+
+### Font Stacks
+
+- We call it a "stack" because the **`font-family` property takes in multiple comma separated font names**. If a given font is not available, the browser will pick the next one from the list.
+
+  ```css
+  .title {
+    font-family: 'Lato', Futura, Helvetica, Arial, sans-serif;
+  }
+  ```
+
+  - The last "item" in the list is the _category_ of the font.
+
+- An alternative approach to using a "custom" fonts is to use the **system font stack**.
+
+  ```css
+  p {
+  font-family:
+    -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
+    helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+  }
+  ```
+
+  Here, we more or less have a guarantee, that the website will look the same way for people on Windows and the same way for people on MacOS (though there might be differences between the operating systems).
+
+### Web Fonts
+
+- You can either **host a custom font yourself or use a 3rd party service**.
+
+  - **Hosting the font yourself** has a number of **advantages**.
+
+    1. Performance – there are no HTTPs handshakes involved since you are not reaching out to a 3rd party domain.
+
+    2. Versioning – you can lock a version of your font. Since you are hosting it yourself, you are in full control over what's available to the application.
+
+    3. Privacy – big brother Google (or other service) cannot track you.
+
+    4. Performance – **You can embed the font file right into your CSS**.
+
+- TIL that **if your font does not have a "bold" variant and you try to use one, the browser will try to emulate the "bold" variant**.
+
+  - This usually does not end well. The "generated" font does not look as good as the original one.
+
+  - The **same will happen for italic variant of the font**.
+
+#### Font Loading UX
+
+- There are **many ways to load a font files**. All depend on how crucial the font is, and what kind of drawbacks you deem okay.
+
+  1. The `font-display: swap` could cause **FOUT (_Flash of Unstyled Text_)** since the browser will not wait that long for the custom font to load. It will most likely swap it when the text is already visible.
+
+  2. The `font-display: block` could cause **FOIT (_Flash of Invisible Text_)** since the browser will wait for the custom font to load before displaying any text.
+
+  3. The `font-display: fallback` is a **happy medium** between the `swap` and `block`. The browser will wait some time, if during that time the font did not load, the default font is used. If the font loaded, the browser will swap the font when the text is already visible.
+
+  4. The `font-display: optional` is **for fonts which are not critical and displaying them is a minor improvement rather than a "feature"**. Here, the browser will wait for a short period of time for the font to load. If it does not load, it will use the default font and will NEVER swap to the custom font.
+
+#### Font Optimization
+
+- There a couple of ways you could optimize your font.
+
+  1. Use **a variable font** – more on that later.
+
+  2. Use **unicode-ranges to only download a subset of the font character set**.
+
+  3. Host the font files yourself.
+
+- One neat trick is to download the font files from Google fonts and then host them yourself.
+
+  - Font files coming from Google fonts are already well optimized.
+
+#### Variable Fonts
+
+- A _variable font_ is a font which is configurable and lives in a single files.
+
+  - Historically you had to download multiple files for different `font-weight` values, with _variable fonts_ that is not the case.
+
+- _variable fonts_ are great since you only have to download a single file. That file is also, most likely, smaller than the "legacy" version of the font.
+
+- With _variable font_ you can **specify custom `font-weight` values like `777`**. The browser will NOT round up to the nearest available weight, the font itself will display as if the `font-weight` was `777` which is neat.
