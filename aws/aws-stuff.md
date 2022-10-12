@@ -7096,6 +7096,8 @@ Consider giving it a read!
 
 - **updates of CFN might take longer if you update a template with nested stacks**.
 
+  - even if you updated a single AWS Lambda function in a single nested stacks, **CFN will perform a full deployment for every stack**.
+
 - there are also implications of rolling back. If a nested stack fails, all stacks (parent and all nested) roll back.
 
 #### Stack Roles
