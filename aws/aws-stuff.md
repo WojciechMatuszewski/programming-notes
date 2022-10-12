@@ -7094,6 +7094,10 @@ Consider giving it a read!
 - **recommended** when you want to **isolate information sharing (outputs) to a group, use nested stacks**. **
   Otherwise** if you want to **share information, export outputs** from a stack.
 
+- **updates of CFN might take longer if you update a template with nested stacks**.
+
+- there are also implications of rolling back. If a nested stack fails, all stacks (parent and all nested) roll back.
+
 #### Stack Roles
 
 - **identity** who is creating given stack **needs permissions for the stack creation itself and any underlying
