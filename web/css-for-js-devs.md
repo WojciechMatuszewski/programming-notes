@@ -146,6 +146,8 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 
   - So the definition like `padding: 10px 20px` means `10px` for up/down and `20px` for right and left.
 
+- TIL that **percentages in padding always refer to the width of the element**, not it's height. Makes sense if you think about it, but I did not know that.
+
 #### Border
 
 - Use **`currentColor` to "synchronize" the border color with the color of the text**.
@@ -515,7 +517,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - Use the **`baseline` value** to align text in relation to the biggest text in a given row.
 
-  - Do not be afraid of nesting `flexbox` declarations. For example, if you wish to use `baseline` and then center the elements, yoy have to nest the `flexbox` declarations.
+  - Do not be afraid of nesting `flexbox` declarations. For example, if you wish to use `baseline` and then center the elements, you have to nest the `flexbox` declarations.
 
 - Use the `align-self` (secondary axis) to manipulate a given child.
 
@@ -1017,3 +1019,94 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - _variable fonts_ are great since you only have to download a single file. That file is also, most likely, smaller than the "legacy" version of the font.
 
 - With _variable font_ you can **specify custom `font-weight` values like `777`**. The browser will NOT round up to the nearest available weight, the font itself will display as if the `font-weight` was `777` which is neat.
+
+### Icons
+
+- Two ways to have custom icons: **a custom font with icons or SVGs**.
+
+  - **SVGs are much better** way of providing icons to the webpage. They are usually better looking, more accessible and can be tweaked. The font icons are kind of a black box.
+
+- There are SVGs icon packages tailor-made for React.
+
+  - Keep in mind that **SVG elements behave like `inline` elements (typography)**. This means that **they will have additional space added to them, even if you remove the `padding` and `margin` properties**.
+
+    - To get rid of that "magic space", make them a `block` or `inline-block` element.
+
+      ```css
+      svg {
+        display: block;
+      }
+      ```
+
+### Images
+
+- Remember about the **`alt` attribute**. It is important to specify it (your linter probably already complains if you do not).
+
+- One neat fact about SVGs is that **SVGs can grow to infinite size without loosing fidelity**.
+
+#### Fit and Position
+
+- Images are considered to be **_replaced elements_**. The browser will replace the underlying `img` tag with a foreign entity.
+
+- The `img` tag **is "special" in a sense that it is a `inline` element, but, by default, we are still able to use `width` and `height` properties on it**.
+
+- The **browser tries to preserve the aspect ratio**, but if you provide both the `width` and the `height` properties, it gives up.
+
+- You can **control how image displays within a container by leveraging the `object-fit` and `object-position` properties**.
+
+#### Images and Flexbox
+
+- **Images behave very "weirdly" when used as direct children of a `flex` parent**.
+
+  - The best course of action is to **wrap the `img` tag with a `div`**. This way you will not loose your sanity trying to make them behave like block-level elements.
+
+#### Aspect Ratio
+
+- As noted earlier, if you set the `height` or the `width` property, the browser will try to preserve the aspect ratio of the image.
+
+- If you set **both the `height` and the `width`, the browser will NOT preserve the aspect ratio** (something has to give).
+
+  - To preserve the aspect ratio, **use the `aspect-ratio` property**. It is widely supported by all of the browsers.
+
+  - Historically, developers utilized the `padding` property along with the _absolute positioning_ to lock in the aspect ratio. Luckily this technique is a thing of the past.
+
+#### Responsive images
+
+- With the `srcset` attribute (on the `img` tag) you can provide multiple resolutions of the same image. The browser will pick the best one and display it.
+
+- As an **alternative to `srcset` attribute** one might use **the `picture` tag with multiple `source` tags inside it**. It looks a bit complicated, but it is most likely worth it.
+
+  ```html
+  <picture>
+    <source
+      type="image/avif"
+      srcset="
+        /cfj-mats/responsive-diamond.avif 1x,
+        /cfj-mats/responsive-diamond@2x.avif 2x,
+        /cfj-mats/responsive-diamond@3x.avif 3x
+      "
+    />
+    <source
+      type="image/webp"
+      srcset="
+        /cfj-mats/responsive-diamond.webp 1x,
+        /cfj-mats/responsive-diamond@2x.webp 2x,
+        /cfj-mats/responsive-diamond@3x.webp 3x
+      "
+    />
+    <img
+      alt=""
+      src="/cfj-mats/responsive-diamond.png"
+    />
+  </picture>
+  ```
+
+  Here, you can **provide multiple formats as well as multiple resolutions for a given format**. If the browser does not recognize the image format, it will skip it. If everything fails, the browser will render a plain `img` tag.
+
+  - As for the styling, the **`picture` element behaves like an _inline_ `span` element** so you might want to add `display: block` to it.
+
+- You can generate multiple resolutions for a given image in your build pipeline. Look into `next/image` package.
+
+#### Background images
+
+- We use the `background-image` mainly for the ability to repeat the image with `background-repeat` property.
