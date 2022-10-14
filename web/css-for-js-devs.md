@@ -1110,3 +1110,38 @@ There is a lot of thing you can do with only margin, padding and some colors.
 #### Background images
 
 - We use the `background-image` mainly for the ability to repeat the image with `background-repeat` property.
+
+### Workshop
+
+- To optimize a given font, see if it's not available in Google fonts. If it is, do the following.
+
+  1. Pick the right font weights and other properties.
+  2. Put the Google fonts link onto your website.
+  3. **Download the font from the Google servers**. You can do that by using "Open in new tab" while looking at the font request in the network tab.
+  4. Put the font file in your project.
+
+  Keep in mind that, by doing all of these steps, you will shave a lot of time out of the request for the font. Since the font is hosted on your domain, there are no handshakes and other request that the browser needs to make.
+
+- The combination of `picture` and `source` is really powerful. Use it!
+
+## CSS Grid
+
+### Mental Model
+
+- **The rows/columns do not have to be the same size, but they do have to be consistent**.
+
+- The rows/columns are _invisible_ from the DOM perspective. The layout purely driven by CSS.
+
+### Grid Flow and Layout Modes
+
+- Similarly to `flexbox` model, you enable the _Grid Flow_ by using the `display` property with a value of `grid`.
+
+- CSS defaults to a grid of `1xN` where N is the number of rows.
+
+  - The height of the grid container will distribute evenly between children.
+
+  - You can **change how the grid children are placed by using `grid-auto-flow` property**.
+
+    - This might feel similar to flexbox `flex-direction`, but **in CSS grid there is no "primary" or "secondary" axis**, so you do not have to worry about `align-items` switching the reference axis.
+
+- As is the case with flexbox, **`display: grid` on the parent affects CHILDREN AND NOT THE PARENT!**.
