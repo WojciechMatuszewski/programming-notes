@@ -557,6 +557,8 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   - The `flex-basis` operates akin to `width/height` but it will respect the `min/max` values.
 
+    - This means that **`flex-basis` where the value is less than the content will be ignored**.
+
 - Using the `flex-shrink` trick (with a very high value) comes in handy in many layouts.
 
 #### Shorthand Gotchas
@@ -1145,3 +1147,25 @@ There is a lot of thing you can do with only margin, padding and some colors.
     - This might feel similar to flexbox `flex-direction`, but **in CSS grid there is no "primary" or "secondary" axis**, so you do not have to worry about `align-items` switching the reference axis.
 
 - As is the case with flexbox, **`display: grid` on the parent affects CHILDREN AND NOT THE PARENT!**.
+
+### Grid construction
+
+- **Unlike `flexbox`** the **size you give each column/row are HARD limits, not suggestions** (the difference between `flex-basis` and `width`, remember that `flex-basis` always wins!).
+
+- You can think of the `fr` unit as `flex-grow` proportions, but keep in mind that, instead of working on children, it scales the columns/rows instead.
+
+- To create rows in `grid` layout, use `grid-template-rows`. To create columns, use `grid-template-columns`.
+
+  - There are multiple nifty functions you can use while creating rows/columns.
+
+- Keep in mind that you can **mix `grid` with `flexbox` (on children)**.
+
+#### Alignment
+
+- The `justify-content` **controls how COLUMNS are distributed INSIDE the grid parent**.
+
+  - The `justify-items` (**ignored in `flexbox`) applies to the child elements (but you declare that property on the parent)**.
+
+- The `align-content` **controls how ROWS are distributed INSIDE the grid parent**.
+
+  - The `align-items` **applies to the child elements, and controls how a child is distributed inside a given row**.
