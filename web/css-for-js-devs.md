@@ -1169,3 +1169,124 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - The `align-content` **controls how ROWS are distributed INSIDE the grid parent**.
 
   - The `align-items` **applies to the child elements, and controls how a child is distributed inside a given row**.
+
+#### Grid Areas
+
+- One of the coolest things about the Grid layout is that **you can explicitly define the names of the rows/columns and assign elements to those areas**.
+
+  ```css
+  .wrapper {
+    display: grid;
+    grid-template-areas:
+      'sidebar header'
+      'sidebar main';
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 80px 2fr;
+  }
+
+  <!-- And so on... -->
+  .sidebar {
+    grid-area: sidebar;
+  }
+  ```
+
+  - This makes it so **you can shuffle the elements in the DOM, but the layout will stay the same**. Each element is assigned to a designed "area" in the grid, so the order of DOM nodes does not matter. Having said that, **keep the keyboard and focus navigation in mind while changing the DOM order**.
+
+- It seems like I'm **unable to use `max` or `min` functions to denote the width/height of a column/row**. The only similar supported function is the `minmax` one and **the combination of `minmax(min/max(VALUE), VALUE)**.
+
+#### Track and Lines
+
+- The `grid-template-areas` is a syntactic sugar over the `grid-column` and `grid-gap` properties.
+
+- The CSS Grid composes of tracks (rows and columns). Each track has a number assigned to it (starting from 1, or -1 if you are looking at bottom right).
+
+  - The **negative track numbers allow you to ensure a given element spans the whole grid area**, like so.
+
+    ```css
+    .grid-child {
+      grid-row: 1 / -1 /* Spans all the rows, no matter how many of them there are */
+    }
+    ```
+
+    Note that **the `/` symbol does not indicate division, but rather a separator**.
+
+### Fluid Grids
+
+- There are few ingredients you need to create a _fluid grid_.
+
+  1. The `repeat` function.
+  2. The `auto-fit` or `auto-fill` property.
+  3. The `minmax` function.
+
+  The resulting snippet looks the following:
+
+  ```css
+  .wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  ```
+
+  - **The `minmax` is a combination of `min` and `max` functions and works akin to the `clamp`**. Keep in mind that **the first value cannot be "flexible" like 1fr**. Using `px`, `rem` or `%` works fine.
+
+    - A good mental model of `minmax(X, Y)` is thinking about it in the following way:
+
+      > I want my column to be `Y`, but never be less than `X`
+
+- The **single most crucial difference between the `auto-fill` and `auto-fit`** keywords is the **how they treat the available space**.
+
+  - The `auto-fill` **will create empty columns** where there is available space to do so.
+
+    > `auto-fill` the container with as much columns as you can.
+
+  - The `auto-fit` **will stretch existing columns to fill the available space**.
+
+    > `auto-fit` the **existing columns** to the available space.
+
+- To create a **truly fluid grid layout** one has to use the `min`/`max` function alongside the `minmax` function.
+
+  ```css
+  .wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  }
+  ```
+
+  This makes it so that **the minimum column size is computed and dynamic**. Say goodbye to the overflow on mobile devices!
+
+### Grid Dividers
+
+- It is **not possible to style grid dividers (tracks)**.
+
+- If you want to create an effect where there tracks of CSS grid have different color, use the **background on the grid elements** and the **background on the grid container**. This way you can create an illusion of "borders" that correspond to grid dividers.
+
+### Grid Recipes
+
+#### Two line center
+
+Instead of using `flexbox`, like so
+
+  ```css
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  ```
+
+You could use `grid`, like so:
+
+  ```css
+  .wrapper {
+    display: grid;
+    place-content: center;
+  }
+  ```
+
+The `place-content: center` is a shorthand for `justify-content: center` and `align-content: center`. Personally, I see it more of a party trick than anything else. We are saving one line of CSS, but the probability of someone having an understanding of this snippet is, I would argue, low.
+
+#### Sticky grids
+
+- **Sticky position does NOT care about grid rows and columns**. As far as it is concerned, the children are constrained by the parent, not the grid tracks.
+
+- If the element does not "stick" **it might span the whole container, despite a small amount of content**. In such situations, you most likely want to use `align-self: start` or similar.
