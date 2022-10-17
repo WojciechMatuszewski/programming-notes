@@ -1290,3 +1290,58 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - **Sticky position does NOT care about grid rows and columns**. As far as it is concerned, the children are constrained by the parent, not the grid tracks.
 
 - If the element does not "stick" **it might span the whole container, despite a small amount of content**. In such situations, you most likely want to use `align-self: start` or similar.
+
+#### Full Bleed Layouts
+
+- Instead of fighting with negative margins (although they are required for padding), one could use CSS grid to create the so-called _full bleed layout_.
+
+  ```css
+  .wrapper {
+    display: grid;
+    grid-template-columns: 1fr min(30ch, 100%) 1fr;
+    padding: 0 16px;
+  }
+
+  .wrapper > section {
+    grid-column: 2;
+  }
+
+  .full-bleed {
+    grid-column: 1 / -1;
+    margin: 0 -16px;
+  }
+  ```
+
+  Keep in mind that **the `1ch` represents the WIDTH of the `0` character and NOT the number of characters**.
+
+  - To get rid of the implicit dependency between the parent `padding` and the children `margin`, you can use CSS variables.
+
+### Managing Overflow
+
+- The **`fr` unit will grow based on the children**.
+
+  - To allow the `fr` unit to be as small as it needs to be, use `minmax`
+
+    ```css
+    .wrapper {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    ```
+
+### Grid Quirks
+
+- Some browsers might limit the number of grid rows. If you bump on this limit, you are rendering way too many things at once. Look into [DOM virtualization](https://github.com/bvaughn/react-window).
+
+- **Similarly to `flexbox`, grid children will NOT collapse margins**.
+
+- You can use the `z-index` on a grid child without having to use the `position` property.
+
+### Workshop
+
+- There are **two ways to center something in relation to the WHOLE page (not a row)**. Think centering a logo which is then accompanied by menu on the left and some other actions on the right.
+
+  1. Using the _spacer_ components with `flex: 1`. This is what we have seen in one of the previous workshops.
+
+  2. Using the `1fr` unit in the context of CSS grid and the `auto` on the child you want to center relatively.
+
+TODO: exercise 2 and up
