@@ -1344,4 +1344,14 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 
   2. Using the `1fr` unit in the context of CSS grid and the `auto` on the child you want to center relatively.
 
-TODO: exercise 2 and up
+- Wrapping elements with borders and creating vertical space between the borders is surprisingly challenging.
+  1. One could use the `:after` or `:before` elements with a given `height` to simulate the border. Then you can also set margins on the `:after` or `:before`.
+  2. You can create a wrapping elements which only do the border. This approach seems simpler and easier to understand.
+
+- Use the `white-space: prewrap` to honour the whitespace in the text. This is especially important when dealing with text from a 3rd party, like CMS.
+
+- To **create "borders" between grid tracks, you can either use `margins` and `border` or one of the children or you can use special "divider" elements that fit nicely inside the grid**.
+
+  - Personally I much prefer the "dividers" approach. This approach decouples the borders from the child styling.
+
+TODO: exercise 4 and up
