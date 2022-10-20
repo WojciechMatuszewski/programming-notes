@@ -1254,6 +1254,8 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   This makes it so that **the minimum column size is computed and dynamic**. Say goodbye to the overflow on mobile devices!
 
+- You **cannot use the "intrinsic" sizes with the `repeat` function**. This means that `min-content`, `max-content`, `auto` will NOT work.
+
 ### Grid Dividers
 
 - It is **not possible to style grid dividers (tracks)**.
@@ -1354,4 +1356,8 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 
   - Personally I much prefer the "dividers" approach. This approach decouples the borders from the child styling.
 
-TODO: exercise 4 and up
+- To **force the grid to overflow in horizontal direction** you can use the `grid-auto-flow: column` and `grid-auto-columns` property. This forces the children NOT to wrap and using the `grid-auto-columns` you can set the minimum width.
+
+- The "world famous" CSS grid snippet requires you to have at least one "concrete" value in the `minmax` function. If you were to use `fr` or `min-max` or similar sizes, the declaration will not be correct.
+
+## Animations
