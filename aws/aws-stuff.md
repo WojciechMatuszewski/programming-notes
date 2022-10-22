@@ -73,7 +73,7 @@
 
     - It seems like I'm not the only one who had troubles with this feature (or at least understanding how the feature works). See [this tweet](https://twitter.com/theburningmonk/status/1554246541694717952).
 
-    - **[Here is a confirmation that it only works in the context of identity policies](https://youtu.be/Ud0QmTCBhps?t=168)**.
+    - It seems like they have updated the documentation. Sadly, it **only works for identity-based policies**.
 
 #### Firecracker
 
@@ -531,7 +531,9 @@
 
   - the **number of `Condition` keys is limited**. Refer to [this document](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_iam-condition-keys.html#condition-keys-sts) for more information.
 
-    - the takeaway is that, you cannot scope the `assumeRole` action to a given resource, it's the role definition that has to take care of least privilege.
+    - the takeaway is that, you cannot scope the `assumeRole` action to a given resource, it's the role definition that has to take care of least privilege. Use **the `aws:userid` condition** to ensure that the role is attached only to a given function. Read [more about it here](https://medium.com/@josh.armitage/locking-aws-lambda-execution-roles-a03b92449f22).
+
+    - another **alternative specific to AWS Lambda** is to **use the `SourceFunctionArn` condition key**, similar to the `aws:userid` one. You can [read more about it here](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html#permissions-executionrole-source-function-arn).
 
 - assuming a role means **being a completely different identity, defined by assumed role**
 
