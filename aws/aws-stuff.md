@@ -2611,6 +2611,10 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
   - according to [this blog post](https://www.alexdebrie.com/posts/dynamodb-eventual-consistency/#eventual-consistency-on-global-secondary-indexes) the GSI data replication uses a queue that sits between the "main table" and the GSI partitions.
 
+- since the **GSI population is asynchronous, the GSI (either a simple or composite) DOES NOT have to be unique**.
+
+  - that is **why you cannot use `GetItem` operation using GSI**. For reading, only the `Scan` and `Query` operations are available.
+
 #### LSI
 
 - the LSI **can be strongly consistent**
