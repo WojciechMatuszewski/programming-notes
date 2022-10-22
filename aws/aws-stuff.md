@@ -529,6 +529,10 @@
 
 - **trust relationship** is **ONLY checked** when **assuming a role** (that usually happens once or infrequently)
 
+  - the **number of `Condition` keys is limited**. Refer to [this document](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_iam-condition-keys.html#condition-keys-sts) for more information.
+
+    - the takeaway is that, you cannot scope the `assumeRole` action to a given resource, it's the role definition that has to take care of least privilege.
+
 - assuming a role means **being a completely different identity, defined by assumed role**
 
 - under the hood **assuming a role means using completely new, temporary, credentials created with sts which are
