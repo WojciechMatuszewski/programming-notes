@@ -1361,3 +1361,65 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - The "world famous" CSS grid snippet requires you to have at least one "concrete" value in the `minmax` function. If you were to use `fr` or `min-max` or similar sizes, the declaration will not be correct.
 
 ## Animations
+
+### Transforms
+
+- Using the **`translate` property will NOT change the element in-flow position**. This means that it works differently than margin. If you use `translate` on element X, the elements Y layout will not be affected.
+
+  - If you use **percentages as the value for `translate`, these are relative to the ELEMENT size and NOT the container size**. That is in stark difference to the `left/right/top/bottom` properties.
+
+  - Keep in mind that you **can mix units using the `calc` function**.
+
+    ```css
+      .element {
+        transform: translateX(calc(100% + 50px));
+      }
+    ```
+
+- The **`scale` will transform the children of the element as well as the element itself**. If not countered, you will see the children stretch.
+
+  - You might want to use `overflow: hidden` on the parent element to manage "spill-over" of the element you apply the `scale` on.
+
+- The **order of operations for the `transform` property is important**. The operations are applied **sequentially one after each other – RIGHT TO LEFT!**.
+
+- The **`transform` property does not work with `inline` elements**.
+
+### CSS Transitions
+
+- You can **animate multiple properties using a comma separated list**.
+
+  ```css
+    .wrapper {
+      transition: transform 250ms, opacity 400ms;
+    }
+  ```
+
+  Notice that each property has a different timing.
+
+  - There is also the `transition:all`, but in reality it is a footgun. You should not use it, it is overly generic.
+
+- Consider using the `ease` and other _easing functions_ to make your animations feel more authentic. The **`linear` is almost never (if not ever) a good option**.
+
+  - You can create your own easing functions with the `cubic-bezier` function.
+
+- When **translating, consider applying animations on the children, not the element itself** when using **hover as the animations trigger**.
+
+  - If you do not do this, you might observe an effect where hovering at the very bottom of the element causes the element to "jump" depending on the animations direction.
+
+    - This is caused by the fact that the hover applies on the element and that element moves (the `transform`). If you do not move your mouse, the element will loose hover and transition back to its origin. But you have a mouse waiting out there to trigger the animation again, and so it repeats.
+
+### Keyframe Animations
+
+- You can either use the `from` and `to` keyword or percentages.
+
+  - The browser does a good job of interpolating between different states, but [as this video shows](https://www.youtube.com/watch?v=azoIMhKOucQ), you might come across some interesting edge cases.
+
+- You can apply _easing functions_ via the `animation-timing-function`.
+
+- The **timing function applies to EACH STEP**. We do NOT get a single ease for the whole duration.
+
+  - This means that **the more `keyframes` you add, the longer your animation will be**. Keep that in mind.
+
+- There is a shorthand, but I find the explicit declarations much more readable.
+
+#### Fill modes
