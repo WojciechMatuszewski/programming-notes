@@ -464,3 +464,57 @@ One solution of this would be to defer the rendering to the point where we know 
 The article I've linked contains a really neat way to do that. The solutions uses `window.requestIdleCallback` **with a timeout** to ensure that the callback where the computation of what should be rendered next actually happens.
 
 Pretty neat I would say!
+
+## Refs and `useSyncExternalStore`
+
+The new `useSyncExternalStore` allows to create the pub-sub patterns with `useRef`. This **might be a good optimization for the context API** where **instead of holding a state as a value, you hold the `ref` and create a pub-sub pattern for `useSyncExternalStore`**.
+
+It does feel weird to me that we would "sync external store" if that store is created within our own application, using Reacts APIs, but, nevertheless, I think it's a good optimization.
+
+```jsx
+const FormContext = createContext(null);
+
+const FormContextProvider = ({
+  children,
+  initialValue = { username: "", password: "" }
+}) => {
+  const stateRef = useRef(initialValue);
+
+  const get = useCallback(() => stateRef.current, []);
+
+  const subscribersRef = useRef(new Set());
+  const subscribe = useCallback((callback) => {
+    subscribersRef.current.add(callback);
+    return () => subscribersRef.current.delete(callback);
+  }, []);
+
+  const set = useCallback((value) => {
+    stateRef.current = { ...stateRef.current, ...value };
+    subscribersRef.current.forEach((subscriber) => {
+      subscriber(stateRef.current);
+    });
+  }, []);
+
+  const contextValue = useMemo(() => ({ get, set, subscribe }), [
+    get,
+    set,
+    subscribe
+  ]);
+
+  return (
+    <FormContext.Provider value={contextValue}>{children}</FormContext.Provider>
+  );
+};
+
+const useFormState = () => {
+  const state = useContext(FormContext);
+  if (!state) {
+    throw new Error("Boom");
+  }
+
+  const stateValue = useSyncExternalStore(state.subscribe, state.get);
+  return [stateValue, state.set];
+};
+```
+
+There is **a lot of additional complexity** using this technique. You **might be better off using a library** – they are using the same `useSyncExternalHook` hook as you (most likely).
