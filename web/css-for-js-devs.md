@@ -1422,4 +1422,69 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 
 - There is a shorthand, but I find the explicit declarations much more readable.
 
+- The **styles in `@keyframes` will take precedence over your regular styles**.
+
+  - On some browsers, you might even be able to override the `!important` declarations.
+
 #### Fill modes
+
+- The `animation-fill-mode` allows us **to persist the animation end-state after the animation is finished**.
+
+  - How many times you wrote an animation, only for the element to snap back to it's original state?
+
+  - You **usually want to use `forwards`, but the `backwards` can be used when you want to reveal an element**.
+
+  - Or you can use the `both` value for `animation-fill-mode` property.
+
+#### Dynamic Updates
+
+- You can apply the animations _dynamically via JS_, similar how you can change CSS variables.
+
+  - If you remove the animation styles altogether, you might see an abrupt end to an animation.
+    **Consider using `animation-play-state: paused` for disabling animations**.
+
+#### Exercises
+
+- Interestingly, you can **declare variables inside the `keyframes` keyword**.
+
+  - Those variables are scoped to the element where the `keyframes` is used.
+
+- It would be really great if we could have a tool which shows where the `transform-origin` is.
+
+  - I'm very surprised that is not a thing, or at least appears not to be a thing, in the Chrome dev tools
+
+### Animation performance
+
+- You should **favour `transform` and `opacity` animations heavily**. Animating other properties is compute expensive and might cause the animation to be sluggish.
+
+  - Some properties are not that bad™️, the `background-color` will not cause a layout shift so animating it is much better than animating the `width` or `height`.
+
+  - **The styles of a given element also plays a huge role in how expensive animating it would be**. For example, **tweaking the `height` on `fixed` positioned element will be very cheap** as it does not "interact" with other elements, layout-wise.
+
+- The `will-change` property **instructs the browser to hand-off the rendering of an element to GPU on page load**.
+
+  - By default, if you apply the `transform` animations, the CPU hands off that element to GPU. There are subtle rendering differences between the two, so you might see text rendered differently.
+
+  - If the browser hands off the element to the GPU when the page loads, there will be no change in how the element is rendered when you animate it.
+
+### Designing animations
+
+#### Orchestration
+
+- Sometimes, to create a great looking animations, you might need to stagger multiple elements – animate them "in turn".
+
+  - If you want to separate the _enter_ and _exit_ animations and stagger multiple elements, you would be better off using a library. There is a lot to code to write (JavaScript code since it requires state).
+
+- Do not forget about the `onTransitionEnd` callback. **It could be useful if you want to animate multiple elements one after the other**.
+
+### Accessibility
+
+- Use **the `@media (prefers-reduced-motion: reduce) {}` query to disable one-off animations**.
+
+  - You can **access this, and other queries, using the `matchMedia` function in JS**.
+
+  - A **better way** would be to **start with no animations, and then add them inside `@media (prefers-reduced-motion: no-preference)`** query.
+
+    - Why do we start with no animations and not disable them globally? **You most likely do NOT want to disable all animations altogether**. Some animations are pretty much required so that the user is aware that something changed. For those cases, you should reduce the animation "umph" rather than disabling it.
+
+### Ecosystem World Tour
