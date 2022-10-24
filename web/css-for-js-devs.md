@@ -1488,3 +1488,57 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
     - Why do we start with no animations and not disable them globally? **You most likely do NOT want to disable all animations altogether**. Some animations are pretty much required so that the user is aware that something changed. For those cases, you should reduce the animation "umph" rather than disabling it.
 
 ### Ecosystem World Tour
+
+- The _Web Animations API_ is a JavaScript alternative to CSS `@keyframes`.
+
+  - The **main difference is that the _Web Animations API_ enables you to provide a single timing function for the WHOLE animation**.
+
+- The _Framer Motion_ library is really good if your application is written using React.
+
+### Workshop
+
+- It is **important to add _hover_ styles only when it makes sense to do so**.
+
+  - Keep in mind that, on mobile devices, the _hover_ state might trigger when user clicks on an element.
+
+  - To enable _hover_ state **only on mouse-powered devices** use the `hover` and `pointer` **media features**.
+
+    ```css
+      .wrapper {
+        @media (hover: hover) and (pointer: fine) {
+          &:hover {
+
+          }
+        }
+      }
+    ```
+
+- Sometimes, to achieve the animation you want, you will need to duplicate the HTML.
+
+  - If you do that, consider using `aria-hidden` so that the screen reader does not read the repeated markup.
+
+## Little Big Details
+
+### CSS Filters
+
+#### Color Manipulation
+
+- You can animate the `filter` property as the **alternative to animating the `background-color`**. The `filter` is hardware-accelerated in SOME browsers.
+
+- There are multiple _filter-related_ CSS functions, like `brightness`, `contrast` and `grayscale`.
+
+  - You can apply multiple of them onto a single element.
+
+    ```css
+      .wrapper {
+          filter: brightness(120%) contrast(110%) grayscale(50%);
+      }
+    ```
+
+#### Blur Filter
+
+- Using **`blur` is really expensive. Make sure you have a good reason for using it**.
+
+- Keep in mind that **`blur` as means of hiding content is not really effective**. People who use screen readers, will be able to read the content. Use `aria-hidden` or similar.
+
+#### Backdrop Filters
