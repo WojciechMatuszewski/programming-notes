@@ -125,6 +125,18 @@ What if your favorite way of writing lambdas is by using bash? Or maybe you want
 
 - use `webpack` to bundle your dependencies
 
+## Caching
+
+- You can either cache **in-memory (per container) or globally (using some sort of cache service)**.
+
+- Keep in mind that **if the resource you cache can change, you should refresh it on an internal basis**.
+
+  - That **interval** should be **global and relative to a current time, not local**. If the interval is local (relative to the container), you risk some of your functions running with an outdated value.
+
+  - To cache **per global interval, use date functions and not hardcoded timestamps**.
+
+  - You can learn [more about caching relative to global time here](https://www.webiny.com/blog/aws-lambda-time-based-caching-technique).
+
 ## Layers
 
 - use `Lambda layers` to abstract common logic.
