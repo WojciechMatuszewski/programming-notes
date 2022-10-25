@@ -1542,3 +1542,129 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - Keep in mind that **`blur` as means of hiding content is not really effective**. People who use screen readers, will be able to read the content. Use `aria-hidden` or similar.
 
 #### Backdrop Filters
+
+- Sometimes, when you use `blur` you really only want to `blur` the background of an element, not the element contents. This is where the `backdrop-filter` comes in handy.
+
+- The `backdrop-filter` can also be used with other properties, not only the `blur`.
+
+  ```css
+    .header {
+      backdrop-filter:
+        brightness(150%)
+        hue-rotate(30deg)
+        blur(5px);
+    }
+  ```
+
+### Border Radius
+
+- TIL that the **more specific variations of the property, like `border-top-left-radius` take in two values**.
+
+  - It turns out, even the `border-radius` property itself takes in multiple values.
+
+    ```css
+    .wrapper {
+      border-radius: 10% 20% 30% 40% / 50% 60% 70% 80%;
+    }
+    ```
+
+#### Nested Radiuses
+
+- If you apply the `border-radius` on the element and its child, the rounding might look off.
+
+  - The edges will not be of the same size, even if you set the `border-radius` to have the same size.
+
+  - To make sure whey optically are the same, you will have to increase the element `border-radius`.
+
+#### Circular Radius
+
+- The **`border-radius` has an implicit limit which is relative to the element height**.
+
+  - If you provide a value bigger than the limit, the maximum value of the `border-radius` will be applied.
+
+  - This allows you to create really funky looking shapes.
+
+### Shadows
+
+- There are a couple of ways to create a shadow in css.
+
+  1. The `box-shadow`. Arguably the most commonly used.
+  2. The `filter: drop-shadow`. It **produces slightly different shadow effect than the `box-shadow` one**.
+  3. The `text-shadow` which I had no idea existed.
+
+#### Contoured Shadows
+
+- Here the difference between the `box-shadow` and `filter: drop-shadow` is much more pronounced.
+
+  - The **`filter:drop-shadow` applies the shadow to non-transparent parts of the image**, while the **`box-shadow` will apply the shadow effect to the whole image**.
+
+    - As you can imagine, in most cases, you want to use the `filter: drop-shadow`.
+
+- If you want **the shadow to "follow" the contour of an element, use the `filter: drop-shadow`**.
+
+#### Single-Sided Shadows
+
+- This is **where the `box-shadow` shines** as the **`filter: drop-shadow` does not allow you to "direct" the shadow in a given direction**.
+
+#### Inset Shadows
+
+- Only available via the `box-shadow` property.
+
+#### Designing Shadows
+
+- Consider **designing shadows while looking at your website holistically**.
+
+  - To take things even further, make sure that **all shadows follow a ratio** which you agree on.
+
+  - This way your website will feel more consistent.
+
+### Colors
+
+#### Accessibility
+
+- It is vital to ensure the text on the page has enough contrast in relation to the background. Otherwise some people will not be able to read your website!
+
+  - There are many accessibility-related tools to help you here. Chrome has a built-in contrast checker.
+
+  - This does not only apply to text, you should also mind the images.
+
+#### Selection Colors
+
+- You can change the _selection color_ (usually blue by default) using the `::selection` pseudo-class.
+
+#### Accent Colors
+
+- Have you ever tried to style the default `<input type = "checkbox">` realizing that you are very limited in the styling options?
+
+  - **This is where the `accent-color` comes in**. It **allows you to specify the colors for native elements like radios, checkboxes, sliders and progress elements**.
+
+  - It might be just enough for the designer to be happy and you not having to rebuild some of the native elements.
+
+### Mobile UX Improvements
+
+- We should not be making buttons tiny in general, but this rule is very important for mobile devices.
+
+  - **You can increase the "surface area" of a given element by using the `:after` or `:before` pseudo elements!**.
+
+    - This technique is a good **alternative to increasing the element width or height**.
+
+      ```css
+      button {
+        position: relative;
+        height: 32px;
+      }
+
+      button::after {
+        --tap-increment: -8px;
+        content: '';
+        position: absolute;
+        top: var(--tap-increment);
+        left: var(--tap-increment);
+        right: var(--tap-increment);
+        bottom: var(--tap-increment);
+      }
+      ```
+
+- Consider using **`user-select: none` for buttons**. On mobile it can **be cumbersome to tap a button only for the OS to select the text inside of it**.
+
+### Pointer Events
