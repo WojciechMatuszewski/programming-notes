@@ -1668,3 +1668,144 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - Consider using **`user-select: none` for buttons**. On mobile it can **be cumbersome to tap a button only for the OS to select the text inside of it**.
 
 ### Pointer Events
+
+- With `pointer-events` property you can... disable the pointer events on a given element!
+
+  - Keep in mind that focus and text selection will still work.
+
+  - This property **applies to all children, unless you set the `pointer-events: all` on a given child**.
+
+### Clipping With clip-path
+
+- Do you remember creating different shapes with CSS borders? Well, these times are over.
+
+  - The `clip-path` is well supported and is much more idiomatic than the invisible borders.
+
+#### Animations
+
+- You can even animate the transition going from different `clip-path` values! Check this out.
+
+  ```css
+    .triangle {
+      clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% 100%,
+        0% 100%
+      );
+      transition: clip-path 250ms;
+      will-change: transform;
+    }
+
+    .triangle-wrapper:hover .triangle,
+    .triangle-wrapper:focus .triangle {
+      clip-path: polygon(
+        0% 0%,
+        100% 50%,
+        100% 50%,
+        0% 100%
+      );
+    }
+  ```
+
+  Pretty amazing if you ask me.
+
+#### Rounded shapes
+
+- It turns out the `clip-path` is usable with different _shape-defining_ functions, like `ellipse`, `circle` or `polygon` (the one we have seen already in the previous example).
+
+  - All of this makes it so that **the `clip-path` can be used like a super-charged `border-radius`**.
+
+- Keep in mind that you can animate between different shapes. Such ability unlocks a new way creating visual experiences.
+
+#### With shadows
+
+- The `drop-shadow` function applies **before the `clip-path`.
+
+  - This means that you will most likely not see the shadow as it will be clipped.
+
+  - You **have to apply the shadow on the parent**.
+
+#### Exercises
+
+- Keep in mind that **you can reveal elements using `clip-path`**. This allows you to create reveals that seem to "blend-in" with existing elements.
+
+  - This is possible because you can **declare the same coordinates for multiple `clip-path` values**.
+
+### Optical alignment
+
+- Keep in mind that **text takes in more space than in Figma, and this is without the "magic space"** of an _inline_ element.
+
+- Sometimes, you have to tweak the space manually. It **is better to make the spacing FEEL even than to be mathematically even**.
+
+### Scrolling
+
+#### Smooth Scrolling
+
+- The _smooth scrolling_ **should ONLY be applied on interaction, and NOT globally**.
+
+  - If you apply it globally, it is known as **_scroll-jacking_** and it is never a good idea.
+
+- If you do apply the `scroll-behavior: smooth`, **make sure to guard it behind the `prefers-reduced-motion: no-preference` query**.
+
+  - Keep in mind that you cannot control the speed and the easing of the scroll animation. It is controlled by the OS.
+
+- The `scroll-behavior: smooth` has a JS equivalent, the `scrollIntoView` or `scrollTo` with the `behavior` parameter.
+
+#### Scroll snapping
+
+- While implementing a slider menu, you probably wrestled a lot with making sure the scroll stops at a given image. All this work that historically been done in JS can be thrown away and replaced with two lines of CSS.
+
+- Use the `scroll-snap-type` and `scroll-snap-align`. These properties are well supported in all browsers.
+
+  - These properties really make our job easier.
+
+#### Scrollbar Colors
+
+- It is possible to style the scrollbar, but you should not overdo it.
+
+  - If you completely replace the native one, users might be confused and do not recognize the scrollbar!
+
+#### Scroll Optimization
+
+- To avoid **clipping content when scrolling to anchors with sticky headers, use the `scroll-margin-top` property**.
+
+  - So good that it exists. I vividly remember having to deal with it without this property.
+
+- To **improve CLS** on sites with async data, **consider using `overflow-y: scroll` to force the vertical scroll by default**.
+
+  - The scrollbar track shifts the page by a couple of pixels. On some websites, this experience might be jarring as the content loads. To prevent this shift, we make sure the scrollbar is always displayed.
+
+### Focus Improvements
+
+#### Focus Visible
+
+- Works on the same basis as `:focus` but **triggers only when the element is focused and the user is using a non-pointer device like the keyboard**.
+
+  - This is a huge win, as previously, it was very annoying to have the focus rings on clicks.
+
+  - What's more, **nowadays most of the browser styles use `:focus-visible` instead of `:focus`**.
+
+- The bottom line is that **there is NO REASON TO REMOVE THE FOCUS OUTLINE**.
+
+#### Focus Within
+
+- It enables you to **style the parent based on the focus state of the child**.
+
+  ```css
+    .parent {
+      &:focus-within {
+        background: red;
+      }
+    }
+  ```
+
+#### Focus Outlines
+
+- The focus outline **works differently for interactive and non-interactive elements**.
+
+- In general we should not apply styles to the outline. The styles are a convention and everyone is used to them.
+
+  - You can experiment with `outline-color` but not all browsers support it.
+
+### Floats
