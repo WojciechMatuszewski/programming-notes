@@ -1809,3 +1809,11 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   - You can experiment with `outline-color` but not all browsers support it.
 
 ### Floats
+
+- You might consider `float` property obsolete, but that is not the case. They have a place in the modern CSS ecosystem!
+
+- They are mainly used for **wrapping the text around images / or other shapes**.
+
+  - Yes, **shapes**. The element **does not have to be a rectangle. It can be an circle or an image itself**.
+
+  - To specify the exact shape, **look into the `shape-outside` property**.
