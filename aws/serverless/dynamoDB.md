@@ -314,7 +314,7 @@ There is one caveat you might not be aware of first, that will definitely come i
 
 #### Optimistic Concurrency Control (OCC)
 
-The DDB transactions works on the premise that multiple transactions can be performed without interfering each other.
+The DDB transactions work on the premise that multiple transactions can be performed without interfering each other.
 Whenever you do a transaction, a check is performed if another transaction is already "working" on a given entity. If so, an error will be thrown.
 
 You can retry the transaction, to be super safe you could pass the `ClientRequestToken` to ensure idempotency.
@@ -324,8 +324,7 @@ Usually you can just retry the request, ensuring that you have valid _Condition 
 
 #### Transactions and other operations
 
-Imagine yourself performing a transaction that involves changing items A and B.
-At the same time, you kick-off a `GetItem` request for the item A and B. It turns out that the read operations may return different results, all is based on timing.
+Imagine yourself performing a transaction that involves changing items A and B. At the same time, you kick-off a `GetItem` request for the item A and B. It turns out that the read operations may return different results, all is based on timing.
 
 - Both `GetItem` requests are run before the TransactWriteItems request.
 
@@ -379,6 +378,22 @@ Like in the _Step Functions_ world, one might use the _Saga pattern_ with _Dynam
 The other service subscribes to the stream updates, then writes to the origin. The front end would poll (or get notified via WebSocket) the transaction status. The transaction itself is _asynchronous_ because it spans multiple services.
 
 [Check out this great video](https://youtu.be/IgFvWaSQaeg?t=1496) for a deep dive regarding this pattern.
+
+## Locking
+
+To prevent the situation where two requests change the same piece of data (the double-booking problem), it is vital to implement some kind of locking strategy for a given piece of data. There are two locking strategies I'm aware of.
+
+### Optimistic locking
+
+It's where you set a _version_ attribute on an item. A given operation can only update this item if the _version_ attribute matches the one specified in the request. You **would use the `ConditionExpression` here** and ensure that the _version_ attribute is the same as it was when you fetched the item.
+
+The strategy is called _optimistic_ because it **allows for multiple non-clashing writes**. As long as the version is the same, the operation will go through.
+
+### Pessimistic locking
+
+Here, you are dealing with some sort of lock. If a given operation acquires a clock for an item, any other operation cannot change that item. **A good example would be the `TransactWrite` operation**. Here, if any other operation tries to write to that item, that operation will fail.
+
+You can also implement physical _lock items_ in the Database.
 
 ## Consistency
 
