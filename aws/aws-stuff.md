@@ -1019,8 +1019,9 @@ An example for s3-prefix (folder)
 - they are **delivered to s3 bucket**. That **bucket has to be owned by master account**.
 
 - to **have user-defined tags within cost allocation report** you have to make sure to **active given tags before
-  generating a raport**.
-  All the tags here are named **cost allocation tags**.
+  generating a report**. All the tags here are named **cost allocation tags**.
+
+- **using the API costs money!**. Before [creating a loop for calling the API, like in this story](https://medium.com/@marinradjenovic/halloween-serverless-stories-3703c4303bb4), make sure you factored the costs in!
 
 ##### Cost & Usage Report
 
@@ -6262,6 +6263,10 @@ is **always open**, it just waits for ANY message to be visible.
 - source of truth for events that flow through the EventBridge
 
   - the **schema registry is not only for your custom events, you can find other AWS services events there as well!**
+
+  - **if, during the lifecycle of a given schema, the EB changes a given schema, there will be an event for it on a default bus**. This allows you to **listen to schema changes and do something about it!**.
+
+    - this is how the [SchemaWatcher](https://cdk-schema-watcher.vercel.app/) tool works. Neat!
 
 - you can generate code bindings
 
