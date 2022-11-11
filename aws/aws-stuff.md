@@ -305,11 +305,36 @@
 
 - **Layers are regional, if you want to share your Layer, and your layer is popular, you will have to deploy this Layer to every region**.
 
+- Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your layers**
+
+  - You can find the list of the specific directory names for a given runtime here: <https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path>
+
 ##### Pulling the layer from the ARN
 
 - You can pull the layer from the ARN. These are usually layers published by others and they have sufficient permissions attached to the layer which enable you to use that layer.
 
 - **When you use the layer, AWS pulls that layer into your account**. This means that **if the external layer were to be deleted, your function will still work as expected**.
+
+##### Lambda extensions and performance concerns
+
+- It **used to be that the AWS Lambda would wait for your extension to finish** before yielding back the result.
+
+  - As of 2021, **this is no longer the case**. AWS Lambda service introduced the "early return" feature where your extension would still could run AFTER the AWS Lambda finished executing, but the response from the function would be send back to the caller instantly.
+
+- Lambda extensions operate on **the Logs API or the Telemetry API (new)**.
+
+  - On the surface, you create a background process which communicates with AWS Lambda "internal" APIs. To talk to an extension in your AWS Lambda code, you make requests to a local HTTP server that the extension spins up.
+
+    - The **Telemetry API provides you with X-Ray traces**. That is not the case for the Logs API.
+
+    - The Telemetry API **also provides you with much more granular events related to the AWS Lambda lifecycle than the Logs API**.
+
+##### Lambda layers and extensions with container deployments
+
+- lambda layers are not directly supported with the container deployments
+
+- to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build
+  with a image that contains the layer**
 
 #### Container deployments
 
@@ -335,18 +360,6 @@
 
 - when you are loading large datasets, it takes time, those chunks have to be downloaded. Lambda might timeout before
   the dataset is loaded
-
-##### Lambda layers
-
-- Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your layers**
-  - You can find the list of the specific directory names for a given runtime here: <https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path>
-
-##### Lambda layers and extensions with container deployments
-
-- lambda layers are not directly supported with the container deployments
-
-- to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build
-  with a image that contains the layer**
 
 #### Tumbling windows
 
@@ -6193,9 +6206,9 @@ is **always open**, it just waits for ANY message to be visible.
 - this limit is not separate to the _EventBridge_ service. _StepFunctions_, _AWS Lambda async invocation_ all have the
   same limit.
 
-- just like in other services that have the same limit, if you ware working with larger payloads, upload the payload to
-  S3, include the presigned URL
-  within the payload.
+- just like in other services that have the same limit, if you ware working with larger payloads, upload the payload to S3, include the presigned URL within the payload.
+
+  - if you do this, consider reading about the [claim check pattern](https://www.boyney.io/blog/2022-11-01-eventbridge-claim-check).
 
 #### Rules
 
