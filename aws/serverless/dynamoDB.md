@@ -141,6 +141,12 @@ You can also change the GSI value of the GSI pk and / or GSI sk without any rest
 
 <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html>
 
+##### GSI asynchronicity
+
+The GSI replication is asynchronous. The leader node acknowledges the write and then sends the write to a stream to be picked up by other nodes (that stream is most likely a kinesis data stream). **That is why you cannot use `consistentRead: true` while using GSI**.
+
+If you want to learn more about GSIs, [check out this video](https://youtu.be/ifSckJlatWE?t=2114).
+
 ##### WCU and GSIs
 
 While the GSI enable you to create elaborate and powerful querying patterns, they also can cause issues in regarding to throttling and WCU / RCU consumption.
@@ -153,8 +159,7 @@ Imagine having 10 GSIs and writing an item that touches only half of them. You w
 ##### Considerations for not creating GSIs
 
 You might decide to skip on creating a GSI and instead choose to use `Scan` API to perform ad-hoc querying.
-I would say this is a good pattern if you are certain that the cost of having those GSIs, and their influence on RCU / WCU consumption, would
-incur a non-trivial increase to your overall cost.
+I would say this is a good pattern if you are certain that the cost of having those GSIs, and their influence on RCU / WCU consumption, would incur a non-trivial increase to your overall cost.
 
 A blog post on this topic <https://roger20federer.medium.com/dynamodb-when-to-not-use-query-and-use-scan-61e4ab90c1df>
 
