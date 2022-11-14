@@ -78,4 +78,42 @@ s
 
   - Take in mind that, some browsers will ask the user for confirmation (Firefox), but some will not (Chrome).
 
-Finished part 2
+## Coding
+
+- Use the `navigator` object.
+
+  - To check the quota, use the `navigator.storage.estimate`
+
+  - To check / ask for persistent storage, use the `navigator.storage.persist`
+
+- The **_local storage_ requires a lot of error handling and sanity checks**.
+
+  - Ensure that the data is JSON – you have to wrap the `parse` with a `try/catch`.
+
+  - Ensure that the parsed data is the data you expect – maybe employ some kind of schema validation?
+
+    - This **problem of validation is not only related to _local storage_. User can fiddle with IndexedDB and other storage APIs as well**!
+
+- **Keep in mind that, the _local storage_ does not count towards your quota** so it is hard to know how much more data you can store.
+
+- There is a **_IndexedDB v2.0_ which is an improvement in API**.
+
+  - The API is event based, but there is a thin wrapper to convert it to promises. [The _idb_ package](https://github.com/jakearchibald/idb).
+
+    - There are a lot of libraries that sit on top of IndexedDB.
+
+- _IndexedDB_ supports transactions. This is quite neat!
+
+  - _IndexedDB_ **supports versioning**. Each "database" is versioned.
+
+    - **We do not have to prefix the key in IndexedDB because the separation happens at the database level**.
+
+- With the IndexedDB or Local Storage one could implement the **storage-first pattern** (not the serverless one :p) where you fetch the data from the storage layer and not the API.
+
+  - If you do this, you need to invest in a mechanism to invalidate the cache. Since we do not operate on HTTP layer here, adding an HTTP response will not do.
+
+  - In most cases, using the application manifest (some kind of file denoting application version or it's options) will do. If the timestamp of the version of the DB is different than the manifest, the application knows that it should revalidate the local data.
+
+- Another technique is the **server-first pattern**. The local data is a fallback for a failed network request.
+
+Finished Part 4 50:22
