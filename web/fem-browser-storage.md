@@ -80,11 +80,15 @@ s
 
 ## Coding
 
+### Reading the quota
+
 - Use the `navigator` object.
 
   - To check the quota, use the `navigator.storage.estimate`
 
   - To check / ask for persistent storage, use the `navigator.storage.persist`
+
+### Browser storage (aka local storage)
 
 - The **_local storage_ requires a lot of error handling and sanity checks**.
 
@@ -95,6 +99,8 @@ s
     - This **problem of validation is not only related to _local storage_. User can fiddle with IndexedDB and other storage APIs as well**!
 
 - **Keep in mind that, the _local storage_ does not count towards your quota** so it is hard to know how much more data you can store.
+
+### IndexedDB
 
 - There is a **_IndexedDB v2.0_ which is an improvement in API**.
 
@@ -116,4 +122,40 @@ s
 
 - Another technique is the **server-first pattern**. The local data is a fallback for a failed network request.
 
-Finished Part 4 50:22
+### Cache Storage
+
+- Common scenarios include
+
+  - Pre-caching assets.
+
+  - Caching Assets on the fly.
+
+  - Querying assets for an offline storage.
+
+  - Creating an offline page.
+
+- The **API is interesting**. You **provide the path to an asset and the browser will download that asset and put it inside the cache in the background**.
+
+  ```js
+    const imgCache = await caches.open("images");
+    imgCache.add("/public/foo.jpeg");
+  ```
+
+  Then you can query the cache. The **response is the HTTP response**.
+
+  ```js
+  // You can also optimize the `match` call to only search a given named cache.
+  const httpResponse = await caches.match("/public/foo.jpeg");
+  ```
+
+  - Since the response from the cache is an HTTP response, it is hard to extract data from it, especially for assets.
+
+    - **That is why this API is used in tandem with the Service Worker**. The Service Worker provides a nice API to extract such data and give it to the browser.
+
+- When interacting with the Service Worker, there is a huge difference between _hard reload_ and _page reload_ of the page.
+
+  - When I _hard reload_, the assets were not fetched from the service worker. **It did not run at all!**. Very interesting.
+
+### FileSystem
+
+Finished 45:20 part 5
