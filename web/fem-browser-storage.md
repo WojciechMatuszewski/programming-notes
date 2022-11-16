@@ -158,4 +158,22 @@ s
 
 ### FileSystem
 
-Finished 45:20 part 5
+- Read and write file in the real filesystem in users device.
+
+  - It **is the only storage API we used so far that requires user permissions**.
+
+  - The support for this API is very limited. Works only for Chrome and Safari (simulated filesystem).
+
+- By using this API, **you do not have to worry about the quota**.
+
+  - If you want to write huge files, as long as the user lets you, you can do it.
+
+## Best Practices
+
+- Small store objects due to performance.
+
+- Keep in mind that you can use IndexedDB in WebWorkers and ServiceWorkers.
+
+- Plan for local data not being there.
+
+  - Always catch errors, be it data integrity errors or quota errors.
