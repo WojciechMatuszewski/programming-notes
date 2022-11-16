@@ -2012,8 +2012,9 @@ much access to the underlying object the bucket owner has.
 
 - the integration **will send ALL bucket events to the EventBridge**
 
-- use the _EventBridge_ rich filtering capabilities. They are **much better than the `event notification` filtering
-  capabilities**
+- use the _EventBridge_ rich filtering capabilities. They are **much better than the `event notification` filtering capabilities**
+
+  - it used to be the case that you could not filter by suffix. [AWS added that capability](https://aws.amazon.com/about-aws/whats-new/2022/11/amazon-eventbridge-enhanced-filtering-capabilities/?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%23209) not long after.
 
 - the events are send to **the default event bus**. This is not ideal as there is a limited number of rules one might
   create on a given bus.
@@ -2463,9 +2464,13 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - it uses **psychical replication: dedicated hardware to do the replication part**.
 
-- the **replication is much faster than CRR read-replica**
+- the **replication is much faster than CRR read-replica**, but **still slower than DDB Global Tables**
 
 - **failover is much faster than CRR read-replica**
+
+- the **collision** resolution works on the basis of the **_quorum voting mechanism_**. You can [read more about it here](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-multi-master.html).
+
+  > If two DB instances attempt to modify the same data page at almost the same instant, a write conflict occurs. The earliest change request is approved using a quorum voting mechanism. That change is saved to permanent storage. The DB instance whose change isn't approved rolls back the entire transaction containing the attempted change. Rolling back the transaction ensures that data is kept in a consistent state, and applications always see a predictable view of the data. Your application can detect the deadlock condition and retry the entire transaction.
 
 ##### Crash recovery
 
@@ -6401,9 +6406,8 @@ Consider giving it a read!
 
 - here is an [example of mine](https://github.com/WojciechMatuszewski/eb-destinations-example)
 
-- here is
-  a [great article](https://medium.com/lego-engineering/amazon-eventbridge-how-to-manage-api-connection-credentials-with-aws-secrets-manager-f773f7d2aac5)
-  on how the _API Destinations_ and the _AWS Secrets Manager_ interact with each other.
+- here is a [great article](https://medium.com/lego-engineering/amazon-eventbridge-how-to-manage-api-connection-credentials-with-aws-secrets-manager-f773f7d2aac5) on how the _API Destinations_ and the _AWS Secrets Manager_ interact with each other.
+
   - the TLDR is that the _EventBridge_ is eating the cost of calling the secrets manager.
 
 #### Event patterns

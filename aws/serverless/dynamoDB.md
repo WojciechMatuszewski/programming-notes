@@ -410,7 +410,7 @@ To make sure your reads are always targeting the `leader` node (where data is pl
 
 ### Global Tables consistency
 
-As good as the _Global Tables_ feature of _DynamoDB_ might seem, We should only use it for "append-only" use-cases. In the end, the tables are regional, and the "global" part is the **asynchronous** replication between those tables.
+As good as the _Global Tables_ feature of _DynamoDB_ might seem, We should only use it for "append-only" use-cases. In the end, the tables are regional, and the "global" part is the **asynchronous** replication between those tables. The **collisions are resolved in _last-writer-wins_ manner**.
 
 The biggest no-no when it comes to **atomic updates** is that the **transactions are not distributed**, meaning that you might have conflicts when someone performs operations on two tables in different regions at the same time.
 
