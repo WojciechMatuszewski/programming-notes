@@ -325,7 +325,7 @@
 
   - On the surface, you create a background process which communicates with AWS Lambda "internal" APIs. To talk to an extension in your AWS Lambda code, you make requests to a local HTTP server that the extension spins up.
 
-    - The **Telemetry API provides you with X-Ray traces**. That is not the case for the Logs API.
+    - The **Telemetry API provides you with X-Ray traces**. That is **not the case for the Logs API**.
 
     - The Telemetry API **also provides you with much more granular events related to the AWS Lambda lifecycle than the Logs API**.
 
@@ -2277,8 +2277,7 @@ Both offerings store underlying data as **EBS snapshots on s3**.
 
 - your DB **can have security group associated with it**
 
-- this is especially useful to know whenever you want to **acces your DB within VPC**. Not using correct rules on the
-  secuirt groups **can lead to connection issues**.
+- this is especially useful to know whenever you want to **acces your DB within VPC**. Not using correct rules on the security groups **can lead to connection issues**.
 
 #### Storage
 
@@ -6329,14 +6328,25 @@ is **always open**, it just waits for ANY message to be visible.
 
 #### Cron and fixed schedule
 
-- with `EventBridge` can create _cron_ schedules or invoke target at fixed rate. The **minimum granularity** is **1
-  minute**.
+- with `EventBridge` can create _cron_ schedules or invoke target at fixed rate. The **minimum granularity** is **1 minute**.
 
 - you **cannot use custom bus for cron / fixed rate schedule**.
 
 - the **cron expression** can be **scheduled for a particular point in time**.
+
   - quite neat considering the alternatives: SQS delay or StepFunctions with "Wait" task.
+
   - [link to the documentation](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule-schedule.html#eb-cron-expressions)
+
+##### Event Scheduler
+
+- a fully featured event scheduler – no **no longer have to string StepFunctions with other services to get a fine-grain scheduling**
+
+- **much better alternative to CRON or scheduled events**
+
+  - mainly due to scale (1 milion schedules per account as opposed to 300 rules in EB)
+
+- the pricing is not that bad, **you pay for number of monthly invocations based on a schedule**.
 
 #### Event Manipulation
 

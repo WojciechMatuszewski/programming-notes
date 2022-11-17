@@ -1955,6 +1955,52 @@ const circle = {
 // radius: 10 => literal type
 ```
 
+## The `satisfies` keyword
+
+The `satisfies` keyword allows us to check if a variable annotated with the `satisfies` adheres to any given subset of a given type.
+You would mainly use this **for objects where the TS infers the widest possible type** instead of a narrow slice that your object adheres to.
+
+Here is what I mean. Let us say we have an object where the keys can be of different values.
+
+```ts
+type Colors = "red" | "green" | "blue";
+type RGB = [red: number, green: number, blue: number];
+
+const palette: Record<Colors, string | RGB> = {
+  red: [255, 0, 0],
+  green: "#00ff00",
+  blue: [0, 0, 255]
+};
+
+const redComponent = palette.red; // string | RGB
+```
+
+The `redComponent` variable points to a correct type – the widest possible definition the property can have within the `palette` object. But it would be nice if we could narrow it down to only the `RGB` tuple type.
+
+```ts
+type Colors = "red" | "green" | "blue";
+type RGB = [red: number, green: number, blue: number];
+
+const palette = {
+  red: [255, 0, 0],
+  green: "#00ff00",
+  blue: [0, 0, 255]
+} satisfies Record<Colors, string | RGB> ;
+
+const redComponent = palette.red; // [number, number, number]
+```
+
+Note that **the `satisfies` keyword works DIFFERENTLY THAN the `as` keyword**. Using the `as` keyword instead of `satisfy` would yield the original result – the `redComponent` having the widest possible type definition.
+
+### What about the `const` assertion?
+
+The `const` assertion works well in situations where you want to narrow down the inferred types but where you do not have a concrete type defined.
+If you have a concrete type defined, like the `RGB` in the example prior, the `satisfies` keyword is the preferred way to narrow down types.
+
+### Interaction with functions
+
+TODO: not implemented yet. I suspect this will allow us to infer function types and also provide generics? (the problem with `typeof`)
+
 ## Functional types
 
 ### Function parameters
