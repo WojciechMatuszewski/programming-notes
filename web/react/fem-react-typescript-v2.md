@@ -43,3 +43,5 @@
     ```jsx
     <input type = "number" onChange = {e => e.currentTarget.valueAsNumber}>
     ```
+
+Stopped at part 3
