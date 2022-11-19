@@ -44,4 +44,12 @@
     <input type = "number" onChange = {e => e.currentTarget.valueAsNumber}>
     ```
 
-Stopped at part 3
+- The `useState` uses the `useReducer` under the hood. That is why you see the `dispatch` in the `useState` callback types.
+
+  - The [discriminated unions](https://basarat.gitbook.io/typescript/type-system/discriminated-unions) is the main mechanism that powers the type safety of the reducers.
+
+- **String literal types are pretty awesome**.
+
+- To get the native HTML props, you can use the `React.ComponentPropsWithoutChildren` or `React.ComponentPropsWithChildren` or `HTMLAttributes`.
+
+  - The **`HTMLAttributes` does not seem to be specific to a given tag** so they are not the best solution.
