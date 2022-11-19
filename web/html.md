@@ -69,3 +69,16 @@ Here is where the `inert` attribute comes in. **When set on the parent, it makes
 Where is this useful? Especially modals. If you render the modal outside of the "main" of your page, you can then set the `main` to be `inert` when the modal displays. You **get the focus trap for free**.
 
 Another use case are **tooltips, where you do not want the browser to ever focus on the tooltip itself**. This is much better than adding `tabIndex` of `-1` as using the `tabIndex` directly interferes with the browser way of handling focus (it might change the order of the focus).
+
+## The `valueAsNumber` property on the input element
+
+How many times have you had to parse the number from the `type="number"` input field? Probably a lot.
+Since the value is of type `string`, you can introduce a bug while doing so. Would not it be better to leave the browser do it for you? Most likely.
+
+It turns out, it is possible – the `type="number"` input field has the `valueAsNumber` property. You can use it in your event handlers.
+
+```jsx
+  <input type = "number" onChange = {e => e.currentTarget.valueAsNumber}>
+```
+
+Pretty cool if you ask me!
