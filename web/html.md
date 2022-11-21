@@ -82,3 +82,17 @@ It turns out, it is possible – the `type="number"` input field has the `valueA
 ```
 
 Pretty cool if you ask me!
+
+## The input type of `email` and multiple email addresses
+
+You might be familiar with the `multiple` attribute on the `input` element when used in conjunction with the `file` type. It turns out that **the `multiple` attribute also works for inputs of type `email`**.
+
+```html
+<input type = "email" multiple = "true">
+```
+
+While you can do this, **you might want to think twice before allowing the user to submit multiple email addresses**. Here are few things to consider.
+
+- Keep in mind that you will have to parse this list to extract individual addresses (most likely).
+- Keep in mind that **the validation error messages vary from browser to browser**.
+- Keep in mind that the **iOS keyboard does not include the comma by default**. This might result in a cumbersome experience for users on mobile.
