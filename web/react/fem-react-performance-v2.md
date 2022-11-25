@@ -1,0 +1,57 @@
+# FrontendMasters React Performance v2
+
+- Not doing stuff is faster than doing stuff.
+
+## How does React do what it does?
+
+- There are three phases to the _rendering cycle_
+
+  - The _render phase_ where **React invokes your components**.
+
+  - The _commit phase_ where **React puts the outputs of your components into the DOM**.
+
+  - The _clean-up phase_ where **React invokes the cleanup functions of `useEffect` and `layoutEffect` hooks**.
+
+- Keep in mind that **React will re-render all children of a given parent**.
+
+- In React 18 **all the state changes are batched**. This was **not the case in prior versions of React**.
+
+  - There was _partial_ batching support for events for change handlers and hooks (synchronous).
+
+    - Any changes originated from an async piece of code were not subject to batching.
+
+## First exercise – wordman
+
+- The instructor showcases how **slow compute of an initial value of the `useState` can negatively impact your app performance**.
+
+  - Keep in mind that **the initializer of your state will be called every render, unless you use the _callback_ form of the initializer**.
+    This is **NOT A REACT THING, THIS IS JAVASCRIPT EXECUTING**.
+
+    ```jsx
+    const [state, setState] = useState(slowToComputeValue()) // Will cause performance issues when the component re-renders
+    const [state, setState] = useState(() => slowToComputeValue()) // Only the initial render is slow
+    ```
+
+## Second exercise – packing list & wordman
+
+- It is often said that you should _lift your state up_ when necessary.
+
+  - The key word here is _"when necessary"_. **Often, the act of _listing the state up_ causes performance problems**. The reason is that one state change will trigger the re-render of every children. If that state lives at the root of your application, the whole app will re-render!
+
+- Sometimes, the best thing you can do is to **create a new component which would encapsulate all the necessary state**. This component could render a couple of other components.
+
+  - Another solution would be to **use the `children` prop to render expensive components in a component which can change**. It is important to **pass the children to that component in a component that does not change often**. It works because the **children component belongs to the tree where we declare it in JSX and NOT where we render it in the DOM**.
+
+    - This is a great optimization technique which works similarly to encapsulating the state as close where it's needed.
+
+- The instructor talked about the **shallow comparison** and the fact that **the non-primitives compare by reference**.
+
+  - This is a common pitfall one can come across while working with React.
+
+    - One can use `useMemo` and `useCallback` hooks to ensure references stay the same given the same inputs.
+
+      - Please **make sure not to abuse these – favour the correct composition first!**.
+
+      - Another technique would be to **use the `useReducer` and pass dispatch around**. This way **you do not have to create functions wrapped with `useCallback`** as you would pass the dispatch closest to where it is used. All the dependencies are in the reducer function already!
+
+Finished part 3
