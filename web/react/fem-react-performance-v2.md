@@ -119,3 +119,17 @@
 - Here the instructor showed us two React 18 hooks, the `useDeferredValue` and `useTransition`. **Both are useful when we want to make some things "low priority"**.
 
   - In React 17 it is not possible to differentiate between low-priority and high-priority updates. With React 18, such distinction is possible.
+
+## My key takeaways
+
+- **You can gain a lot in terms of performance by moving stuff around**.
+
+  - Co-locating and encapsulating state is one of the best ways to improve performance without introducing complexity.
+
+    - As a bonus, you will most likely make your app structure more readable.
+
+- **Using `memo` is okay, but do not overuse it**.
+
+  - Keep in mind the `memo` gotcha with the `children` prop – where you render the `children` matters!
+
+- React 18 exposes hooks to make the UI feel more responsive – the `useDeferredValue` and the `useTransition` hooks.
