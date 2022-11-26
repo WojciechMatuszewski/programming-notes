@@ -54,4 +54,41 @@
 
       - Another technique would be to **use the `useReducer` and pass dispatch around**. This way **you do not have to create functions wrapped with `useCallback`** as you would pass the dispatch closest to where it is used. All the dependencies are in the reducer function already!
 
-Finished part 3
+## Third exercise – the `context` API
+
+- The instructor showed the two most common gotchas with the `useContext` and the `context` API in general.
+
+  1. First is the fact that, if your provider re-renders often, the value you pass to the `Provider` component might change. If that happens, all the consumers will re-render.
+
+      - The solution here is **to use two `Context` objects, one for the data, one for the `dispatch` or the setters**.
+
+        - Keep in mind that the **order in which you render the providers matters**. You want to render the "actions" provider first.
+          All parents trigger re-render on their children. You would not want to re-render the "actions" provider when `items` changed.
+
+          ```jsx
+            <ActionsContext.Provider value = {dispatch}>
+              <ItemsContext.Provider value = {items}>
+                {children}
+              </ItemsContext.Provider>
+            </ActionsContext.Provider>
+          ```
+
+  2. The `useContext` API injects "hidden" props into a given component. Those "hidden" props will always bust the memoization.
+
+      - This is not really a problem so there is no solution. It is how the API works. If you make your context granular, you should be good.
+
+## Fourth exercise – hottest-takes
+
+- Here we are dealing with a situation where the "state" context has two pieces of state which are disjointed from each other. If one changes, a new context "object" value is created.
+
+  ```jsx
+  <ActionsContext.Provider value={actions}>
+    <StateContext.Provider value={{ posts, users }}> // two separate `useReducer` calls
+      {children}
+    </StateContext.Provider>
+  </ActionsContext.Provider>
+  ```
+
+    So, if the `posts` change, all the components "subscribed" to the `users` will change as well. The **solution is to make the `value` prop more granular, by adding additional context providers**.
+
+Finished part 5 46:24

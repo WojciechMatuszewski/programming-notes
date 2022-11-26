@@ -6348,6 +6348,10 @@ is **always open**, it just waits for ANY message to be visible.
 
 - the pricing is not that bad, **you pay for number of monthly invocations based on a schedule**.
 
+- the nice this is that **it supports spreading the schedules over a certain time period**.
+
+  - this should prevent the [_thundering herd problem_](https://en.wikipedia.org/wiki/Thundering_herd_problem) where you flood a given system with events because they all were scheduled for the same time.
+
 #### Event Manipulation
 
 - you can **transform the event**. This of this picking and choosing which fields you want to forward to given service.
