@@ -132,4 +132,8 @@
 
   - Keep in mind the `memo` gotcha with the `children` prop – where you render the `children` matters!
 
+- Ensure that **your `context`s are granular!**.
+
+  - Use the `state`/`dispatch` context pattern.
+
 - React 18 exposes hooks to make the UI feel more responsive – the `useDeferredValue` and the `useTransition` hooks.
