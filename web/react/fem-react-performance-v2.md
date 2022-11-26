@@ -91,4 +91,31 @@
 
     So, if the `posts` change, all the components "subscribed" to the `users` will change as well. The **solution is to make the `value` prop more granular, by adding additional context providers**.
 
-Finished part 5 46:24
+- When using **memoization, and your component takes in `children` prop, ensure that the `children` render in a place that does not re-render frequently**. Otherwise you will be busting memoization. Every time the place where you render those `children` re-render, the memoized component will re-render.
+
+    ```jsx
+    const [users, setUsers] = useState([])
+    return (
+      <div>
+        {users.map(user => {
+          return (
+            <User user = {user}>
+              <SomeExpensiveComponent/> // This one will re-render every time the `users` change. If possible, rendering this component elsewhere (either inside User or at the parent level).
+            </User>
+          )
+        })}
+      </div>
+    )
+    ```
+
+  - This is because the `children` are a complex object data structure.
+
+- Regardless of the optimization techniques, **consider normalizing your state data structures**.
+
+  - We have a tendency to use arrays for global state, but **an object with keys is usually much better from the "read" use-case** which is **the main access pattern in the UIs**.
+
+## Fifth exercise – lots-to-do
+
+- Here the instructor showed us two React 18 hooks, the `useDeferredValue` and `useTransition`. **Both are useful when we want to make some things "low priority"**.
+
+  - In React 17 it is not possible to differentiate between low-priority and high-priority updates. With React 18, such distinction is possible.
