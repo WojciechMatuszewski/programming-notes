@@ -1,7 +1,14 @@
 # Lambda
 
-There is a difference between `exports =` and `module.exports =`. **Always prefer `module.exports` because it's the `module.exports` that gets returned**.
-With `exports` you are mutating an `module.exports` and if there is an `exports` and `module.exports` within the same file, it's the `module.exports` that will be honoured.
+There is a difference between `exports =` and `module.exports =`. **Always prefer `module.exports` because it's the `module.exports` that gets returned**. With `exports` you are mutating an `module.exports` and if there is an `exports` and `module.exports` within the same file, it's the `module.exports` that will be honoured.
+
+## Lambda Code / Configuration updates
+
+- the AWS Lambda service **cannot update both the code and the settings at the same time**, these are **separate API calls in the AWS Lambda service**.
+
+  - this means that, **it is possible to create a mini-outage when deploying an update to your function**. For example, you could be **changing the `runtime` parameter and the function code** or **environment variables and the function code**. It depends on which operation finishes first.
+
+    - to ensure **that your deployments are devoid of this problem** use **aliases when deploying your AWS Lambda functions**. This practice is recommended by AWS, [see this link for a reference](https://github.com/DataDog/datadog-cdk-constructs/issues/110#issuecomment-1305854450).
 
 ## Invocation modes
 
