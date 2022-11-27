@@ -527,7 +527,9 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - In **the `flexbox` model, the `width` and the `height` properties are more like suggestions (by default)**. The element can shrink to a size which is less than the `width`.
 
-  - Since, depending on the `flex-direction` you operate on different axis, **use flex-basis instead of `width` or `height` as it takes into the account the `flex-direction` property**.
+  - Since, depending on the `flex-direction` you operate on different axis, **use `flex-basis` instead of `width` or `height` as it takes into the account the `flex-direction` property**.
+
+    - Keep in mind that **the `flex-basis` is also a suggestion to the layout algorithm**. Nothing stops the item to shrink below the specified `flex-basis`.
 
 - The `flex-shrink` controls how much a given element will shrink in relation to other elements. Keep in mind that **the shrinking only happens up to a `min-content` threshold!**. After that, the box will overflow.
 
