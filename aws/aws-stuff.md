@@ -6030,8 +6030,11 @@ or create union products**.
 
 - can have **resource policies** applied
 
-- **subscribers** can have **filters applied on the SNS topic**. The filtering itself is something named **filter
-  policy**.
+##### Content filtering
+
+- **subscribers** can have **filters applied on the SNS topic**. The filtering itself is something named **filter policy**.
+
+- you can **filter both the metadata as well as the message content**. The latter is a new change introduced before ReInvent 2022.
 
 ##### Non-Lambda integration
 
@@ -6053,8 +6056,7 @@ or create union products**.
 
 - you **CAN batch on the sender level**.
 
-  - use the [_PublishBatch_ API](https://docs.aws.amazon.com/sns/latest/api/API_PublishBatch.html), it will save you
-    some $$!
+  - use the [_PublishBatch_ API](https://docs.aws.amazon.com/sns/latest/api/API_PublishBatch.html), it will save you some $$!
 
 ##### PII or PHI data
 
@@ -6065,6 +6067,16 @@ or create union products**.
 - SNS has a similar capability to the [Amazon Macie](https://aws.amazon.com/macie/) – you can scan SNS payloads for sensentive data.
 
 - This feature can **prevent you from pushing to the topic if you set it to do so**. Pretty nice!
+
+##### vs EventBridge
+
+- Use **SNS if you want to fan-out to very large number of subscribers**.
+
+  - It is not possible in EventBridge due to limited number of rules/targets.
+
+- Use **SNS if you need the FIFO semantics**.
+
+  - At the time of writing this, EventBridge does not have the FIFO semantics option.
 
 #### SQS
 
