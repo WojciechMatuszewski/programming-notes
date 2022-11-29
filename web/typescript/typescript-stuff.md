@@ -1394,10 +1394,80 @@ declare function foo(person: Person): any;
 foo(p); // Error, you cannot "downgrade" from readonly
 ```
 
+## The `object` type
+
+The `object` type is meant to represent **all non-primitive types** in TypeScript. This is in **difference to the `Object` type** which **represents all primitive AND non-primitive types**.
+
+### The usage
+
+I would reach out for `object` type in the case where **I want to pass a "shallow" type to a "wider" type**. Here is an example.
+
+```ts
+interface User {
+  id: string;
+  name: string;
+}
+
+type IsUser<O extends Record<string, unknown>> = O extends {id: string} ? true : false;
+type Result = IsUser<User> // Type 'User' does not satisfy the constraint 'Record<string, unknown>'. Index signature for type 'string' is missing in type 'User'
+```
+
+The error happens because we are trying to **pass a very strict definition to a more generic one**. In this case **an interface with well defined keys into a `Record` type with unknown keys**. TypeScript will not let us to do that. Now, if I specify the `O` to extends the `object`, the `IsUser` generic type will work as expected.
+
+```ts
+interface User {
+  id: string;
+  name: string;
+}
+
+type IsUser<O extends object> = O extends {id: string} ? true : false;
+type Result = IsUser<User> // true
+```
+
+**Interestingly, if I were to type the `User` as a `type`, TypeScript would not complain**.
+
+```ts
+type User = {
+  id: string;
+  name: string;
+}
+
+type IsUser<O extends Record<string, unknown>> = O extends {id: string} ? true : false;
+type Result = IsUser<User>
+```
+
+It turns out that **this is the intended behavior**. As I understand it, since the `types` cannot be _augmented_ in place, it is safe to allow them to be "indexed". You can [read more about this here](https://github.com/microsoft/TypeScript/issues/15300#issuecomment-332366024).
+
+### The problem
+
+The example we have looked so far was about objects. Both the `Record` and the `object` type allow for objects. The problem is that **the `object` type allows for arrays and functions as well!**. In most cases, such behavior is undesirable, **but how could we create a "more strict" version of the `object` type**.
+
+```ts
+type MyObject = object;
+const fakeObject: MyObject = () => null // No errors. Behaves as per spec, but undesirable in our case.
+```
+
+There is a way to do so, but it is a bit hacky.
+
+```ts
+type MyObject = object;
+const fakeObject: MyObject = () => null
+
+type MyStrictObject = object & {call?: never} & {bind?: never} & {push?: never};
+const fakeObject2: MyStrictObject = () => null; // Error
+const fakeObject3: MyStrictObject = []; // Error
+
+
+const obj: Record<string, unknown> = {}
+const realObject: MyStrictObject = obj; // Ok
+```
+
+We explicitly annotate some of the properties available to a function and an array as `never`. This ensures that we cannot assign them to the type.
+This, of course, is very hacky, but I could not find any other way. The `Exclude` type did not work when using with `object` type.
+
 ## Enums
 
-Enums are quite popular with _Ngrx_. They are not all sunshine and rainbows
-though.
+Enums are quite popular with _Ngrx_. They are not all sunshine and rainbows though.
 
 - they are typescript only concept
 - can cause bundle bloat
@@ -1537,8 +1607,7 @@ interface SomeInterface {
 KeyAt<SomeInterface, "wojtek">; // 'ala 123', literal type!
 ```
 
-This allows us to _pluck a given type_ out of object. This makes sure that
-return our function has return value correctly typed.
+This allows us to _pluck a given type_ out of object. This makes sure that return our function has return value correctly typed.
 
 ```ts
 declare function get<K extends string>(
@@ -1717,9 +1786,7 @@ You might think we can do the type using normal turnery like :
 type Last2<P extends any[]> = HasTail<P> ? Last2<Tail<P>> : Head<P>
 ```
 
-This restriction stems from TS itself, you can though reference a type from
-within an object type just like we are doing with our first `Last`
-implementation.
+This restriction stems from TS itself, you can though reference a type from within an object type just like we are doing with our first `Last` implementation.
 
 #### 1000 IQ big brain Last
 
@@ -1923,9 +1990,7 @@ const value = someObj.prop1 && someObj.prop1.prop2
         & const; // ..
 ```
 
-Syntax with `?` is much cleaner, especially with nested objects and properties.
-You no longer have to worry about checks with `&&`. `?` operator takes care that
-for you.
+Syntax with `?` is much cleaner, especially with nested objects and properties. You no longer have to worry about checks with `&&`. `?` operator takes care that for you.
 
 ## `const` assertion
 
