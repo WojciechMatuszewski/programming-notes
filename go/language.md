@@ -277,3 +277,19 @@ func getMessage() (message string, err error) {
 ```
 
 This section was inspired by [this article](https://trstringer.com/golang-deferred-function-error-handling/).
+
+## Heap vs Stack allocations
+
+> Keep in mind that this is my understanding which might not be entirely correct.
+
+Where your variables and data lives **does** affect the performance of the program. In real-world, this might not be that important, but in some cases, where performance is paramount, it definitely be something to think about.
+
+- **The heap** is a **managed by the Garbage Collector**. This means that, **the more stuff you have on the heap, the slower the Garbage Collector cycle will be**.
+
+- **The stack does not interact with the Garbage Collector at all**. This means, that it is faster than the heap.
+
+- **When you introduce pointer semantics, you are AT RISK of using the heap**. A more complex data structure, like heap, is needed to track the lifecycle of the pointer. The compiler needs to know when the pointer goes out of "use" to garbage collect it. This **is not the case in stack case**. Since stack is a LIFO structure, the compiler knows exactly when a given data is unused.
+
+  - Keep in mind that **using pointers does not necessarily guarantee heap allocations**. If you **pass pointers "down" (as parameters), you might be able to avoid heap allocations**. If you **return pointers, there you will allocate on the heap**.
+
+  - Of course, all of this is related to how compiler decides to optimize things.
