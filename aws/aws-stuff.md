@@ -816,6 +816,8 @@ An example for s3-prefix (folder)
 
 - it is used for **scoping permissions down, it does NOT provide permissions on its own**
 
+- keep in mind that **create a permission to disallow changing the permission boundary**.
+
 #### Groups
 
 - **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **
