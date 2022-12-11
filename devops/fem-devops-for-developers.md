@@ -120,4 +120,10 @@ This framework could help you **avoid unnecessary work**. By slowing down and as
 
   - You can start vague, but then propose a concrete solution.
 
-<!-- Finished part 2 -->
+## Identifying problems
+
+- Usually people have strong opinions on things that should be an upfront decision. If you do not take action, you run at risk of bike-shedding on things that should have been decided upon upfront.
+
+- Standardization is a very easy way to improve agility of organization.
+
+Finished part 3 51:23
