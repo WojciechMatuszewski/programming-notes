@@ -34,4 +34,20 @@
 
   - Instead of _children_, the framework uses _slots_.
 
-- Qwik uses the concept of loaders from Remix, but they have a different name for it. Very interesting that the framework mixes and adds it is own twist on the things from the other frameworks/meta-frameworks
+- Qwik uses the concept of loaders from Remix, but they have a different name for it. Very interesting that the framework mixes and adds it is own twist on the things from the other frameworks/meta-frameworks.
+
+  - You can only have a single _loader_ in a given component file. Like in Remix, you can import other loaders into your loader.
+
+  - There is **a loader that responds to the POST submit for a form**. Again, similar to Remix.
+
+- The **most interesting thing about Qwik** for me is the fact that **the framework automatically lazy-executes the JS**.
+
+  - It is almost as if the components were lazy loaded. **If the component is NOT visible on the screen, its JS will NOT run**.
+
+- There is **no clear client vs server boundary for components code**.
+
+  - Some parts of the component might run on the server and resume on the client.
+
+  - Some method have "client" or "server" within the name.
+
+<!-- Finished day 1 part 4 -->
