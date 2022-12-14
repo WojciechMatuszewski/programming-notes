@@ -40,6 +40,8 @@
 
   - There is **a loader that responds to the POST submit for a form**. Again, similar to Remix.
 
+  - There is also **a loader to responds to both POST and GET requests**. Very useful as a middleware, especially for authorization.
+
 - The **most interesting thing about Qwik** for me is the fact that **the framework automatically lazy-executes the JS**.
 
   - It is almost as if the components were lazy loaded. **If the component is NOT visible on the screen, its JS will NOT run**.
@@ -50,4 +52,14 @@
 
   - Some method have "client" or "server" within the name.
 
-<!-- Finished day 1 part 4 -->
+- You can control if you want to navigate using SSR or client-side via the usage of `a` tag (server-side) or `Link` component (client-side).
+
+- The **ability to defer JS execution in Qwik is insane**.
+
+  - By using the `$` you can defer functions inside the component. This is very new to me.
+
+  - As the creator of the Qwik explained, it is due to a rust pre-compile step that goes in and splits the code in the chunks.
+
+  - This pre-compile step alongside with a heuristic on the service worker side of things **produces a very optimized bundles that the framework will fetch automatically based on user interactions**.
+
+    - If you thought that the React mental-model is hard to grasp, Qwik makes React look like a toy.
