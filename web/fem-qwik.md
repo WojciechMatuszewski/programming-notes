@@ -63,3 +63,5 @@
   - This pre-compile step alongside with a heuristic on the service worker side of things **produces a very optimized bundles that the framework will fetch automatically based on user interactions**.
 
     - If you thought that the React mental-model is hard to grasp, Qwik makes React look like a toy.
+
+<!-- Finished day 1 -->
