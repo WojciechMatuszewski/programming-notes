@@ -64,4 +64,40 @@
 
     - If you thought that the React mental-model is hard to grasp, Qwik makes React look like a toy.
 
-<!-- Finished day 1 -->
+## How does Qwik work under the hood?
+
+- By default, all frameworks similar to React have to **execute all the code to figure out if there are listeners attached to a given elements**.
+
+  - This is very wasteful. Even if you **lazy load, the code that you lazy loading (on the same route) will be executed instantly**.
+
+    - The only case where lazy loading makes sense is if the lazy-loaded code is behind a condition or on a different route.
+
+  - The **fundamental assumption with existing framework is: all code is available when they run**.
+
+    - This is NOT the case in Qwik. Such assumption creates performance constraints.
+
+- Everything in Qwik is asynchronous. You can embed _promises_ right into the JSX and they will be resolved.
+
+  - This means you can _fetch as you render_ without any ceremony. This is **huge**.
+
+- Since you can lazy-load functions, **the serializer must be quite complex since serializing functions is very hard**.
+
+  - Think of all the variables in closures and the logical scope.
+
+- **Due to all the magic happening behind the scenes** you might end up in a scenario where a seemingly regular usage of the variables might trigger a deoptimization.
+
+  - I'm not talking about the `deopt` call from Node. I'm talking about Qwik downloading the whole component instead of skipping it.
+
+  - That is the price you pay for having so many great features?
+
+  - **Even with deoptimization behavior, the baseline is much better than the "current" frameworks**.
+
+- **Qwik is a truly reactive framework**. If you update the `signal`, only the parts that use the signal will update.
+
+- Qwik has the notion of an `useEffect` (without dependencies) and `useLayoutEffect` (without dependencies).
+
+  - The main difference are the **name of the hooks, and their granularity**. Some run before render on the server, some on the client and such.
+
+  - Note that `useEffect` runs on the client and on the server AFTER rendering. Running `useEffect` BEFORE rendering on the server and on the client is not possible. Qwik have you covered here.
+
+<!-- Finished day 2 part 2 -->
