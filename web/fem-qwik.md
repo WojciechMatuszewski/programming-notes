@@ -100,4 +100,18 @@
 
   - Note that `useEffect` runs on the client and on the server AFTER rendering. Running `useEffect` BEFORE rendering on the server and on the client is not possible. Qwik have you covered here.
 
-<!-- Finished day 2 part 2 -->
+- Another insane demo was the CloudFlare one where multiple separate application were streaming in their content.
+
+  - One could interact with the "header" application **before** the "main" application downloaded.
+
+  - **The HTML alone defines the application**.
+
+  - To **communicate state between different apps, one can use custom events**.
+
+    - A nice way to go about it, and native to the browser as well!
+
+- You can **run React code inside Qwik**.
+
+  - You can to tell Qwik that you are using "React JSX" and not "Qwik JSX".
+
+    - What is nice is that the "wrapped" component has all the Qwik-specific props, like `onChange$`.
