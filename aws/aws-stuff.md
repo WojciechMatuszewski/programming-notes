@@ -6319,6 +6319,40 @@ is **always open**, it just waits for ANY message to be visible.
 
 - can be an source of events. Whenever it discovers the schema it will publish to a default EventBus
 
+#### EventBridge Pipes
+
+- enables you to **create point-to-point integrations between services**
+
+- the **connection between the source and the target is 1:1**.
+
+  - you cannot invoke multiple targets with the same pipe. You will need to create multiple pipes.
+
+##### vs EventBridge targets
+
+- with the **EventBridge Pipes** there is **no notion of subscriber**.
+
+- with the **EventBridge Pipes** you can **enrich the messages via compute services**.
+
+  - not possible with EventBridge Events. You **would have to target a AWS Lambda function and then re-send the event**.
+
+    - this is **also an example of so-called glue code**.
+
+- the **EventBridge targets** integrate **with more services**.
+
+  - the EventBridge pipes is limited to a handful (less than 20).
+
+- they **claim** that the **EventBridge pipes** support ordering, but I will need to confirm to be sure.
+
+- the **EventBridge Pipes uses the ESM mechanism of AWS Lambda**. [Reference](https://youtu.be/xXGXCOc3cBs?t=721).
+
+  - this means that you have all the nice settings of the producers available to you, like batching and slitting events on failures.
+
+##### Things to check
+
+- Can I send batches to the service, for example DDB -> Transformer -> SQS Batch
+
+- What about ordering and retries?
+
 #### vs SQS
 
 - **EventBridge** has **more integrations**
