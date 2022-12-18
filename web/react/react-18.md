@@ -346,3 +346,43 @@ function VeryHeavyComponent({ id }) {
   return <div>Heavy!</div>;
 }
 ```
+
+## The different component types
+
+React 18 introduced the `use client` directive and with it, it brought _server components_. This means that one can now use either components with the `use client` directive or leverage the fresh _server components_ when building their UIs. The following dives into a bit of detail about what each type of component does and what are their limitations.
+
+### Before Client and Server Components
+
+Before React 18 existed, you had two choices
+
+1. Render your whole application on the client. This could lead to "white page" of first content.
+
+2. Render your application on the server. Perform the hydration on the client. **This means that your application is executed twice**. Not ideal. **Frameworks like Qwik address this**.
+
+### React Server Components
+
+Here you **stream non-interactive HTML code from the server to the client**. This is **similar to `getServerSideProps` in Next.js**, but it is **NOT the same**. The main difference between _React Server Components_ and `getServerSideProps` are.
+
+1. With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server Components_.
+
+  1.1 **You cannot use any React hooks with _React Server Components_**.
+
+  1.2 Using `getServerSideProps` is **to display a non-interactive version of the _client_ component** and then hydrate it for interactivity. There is **no hydration using _React Server Components_**.
+
+2. With _React Server Components_ you can **fetch as your render**, where the component definition is asynchronous.
+
+3. The **dependencies you use to render _Server Components_ do not add to your overall bundle**.
+
+  3.1 Since there is no hydration, there is no need to push that code to the client.
+
+4. The **_Server Components_ allow you to use native Node.js functions as they only run on the backend**.
+
+### React Client Components
+
+These are your "standard" React Components. They work as if you were loading them **purely on the client**. You can do all the effects and such without worrying about running on the server.
+
+### The bottom line
+
+1. The **_Server and Client Components_ do NOT replace SSR**. Keep in mind that **SSR can render HTML output of client components**. That is NOT possible with _Server Components_.
+
+2. Now you **have a greater control over what runs where**. I'm not sure if that is a good thing or not. Most likely not since it should be an "opt-in" rather a "must-do". These concerns are addressed by frameworks like Qwik and Marko where the place where component executes is opaque to the developer.
