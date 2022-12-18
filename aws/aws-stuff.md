@@ -6319,6 +6319,30 @@ is **always open**, it just waits for ANY message to be visible.
 
 - can be an source of events. Whenever it discovers the schema it will publish to a default EventBus
 
+#### EventBridge Scheduler
+
+- allows you to **stagger events via the flexible time windows**.
+
+  - this allows you to avoid the thundering herd problem where all the events scheduled for a given time trigger all at once.
+
+- integrates with DLQ
+
+##### vs EventBridge targets/rules
+
+- the **EventBridge Scheduler** allows you to **set the start and the end time for _rate_ and _CRON_ based invocations**.
+
+  - this is NOT possible with EventBridge targets/rules.
+
+- the **EventBridge Scheduler** allows you to **set one time events**.
+
+  - this is possible to implement with EventBridge targets/rules but it requires a lot of effort.
+
+    - think invoking a Lambda function every X to scan the database and based on the results sending the email.
+
+- the **EventBridge Scheduler** does **NOT allow you to invoke different targets based on rules**.
+
+  - you **can invoke multiple targets but the dynamic routing based on the event is out of the picture**.
+
 #### EventBridge Pipes
 
 - enables you to **create point-to-point integrations between services**
@@ -6327,7 +6351,7 @@ is **always open**, it just waits for ANY message to be visible.
 
   - you cannot invoke multiple targets with the same pipe. You will need to create multiple pipes.
 
-##### vs EventBridge targets
+##### vs EventBridge targets/rules
 
 - with the **EventBridge Pipes** there is **no notion of subscriber**.
 
