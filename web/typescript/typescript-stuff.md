@@ -1502,6 +1502,40 @@ Much better now!
 **BUT BEWARE** Enums cannot be used with _plugin-transform-typescript_ which you
 are probably using.
 
+### Enums considered harmful
+
+You learned that the `enum` keyword is not ideal as it could bloat your bundle and that the `const enum` is a better alternative. Now the question is **should you even use enums at all?**. Keep in mind that enums are **not native to JS** so you are introducing a feature that is purely TS related. This might or might not be a problem when `enum` keyword is introduced to the JS language.
+
+**But I think the biggest argument AGAINST using the `enum` keyword** is the fact that you can leverage the native JS object to achieve the same result.
+
+```ts
+enum MyEnum {
+  foo,
+  bar
+}
+
+declare function withTSEnum(enumValue: MyEnum): void;
+withTSEnum("foo") // error!
+withTSEnum(MyEnum.foo) // ok
+
+const nativeEnum = {
+  foo: "foo",
+  bar: "bar"
+} as const;
+type NativeEnumValues = keyof typeof nativeEnum
+
+
+declare function withObjectEnum(enumValue: NativeEnumValues): void
+withObjectEnum("foo") // ok
+withObjectEnum(nativeEnum.foo) // ok
+```
+
+I would argue that the `enum object` pattern is even better than the TS version. Notice that you can provide literal values as well as the property of a given object. **If you are not convinced, consider looking at the following resources**.
+
+1. The TS documentation about [`const enum` keyword pitfalls](https://www.typescriptlang.org/docs/handbook/enums.html#const-enum-pitfalls).
+
+2. This [youtube video explaining the state of the `enum` keyword](https://www.youtube.com/watch?v=jjMbPt_H3RQ).
+
 ## Mocking with Typescript
 
 When testing sometimes you have to mock stuff. It's pretty common procedure, but
