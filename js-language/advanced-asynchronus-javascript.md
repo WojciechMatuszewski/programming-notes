@@ -305,3 +305,29 @@ function preloadImage(src) {
 ```
 
 `defer` operator make it so that the work begins only when someone actually subscribes, creating _lazy observable_. `defer` basically is an **observable factory**.
+
+## Using requestAnimationFrame
+
+I rarely find myself reaching out for the `requestAnimationFrame` function, but when I do, I usually want to _defer_ some piece of logic AFTER the next frame is painted to the screen. **It is crucial to understand when the RAF really runs, otherwise you mind encountering weird bugs**.
+
+The pattern I've used RAF for is the following.
+
+```js
+changeTheDom()
+requestAnimationFrame(() => {
+  doSomethingAfterTheDOMIsChanged()
+})
+```
+
+It turns out that the **RAF runs before the next repaint** ([MDN reference](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)). This means that, the `doSomethingAfterDOMIsChanged()` **might read stale values as the browser did not fully perform the layout**. To ensure that all the elements are fully in position, **consider adding the `setTimeout` call inside the RAF call**.
+
+```js
+changeTheDom()
+requestAnimationFrame(() => {
+  setTimeout(() => {
+    doSomethingAfterTheDOMIsChanged()
+  }, 0)
+})
+```
+
+This is a technique [used in one of the articles on `web.dev` regarding time to interaction optimizations](https://web.dev/optimize-inp/?ck_subscriber_id=1352906140#optimize-event-callbacks). It looks weird/silly but it appears to be legit.
