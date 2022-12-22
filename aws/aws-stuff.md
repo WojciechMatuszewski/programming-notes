@@ -461,6 +461,18 @@
 
   - AWS recommends **spinning another SFN execution** which carries the work from the initial execution.
 
+#### Distributed Map
+
+- Does not feed your "processor" (could be a lambda function) the content of the S3 bucket. You still have to read it yourself.
+
+- Enables you to **perform a very high concurrency map jobs over different data (has a native S3 integration)**.
+
+  - It will **list the s3 files for you and write the result of ALL the map runs to a given s3 bucket as well**.
+
+    - Keep in mind that the **result file cannot exceed 5gb in size**. If **it does, the feature will split the results and write multiple files**.
+
+      - Pretty neat, the "reduce" step is somewhat implemented for you automatically.
+
 ### IAM
 
 - **IAM** is universal, **is global**, does not apply to regions
