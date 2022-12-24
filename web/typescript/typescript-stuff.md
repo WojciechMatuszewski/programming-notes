@@ -763,11 +763,9 @@ type t1 = NonNullableMy<null>; // never
 
 ### Inferring the type
 
-This feature is very useful. Basically you can `pluck` a type from generic using
-conditional types.
+This feature is very useful. Basically you can `pluck` a type from generic using conditional types.
 
-**We can place the infer keyword at the position where we want the type to be
-inferred.**
+**We can place the infer keyword at the position where we want the type to be inferred.**
 
 ```typescript
 // you could also do args: infer U
@@ -794,6 +792,28 @@ type AppendArgument<Fn, A> = Fn extends (...args: infer Args) => infer R
 ```
 
 Here I've used _infer_ to both get the hold of the function arguments, but also the return type of the `Fn` type. While I could use the `ReturnType` generic, using _infer_ is also nice ;)
+
+##### Placing a constraint on the inferred type
+
+Did you know you can **place a constraint on what you infer**? The syntax looks as follows.
+
+```ts
+type FakeReturnTypeString<F> = F extends ((...args: any[]) => (infer R extends string)) ? R : never;
+
+function returnNumber() {
+  return 3
+}
+
+type test = FakeReturnTypeString<typeof returnNumber> // never
+```
+
+It is as if you were to say: **infer this type ONLY WHEN it matches my constraint**. Seems pretty useful, **especially if the alternative is to perform a nested ternary check**.
+
+```ts
+type FakeReturnTypeString<F> = F extends (...args: any[]) => infer R ? R extends string ? R : never : never
+```
+
+The version with a constraint on the `infer` seems much cleaner.
 
 ## Mapped And Lookup Types
 
