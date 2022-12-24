@@ -1316,6 +1316,12 @@ interface Artist {
 // now interface Artist contains name and songs
 ```
 
+- It seems like **there is no performance difference between the `types` and `interface` keyword**. [Source](https://youtu.be/zM9UPcIyyhQ?t=58).
+
+  > For the most part, you can choose based on personal preference, and TypeScript will tell you if it needs something to be the other kind of declaration. If you would like a heuristic, use interface until you need to use features from type.
+
+- Check [the official documentation](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces).
+
 ## Function Overloads
 
 You can provide different implementations based on the arguments that we supply. It makes stuff more readable.
