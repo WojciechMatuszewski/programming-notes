@@ -4478,6 +4478,16 @@ Way of grouping EC2 instances.
 - with **multiple ENI attached** you can put **multiple SGs on one instance**. That is because you put SG on the ENI and
   not on the EC2 itself.
 
+### AWS Fault Injection Simulator
+
+- Used for **simulating various issues with either a certain API action or the network as a whole**.
+
+- Sadly, **it only works in the context of a VPC** at the time I'm writing this.
+
+  - It would be so nice to simulate DynamoDB or S3 issues without having to attach the Lambda function to the VPC.
+
+- Currently, **only a handful of services are supported**. Most of them **are EC2-like services** (not serverless).
+
 ### AWS Batch
 
 - allows you to run **processes (async) across one or more instances or ETL jobs**
