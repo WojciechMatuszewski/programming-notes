@@ -16,7 +16,9 @@ There is a difference between `exports =` and `module.exports =`. **Always prefe
 
 - the _request response_ model directly passes the event to the execution environment
 
-- the _event_ model passes the payload to the internal SQS queue which is then consumed by _Lambda poller fleet_ and then passed to the execution environment
+- the _event_ model passes the payload to the internal SQS queue which is then consumed by _Lambda poller fleet_ and then passed to the execution environment. The Lambda ESM passes the payload _synchronously_ to the downstream AWS Lambda function.
+
+  - see [this talk to learn more about the asynchronous invocation flow](https://youtu.be/0_jfH6qijVY?t=1148).
 
 ### Execution environment
 

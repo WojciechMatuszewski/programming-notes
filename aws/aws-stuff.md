@@ -358,6 +358,8 @@
 - the things that you put into your container are split into 100 MB chunks, this is an side-effect of how Lambda service
   optimizes your container
 
+  - [learn more here](https://youtu.be/0_jfH6qijVY?t=1814).
+
 - when you are loading large datasets, it takes time, those chunks have to be downloaded. Lambda might timeout before
   the dataset is loaded
 
@@ -395,9 +397,7 @@
 - the state is needed because the lambda might not be ready to be invoked immediately after the operation.
   The service might be creating resources on your behalf, that usually takes time
 
-- Refer
-  to [this post](https://aws.amazon.com/blogs/compute/coming-soon-expansion-of-aws-lambda-states-to-all-functions/) for
-  the additional info
+- Refer to [this post](https://aws.amazon.com/blogs/compute/coming-soon-expansion-of-aws-lambda-states-to-all-functions/) for the additional info
 
 #### Invocation models
 
@@ -407,6 +407,14 @@
   **When throttled, will retry up to 6 hours**. After the 6 hours pass, your event is either dropped or moved into the DLQ. Remember that you can **use Lambda destinations with async invokes**.
 
 - **ESM** invocation – this is where you can set filtering, batching and so on. It is **not the same as asynchronous** invocation, as the ESM invokes the AWS Lambda function synchronously (after it received the data from the source). Remember that **you can use Lambda destinations with stream-based ESM invokes**.
+
+#### SnapStart
+
+- **Only available for .NET runtime at the time of writing this**.
+
+- Instead of downloading the code and booting the VM, the **AWS Lambda services takes a snapshot of the VM when you modify the function and then restores that VM when necessary**.
+
+  - This process is much faster than the aforementioned steps improving the cold start performance in the process.
 
 ### Step Functions
 
@@ -8307,4 +8315,8 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
 - "Application integration patterns for microservices" -> A lot of examples with SQS and SNS. Talks about storage-first
   pattern (without naming it explicitly). Worth
 
-- "Deep dive on Amazon S3" -> Good talk. Refresher on many AWS S3 features. Worth
+- "Deep dive on Amazon S3" -> Good talk. Refresher on many AWS S3 features -> Worth
+
+## re:Invent 2022 watched videos
+
+- ["A closer look at AWS Lambda (SVS404-R)"](https://www.youtube.com/watch?v=0_jfH6qijVY) -> Worth. A lot of details included. Do you need to know those details? Not sure, are they interesting – yes!
