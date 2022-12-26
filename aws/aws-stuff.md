@@ -386,7 +386,7 @@
 - this allows you to **return which message failed in a given batch**
 
 - is **different than bisect on error** because **with bisect on error one message might be processed multiple times**.
-  Here we are **telling the pooler which message failed exactly**
+  Here we are **telling the poller which message failed exactly**
 
 - **DOES NOT WORK WITH SQS**. You still have to use the pattern where you throw the messages that failed the processing
 
