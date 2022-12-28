@@ -8320,3 +8320,33 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
 ## re:Invent 2022 watched videos
 
 - ["A closer look at AWS Lambda (SVS404-R)"](https://www.youtube.com/watch?v=0_jfH6qijVY) -> Worth. A lot of details included. Do you need to know those details? Not sure, are they interesting – yes!
+
+- ["SaaS microservices deep dive: Simplifying multi-tenant development"](https://www.youtube.com/watch?v=NpThwz0z_D0) -> Worth. Good refresher on some of the practices we use at Stedi.
+
+  - Good example of retrieving the `ConsumedCapacity` DDB information to bill based on that.
+
+  - Handy reminder about the ability to use ABAC for the AWS SDK.
+
+- ["Architecting secure serverless applications"](https://www.youtube.com/watch?v=A8iHQjHv8nY) -> Worth. Good refresher.
+
+  - I think the `lambda:SourceFunctionArn` condition key should be advertised more widely. It is such a good feature.
+
+- ["Build production-ready prototypes rapidly using serverless patterns"](https://www.youtube.com/watch?v=Q2OY55gaOjw) -> Meh? Would be worth if you are able to understand what the speaker is saying.
+
+  - Very interesting take on managing CDK "hidden" dependencies.
+
+    - Using SSM would work, but I would still need to re-deploy a service if I update a given parameter.
+
+      - If the parameter is used at runtime, changing it could be dangerous.
+
+    - I'm not sure about putting the resource properties into the configuration files. IMO it is too easy to break resources via some kind of typo.
+
+- ["Advanced serverless workflow patterns and best practices"](https://www.youtube.com/watch?v=o6-7BAUWaqg) -> Meh. Very bias towards SFN which might not be a good idea.
+
+  - SFN is great, but it can be complex.
+
+  - Having said that, the talk mentions a lot of neat patterns.
+
+    - Interesting insight: **the cost of the express workflow is demendant on the memory it took to execute it**. You can **optimize the cost by reducing the amount of the data send between steps**. The less data there is, the lower the memory footprint.
+
+      - Having said that, the **lowest pricing tier is up to 64 mb** so there is no point of optimizing if you are already under that threshold.
