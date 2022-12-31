@@ -8403,7 +8403,15 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
 
   - TIL [about the PC issues when you throw an error in the init code](https://youtu.be/NZVNAEK6shc?t=1731).
 
+- ["Building Serverlesspresso: Creating event-driven architectures"](https://www.youtube.com/watch?v=qs0U0LdNkV0) -> Worth. Very interesting talk.
+
+  - First time I see an IoT Core usage related to websockets advertised by AWS.
+
+    - The IoT Core WebSockets are so underappreciated!
+
 - <https://www.youtube.com/watch?v=bUvTxaqWXXs>
 - <https://www.youtube.com/watch?v=qs0U0LdNkV0>
 - <https://www.youtube.com/watch?v=IYxav-lrNkg>
 - <https://www.youtube.com/watch?v=LyzNM9KIJSU>
+
+TODO: analyze answers -> <https://explore.skillbuilder.aws/learn/course/14624/play/67806/serverless-learning-plan-badge-assessment;lp=92>
