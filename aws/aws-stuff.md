@@ -93,6 +93,18 @@
 - Do not confuse this with **reserved capacity**. Here we are **provisioning workers**, in the other case we are **
   reserving the amount of time a lambda can be invoked**
 
+- **if you throw an error outside of the handler body**, the _provisioned concurrency_ **rollout will fail and you will not be able to retry it**.
+
+  - the fix is to release a new AWS Lambda version.
+
+  - [more info here](https://youtu.be/NZVNAEK6shc?t=1731).
+
+- keep in mind that **during the INIT phase of PC, you DO NOT get the 1 full CPU for free**.
+
+  - your init code will run as if it was invoked with the CPU equivalent to the amount of memory allocated ot the AWS Lambda.
+
+  - this is **completely different than the init phase of the "regular" AWS Lambda functions**, [where you get one full CPU for free](https://youtu.be/NZVNAEK6shc?t=2184) regardless of the memory settings of your AWS Lambda.
+
 #### Inside VPC
 
 - **you can attach the lambda to a vpc**. Based on your needs, the associated subnets should be either private or
@@ -8350,3 +8362,48 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
     - Interesting insight: **the cost of the express workflow is demendant on the memory it took to execute it**. You can **optimize the cost by reducing the amount of the data send between steps**. The less data there is, the lower the memory footprint.
 
       - Having said that, the **lowest pricing tier is up to 64 mb** so there is no point of optimizing if you are already under that threshold.
+
+- ["Building real-world serverless applications with AWS SAM"](https://www.youtube.com/watch?v=jZcS-XRt2Mo) -> Meh. I'm not sure why is this considered level 300 talk. This is an overview of a deployment framework.
+
+  - The **neat thing about AWS SAM is the ability to generate mock events**. The `sam local generate-event` is very useful.
+
+  - The **`sam logs` command is also pretty great**.
+
+- ["Observability: Best practices for modern applications"](https://www.youtube.com/watch?v=YiegAlC_yyc) -> Worth
+
+  - A very interesting take on metrics. The **speaker recommends you start with OpenTelemetry for metrics and traces FOR CONTAINERS**.
+
+    - It seems like the CW + X-Ray is still the go-to for AWS Lambda functions.
+
+  - Good thing that they mentioned high cardinality metrics and the implications of the cost.
+
+    - It is very easy to screw this up.
+
+  - Good refresher about alarms, especially about the composite alarms.
+
+    - TIL that you can have composite alarms of composite alarms.
+
+    - I'm not sold on ML-based alarms, but I have not used them in a while, so I might be negatively biased.
+
+- ["AWS Lambda Powertools: Lessons from the road to 10 million downloads"](https://www.youtube.com/watch?v=dH2GP6Lydj8) -> Not strictly related to serverless, but a good overwiev of what is happening with the powertools.
+
+- ["Building global event-driven applications"](https://www.youtube.com/watch?v=NNTsOKuPlTQ) -> Worth.
+
+  - Provides a good template what should be multi-region and what should not (or might not need to be).
+
+  - I'm glad the speaker mentioned the impact of dependencies while assesing wheter the architecture is multi-region or not.
+
+    - Imagine building your architecuture to the latest and greatest multi-region standards only to have your dependency be a single point of failure.
+
+- ["Practical experience with a serverless-first strategy at Capital One"](https://www.youtube.com/watch?v=NZVNAEK6shc) -> Worth. Interesting format.
+
+  - A very interesting insight on how the _provisioned concurrency_ works with CodeDeploy rollouts.
+
+    - I had no idea that using PC could lenghten the deployment time to such extend.
+
+  - TIL [about the PC issues when you throw an error in the init code](https://youtu.be/NZVNAEK6shc?t=1731).
+
+- <https://www.youtube.com/watch?v=bUvTxaqWXXs>
+- <https://www.youtube.com/watch?v=qs0U0LdNkV0>
+- <https://www.youtube.com/watch?v=IYxav-lrNkg>
+- <https://www.youtube.com/watch?v=LyzNM9KIJSU>
