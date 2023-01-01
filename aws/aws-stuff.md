@@ -8417,7 +8417,14 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
 
     - The IoT Core WebSockets are so underappreciated!
 
-- <https://www.youtube.com/watch?v=bUvTxaqWXXs>
-- <https://www.youtube.com/watch?v=qs0U0LdNkV0>
-- <https://www.youtube.com/watch?v=IYxav-lrNkg>
-- <https://www.youtube.com/watch?v=LyzNM9KIJSU>
+- ["Building a multi-Region serverless application with AWS AppSync"](https://www.youtube.com/watch?v=bUvTxaqWXXs) -> Started weak, ended okay. Kind of worth it. Mainly a refresher.
+
+  - A very good showcase of how one might implement multi-region API.
+
+  - I'm quite suprised that they did not implement a better story for multi-region subscriptions.
+
+    - Using local-resolvers sounds like a lot of work.
+
+- ["Accelerate GraphQL API app development & collaboration w/AWS AppSync"](https://www.youtube.com/watch?v=LyzNM9KIJSU) -> Worth.
+
+  - Good overview of the AppSync JS (Pipeline)Resolvers
