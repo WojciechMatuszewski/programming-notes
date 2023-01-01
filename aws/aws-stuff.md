@@ -46,6 +46,14 @@
 
 - executions are **billed by the millisecond**
 
+##### Compute saving plans
+
+- in similar fashion to EC2 and containers, **you can sign up for a saving plan for AWS Lambda usage**.
+
+  - keep in mind that using saving plans means committing to a certain level of spend.
+
+  - you can [read more about the saving plans here](https://aws.amazon.com/about-aws/whats-new/2020/02/aws-lambda-participates-in-compute-savings-plans/).
+
 #### Alias
 
 - alias can point to a **single version** or **two lambda versions**.
@@ -8413,5 +8421,3 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
 - <https://www.youtube.com/watch?v=qs0U0LdNkV0>
 - <https://www.youtube.com/watch?v=IYxav-lrNkg>
 - <https://www.youtube.com/watch?v=LyzNM9KIJSU>
-
-TODO: analyze answers -> <https://explore.skillbuilder.aws/learn/course/14624/play/67806/serverless-learning-plan-badge-assessment;lp=92>
