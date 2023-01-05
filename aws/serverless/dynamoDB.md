@@ -618,6 +618,11 @@ Depending on the size of your data, performing the `Scan` operation on your tabl
 
 If you need to perform the `Scan` operation infrequently and the size of your data is relatively small, I would say that you should go for it. In most cases, you pay more for GSI replication than performing the `Scan` operation once in a while.
 
+#### `Scan` operation within an index (sparse indexes)
+
+**Keep in mind that you can use the `Scan` operation on a GSI or LSI**. This means that that you will fetch only the items that have a given index.
+This is **great use-case for migrations**, as you get a partial benefit of the `Query` API (you cannot use the `KeyConditionExpression`), but you do not scan the entire table.
+
 ### Export to S3
 
 You can also export your data in DynamoDB to S3 and use BI-specific tools on the exported data. The DynamoDB does not consume any RCU/WCU during the export operation because **the export is based on the PITR backup instead of the live data**.
