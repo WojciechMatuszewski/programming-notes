@@ -411,6 +411,10 @@ You can even make it so that the hook takes parameters and perform some calculat
 
 What is important here to note that **`React.useContext`** will always return the **default context value** when **there is no `Provider` up in the tree**. This is why you should **always set your `Provider` default value to null / undefined**.
 
+### TODO: Uncontrolled Compound Components
+
+TODO: <https://jjenzz.com/avoid-global-state-colocate>
+
 ## Prop Collections and Getters
 
 This pattern was widely used with `render props` now migrated to custom hooks.

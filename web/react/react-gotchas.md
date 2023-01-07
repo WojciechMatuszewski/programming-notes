@@ -171,9 +171,12 @@ const callbackRef = useCallback((ref) => {
 return <div ref={callbackRef} />;
 ```
 
-It is **very important** that you use **`useCallback`** here. Otherwise you might be in for an infinite loop.
+It is **very important** that you use **`useCallback`** here. Otherwise you might be in for an infinite loop. As you can see, the complexity of this solution is a bit higher (at least from the _familiarity_ point of view) than the `useEffect` one.
 
-As you can see, the complexity of this solution is a bit higher (at least from the _familiarity_ point of view) than the `useEffect` one.
+#### The infinite loop problem
+
+In the text above, I mentioned that using the inline-function (instead of the `useCallback`) could cause an infinite loop. Why is that?
+**That is because, if the _ref callback_ is an inline function, React will call that function twice EVERY RENDER**. The first call with a `null` value, the second with an instance of the element. [You can read more about this problem here](https://julesblom.com/writing/ref-callback-use-cases?ck_subscriber_id=1352906140#ref-callback).
 
 ### Bottom line
 
