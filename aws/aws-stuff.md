@@ -7222,6 +7222,33 @@ Consider giving it a read!
   - metadata attributes
   - update policy attributes
 
+##### The `Ref` vs `GetAtt` dilemma
+
+When using CloudFormation, you will come across the `Ref` and the `GetAtt` _intrinsic functions_ (across many others). Depending on what resource you are looking at, **the `GetAtt` might make you feel like the `Ref` is redundant, but that is not the case! – it all depends on the underlying resource**.
+
+For some, **other resources need the output of the `Ref` of a given resource**, for **others, you might be able to do it with the `GetAtt` function**.
+The point is, that there does not seem to be a rule that you could follow. There [is this interesting Twitter thread](https://twitter.com/alexbdebrie/status/1613905247893704705) about this question. The conclusion is, at least to me, to use the one that you prefer.
+
+As a sidenote, please use the `!` form of the functions. I have not seen the `Fn::` syntax in a while, and I think it might be legacy?
+
+##### The `Sub` and the rest of the world
+
+After reading about the `Ref` and the `GetAtt` you might be concerned that now, every time you want to reference a resource, you will have to decide which _intrinsic function_ to use. **What if I told you there is a function which combines both `Ref` and `GetAtt`?**. Enter the `Sub` _intrinsic function_ – the one I default to.
+
+I will not be repeating [the docs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html#w2ab1c33c28c64c13) here, but the TLDR is that if you use the `Sub` with a resource and access a property of that resource, like so:
+
+```yaml
+!Sub ${DemoQueue.Arn}
+```
+
+It will behave like `GetAtt`, so the `Arn`. But, if I were NOT to access the `Arn` property, it would behave like the `Ref` function.
+
+```yaml
+!Sub ${DemoQueue}
+```
+
+Problem solved.
+
 #### Stack Updates
 
 - based of template diffing
