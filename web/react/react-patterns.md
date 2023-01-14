@@ -411,9 +411,29 @@ You can even make it so that the hook takes parameters and perform some calculat
 
 What is important here to note that **`React.useContext`** will always return the **default context value** when **there is no `Provider` up in the tree**. This is why you should **always set your `Provider` default value to null / undefined**.
 
-### TODO: Uncontrolled Compound Components
+## Uncontrolled Compound Components
 
-TODO: <https://jjenzz.com/avoid-global-state-colocate>
+Just like in the case of native HTML elements, like inputs, the _Compound Component_ can be _uncontrolled_. This means that you do not have to provide any refs, any state, nothing. This entry was inspired by [this blog post](https://jjenzz.com/avoid-global-state-colocate), which coins the term, but I think there is another pattern here – **colocation using React portals**.
+
+## Colocation using React portals
+
+The colocation with React portals allows you to cover up global state with the usage of React context. It is a bit better than global state, and very useful some some UIs, **for example where one trigger causes a content in completely different part of the DOM tree to show up**.
+
+The basic idea is to create the **context of dealing with the portal, and the context of the trigger**. Then, **one could render the content inside the portal provider**, like so:
+
+```jsx
+<SidebarProvider>
+  <Sidebar/> // -> The place where you want to render the content
+  <RectangleProvider> // -> Provider for the trigger
+    <Rectangle /> // -> The trigger
+    <SidebarPortal> // -> The portal to render it in a different place
+      <RectangleStyler /> // -> The trigger "content"
+    </SidebarPortal>
+  </RectangleProvider>
+</SidebarProvider>
+```
+
+This technique is described in depth [here](https://jjenzz.com/avoid-global-state-colocate).
 
 ## Prop Collections and Getters
 
