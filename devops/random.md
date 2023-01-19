@@ -2,6 +2,8 @@
 
 ## Rolling back vs. rolling forward
 
+> Taken from [this AWS Builder's Library article](https://aws.amazon.com/builders-library/cicd-pipeline/).
+
 You might have heard the term _roll back_ before in the context of CI/CD pipelines. It is when you want to bring the system to the old state before a change. **This is the most common way of restoring the system in the case of an emergency**, where a change introduces a bug.
 
 But what happens if the **change latent change – a change introduced a while back that now sits sandwiched between other changes?**

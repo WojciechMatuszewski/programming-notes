@@ -6237,6 +6237,20 @@ is **always open**, it just waits for ANY message to be visible.
   - SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can
     retry the batch multiple times before the messages land in DLQ
 
+###### Maximum concurrency
+
+- Prior to this annoucment, **the only way to control concurrency when using SQS was the _reserved concurrency_ setting on the AWS Lambda**.
+
+  - This **caused problems** because **if the ESM failed to invoke your function, the message might end up on the DLQ**. As we know, retrying from the DLQ is not that fun (there is a one-click solution available in the AWS console, but that is only the AWS console feature).
+
+- [The annoucment](https://aws.amazon.com/blogs/compute/introducing-maximum-concurrency-of-aws-lambda-functions-when-using-amazon-sqs-as-an-event-source/) added a feature **where the ESM is aware of the concurrency of the subscriber**. This means that **ESM will only cause X amount of concurrent AWS Lambda invocations** (the X is configurable).
+
+- This **does solve the overpull issue, but you still have to be careful**. If you do not triple check the AWS Lambda _reserved concurrency_ settings, you might still experience it.
+
+  - For example, imagine having a _reserved concurrency_ set to 10 on your AWS Lambda function, but in the ESM config for the SQS integration, you set the concurrency to 15. Such configuration will cause the overpull issue and some of your messages might end up on the DLQ.
+
+- You can [read more about this here](https://zaccharles.medium.com/does-maximum-concurrency-solve-the-lambda-sqs-issue-3c19701e6e75).
+
 ### SES
 
 - for sending **emails, and only emails**.
