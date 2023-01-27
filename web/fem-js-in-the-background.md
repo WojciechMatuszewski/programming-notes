@@ -75,6 +75,27 @@ navigator.mediaSession.metadata = new MediaMetadata({
 
     - The UI on the browser is a bit misleading. On Brave it looks like downloading files to a file system.
 
+### Push Notifications
+
+- Do not ask to allow for push notifications instantly.
+
+  - Follow best practices here.
+
+- Goes thought the **push server which belongs to the browser**.
+
+  - You send requests to the browser push server. This creates the notification the user sees in the browser.
+
+- Different browsers **have different heuristics they apply when deciding whether to allow you to request push notifications permissions**.
+
+  - For example, if Chrome thinks you abuse the feature, it will NOT display the popup for a new user.
+
+- The flow of the notification is a bit complex.
+
+  1. You have to save the browser endpoint + the private/public keys.
+  2. You send the payload to the browser endpoint.
+  3. The browser wakes up the service worker and sends the event to the service worker.
+  4. The service worker creates a push message that the end-user will see.
+
 ## The Beacon API
 
 - Use for **requests that you do not need the response from**.
@@ -101,4 +122,3 @@ navigator.mediaSession.metadata = new MediaMetadata({
   - There are two APIs to create notifications, but only **a single permission to grant the ability to use them**.
 
     - This creates confusion.
-finished part 4
