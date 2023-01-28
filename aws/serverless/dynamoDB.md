@@ -1,5 +1,7 @@
 # DynamoDB
 
+Random stuff about DynamoDB
+
 ## Basics
 
 - table must have _partition key_ and **optional** _sort key_ (or range key)
@@ -109,14 +111,14 @@ If you are faced with **spike traffic loads**, the **_on demand_ capacity mode m
 - while building your data model rely on user stories
 - try to use single table design. This will allow you to avoid N+1 problem. The N+1 problem is where you get some data and loops through the results of that data (reaching to the database again).
 
-## Indexes
+### Indexes
 
 - Mandatory Primary Key - Either simple or composite
 - Simple Primary Key - Only Partition or Hash key
 - Composite Primary Key - Partition Key + Sort or Range Key
 - Partition or Hash Key decides the target partition
 
-### Indexes basics
+#### Indexes basics
 
 1. If the table has only partition key (**also called hash key**) then that key has to be unique.
 2. If the table has partition key and sort key (**also called range key**) **their combination must be unique**
@@ -192,6 +194,22 @@ Carefully picking HASH key is very important with this approach.
 - sometimes called **partition overloading**
 
 - whats more important is that **attributes can be sort keys for GSI**
+
+### Time-related attributes
+
+- You **most likely want to add some kind of time-related metadata to each item**.
+
+  - Think of `createdAt` or `updatedAt`.
+
+- **Consider granular attributes in addition to more generic `createdAt` and `updatedAt` ones**.
+
+  - The reason is that you might want to perform an operation that gets items for a certain day, year and so on.
+
+    - As an alternative, one could use the `>` operator on the timestamp.
+
+      ```text
+      #created_at > TIMESTAMP
+      ```
 
 ## Projections
 
