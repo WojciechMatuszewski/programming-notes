@@ -1,6 +1,63 @@
-# JavaScript in the Background
 
-TODO: merge with the other file on other mac.
+# FEM JavaScript in the Background
+
+## What does "in the background" mean?
+
+- We do not have an official definition.
+
+  - There are many definitions. Some of them talk about "hiding/minimizing" the window. Others talk about "suspending/freezing" in memory.
+
+  - In **this workshop concept, the "background" does NOT refer to running code in a separate thread**.
+
+- For this workshop, the background is **when the user stops or pauses the usage of the web app**.
+
+## Web App lifecycle
+
+- On mobile, the OS suspends the applications in the background.
+
+  - That is not the case for desktop operating systems. If you have multiple applications open, they will keep executing code, even if they are in the "background".
+
+- **On desktop OS, when you "hide" a website window, the timers might still execute, but the frequency of the executions is significantly reduced**.
+
+  - Truly fascinating. I always thought that the timers stopped.
+
+  - Good reminder **that the internal and the timeout of the `setTimeout` / `setInterval` APIs is not guaranteed to be accurate**.
+
+  - The behavior of the timers is **browser specific**. For example, **the Safari browser will NOT execute the timers at all!**
+
+### APIs to rescue
+
+- Few APIs that can help us run code in the background.
+
+  1. The **`Web Push` API can wake your application up**. The `push` is done via the server.
+
+  2. The **`Background Sync` API** will let the browser know that we need to update the data in the background.
+
+    2.1 There is also the **`Periodic Background Sync` API** which works like a CRON for background data synchronization.
+
+  3. The **`Background Fetch` API** is for downloading **large pieces of data in the background**.
+
+## Background Detection
+
+- The **most reliable event to listen to is the `visiblitychange` event**.
+
+  - This event is multi-platform and executes in **most situations** where the app might go into the "background".
+
+    - The event will NOT fire when the app suspends.
+
+  - This means that **you should NOT be using the `unload` event**. It is not recommended anymore. [Learn more here](https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event).
+
+- The `visiblitychange` event could be used **to check whether one should refresh any auth tokens**.
+
+  - We had a similar issue at Stedi.
+
+## Service Workers
+
+- TIL that, **in the future, service workers might NOT be required for PWAs**.
+
+- It is **different than a _Web Worker_ because it has special APIs that are NOT available in a Web Worker**.
+
+  - _Web Worker_ is for computation. The _Service Worker_ acts like a middleware or local web server.
 
 ## Media features
 
