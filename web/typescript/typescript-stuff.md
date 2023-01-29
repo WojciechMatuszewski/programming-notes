@@ -2438,6 +2438,31 @@ const t = makeRouter3({ foo: { search: ["bar", "baz"] } });
 t.foo["search"]; // ["bar", "baz"]
 ```
 
+#### Type narrowing with _const annotations_
+
+When creating a variable, you have the ability to add `as const` to it. This will make the TypeScript **infer the literal types of the values**.
+
+```ts
+const foo = "bar" as const; // foo is of type "bar"
+const foo2 = "bar"; // foo2 is of type "string"
+```
+
+This is very handy – it enables you to be strict and explicit with the values you are passing (keep in mind that the `as const` also adds `readonly` to object properties). **What is nice is the ability to use the _const annotations_ in the context of generic parameters**. Starting from TypeScript v5, the following is a valid code.
+
+```ts
+declare function router<const R extends readonly string[]>(routes: R): Record<R[number], unknown>;
+const foo = router(["a", "b"]) // "a" | "b"
+```
+
+If I were to create a similar function signature in TypeScript v4.x, the inference would fallback to the `string`.
+
+```ts
+declare function router<R extends string[]>(routes: R): Record<R[number], unknown>;
+const foo = router(["a", "b"]) // "string"
+```
+
+Keep in mind that, **for the _const annotation_ to take an effect here, one has to use the `readonly` modifier on the array**. Otherwise TypeScript will fall back to the old behavior.
+
 ## Type branding (AKA _opaque types_)
 
 Imagine you have a function that converts EURO to USD. Here is how one might write the type declaration for this function.
