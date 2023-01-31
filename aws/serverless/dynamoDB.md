@@ -426,7 +426,7 @@ When you have the same `PK`, items with that `PK` will be on the same partition.
 
 To make sure your reads are always targeting the `leader` node (where data is placed first) - you have to manually tell dynamo, on operation basis, to perform a `consistent read / write`.
 
-### Strongly consistent reads are not the silver bullet
+### Strongly consistent reads are NOT the silver bullet
 
 After reading about the semantics of _strongly consistent reads_ you might be tempted to use them by default. I would argue that this is not the right way to go about the DynamoDB API usage.
 

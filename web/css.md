@@ -439,3 +439,22 @@ Another nice thing about cascade layers is that they are **declared only once** 
   }
 }
 ```
+
+TODO: <https://www.htmhell.dev/adventcalendar/2022/21/?utm_source=stefanjudis>
+TODO: <https://www.stefanjudis.com/snippets/how-to-animate-height-with-css-grid/?utm_source=stefanjudis>
+
+## Animating the height property
+
+Since the beginning of CSS (?), we have been unable to animate the height of the element from "auto" to 0 (or vice-versa). That lead us to use various "hacks" to create toggles. With time, these "hacks" became the go-to solutions for creating a "hide/show" animation.
+
+In an ideal world, we could animate the height using CSS, but that is not possible. If you want to animate the height, you shall use JS, and the best way to do this is to use the so-called FLIP technique.
+
+### Using FLIP
+
+With the FLIP technique, you first measure the element, apply the animations, and reverse them – all in a single frame. This allows you to create an effect of smooth animation. Do not get fooled by the "simplicity" of the steps listed here – to **correctly animate the height using FLIP, you will most likely need to apply reverse transforms**. You are better off using a library that will perform the math for you.
+
+TODO: <https://carlanderson.xyz/how-to-animate-on-height-auto/> (flip)
+
+### Using the `max-height` property
+
+### Using the CSS Grid layout
