@@ -426,6 +426,16 @@ When you have the same `PK`, items with that `PK` will be on the same partition.
 
 To make sure your reads are always targeting the `leader` node (where data is placed first) - you have to manually tell dynamo, on operation basis, to perform a `consistent read / write`.
 
+### Strongly consistent reads are not the silver bullet
+
+After reading about the semantics of _strongly consistent reads_ you might be tempted to use them by default. I would argue that this is not the right way to go about the DynamoDB API usage.
+
+Here is the kicker – the **strongly consistent reads are as fresh as the data you put into the database**. Keep in mind that **a lot can happen during the time it takes you to retrieve that data**. What if some other thread modified the value when you were fetching it? Then we are back to the semantics of eventually consistent read.
+
+Apart from the possible in-transit mutations, there is one situation where **using the _strongly consistent reads is an overkill – when you use a condition expression**. What is the point of using SC if DynamoDB checks data integrity before it commits it to the storage for you? **Keep in mind that SC operations have an additional cost**.
+
+So **when should you use SC reads?** In [this Twitter thread](https://twitter.com/ksshams/status/1620138322495680512), Khwaja talks about **monotonic reads**, which in this context mean **reads that never "travel back in time" – the data they read is as stale as the latest put in a given thread**. A good example would be a counter – you will never go from 33 to 32, you will always "read forward".
+
 ### Global Tables consistency
 
 As good as the _Global Tables_ feature of _DynamoDB_ might seem, We should only use it for "append-only" use-cases. In the end, the tables are regional, and the "global" part is the **asynchronous** replication between those tables. The **collisions are resolved in _last-writer-wins_ manner**.
