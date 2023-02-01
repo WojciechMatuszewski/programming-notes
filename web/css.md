@@ -440,9 +440,6 @@ Another nice thing about cascade layers is that they are **declared only once** 
 }
 ```
 
-TODO: <https://www.htmhell.dev/adventcalendar/2022/21/?utm_source=stefanjudis>
-TODO: <https://www.stefanjudis.com/snippets/how-to-animate-height-with-css-grid/?utm_source=stefanjudis>
-
 ## Animating the height property
 
 Since the beginning of CSS (?), we have been unable to animate the height of the element from "auto" to 0 (or vice-versa). That lead us to use various "hacks" to create toggles. With time, these "hacks" became the go-to solutions for creating a "hide/show" animation.
@@ -453,8 +450,60 @@ In an ideal world, we could animate the height using CSS, but that is not possib
 
 With the FLIP technique, you first measure the element, apply the animations, and reverse them – all in a single frame. This allows you to create an effect of smooth animation. Do not get fooled by the "simplicity" of the steps listed here – to **correctly animate the height using FLIP, you will most likely need to apply reverse transforms**. You are better off using a library that will perform the math for you.
 
-TODO: <https://carlanderson.xyz/how-to-animate-on-height-auto/> (flip)
+To learn more about the FLIP technique, checkout [_Method 4_ in this blog post](https://carlanderson.xyz/how-to-animate-on-height-auto)
 
 ### Using the `max-height` property
 
+Instead of animating the `height`, we could animate the `max-height` property. This avoids the need to apply the scale transformations – the content will shrink (remember about the `overflow` property here!) as expected.
+
+One note about the `max-height`: **you most likely want to measure the element you animate before you animate it**. The reason is that if you apply a very high `max-height` and then animate it to 0, the animation will look weird – the timing function applies to the whole `max-height` range!
+
+Apart from the issues with timing functions, the `max-height` can sometimes mess with your layout. Be mindful of what you put the `max-height` on – we would not want the content to create unnecessary scroll bars!
+
 ### Using the CSS Grid layout
+
+This one is entirely new for me. Instead of animating height-related properties, we could animate the grid tracks. Combine it with the `overflow: hidden` property, and you have a beautiful "collapse" animation.
+
+```js
+document.getElementById("app").innerHTML = `
+<button type = "button" id = "toggle">Toggle</button>
+<div class = "box">
+  <div class = "box-inner">
+    <p>content</p>
+    <p>content</p>
+    <p>content</p>
+    <p>content</p>
+  </div>
+</div>
+`;
+
+const button = document.getElementById("toggle");
+const box = document.querySelector(".box");
+
+button.addEventListener("click", function onButtonClick() {
+  const isHidden = box.classList.contains("hidden");
+  if (isHidden) {
+    box.classList.remove("hidden");
+    return;
+  }
+
+  box.classList.add("hidden");
+});
+```
+
+```css
+.box {
+  display: grid;
+  grid-template-rows: 1fr;
+  background: red;
+  transition: grid-template-rows 0.5s ease-in-out;
+}
+
+.box-inner {
+  overflow: hidden;
+}
+
+.hidden {
+  grid-template-rows: 0fr;
+}
+```
