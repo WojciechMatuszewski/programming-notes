@@ -7195,17 +7195,22 @@ Consider giving it a read!
 
 #### Resource identifiers
 
-- when working with _CloudFormation_ you will be dealing with two types of identifiers. **The _logical resource id_ and
-  the _physical resource id_**.
+- you can read more about resource identifiers [here](https://betterdev.blog/understanding-logical-ids-in-cdk-and-cloudformation).
+
+- when working with _CloudFormation_ you will be dealing with two types of identifiers.  **The _logical resource id_ and the _physical resource id_**.
 
 - about the _psychical resource id_
 
   - you can only reference resources via their _physical resource id_.
-  - you can **assign the _psychical resource id_ directly via `name` property. The `name` property is not available on
-    all resources**.
+
+  - you can **assign the _psychical resource id_ directly via `name` property. The `name` property is not available on all resources**.
+
   - the **change in _psychical resource id_ tells _CloudFormation_ whether the resource should be replaced or not**.
+
   - **if the `name` property is not specified**, the _psychical resource id_ will be **automatically generated**.
     To my best knowledge, _CloudFormation_ uses part of stack name as the basis for the generation.
+
+  - TLDR: the **clients care about _psychical resource id_ as it is included in the ARN of the resource**.
 
 - about the _logical resource id_
 

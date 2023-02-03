@@ -128,8 +128,14 @@ If you are faced with **spike traffic loads**, the **_on demand_ capacity mode m
 #### Local Secondary Indexes
 
 They are called local because they are tied with partition key (hash key).
-Partition key is responsible for putting things in the same buckets and secondary indexes allow to do querying operations inside those buckets.
-Since we are only doing operations inside _buckets_ it's pretty fast.
+
+Partition key is responsible for putting things in the same buckets and secondary indexes allow to do querying operations inside those buckets. Since we are only doing operations inside _buckets_ it's pretty fast.
+
+- They **support _strongly consistent_ reads** but they are **limited by the partition size (they cannot be split, like in the case of GSI)**.
+
+- You **cannot create LSIs after the table is already created**.
+
+- You should favour GSIs unless you need strong consistency on the index. Do you really?
 
 #### Global Secondary Indexes
 
