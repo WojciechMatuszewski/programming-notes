@@ -2,6 +2,18 @@
 
 Notes from FrontendMasters workshop.
 
+## How NOT to use ARIA
+
+> Inspired by [this great video](https://www.accessibilityoz.com/resources/videos/how-not-to-use-aria/)
+
+As developers, we have a tendency to overuse some techniques. Like in the case of favouring JS instead of CSS for simple tasks, one can overuse the ARIA attributes degrading the overall accessibility of the markup.
+
+1. There is no reason to add **ARIA attributes to HTML elements that already have accessible APIs**. A good example would be adding `role="radio` to a `input type = "radio"` element. Another, **which I'm guilty of**, is **adding `aria-required` and `required` to a `input` element**. Stop it!
+
+2. The `aria-describedby` is great for errors, but ensure you do not overload the user with information. Being verbose has it place and time.
+
+3. When **copying code with ARIA attributes, ensure you understand what you are copying**. Watch out for `id` definitions and how they relate to existing ARIA attributes in the markup.
+
 ## Visibility vs Opacity vs Visually-Hidden vs Display
 
 ### Visibility
@@ -63,25 +75,26 @@ Notes from FrontendMasters workshop.
 ## Live Regions
 
 - used to announce something (like combobox filtering result)
+
 - can be `polite` (non-interrupting) and `assertive` (interrupts previous
   announcement)
+
 - live regions can be useful when dealing with forms and alerts about validity
+
 - also about informing use that an error occurred or that something was saved
 
 ## `prefers-reduced-motion`
 
 - you can use it with media queries (media query reacts on hardware level, eg.
   user preferences inside system settings)
+
 - should be used to soften or turn off given animation
 
 ## Attributes
 
 ### `aria-labelledby`
 
-This attribute is useful when you need to group elements.
-
-It takes groups of `ids` to group those elements together.
-
+This attribute is useful when you need to group elements. It takes groups of `ids` to group those elements together.
 As an example, lets suppose you have such structure
 
 ```jsx
@@ -144,4 +157,57 @@ const errorTextID = errorText && isInvalid ? `${name}-error}`: ""
 }
 ```
 
-Much better!
+**Make sure to also use the `aria-invalid` attribute on the field if it is invalid!**. The combination of `aria-describedby` with `aria-invalid` makes for a true accessible error messages.
+
+```jsx
+const hasErrors = ...
+return (
+  <label htmlFor = "name">Name</label>
+  <input id = "name" id = "name" type = "text" required = {true} aria-invalid = {hasErrors} aria-describedby = "name-error">
+  {hasErrors ? <span id = "name-error">Name is required</span> : null}
+)
+```
+
+Some people also seem to advocate for using the _live regions_ (`role="alert"`), like so
+
+```tsx
+return (
+  <>
+    <div role = "alert" tabIndex={-1}></div>
+    <form>
+      ...
+    </form>
+  </>
+)
+```
+
+This technique should be **used for _form-submit_ errors rather than the inline errors**. You would **populate the `div` with errors and switch the `tabIndex=0` attribute after the user submits the form**. [You can learn more about this technique here](https://www.accessibilityoz.com/resources/videos/error-messages-in-forms/).
+
+## `aria-labelledby` vs. `aria-describedby` vs. `aria-label`
+
+> You can learn more by [watching this video](https://www.accessibilityoz.com/resources/videos/aria-labelledby-vs-aria-describedby-vs-aria-label/).
+
+- **`aria-labelledby` is used to provide an accessible name for a given element**.
+
+  ```html
+    <div role = "dialog" aria-labelledby = "heading">
+      <h1 id = "heading">Modal title</h1>
+    </div>
+  ```
+
+- **`aria-describedby` is used to DESCRIBE and provide more semantic meaning to an element**. You should use it for **form errors**.
+
+  ```jsx
+  <label htmlFor = "name">Name</label>
+  <input id = "name" id = "name" type = "text" required = {true} aria-invalid = {hasErrors} aria-describedby = "name-error">
+  <span id = "name-error">Name is required</span>
+  ```
+
+  - You can **specify more than one id in the `aria-describedby`**. Keep in mind to not overload the user with information.
+
+- **`aria-label` is used to provide accessible name directly to a given element**. The contents of the `aria-label` will not be visible on the screen.
+  This of this as a way to provide a contextual information to users who have a poor vision and may not be able to guess the "context" of the element.
+
+    ```html
+    <button aria-label = "Close and return">Close</button>
+    ```
