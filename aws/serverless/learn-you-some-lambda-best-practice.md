@@ -36,6 +36,8 @@ There is a difference between `exports =` and `module.exports =`. **Always prefe
 
 - the **GO 1.x does not support lambda extensions**, you have to use either **`provided` or `provided.al2` for the extensions to work**
 
+- **you do not have access to the AWS Lambda payload or the response**. Such a pity, but I fully support this decision. Imagine the abuse it could cause.
+
 ## Lambda runtime
 
 - wrapper the AWS provides that runs your handler.
@@ -43,6 +45,14 @@ There is a difference between `exports =` and `module.exports =`. **Always prefe
 - in **Node.Js, your handler is wrapped with `try/catch` so the 'uncaughtException` and similar handlers will not fire!**.
 
 - if you have to dive really deep, the runtime you are using might be published on GitHub. At least that is the case for [Node.Js one](https://github.com/aws/aws-lambda-nodejs-runtime-interface-client) and many others.
+
+- **the Lambda runtime version is different than the RUNTIME IDENTIFIER that you see in the console**.
+
+  - the runtime identifier looks like _python3.9_ or _nodejs18.x_, but **the runtime version is an ARN to a container image**.
+
+  - Lambda service added the ability to control what runtime are you using. [Read more about it here](https://docs.aws.amazon.com/lambda/latest/dg/runtimes-update.html).
+
+    - I would not recommend using it. Why bother having to do something manually? What emergency situation would warrant the change here? No idea.
 
 ### Custom runtime
 
@@ -267,6 +277,22 @@ This solution is not without downsides though:
 - prefer Lambda Destinations when you can.
 
 - remember that Lambda Destinations are not only about failure. **There is also `onSuccess` event you can configure**. You would use it when you have `one hop` situation. Other than that **prefer step functions**.
+
+### Faking AWS Lambda Destinations with AWS Lambda extensions
+
+> Inspired by [this article](https://danwakeem.medium.com/extension-review-funky-async-extension-8e5021343d00).
+
+- You would do this if your AWS Lambda is not invoked asynchronously or via a stream.
+
+  - **As an alternative to an extension, one might perform a _fire-and-forget_ type of request at the end of AWS Lambda invocation**.
+
+    - This **might have consequences, where upon another invoke, the promise you created in the previous invoke rejects, crashing the runtime in the process**. Watch out for this edge case! That is why using extensions here is safer as they are a separate process.
+
+- You can **invoke another AWS Lambda when a given AWS Lambda responds to the client**.
+
+- Keep in mind that **you do not have access to the AWS Lambda payload or the response**. You have to forward those to the extension somehow.
+
+  - I would most likely use some kind of environment variables since the extension has access to them. An alternative would be to have a dedicated http endpoint on the extension level to collect those.
 
 ## Async with Lambda
 

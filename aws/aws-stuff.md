@@ -6243,6 +6243,8 @@ is **always open**, it just waits for ANY message to be visible.
 
   - This **caused problems** because **if the ESM failed to invoke your function, the message might end up on the DLQ**. As we know, retrying from the DLQ is not that fun (there is a one-click solution available in the AWS console, but that is only the AWS console feature).
 
+    - Another **problem introduced by using _reserved concurrency_ is the fact that it takes away concurrency from all other functions in your AWS account**. Event if the function sits at zero invocations, other functions cannot use that concurrency.
+
 - [The annoucment](https://aws.amazon.com/blogs/compute/introducing-maximum-concurrency-of-aws-lambda-functions-when-using-amazon-sqs-as-an-event-source/) added a feature **where the ESM is aware of the concurrency of the subscriber**. This means that **ESM will only cause X amount of concurrent AWS Lambda invocations** (the X is configurable).
 
 - This **does solve the overpull issue, but you still have to be careful**. If you do not triple check the AWS Lambda _reserved concurrency_ settings, you might still experience it.
