@@ -38,4 +38,20 @@
 
   - It does overload the concept of a rate limiter to me a bit. Should not the routing be a separate service?
 
-Finished 1 17:53
+- The notion of _sticky sessions_ is **crucial** if we scale the **persistence layer of the rate limiter**.
+
+  - Imagine accessing different storage nodes with different information for the same user for each request. A nightmare!
+
+### Thinking in AWS
+
+- The easiest solution, most likely, would be to **leverage the APIGW rate limiting capabilities**. But there are some caveats to that.
+
+  1. Keep in mind that APIGW "only" supports 10k requests/s. This is a soft limit.
+
+  2. Keep in mind that to **have the rate limiting applied on the tenant-level** one would have to **use usage plans and api keys**. There is a **limit on how many api-keys we can create**.
+
+- As for my own implementation. I see two ways we can go about this.
+
+  1. Use the **APIGW authorizer as a rate limiter**. Retrofitting the authorizer to act as a proxy could work. Instead of checking the IAM and the token (though that could also be possible), we could deny the access to the API based on the amount of requests a given user made. For the persistance layer, I would use DynamoDB with DAX. Most likely two tables, one for rules (DAX) and one for the request count (without DAX).
+
+  2. Use CloudFront as the proxy? A wildcard (no idea if that would work at all), but we could use the CloudFront as the proxy which would talk to the persistance layer.
