@@ -426,6 +426,8 @@
 - **Asynchronous** invocation – uses SQS under the hood. Will **retry FUNCTION errors twice**. You can (and probably should) set up a DLQ.
   **When throttled, will retry up to 6 hours**. After the 6 hours pass, your event is either dropped or moved into the DLQ. Remember that you can **use Lambda destinations with async invokes**.
 
+  - Recently, AWS added a way to monitor failures and the congestion on the internal SQS responsible for handling the async invokes. [You can read more about it here](https://aws.amazon.com/blogs/compute/introducing-new-asynchronous-invocation-metrics-for-aws-lambda/). It does seem to me like they are exposing more and more internal implementation details to end customers. Interesting move.
+
 - **ESM** invocation – this is where you can set filtering, batching and so on. It is **not the same as asynchronous** invocation, as the ESM invokes the AWS Lambda function synchronously (after it received the data from the source). Remember that **you can use Lambda destinations with stream-based ESM invokes**.
 
 #### SnapStart
