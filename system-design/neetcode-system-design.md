@@ -13,7 +13,6 @@
     - If not, then you will have to implement it as a shared service, especially since one API might be distributed across different machines.
 
       > I would immediately reach for APIGW here, or at least ask if adding a gateway in front of the API is possible. Having said that, one has to remember that rate-limiting per user is not that great in APIGW.
-
       > Keep in mind that the **APIGW usage plans require API keys to work**, and the **number of API keys you can create is limited!**.
 
 ### Non-functional requirements
@@ -57,3 +56,39 @@
   2. Use CloudFront as the proxy? A wildcard (no idea if that would work at all), but we could use the CloudFront as the proxy which would talk to the persistance layer.
 
   3. Use **WAF rate limiting capabilities**. It has the ability to rate limit based on the IP address, but **there is no way to configure the algorithm is uses to compute the count of requests**. An advantage here is that one can use WAF with both APIGW and ALB.
+
+## Design a Link shortener
+
+- The idea is simple, map a string into another string, but shorter.
+
+- You most likely want to expire those links.
+
+### Non-functional requirements
+
+- High availability (well, duh!)
+
+- Low latency
+
+  - Optimize for reads
+
+  - There might really be a LOT of reads. **While thinking about the architecture, also take the cost into the consideration**.
+
+### Implementation
+
+- Since we do not need atomic operations, a NoSQL database could be the right choice here.
+
+- Due to the large amount of reads, one **could consider adding caching in-between the client and the storage layer**.
+
+  - With the cache in place, the eviction algorithm is quite important. The teacher suggest going with LRU – [_Least Recently Used_](https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU)
+
+    > Keeping and computing what is the _least recently used_ item is quite expensive.
+
+- Since the implementation relies on redirects, **you must know what is the difference between `301` and `302` status codes**.
+
+  - The `301` status code is for **permanent moves, it causes the browser to CACHE the end location**.
+
+  - The `302` status code is for **temporary moves, the browser will not cache the request**.
+
+    - Imagine the case where you want to apply analytics on the backend. Then you most likely want to know about all the redirects happening. In such case, the `302` status code could be a better choice. Otherwise, `301` is the way to go.
+
+### Thinking in AWS
