@@ -55,3 +55,5 @@
   1. Use the **APIGW authorizer as a rate limiter**. Retrofitting the authorizer to act as a proxy could work. Instead of checking the IAM and the token (though that could also be possible), we could deny the access to the API based on the amount of requests a given user made. For the persistance layer, I would use DynamoDB with DAX. Most likely two tables, one for rules (DAX) and one for the request count (without DAX).
 
   2. Use CloudFront as the proxy? A wildcard (no idea if that would work at all), but we could use the CloudFront as the proxy which would talk to the persistance layer.
+
+  3. Use **WAF rate limiting capabilities**. It has the ability to rate limit based on the IP address, but **there is no way to configure the algorithm is uses to compute the count of requests**. An advantage here is that one can use WAF with both APIGW and ALB.
