@@ -92,3 +92,29 @@
     - Imagine the case where you want to apply analytics on the backend. Then you most likely want to know about all the redirects happening. In such case, the `302` status code could be a better choice. Otherwise, `301` is the way to go.
 
 ### Thinking in AWS
+
+- **S3 can act as a "redirect" engine**.
+
+  - This, I would call it, a niche feature, is pretty much all we want.
+
+    1. It handles deletion of old objects via _lifecycle rules_. There is **a limit of how many _expiration rules_ one can set inside a given bucket / day**. The limit is **very low – 100/day**, but there are workarounds. [See this stackoverflow thread for more ideas](https://stackoverflow.com/questions/12185879/s3-per-object-expiry).
+
+    2. Enables you to redirect the user to a given destination.
+
+    3. Handles a lot of traffic.
+
+    4. Eliminates the need for the database.
+
+    **Keep in mind that, you will pay for each S3 GET request**, but that cost would also be there for any other solution.
+
+- Use **APIGW + AWS Lambda + DynamoDB**.
+
+  - Before the S3 redirecting was possible, people used to compute the shortened URL using AWS Lambda, and save those on DynamoDB.
+
+  - Here, the scale is also quite big, but since there are more "pieces of the puzzle", the maintenance cost will be higher.
+
+  - **Keep in mind that DynamoDB TTL could have a delay up to 48 hours**.
+
+    - At least this one is documented. I could not find the information about the S3 expiry delay.
+
+  - The latency will be much higher than the S3 version, since there are a lot of services involved.
