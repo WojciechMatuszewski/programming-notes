@@ -634,6 +634,50 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - The combination of `min-width` and `flex:1` is powerful. Use it to create "grid-like" layouts especially if you cannot use CSS grid for some reason (of course, the best solution would be to use CSS grid).
 
+## Flexbox round 2
+
+- Controls distribution of elements on the single primary axis. The axis changes depending on the `flex-direction` property value.
+
+- When you apply the `display: flex` on an element, **you do not change that element layout mode, you change its children layout mode**.
+
+  - This is crucial to understand. You can have an element with `display: flex` that behaves like a block element.
+
+  - The **`flex` layout mode is NOT recursive**. If you set it on the parent, only the immediate children will be affected.
+
+### Directions and Alignment
+
+- To control which axis is the primary one, use the `flex-direction` property.
+
+  - It really is helpful to get this mental model right. Instead of trying out random properties, knowing which axis is the primary one and using the correct declaration makes a difference. It also feels quite good :)
+
+- The word **_justify_ is for primary axis, the word _align_ is for the secondary axis**.
+
+#### Alignment Tricks
+
+- In some cases, **instead of centering on the secondary axis, you might want to use the `baseline` alignment instead**.
+
+  - Combine the `baseline` on the children with the `center` on the parent and you have a great looking layout!
+
+- To align specific single child, use the `align-self` property on the child.
+
+### Growing and Shrinking
+
+- The **`width` and `height` are more like SUGGESTIONS rather than hard rules**.
+
+  - The elements can shrink below their `width` and `height`.
+
+- The `flex-basis` is **like `height` or `width` depending on which axis is the primary one**.
+
+  - If you have `flex-basis` set, the `flex-basis` will always win with either `width` or `height` depending on which axis is the primary one.
+
+    - The `flex-basis` **cannot scale the element below it's minimum content size**. If you set it to 0, the contents of the element will NOT overflow. This is not the case with width, where the contents of the element WOULD overflow.
+
+  - The **`flex-grow` will override the `flex-basis` property**.
+
+- The `flex-shrink` is for setting the **speed with which a given element shrinks relative to other elements**.
+
+finished after first exericse
+
 ## Responsive and Behavioral CSS
 
 ### Working with Mobile Devices
