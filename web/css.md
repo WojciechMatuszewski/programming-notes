@@ -510,24 +510,50 @@ button.addEventListener("click", function onButtonClick() {
 
 ## CSS-in-JS
 
+CSS-in-JS became de-facto day of styling our apps. Let us explore how it works on the high level and learn about it's potential drawbacks as well as the benefits it brings to the table.
+
+### Syntax
+
+- You write your CSS, either via some kind of `css` function or via `styled.TAG_NAME`.
+
+  - These were popularized by _emotion.js_ and _styled-components_ libraries.
+
+- The big advantage here is that you can use React-declared variables to style the elements. This **makes the styles dynamic**.
+
+  - Keep in mind that **you can pretty much do the same thing with CSS variables**.
+
 ### How does CSS-in-JS work?
 
-- serialization of styles into CSS when your component renders
+> Based on [this article](https://www.lauchness.com/blog/emotion-under-the-hood)
 
-- "Runtime CSS-in-JS libraries work by inserting new style rules when components render, and this is bad for performance on a fundamental level."
+- The styles you wrote are **serialized into CSS**.
 
-- static vs dynamic style generation
+  - For **static styles**, this could happen at build time or at runtime.
 
-  - dynamic is when you use the `props`
+  - For **dynamic styles**, this happen at runtime, **when your component runs**.
 
-- style definition as the source of truth -> <https://www.lauchness.com/blog/emotion-under-the-hood>
+  - **Serialization is costly**. It is the major performance hot-spot in many libraries.
+
+- Then these styles are **injected into the HTML**. This also takes a bit of time.
+
+  - CSS-in-JS libraries usually leverage catching so not to include the same definitions multiple times. The more granular the serialized CSS is, the less duplication.
 
 ### The benefits
 
+- The ability to co-locate CSS and JSX in the same file
+
+- Speed of development and DX. It is easy to pick up and learn.
+
 ### The drawbacks
 
-- <https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b>
+> Learn more [by reading this article](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b)
 
-- increase bundle size due to another runtime dependency
+- Performance issues due to serialization and runtime dependency.
 
-- can clutter the dev tools
+- Increased JS bundle size.
+
+- **Using CSS-in-JS library can clutter your React dev-tools**. Most libraries inject special components responsible for handling context (theme) and other stuff.
+
+### The bottom line
+
+CSS-in-JS is a great way to style your apps, but it is not without its shortcomings. With the advent of _server components_, **there might be a shift away from CSS-in-JS in favour of more native solutions like _CSS modules_ or _SaSS modules_**.
