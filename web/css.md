@@ -507,3 +507,27 @@ button.addEventListener("click", function onButtonClick() {
   grid-template-rows: 0fr;
 }
 ```
+
+## CSS-in-JS
+
+### How does CSS-in-JS work?
+
+- serialization of styles into CSS when your component renders
+
+- "Runtime CSS-in-JS libraries work by inserting new style rules when components render, and this is bad for performance on a fundamental level."
+
+- static vs dynamic style generation
+
+  - dynamic is when you use the `props`
+
+- style definition as the source of truth -> <https://www.lauchness.com/blog/emotion-under-the-hood>
+
+### The benefits
+
+### The drawbacks
+
+- <https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b>
+
+- increase bundle size due to another runtime dependency
+
+- can clutter the dev tools

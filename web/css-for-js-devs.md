@@ -676,7 +676,49 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - The `flex-shrink` is for setting the **speed with which a given element shrinks relative to other elements**.
 
-finished after first exericse
+  - You can **disable shrinking** by setting the **`flex-shrink` to 0**.
+
+  - A neat trick is to **apply a very large `flex-shrink` to one element, and a low number to another element**.
+
+#### The `flex` Shorthand
+
+- The `flex` shorthand is setting the **`flex-grow`, `flex-basis` and `flex-shrink`**.
+
+  - You usually use it for **making the elements have equal size**.
+
+  - It works mainly due to **setting the `flex-basis` to 0** – if the element width/height is 0, all space is "available space" that can be filled when an element has `flex-grow` set to 1.
+
+#### Constraints
+
+- While the `flex-basis` controls the _hypothetical width or height_ of an element, it **will respect the `max-width` or `max-height` properties**.
+
+  - Using both `flex-basis` and `max-XX` allows you to put constraints on the element width/height.
+
+#### Shorthand Gotchas
+
+- The most common gotcha is **setting the `width/height` and using the `flex` shorthand together.
+
+  - Keep in mind that **the `flex-basis` will ALWAYS override the `width`/`height`**. The **order of CSS declarations does not matter here!**.
+
+### Wrapping
+
+- Like in the case of `inline` elements, **`flex` positioned children can wrap**.
+
+  - Control wrapping via the `flex-wrap` property.
+
+  - Keep in mind that **when an element wraps, it's size will most likely be different than the other children on a different row/column**.
+
+    - This is because the sizing in flexbox is per row/column.
+
+- When using wrapping, you are effectively creating _two-dimensional_ layouts.
+
+  - There is an additional property for aligning the whole content – the `align-content` (so far, we have only used the `align-items` for secondary axis alignment).
+
+### Groups and Gaps
+
+- Use the `gap` property, it behaves as you would expect it to behave.
+
+finished groups and gaps
 
 ## Responsive and Behavioral CSS
 
