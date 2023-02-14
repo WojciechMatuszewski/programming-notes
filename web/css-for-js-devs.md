@@ -756,6 +756,8 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   - If the **`position: sticky` does not seem to work, maybe the element has the height of the parent? If so use `align-self`**.
 
+Finished recipes
+
 ## Responsive and Behavioral CSS
 
 ### Working with Mobile Devices
