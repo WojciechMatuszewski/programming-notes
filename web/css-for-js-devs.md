@@ -634,7 +634,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - The combination of `min-width` and `flex:1` is powerful. Use it to create "grid-like" layouts especially if you cannot use CSS grid for some reason (of course, the best solution would be to use CSS grid).
 
-## Flexbox round 2
+## Flexbox encore
 
 - Controls distribution of elements on the single primary axis. The axis changes depending on the `flex-direction` property value.
 
@@ -718,7 +718,43 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - Use the `gap` property, it behaves as you would expect it to behave.
 
-finished groups and gaps
+### Ordering
+
+- Allows you to **change the VISUAL order of the flex children**.
+
+  - This only applies to visuals, **the DOM structure is untouched!**.
+
+- You have a couple of properties at your disposal.
+
+  1. The `order` property.
+  2. The `flex-direction` property.
+  3. The `flex-wrap: wrap-reverse`.
+
+- A **common technique here is to reverse the order of the DOM and apply the `flex-direction: row-reverse**.
+
+  - Imagine an `aside` that you want on the right, but you want it to focus first, before the content on the left.
+
+  - Imagine a modal where the first button is "Cancel" but you want to focus the second button first (most libraries focus first focusable element).
+
+### Flexbox Interactions
+
+- An element can **only interact with a single layout mode when also participating in a `flex` layout**.
+
+  - This means that **adding `position: fixed` to a `flex: 1` child makes all flex-related properties be ignored**.
+
+  - As always, there is an exception to this rule – the _relative positioning_ and _sticky positioning_. You can use both `flex: 1`, and `position: relative`.
+
+- The **_margin collapse_ is NOT a thing in flexbox**.
+
+  - We are talking about the margin collapsing in _Flow_ layout mode.
+
+- The **`z-index` works with _flex layout_ without the need to set the `position: relative`**.
+
+### Recipes
+
+- When using **`position: sticky` within a flex container, pay attention to how tall a given element is**.
+
+  - If the **`position: sticky` does not seem to work, maybe the element has the height of the parent? If so use `align-self`**.
 
 ## Responsive and Behavioral CSS
 
