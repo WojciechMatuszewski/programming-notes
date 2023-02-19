@@ -756,7 +756,23 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   - If the **`position: sticky` does not seem to work, maybe the element has the height of the parent? If so use `align-self`**.
 
-Finished recipes
+### Workshop
+
+- Creating artificial margins via the `flex: 1` component is a great technique to ensure that elements stay in the center, even if there is an element on the left/right of that given element.
+
+  ```tsx
+    <FlexSpacer>
+      </Content>
+    </FlexSpacer>
+    </MoreContent>
+    </FlexSpacer>
+  ```
+
+- To create _grid-like_ layouts, use the `min-width` and `flex: 1`.
+
+  - The `min-width` is a firm statement, the elements will not go below that width.
+
+  - The `flex: 1` tells the elements that they can grow and shrink. Keep in mind that **the elements will wrap if there is no available space on a given axis**. If you do not set the `min-width`, the elements will shrink to the _min-content_ size.
 
 ## Responsive and Behavioral CSS
 
