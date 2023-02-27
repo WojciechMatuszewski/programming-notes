@@ -330,6 +330,28 @@ function Component({ prop }) {
 }
 ```
 
+## Layout Components
+
+It is considered best practice to use the _composition_ characteristics of React. Instead of _prop drilling_ you should consider using the `children` (or other props) to _compose_ components together. This helps to reduce the chance of breaking something when refactoring, as there will be less changes to make, since there is less prop drilling.
+
+Now, it is **worth remembering that it is completely okay to create specific, named props for "slotting" components**. In fact, the concepts of "slots" exist in other framework as well! **You can leverage other props than `children` for composition**.
+
+To give you an example. Here is the `Main` component which acts as a _layout component_.
+
+```tsx
+function Main() {
+  return <div>
+    <Sidebar userAvatar = {<UserAvatar/>}>
+    <Content
+      promo={<Promo/>}
+    />
+    <Footer disclosure={<Disclosure/>}/>
+  </div>
+}
+```
+
+This example is very contrived, but it showcases the power of so called "slots". This is not an "official" concept, we are still using the regular React props. **The main point I want to drive here is that it is OKAY to use props different than `children` for composition of components**.
+
 ## Compound Components
 
 ### Non-flexible Compound Components
