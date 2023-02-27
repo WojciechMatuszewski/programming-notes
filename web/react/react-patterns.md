@@ -521,9 +521,34 @@ Now instead of returning `inputProps` you will return a function. This will allo
 />
 ```
 
-The `getInputProps` is responsible for _pseudo-composing_ the `onChange` handlers.
+The `getInputProps` is responsible for _pseudo-composing_ the `onChange` handlers. The `tanstack/table` and `downshift` uses this pattern heavily.
 
-The `tanstack/table` and `downshift` uses this pattern heavily.
+## State Initializer
+
+Sometimes your components might expose the "initialX" API (can also be named "defaultX"). Like the `input` HTML component that exposes the "defaultValue".
+
+```tsx
+<input type = "text" defaultValue = "foo"/>
+```
+
+This is all nice, but **what would happen if the `defaultValue` changed when the `input` component is already mounted?**. Especially when your component exposes a reset function. Should we _reset_ to the "initial initial" value or the "new initial" value?
+
+This is the question I cannot answer universally, but I would lean towards the first option – always stick to the "initial initial" value.
+
+```ts
+function MyInput = ({initialValue}) {
+  const {current: defaultValue} = useRef(initialValue);
+  // ...
+
+  return {reset: () => {
+    setState(defaultValue)
+  }}
+}
+```
+
+We can **leverage the `useRef` to "ignore" any updates to the initial value**. This way, no matter what the value is, the reset function will always change the state to the "true" initial value.
+
+Of course, if you re-mount the component, the "initialValue" will update.
 
 ## State Reducer
 
