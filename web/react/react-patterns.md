@@ -523,6 +523,8 @@ Now instead of returning `inputProps` you will return a function. This will allo
 
 The `getInputProps` is responsible for _pseudo-composing_ the `onChange` handlers.
 
+The `tanstack/table` and `downshift` uses this pattern heavily.
+
 ## State Reducer
 
 This is an implementation of _inversion of control_ principle. Your component / hook is using a reducer for managing it's state.
