@@ -201,9 +201,9 @@ The `now` is the _external store_ value. The `setInterval` simulates changes. Th
 
 You might wonder why the `notify` function is not taking any parameters? Would not that be more straightforward? Instead, we have to create the `onSnapshot` function. The answer to this question lies in understanding how rendering works in React 18.
 
-Before React 18, the rendering was synchronous. If React started rendering the tree, it had to finish in one go. With React 18, that is no longer the case – the rendering is interruptable.
+Before React 18, the rendering was synchronous. If React started rendering the tree, it had to finish in one go. With React 18, that is no longer the case – the rendering is interruptible.
 
-Interruptable rendering means that, in extreme cases, if not taken into account, React could render part of your tree with state X and part of the tree with state Y (the update of the state happened in-between the interruption). To prevent such occurrences, as they relate to external stores, **instead of using the "live store value", React takes the "snapshot" value and performs the rendering cycle using that particular value for the whole process, even if it is interrupted**.
+Interruptible rendering means that, in extreme cases, if not taken into account, React could render part of your tree with state X and part of the tree with state Y (the update of the state happened in-between the interruption). To prevent such occurrences, as they relate to external stores, **instead of using the "live store value", React takes the "snapshot" value and performs the rendering cycle using that particular value for the whole process, even if it is interrupted**.
 
 ### The usefulness of `useSyncExternalStore`
 

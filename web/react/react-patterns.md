@@ -130,8 +130,7 @@ With that, your `current` key should hold the first resolved users 🤗
 
 You will most likely use this pattern when dealing with a `debounce` function (or anything where you call the provided callback really).
 
-The premise here is that we **do not want to re-render when the provided callback changes** but still
-want to use it within our logic with the certainty that we are calling the latest provided callback.
+The premise here is that we **do not want to re-render when the provided callback changes** but still want to use it within our logic with the certainty that we are calling the latest provided callback.
 
 Here is the pattern
 
@@ -160,6 +159,9 @@ function useDebounce({callback, delay}) {
     callbackRef.current = callback
   })
 
+  // You SHOULD NOT! pass the `callbackRef.current` here like so: debounce(callbackRef.current)
+  // The `useCallback` will close-over the `callbackRef.current` when it's initialized.
+  // This means that the `callbackRef.current` would be pointing to a stale value!
   return React.useCallback(debounce(...args) => callbackRef.current(...args), delay), [delay])
 }
 ```
