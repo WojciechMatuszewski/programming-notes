@@ -1342,6 +1342,8 @@ interface Artist {
 
 - Check [the official documentation](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces).
 
+All in all it boils down to what you prefer. Do you prefer the name `interface`? Go with the `interface`. Do you prefer the name`type`? Go with `type`. **The only exception is when building a library. There you should be exposing interfaces so that users can extend your types!**.
+
 ## Function Overloads
 
 You can provide different implementations based on the arguments that we supply. It makes stuff more readable.
@@ -1525,8 +1527,7 @@ let selected = "No"; /* no */
 
 Much better now!
 
-**BUT BEWARE** Enums cannot be used with _plugin-transform-typescript_ which you
-are probably using.
+**BUT BEWARE** Enums cannot be used with _plugin-transform-typescript_ which you are probably using.
 
 ### Enums considered harmful
 
@@ -2528,3 +2529,36 @@ declare function euroToUSD(euro: Euro): USD;
 ```
 
 Remember that you will have to cast the returned value to the `USD` type. Otherwise TypeScript will yell at you that it is impossible to convert a `number` to `USD`,
+
+### Branding non-primitive types
+
+The technique of type-branding also allows you to _brand_ any complex type, like a shape of an object. To give you an example.
+
+```ts
+interface Credentials {
+  password: string,
+  email: string
+}
+
+type ValidCredentials = Credentials & {_brand_: "Valid"};
+const validateCredentials = (credentials: Credentials) => ValidCredentials {
+  // ... logic
+}
+```
+
+Here, I would _brand_ each member of the `Credentials` interface, but I wanted to show you that branding "complex" shapes is also possible. In the end this technique uses _type intersections_ so it applies to every type.
+
+### Making the Branded Types suck less (subjective)
+
+If you decide to use the _type branding_ technique without any abstractions, you will be type-casting all over the place. Not ideal. In my humble opinion, the **_type branding_ combines well with a function that explicitly casts the type for you**. While that function is very shallow, and violates one of the core principles of good design, I like it much better than having `as XX` scattered thought the codebase.
+
+```ts
+type Email = string & {_brand_: "EMAIL"};
+
+// The name is very contrived. Change it according to your use-case.
+const asBrandedEmail = (email: string): Email => {
+  return email as Email
+}
+
+const foo: Email = asBrandedEmail("wojciech@stedi.com");
+```
