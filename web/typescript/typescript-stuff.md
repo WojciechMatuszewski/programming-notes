@@ -2548,6 +2548,22 @@ const validateCredentials = (credentials: Credentials) => ValidCredentials {
 
 Here, I would _brand_ each member of the `Credentials` interface, but I wanted to show you that branding "complex" shapes is also possible. In the end this technique uses _type intersections_ so it applies to every type.
 
+### Type branding for objects
+
+Keep in mind that you can also **use branded types as keys of an object**. This creates an interesting dynamic where, based on the key you provided, a different type is returned.
+
+```ts
+type UserId = ...
+type User = ...
+
+type PostId = ...
+type Post = ...
+
+type DB = Record<UserId, User> & Record<PostId, Post>
+```
+
+If I access the `DB` via the `PostId`, I will get a `Post`. If I access it via the `UserId`, I will get a `User`. How cool is that!?
+
 ### Making the Branded Types suck less (subjective)
 
 If you decide to use the _type branding_ technique without any abstractions, you will be type-casting all over the place. Not ideal. In my humble opinion, the **_type branding_ combines well with a function that explicitly casts the type for you**. While that function is very shallow, and violates one of the core principles of good design, I like it much better than having `as XX` scattered thought the codebase.
