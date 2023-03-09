@@ -115,6 +115,8 @@ Notice that we have a sort of overlap here. You might expect some kind of shadow
 
 ## Augmenting global declarations
 
+### Augmenting NodeJs `process.env`
+
 Lets say you are building a NodeJs app and you want to have strongly typed `process.env` object.
 
 All you have to do is to create some `.d.ts` file (could be `.ts` file but I would go for `d.ts` for clarity) and use the fact that **namespaces are merged just like interfaces**.
@@ -128,6 +130,35 @@ namespace NodeJS {
 ```
 
 That is all.
+
+### Augmenting the `window`
+
+Some libraries add things into the `window` object. For example, the `Cypress` library or the `monaco-editor` library.
+In most cases, these should be ignored, but in some, like debugging, they are very handy.
+
+If you want to access them without ignoring TypeScript errors, you need to type them – augment the `window` property.
+Here is how to do it.
+
+```ts
+declare global {
+  // Uses interface merging
+  interface Window {
+    Cypress: MY_TYPE
+    Monaco: MY_TYPE
+  }
+}
+```
+
+### Augmenting NodeJs `global`
+
+```ts
+declare global {
+  var myGlobalVariable: string
+  function myGlobalFunction(): string
+}
+```
+
+Keep in mind that this is not the same as augmenting the `process.env` or the `window`. This code augments the `globalThis`.
 
 ### My augmentations does not work when I import something to the declaration file
 
