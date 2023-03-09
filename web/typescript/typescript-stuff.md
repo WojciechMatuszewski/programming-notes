@@ -268,6 +268,22 @@ Kind of makes sense does not it?
 
 It can be frustrating though – in situations where you want to override a 3rd party library interface property. **I do not have a good answer for doing that yet**.
 
+### What does "ambient context" mean?
+
+When working with global types, you might encounter a world _ambient_. For example, TypeScript is going to complain when you try to use the `declare` keyword within a `declare` block, like so:
+
+```ts
+declare global {
+  declare function myFunc(): boolean // ERROR: A 'declare' modifier cannot be used in an already ambient context.
+}
+```
+
+So what does the _ambient context_ mean here?
+
+**You can think of the _ambient context_ as ["without implementation"](https://github.com/Microsoft/TypeScript-Handbook/issues/180#issuecomment-195452691) or that the implementation of the code is somewhere else**.
+
+In the example above, the implementation of the `global` does not live within the file I'm editing. The types will be erased at runtime. Thus the _declaration_ I'm working with exists within an _ambient context_.
+
 ## "Loose" autocomplete
 
 > Check out [this tip](https://www.totaltypescript.com/tips/create-autocomplete-helper-which-allows-for-arbitrary-values).
