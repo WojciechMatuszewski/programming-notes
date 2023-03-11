@@ -278,6 +278,24 @@ func getMessage() (message string, err error) {
 
 This section was inspired by [this article](https://trstringer.com/golang-deferred-function-error-handling/).
 
+### Better way in Go 1.20
+
+The native functionality of wrapping errors in Go 1.20 enables much safer way to handle deferred errors, without the gotcha of overriding other errors.
+
+```go
+func example(r io.ReadCloser) (err error) {
+ defer func() {
+  err = errors.Join(err, r.Close()) // Magic!
+ }()
+
+ // ... code that reads from r ...
+}
+```
+
+This is such a great way to do it! Of course, it was possible before, with the usage of libraries, but I've never seen it in a wild.
+
+Inspired by [this article](https://wstrm.dev/posts/errors-join-heart-defer/).
+
 ## Heap vs Stack allocations
 
 > Keep in mind that this is my understanding which might not be entirely correct.
