@@ -375,7 +375,43 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
   3.1 Since there is no hydration, there is no need to push that code to the client.
 
+  3.2 The _React Server Components_ have **automatic bundle splitting**. As in you do not have to use `React.lazy` for code splitting.
+
+    - If the page is not using some of the components, they will not be send to the client.
+
 4. The **_Server Components_ allow you to use native Node.js functions as they only run on the backend**.
+
+#### Notes from the "React Server Components with Dan Abramov, Joe Savona, and Kent C. Dodds"
+
+[Full link to the video here](https://www.youtube.com/watch?v=h7tur48JSaw).
+
+> It seems like it is very easy to cause waterfalls with RSCs. Since you are streaming the response, there might be a lot of back-and-fourth between the server and, for example, a database.
+
+1. The **architecture of server components is separate from SSR**. You can put SSR on the edge, but run the server components close to the data layer.
+
+2. Regardless of the framework, you can introduce waterfalls. The answer is observability and performance tracing.
+
+---
+
+1. According to Dan, [RSC automatically de-duplicate requests](https://youtu.be/h7tur48JSaw?t=2257).
+
+    - I'm not sure that is true for _native_ RSC? It is a [feature of Next.js 13](https://beta.nextjs.org/docs/data-fetching/fundamentals#automatic-fetch-request-deduping).
+
+    - And [here, Kent talks about overloading the fetch](https://youtu.be/h7tur48JSaw?t=2441). I think that he is referring to the Next.js 13 implementation?
+
+      - It [turns out there is a new "fetch" exposed by React](https://youtu.be/h7tur48JSaw?t=2517). **They are talking about `react-fetch` package that leverages the cache API**.
+
+---
+
+1. As it stands now, you cannot have one server component and client component live in the same file.
+
+    - This is not a limitation of the architecture. It is a conscious decision.
+
+---
+
+1. [Here Kent talks about how we should structure the application that uses server components](https://youtu.be/h7tur48JSaw?t=5145).
+
+    - This is a shift in how we usually write React apps, where the `children` prop is used but not to that extend.
 
 ### React Client Components
 
