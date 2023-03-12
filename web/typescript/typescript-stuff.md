@@ -113,6 +113,11 @@ const Person = { firstName: "Wojtek" };
 
 Notice that we have a sort of overlap here. You might expect some kind of shadowing issue to occur, but that is not the case. These 2 declarations are _isolated_ from each other, they live in 2 different _spaces_.
 
+## Namespaces
+
+_Namespaces_ are used to **organize the global interfaces / types**. It is to ensure that **multiple libraries do not override each other types**.
+The most notable namespace is the `NodeJS` namespace. Please note that the **namespaces, like interfaces can merge together**. It all depends on how you structure the files.
+
 ## Augmenting global declarations
 
 ### Augmenting NodeJs `process.env`
@@ -122,9 +127,11 @@ Lets say you are building a NodeJs app and you want to have strongly typed `proc
 All you have to do is to create some `.d.ts` file (could be `.ts` file but I would go for `d.ts` for clarity) and use the fact that **namespaces are merged just like interfaces**.
 
 ```ts
-namespace NodeJS {
-  interface ProcessEnv {
-    MY_GLOBAL_ENV_VARIABLE: string;
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      MY_GLOBAL_ENV_VARIABLE: string;
+    }
   }
 }
 ```
@@ -170,6 +177,7 @@ If you add an `import` statement to your declaration file though
 
 ```ts
 import type fs from "fs";
+
 namespace NodeJS {
   interface ProcessEnv {
     MY_GLOBAL_ENV_VARIABLE: string;
@@ -238,6 +246,32 @@ declare module "3rd-party-lib" {}
 ```
 
 As a rule of thumb I'm always sticking to `declare module` syntax, just to make things consistent
+
+### Colocation of global interfaces
+
+I'm not sold on globally-accessible interfaces, but if you were to do this pattern, I would **recommend using colocation when augmenting the `global`**.
+
+Here is what I mean
+
+```ts
+// file foo.ts
+
+declare global {
+  interface MyGlobalInterface {
+    // PROPERTIES THAT ONLY THIS FILE USES
+  }
+}
+
+
+// file bar.ts
+declare global {
+  interface MyGlobalInterface {
+    // PROPERTIES THAT ONLY THIS FILE USES
+  }
+}
+```
+
+If you were to delete the `bar.ts` file, all the properties appended to the `MyGlobalInterface` would no longer be available. This is pretty nice, as the worst part of refactoring code is often checking if something is used or not, specially if the interface is quite complex.
 
 ### Typescript ignores my `d.ts` file
 
