@@ -120,6 +120,10 @@ The most notable namespace is the `NodeJS` namespace. Please note that the **nam
 
 ## Augmenting global declarations
 
+In the section below, we will be using the `declare` keyword. Before diving into each problem, it is vital you understand what the `declare` keyword is about.
+
+The **`declare` keyword tells TypeScript that a variable/function/module exists and might be used inside the code**. Think of it as declaring global variables with the benefit of autocompletion. Of course that is not the sole purpose of this keyword. Read more below!
+
 ### Augmenting NodeJs `process.env`
 
 Lets say you are building a NodeJs app and you want to have strongly typed `process.env` object.
@@ -1229,8 +1233,7 @@ function someFn(arg: number | string) {
 
 #### In vanilla JS
 
-> it tests if a `.prototype` property of a constructor exists somewhere in
-> another object
+> it tests if a `.prototype` property of a constructor exists somewhere in another object
 
 Example:
 
@@ -1293,6 +1296,24 @@ function isAthlete(subject: Athlete | NormalPerson): subject is Athlete {
   return "speed" in subject;
 }
 ```
+
+### Type Guards in callback functions
+
+This technique is **very useful for `filter` or `reduce` callbacks where you want the return type to match your filter predicate without using `as` keyword**. Here is an example.
+
+```ts
+const values = [1, 2, undefined, 3];
+
+const theRegularFilter = values.filter(val => val != null) // (number | undefined)[]
+const theTypeCastFilter = values.filter(val => val != null) as number[] // number[]
+
+const theTypeGuardFilter = values.filter((val): val is number => {
+  return val != null
+}) // number[]
+```
+
+The `theTypeGuardFilter` is quite nice. It works on the similar basis as the `as` keyword **in terms of type-safety**, but is is much robust solution.
+This is a great way to ensure the filtered data has the type you want it to have!
 
 ## Intersection Types
 
