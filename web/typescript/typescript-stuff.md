@@ -569,15 +569,16 @@ function isDefined<T>(x: T): asserts x is NonNullable<T> {
 }
 ```
 
-The signature differs greatly and there is actually more to the
-`assert signatures` signature than presented here.
-
+The signature differs greatly and there is actually more to the `assert signatures` signature than presented here.
 On top of that, the **assert-type functions cannot be using the arrow function syntax**.
 
 ```ts
+// THIS WILL NOT WORK!
 const assertValue = (value: boolean): asserts value => {
   // ...
 };
+
+// Error when using it: Assertions require every name in the call target to be declared with an explicit type annotation
 ```
 
 I'm not sure why is this the case. It seems to have something to do with _control flow analysis_, but I'm not 100% sure.
@@ -590,13 +591,11 @@ There are actually 2 variants
 - for checking a condition
 - for telling TypeScript that specific variable or property has a different type
 
-So it all basically boils down to that `Assert Signatures` does not return
-anything, they throw this `AssertionError` whenever something is wrong.
+So it all basically boils down to that `Assert Signatures` does not return anything, they throw this `AssertionError` whenever something is wrong.
 
 `Type Guards` on the other hand return `true` or `false` based on they inputs.
 
-The signature `asserts something` or `asserts x is something` tells the reader
-of the code that **that function will only return if the assertion holds**
+The signature `asserts something` or `asserts x is something` tells the reader of the code that **that function will only return if the assertion holds**
 
 ```ts
 function checkIfString(input:any) asserts input is string {
@@ -1314,6 +1313,25 @@ const theTypeGuardFilter = values.filter((val): val is number => {
 
 The `theTypeGuardFilter` is quite nice. It works on the similar basis as the `as` keyword **in terms of type-safety**, but is is much robust solution.
 This is a great way to ensure the filtered data has the type you want it to have!
+
+### Type Guards with generics
+
+Depending on how you structure the generic functions, you **can use the type guards with generic signatures**.
+
+```ts
+type Confirmer<T> = (node: unknown) => node is T;
+declare function confirm<T>(confimer: Confirmer<T>);
+```
+
+Mind the syntax, especially for parameters of an interface.
+
+```ts
+interface DOMNodeExtractorConfig<T, Result> {
+  // I cannot use an arrow function here.
+  isNode(node: unknown): node is T;
+  transform: (node: T) => Result;
+}
+```
 
 ## Intersection Types
 
