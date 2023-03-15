@@ -1207,7 +1207,7 @@ type Person = typeof person; // {age: number, name: string}
 
 This is very powerful especially with `ReturnType`.
 
-## Type Guards
+## Type Guards (predicates)
 
 Using a _Type Guard_ you can tell Typescript which type something is.
 
@@ -1323,12 +1323,13 @@ type Confirmer<T> = (node: unknown) => node is T;
 declare function confirm<T>(confimer: Confirmer<T>);
 ```
 
-Mind the syntax, especially for parameters of an interface.
+This also works for properties within the interface.
 
 ```ts
 interface DOMNodeExtractorConfig<T, Result> {
-  // I cannot use an arrow function here.
   isNode(node: unknown): node is T;
+  // As alternative one might write
+  // isNode: (node: unknown) => node is T;
   transform: (node: T) => Result;
 }
 ```
@@ -2684,7 +2685,32 @@ type DB = Record<UserId, User> & Record<PostId, Post>
 
 If I access the `DB` via the `PostId`, I will get a `Post`. If I access it via the `UserId`, I will get a `User`. How cool is that!?
 
-### Making the Branded Types suck less (subjective)
+### Type branding and type guards (predicates)
+
+For the ultimate type safety, one could combine both techniques. Check this out.
+
+```ts
+type Valid<T> = Brand<T, "Valid">;
+
+interface PasswordValues {
+  password: string;
+  confirmPassword: string;
+}
+
+const isValidPassword = (
+  values: PasswordValues
+): values is Valid<PasswordValues> => {
+  if (values.password !== values.confirmPassword) {
+    return false;
+  }
+
+  return true;
+};
+```
+
+When we call the `isValidPassword` we get the correct type – the `PasswordValues` wrapped within the `Brand` type. Pretty neat!
+
+## Making the Branded Types suck less (subjective)
 
 If you decide to use the _type branding_ technique without any abstractions, you will be type-casting all over the place. Not ideal. In my humble opinion, the **_type branding_ combines well with a function that explicitly casts the type for you**. While that function is very shallow, and violates one of the core principles of good design, I like it much better than having `as XX` scattered thought the codebase.
 
