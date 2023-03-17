@@ -1251,8 +1251,7 @@ foo instanceof Foo
 
 #### In Typescript
 
-This works basically the same as `typeof`. Rarely used (used mainly with
-classes, brr)
+This works basically the same as `typeof`. Rarely used (used mainly with classes, brr)
 
 ### User Defined Type Guard
 
@@ -2560,6 +2559,34 @@ const t = makeRouter3({ foo: { search: ["bar", "baz"] } });
 t.foo["search"]; // ["bar", "baz"]
 ```
 
+#### Type narrowing by providing a default generic parameter
+
+In some cases, especially when you perform a recursive build-up of types (think builder pattern where each method call "enhances" the given object), it is vital to provide a default type for the generic. **If you do not, TypeScript will infer the widest possible type from the generic, which will ruin the constraints on your type**.
+
+Here is what I mean.
+
+```ts
+type Foo = Record<string, string> & Record<"foo", string> // The type will allow for any string
+type Bar = {} & Record<"foo", string> // The type will allow only for the "foo" key.
+```
+
+This is very important in generic signatures.
+
+```ts
+class Builder<TMap extends Record<string, string> = {}> {
+  constructor(private map: TMap) {
+
+  }
+
+  set<K extends string>(key: K, value: string): Builder<TMap & Record<K, string>> {
+    (this.map[key] as any) = value;
+    return this.
+  }
+}
+```
+
+Without the `= {}` TypeScript would always use the `Record<string, string>` type. No matter how many times you call set, the widest possible type will always win with more specific one.
+
 #### Type narrowing with _const annotations_
 
 When creating a variable, you have the ability to add `as const` to it. This will make the TypeScript **infer the literal types of the values**.
@@ -2724,3 +2751,77 @@ const asBrandedEmail = (email: string): Email => {
 
 const foo: Email = asBrandedEmail("wojciech@stedi.com");
 ```
+
+## TypeScript and Classes
+
+The `class` **can act both as a runtime construct and a type**. This is quite rare in TypeScript (the only other construct I can think of, that behaves the same way, is the `enum` and `const enum`).
+
+This means you can do something like the following.
+
+```ts
+class MyError extends Error {}
+
+function foo(error: MyError) {} // used as a type
+
+const error = new MyError() // used as a runtime value
+```
+
+### Type Predicates and Classes
+
+You can **leverage the type predicates (guards) on the methods of the class**. This is pretty wild. Look at the following example.
+
+```ts
+class UserValues {
+  error?: string
+  constructor(private values: Record<string, string>) {}
+
+  // Notice this wild piece of syntax
+  public areValid(): this is this & { error: string } {
+    // validates that `this.values` are valid
+  }
+}
+
+// On the caller side
+
+const userValues = new UserValues({firstName: "", lastName: ""})
+
+if (!userValues.areValid()) {
+  userValues.error // string
+  return
+}
+
+userValues.error // string | undefined
+```
+
+Since we do not have a parameter for the `areValid` function, the only way to refer to the "current scope" is through the use of `this` keyword.
+I have to say, the `this is this &` syntax is quite funny :D.
+
+Please note that the **type predicates can also influence the types inside the class itself**.
+
+```ts
+class UserValues {
+  error?: string
+  constructor(private values: Record<string, string>) {}
+
+  // Notice this wild piece of syntax
+  public areValid(): this is this & { error: string } {
+    // validates that `this.values` are valid
+  }
+
+  public login() {
+    const areValid = this.areValid()
+    if (!areValid) {
+      this.error // string
+      return
+    }
+
+    this.error // string | undefined
+  }
+}
+```
+
+This is quite amazing. You can change the type of `this` dynamically. It is like "self mutation".
+
+### Assertion functions and Classes
+
+**Like in the case of type predicates, you can use the assertion functions inside classes**. The syntax is basically the same as the regular assertion function and works on the same basis as type predicate.
