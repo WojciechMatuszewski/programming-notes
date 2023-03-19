@@ -1775,6 +1775,14 @@ An example for s3-prefix (folder)
 
 - they **apply** to **buckets, prefixes, tags and current or previous versions of the object**.
 
+#### Object Lambda
+
+- Allows you to **manipulate the result of the HEAD, GET or LIST s3 operations**.
+
+- Works by **exposing an S3 endpoint that will then invoke a Lambda function**.
+
+- The **endpoint in itself cannot be public**, but with the [addition to allow the endpoint to be hooked up to CloudFront](https://aws.amazon.com/blogs/aws/new-use-amazon-s3-object-lambda-with-amazon-cloudfront-to-tailor-content-for-end-users/) you can make it public.
+
 #### Security
 
 - **by default only the account that created the bucket can do stuff with it**
@@ -1838,8 +1846,7 @@ So when to use what?
 ##### Endpoint policy
 
 - s3 endpoints allow you to have granular permissions (basically a bucket policy) for a narrow scope of your objects.
-  This policy does not "pollute"
-  your main bucket policy because it's attached to the endpoint itself
+  This policy does not "pollute" your main bucket policy because it's attached to the endpoint itself
 
 - you would **use this** if your **main bucket policy is getting out of hand**, as in it's getting too big or
   unmanageable
@@ -1879,8 +1886,7 @@ So when to use what?
 - you can use **referrer IAM condition** to **allow request from specific web pages**.
 
 - you can create **POST** or **PUT** signed urls. The **POST** version allow you to specify **conditions**. The
-  conditions are pretty powerfull,
-  you can for example, assert on the size of the object being uploaded.
+  conditions are pretty powerful, you can for example, assert on the size of the object being uploaded.
 
 ##### Access logs
 
@@ -7345,6 +7351,10 @@ Problem solved.
 - this setting exists to prevent you from creating dangerous IAM roles. It forces you to look at what's being created
 
 #### Deletion Policy
+
+- **THIS ONLY APPLIES WHEN YOU REMOVE A STACK, NOT A RESOURCE!**. [Read the damn documentation!](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html#:%7E:text=With%20the%20DeletionPolicy%20attribute%20you%20can%20preserve%2C%20and%20in%20some%20cases%2C%20backup%20a%20resource%20when%20its%20stack%20is%20deleted.).
+
+  - If you wisth to **preserve the original resource when performing a replacement**, use the **`UpdateReplacePolicy`**.
 
 - you can use **Snapshot** to **create a snapshot of data for services that support snapshots**
 
