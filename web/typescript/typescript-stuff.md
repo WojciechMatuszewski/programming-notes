@@ -293,6 +293,10 @@ There are 2 solutions here:
 1. Rename your `d.ts` file
 2. Specify the `d.ts` file within the `file` block inside your `tsconfig`.
 
+#### When using d.ts file I accidentally overwritten all definitions for a library
+
+Depending on how your tsconfig is set up, by writing a `declare module 'XX'` in the `d.ts` file you will be **completely overwriting the types of a given library**. This option is a bit nuclear, but sometimes it is completely valid, for example when the library is written in JS and does not export any types.
+
 ### I cannot override method inside an interface
 
 **To my best knowledge**, overriding a method declared inside an interface is **not possible**. Why?
@@ -2501,12 +2505,33 @@ In other worlds, **the TS compiler will always expand the generic parameter to t
 
 ### Lazy type evaluation - prevent type parameter inference
 
-Sadly, there is no _intuitive_ or _native_ way to do this.
+In this situation, what we want is for **TypeScript to defer the inference of the `Obj` until we provide it explicitly**. This is not possible without tricks as **the default behavior of TypeScript is to always infer the type parameter from it's first occurrence**.
 
-There is ongoing GH thread. You can find it here.
-<https://github.com/Microsoft/TypeScript/issues/14829>
+The best example would be a `compare` function.
 
-We will be using the solution described in that thread, mainly <https://github.com/Microsoft/TypeScript/issues/14829#issuecomment-504042546>
+```ts
+declare function compare<A>(a: A, b: A): boolean;
+
+compare(1, "123") // "123" is not assignable to type number
+compare("123", 1) // 1 is not assignable to type string
+```
+
+Notice that the type parameter `A` got inferred from it's first occurrence. We can **change this behavior by leveraging lazy evaluation of the type parameters**. This is possible **with conditional types, as when TypeScript sees `?`, it will defer the inference until after the T is resolved**.
+
+```ts
+type NoInfer<T> = [T][T extends any ? 0 : never]
+
+declare function compare<A>(a: NoInfer<A>, b: A): boolean;
+
+compare(1, "123") // 1 is not assignable to type string
+compare("123", 1) // "123" is not assignable to type number
+```
+
+Now it's the second parameter that is used for the inference. How this method could help us solve our problem?
+
+---
+
+Let us use the `NoInfer` type and apply it to our problem. All of this is inspired by [this StackOverflow answer](https://stackoverflow.com/a/56688073).
 
 ```ts
 type NoInfer<T> = [T][T extends any ? 0 : never];
@@ -2519,13 +2544,12 @@ type BaseObj = {
 };
 
 function foo<Obj extends BaseObj = never>(
+  // See the section for comparing with `never` type
   obj: [Obj] extends [never] ? MyObj : NoInfer<Obj>
 ): [Obj] extends [never] ? MyObj : NoInfer<Obj> {
   return obj;
 }
 ```
-
-With that function declaration, every use-case should be fulfilled.
 
 As I mentioned, this _workaround_ is leveraging the fact that if a _type parameter_ is used in a context of conditional type, it will be evaluated lazily as in the inference will not occur.
 
@@ -2611,6 +2635,8 @@ const foo = router(["a", "b"]) // "string"
 ```
 
 Keep in mind that, **for the _const annotation_ to take an effect here, one has to use the `readonly` modifier on the array**. Otherwise TypeScript will fall back to the old behavior.
+
+In addition, if you use the `const R` generic syntax, all the properties of R will become `readonly`. This might or might not be what you want. Keep that in mind.
 
 ## Type branding (AKA _opaque types_)
 
