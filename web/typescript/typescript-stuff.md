@@ -940,6 +940,38 @@ type Test = NoNumbers<{ prop1: string; prop2: number }>; // {prop1: string}
 
 As of writing this, this is relatively new addition to the language.
 
+### Reverse Mapped Types
+
+Usually when using mapped types, you work on a result. The pipeline is `A -> MappedType<A> -> B`. This means that there are no "backwards lookups" of types because the `A` is already established.
+
+The **idea behind the reverse mapped types is that we are instructing TypeScript to "look back" and transform a given type**.
+I think its best illustrated on a example.
+
+```ts
+export function makeEventHandlers<T extends Record<string, unknown> = {}>(obj: {
+  [K in keyof T]: (prop: K) => void;
+}) {
+  return obj;
+}
+
+const obj = makeEventHandlers({
+  click: name => {
+    console.log(name); // name is `click`
+
+    type test = Expect<Equal<typeof name, "click">>;
+  },
+  focus: name => {
+    console.log(name); // name is `focus`
+
+    type test = Expect<Equal<typeof name, "focus">>;
+  }
+});
+```
+
+Notice that, in the example, I'm **not providing the shape of the obj upfront, yet TypeScript is still able to compute the property names and pass them to the function argument**. Again, what I pass to the `makeEventHandlers` function is not known upfront. **I'm able to transform the inferred type**. This is pretty cool!
+
+Inspired by [this talk](https://youtu.be/fjPzlywUH0M?t=3020).
+
 ### Keyof and `[keyof]`
 
 Differences are quite big
