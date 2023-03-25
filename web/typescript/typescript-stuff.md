@@ -160,6 +160,42 @@ declare global {
 }
 ```
 
+#### With dynamic types
+
+Sometimes, the list of the types you want to add is dynamic – it might be coming from an object that will change over time. Imagine the following scenario.
+
+```ts
+const addAllOfThisToWindow = {
+  add: (a: number, b: number) => a + b,
+  subtract: (a: number, b: number) => a - b,
+  multiply: (a: number, b: number) => a * b,
+  divide: (a: number, b: number) => a / b
+};
+
+Object.assign(window, addAllOfThisToWindow);
+```
+
+We could add those properties one by one, and that would be my preferred way (depending on the team experience with TypeScript).
+We can also leverage the fact that the `window` is an interface which we can extend.
+
+```ts
+const addAllOfThisToWindow = {
+  add: (a: number, b: number) => a + b,
+  subtract: (a: number, b: number) => a - b,
+  multiply: (a: number, b: number) => a * b,
+  divide: (a: number, b: number) => a / b
+};
+
+declare global {
+  // Keep in mind that for the `extends` to work, you have to declare either a separate type or an interface.
+  // You cannot do it "inline".
+  type ToAdd = typeof addAllOfThisToWindow;
+  interface Window extends ToAdd {}
+}
+```
+
+That is it!
+
 ### Augmenting NodeJs `global`
 
 ```ts
@@ -981,8 +1017,7 @@ type Test1 = keyof Something; // "id" | "name" | "property"
 type Test2 = Something[keyof Something]; // string | number | undefined
 ```
 
-It's very similar to accessing object values and `Object.keys` in JS. **It's
-just that the value is the type itself**
+It's very similar to accessing object values and `Object.keys` in JS. **It's just that the value is the type itself**
 
 ```js
 var someObj = {
@@ -1519,6 +1554,62 @@ function reverse<T>(dataToReverse: string | T[]): string | T[] {
 
 It is **important to put your "narrowest" definition on the top**. Overloads are read from the top to bottom.
 If you were to reverse this rule, the code using the overloading function will always land on the "widest" overload, making the DX bad (the "widest" overloads are usually there as a fallback).
+
+### Variadic functions
+
+Depending on the type user provided, **you can make the function take different amount of parameters, without any overloads**.
+
+```ts
+interface Events {
+  click: {
+    x: number;
+    y: number;
+  };
+  focus: undefined;
+}
+
+export const sendEvent = <TName extends keyof Events>(
+  event: TName,
+  ...args: Events[TName] extends undefined ? [] : [payload: Events[TName]]
+) => {
+  // Send the event somewhere!
+};
+
+it("Should force you to pass a second argument when you choose an event with a payload", () => {
+  // @ts-expect-error
+  sendEvent("click");
+
+  sendEvent("click", {
+    // @ts-expect-error
+    x: "oh dear"
+  });
+
+  sendEvent(
+    "click",
+    // @ts-expect-error
+    {
+      y: 1
+    }
+  );
+
+  sendEvent("click", {
+    x: 1,
+    y: 2
+  });
+});
+
+it("Should prevent you from passing a second argument when you choose an event without a payload", () => {
+  sendEvent("focus");
+
+  sendEvent(
+    "focus",
+    // @ts-expect-error
+    {}
+  );
+});
+```
+
+Depending on the first parameter, the user might or might not have to provide the second parameter. **Notice the trick with an empty array and the spread operator**.
 
 ## Declare keyword
 
@@ -2656,14 +2747,14 @@ This is very handy – it enables you to be strict and explicit with the values 
 
 ```ts
 declare function router<const R extends readonly string[]>(routes: R): Record<R[number], unknown>;
-const foo = router(["a", "b"]) // "a" | "b"
+const foo = router(["a", "b"]) // Record<"a" | "b", unknown>
 ```
 
 If I were to create a similar function signature in TypeScript v4.x, the inference would fallback to the `string`.
 
 ```ts
 declare function router<R extends string[]>(routes: R): Record<R[number], unknown>;
-const foo = router(["a", "b"]) // "string"
+const foo = router(["a", "b"]) // Record<"string", unknown>
 ```
 
 Keep in mind that, **for the _const annotation_ to take an effect here, one has to use the `readonly` modifier on the array**. Otherwise TypeScript will fall back to the old behavior.
