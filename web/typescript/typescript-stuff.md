@@ -2493,7 +2493,7 @@ type Result = ConditionalCheck<number>;
 
 you pass _type parameters_ to the _type function_ (I'm not sure if this is an official name, but I like to think of it that way).
 
-The you pass _naked type parameter_ if that parameter is not wrapped within an other structure (in TS land). An example of a _clothed_ type parameter would be passing `[number]` as `T` to the _type function_.
+There you pass _naked type parameter_ if that parameter is not wrapped within an other structure (in TS land). An example of a _clothed_ type parameter would be passing `[number]` as `T` to the _type function_.
 
 When conditional types are used with the _naked type parameter_, they are called _distributive conditional types_.
 The name sounds scary, but the underlying functionality is rather not that complicated. Let us jump in!
@@ -2541,8 +2541,7 @@ type Test1 = CheckForNever<"hi">; // 0 => Ok.
 type Test2 = CheckForNever<never>; // never => Wtf?
 ```
 
-The `Test2` is evaluated to type `never` **due to the fact that when `never` is passed as a type parameter, TypeScript distributes over an empty union**.
-Since the union is _empty_ and there is nothing to distribute over, the result is a `never` type.
+The `Test2` is evaluated to type `never` **due to the fact that when `never` is passed as a type parameter, TypeScript distributes over an empty union**. Since the union is _empty_ and there is nothing to distribute over, the result is a `never` type.
 
 This is not the case with other, less _special_ types like `number` or `string` (or others), where if you pass them as a type parameter, TypeScript distributes of a union with one member - that type.
 
