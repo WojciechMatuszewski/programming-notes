@@ -56,4 +56,34 @@
 
 ## Understanding the internet
 
-Finished day 1 part 4 11:17
+### How does the internet work?
+
+- Mainly through collaboration and rules.
+
+- The request travels through different layers.
+
+  - computer -> network card -> router -> ISP -> Tier 1 ISP -> Data center -> server cluster -> load balancer -> server
+
+> Here Jem talks about TCP, UDP, ICMP and network packets
+
+### How does the domains work
+
+- The _DNS_ and the _Nameservers_.
+
+- The server talks to the browser via the IP.
+
+- There are different type of _DNS records_
+
+  - The **A record maps the IP to the name**.
+
+  - The **CNAME maps the name to another name**.
+
+## Web Servers
+
+- The main players are _Apache_ and _NGINX_.
+
+  - The _NGINX_ can do a lot of things. It can be a web server, _reverse proxy_ or a _forward proxy_.
+
+  - The _NGINX_ will route the request to a given "piece of the stack" on your server.
+
+Finished Day 1 part 6 53:17
