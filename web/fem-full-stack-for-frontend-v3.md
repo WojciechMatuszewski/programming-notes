@@ -86,4 +86,104 @@
 
   - The _NGINX_ will route the request to a given "piece of the stack" on your server.
 
-Finished Day 1 part 6 53:17
+## Version control
+
+- You should be using it.
+
+- Git uses hash functions to encode content.
+
+## Security
+
+- SSH keys, Firewalls, keeping the software up-to-date, use two-factor-authentication and VPNs.
+
+- **Ports allows us to map specific endpoint to a process or a network service**.
+
+  - Without ports, we would have run out of network addresses much sooner than we did.
+
+### Firewall
+
+- Firewalls allows you to close ports.
+
+  - This is super helpful since **there are tools to scan your machine for open ports, like _nmap_**.
+
+  - An open port, that should not be open, is an attack vector.
+
+  - There are **different tools for configuring Firewall rules**. One of them is the `ufw`.
+
+### Permissions
+
+- Do your best to scope the permissions down.
+
+  - I think everyone is guilty of doing `chmod 777 FILE`. While it might work, it is a bit dangerous.
+
+  - Do understand what the numbers means. Behind every number there is the `rwx` permission set.
+
+## CI/CD
+
+- It is about _validating your code_.
+
+  - **Testing is at core of CI/CD**.
+
+> Here Jem creates a CRON job to invoke a given script
+
+## Diving into the terminal
+
+### Streams (stdin, stdout, stderr)
+
+- Since all of the unix commands implements those interfaces, we can chain them together.
+
+- The `2>&1` means: **redirect both stderr and stdout**.
+
+  - The only time I used this is to get an output from jest: which tests failed without having to scroll endlessly through logs.
+
+### Finding things
+
+- There are many commands to help you find things. The most common among them are `find` and `grep`.
+
+  - `find` is for searching through **file names**, the `grep` is for searching through **file contents**.
+
+    - There is also `zgrep` which allows you to find inside zipped files. Pretty amazing.
+
+## Files / Databases
+
+- Saving everything to a file is inefficient and you cannot shard data across multiple files.
+
+- There are relational and non-relational databases.
+
+> Here Jem demonstrates the basics of SQL language.
+
+## HTTP
+
+- Has two distinct parts, the request and the response.
+
+- **Cookies are just another header in the request part of HTTP**.
+
+### HTTPS
+
+- Secure HTTPS.
+
+  - Prevents the man-in-the-middle attack.
+
+- In most cases, you want to either disable HTTP or redirect the HTTP traffic to HTTPS.
+
+### HTTP/2
+
+- The **HTTP made a request for every file we need**.
+
+  - This is a bit inefficient as the webpages usually require multiple files. Initializing multiple network connections for each file creates big overhead.
+
+- **HTTP/2 allows for _multiplexing_**. This means that multiple files can be fetched on a single connection.
+
+  - Keep in mind that HTTP/2 **is not free!**. It takes a bit more CPU to handle this protocol.
+
+## Containers
+
+- Packaging the applications into small chunks.
+
+  - The chunk contains everything that the application needs to start running. All the dependencies and such.
+
+  - This makes it easy to share / duplicate services. There is no problem of "it runs fine on my machine".
+
+### Orchestration
+
+> Here Jem talks about k8s and load balancers.
