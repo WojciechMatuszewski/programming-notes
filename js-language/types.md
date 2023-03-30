@@ -234,8 +234,7 @@ Boolean(" \t\n"); // => true OOPS!
 
 How come we can do `.toString()` or `.length` or similar function calls on a primitive ?
 
-Thats called `boxing`. It's a form of implicit coercion
-Actually whats happening is JavaScript implicitly coerces the primitive values to their object counter parts so we have methods on them.
+Thats called `boxing`. It's a form of implicit coercion. Actually whats happening is JavaScript implicitly coerces the primitive values to their object counter parts so we have methods on them.
 
 ### == vs ===
 

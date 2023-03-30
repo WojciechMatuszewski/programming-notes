@@ -2,7 +2,7 @@
 
 - [Rust for TypeScript Devs](https://frontendmasters.com/workshops/rust-typescript-devs/).
 
-  - Finished day 1, part 2 37:12
+  - Finished day 1, part 4 00:00
 
 ## &str vs String
 
@@ -51,7 +51,9 @@ Notice the `Vec<_>`. This **tells the compiler to infer the type of the `collect
 
 From [this book](https://google.github.io/comprehensive-rust/exercises/day-1/implicit-conversions.html).
 
-## What is `collect()`
+## Collections
+
+### What is `collect()`
 
 **`collect()` will consume the iterator and create a new collection**. This is a syntactic sugar over making your own collection and then calling the `.next` on it.
 
@@ -82,4 +84,35 @@ while let Some(x) = list.next() { // but we reference it here implicitly by refe
 }
 
 println!("list = {:?}", new_vector);
+```
+
+### The lazy nature of the iterators
+
+In JavaScript / TS functions available on the `Array.prototype`, like `map` or `filter` are _push-based_. This means they execute eagerly and they **consume the whole array**. In Rust, it's a bit different. The iterators will be collapsed into a loop. This means **that no matter how many iterators you have, they will only traverse the array once**. In addition, to invoke those iterators, one has to call `collect`.
+
+This is something the Rust community calls "_zero cost abstractions_". Pretty neat concept.
+
+## Boxed values
+
+- Boxed values land on the heap.
+
+  - The heap is much bigger than the stack. It allows you to store bigger pieces of data.
+
+  - Keep in mind that using heap is not free. It is much "slower" than the stack as the compiler has to track who uses what data.
+
+Where would use use the `Box` generic type? Anywhere **where the exact size of the data of a given thing cannot be known at compile time OR the data is large and you want to avoid copying**. This means, we mostly would use this type **while working with traits** or **large pieces of data / recursive structures**.
+
+```rust
+trait Driver {
+    fn drive(&self);
+}
+
+struct CarDriver {}
+impl Driver for CarDriver {
+    fn drive(&self) {}
+}
+
+fn create_driver() -> Box<dyn Driver> { // The size of the return value cannot be known on compile time. There might be multiple structs that implement the Driver trait
+    return Box::new(CarDriver {});
+}
 ```
