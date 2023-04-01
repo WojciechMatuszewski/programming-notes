@@ -2,7 +2,7 @@
 
 - [Rust for TypeScript Devs](https://frontendmasters.com/workshops/rust-typescript-devs/).
 
-  - Finished day 1, part 5 00:00
+  - Finished day 1, part 6 43:26
 
 ## Stack vs the Heap
 
@@ -150,5 +150,28 @@ impl Driver for CarDriver {
 
 fn create_driver() -> Box<dyn Driver> { // The size of the return value cannot be known on compile time. There might be multiple structs that implement the Driver trait
     return Box::new(CarDriver {});
+}
+```
+
+## Traits
+
+I like to think about the `trait` keyword as the `interface` keyword in Go. In addition, one cool thing is that **traits do not have to live in the same file as the data structures that implement them**. This means that **the implementation is separate to the data structure**. Such a powerful concept that allows you to co-locate different _concerns_ together!
+
+### Default implementation for Traits
+
+When I first saw this I was blown away. Remember the whole _separating the data and traits_ stuff? It turns out you can also provide defaults for the trait methods **in the trait itself**. Check this out:
+
+```rust
+trait Collidable<T> {
+    fn collide(&self, other: &T) -> bool;
+
+    fn collides(&self, others: &[T]) -> bool {
+        for other in others {
+            if self.collide(other) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 ```
