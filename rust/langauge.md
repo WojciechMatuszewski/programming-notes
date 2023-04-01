@@ -2,7 +2,43 @@
 
 - [Rust for TypeScript Devs](https://frontendmasters.com/workshops/rust-typescript-devs/).
 
-  - Finished day 1, part 4 00:00
+  - Finished day 1, part 5 00:00
+
+## Stack vs the Heap
+
+Since, when writing rust code, one has to think a little bit about the memory management, it is paramount to understand what the _heap_ and the _stack_ is. You might have a vague idea what these things are – after all every basic CS course teaches those things. Having said that, I found myself often guessing where a given variable lands (if it's on a _heap_ or a stack_). Let us explore those concepts in terms of rust code.
+
+- **_stack_ is much faster than the _heap_**.
+
+- **_stack_ is much smaller than the _heap_**.
+
+- **You want your stuff to be on the _stack_ most of the times**. If the _stack_ is faster, then there is no reason to allocate to the _heap_ without a reason.
+
+- **Depending on what you return from the functions, you might be allocating on the _heap_ or on the _stack_**.
+
+  - If you use a structure that lives on the _heap_, you will be allocating on the _heap_.
+
+    - For example returning a `vec` from a function.
+
+    - For example defining variables inside a function that live on the _heap_.
+
+  - If you do not use a structure that lives on the _stack_, you will not be allocating on the _heap.
+
+- **For every thing you store on the heap, there is something (a pointer) stored on the stack**.
+
+  - This helps with cleaning up the memory.
+
+### Borrowing and owning
+
+- When **passing a value to a function, that function will _consume_ the value**.
+
+  - Unless it is a reference, after the function is done, that value will no longer the accessible in the "parent scope".
+
+- You **cannot have more than one mutable OVERLAPPING reference to something**.
+
+  - That also applies to an items of a vector.
+
+  - Keep in mind that the rust compiler is exceptionally smart. Some times you can have multiple mutable references, as long as the previous reference is dropped before you access the next one.
 
 ## &str vs String
 
