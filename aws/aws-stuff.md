@@ -1353,6 +1353,18 @@ An example for s3-prefix (folder)
 
 - with advanced parameters you can get **really granular per parameter policies**.
 
+- you can have **more than 10k parameters / region**.
+
+##### Intelligent tiering
+
+- you do not have **to choose between the standard and advanced** parameters. Let the AWS decide for you!
+
+- the "upgrade" happens **when you update the parameter value or exceed the number of parameters quota**.
+
+- this is a **great way to optimize costs**. It does not seem to cost any additional $$ to turn it on?
+
+  - I think it might be a default now.
+
 #### Secrets Manager
 
 - while you can store secrets within `Parameter Store`, **`Secrets Manager` rotate the secrets (automatically or
@@ -2723,8 +2735,7 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - the streams are **considered poll based events**. These events are **ordered and guaranteed to hold an order**.
 
-- while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand
-  billing_, there might be a concurrency spike in lambdas reading off the stream for that table.
+- while you cannot control the number of shards directly, **one of the things that has an effect on the number of shards is the capacity of the table**. This means that if you encounter a spike in WCU/RCU and you are using _on demand billing_, there might be a concurrency spike in lambdas reading off the stream for that table.
 
   - to **get the number of shards**, use the **`DescribeStream API`**.
 
@@ -2732,11 +2743,9 @@ There are a few approaches when it comes to scaling with dynamoDB
   batches if you are populating the table with items from different "collections"**. Every item will be consumed though,
   your lambda will be invoked more times.
 
-- the **throughput of the stream** is based on the **number of partitions** given table **has**. This is because, **the
-  more partitions your table has** the more **underlying shards will be allocated for that table**
+- the **throughput of the stream** is based on the **number of partitions** given table **has**. This is because, **the more partitions your table has** the more **underlying shards will be allocated for that table**
 
-- DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do
-  not use Kinesis directly.
+- DDB **does not use Kinesis under the hood**. **DDB streams use the underlying tech that powers Kinesis** but they do not use Kinesis directly.
 
 - **free if integrated with Lambda**, otherwise you **pay for `GetRecords` call**.
 
@@ -2744,6 +2753,10 @@ There are a few approaches when it comes to scaling with dynamoDB
   Lambda so there is no charge for the `GetRecords` call. If you were to consume the stream in a different way, it
   matters what you select. Imagine a "heavy" record being updated and you have selected the _New and old images_ option.
   To fill your batch, more `GetRecords` API calls will be needed, thus you will pay more.
+
+- be **mindful of the number of stream consumers**.
+
+  - [here is a list what counts as a consumer](https://www.alexdebrie.com/bites/dynamodb-streams/#what-counts-as-a-consumer-for-my-consumer-limit).
 
 ##### Pushing data to Kinesis Data Streams
 
@@ -2844,6 +2857,10 @@ There are a few approaches when it comes to scaling with dynamoDB
 #### Global Tables
 
 - you **need to have streams enabled (new and old)**
+
+  - the replication between the master and the replica **counts as the DynamoDB stream consumer** (see [this article](https://www.alexdebrie.com/bites/dynamodb-streams/#should-i-use-dynamodb-streams-or-kinesis-streams-for-dynamodb-change-data-capture) for more information).
+
+    - keep in mind that AWS recommends at most 2 consumers for your stream.
 
 - this is a **master-master setup**. This means that you can use the table in other region as your new master. **
   all `global` tables replicate to each other**
@@ -6424,6 +6441,10 @@ is **always open**, it just waits for ANY message to be visible.
 - the **connection between the source and the target is 1:1**.
 
   - you cannot invoke multiple targets with the same pipe. You will need to create multiple pipes.
+
+- ensure that **you do not create too many pipes for a single source**.
+
+  - the AWS documentation recommends **at most 2 consumers for a DynamoDB Stream**. Keep in mind that **EB pipe also counts as a consumer**.
 
 ##### vs EventBridge targets/rules
 
