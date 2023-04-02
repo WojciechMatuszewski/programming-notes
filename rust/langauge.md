@@ -2,7 +2,7 @@
 
 - [Rust for TypeScript Devs](https://frontendmasters.com/workshops/rust-typescript-devs/).
 
-  - Finished day 1, part 6 43:26
+  - Finished the whole thing
 
 ## Stack vs the Heap
 
