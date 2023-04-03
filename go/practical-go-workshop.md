@@ -4,11 +4,11 @@
 
 - **optimize for the reader**
 
-* a good name for a variable does not describe the variable contents but the purpose
+- a good name for a variable does not describe the variable contents but the purpose
 
 - you should consider short variable names for variables that live short. Find balance and not strive blindly to use 1 letter variables.
 
-* do not mix and match long and short variable names
+- do not mix and match long and short variable names
 
 ```go
 func (s *SNMP) Fetch(oid []int, index int) (int, error)
@@ -20,7 +20,7 @@ func (s *SNMP) Fetch(oid []int, index int) (int, error)
 - do not let package names steal good variable names.
   a good example of this problem is `context.Context`. This is why you will most use `ctx` here.
 
-* use **names who have established name through programming languages**.
+- use **names who have established name through programming languages**.
   these include `i`, `j`, `db` all of the usual stuff.
 
 ## Initializers
@@ -77,7 +77,7 @@ min, max := 0, 1000
   )
   ```
 
-* always document public symbols, this means putting meaningful comments above the things you export.
+- always document public symbols, this means putting meaningful comments above the things you export.
 
 - avoid comments that do not add any value. You will most likely fall into that trap when using `interfaces`
 
@@ -155,4 +155,4 @@ min, max := 0, 1000
 
   Much better!
 
-https://youtu.be/gi7t6Pl9rxE?list=WL&t=7704
+<https://youtu.be/gi7t6Pl9rxE?list=WL&t=7704>
