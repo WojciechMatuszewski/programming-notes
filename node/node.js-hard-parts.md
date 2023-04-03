@@ -289,8 +289,10 @@ Let's summarize our knowledge of the _event loop_
 
 - **_event loop_ has _phases_ – different queues that contain _commands_**
 
-* With each **transition** to **another phase**, the **`process.nextTick` and the microtask (promises) are drained**. This happens to a certain extend, the _libuv_ makes sure we are not starving the _event loop_ with blocking calls
+- With each **transition** to **another phase**, the **`process.nextTick` and the microtask (promises) are drained**. This happens to a certain extend, the _libuv_ makes sure we are not starving the _event loop_ with blocking calls
 
 - The **loop starts by checking the _microtask_ and _nexTick_ queues**, then moves to _expired timers_ and such. [This article contains nice visual representation](https://blog.insiderattack.net/promises-next-ticks-and-immediates-nodejs-event-loop-part-3-9226cbe7a6aa).
 
-* It **seems that** the `setTimeout(fn, 0)` is **guaranteed to run at the next loop of the event loop**. **After the immediates set synchronously**.
+- It **seems that** the `setTimeout(fn, 0)` is **guaranteed to run at the next loop of the event loop**. **After the immediates set synchronously**.
+
+- Another helpful visualization [can be found here](https://www.builder.io/blog/visual-guide-to-nodejs-event-loop?ck_subscriber_id=1352906140#visualizing-the-event-loop).
