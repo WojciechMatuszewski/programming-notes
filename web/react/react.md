@@ -11,15 +11,15 @@ debug(elem);
 
 - Use `user` from `@testing-library/user-event` for more general events. `fireEvent` only fires a singular event which might not be representative enough.
 
-* Use `jest-axe` for a11y assertions
+- Use `jest-axe` for a11y assertions
 
 - considering spying on `console.error` when testing something that can throw. **Remember to restore**, probably using `error.mockRestore()`
 
-* there is something called `toMatchInlineSnapshot`. It basically creates snapshots automatically but the `snapshot` itself is within a test code, not a separate file.
+- there is something called `toMatchInlineSnapshot`. It basically creates snapshots automatically but the `snapshot` itself is within a test code, not a separate file.
 
 - you should not use `.toHaveBeenCalledTimes` on `mock functions` which are _rendered_ (looking at you `renderProps`). Normally for API calls that is ok, but other than that just use `toHaveBeenCalledTimes`
 
-* asserting on dates is hard. You should create a delta between 2 dates.
+- asserting on dates is hard. You should create a delta between 2 dates.
 
 ```js
 const preDate = new Date();
@@ -564,8 +564,23 @@ function SomeComponent() {
 }
 ```
 
-`useEffect` will close-over `listener` and hold it's reference event when props
-change!. You do not have to pass it inside deps array.
+`useEffect` will close-over `listener` and hold it's reference event when props change!. You do not have to pass it inside deps array.
+Not having the `listener` in the dependency array is not a bug. The linter is smart enough to trace the code inside the `listener` function. **As long as we are not using any outside variables in the `listener` function, the linter will not complain**.
+
+```js
+function SomeComponent() {
+  const [state, setState] = useState(false)
+
+  function listener() {
+    state;
+  }
+
+  React.useEffect(() => {
+    window.addEventListener("scroll", listener);
+    return () => window.removeEventListener("scroll", listener);
+  }, []); // the linter will complain as the `listener` uses an "outside" variable – the state
+}
+```
 
 ## Rendering, Commits, Reconciliation
 
@@ -613,7 +628,7 @@ Now imagine your tree re-rendering and then user decides to trigger the state up
 
 What is happening at that very moment? Some parts of your tree are already ready with PREVIOUS value from the state (pre-user interaction) and SOME are still to be rendered BUT the state already has a different value.
 
-This issue is called tearing, where **some parts of your tree are inconsistent with others when it comes to state**. There is a great resource about this: https://github.com/dai-shi/will-this-react-global-state-work-in-concurrent-mode#what-is-tearing
+This issue is called tearing, where **some parts of your tree are inconsistent with others when it comes to state**. There is a great resource about this: <https://github.com/dai-shi/will-this-react-global-state-work-in-concurrent-mode#what-is-tearing>
 
 #### Suspense and data fetching
 
@@ -952,7 +967,7 @@ The above requirement makes me believe that the _automatic batching_ feature is 
 
 Resources:
 
-- https://github.com/reactwg/react-18/discussions/21
+- <https://github.com/reactwg/react-18/discussions/21>
 
 #### Opting out
 
