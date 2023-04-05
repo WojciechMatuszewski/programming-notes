@@ -162,7 +162,22 @@ While the GSI enable you to create elaborate and powerful querying patterns, the
 With the RCU case, please remember that querying given GSI consumes a sum RCU in terms of all projected attribute sizes across all of the items returned. This usually is not a problem, but I've noticed that engineers often overlook this property of the GSI.
 
 The RCU case is similar to the RCU one. The total provisioned throughput cost of a write consists of the sum of write capacity units consumed by writing to the base table nad those consumed by updating the global secondary index.
+
 Imagine having 10 GSIs and writing an item that touches only half of them. You will be paying a lot more for a single write that you would have if the GSI were not there. This argument alone should makes us question each and every new GSI we plan to add, especially in the single table environment.
+
+**Note that GSIs have their own RCU/WCU limits that are separate from the base table**.
+
+###### Implications of GSI throttling
+
+[Here is a great article](https://medium.com/shelf-io-engineering/five-ways-to-deal-with-aws-dynamodb-gsi-throttling-1a489803a981) on this subject.
+
+The main takeaways I have after reading it are:
+
+- The base table is **not directly** affected when **GSI RCU** goes over the limit.
+
+- The base table **is affected** when **GSI WCU** goes over limit. By "affected" we mean to say that **write operations will NOT succeed on the base table as well as the GSI** – [source](https://repost.aws/knowledge-center/dynamodb-gsi-throttling-table).
+
+- There are various techniques that could help here. The most notable for me are splitting the table or sharding the GSI.
 
 ##### Considerations for not creating GSIs
 
