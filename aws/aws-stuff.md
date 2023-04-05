@@ -6249,6 +6249,8 @@ is **always open**, it just waits for ANY message to be visible.
 
 - you can **set that message will be transported to DQL whenever `recieveCount` is greated than ...**
 
+- [here is a great article](https://dvla.github.io/posts/2023-03-improving-our-dead-letter-queues) about DLQ in relation to SQS and some practices you, in my humble opinion, should adapt
+
 ##### Redrive Policy
 
 - this is the **policy used to determine when to move given msg to DLQ**
