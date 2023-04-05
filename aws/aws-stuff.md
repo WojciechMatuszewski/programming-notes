@@ -6194,6 +6194,16 @@ is **always open**, it just waits for ANY message to be visible.
 
 > The length of time, in seconds, for which a ReceiveMessage action waits for a message to arrive
 
+##### Peeking
+
+- there is no built-in mechanism to _peek_ messages in the queue
+
+- to _peek_, **use the `ReceiveMessages` API call with the `visiblityTimeout` of 0**. This way any other application that wants to receive those messages should be able to do so.
+
+- **be mindful of the `maxReceiveCount` attribute!**. If you have it set, and you _peek_ too many times, your messages might end up on the DQL before they were processed.
+
+- keep in mind that **peeking does not necessarly mean getting the "head" of the queue backlog**. This is because some other system might already receive the "head" messages and is processing them with some non-zero `visiblityTimeout`.
+
 ##### HA
 
 - every **message** is stored on **3 hosts across MIN 2 AZs**
