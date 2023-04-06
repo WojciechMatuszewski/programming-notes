@@ -69,11 +69,19 @@ Example with List:
 
 You can use either _provisioned capacity_ or _on demand_ mode to control how many operations your table can handle.
 
-### On demand
+### On-demand
 
 This mode might sound like a serverless dream come true. You pay only for what you use and you do not have to worry about scaling your throughput up or down.
 
 And in 99% of cases, this is exactly what is happening. But in that 1% of cases, you might want to "warm" or "pre-provision" internal DDB resources to handle given load.
+
+#### Scaling
+
+The **`on-demand` mode does not scale that well for small workloads**. The [aws documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html#HowItWorks.InitialThroughput) says that **the table will provision up to double the previous peak traffic on a table**. This means that if you have a huge spike, you will most likely experience throttling on the table.
+
+> However, throttling can occur if you exceed double your previous peak within 30 minutes.
+
+Like everything in software world, there are tradeoffs. Usually you should be good with on-demand, **but for super spiky workloads (for which I often see this mode advertised)**, you might be better off with **auto scaling**.
 
 ### Provisioned capacity
 
