@@ -81,7 +81,7 @@ The **`on-demand` mode does not scale that well for small workloads**. The [aws 
 
 > However, throttling can occur if you exceed double your previous peak within 30 minutes.
 
-Like everything in software world, there are tradeoffs. Usually you should be good with on-demand, **but for super spiky workloads (for which I often see this mode advertised)**, you might be better off with **auto scaling**.
+Like everything in software world, there are tradeoffs. Usually you should be good with on-demand, **but for super spiky workloads (for which I often see this mode advertised)**, you might be better off with **auto scaling with provisioned capacity**.
 
 ### Provisioned capacity
 
@@ -106,8 +106,6 @@ You might be wondering if there is any delay between the throttling happening an
 While the _adaptive capacity_ concern was to ensure enough throughput is allocated for a given partition, the **role of the _auto scaling_ is to ensure your table has enough WCU/RCU to handle the load**.
 
 The _auto scaling_ feature **uses _AWS CloudWatch Alarms_ under the hood** to scale the WCU/RCU. This means that **there will be a delay (minutes) between the _auto scaling_ kicking in and the traffic increase**. Ideally your traffic would rise gradually, but this might not always be the case.
-
-If you are faced with **spike traffic loads**, the **_on demand_ capacity mode might be more suited for your use case**.
 
 ### Throughput Capacity
 
