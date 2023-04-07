@@ -782,6 +782,48 @@ type WithoutName = Exclude<User, "name">; // User, because T is not extending U 
 type WithoutName = Exclude<keyof User, "name">; // 'email' | 'password'
 ```
 
+#### Exclude an non-primitive types
+
+You can use the `Exclude` utility type with interfaces and types. Check this out.
+
+```ts
+type Event =
+  | {
+      type: 'click'
+      x: number
+      y: number
+    }
+  | {
+      type: 'focus'
+    }
+  | {
+      type: 'change'
+      value: string
+    }
+
+type ClickAndFocusEvent = Exclude<Event, {type: 'click'}> // { type: 'focus' } | { type: 'change', value: string }
+type OnlyChangeEvent = Exclude<Event, {type: 'click' | 'focus'}> // { type: 'change', value: string }
+```
+
+In the above example, we were dealing with a discriminant on the `type` property. **But the `Exclude` also works without a discriminant**.
+
+```ts
+type Evnt =
+  | {
+      x: number
+      y: number
+    }
+  | {
+      name: string
+    }
+  | {
+      type: 'change'
+      value: string
+    }
+
+type ClickAndFocusEvent = Exclude<Evnt, {name?: string, value?: string}> // { x:number, y:number }
+```
+
 ## Combining Exclude And Pick
 
 With combine power of `Exclude` and `Pick` we can do some nice stuff (especially
