@@ -54,6 +54,18 @@
 
   - you can [read more about the saving plans here](https://aws.amazon.com/about-aws/whats-new/2020/02/aws-lambda-participates-in-compute-savings-plans/).
 
+#### Invocation modes
+
+- There are three invocation modes for AWS Lambda
+
+  - The _synchronous_ invocation model (request-response).
+
+  - The _asynchronous_ invocation model that uses **internal SQS queue**. You cannot get "into" that queue. It is managed by the AWS Lambda service.
+
+  - [The _streaming_ response model](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-response-streaming/). This, at the time of writing this, is very new. **This invocation model allows you to get past the 6MB response limit** which I think will open the door to many more use-cases for AWS Lambda.
+
+    - On the side note, keep in mind that the 6 MB output limit is not really 6 MB of data. There is some encoding going on after your payload "leaves" the handler. See [this article series for more information](https://zaccharles.medium.com/deep-dive-lambdas-response-payload-size-limit-8aedba9530ed).
+
 #### Alias
 
 - alias can point to a **single version** or **two lambda versions**.
