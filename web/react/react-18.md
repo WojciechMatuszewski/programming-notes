@@ -413,6 +413,22 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
     - This is a shift in how we usually write React apps, where the `children` prop is used but not to that extend.
 
+- Server components as island architecture?
+
+#### Notes from the "Into the Depths with Server Components and Functions"
+
+> You can [find the source here](https://www.youtube.com/watch?v=QS9yAsv1czg).
+
+- Server Components as islands. The root is on the server. This allows for optimization on the data-serialization level.
+
+  - The _server_ tree is continuous, while the _client_ tree can be split by the server components. This makes it hard to communicate between different client-components (use client context for that).
+
+- Caching (mostly de-duping) moves from the client to the server. Of course you can cache on the client, but keep in mind that the client components are mixed with server components. Since the server is the root, it makes sense to cache on the server.
+
+- Nested routing and the ability to deduce which data lives where allows you to skip waterfalls. You can fetch data for components you are about to render in parallel while rendering them.
+
+  - That is not the case in most of the apps today. Currently we "fetch on render" most of the times.
+
 ### React Client Components
 
 These components are **prerendered on the server and hydrated on the client**. This means that **when using RCCs you pay the cost of shipping JS to the client**. These are your "standard" Next.js components from the `page` directory.
