@@ -415,7 +415,7 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
 ### React Client Components
 
-These components are **prerendered on the server and hydrated on the client**. This means that **when using RSCs you pay the cost of shipping JS to the client**. These are your "standard" Next.js components from the `page` directory.
+These components are **prerendered on the server and hydrated on the client**. This means that **when using RCCs you pay the cost of shipping JS to the client**. These are your "standard" Next.js components from the `page` directory.
 
 ### The bottom line
 
