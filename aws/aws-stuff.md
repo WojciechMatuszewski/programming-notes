@@ -60,7 +60,11 @@
 
   - The _synchronous_ invocation model (request-response).
 
-  - The _asynchronous_ invocation model that uses **internal SQS queue**. You cannot get "into" that queue. It is managed by the AWS Lambda service.
+  - The _asynchronous_ invocation model that uses **internal queue (maybe SQS?)**. You cannot get "into" that queue. It is managed by the AWS Lambda service.
+
+    - It turns out the metrics which I would deem necessary for basic observability for this invocation model were added only recently (in relation to when I'm writing this). I wonder how people were able to use this invocation type in any kind of workload before [these metrics were available](https://aws.amazon.com/blogs/compute/introducing-new-asynchronous-invocation-metrics-for-aws-lambda/).
+
+      - To be fair, I was thinking about the _asynchronous_ invocation of a AWS Lambda via the SDK, and not the context of the integration between different services. It turns out these metrics are even more important when thinking about SNS -> AWS Lambda or similar integrations.
 
   - [The _streaming_ response model](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-response-streaming/). This, at the time of writing this, is very new. **This invocation model allows you to get past the 6MB response limit** which I think will open the door to many more use-cases for AWS Lambda.
 

@@ -415,7 +415,7 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
 ### React Client Components
 
-These are your "standard" React Components. They work as if you were loading them **purely on the client**. You can do all the effects and such without worrying about running on the server.
+These components are **prerendered on the server and hydrated on the client**. This means that **when using RSCs you pay the cost of shipping JS to the client**. These are your "standard" Next.js components from the `page` directory.
 
 ### The bottom line
 
