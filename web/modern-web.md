@@ -24,10 +24,32 @@
 
   - When the app hydrates, the user will "feel" the hydration (a minor freeze, or some kind of glitch) if you defer it.
 
-### Eager vs Progressive hydration
+### Different kinds of hydration
+
+There are spectrums of hydration. One can mix them accordingly. For example, you can have _eager_ and _partial_ hydration implemented in the same framework.
+
+#### Eager vs Progressive hydration
 
 - _Progressive hydration_ would be loading the JS and hydrating on event/interaction.
 
 - _Eager_ would be to hydrate everything at the beginning.
 
-[Finished here](https://youtu.be/iR5T2HefqKk?t=6391)
+#### Partial vs Full
+
+- _Partial hydration_ is to send only the JS needed for interaction for a given page. This combines the knowledge that the server and the client has.
+
+  - If you do not need the JS, the framework will only send the serialized HTML/data for given pieces of the page.
+
+- _Full hydration_ is to send all the JS for every component.
+
+#### Replayable vs Resumable
+
+- _Resumable hydration_ is when you **do NOT** repeat any work that the server already done.
+
+  - Keep in mind that so far we have been running the JS that already been run on the server. This is quite revolutionary.
+
+  - This technique requires the serialization of the whole state. Both the app state and the framework state.
+
+- _Replayable hydration_ is when you re-store the state of the components as the server seen them.
+
+  - This means you only ship the app state and "replay" the framework to a given state.
