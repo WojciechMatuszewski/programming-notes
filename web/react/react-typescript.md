@@ -1,5 +1,44 @@
 # React Typescript
 
+## Getting all props for a given HTML node
+
+This is especially useful when building any re-usable components. Picture a situation where you have to build a re-usable `Button` components.
+You most likely have some _design-system specific_ props and you would also like to accept all other props the `button` HTML can.
+
+```tsx
+type DesignSystemProps =  {
+  leadingIcon: Icon,
+  variant: string
+  // and so on
+}
+
+type Props = DesignSystemProps
+
+const MyButton = ({leadingIcon, variant, ...rest}: Props) => {
+  // the `rest` is typed as {}
+  return <button>...</button>
+}
+```
+
+There are various ways to do it, but I think the most straightforward one is to use the `ComponentProps` type from React typings.
+
+```tsx
+type DesignSystemProps =  {
+  leadingIcon: Icon,
+  variant: string
+  // and so on
+}
+
+type Props = DesignSystemProps & ComponentProps<"button">
+
+const MyButton = ({leadingIcon, variant, ...rest}: Props) => {
+  // the `rest` contains all the props the `button` can have.
+  return <button>...</button>
+}
+```
+
+Also, when we are at it, **make sure you forward the ref to the button**. Being unable to use the `ref` on the consumer side is a bit soul crushing.
+
 ## Polymorphic components
 
 There are the components which change their behavior (in our case _props_) based on some condition (in our case a specific _prop_).
