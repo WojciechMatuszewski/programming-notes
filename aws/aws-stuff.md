@@ -70,6 +70,14 @@
 
     - On the side note, keep in mind that the 6 MB output limit is not really 6 MB of data. There is some encoding going on after your payload "leaves" the handler. See [this article series for more information](https://zaccharles.medium.com/deep-dive-lambdas-response-payload-size-limit-8aedba9530ed).
 
+#### APIGW integration types
+
+- There is the **`HTTP_PROXY` integration type** where APIGW **will forward the whole request to your AWS Lambda function**. You **do not get to specify the request/response mapping templates**.
+
+- There is the **`AWS_PROXY` integration type** where APIGW **will apply a default, non-configurable mapping template to the request**. You **do not get to specify the request/response mapping templates**.
+
+- There is the **`AWS` integration** where APIGW **will NOT transform anything for you**. You **must configure both the request and response mapping templates**.
+
 #### Alias
 
 - alias can point to a **single version** or **two lambda versions**.
