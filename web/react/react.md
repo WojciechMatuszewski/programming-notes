@@ -110,9 +110,48 @@ Yes, you could pass the second parameter to the `React.memo`, but you might also
 
 Why would this work? Well, know `React.memo` will be diffing between **primitives** (granted `article` does not have an object property). Since `React.memo` diffs between _primitives_, there is no referential identity to worry about.
 
-## Lesser known hooks
+## Hooks
 
-### `useDebugValue`
+### `useReducer` is the cheat mode of hooks
+
+> Based on [this article piece](https://overreacted.io/a-complete-guide-to-useeffect/#why-usereducer-is-the-cheat-mode-of-hooks)
+
+I've always been though to put the `reducer` function outside of the component body. This made sense to me as I though that if I put it inside the component, the reference to the `reducer` would be lost and the dispatch would not be stable between re-renders.
+
+Turns out this is not the case. **You can define the `reducer` function in the component body and close-over any properties**. This I do not have a specific use-case at hand for this technique, it is very interesting to me that we can do this.
+
+As an alternative to what Dan posted, one could solve the issue like this:
+
+```tsx
+function reducer(state, action) {
+  if (action.type === "tick") {
+    return state + action.payload;
+  } else {
+    throw new Error();
+  }
+}
+
+function Counter({ step }) {
+  const [count, dispatch] = useReducer(reducer, 0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      dispatch({ type: "tick", payload: step });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [dispatch, step]);
+
+  return <h1>{count}</h1>;
+}
+```
+
+Here, the `reducer` is defined outside of the `Counter`. The functionality **appears to behave the same way as before BUT it is NOT**. Every time the `step` changes we will clear the interval (rightfully so). That has an implication that we will start counting from 0 up to the specified time to run the interval callback.
+
+This is not the case when you use the "trick" Dan describes. There, when the step changes, we will never clear the interval, so there wont be this "delay" in counting the number.
+
+### Lesser known hooks
+
+#### `useDebugValue`
 
 This hook is tightly integrated with the React dev extension.
 The idea is to have more information about given hook when using that extension.
@@ -125,7 +164,7 @@ React.useDebugValue(_value, _transformFn)
 
 What it does it displays that value as additional label near given hook. Please note that **this hook is only fired whenever dev tools are open**.
 
-### `useImperativeHandle`
+#### `useImperativeHandle`
 
 This one allows you to control how what `ref` can do.
 
@@ -176,7 +215,7 @@ I think this hook is not that useful in day-to-day work, but there are probably 
 
 The `useImperativeHandle` hook allows you too implement _bidirectional_ flow of the data. Just like you could with class components and `React.ref`.
 
-#### Pseudo implementation
+##### Pseudo implementation
 
 One thing I find really useful while learning is to try to re-implement things, this way I'm actually learning how a given abstraction works under the hood (even though my implementation is probably not covering all the use cases and so on).
 
