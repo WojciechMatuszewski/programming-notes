@@ -78,4 +78,22 @@ It is quite fascinating how many ways there are to measure performance of the we
 
 ## Question 8
 
-Finished 1:03:00 part 1
+- The `no-cache` header is a bit misleading to me. I would imagine it would not cache anything (or touch the cache at all), but it **will still validate the cache response with the origin server before using it**.
+
+  > It will always make the request to the origin server BEFORE using the resource. If the resource server responds with 304, the browser will use the resource it has, otherwise it will use the one from the resource server.
+
+  - Use the **`no-store` value when you do not want to cache at all!**.
+
+Overall, I think the knowledge of cache headers is quite important. It is very easy to get them wrong or forget that they even exist.
+
+## Question 9
+
+Interesting history lesson here. It **used to be the case that if two objects referenced each other, you could introduce a memory leak**. Older browsers were using **reference counting** as the heuristic to determine if a given piece of memory can be garbage collected.
+
+This is **not the case now**. The instructor states that **if there are no references to items in the global execution context, the browser will GC those items** (even if they have a reference to each other).
+
+## Question 10
+
+This question touches on the topic of **"optimized" and "non-optimized" animations**. It is worth knowing that **animating properties like `width` or `left` might cause freezes and stutters**. There are websites that will tell you which property is "optimized" for animation (AKA will not cause the layout work). [This MDN page is a good resource](https://developer.mozilla.org/en-US/docs/Learn/Performance/CSS#animating_on_the_gpu)
+
+Finished part 2, 39:29
