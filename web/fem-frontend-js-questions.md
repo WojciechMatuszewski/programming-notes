@@ -96,4 +96,108 @@ This is **not the case now**. The instructor states that **if there are no refer
 
 This question touches on the topic of **"optimized" and "non-optimized" animations**. It is worth knowing that **animating properties like `width` or `left` might cause freezes and stutters**. There are websites that will tell you which property is "optimized" for animation (AKA will not cause the layout work). [This MDN page is a good resource](https://developer.mozilla.org/en-US/docs/Learn/Performance/CSS#animating_on_the_gpu)
 
-Finished part 2, 39:29
+## Question 11
+
+- There are two phases of even propagation: the **capturing and the bubbling phase**.
+
+- **By default** the `addEventListener` **will invoke the callback in the context of the bubbling phase**.
+
+  - You can **change this behavior by using the 3rd parameter of `addEventListener`**. Either by providing an object with a `capture` property or a boolean value.
+
+- The **event flow is bidirectional – it first goes to the target (capturing), then back from the target to the root document (bubbling)**.
+
+## Question 12
+
+This one is about CSS specificity. I'm not sure how useful it is to memorize those rules. There are bunch of sites that will tell you the specificity of a given selector. I think that the most important thing is to know that _CSS specificity_ is a thing and that some rules can override each other.
+
+## Question 13
+
+- The **difference between the `Map` and `WeakMap`** is how it "handles" references and what can be a key.
+
+  - You can think of the **`Map` as copying over the values into it's own memory**. Even if you **remove the underlying value, the `Map` will still hold onto that value in the memory**.
+
+  - The **`WeakMap`** works more like it was **holding references to the underlying values. If you "delete" the underlying value, the `WeakMap` will also remove it**.
+
+```js
+var k1 = {a: 1};
+var k2 = {b: 2};
+
+var map = new Map();
+var wm = new WeakMap();
+
+map.set(k1, 'k1');
+wm.set(k2, 'k2');
+
+k1 = null;
+map.forEach(function (val, key) {
+    console.log(key, val); // You can still access `k1` value, even though we "removed it" from the execution context.
+});
+
+k2 = null;
+wm.get(k2) // undefined. The value is gone.
+```
+
+## Question 14
+
+A question about [_Web Vitals_](https://web.dev/vitals/). There are a lot of acronyms and I'm unsure if it's worth remembering them. I mean you can always look it up in the docs.
+
+## Question 15
+
+This one is about **CSP header** value. I have to admit I was unaware that such thing even existed before I jointed Stedi. It is very interesting to me that one can **limit the origins the browser can load the resources from**. This is a great boost to the security posture of your application, **but it also can be a pain in the ass sometimes**.
+
+The strategy seem to disallow all origins by default (by providing the `default-src: "none"`) and then extend the various resource types with hand-picked origins.
+
+You can [read more about CSP here](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP). Notice the "weird" syntax where each "rule" is separated by `;`.
+
+## Question 16
+
+- If you do not specify some attributes on the `a` tags, and the page your link is pointing at is malicious, you might help that malicious site hack your users.
+
+  - By default, though some browsers like Chrome are already removing the access to those properties, you can check the origin the user came from to your website. This is done via the `document.referrer` (there is also `document.opener`).
+
+  - You **should be setting the `rel="noreferrer"` on your links to ensure that the target website cannot gain any information where the user came from**. This is a good practice from the security and privacy perspective.
+
+- If you specify the `noreferrer` it also implies the `noopener`.
+
+## Question 17
+
+Ahh, JS generators. Such an underused and underappreciated feature of the language.
+
+Since I'm not that familiar with them, I was unsure about the answer, but I turned out to be the correct one. One thing that caught me off guard was assigning to the `yield`, like so.
+
+```js
+function* gen() {
+  const result = yield;
+
+  console.log("You passed", result);
+
+  return "done":
+}
+
+const it = gen();
+it.next() // undefined
+it.next("42") // "You passed 42" (iterator ends)
+```
+
+## Question 18
+
+- `all` will resolve all promises but until a point of first rejection.
+- `race` – will resolve the first promise that resolves or rejects.
+- `any` – will wait for the first promise that resolves successfully. If none of the promise resolve, then it will reject.
+- `allSettled` – will resolve all promises and then give you either a value or a rejection reason for each of them.
+
+## Question 19
+
+- The **`bfcache` is a cache of pages the user visited in a given session**. The cache is there to **allow snappier "go back" navigation**.
+
+- There are some **events that will make a given page unfit for `bfcache`**. One of them is **the `unload` event**.
+
+  - Keep in mind that **this is not the same as `beforeunload` event that you might use to warn the user that they have not saved their work**. You cannot cancel the `unload` event.
+
+    - The `beforeunload` and the `unload` is not that reliable. The end-solution to the problem where the user might forget to save their work is to have auto-save functionality with versioning.
+
+## Question 20
+
+This question is about various attacks a malicious party might try. The most famous one would be XSS or CSRF. Luckily for us, the XSS is pretty much impossible if you use a framework.
+
+Finished part 4 07:45
