@@ -200,4 +200,96 @@ it.next("42") // "You passed 42" (iterator ends)
 
 This question is about various attacks a malicious party might try. The most famous one would be XSS or CSRF. Luckily for us, the XSS is pretty much impossible if you use a framework.
 
-Finished part 4 07:45
+- Use "same-site" cookies as they are very secure and should be the default
+
+- Understand the mechanism of the _CSRF token_.
+
+  - This is a token which is used to validate that the requests are coming from a legit client and are not _forged_ by an attacker.
+
+  - First, the server generates such token and sends it alongside other data in the cookie. The client has to make the requests with that token for the server to accept their request.
+
+## Question 21
+
+This one is about loading fonts and the `font-display` attribute. There are a lot of them and what value you specify for `font-display` could influence how "fast" your page feels.
+
+- I did not know that the `block` value renders an **invisible font**. Interesting.
+
+  - I have not seen this in the wild for ever? This is mostly because the **`auto` is the default**.
+
+- You most likely want to use `swap` with custom CSS to match the default font as close as possible to your custom font.
+
+## Question 22
+
+- The **`HttpOnly` on the cookie DOES NOT mean that the cookie will only be set for HTTP domains**.
+
+  - It means that the **client cannot access that cookie**. The `HttpOnly` makes the cookie _server-side_ only.
+
+## Question 23
+
+- The `first-of-type` will target all elements that match this rule of different nesting levels.
+
+    ```html
+    <div>
+      <ul>
+        <!-- ul:first-of-type > li:first-of-type -->
+        <li>foo</li>
+        <ul>
+          <!-- ul:first-of-type > li:first-of-type -->
+          <li>bar</li>
+        </ul>
+      </ul>
+    </div>
+    ```
+
+- If you want to target the "real" first occurrence, use the `first-child`
+
+## Question 24
+
+- This question is about the `Strict-Transport-Security` header and something called **HSTS**. I was completely unaware that such thing exists.
+
+- With **HSTS you can guarantee that the browser will automatically redirect the user from HTTP to HTTPs**. This could save you some work on your server as it is the browser doing that redirect.
+
+  - When you **perform the initial redirect on the server, attach the `Strict-Transport-Security` header to the response and the browser will handle the rest**.
+
+## Question 25
+
+This one was about rendering layers and how they are created. The browser creates those layers to promote the animations to GPU or to enhance performance – imagine your `position:fixed` element causing the layout re-calculation on scroll, that would be horrible for performance!
+
+## Question 26
+
+This one was about various image formats. The web progressed a LOT from the `.jpeg` days – there are a lot of choices.
+It appears that the `AVIF` if the image format of the future?
+
+## Question 27
+
+This one was about CORS. I have to admit, I'm still not so well educated on this subject.
+
+- To allow cookies with requests, you have to explicitly denote that in the CORS headers.
+
+- Keep in mind that the "CORS request" is the "OPTIONS" request. **Not all requests require the preceding OPTIONS request**.
+
+  - If the [request is _simple_](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests) the browser will not bother with the "OPTIONS" request.
+
+## Question 28
+
+Another question about the event loop. The takeaway here for me is that **you can block the queue if a microtask (promise-queue) schedules another micro-task**. Keep in mind that some things run synchronously, like the `defer` in Go.
+
+- The `Promise.resolve()` is synchronous
+
+- The `Promise(callback)` will call the `callback` synchronously.
+
+## Question 29
+
+- HTTP 1.1 can only do one request over a given TCP connection at a given time. You have to have multiple TCP connections for multiple resources.
+
+- HTTP 2.0 can do **multiple requests over the same TCP connection**. This means that there are less TCP-related resources to manage.
+
+- The HTTP 3.0 can do invents a new protocol called **QUIC**. This greatly increases performance as you can do multiple requests across multiple connections.
+
+## Question 30
+
+This one was about the `this` keyword and its value under different contexts. I find the golden rule Kyle Simpson thought me here very valuable.
+
+> The only thing that matters is how the function is called.
+
+Do you see any object to the left of the `.`? Then that will be the `this` value. If not, fallback to global.
