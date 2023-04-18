@@ -115,3 +115,29 @@
   - You can to tell Qwik that you are using "React JSX" and not "Qwik JSX".
 
     - What is nice is that the "wrapped" component has all the Qwik-specific props, like `onChange$`.
+
+## Random things I've read on the internet about Qwik
+
+- Qwik uses Rust to read your code and split it into different JS files. The `$` symbol is important here as it is one of the clues for the _optimizer_ that there is a potential split point where this symbol is visible.
+
+- Qwik uses a global event listener on the `document` to handle all the events your app produces. You can break the framework by adding your own listener on the `window`.
+
+  ```js
+  useVisibleTask$((ctx) => {
+    const element = window;
+
+    const listener: EventListener = (e) => {
+      console.log(e);
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    element?.addEventListener("click", listener, { capture: true });
+
+    ctx.cleanup(() => {
+      element?.removeEventListener("click", listener, { capture: true });
+    });
+  });
+  ```
+
+  Notice the `capture` here. If I did not set this, the Qwik listener would be the first to process the event as it is registered for the _capture_ phase and not the _bubbling phase_ (the default).
