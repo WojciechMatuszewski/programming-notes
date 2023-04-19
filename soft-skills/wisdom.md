@@ -75,7 +75,7 @@ All too often the mantra when creating software goes like this: _"You need to de
 
 We often talk about the concept of _premature opitmization_ –there is no point in optimizing the code unless you need to optimize it. This sounds good until your site loads after 30 seconds or a call to a database take a minute to finish.
 
-If that happened to your codebase, you witnessed the [**premature pessimization**](https://stackoverflow.com/questions/15875252/premature-optimization-and-premature-pessimization-related-to-c-coding-standar) with your own eyes – people quote the idea of _premature optimization_ as means of writing code that is not performing well (it does not have to perform great).
+If that happened to your codebase, you witnessed the [**premature pessimisation**](https://stackoverflow.com/questions/15875252/premature-optimization-and-premature-pessimization-related-to-c-coding-standar) with your own eyes – people quote the idea of _premature optimization_ as means of writing code that is not performing well (it does not have to perform great).
 
 Where you should focus on are the interfaces and the underlying data structures. If you have those right, you will likely never be in a situation where your system is unusable. With the correct and well-defined interfaces and data structures, you can optimize all you want later on.
 
@@ -92,3 +92,19 @@ How many times did you judge a person based on yours, maybe inaccurate, judgment
 In such situations, consider looking at what is happening through the lens of empathy. **Replace your judgments with curiosity**. If you do that, you will likely arrive at a different explanation of a situation.
 
 So, next time you or someone you work with is underperforming, instead of judging, ask, "Hey, what is going on? How can I help".
+
+## Hyperbolic discounting or how we want the quick rewards
+
+Have you ever worked with a code that does not _feel_ good to work with? You know what I'm talking about – the code is not that great, is complex and there are very few, if any, tests. You are under pressure to deliver, but you are afraid that your changes will introduce issues.
+
+In those cases, you might ask yourself: "who wrote this code?! It is so bad!". And you would be right to say that, the code is bad, but the experienced developer will also ask himself: "what caused this code to end up this way?". And that is a key question you should be asking yourself most of the time.
+
+See, we as humans, want a quick reward. That is why we eat fast food rather than cooking a healthy meal – it is much more convenient to eat something with a lot of fat and sugar from McDonlands rather than to eat clean. This behavior is not limited to mundane every-day things, **it also applies to business and software development**.
+
+In business, unexperienced (to some degree) leaders (or greedy ones) want to get their product out there _FAST_. They will try to pressure you to deliver as fast as possible. Since you will most likely agree (not something I would advocate for), you end up with a situation I described above – code that has low cohesion and is not designed well.
+
+This behavior of _wanting things now_ and disregarding the implications is something called **hyperbolic discounting**. We do not think about the implications of the "reward" in the long term. All we have in front of us are days or weeks after the feature lands. "Oh my business is going to earn some much money" they say, but they fail to realize that they have just set it to fail in the next year.
+
+---
+
+There is much more to be said about the quality of the software, but I find [this talk especially interesting](https://www.youtube.com/watch?v=aRR0EDazxIk). It touches on the subject of hyperbolic discounting and how to fight it with data-driven insights.
