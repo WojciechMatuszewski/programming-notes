@@ -145,15 +145,13 @@ Partition key is responsible for putting things in the same buckets and secondar
 
 #### Global Secondary Indexes
 
-These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key.
-They work _outside the buckets_. Global secondary indexes are **stored on their own partitions** (separate from the table).
+These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key. They work _outside the buckets_. Global secondary indexes are **stored on their own partitions** (separate from the table).
 
-The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different than the LSI / primary indexes.
-You can also change the GSI value of the GSI pk and / or GSI sk without any restrictions. This is quite logical since otherwise it would not be possible to create _sparse indexes_.
+The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different than the LSI / primary indexes. You can also change the GSI value of the GSI pk and / or GSI sk without any restrictions. This is quite logical since otherwise it would not be possible to create _sparse indexes_.
 
-> In a DynamoDB table, each key value must be unique. However, the key values in a global secondary index do not need to be unique.
+> In a DynamoDB table, each key value must be unique. However, the key values in a global secondary index do not need to be unique. <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html>
 
-<https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html>
+Another thing to note is that **the set of data-types you can create the GSI from is limited**. For example, you **cannot create a GSI on a boolean value**. Before you plan your data model, ensure that the data-type is compatible with the GSI/index scheme.
 
 ##### GSI asynchronicity
 
