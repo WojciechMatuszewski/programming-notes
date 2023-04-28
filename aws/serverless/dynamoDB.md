@@ -145,7 +145,7 @@ Partition key is responsible for putting things in the same buckets and secondar
 
 #### Global Secondary Indexes
 
-These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key. They work _outside the buckets_. Global secondary indexes are **stored on their own partitions** (separate from the table).
+These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key. **GSI is like creating a separate table with items that only contain that GSI**. Global secondary indexes are **stored on their own partitions** (separate from the table).
 
 The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different than the LSI / primary indexes. You can also change the GSI value of the GSI pk and / or GSI sk without any restrictions. This is quite logical since otherwise it would not be possible to create _sparse indexes_.
 
@@ -156,6 +156,8 @@ Another thing to note is that **the set of data-types you can create the GSI fro
 ##### GSI asynchronicity
 
 The GSI replication is asynchronous. The leader node acknowledges the write and then sends the write to a stream to be picked up by other nodes (that stream is most likely a kinesis data stream). **That is why you cannot use `consistentRead: true` while using GSI**.
+
+The **GSIs have much lower throughput than the base table**. This is because the **GSIs have much lower cardinality, as there is only a single PK and SK for a given GSI table**. This means that the **replication can lag quite a bit behind the main table**. See [this tweet for more information](https://twitter.com/ksshams/status/1651196657831403520?s=20).
 
 If you want to learn more about GSIs, [check out this video](https://youtu.be/ifSckJlatWE?t=2114).
 
@@ -173,7 +175,7 @@ Imagine having 10 GSIs and writing an item that touches only half of them. You w
 
 ###### Implications of GSI throttling
 
-[Here is a great article](https://medium.com/shelf-io-engineering/five-ways-to-deal-with-aws-dynamodb-gsi-throttling-1a489803a981) on this subject.
+[Here is a great article](https://medium.com/shelf-io-engineering/five-ways-to-deal-with-aws-dynamodb-gsi-throttling-1a489803a981) on this subject. There is also [this Twitter thread](https://twitter.com/ksshams/status/1651196703004053505?s=20).
 
 The main takeaways I have after reading it are:
 

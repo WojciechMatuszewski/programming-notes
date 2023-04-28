@@ -12,8 +12,7 @@ Imagine being in a team. Only, and only you, know how to operate a given part of
 
 Now, instead of pursuing other interesting projects within your company, you are stuck at your team (they might be a great bunch of people, that does not matter). You locked yourself in. There is no going back. You stagnate.
 
-Instead of being a knowledge silo, spread the knowledge to people around you. Make sure they can operate the system just as well, if not better, than you.
-Would that mean giving them assignments that you deem interesting at first? Yes! The payoff? You are free from the shackles of your domain. You can switch projects – guilt-free!
+Instead of being a knowledge silo, spread the knowledge to people around you. Make sure they can operate the system just as well, if not better, than you. Would that mean giving them assignments that you deem interesting at first? Yes! The payoff? You are free from the shackles of your domain. You can switch projects – guilt-free!
 
 ## Taxonomies fail at the edges
 
