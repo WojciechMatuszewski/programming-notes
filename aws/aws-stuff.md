@@ -245,11 +245,18 @@
 - **Lambda destinations are used when lambda is invoked by other services** like: **s3, SNS, SES, Config etc..** and
   then those **onSuccess or onFailure** events are **send to Lambda, SNS, SQS, EventBridge**.
 
-- works only for **async** and **stream based invocations**.
-  - if you need to setup **destinations of pool-based invocations** then you might be interested in **setting
-    destinations on Event Source Mapping** itself.
-  - in these types of invocations, the **Event Source Mapping** controls the batching and pushing the events to your
-    lambda
+- Works only for **async** and **stream based invocations**.
+
+  - Ff you need to setup **destinations of pool-based invocations** then you might be interested in **setting destinations on Event Source Mapping** itself.
+
+  - In these types of invocations, the **Event Source Mapping** controls the batching and pushing the events to your
+    AWS Lambda function
+
+- **The payload you get contains both the event and the error response**. This is **different than using DLQ** where DLQ only contains the event and **some, not all information about the error**.
+
+  - To be specific, [according to the docs](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html) it sends the message with three attributes: `RequestId`, `ErrorCode` and `ErrorMessage`.
+
+    - **Keep in mind that these attributes count towards the 256kb size quota**. If you exceed that limit, your message will never arrive at the DLQ (quite scary, I never thought about this one).
 
 #### Lambda function URLs
 
