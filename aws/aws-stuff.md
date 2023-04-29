@@ -317,8 +317,11 @@
 
 - with event based architecture, it may happen that you cause an infinite loop of invocations (think s3 events)
 
-- you can troubleshoot the problem by **setting reserved concurrency limit to 0**.
-  This will make it so your function is not invoked at all. There is a **built-in option for that within the UI**.
+- you can troubleshoot the problem by **setting reserved concurrency limit to 0**. This will make it so your function is not invoked at all. There is a **built-in option for that within the UI**.
+
+  - keep in mind that **some services, like s3, retry events**. This means that you might want **to wait before turning the reserved concurrency back on to non-zero number**. Of course, the if you have your fix in place, that should not be a problem.
+
+    - AWS recommends using two buckets to avoid an issue with s3 recursive PUTs / READs altogether. [Source article](https://aws.amazon.com/blogs/compute/avoiding-recursive-invocation-with-amazon-s3-and-aws-lambda/).
 
 #### Deployments with `CodeDeploy`
 
