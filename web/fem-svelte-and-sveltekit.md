@@ -82,3 +82,4 @@ Going trough [this course](https://frontendmasters.com/workshops/svelte-svelteki
   - It also handles errors via the `{:catch}`, similar how you can use the `ErrorBoundary` in React.
 
 Finished day 1 part 1 55:46
+<https://learn.svelte.dev/tutorial/await-blocks>
