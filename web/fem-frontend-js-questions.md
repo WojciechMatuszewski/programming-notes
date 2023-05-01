@@ -89,6 +89,8 @@ Since we are talking about the event loop, let us consider **a couple of ways to
 
 - You can **schedule with `requestIdleCallback`**. Have not had the pleasure to use this one yet, but I see how it might be useful. The use case from the blog post is a good one.
 
+  - TIL that there is a polyfill for this callback. The polyfill uses `setTimeout` with a value of `1`. Interesting.
+
 ## Question 5
 
 - The **`dns-prefetch` performs domain name resolution in the background**.
