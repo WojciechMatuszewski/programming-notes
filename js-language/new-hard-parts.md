@@ -79,8 +79,7 @@ Along with _call stack_ we also have many queues. One of them is the _Callback Q
 
 #### Event Loop
 
-_Event Loop_ is a **Javascript engine feature**.
-_Event loop_ checks if _Callback Queue_ is empty and places stuff from _Callback queue_ to _Call Stack_
+_Event Loop_ is a **Javascript engine feature**. _Event loop_ checks if _Callback Queue_ is empty and places stuff from _Callback queue_ to _Call Stack_
 
 ### Promises
 

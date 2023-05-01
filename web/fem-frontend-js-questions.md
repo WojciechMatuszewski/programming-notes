@@ -50,6 +50,45 @@ A classic question of "what gets logged". This one requires the knowledge of the
 
   - This means that the _timers_ are executed AFTER the micro-tasks (mainly Promises).
 
+---
+
+Since we are talking about the event loop, let us consider **a couple of ways to _schedule_ code execution**. Having understanding what runs when plays a vital role when dealing with animations.
+
+> Based on [this lovely article](https://www.macarthur.me/posts/navigating-the-event-loop).
+
+- You **can schedule with `setTimeout` making the code inside run on the soonest possible future turn of the event loop**.
+
+  - Please know that the _soonest possible_ does not necessarily mean _next_. You can block the event loop with microtasks pretty easily!
+
+  - You can use **this technique to spread the work across multiple event loop cycles**.
+
+    - The **sample would apply to the `postMessage` trick**. This one might be more optimized as the browser does not have to queue timers.
+
+- You **can schedule with `queueMicrotask` making the code run AT THE END of the current event cycle loop**. This **kind of works like `defer` from GO**.
+
+    ```js
+    function main() {
+      queueMicrotask(() => {
+        console.log("at the end");
+      });
+
+      if (Math.random() > 0.5) {
+        console.log("exiting");
+        return;
+      }
+
+      console.log("not exiting");
+    }
+
+    main();
+    ```
+
+  In the example above, no matter what branch of the code is executed, the `at the end` will be executed (yes, even if we return early).
+
+- You can **schedule with `requestAnimationFrame`**. I've used this hook extensively to ensure my animations are applied _after_ the measurements, but in the same keyframe. [The article goes in a great detail about the use case I have in mind](https://www.macarthur.me/posts/navigating-the-event-loop#3-requestanimationframe).
+
+- You can **schedule with `requestIdleCallback`**. Have not had the pleasure to use this one yet, but I see how it might be useful. The use case from the blog post is a good one.
+
 ## Question 5
 
 - The **`dns-prefetch` performs domain name resolution in the background**.
