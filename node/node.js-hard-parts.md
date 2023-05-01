@@ -296,3 +296,5 @@ Let's summarize our knowledge of the _event loop_
 - It **seems that** the `setTimeout(fn, 0)` is **guaranteed to run at the next loop of the event loop**. **After the immediates set synchronously**.
 
 - Another helpful visualization [can be found here](https://www.builder.io/blog/visual-guide-to-nodejs-event-loop?ck_subscriber_id=1352906140#visualizing-the-event-loop).
+
+- [Another great article about the event loop](https://www.macarthur.me/posts/navigating-the-event-loop), especially the `queueMicrotask` pattern that looks similar to `defer` in Go (which I love!).
