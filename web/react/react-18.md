@@ -363,23 +363,35 @@ Before React 18 existed, you had two choices
 
 Here you **stream non-interactive HTML code from the server to the client**. This is **similar to `getServerSideProps` in Next.js**, but it is **NOT the same**. The main difference between _React Server Components_ and `getServerSideProps` are.
 
-1. With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server Components_.
+- With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server Components_.
 
-  1.1 **You cannot use any React hooks with _React Server Components_**.
+  - **You cannot use any React hooks with _React Server Components_**.
 
-  1.2 Using `getServerSideProps` is **to display a non-interactive version of the _client_ component** and then hydrate it for interactivity. There is **no hydration using _React Server Components_**.
+  - Using `getServerSideProps` is **to display a non-interactive version of the _client_ component** and then hydrate it for interactivity. There is **no hydration using _React Server Components_**.
 
-2. With _React Server Components_ you can **fetch as your render**, where the component definition is asynchronous.
+- With _React Server Components_ you can **fetch as your render**, where the component definition is asynchronous.
 
-3. The **dependencies you use to render _Server Components_ do not add to your overall bundle**.
+- The **dependencies you use to render _Server Components_ do not add to your overall bundle**.
 
-  3.1 Since there is no hydration, there is no need to push that code to the client.
+  - Since there is no hydration, there is no need to push that code to the client.
 
-  3.2 The _React Server Components_ have **automatic bundle splitting**. As in you do not have to use `React.lazy` for code splitting.
+  - The _React Server Components_ have **automatic bundle splitting**. As in you do not have to use `React.lazy` for code splitting.
 
     - If the page is not using some of the components, they will not be send to the client.
 
-4. The **_Server Components_ allow you to use native Node.js functions as they only run on the backend**.
+- The **_Server Components_ allow you to use native Node.js functions as they only run on the backend**.
+
+- The **_Server Components_ are always "rendered", no matter if they are lazily loaded**.
+
+  - This is something I learned from [this video](https://www.youtube.com/watch?v=AGAax7WzStc) and also from [the next.js docs](https://beta.nextjs.org/docs/optimizing/lazy-loading#example-importing-server-components).
+
+    - According to the docs, "If you dynamically import a Server Component, only the client components that are children of the Server Component will be lazy loaded - not the Server Component itself.". This **is very important to keep in mind**.
+
+    - As your page grows, you might need to stream more and more data. I must be missing something, but this strategy does not sound right to me. What if I have a huge number of components?
+
+      - After a bit of googling, I came to a conclusion that it does not matter as you most likely will split everything per page. What I worry about are waterfalls while fetching client components JS.
+
+        - This [blog from the remix team](https://remix.run/blog/react-server-components#the-react-teams-demo) confirms my suspicions. Unless you kickoff all the promises to start fetching and pass them down to components, you will get into fetch-render-fetch-render cycle that causes waterfalls.
 
 #### Notes from the "React Server Components with Dan Abramov, Joe Savona, and Kent C. Dodds"
 
