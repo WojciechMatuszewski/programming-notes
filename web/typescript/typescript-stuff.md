@@ -1474,30 +1474,27 @@ const stripeOrder = Object.assign({}, order, stripeData); // OrderWithStripe
 
 While working with unions you might want to check some condition for each member of the union.
 
-For example, I might want to check if this union
+Let us say you have this collection of fruits.
 
 ```ts
-type MyUnion = string | number | boolean;
+type Fruits = "apple" | "banana" | "orange";
 ```
 
-contains the `string` type. Thankfully for us, the _union_ type has this property where when you use the _conditional types_ the condition will be applied to all members of the union.
+Now, you would like to create a type that only contains the `"apple"` or `"banana"`. To do so, you might be tempted to write the type like this.
 
 ```ts
-type MyUnion = "ala" | 0 | true;
-
-type HasString = Check<MyUnion, "ala">; // 'ala'
+type AppleOrBanana = Fruit extends "apple"| "banana" ?  "apple"| "banana"  : never
 ```
 
-The condition inside the `HasString` type is expanded to something like this
+Sadly this **will not work as you would expect**. The underlying type is still `never`. This is because **the _distributive_ part of the types is only applied when we are dealing with generics**.
+
+In the example above, TypeScript will **compare the WHOLE `Fruits` type to the WHOLE union type you created by hand**. This is not want you want. You want to compare each member of `Fruits` with each member of the union type. To do so, you must use generics.
 
 ```ts
-type HasString =
-  | ("ala" extends "ala" ? "ala" : never)
-  | (0 extends "ala" ? "ala" : never)
-  | (true extends "ala" ? "ala" : never);
+type AppleOrBanana<TFruit> = TFruit extends "apple"| "banana" ?  "apple"| "banana"  : never
 ```
 
-Now, typescript is doing this for you, but this is something worth knowing.
+This time, TypeScript will compare each member of `TFruit` with each member of the `"apple"| "banana"` union.
 
 ### `Extract` utility
 
