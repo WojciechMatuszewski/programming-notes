@@ -1782,6 +1782,19 @@ const realObject: MyStrictObject = obj; // Ok
 We explicitly annotate some of the properties available to a function and an array as `never`. This ensures that we cannot assign them to the type.
 This, of course, is very hacky, but I could not find any other way. The `Exclude` type did not work when using with `object` type.
 
+## The `{}` type
+
+This type **represents all values except `null` or `undefiled` values**. This type is **different than the `object` type**.
+
+```ts
+type Maybe<T extends {}> = T | null | undefined;
+
+Maybe<null> // error
+Maybe<undefined> // error
+Maybe<false> // ok
+Maybe<() => null> // ok
+```
+
 ## Enums
 
 Enums are quite popular with _Ngrx_. They are not all sunshine and rainbows though.
