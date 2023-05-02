@@ -27,7 +27,7 @@ This is pretty neat, I still have to play around with it but it allow you to bas
 type Corner = `${"top" | "bottom"}-${"left" | "right"}`;
 ```
 
-I think it main usage will be in automatically typing _query parameters_ for you. Since it works with generics, you can do a lot of cool stuff here.
+I think it main usage will be in automatically typing _query parameters_ for you. Since it works with generics, you can do a lot of cool stuff here Keep in mind that an empty string fulfils the  `${string}` type. This detail is quite important when dealing with conditional types.
 
 ### _@ts-expect-error_
 

@@ -1018,6 +1018,19 @@ type Test = NoNumbers<{ prop1: string; prop2: number }>; // {prop1: string}
 
 As of writing this, this is relatively new addition to the language.
 
+Keep in mind that **you can also alter what we "iterate" over**. This is **very handy when dealing with an union**.
+
+```ts
+type MyUnion = {
+  type: "banana",
+  color: "yellow"
+} | { type: "apple", color: "red"}
+
+type ToObject = {[K in MyUnion as K["type"]]: K} // banana: {type: "banana", color: "yellow"} and so on...
+```
+
+If you try to "iterate" over the union without the `as` keyword, you will get an error. It is super handy since `K` is the whole object (member of the union), and not a primitive value.
+
 ### Reverse Mapped Types
 
 Usually when using mapped types, you work on a result. The pipeline is `A -> MappedType<A> -> B`. This means that there are no "backwards lookups" of types because the `A` is already established.
