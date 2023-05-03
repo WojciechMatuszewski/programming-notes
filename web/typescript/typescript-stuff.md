@@ -981,6 +981,29 @@ type FakeReturnTypeString<F> = F extends (...args: any[]) => infer R ? R extends
 
 The version with a constraint on the `infer` seems much cleaner.
 
+### Conditional return type
+
+There comes a time where you might need to put a conditional type as a return type for a given function. When doing so **you will most likely encounter an error**. The error would be saying that TypeScript cannot assign the return type to the values you are returning from the function. **This is to be expected**, at least at the time of writing this – TypeScript is not smart enough to figure everything out!
+
+```ts
+function youSayGoodbyeISayHello<
+  TGreeting extends string,
+  TReturn = TGreeting extends "hello" ? "goodbye" : "hello"
+>(greeting: TGreeting): TReturn {
+  return greeting === "goodbye" ? "hello" : "goodbye"; // error
+```
+
+The **solution is to perform as type cast on the return value**. I hope that, one day, this will not be necessary, but at the time of writing this, it is.
+
+```ts
+function youSayGoodbyeISayHello<
+  TGreeting extends string,
+  TReturn = TGreeting extends "hello" ? "goodbye" : "hello"
+>(greeting: TGreeting) {
+  return (greeting === "goodbye" ? "hello" : "goodbye") as TReturn; // Notice the cast here.
+}
+```
+
 ## Mapped And Lookup Types
 
 You can use `in` and `keyof` to transform interfaces and type-objects
