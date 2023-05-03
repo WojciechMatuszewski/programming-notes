@@ -2713,6 +2713,12 @@ As you can see, with our naive implementation of `foo` function, one use-case wa
 
 In other worlds, **the TS compiler will always expand the generic parameter to the widest possible type available**.
 
+### The golden rule of Inference and Generics
+
+Like in the case of function parameters, **one can declare too many _generic type parameters_**. This is a smell and should be fixed. The reason is that **it can make it really hard for other people to understand what the function type parameters are for**. Imagine seeing a lot of generics slots with multiple duplicate values inferred. Not that fun right?
+
+So, **always declare the generics as close to where they are assigned** and **keep the number of generic parameters as low as possible**. Like in programming and in life – less is more!
+
 ### Lazy type evaluation - prevent type parameter inference
 
 In this situation, what we want is for **TypeScript to defer the inference of the `Obj` until we provide it explicitly**. This is not possible without tricks as **the default behavior of TypeScript is to always infer the type parameter from it's first occurrence**.
