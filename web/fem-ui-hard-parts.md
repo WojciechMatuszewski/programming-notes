@@ -1,0 +1,63 @@
+# FEM UI Hard Parts
+
+[Notes from this course](https://frontendmasters.com/workshops/hard-parts-ui/).
+
+## Introduction
+
+- All the work related to the UI appears deceivingly simple. How hard can it be to update something after an interaction?
+
+  - Turns out there is much more to that than meets the eye.
+
+- People underestimate HTML. It is quite intuitive and ver forgiving language.
+
+  - The **translates to a collection of nodes represented by an object. That object is then feed to the rendering engine**.
+
+    - This is **the origin of the _Document Object Model_**. You have the object that represents the HTML Document.
+
+### HTML, C++ and DOM
+
+- Browsers operate in C++ or C.
+
+- The HTML translates to DOM which is then internally a C++/C (browser) data structure.
+
+  - It is the **layout and rendering engine that translates DOM onto the screen**.
+
+- The **layout engine** works out page layout for specific browser and screen.
+
+- The **rendering engine** produces the composite "image" for graphics card.
+
+## CSS (briefly)
+
+- It turns out that, like in the case of HTML, **CSS also has a "model" called CSSOM**.
+
+  - The _CSSOM_ also contains information on what is displayed on the page.
+
+    - The _CSSOM_ contains styling rules that the rendering and layout engine take into the account.
+
+    - The **rules in _CSSOM_ are mapped to a node in the DOM**.
+
+## Enabling user interaction
+
+- For any change, there must be some underlying piece of data that changes.
+
+  - Pixels DO NOT equal data.
+
+- Since we cannot "run" the DOM that holds the data, we have to user other means.
+
+  - This is where JavaScript comes in.
+
+### Data and code in JavaScript
+
+- Browsers only load HTML. It is **the HTML parser that spins up the JS engine**.
+
+- When JS starts up, the callstack is empty. As soon as you invoke a function, it will be added to that callstack.
+
+- **Some of the APIs you use in JavaScript, like `console.log` are NOT JS native features**.
+
+  - In this particular case, the `console.log` is a browser feature. When invoked, it does not do much in JS, all the work is done in the browser.
+
+- As eluded earlier, it is the JS that can interact with the DOM. **You can interact with the DOM via the `document` object**.
+
+- The **WebIDL is a format that denotes how JS interacts with the browser API features**.
+
+Finished Day 1 Part 2 1:06:22

@@ -1612,13 +1612,13 @@ All in all it boils down to what you prefer. Do you prefer the name `interface`?
 
 ## Function Overloads
 
-You can provide different implementations based on the arguments that we supply. It makes stuff more readable.
+You can provide different implementations based on the arguments that we supply. It makes stuff more readable. Remember that **to use overloads you have to use the `function` keyword**.
 
 ```typescript
 // these are virtual, they will get compiled away
 function reverse(dataToReverse: string): string;
 function reverse<T>(dataToReverse: T[]): T[];
-// real implementation
+// real implementation. You should add an explicit return type here for safety.
 function reverse<T>(dataToReverse: string | T[]): string | T[] {
   if (typeof dataToReverse == "string") {
     return dataToReverse.split("").reverse().join("");
@@ -1627,8 +1627,82 @@ function reverse<T>(dataToReverse: string | T[]): string | T[] {
 }
 ```
 
-It is **important to put your "narrowest" definition on the top**. Overloads are read from the top to bottom.
-If you were to reverse this rule, the code using the overloading function will always land on the "widest" overload, making the DX bad (the "widest" overloads are usually there as a fallback).
+It is **important to put your "narrowest" definition on the top**. Overloads are read from the top to bottom. If you were to reverse this rule, the code using the overloading function will always land on the "widest" overload, making the DX bad (the "widest" overloads are usually there as a fallback).
+
+### Function Overloads and the implementation signature
+
+When writing function overloads, **make sure to list ALL possible specific cases the implementation function has to handle**. Since the **signature of the implementation function is NOT exposed to TS, your overloads have to handle all possible cases**. You cannot "cheat" by doing something like this:
+
+```ts
+function getRolePrivileges(role: "admin"): AdminPrivileges;
+function getRolePrivileges(role: "user"): UserPrivileges;
+function getRolePrivileges(role: string): AnonymousPrivileges {
+  switch (role) {
+    case "admin":
+      return {
+        sitesCanDelete: [],
+        sitesCanEdit: [],
+        sitesCanVisit: []
+      };
+    case "user":
+      return {
+        sitesCanEdit: [],
+        sitesCanVisit: []
+      };
+    default:
+      return {
+        sitesCanVisit: []
+      };
+  }
+}
+```
+
+Notice that the implementation function returns specific type rather than an union of types. **This is wrong and TypeScript will complain**. The fix would be to ensure our overloads take care of all the values.
+
+```ts
+function getRolePrivileges(role: "admin"): AdminPrivileges;
+function getRolePrivileges(role: "user"): UserPrivileges;
+function getRolePrivileges(role: string): AnonymousPrivileges;
+function getRolePrivileges(
+  role: string
+): AnonymousPrivileges | AdminPrivileges | UserPrivileges {
+  switch (role) {
+    case "admin":
+      return {
+        sitesCanDelete: [],
+        sitesCanEdit: [],
+        sitesCanVisit: []
+      };
+    case "user":
+      return {
+        sitesCanEdit: [],
+        sitesCanVisit: []
+      };
+    default:
+      return {
+        sitesCanVisit: []
+      };
+  }
+}
+```
+
+### Generics and Function Overloads
+
+Keep in mind that you can use generic signature in the function overload signature.
+
+```ts
+function returnWhatIPassInExceptFor1<T extends string>(t: T): T;
+function returnWhatIPassInExceptFor1<T extends number>(
+  t: T
+): T extends 1 ? 2 : T;
+function returnWhatIPassInExceptFor1(t: unknown): unknown {
+  if (t === 1) {
+    return 2;
+  }
+
+  return t;
+}
+```
 
 ### Variadic functions
 
