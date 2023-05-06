@@ -82,6 +82,12 @@
 
   - This node then puts **the _callback_ into the _callback queue_**. The **_callback queue_ is a macrotask queue**.
 
+    - This model also showcases the power of the closure. If you think about it, when you assign a function to a given property of the node, you are packaging everything that a given function has to have, in terms of memory, to run successfully. Quite fascinating.
+
   - The **event loop will pick up the function from the _callback queue_** and run it.
 
 - It takes a lot of work to perform this seemingly simple task. All the data and information that has to travel from the JS to C++ through the Web IDL.
+
+## One-way Data Binding
+
+Finished Part 4 day 1 00:00
