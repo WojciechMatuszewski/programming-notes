@@ -60,4 +60,28 @@
 
 - The **WebIDL is a format that denotes how JS interacts with the browser API features**.
 
-Finished Day 1 Part 2 1:06:22
+### Going from C++ land to JavaScript
+
+- When you invoke functions like `querySelector` JS will reach out to the browser APIs. The browser holds all the elements in memory as C++ objects.
+
+  - How come we can get the element back, if it is declared in C++?
+
+  - It is the **Web IDL** that helps to do the translation from C++ land to JS land.
+
+    - Keep in mind that the returned object still has a "hidden link" to the C++ land.
+
+- If you think about it, **logging the output of the `querySelector` prints the _command_, the _HTML syntax_ rather than the data itself**.
+
+  - This is quite fascinating. I cannot think of a similar situation.
+
+### User Actions
+
+- By assigning to certain properties on the object returned from running the `querySelector` you can tell the DOM to _call back_ a function when user interacts with an element like an input.
+
+- The **_Event API_ will trigger an event to a given _DOM node_**.
+
+  - This node then puts **the _callback_ into the _callback queue_**. The **_callback queue_ is a macrotask queue**.
+
+  - The **event loop will pick up the function from the _callback queue_** and run it.
+
+- It takes a lot of work to perform this seemingly simple task. All the data and information that has to travel from the JS to C++ through the Web IDL.
