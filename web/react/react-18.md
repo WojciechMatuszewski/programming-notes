@@ -447,6 +447,8 @@ These components are **prerendered on the server and hydrated on the client**. T
 
 ### The bottom line
 
-1. The **_Server and Client Components_ do NOT replace SSR**. Keep in mind that **SSR can render HTML output of client components**. That is NOT possible with _Server Components_.
+1. The **_Server and Client Components_ do NOT replace SSR**. Keep in mind that **SSR can render HTML output of client components**. That is how they are implemented in Next.js.
+
+  > Client Components enable you to add client-side interactivity to your application. In Next.js, they are pre-rendered on the server and hydrated on the client. You can think of Client Components as how components in the Pages Router have always worked.
 
 2. Now you **have a greater control over what runs where**. I'm not sure if that is a good thing or not. Most likely not since it should be an "opt-in" rather a "must-do". These concerns are addressed by frameworks like Qwik and Marko where the place where component executes is opaque to the developer.
