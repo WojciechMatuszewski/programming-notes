@@ -90,4 +90,4 @@
 
 ## One-way Data Binding
 
-Finished Part 4 day 1 00:00
+Finished day 1 part 4 30:32
