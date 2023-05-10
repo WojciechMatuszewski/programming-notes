@@ -90,4 +90,14 @@
 
 ## One-way Data Binding
 
-Finished day 1 part 4 30:32
+- There is a lot of things that the user can do that could affect the view.
+
+  - It is not feasible to have a separate case for each of those things.
+
+  - That is why **most frameworks derive the view from the state. It is the state that is the single source of truth**.
+
+  - That is why React will re-render **everything** by default. It is so much easier to reason about the UI this way.
+
+  - Of course this only a single approach, but it is very popular.
+
+Finished day 2 part 1 00:00
