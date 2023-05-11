@@ -74,6 +74,12 @@
 
   - This is quite fascinating. I cannot think of a similar situation.
 
+### Going from JavaScript to C++
+
+- When the JS engine boots up, it populates the memory with globally accessible objects that **allow you to reference the DOM – the data in C++**.
+
+  - One of such objects is the **`document` object**. The `document` object allows you to query / manipulate elements.
+
 ### User Actions
 
 - By assigning to certain properties on the object returned from running the `querySelector` you can tell the DOM to _call back_ a function when user interacts with an element like an input.
@@ -100,4 +106,18 @@
 
   - Of course this only a single approach, but it is very popular.
 
-Finished day 2 part 1 00:00
+- The goal here is to declare the relationship between the data and the view **once**.
+
+  - After that is done, the only thing that we have to do is to update the data. The UI should update automatically!
+
+## Virtual DOM
+
+### The function as a component
+
+- In the _One-way Data Binding_ section we explored the notion of having a single source of truth of values for a given elements.
+
+  - The model of adding a callback to an input where the callback is the single source of truth breaks down as soon as you want to manipulate (remove/add) elements on the page.
+
+  - To encapsulate even more logic, we will **not** be binding to the events, but rather re-running our function (something that resembles the components) every so often.
+
+    - In the function itself, we will be replacing the "state of the world" (the UI) with the most up-to-date elements, derived from the data in JS.
