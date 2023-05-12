@@ -121,5 +121,4 @@
   - To encapsulate even more logic, we will **not** be binding to the events, but rather re-running our function (something that resembles the components) every so often.
 
     - In the function itself, we will be replacing the "state of the world" (the UI) with the most up-to-date elements, derived from the data in JS.
-
-Finished Day 2 part 2 00:00
+Finished Day 2 part 2 39:25
