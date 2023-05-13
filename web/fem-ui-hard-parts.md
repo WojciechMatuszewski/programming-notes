@@ -161,4 +161,20 @@
 
   - We need to use recursion here. Keep in mind that the function can return an array of arrays. For each array we have to call our "convert" function that will create DOM nodes.
 
-Finished Day 2 Part 5 00:00
+### Performance optimizations
+
+- Will first starts with encapsulating the DOM creation and update in a single function.
+
+  - This allows us to trigger this function **only when something changed**. We are still missing granular updates.
+
+  - We no longer run the "update" function at a given interval. This makes the whole UI faster.
+
+- The next step is to introduce the `findDiff` function. The version Will presents is using the `JSON.stringify` comparison. That makes sense as the whole structure of the VDOM is serializable.
+
+  - I wonder how that relates to RSCs and the JSON-serializable format they are in.
+
+  - Note that the function diffs **array items and not the whole VDOM**. This allows for granularity on node-by-node basis.
+
+## My closing thoughts
+
+I'm a bit conflicted whether I got any value from this workshop. While the content and the explanation was top notch, I believe it was a bit too shallow. On the other hand, it showcased how one might build a simplistic FE framework.
