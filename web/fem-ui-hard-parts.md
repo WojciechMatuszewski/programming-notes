@@ -121,4 +121,44 @@
   - To encapsulate even more logic, we will **not** be binding to the events, but rather re-running our function (something that resembles the components) every so often.
 
     - In the function itself, we will be replacing the "state of the world" (the UI) with the most up-to-date elements, derived from the data in JS.
-Finished Day 2 part 2 39:25
+
+### Making the code more "visual"
+
+- One of the most appealing facts about the JSX (even the "raw" representation, in it's functional form) is that it _visually_ describes the HTML.
+
+  - Of course, it is not the HTML itself. It is much more powerful. But my being _visual_ it really helps with keeping the right mental model.
+
+- At this point in the course, Will starts to slowly convert to the JSX syntax by representing the "to be created HTML" via arrays, like so
+
+    ```js
+      const divInfo = ["div", `Hi, ${name}`]
+    ```
+
+  The first item is the node "kind" and the second are the "props", in this particular case, the `children`.
+
+  - The evolution of this approach is the `createVDOM` function
+
+      ```js
+      function createVDOM() {
+        return [
+          ["input", name, handle],
+          ["div", `Hello, ${name}`],
+        ]
+      }
+      ```
+
+### Composition & Functional Components
+
+- Will first starts with using the `map` function on the array returned by the `createVDOM` function.
+
+  - This allows for flexibility – we no longer have to manually assign variables to the results of the `convert` function.
+
+  - At this stage we are still running the "update" function at a interval. Not ideal.
+
+- Here we are still re-creating all the elements. This is wasteful. Will eludes to some kind of diffing that would allow us to improve the performance.
+
+- The next evolution is to, instead of hardcoding the elements within the VDOM array, use functions that would return pieces of that array. **This is how component works in React!**.
+
+  - We need to use recursion here. Keep in mind that the function can return an array of arrays. For each array we have to call our "convert" function that will create DOM nodes.
+
+Finished Day 2 Part 5 00:00
