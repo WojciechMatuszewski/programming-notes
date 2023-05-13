@@ -205,6 +205,10 @@
 - _Event Source Mapping_ uses **lambda execution role** for IAM permissions. This is why you have to specify that, for
   example, your function can read and delete messages from SQS
 
+- if you want to know if a service uses ESM while integrating with AWS Lambda, a good rule of thumb is the following
+
+  > If there is batching/filtering there must be _event source mapping_.
+
 ##### Applying filters
 
 - you can **apply filters on data coming from the event source**
@@ -3550,16 +3554,16 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
 #### Records
 
-- **A/AAAA**: maps a **host, so a www...** into **ipv4(A) or ipv6(AAAA)**
+- **A/AAAA**: maps a **host, so a <www>...** into **ipv4(A) or ipv6(AAAA)**
 
 - **CNAME**: allows you to create **aliases (NOT THE SAME AS ALIAS RECORD)** to given **A/AAAA records**. **DOES NOT
-  WORK ON NAKED DOMAINS (google.com vs www.google.com)**
+  WORK ON NAKED DOMAINS (google.com vs <www.google.com>)**
 
 - **Alias**: **ROUTE 53 specific!**. **Behave like CNAMES, instead of pointing to a A/AAAA/IP** it **points to a logical
   service provided by AWS**. You **can use** on **apex zone (naked) records**.
 
 - **for some integrations** **alias record is FREE!**. You can use this technique to save costs. Remember that you can
-  assign **www.something.com** as alias as well as the **naked domain (without www)**
+  assign **<www.something.com>** as alias as well as the **naked domain (without www)**
 
 - when creating an alias it might show as **A (alias)** or something like this. Do not be afraid. This is what R53 is
   doing under thee hood.
