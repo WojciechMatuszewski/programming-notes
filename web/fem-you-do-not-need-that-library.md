@@ -94,4 +94,30 @@ Notes based on [this course](https://frontendmasters.com/workshops/pure-javascri
 
 - You can dispatch your own custom events. Of course, keep them documented and strongly typed. Otherwise it will get out of hand (it always does).
 
-Finished part 3 00:00
+## ESModules
+
+- Use them. They are supported in every major browser.
+
+  - To specify the script as an `ESModule`, use the `type="module"` attribute.
+
+- Before ESModules, everything that you write, every variable and function was global. There was no encapsulation (of course that does not apply to variables defined in functions).
+
+- One thing to note. **When importing files, you have to specify the filename with the extension**. That is not the case if you are using bundlers, but it is a requirement when using native ESModules.
+
+## Navigating via DOM
+
+- You can either have all the pages in the DOM and toggle their visibility, or remove/add elements into the DOM when clicking on the link. Up to you.
+
+  - There is no concept of a "router" in the vanilla JS. But we have **the history API**.
+
+- No matter what approach you choose, you will need to `preventDefault` the `a` tag to ensure the browser does not initiate new navigation with full page reload.
+
+### The history API
+
+- The `history` API allows you to change the URL of the browser without changing anything on the page.
+
+  - It is up to you to react to the URL changes. The event you are interested in is called `popstate`.
+
+#### Pseudo components and the page route
+
+Finished day part 4 00:00
