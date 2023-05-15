@@ -112,6 +112,28 @@
 
 ## Virtual DOM
 
+- The virtual DOM is a in-memory representation of all the nodes from the HTML.
+
+  - This allows us to make changes in-memory, and then, when all the changes are made, commit to the "regular" DOM.
+
+    - This is an optimization technique. Applying changes one-by-one to the "regular" DOM is quite slow.
+
+- By comparing the previous and the next virtual DOM, we can deduce which nodes needs to change.
+
+  - This process **requires us to traverse the whole virtual DOM**. This can get quite slow on large trees.
+
+### Block DOM
+
+> Based on [this article](https://millionjs.org/blog/virtual-dom).
+
+- The Block DOM is a **representation of state of the HTML DOM nodes**.
+
+  - It **holds the state of the nodes, not the nodes themselves**.
+
+    - This means that, **to know what changed, we only have to compare the state. This DOES NOT require us to do any kind of traversals**.
+
+      - All of this results in a much more performant solution. But this **is not a silver bullet**. Websites with a lot of dynamic content would not benefit that much from this technique. You can see huge difference in websites with a lot of static content and some reactivity here and there.
+
 ### The function as a component
 
 - In the _One-way Data Binding_ section we explored the notion of having a single source of truth of values for a given elements.
