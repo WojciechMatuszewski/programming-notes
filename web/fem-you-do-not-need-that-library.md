@@ -118,6 +118,28 @@ Notes based on [this course](https://frontendmasters.com/workshops/pure-javascri
 
   - It is up to you to react to the URL changes. The event you are interested in is called `popstate`.
 
+    - To be able to navigate when `popstate` fires, you will need to set state when using `pushState`. Otherwise you will not be able to deduce what route the given `popstate` corresponds to.
+
+      - `pushState` with `{route: "/"}` -> `popstate` -> the `event` contains the `route` parameter -> move to the given route.
+
 #### Pseudo components and the page route
 
-Finished day part 4 00:00
+- There Max suggest using _Web Components_.
+
+  - In short, **it is your own custom HTML tag**.
+
+    - TIL that `customElements.define` API exists.
+
+    - Custom elements even have a lifecycle methods.
+
+- There is also the **`template` HTML tag**. It is a special tag that exists in the DOM, but the browser ignores it contents.
+
+  - How is this useful? You can **hold different "routes" in the `template` tag. When it is time to display the content, you clone it from the `template`**.
+
+### Shadow DOM
+
+- By default, the CSS applied to the custom element will leak to the "global DOM".
+
+  - By leveraging the _shadow DOM_, you can encapsulate styles. They will only apply to the elements inside the custom components.
+
+Finished part 4 57:22
