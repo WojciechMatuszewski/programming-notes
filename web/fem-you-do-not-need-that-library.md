@@ -142,4 +142,32 @@ Notes based on [this course](https://frontendmasters.com/workshops/pure-javascri
 
   - By leveraging the _shadow DOM_, you can encapsulate styles. They will only apply to the elements inside the custom components.
 
-Finished part 4 57:22
+- Max loaded the CSS in a very particular way – he used fetch API and injected the result text into the `style` tag.
+
+  - Usually we would be putting the styles in the style tags at the top of the head, but since we want to encapsulate them, we have to put them into the shadow DOM.
+
+## Reactivity using Proxies
+
+- Now that proxies are widely supported, it is a no-brainier to use them!
+
+- Mind the `Reflect` API. Instead of "forwarding" the operation onto the `target`, you can use the `Reflect` API that has the same API as proxy traps (`get`, `set` etc...).
+
+  - Why should you use them? **MDN mentions "but using Reflect saves you from having to remember the syntax that each internal method corresponds to"**.
+
+### Emitting events and changes
+
+- In the workshop we are using custom events to communicate between different components.
+
+  - **We have to explicitly emit those events to the `window` and not the `document`**. The reason is that **each shadow DOM has it's own `document`**.
+
+    - If we were to emit them on the `document` other components would not be able to listen, if the emitting component uses shadow DOM.
+
+## Embedding components in other components
+
+- Since we have the full control over HTML tags (we can creature custom tags), one can render a set of custom tags inside a component, which in itself is a custom tag.
+
+- As for the _props_, Max is using the `dataset` object and adds properties to that object. Then in the child component, we have to parse the property (a string) into a JS object.
+
+## Forms
+
+Finished part 5 51:54
