@@ -170,4 +170,28 @@ Notes based on [this course](https://frontendmasters.com/workshops/pure-javascri
 
 ## Forms
 
-Finished part 5 51:54
+- Using the frameworks like React and libraries to handle forms caused us to forget that we have quite nice forms API at our disposal.
+
+  - You can get individual fields by the _dot_ notation on the form DOM object.
+
+- **TIL that changing the element value via JS will NOT trigger the `change` event**.
+
+  - This is very handy in our situation as it prevents us from triggering an infinite loop where we change the element value via JS and also listen for the `change` event.
+
+- To **bind the form values with values in JS and vice-versa Max used a Proxy + an event listener on the form fields**.
+
+  - We have also encapsulated the state with a _private class property_ (using the `#` syntax).
+
+## Recap
+
+- It was nice to get my hands dirty with web components. I was not aware that creating custom HTML tags is that simple.
+
+  - To create the elements, one has to register it via the `customElements.define`. Your class/object **must** extend the `HTMLElement` interface.
+
+- Vanilla JS is very powerful. The amount of the surface area can be intimidating, especially for newcomers.
+
+- During the workshop we heavily leveraged proxies. I'm glad they are getting some usage as they are really useful.
+
+- The `history` API is not a black box. I think that if you are using the `react-router` which is partially based on the `history` API (to my best knowledge), it is very beneficial for you to understand the API.
+
+  - The fact that you can "fake" navigation and even provide a state into the `popstate` event is quite amazing!
