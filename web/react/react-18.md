@@ -361,6 +361,10 @@ Before React 18 existed, you had two choices
 
 ### React Server Components
 
+Before you learn anything about how they work, you should know that **this is a spec rather than a technology**. It just so happens that Next.js is the first meta-framework to implement it.
+
+---
+
 Here you **stream non-interactive HTML code from the server to the client**. This is **similar to `getServerSideProps` in Next.js**, but it is **NOT the same**. The main difference between _React Server Components_ and `getServerSideProps` are.
 
 - With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server Components_.
