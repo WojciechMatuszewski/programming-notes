@@ -200,3 +200,33 @@
 ## My closing thoughts
 
 I'm a bit conflicted whether I got any value from this workshop. While the content and the explanation was top notch, I believe it was a bit too shallow. On the other hand, it showcased how one might build a simplistic FE framework.
+
+---
+
+## Different models of Reactivity
+
+> Based on [this great article](https://www.builder.io/blog/reactivity-across-frameworks)
+
+- At the very basic level, the reactivity model **can be _fine-grained_ or _coarse-grained_**.
+
+  - With _coarse-grained_ reactivity model, the framework have to re-run the whole parts of the tree to understand what changed.
+
+  - The _fine-grained_ reactivity model is more performant, in a sense that much less diffing operations are required. There is no need to re-run the components for the whole parts of the tree. We exactly know what has changed.
+
+- **Some frameworks like Svelte use a technique called _dirty checking_**. This technique involves **running a "scanner" function that checks if something changed**. This is **different than using listeners (at least from what I read on the internet)**.
+
+  - Other notable framework that uses this technique is Angular.
+
+- **Qwik does the reactivity at the DOM element level, not component level**. This is great since, when a change happens, the framework does not have to re-run the whole component. It can update a given value in the DOM.
+
+  - This **only works with mutations that do not add/remove DOM nodes**. But I bet they are working on improving that. When you add/remove DOM nodes, currently, they have to re-run the component.
+
+- **Solid works on similar basis to Qwik, but the framework also handles removals/additions in course-grained fashion**.
+
+  - Solid executes the component exactly once. This is wild to think about in the world where React will execute your component multiple times.
+
+- After reading the above, you might think that _coarse-grained_ reactivity is bad and should not be used.
+
+  - As with everything in software world, that is not the case. **The main benefit of _coarse-grained_ reactivity model is that it "just" works**. It is very hard to mess things up, when you re-create the state of the world every time something updates.
+
+    - Of course, not everything is sunshine and rainbows. By using _course-grained_ reactivity model, you pay the price with performance.
