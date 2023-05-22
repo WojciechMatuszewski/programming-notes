@@ -111,4 +111,113 @@ Taking notes while watching [this course](https://frontendmasters.com/workshops/
 
     - Keep in mind that **the `beforeunload` event is compatible with bfcache on Chrome and Safari, but not on Firefox**.
 
-Finished part 3 52:28
+### Server Worker
+
+- If you utilize caching, the service worker can act as a "local" server for the page assets.
+
+  - There are multiple ways to go about it. I would personally recommend the [workbox library](https://developer.chrome.com/docs/workbox/the-ways-of-workbox/).
+
+## Parsing & executing resources
+
+- **By default, executing the `script` tag will block the browser parsing further HTML until the script is executed**.
+
+  - This is pretty bad for performance.
+
+    - Nowadays we have the `defer` and `async` attributes available to us.
+
+- **By default, parsing the CSS will block rendering**.
+
+## Basic Performance Optimizations
+
+- Enable GZIP on text-based files.
+
+- Make static content expire late in the future.
+
+  - So that the browser does not have to ask the server if the files are valid or not. Bust the cache via hashes appended to files.
+
+- Use CDN for static content.
+
+  - So that the assets are "closer" to the user.
+
+- Consider avoiding putting a lot of data in the cookies.
+
+  - Browser sends the cookies with **every request**.
+
+- Avoid redirects. They force the browser to "start from zero" in the process on rendering the page and resource discovery.
+
+- JavaScript **is very expensive to run when you think about it**.
+
+  - Defer or remove it as much as possible.
+
+  - Compress and obfuscate it. It improves the filesize. Remember about bundling everything together.
+
+- Embrace responsive images.
+
+  - Do not serve very large images on phones. Serve the size the image the user needs.
+
+    - You have the `picture` and `srcset` at your disposal!
+
+## Hacking Performance
+
+### Hacking first load
+
+- Avoid more than one roundtrip.
+
+  > Here Max goes on a tangent related to units of measurement. There is a confusion that 1 KB is 1024 Bytes, but in fact it is 1000 Bytes.
+    The 1024 Bytes is 1 KiB. Max traces this to Windows that does not adhere to the official units of measurement and uses KB (and other similar units) in the place of KiB (and other similar units).
+
+  - **On most Linux-based systems**, the **maximum packet size is 14.6 KiB**. If you can **fit the "above the fold" HTML and assets there**, you will benefit greatly in terms of performance metrics.
+
+    - The reason is that, in a TCP connection, packets might arrive out of order. Consolidating those takes time. If you send a single packet, there is nothing to order.
+
+- Use the **HSTS header**.
+
+  - This tells the browser that, no matter the URL on a given domain, it is always safe to redirect to HTTPs.
+
+### Hacking LCP
+
+- **Help** the browser **discover assets earlier** by using the **rel=`preload` syntax** on links and images.
+
+  - This applies to images, fonts, stylesheets.
+
+  - **Do not overuse this**! If you add "preload" to everything, it will not work well.
+
+- Hand-pick the **`fetchpriority` for very important assets**.
+
+  - Again, setting everything to the highest possible priority does not work. It makes everything "baseline" again.
+
+  - The **browser already sets the `fetchpriority` implicitly for assets**.
+
+  - You can also **help the browser and change the defaults by letting the `fetchpriority` to `low` on some assets**.
+
+- Utilize the **HTTP Early Hints**.
+
+  - Instead of the browser waiting for the server to respond with HTML, the **server can, while working on the HTML, send the browser instructions about what assets the browser will need**. The browser **can start downloading those assets meanwhile the server works on the response**.
+
+### Hacking Data Transfer
+
+- Utilize the HTTP/3 standard.
+
+- Use Zopfli.
+
+  - It **takes more time to compress than gzip, has the same efficiency when decompressing and produces archives that are about 8% smaller than gzip**.
+
+- Use Brotli
+
+  - About **25% better than gzip**.
+
+### Hacking Resource Loading
+
+- Use modern image formats like WebP, AVIF and so on.
+
+- Use the service worker with _stale-while-revalidate_ strategy.
+
+  - Serve from the cache, but in the background, ensure the asset is up to date. If it's not, replace it on the next load.
+
+  - Nowadays, you can use **the _stale-while-revalidate_ header value**.
+
+- Use the `preconnect` of `dns-prefetch` to save up time when the browser requests given asset.
+
+  - Keep in mind that **`preload` will also fetch the file**. Sometimes **you do not want to `preload` the files, especially since they will be shown later in the page lifecycle**.
+
+Finished part 5 00:00
