@@ -220,4 +220,74 @@ Taking notes while watching [this course](https://frontendmasters.com/workshops/
 
   - Keep in mind that **`preload` will also fetch the file**. Sometimes **you do not want to `preload` the files, especially since they will be shown later in the page lifecycle**.
 
-Finished part 5 00:00
+- Use the **native `loading="lazy"` for images**.
+
+  - It used to be that you needed a JS library for this. Nowadays it is built-in inside the browser.
+
+- **Change how the fonts load via the `display` property**.
+
+  - There are many values available to you. Play with them to avoid the _Flash of Unstyled Text_.
+
+## Hacking Interaction Experience
+
+- **Avoid client-side rendering**.
+
+  - As nice as it is, it is hurting your performance in a big way.
+
+  - Keep in mind that Next.js will do SSR on the first load, then do client-side navigation.
+
+- Move heavy tasks to WebAssembly and workers.
+
+- **Stop serving legacy code if you can**.
+
+  - This one is huge. See what kind of code the bundler you use produce. Maybe you are still on ES5?
+
+## Using Performance APIs
+
+- Using RUM tools like DataDog.
+
+- Using the `performance` object.
+
+  - The `performance.timing` **contains a lot of timestamps related to the page lifecycle**.
+
+- There is the `PerformanceObserver` object. It works similar to the `IntersectionObserver`, but for performance-related timings.
+
+  - It can notify you when the browser decided what was the "first-input delay" and so on.
+
+## Animation Frames
+
+- It is not guaranteed that the timers run by the time you specified in the function.
+
+  - They are put in a specific queue. If we block the event loop, the timer might never fire.
+
+- If you want to execute code **at the next frame, use the `requestAnimationFrame` API**.
+
+- There is also `requestIdleCallback` API as well.
+
+- You can **split intensive work in-between idle moments** by **`requestIdleCallback`**.
+
+  - It **even has the `timeout` property**. A nice API to control the flow of synchronous job.
+
+- There is also the **`setImmediate`** where **you tell the browser to execute your code at the end of the event loop, but before the timers**.
+
+## Summary
+
+- The web performance is also about your bottom line.
+
+- There are a LOT of tools to optimize web performance.
+
+- **First measure things**.
+
+- It is vital to understand how browsers cache works.
+
+  - Setting a very long expiry time on assets makes sense if you include their hash in the name.
+
+  - Mind the bfcache and the implications of some event listeners on it.
+
+- CSS will block HTML rendering.
+
+- JS will bloc HTML parsing (worse than CSS).
+
+- If you tried to solve performance problems long time ago, it has gotten much easier.
+
+  - You no longer have to lean on external libraries that much. A great example is the `loading="lazy"` attribute on images.
