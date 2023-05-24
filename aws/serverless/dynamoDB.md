@@ -143,6 +143,12 @@ Partition key is responsible for putting things in the same buckets and secondar
 
 - You should favour GSIs unless you need strong consistency on the index. Do you really?
 
+- The **LSI is also the copy of the base table**. This behavior is the same as GSI.
+
+  > A local secondary index also contains a copy of some or all of the attributes from its base table.
+
+  - But the **LSIs are synchronous and SHARE throughput with the base table**. In the end **you will also pay for the writes to LSI as well as the writes to the base table**.
+
 #### Global Secondary Indexes
 
 These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key. **GSI is like creating a separate table with items that only contain that GSI**. Global secondary indexes are **stored on their own partitions** (separate from the table).
