@@ -449,6 +449,34 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
 These components are **prerendered on the server and hydrated on the client**. This means that **when using RCCs you pay the cost of shipping JS to the client**. These are your "standard" Next.js components from the `page` directory.
 
+#### Notes from the "Dan Abramov explores React Server Components with us!"
+
+> You can [find the source here](https://www.youtube.com/watch?v=Fctw7WjmxpU).
+
+- The **term server and client** is a bit **misleading**. You do **not need a server to use server components**.
+
+  - If you do not use the server, the "server" components would be built during the app build.
+
+    - In fact, in the video, they started with the client-only architecture.
+
+- The **response of an RSC is like a "JSON with holes"**. These are not instructions of any kind. This is streamable JSON .
+
+- The data-fetching story gets interesting when you take `Suspense` into the mix. Keep in mind that **`Suspense` now works on the server and with server components!**.
+
+  - With `Suspense` you can **achieve out-of-order streaming**. This is nice as some server components might take more time to resolve. You would not want to wait for ALL of them to resolve before showing content.
+
+- You **cannot import server components into client components**.
+
+  - This does make sense. If your server component uses a node-specific API, it would explode on the client.
+
+  - To **compose, use the `children` prop**.
+
+- Server components allow **for automatic code splitting of client components**.
+
+  - **The JSON data of RSC contains the location of the client components file**. If the server component does not include the client components, there is nothing to download.
+
+> Finished <https://youtu.be/Fctw7WjmxpU?t=7711>
+
 ### The bottom line
 
 1. The **_Server and Client Components_ do NOT replace SSR**. Keep in mind that **SSR can render HTML output of client components**. That is how they are implemented in Next.js.
