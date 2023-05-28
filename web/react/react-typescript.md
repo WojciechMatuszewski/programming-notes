@@ -39,6 +39,23 @@ const MyButton = ({leadingIcon, variant, ...rest}: Props) => {
 
 Also, when we are at it, **make sure you forward the ref to the button**. Being unable to use the `ref` on the consumer side is a bit soul crushing.
 
+## Generic components
+
+In TypeScript you can provide the generic slots for arrow functions and the "regular" functions. The syntax, while a bit different, is more or less similar.
+
+```ts
+const myGenericArrowFn = <T>(a: T) => {};
+function myGenericFn<T>(a: T) {}
+```
+
+**While in JSX files, the syntax to define a generic slot for an arrow function looks a bit different**. This is most likely due to the potential confusion of you editor where it is unable to distinguish a JSX tag vs a generic slot syntax.
+
+```ts
+const MyComponent = <T,>(props:T) => {}
+```
+
+**Notice the `,` here**. Pretty weird, but it works.
+
 ## Polymorphic components
 
 There are the components which change their behavior (in our case _props_) based on some condition (in our case a specific _prop_).

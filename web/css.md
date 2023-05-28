@@ -234,10 +234,22 @@ Did you notice that, if you click a link, the focus outline is not there? **But 
 Well supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators and spaces.
 
 ```css
-element: not(img); /*ok*/
-div: not(.someClass); /*can be also an id*/
-div: not(ul li); /*will not work, there is a space, it's not a simple selector*/
+element:not(img); /*ok*/
+div:not(.someClass); /*can be also an id*/
+div:not(ul li); /*will not work, there is a space, it's not a simple selector*/
 ```
+
+#### Using the `:not` with elements that DO NOT contain certain properties
+
+What if you wanted to select all `p` tags that DO NOT have any class? Or maybe an image that does NOT have the `alt` tag?
+
+```css
+img:not([alt]) {
+  outline: 5px solid red;
+}
+```
+
+I find it pretty amazing that we can do so much logic in CSS. Of course I was not aware that using `[]` syntax checks for the _presence_ of a given attribute.
 
 ## Pseudo-elements
 
