@@ -475,7 +475,11 @@ These components are **prerendered on the server and hydrated on the client**. T
 
   - **The JSON data of RSC contains the location of the client components file**. If the server component does not include the client components, there is nothing to download.
 
-> Finished <https://youtu.be/Fctw7WjmxpU?t=7711>
+- The **`startTransition` tells the React that it is okay for the screen to be delayed while we wait for the RSC to refresh**.
+
+  - This allows you to skip the `Suspense` loading screens when the part of the tree update.
+
+    - Dan says that the `startTransition` allows you to **wait till React has something to show**.
 
 ### The bottom line
 
