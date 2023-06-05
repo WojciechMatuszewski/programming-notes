@@ -64,14 +64,31 @@ And do not look surprised, you already know one pragma (a directive really) that
 "use strict";
 ```
 
-## Resetting Component State with key property
+## Resetting Component State with `key` property
 
-`key` is used to help React track changes and basically be able to tell whats
-changed in between renders.
+`key` is used to help React track changes and basically be able to tell whats changed in between renders.
 
-This may seem trivial but you can actually control this behavior right? Since
-you can pass a key to every component / jsx stuff we can manually re-instantiate
-a given component / node.
+This may seem trivial but you can actually control this behavior right? Since you can pass a key to every component / jsx stuff we can manually re-instantiate a given component / node.
+
+### Other use-case for the `key` property
+
+React tries to re-use DOM nodes as much as possible. It might happen that you want to toggle between two separate instance of components while resetting their state every time the instance changes.
+
+```jsx
+(
+  isCompany ? <Input id = "company"> : <Input id = "person">
+)
+```
+
+In that case, **switching the `isCompany` variable will not cause the `Input` to reset its state**. From React perspective, the "type" of the node is the same, thus will be re-used. To force a new state, you need to add the `key` property with different value to each of the instance.
+
+```jsx
+(
+  isCompany ? <Input id = "company" key = "company"> : <Input id = "person" key =  "person">
+)
+```
+
+With this change, every time you toggle the `isCompany` variable, the `Input` state will reset.
 
 ## Referential identity and `React.memo`
 
