@@ -44,4 +44,16 @@ Watching [this workshop](https://frontendmasters.com/workshops/practical-css/). 
 
       - This helps as now the only think that matters is which order your declare the layers.
 
-Finished day 1 part 2, 22:37 -> <https://codepen.io/WojciechMatuszewski/pen/yLQBrWV?editors=1100>
+- **By default, the `img` tag is considered to by typography**. This means you can align it by using `text-align: "center"` on the parent.
+
+- Jen talked briefly about _margin collapsing_. A very important topic in the world of CSS.
+
+  - While she was right in general, **keep in mind that there are exceptions to the _margin collapsing_ rule**. The **margins of `absolute`, `float` and `flex-positioned` elements never collapse**.
+
+  - Only the **block elements margins collapse**.
+
+- It is cool that Jen used the `picture` element for optimizing the images.
+
+- While writing the tablet/desktop CSS we heavily leveraged CSS grid. The grid layout is very powerful
+
+Finished part 4 day 1 00:00
