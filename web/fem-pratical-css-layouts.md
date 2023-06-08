@@ -56,4 +56,14 @@ Watching [this workshop](https://frontendmasters.com/workshops/practical-css/). 
 
 - While writing the tablet/desktop CSS we heavily leveraged CSS grid. The grid layout is very powerful
 
-Finished part 4 day 1 00:00
+- The **`inline-block` element flows like a `inline` element, but you can set width/height on it. It will also respect padding and margin values**.
+
+  - There is also the **wrapping behavior**. The **`inline` element can wrap in "the middle" of itself, while the `inline-block` will always wrap as a whole**.
+
+  - I find [this table helpful](https://gist.github.com/Asheq/1ef5ec77b8e89c2c9da89d2b7a1cf8cb) when thinking about `block` vs. `inline-block` vs. `block`.
+
+> After watching the medium design for a bit, I've decided to skip to the hard one.
+
+<https://codepen.io/jen4web/pen/gOBvppB>
+
+Finished day 2 part 5 00:00
