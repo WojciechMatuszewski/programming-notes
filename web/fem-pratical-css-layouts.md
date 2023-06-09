@@ -63,7 +63,3 @@ Watching [this workshop](https://frontendmasters.com/workshops/practical-css/). 
   - I find [this table helpful](https://gist.github.com/Asheq/1ef5ec77b8e89c2c9da89d2b7a1cf8cb) when thinking about `block` vs. `inline-block` vs. `block`.
 
 > After watching the medium design for a bit, I've decided to skip to the hard one.
-
-<https://codepen.io/jen4web/pen/gOBvppB>
-
-Finished day 2 part 5 00:00
