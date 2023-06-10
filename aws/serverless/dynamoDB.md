@@ -6,6 +6,14 @@ Random stuff about DynamoDB
 
 - table must have _partition key_ and **optional** _sort key_ (or range key)
 
+- The **WCU is measured in 1KB increments (rounded up) FOR THE WHOLE ITEM you are writing to**.
+
+  - This means that, **if the item you are writing to is large, but you update only a small portion of it, you will pay a lot for the write**.
+
+    - This is why **you should consider splitting the "large" attributes apart from the small ones that you frequently update**.
+
+- The **RCU is measured in 4KB increments (rounded up)**.
+
 ## Contribution Insights
 
 - you can view graphs on access patterns for your database
@@ -171,7 +179,7 @@ If you want to learn more about GSIs, [check out this video](https://youtu.be/if
 
 While the GSI enable you to create elaborate and powerful querying patterns, they also can cause issues in regarding to throttling and WCU / RCU consumption.
 
-With the RCU case, please remember that querying given GSI consumes a sum RCU in terms of all projected attribute sizes across all of the items returned. This usually is not a problem, but I've noticed that engineers often overlook this property of the GSI.
+With the RCU case, **please remember that querying given GSI consumes a sum RCU in terms of all projected attribute sizes across all of the items returned**. This usually is not a problem, but I've noticed that engineers often overlook this property of the GSI.
 
 The RCU case is similar to the RCU one. The total provisioned throughput cost of a write consists of the sum of write capacity units consumed by writing to the base table nad those consumed by updating the global secondary index.
 
@@ -193,15 +201,13 @@ The main takeaways I have after reading it are:
 
 ##### Considerations for not creating GSIs
 
-You might decide to skip on creating a GSI and instead choose to use `Scan` API to perform ad-hoc querying.
-I would say this is a good pattern if you are certain that the cost of having those GSIs, and their influence on RCU / WCU consumption, would incur a non-trivial increase to your overall cost.
+You might decide to skip on creating a GSI and instead choose to use `Scan` API to perform ad-hoc querying. I would say this is a good pattern if you are certain that the cost of having those GSIs, and their influence on RCU / WCU consumption, would incur a non-trivial increase to your overall cost.
 
 A blog post on this topic <https://roger20federer.medium.com/dynamodb-when-to-not-use-query-and-use-scan-61e4ab90c1df>
 
 ##### Provisioning capacity for an index
 
-If you have your table set to **provisioned capacity mode** you will be able to set capacity for a given GSI.
-This might come in handy in cases where you want to optimize costs or are very well informed about the access patterns.
+If you have your table set to **provisioned capacity mode** you will be able to set capacity for a given GSI. This might come in handy in cases where you want to optimize costs or are very well informed about the access patterns.
 
 #### Sort Key
 
@@ -246,8 +252,7 @@ Carefully picking HASH key is very important with this approach.
 
 ## Projections
 
-While creating **GSI (HASH / HASH + RANGE)** you can **project other attributes on those keys**. This is an important concept because **keys store data, they have some `weight`**.
-By default, when you have GSI, you only have access to attributes that are your keys. To use other attributes, you should use projections.
+While creating **GSI (HASH / HASH + RANGE)** you can **project other attributes on those keys**. This is an important concept because **keys store data, they have some `weight`**. By default, when you have GSI, you only have access to attributes that are your keys. To use other attributes, you should use projections.
 
 You could also project everything, but that is kind of inefficient. **There is an underlying storage cost that comes with every index!**
 
@@ -700,8 +705,7 @@ You can find a blogpost regarding this architecture [here](https://aws.amazon.co
 
 ### Measure before you optimize
 
-_DynamoDB_ is great. It allows you to pull the WCU/RCU information right from the operation you have just performed.
-There is an option within the SDK to get the `ReturnConsumedCapacity`. You can then send that information somewhere, maybe to your analytics pipeline,
+_DynamoDB_ is great. It allows you to pull the WCU/RCU information right from the operation you have just performed. There is an option within the SDK to get the `ReturnConsumedCapacity`. You can then send that information somewhere, maybe to your analytics pipeline,
 where you would chart the cost of each operation.
 
 ### Use Reserved Capacity
