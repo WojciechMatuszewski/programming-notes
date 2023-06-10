@@ -96,3 +96,26 @@ While you can do this, **you might want to think twice before allowing the user 
 - Keep in mind that you will have to parse this list to extract individual addresses (most likely).
 - Keep in mind that **the validation error messages vary from browser to browser**.
 - Keep in mind that the **iOS keyboard does not include the comma by default**. This might result in a cumbersome experience for users on mobile.
+
+## Huge amounts of DOM nodes and the `content-visibility`
+
+> Based on [this](https://web.dev/dom-size-and-interactivity/?ck_subscriber_id=1352906140) and [this](https://web.dev/content-visibility/) blog post.
+
+At some point you might encounter a website where the number of the DOM nodes is huge. This might be a blog, this might be some other interactive site. But the problem is the same – the amount of the DOM nodes causes the browser to freeze when rendering the initial content.
+
+**If you are dealing with a list consider virtualizing the content**. But what if that is not possible? What if the content is structured in a way that makes it impossible to collect into a list? Luckily, the browser vendors come with some help. **Enter the `content-visibility` property.
+
+The **`content-visibility` is a NATIVE way to tell the browser to defer rendering some parts of the webpage to when the content enters the viewport**. It is like a native virtualization, but of course it does not handle all the cases that super well (but it is a built-in API that requires 0 KiB of JS to implement).
+
+You have three values to choose from.
+
+- The `auto`.
+- The `visible`.
+- The `hidden`
+
+Of course, me being me, I always lean towards the simplest, the most "out-of-the-box" solution possible, so the `auto` property is very appealing to me. The browser will do most of the work for me, and I do not have to manage the state myself.
+
+To be clear: **this is not a silver bullet**. With **the `auto` property, the scrollbar might jump around while the browser shows/hides the content**.
+Some articles recommend using the `IntersectionObserver` API to handle the state manually, which is what you most likely will end up doing.
+
+Overall, this is a great API to be familiar with. If you are using a framework, and not using `Fragments`, it is quite easy to case the DOM to be quite big causing rendering issues.
