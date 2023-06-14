@@ -338,6 +338,41 @@ These can be use to detect if a CSS feature is available on given browser.
 
 Pretty cool stuff!.
 
+## Logical properties
+
+Instead of using the `left` and `right` keyword for paddings, margins and so on, one **should consider using the `inline` and `block` keywords**.
+
+```css
+.foo {
+  margin-inline-start: 10px; /* AKA margin-right */
+  margin-inline-end: 10px; /* AKA margin-left */
+  block-size: 30px; /* AKA the height */
+  inline-size: 40px; /* AKA the width */
+}
+
+.bar {
+  inset-inline-start: 10px; /* AKA left: 10px */
+  inset-inline-end: 20px; /* AKA right: 20px */
+}
+```
+
+Why should you bother? **There are at least two big reasons**.
+
+1. **Using logical properties are named after the box model**. This makes the code more consistent.
+
+2. **Using logical properties gives you the support for different writing modes by default**. Some languages read left to right or in other direction.
+  Luckily for us, the browser will handle other writing modes automatically for us if we use logical properties.
+
+Even if you do not have a requirement for page translation now, consider how many people use the translate plugin available in the browsers. I know you had used it at least once!
+
+You can [learn more about the logical properties here](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values).
+
+## The Many Kinds of Viewport Units
+
+Gone are the days where we only had `vh` and `vw`. **Now we have multiple ways to define the viewport units. Most of them are driven by the mobile use-case where they are dynamic due to browser address bar appearing/disappearing**. There are **too many to list here, but the most interesting unit for me is the _dynamic_ one**. This one scales based on the state of the address bar (if it is hidden or not).
+
+You can [learn more about the different kinds of viewport units here](https://www.terluinwebdesign.nl/en/css/incoming-20-new-css-viewport-units-svh-lvh-dvh-svw-lvw-dvw/).
+
 ## CSS Variables
 
 CSS Variables allow you to declare different values, which you can use later in your CSS definitions. **Keep in mind that you can scope the visibility of variables, like in any other programming language**.
@@ -569,3 +604,27 @@ CSS-in-JS became de-facto day of styling our apps. Let us explore how it works o
 ### The bottom line
 
 CSS-in-JS is a great way to style your apps, but it is not without its shortcomings. With the advent of _server components_, **there might be a shift away from CSS-in-JS in favour of more native solutions like _CSS modules_ or _SaSS modules_**.
+
+## CSS Container Queries
+
+Remember setting the _media queries_ for the whole width of the page only to style some container that lived inside another container and it's width did not necessarily depended on the width of the viewport? You got the job done, but it was not something you enjoyed.
+
+**Now you can base the size of the child out of the size of the parent**. If the parent shrinks, the child can also shrink. **The container queries are like media queries but instead of looking at viewport, they look at the parent**. Very useful stuff.
+
+Why is this useful? **In the age of components, it is very hard to style them according to the viewport**. Components are composable, they might "appear" in different contexts. Ideally they should "just work" no matter who the parent is.
+
+```css
+.parent {
+  container: NameForTheContainer / inline-size;
+}
+
+.child {
+  color: red;
+
+  @container NameForTheContainer (max-width: 400px) {
+    color: blue;
+  }
+}
+```
+
+The syntax is very familiar. One addition is that you have to "name" your container to use the `@container` query.

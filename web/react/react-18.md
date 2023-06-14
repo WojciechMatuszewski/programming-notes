@@ -488,3 +488,19 @@ These components are **prerendered on the server and hydrated on the client**. T
   > Client Components enable you to add client-side interactivity to your application. In Next.js, they are pre-rendered on the server and hydrated on the client. You can think of Client Components as how components in the Pages Router have always worked.
 
 2. Now you **have a greater control over what runs where**. I'm not sure if that is a good thing or not. Most likely not since it should be an "opt-in" rather a "must-do". These concerns are addressed by frameworks like Qwik and Marko where the place where component executes is opaque to the developer.
+
+3. **React can stream parent components' output before their children finish rendering**. If it was unable to do so, you would be blocking the rendering every time you created an async RCS.
+
+## Notes from "RSC From Scratch"
+
+> [Here is the link to the first entry](https://github.com/reactwg/server-components/discussions/5) in the series.
+
+- The SSR is about sending the HTML as the initial request. The RSC is about sending serialized JSX upon subsequent navigations so that we can navigate without destroying the state of the application.
+
+- While using RSCs, the navigation **will fetch, by default, only the parts that could have changed**. There is no point in returning the serialized JSX for the "Layout" if you know that it could not have changed.
+
+- The RSC have a special format to them because returning the "raw JSX" is not possible and even if it would be, the "raw JSX" is quite large.
+
+  - The "raw JSX" contains symbols that correspond to the element type. These get stripped when performing `JSON.stringify`.
+
+> Waiting for the part 2 as the part 1 was a fascinating read.
