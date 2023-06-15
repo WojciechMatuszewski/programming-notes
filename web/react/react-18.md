@@ -377,7 +377,9 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
 - The **dependencies you use to render _Server Components_ do not add to your overall bundle**.
 
-  - Since there is no hydration, there is no need to push that code to the client.
+  - Since there is **no hydration when using SSR**, there is no need to push that code to the client.
+
+    > See [this tweet](https://twitter.com/sebmarkbage/status/1341142110385410049).
 
   - The _React Server Components_ have **automatic bundle splitting**. As in you do not have to use `React.lazy` for code splitting.
 
