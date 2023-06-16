@@ -6298,6 +6298,8 @@ is **always open**, it just waits for ANY message to be visible.
 - you can redrive messages from DQL using [replay-aws-dlq](https://github.com/garryyao/replay-aws-dlq), you probably
   want to use `npx` for that.
 
+  - aws **introduced an SDK API to perform the redrive**. You should favour that instead. See [this link](https://aws.amazon.com/blogs/aws/a-new-set-of-apis-for-amazon-sqs-dead-letter-queue-redrive).
+
 ##### Integration with AWS Lambda
 
 - AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and
