@@ -1,4 +1,4 @@
-# Events and their phases
+# Events
 
 Usually we are working with frameworks like _Angular_, _React_ or _Vue_ that abstract interactions with the DOM event model.
 While this is certainly a productivity boost, I think it's at least worth knowing about 2 most important concepts - _event capturing_ and _event bubbling_.
@@ -129,3 +129,39 @@ controller.abort(); // remove the listener
 Notice that I've created a new instance of the listener in the `addEventListener` callback. **With the `AbortController` API, you do not have to worry about the referential equality of the callbacks!**. Pretty neat if you ask me.
 
 - You can read more about many other `AbortController` use cases [here](https://whistlr.info/2022/abortcontroller-is-your-friend/).
+
+## Custom events and the `EventEmitter`
+
+There is an API for creating custom events that you can incorporate to your application. **The events can be scoped to a given "emitter" or global**.
+This makes some of the npm packages obsolete. Of course the packages might provide some additional sugar on top, but in most cases, you will not need them!
+
+### Global events
+
+Use the `dispatchEvent` API available on the `window`.
+
+```js
+window.dispatchEvent(new Event("..."))
+```
+
+Then you can listen in any other part of your application.
+
+```js
+window.addEventListener("foo", () => {
+  // ...
+})
+```
+
+### "Scoped" events
+
+You can **either scope the event to a given element, or create an instance of an "emitter"**. Usually you want your events to be scoped to a given context.
+
+```js
+const emitter = new EventTarget();
+
+// You can also query for an element here instead of using `window`.
+emitter.dispatchEvent(new Event("..."));
+```
+
+```js
+emitter.addEventListener("..")
+```
