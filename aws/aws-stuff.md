@@ -498,6 +498,10 @@
 - there is a **limit in terms of number of entries in the execution history**. It's quite big - 25000. Avoid reaching
   it (split executions into multiple workflows if needed)
 
+- **use versions and aliases with routing configuration**. This is super helpful when doing any kind of complex changes.
+
+  - it appears **to work similar to CodeDeploy _safe deployments_**, there is **even a rollback feature when an alarm alarms**.
+
 #### Step Functions and idempotency
 
 - _Step Functions_ can be used to ensure service idempotency
