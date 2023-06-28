@@ -7529,6 +7529,10 @@ Problem solved.
 
 - if you ever used the AWS SAM, then you have already used Macros, mainlu the `AWS::Serverless` macro specified in the `Transform` block.
 
+- **the SAM framework uses the `AWS::Serverless-2016-10-31` macro**.
+
+  - in addition, you **might find `AWS::LanguageExtensions` macro helpful** as it adds additional functions and attributes to the CFN template.
+
 #### Helper scripts
 
 - these are utilities provided by CloudFormation to **orchestrate, notify CF when changes happen to the underlying
