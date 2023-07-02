@@ -1654,12 +1654,9 @@ An example for s3-prefix (folder)
   (region needs to differ)**.
 
 - S3 can be `accelerated`. There is something called **S3 Transfer Acceleration** where users upload to **edge
-  locations** instead directly to
-  the Bucket (your downloads will also be faster). Then that uploaded object is **transferred automatically to your
-  bucket**.
-  One thing to keep in mind that you will not always see the speed increase. It is dependant on where you are making the
-  request from.
-  Maybe there is no edge pop near you?
+  locations** instead directly to the Bucket (your downloads will also be faster). Then that uploaded object is **transferred automatically to your bucket**.
+
+  One thing to keep in mind that you will not always see the speed increase. It is dependant on where you are making the request from. Maybe there is no edge pop near you?
 
 - S3 is a **tiered** storage
 
@@ -1696,6 +1693,12 @@ An example for s3-prefix (folder)
 #### Monitoring
 
 - use **S3 Storage Lens** to get insight into what is happening across your buckets
+
+- you can use **CloudTrail events to monitor S3 API calls**.
+
+  - this requires you to turn on the **_data events_ which will cost you additional $$**
+
+- you can also **turn on _server access logging**. Keep in **mind that if the number of requests to the bucket is huge, your CW bill will increase**.
 
 ##### Inventory
 
@@ -1789,19 +1792,14 @@ An example for s3-prefix (folder)
 
 - After **enabling** versioning, it **cannot be disabled**, only **suspended**
 
-- Remember that with versioning your previous versions persists on the bucket. This can lead to exponential growth of
-  size when editing big files.
+- Remember that with versioning your previous versions persists on the bucket. This **can lead to exponential growth of size when editing big files**.
 
 - When an object is deleted, **bucket may seem empty** but that's not the case. You just placed a _delete marker_ on
-  that object (thus creating a new version). Your **previous versions are still there!, you can view them within
-  versions tab!**.
+  that object (thus creating a new version). Your **previous versions are still there!, you can view them within versions tab!**.
 
-- You can restore your deleted objects by **deleting a delete marker**.
-  This property makes it so that **whenever someone mentions the idea of _soft deletes_ you should think of _delete
-  markers_**.
+- You can restore your deleted objects by **deleting a delete marker**. This property makes it so that **whenever someone mentions the idea of _soft deletes_ you should think of _delete markers_**.
 
-- **The act of deleting the _delete marker_ (OR ANY PARTICULAR VERSION) is not replicated!**. But the **_delete markers_
-  can be replicated. It all depends on the replication settings**.
+- **The act of deleting the _delete marker_ (OR ANY PARTICULAR VERSION) is not replicated!**. But the **_delete markers_ can be replicated. It all depends on the replication settings**.
   Use [this documentation page](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-what-is-isnot-replicated.html)
   to guide you.
 
@@ -1843,16 +1841,21 @@ An example for s3-prefix (folder)
 
 - if you want to track **policy changes** use **CloudTrail**
 
+- **nowadays the buckets are created WITHOUT public access by default**.
+
+  - that is a great default to have
+
+- **nowadays the items are encrypted by default**. The encryption is S3-managed key.
+
+  - this is a great default to have
+
 ##### ALCs
 
 - **considered legacy** but I find it **relevant in day-to-day** job when it comes to s3
 
 - **not granular**, with ACLs you can **grant permissions to AWS accounts and pre-defined groups**
 
-- to **identify the AWS accounts** you will be using something called **Canonical user ID**. The ID is basically an **
-  obfuscated form of AWS account ID**.
-  to get your AWS account information, as well as your _Canonical user ID_, click on the dropdown with the account name
-  and go to _Security Credentials_
+- to **identify the AWS accounts** you will be using something called **Canonical user ID**. The ID is basically an **obfuscated form of AWS account ID**. To get your AWS account information, as well as your _Canonical user ID_, click on the dropdown with the account name and go to _Security Credentials_
 
 - to **identify groups** you will be using **URIs**. These are looks something
   like `http://acs.amazonaws.com/groups/global/AuthenticatedUsers`
@@ -1877,8 +1880,7 @@ An example for s3-prefix (folder)
 
 - allow you to **operate on _identities_** so users, groups and roles
 
-- you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN
-  YOUR ACCOUNT!, identities you control**.
+- you would use **identity policies** to **control access** to s3 resources, this however **only works on identities IN YOUR ACCOUNT!, identities you control**.
 
 ###### Identity vs Bucket Policy
 
@@ -1913,9 +1915,7 @@ So when to use what?
 
 - can be enabled on the account or the bucket level. Account level should be preferred
 
-- overrules any ACLs and policies that you specify. If you have this enabled, objects will not be publicly accessible,
-  no matter the policy or ALCs
-  that you have in place.
+- overrules any ACLs and policies that you specify. If you have this enabled, objects will not be publicly accessible, no matter the policy or ALCs that you have in place.
 
 ##### Cross-account
 
