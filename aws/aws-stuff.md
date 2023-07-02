@@ -1987,9 +1987,7 @@ much access to the underlying object the bucket owner has.
     AWS master key**.
   - **SSE-KMS**: **keys** are **managed by KMS service**. It **allows for role separation** since **keys are stored in
     accounts KMS**
-  - **SSE-S3**: The **master key is within AWS**. Be careful with this one though. Since S3 has the key, when you make
-    your bucket public, s3 will automatically decrypt the contents.
-    This is why you should **prefer SSE-KMS** whenever possible.
+  - **SSE-S3**: The **master key is within AWS**. Be careful with this one though. Since S3 has the key, when you make your bucket public, s3 will automatically decrypt the contents. This is why you should **prefer SSE-KMS** whenever possible.
 
 - **no additional cost** for enabling encryption
 
