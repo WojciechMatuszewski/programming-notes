@@ -6222,13 +6222,14 @@ or create union products**.
 ##### Pooling
 
 - there is a notion of **pooling**.
+
   - **short pooling**: up to **10 messages** at once. You **constantly have to check the queue**
+
   - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request
     will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **
     avoid empty API calls**
 
-Whats very important to understand is that **LONG POOLING CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection**
-is **always open**, it just waits for ANY message to be visible.
+What is very important to understand is that **LONG POOLING CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection** is **always open**, it just waits for ANY message to be visible.
 
 - you can **control how long the long pooling takes** by **specifying ReceiveMessageWaitTimeSeconds attribute**
 
@@ -6243,6 +6244,14 @@ is **always open**, it just waits for ANY message to be visible.
 - **be mindful of the `maxReceiveCount` attribute!**. If you have it set, and you _peek_ too many times, your messages might end up on the DQL before they were processed.
 
 - keep in mind that **peeking does not necessarly mean getting the "head" of the queue backlog**. This is because some other system might already receive the "head" messages and is processing them with some non-zero `visiblityTimeout`.
+
+##### Temporary / virtual Queues
+
+- **Not a service, but rather an architectural pattern / client** exposed by AWS. **Only available in Java so far**.
+
+- The way I understand it, the **virtual queues pattern allow you to map in-memory queues with a single SQS queue**. Then, you **can push messages to the virtual queues as if they were separate**. In reality you are using a single SQS under the hood.
+
+  - Since there might be multiple virtual queues, **AWS recommends low-traffic workloads for the virtual queues**. Understandable.
 
 ##### HA
 
@@ -6273,11 +6282,12 @@ is **always open**, it just waits for ANY message to be visible.
 
   > Total concurrency is equal to or less than the number of unique MessageGroupIds in the SQS FIFO queue
 
-- with the _message group ID_ parameter you have the guarantee that the messages from a given group were processed in
-  order.
-  - **note that the batch that the lambda is provided might contain messages from different _message groups_!** but
-    those messages are **"in order" when you look globally**
+- with the _message group ID_ parameter you have the guarantee that the messages from a given group were processed in order.
+
+  - **note that the batch that the lambda is provided might contain messages from different _message groups_!** but those messages are **"in order" when you look globally**
+
   - **use the `SequenceNumber` attribute to sort the messages that you were given in lambda to ensure ordering**
+
   - [link to a helpful video](https://youtu.be/8zysQqxgj0I?t=918)
 
 ##### DLQ
@@ -6304,17 +6314,19 @@ is **always open**, it just waits for ANY message to be visible.
 
 ##### Integration with AWS Lambda
 
-- AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and
-  then increases by 60 based on the number of messages in the queue**
+- AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**
 
-- What is interesting is that the API and the _pollers_ are deployed on AWS Lambda. This insight was shared in "Amazon
-  builders’ library: Operational excellence at Amazon" re:Invent 2021 talk.
+- The AWS Lambda service (in reallity the ESM) **uses long polling for the integration**. This makes sense as it would be ineficient to use anything else but long polling. See [this documentation section](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-scaling).
 
-- AWS [in their documentation page](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) recommends setting the
-  following features to the following values
+- What is interesting is that the API and the _pollers_ are deployed on AWS Lambda. This insight was shared in "Amazon builders’ library: Operational excellence at Amazon" re:Invent 2021 talk.
+
+- AWS [in their documentation page](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html) recommends setting the following features to the following values
+
   - AWS Lambda concurrency: to at least 5. I think this is because the initial concurrency of the _poller fleet_ is 5
-  - SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can
-    retry the batch multiple times before the messages land in DLQ
+
+  - SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can retry the batch multiple times before the messages land in DLQ
+
+    - If you think about, AWS recommends really high visiblity timeout. I wonder if it's the case of "better safe than sorry" or something else.
 
 ###### Maximum concurrency
 
