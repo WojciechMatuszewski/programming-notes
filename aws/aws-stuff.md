@@ -5741,6 +5741,8 @@ or create union products**.
 
 - **CIDRS cannot overlap**, but you make much less connections between VPCs in general
 
+  - solves the problem **of having to peer each VPC with each other for communication**. The hint is within the name – _transit_.
+
 - **works** with **direct connect and VPNs**
 
 - you can create **route tables on transit gateway to control the visibility of each VPC**
@@ -5863,19 +5865,19 @@ or create union products**.
 
 - if you specify **dynamic routing** the connection will use **BGP**.
 
-- if you specify **dynamic routing** both sides **can exchange routing information**. You **do not have to provide such
-  information yourself, like in a static routing solution**
+- if you specify **dynamic routing** both sides **can exchange routing information**. You **do not have to provide such information yourself, like in a static routing solution**
 
 - the **connection** occurs between **customer gateway** and **virtual private gateway (attached to VPC)**
 
 - you can **create multiple tunnels** to achieve **HA on AWS site**
 
-- you can create **multiple customer gateways** and **multiple tunnels** for **full HA**. This architecture **requires
-  BGP**
+- you can create **multiple customer gateways** and **multiple tunnels** for **full HA**. This architecture **requires BGP**
 
 - when you setup the connection the **peer identity authentication is established**
 
 - it **uses the public internet** to exchange data.
+
+- **great way to establish direct connection with AWS while waiting for direct connect**.
 
 ##### Managed VPN
 
