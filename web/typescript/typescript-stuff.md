@@ -1902,6 +1902,15 @@ Maybe<false> // ok
 Maybe<() => null> // ok
 ```
 
+If you go by the definition from above, it should not be surprising that this works. Strings, Booleans and other types have multiple of properties on them, thanks to _boxing_.
+
+```js
+true.valueOf()
+"ss".includes("xx")
+
+// and so on...
+```
+
 ## Enums
 
 Enums are quite popular with _Ngrx_. They are not all sunshine and rainbows though.
