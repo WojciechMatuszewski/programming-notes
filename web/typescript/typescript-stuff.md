@@ -1911,6 +1911,8 @@ true.valueOf()
 // and so on...
 ```
 
+As for another definition – **the `{}` type represents all the types that will not throw if you access any kind of property on them. Only `null` or `undefined` will throw in such case**.
+
 ## Enums
 
 Enums are quite popular with _Ngrx_. They are not all sunshine and rainbows though.
