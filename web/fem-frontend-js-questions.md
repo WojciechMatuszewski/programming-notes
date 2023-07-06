@@ -24,6 +24,8 @@
 
 - The **combination of DOM & CSSOM Trees (with only visible elements) creates a _Render Tree_**.
 
+  - Mind the _only visible elements_. That is why the A was not correct in this question.
+
 ## Question 3
 
 This question is all about the DNS, and I know almost nothing about these things.
