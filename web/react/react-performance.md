@@ -518,3 +518,27 @@ const useFormState = () => {
 ```
 
 There is **a lot of additional complexity** using this technique. You **might be better off using a library** – they are using the same `useSyncExternalHook` hook as you (most likely).
+
+## The cost of SVGs in your bundle
+
+There are multiple ways you can use SVGs in your applications.
+
+1. You can "inline" them into your JSX. Use them as components.
+
+2. You can "inline" them into the HTML. That sounds nice but is hard to do with a component-based apps driven by a framework.
+
+3. You can use `img` tag with a link to an SVG.
+
+4. You can use them as sprites, using the `symbol`, `use` and `defs` elements.
+
+All of those have drawbacks, but **inlining the SVG into the JSX appears to be the worst solution in terms of performance**. That is because, **the browser now has to parse the JS that contains SVGs, this really slows down the parsing process**. In addition, **the memory footprint of your application is much bigger** as the JS engine has to hold down onto those SVGs.
+
+The **best solution in terms of performance/tradeoffs ratio appears to be using the SVGs as sprites** (point number 4). There are many resources about this problem, here is the list of the ones I found helpful.
+
+- <https://kurtextrem.de/posts/svg-in-js?ck_subscriber_id=1352906140>
+- <https://benadam.me/thoughts/react-svg-sprites/>
+- <https://twitter.com/_developit/status/1382838799420514317>
+
+---
+
+In Next.js, **you can use the `Image` tag with a link to the SVG natively**. So there is no excuse to having the SVGs in your bundle, unless you really need to animate it.
