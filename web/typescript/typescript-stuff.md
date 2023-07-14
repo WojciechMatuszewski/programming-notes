@@ -423,6 +423,22 @@ function getFontSize(size: "sm" | "xs" | Omit<string, "sm" | "xs"> ) {
 
 Now, the autocomplete works as expected. It's either `sm`, `xs` or all the strings (except the `sm` or `xs` value).
 
+## What the `d.ts` file is good for and what it is NOT good for
+
+The `d.ts` files are for
+
+- Providing global types that are available in all your TS files without the need to import them.
+
+- Augmenting the library types.
+
+The `d.ts` files are **not for**
+
+- **Putting types that are related to modules and importing those types in different files**.
+
+The reason why you do not want to do this, is that, in most cases, you will have the `skipLibCheck:true` turned on (makes sense, since it is TypeScript that usually generates those files. Why bother checking them?). If you do, you will not notice the type errors in those files.
+
+**TypeScript team also is against putting module-types into `d.ts` files. See [this comment](https://github.com/microsoft/TypeScript/issues/52593#issuecomment-1419505081)**.
+
 ## TripleSlash aka Reference
 
 You have seen them, the weird `/// <reference types|lib=...>` syntax. This is mostly relic of the past but still can be useful in day-to-day work.

@@ -261,3 +261,9 @@ const App = () => {
 Notice that I'm accessing the `data` as if the `useFetchUser` was synchronous. I'm able to do this because **React can now "pause" rendering of the `User` component until the `useFetchUser` resolves**. No more `if (isLoading)` checks. Now it's the role of the `fallback` prop on the `Suspense` component to take care of the loading for us. Pretty neat!
 
 One additional detail – notice the `ErrorBoundary`. If the `useFetchUser` fails, the error will propagate to the nearest `ErrorBoundary` (or crash your application).
+
+### Event better way to fetch data
+
+While _fetching while you render_ is much better than _fetching after render_ (usually with `useEffect`), we can **combine the power of `Suspense` with pre-fetching**. We could **start fetching the data as soon as the user hovers over some element, or even before that – when they land on a given page**!
+
+By shifting the fetching as much as possible to the left, we get the best UX. The app might feel as if it does not fetch any data!
