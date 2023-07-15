@@ -6197,6 +6197,30 @@ or create union products**.
 
   - At the time of writing this, EventBridge does not have the FIFO semantics option.
 
+##### SNS to SQS pattern
+
+> Read more about this integration [here](https://theburningmonk.com/2023/07/sns-to-lambda-or-sns-to-sqs-to-lambda-what-are-the-trade-offs/).
+
+- The **main benefit is the ability to batch on the RECEIVER level**.
+
+  - Imagine polling a couple of messages and running network requests in parallel. This would be impossible with only using the SNS.
+
+- There is a **cost consideration of publishing the message to the SQS**.
+
+  - When there is a lot of requests, these costs could add up.
+
+- Using the **SQS requires you to handle the errors differently on the consumer side**.
+
+  - Since the messages can be batched, you have to ensure a single error wont fail the whole batch. This usually means **implementing partial batch responses**.
+
+- I find the **SQS to be a good tool for concurrency control**.
+
+  - You can **control the concurrency on the ESM level**. This is, in my opinion, better than using AWS Lambda concurrency settings.
+
+    - With AWS Lambda concurrency settings, the SQS pollers would still attempt to invoke the AWS Lambda. This will create noise in your dashboards – a lot of unnecessary throtlling errors might occur.
+
+      - The **AWS Lambda throttled invocations do not count as errors and are not send to the DLQ**. This is very important fact to know.
+
 #### SQS
 
 - **nearly unlimited throughput FOR STANDARD QUEUES (not FIFO)**
@@ -6205,12 +6229,9 @@ or create union products**.
 
   - if you need to transport bigger payloads, **upload the event to S3 first, then send the pointer to S3** as the event
 
-- when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X
-  seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that
-  message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
+- when a **consumer reads a message from a queue**, that message will be **_invisible_ for other workers up to X seconds**. This is so called **visibility timeout**. If you **process the message and do not delete it** that message **will be _visible_ again for processing**. This is how **retry mechanism** is implemented.
 
-- you can **change visibility timeout PER ITEM BASIS**. This might come in handy when you know some messages can take
-  longer than usuall. This is **usually done by tagging such message using some kind of JSON header**.
+- you can **change visibility timeout PER ITEM BASIS**. This might come in handy when you know some messages can take longer than usuall. This is **usually done by tagging such message using some kind of JSON header**.
 
 - **by default** your **standard queue** **DOES NOT PRESERVE THE ORDER**. You can also **have duplicates (sometimes)**.
 
