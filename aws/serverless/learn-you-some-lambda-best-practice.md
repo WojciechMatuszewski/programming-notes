@@ -38,6 +38,20 @@ There is a difference between `exports =` and `module.exports =`. **Always prefe
 
 - **you do not have access to the AWS Lambda payload or the response**. Such a pity, but I fully support this decision. Imagine the abuse it could cause.
 
+- quite [useful with LaunchDarkly](https://docs.launchdarkly.com/guides/infrastructure/aws-lambda#closing-the-client).
+
+  - I wish I knew that when we were using it at work.
+
+### Lambda extensions and graceful shutdown
+
+- if you **have ANY(TBD: verify) extension attached to your function, you can listen to the `SIGTERM` event**.
+
+  - here is [an example using the CW extension](https://github.com/aws-samples/graceful-shutdown-with-aws-lambda/tree/main/nodejs-demo)
+
+- this is quite useful for closing DB connections and so on.
+
+- just note that **this event is fired when the execution environment is about to be closed**. This **means that your AWS Lambda might have already been invoked a couple of times on the same container**.
+
 ## Lambda runtime
 
 - wrapper the AWS provides that runs your handler.
