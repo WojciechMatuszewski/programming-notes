@@ -137,6 +137,16 @@
 
   - this is **completely different than the init phase of the "regular" AWS Lambda functions**, [where you get one full CPU for free](https://youtu.be/NZVNAEK6shc?t=2184) regardless of the memory settings of your AWS Lambda.
 
+#### On-demand (unreserved) concurrency and proactive initialization
+
+> From [this great blog post](https://aaronstuyvenberg.com/posts/understanding-proactive-initialization)
+
+- AWS Lambda can **proactively warm up your functions, even if you are NOT using the _provisioned concurrency_**.
+
+- This happens rather frequently, somewhere around 50% of times.
+
+- This will reduce your cold starts. You basically get, albeit a bit unreliable, _provisioned concurrency_ for free!
+
 #### Inside VPC
 
 - **you can attach the lambda to a vpc**. Based on your needs, the associated subnets should be either private or
