@@ -9,6 +9,10 @@ You update to _React_ 18 and observe a weird behavior, where tree parts have dif
 
 The answer lies in the fact that _React_ 18 uses _concurrent rendering_ technique. The technique is about yielding to the browser – i.e., "pausing" _React_ rendering. **If an update sneaks in between this "pause," one part of the tree might show different values!**
 
+### Note on concurrent rendering
+
+According to [this article](https://vercel.com/blog/how-react-18-improves-application-performance), **React will yield back to the main thread every 5 MS to check if there is not any more important task to do**. This is quite interesting, they must use some kind of timer to do the yielding.
+
 ### Why is it not a problem in _React_ 17?
 
 _React_ 17 is synchronous. There is no way for an update to sneak in when _React_ yields to the browser because no yielding occurs.
@@ -34,6 +38,8 @@ return (
   ></button>
 );
 ```
+
+When you use `startTransition`, the **React will prepare a new tree in the background**. Once that tree is finished rendering, the result can be committed into the DOM.
 
 ### Regarding the state updates
 
