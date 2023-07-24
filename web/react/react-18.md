@@ -512,3 +512,35 @@ These components are **prerendered on the server and hydrated on the client**. T
   - The "raw JSX" contains symbols that correspond to the element type. These get stripped when performing `JSON.stringify`.
 
 > Waiting for the part 2 as the part 1 was a fascinating read.
+
+## More about RSCs and RCCs
+
+> Based on [this great blog post](https://demystifying-rsc.vercel.app/).
+
+- The **SSR output of the RSCs is the HTML and the encoded _virtual DOM_**.
+
+  - The _virtual DOM_ is needed for future updates and to ensure we can mix RCCs with RSCs.
+
+  - The data is encoded in a "special" new format that allows streaming.
+
+- In **Next.js, RCCs are, by default, pre-rendered on the server**. That is why you see static HTML when you view the page source.
+
+  - This is the SSR mechanism that we have been using for a while now.
+
+- **Every time you use `use client`, you tell the bundler to put the component into a separate file**.
+
+  - Then, React can reference the file in the streaming RSC output.
+
+- You can **control whether the RCC runs on the server or not via the `next/dynamic` and the `ssr: true/false` option**.
+
+- The **RCC can have RSC as `children`, but keep in mind that updating props passed to RCS will NOT cause a re-render**!
+
+- If you **import a component inside a RCC, the component becomes RCC**.
+
+  - This means that you can skip the `use server` on some occasions, but that might lead to a mistake where you want the component to explicitly be a RSC, but it becomes RCC.
+
+    - One can **use the `server-only` module** to ensure that developers do not import RSCs into RCCs by accident.
+
+- **Asynchronous RSCs are rendered in parallel if they are on the same nesting level**.
+
+- The `Suspense` allows streaming. This can speed up the perceived performance of the page because React will render something, be it the fallback, as soon as possible.
