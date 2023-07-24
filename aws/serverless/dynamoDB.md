@@ -750,6 +750,8 @@ DDB exposes a feature where, given an attribute marked as "TTL" (the name of the
 It's not instantaneous though. There might be up to 48 hours of delay between "TTL" expiring and the item being deleted. This is due to the fact
 that the sweeper that runs the deletion is spun up on spare capacity of DDB (source: <https://youtu.be/S02CRffcoX8?t=1368>)
 
+Please note that **TTL in the context of global tables will incur a cost of the write in the secondary region**. While the TTL itself is free of charge in the primary, the propagation of the write to the secondary costs $$. [See this part of the video for more information](https://youtu.be/21BXeSRuL2w?t=2659).
+
 ### Using filtering instead of a GSI
 
 Depending on how your GSI is set up, you might be paying too much.
