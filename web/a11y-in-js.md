@@ -29,7 +29,8 @@ As developers, we have a tendency to overuse some techniques. Like in the case o
 ### Visually-Hidden
 
 - preserves accessibility information
-- rips element from the DOM flow
+- enables focusing **granted you keep the element dimensions to 1x1 and not 0x0**.
+  - on some browsers, if you set the dimensions to 0x0 px, the elements will not be focusable.
 
 ### Display
 
