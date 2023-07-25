@@ -119,3 +119,19 @@ To be clear: **this is not a silver bullet**. With **the `auto` property, the sc
 Some articles recommend using the `IntersectionObserver` API to handle the state manually, which is what you most likely will end up doing.
 
 Overall, this is a great API to be familiar with. If you are using a framework, and not using `Fragments`, it is quite easy to case the DOM to be quite big causing rendering issues.
+
+## DOM and Shadow DOM
+
+### Shadow DOM
+
+- This concept is **used in the context of custom web components**.
+
+- It is **separate from the "main" DOM**.
+
+  - This means you can have multiple IDs that repeat, and you do not have to worry about specificity rules.
+
+- The main benefit is the **style isolation. Your CSS will NOT clash with any other CSS on the page**.
+
+- Apart from the regular selectors, you get access to the `:host` and `:host-context` pseudo-classes.
+
+  - These only exist in the context of the Shadow DOM.
