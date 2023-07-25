@@ -1927,7 +1927,7 @@ true.valueOf()
 // and so on...
 ```
 
-As for another definition – **the `{}` type represents all the types that will not throw if you access any kind of property on them. Only `null` or `undefined` will throw in such case**.
+As for another definition – **the `{}` type represents all the types that will not throw if you access any kind of property on them. Only `null` or `undefined` will throw in such case**. You can also think of this type **as top-level TypeScript type**. It allows you to describe every possible type, just like `unknown`.
 
 ## Enums
 
