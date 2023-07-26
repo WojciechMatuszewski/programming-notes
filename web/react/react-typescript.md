@@ -358,3 +358,82 @@ function Component(props: { expanded: boolean }): React.ReactNode;
 function Component(props: { collapsed: boolean }): React.ReactNode;
 function Component(props: { expanded: boolean } | { collapsed: boolean }) {}
 ```
+
+## Type-helpers
+
+React exposes various type-helpers to help you type your components/hooks faster.
+
+### Automatic `children` with `PropsWithChildren`
+
+Writing `children: React.ReactNode` might get cumbersome after a while. To save you a little bit of typing, one might use `PropsWithChildren` type-helper.
+
+```tsx
+const Component = ({someProp, children}: React.PropsWithChildren<{someProp: number}>) => {}
+```
+
+Of course, I **strongly think you should NOT use this type-helper for every component**. As it was the case with `React.FC`, marking every component as taking `children` prop is misleading as some of them will not do anything with the `children` prop.
+
+### Mirror HTML element without `ref` prop with `ComponentPropsWithoutRef`
+
+It is quite common, especially when creating a design system or a component library, to have to "mirror" an HTML element. Your design system might include custom buttons, sliders and inputs. It is vital to have the props be correct so that the customers of the library are happy.
+
+To help you achieve that goal, you should **consider using `ComponentPropsWithoutRef`** when creating custom HTML-like components.
+
+```tsx
+interface Props extends React.ComponentPropsWithoutRef<"button"> {
+  scale: "small" | "large" | "medium"
+}
+
+const MyCustomButton = ({scale, ...buttonHTMLProps}: Props) => {
+  return <button {...buttonHTMLProps}>SomeButton</button>
+}
+```
+
+Of course, **this only applies if you DO NOT want to `forwardRef` which I argue you SHOULD do in this case**. It is quite frustrating as a library consumer not to have the ability to get the `ref` of the underlying element. **For that, use the `React.ComponentPropsWithRef`**.
+
+### Strongly typed `useRef` with `ElementRef`
+
+When using the `useRef` hook, you most likely want to pass a type to the generic slot of the hook.
+
+```ts
+const ref = useRef<SomeTypeHere>()
+```
+
+The problem is, that sometimes, it is hard to know what the `SomeTypeHere` supposed to be. Usually it is a HTMLElement type, but sometimes it could be a custom type, especially when you use `useImperativeHandle`.
+
+This is **where the `ElementRef` type-helper comes in**. The `ElementRef` will help you to derive the right type for the ref. Check this out.
+
+```tsx
+import { ElementRef, forwardRef, useImperativeHandle, useRef } from "react";
+
+function App() {
+  // Works well
+  const someElementRef = useRef<ElementRef<"audio">>()
+
+  // Also works well!
+  const componentWithForwardedRef = useRef<ElementRef<typeof ComponentWithForwardedRef>>()
+
+  // This one as well!
+  const componentWithImperativeHandle = useRef<ElementRef<typeof ComponentWithImperativeHandle>>();
+
+  return (
+    <div>it works</div>
+  );
+}
+
+const ComponentWithForwardedRef = forwardRef<HTMLDivElement>((props, ref) => {
+  return <div>works</div>
+})
+
+
+const ComponentWithImperativeHandle = forwardRef<{ someFunc: VoidFunction }>((props, ref) => {
+  useImperativeHandle(ref, () => {
+    return {
+      someFunc: () => { }
+    }
+  })
+  return <div>works</div>
+})
+
+export default App;
+```
