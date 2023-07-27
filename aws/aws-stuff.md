@@ -2912,20 +2912,31 @@ There are a few approaches when it comes to scaling with dynamoDB
 
     - keep in mind that AWS recommends at most 2 consumers for your stream.
 
-- this is a **master-master setup**. This means that you can use the table in other region as your new master. **
-  all `global` tables replicate to each other**
+- this is a **master-master setup**. This means that you can use the table in other region as your new master. **All `global` tables replicate to each other**.
 
-- **removing** the **table from `global-tables` view DOES NOT delete the data**. If you really want to delete the data,
-  you should remove it manually or just remove the table manually.
+- **removing** the **table from `global-tables` view DOES NOT delete the data**. If you really want to delete the data, you should remove it manually or just remove the table manually.
 
-- you should consider the cost of consistency. The writes to the other global table are more costly than normal writes.
-  These are not done by you, but by the service itself.
+- you should consider the cost of consistency. The writes to the other global table are more costly than normal writes. These are not done by you, but by the service itself.
 
 - due to **replication lag** you **might have issues with read/write consistency**. Keep that in mind.
 
   - read more about Global Tables consistency [here](https://www.alexdebrie.com/posts/dynamodb-eventual-consistency/#eventual-consistency-on-dynamodb-global-tables).
 
   - Whatever you do, **do not make an assumption about the maximum time it takes Dynamo to replicate your data**. Any assumption you make and bake into your system will most likely be wrong!
+
+##### Replication between databases
+
+- **transactions will replicate as separate updates**. While you can use the `Transact` API for atomic updates on the primary, that is not the case when the data replicates.
+
+- internally, **each item has a "last write timestamp", the last writer always wins**.
+
+- the **items replicate to all participating regions**.
+
+- **the service will accept writes, even if the replica in a given region is offline**.
+
+  - this means that, in unlikely event of a downtime, you might build a backlog of updates in the secondary. Can be problematic as having a huge backlog might cause throttling.
+
+- you **pay for the replicate data writes with `rWCUs` or `rWRUs` depending on the table capacity mode**.
 
 ##### The `AWS::DynamoDB::GlobalTable` resource
 
