@@ -2906,6 +2906,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 #### Global Tables
 
+> For the deep dive on [Global Tables check out this article](https://docs.aws.amazon.com/prescriptive-guidance/latest/dynamodb-global-tables/introduction.html).
+
 - you **need to have streams enabled (new and old)**
 
   - the replication between the master and the replica **counts as the DynamoDB stream consumer** (see [this article](https://www.alexdebrie.com/bites/dynamodb-streams/#should-i-use-dynamodb-streams-or-kinesis-streams-for-dynamodb-change-data-capture) for more information).
