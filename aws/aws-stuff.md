@@ -2940,6 +2940,8 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - you **pay for the replicate data writes with `rWCUs` or `rWRUs` depending on the table capacity mode**.
 
+- you can **use TTL in any region, the TTL deletion propagates to other regions**. You wont pay of the TTL on the region that the TTL happened, but **you will pay for the TTL propagation to other regions**.
+
 ##### The `AWS::DynamoDB::GlobalTable` resource
 
 - This is a patch from the _DynamoDB_ table. This resource should be used (**my personal take**) as a replacement for
@@ -8058,8 +8060,7 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 ### AWS Global Accelerator
 
 - this like **global pseudo-route53 with a sparkle of load balancer which allways returns 2 IPS for your costumers**.
-  This is so that then user device caches the IP and disaster occurs it does not route to the service that is not
-  working. The **returned IP is the same** but **the routing logic is within Global Accelerator**
+  This is so that then user device caches the IP and disaster occurs it does not route to the service that is not working. The **returned IP is the same** but **the routing logic is within Global Accelerator**
 
 - gives you **2 anycast IPS**
 
@@ -8077,12 +8078,11 @@ These systems are used to **detect and prevent intrusions** from gettiing to you
 
 #### VS Route53
 
-- **GA** has **multi-region failover** which **does not rely on DNS**. This is huge since **you do not have to worry
-  about DNS cache**
+- **GA** has **multi-region failover** which **does not rely on DNS**. This is huge since **you do not have to worry about DNS cache**
 
-- **GA** also **uses AWS backbone network**. This is the same technology as CloudFront. R53 does not work on that layer.
+- **GA** also **uses AWS backbone network. This means that the latencies will be lower**. This is the same technology as CloudFront. R53 does not work on that layer.
 
-- **GA** is **a bit more expensive than R53** when it comes to **static costs**
+- **GA** is **a bit more expensive than R53** when it comes to **static costs**.
 
 #### CloudFront
 
