@@ -41,6 +41,8 @@ return (
 
 When you use `startTransition`, the **React will prepare a new tree in the background**. Once that tree is finished rendering, the result can be committed into the DOM.
 
+The **`startTransition` API will not help you in the case of CPU-heavy operations**. If the main thread is blocked, then it will be blocked, regardless if you wrap the computation with `startTransition` or not.
+
 ### Regarding the state updates
 
 Remember that with _React_ 18, the state updates are batched together. In previous versions in _React_, this was not necessarily always the case.
@@ -117,10 +119,9 @@ const deferredState = useDeferredValue(expensiveState);
 return <Component state={deferredState} />;
 ```
 
-Here, the `deferredState` is a piece of state that might or might not cause a re-render.
-By wrapping the `expensiveState` in the `useDeferredValue`, we tell _React_ to postpone updates to components that take this state if needed.
+Here, the `deferredState` is a piece of state that might or might not cause a re-render. By wrapping the `expensiveState` in the `useDeferredValue`, we tell _React_ to postpone updates to components that take this state if needed.
 
-Pretty good API if you ask me.
+The **`useDeferredValue` will not help you if the computation in React components is very CPU-heavy**. It should be **used when the rendering takes a lot of time, not computing values**.
 
 ### How the `useDeferredValue` works
 
