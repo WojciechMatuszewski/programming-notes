@@ -75,9 +75,13 @@ Creating those is actually not that hard (even with `forwardRef`). So lets start
 
 For this you need to know that:
 
-- `React.ElementType` describe all possible HTML tags (`a`, `button` etc...) and also our components (class or functional, does not matter)
+- **`React.ElementType` describes all possible HTML tags (`a`, `button` etc...) and also our components (class or functional, does not matter)**
+
+  - This is **different than `JSX.IntrinsicElements` as this type describes only the HTML elements and not custom components**.
 
 - To get props from a given `ElementType` you should use `React.ComponentProps<E>` helper type
+
+  - You can also use variations of this type, like `React.ComponentPropsWithoutRef`.
 
 With these points in mind, the implementation is rather simple
 
