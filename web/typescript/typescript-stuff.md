@@ -2955,6 +2955,59 @@ Keep in mind that, **for the _const annotation_ to take an effect here, one has 
 
 In addition, if you use the `const R` generic syntax, all the properties of R will become `readonly`. This might or might not be what you want. Keep that in mind.
 
+### The `could be instantiated with an arbitrary type which could be unrelated to` problem
+
+When working with generics, you might encounter the following error message:
+
+> TGenericParameter could be instantiated with an arbitrary type which could be unrelated to OtherTGenericParameter
+
+This mostly happens because:
+
+1. **TypeScript is not capable of reasoning about your code**.
+2. TypeScript prevents you from making a mistake in the types.
+
+The situation number 1 often happens when you are typing a _higher order function_.
+
+```ts
+export const withRouter = <TProps,>(Component: React.ComponentType<TProps>) => {
+  const NewComponent = (props: Omit<TProps, 'router'>) => {
+    const router = useRouter();
+    /**
+     * TypeScript is not able to deduce that
+     * Exclude<T, k> & { [k]: T[k] } === T
+     *
+     * https://github.com/microsoft/TypeScript/issues/35858#issuecomment-573909154
+     * We have to past props to `props as TProps`
+     */
+    return <Component {...props} router={router} />;
+  };
+
+  NewComponent.displayName = `withRouter(${Component.displayName})`;
+
+  return NewComponent;
+};
+```
+
+Like I wrote in the comment, TypeScript is not capable of understanding that `Omit<TProps, 'router'> & {router: Router}` is the same as `TProps`.
+
+--
+
+As for the option number 2. This one ensures that you do not make a silly mistake with the types.
+
+```ts
+// Type '"bar"' is not assignable to type 'T'.
+// '"bar"' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '"foo" | "bar"'.
+const foo = <T extends 'foo' | 'bar'>(arg: T = 'bar') => {}
+```
+
+This makes sense as you could, in theory, in your code, do the following:
+
+```ts
+foo<'foo'>()
+```
+
+Which then creates a really weird situation for the default `arg` value.
+
 ## Type branding (AKA _opaque types_)
 
 Imagine you have a function that converts EURO to USD. Here is how one might write the type declaration for this function.

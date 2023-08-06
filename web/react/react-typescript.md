@@ -344,9 +344,40 @@ type Props =
 function Component(props: Props) {...}
 ```
 
-Now, depending on the editor you are using, you will still get a code completion for the `never` properties.
-I would not sweat much about that, unless you are not using tsc before compilation, the consumer of the `Component`
-will not be able to pass the impossible state.
+Now, depending on the editor you are using, you will still get a code completion for the `never` properties. I would not sweat much about that, unless you are not using tsc before compilation, the consumer of the `Component` will not be able to pass the impossible state.
+
+**Keep in mind that TypeScript might complain when you destructure the props without checking of the discriminant first**.
+
+```tsx
+type ModalProps =
+  | {
+    variant: "no-title";
+  }
+  | {
+    variant: "title";
+    title: string;
+  };
+
+// Works
+export const Modal = (props: ModalProps) => {
+  if (props.variant === "no-title") {
+    return <div>No title</div>;
+  } else {
+    return <div>Title: {props.title}</div>;
+  }
+};
+
+// Does not work
+export const Modal = ({variant, ...props}: ModalProps) => {
+  if (props.variant === "no-title") {
+    return <div>No title</div>;
+  } else {
+    return <div>Title: {props.title}</div>;
+  }
+};
+```
+
+TypeScript is not smart enough to handle this workflow yet.
 
 #### Using overloading
 
