@@ -6532,6 +6532,10 @@ What is very important to understand is that **LONG POOLING CAN END MUCH EARLIER
 
 - integrates with DLQ
 
+- there used to be a problem with leftover one-time schedules. These were not deleted upon completion. After 02.08.2023 this is no longer the case. [Read more here](https://aws.amazon.com/blogs/compute/automatically-delete-schedules-upon-completion-with-amazon-eventbridge-scheduler/).
+
+  - you can add this setting to recurring schedules as well!
+
 ##### vs EventBridge targets/rules
 
 - the **EventBridge Scheduler** allows you to **set the start and the end time for _rate_ and _CRON_ based invocations**.

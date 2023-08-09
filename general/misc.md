@@ -185,7 +185,7 @@ But there are other _observers_ too:
 
 - `mutationObserver`: used to watch for `DOM` _mutations_.
 
-* `resizeObserver`: a new kid on the block. Tries to achieve the holy grail of
+- `resizeObserver`: a new kid on the block. Tries to achieve the holy grail of
   being notified when **given element** resizes to given width/height.
 
 There is actually very interesting article on `resizeObserver` by Philip Walton
