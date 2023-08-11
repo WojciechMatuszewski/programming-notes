@@ -1296,6 +1296,12 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - As is the case with flexbox, **`display: grid` on the parent affects CHILDREN AND NOT THE PARENT!**.
 
+- The CSS Grid interacts with `position: absolute`.
+
+  - **If you set the `position:relative` on the grid, the children with `position: absolute` will be contained to a given grid cell**. Pretty neat!
+
+    - You can **use this to move the element outside of its designed grid-area**.
+
 ### Grid construction
 
 - **Unlike `flexbox`** the **size you give each column/row are HARD limits, not suggestions** (the difference between `flex-basis` and `width`, remember that `flex-basis` always wins!).
