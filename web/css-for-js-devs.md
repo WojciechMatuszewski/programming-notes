@@ -335,6 +335,10 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   - The `absolute` positioned elements **ignores all parents until it find either the one with positioned layout or the initial containing block**.
 
+- The **containing block is also called `offset parent`**.
+
+  - This makes more sense if you think about the names of the logical properties used to style position of the `absolute` element, like `offset-inline-start` and similar.
+
 ### Stacking Contexts
 
 - There are many factors which influence how elements stack on top of each other. Most notable are the **layout mode and the DOM order** and the **`z-index`** value.
