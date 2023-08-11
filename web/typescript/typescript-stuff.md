@@ -118,6 +118,8 @@ Notice that we have a sort of overlap here. You might expect some kind of shadow
 _Namespaces_ are used to **organize the global interfaces / types**. It is to ensure that **multiple libraries do not override each other types**.
 The most notable namespace is the `NodeJS` namespace. Please note that the **namespaces, like interfaces can merge together**. It all depends on how you structure the files.
 
+**_Namespaces_ are considered legacy feature – something to be used before ESM modules came along**. They also **compile to runtime code** which is far less than ideal.
+
 ## Augmenting global declarations
 
 In the section below, we will be using the `declare` keyword. Before diving into each problem, it is vital you understand what the `declare` keyword is about.
