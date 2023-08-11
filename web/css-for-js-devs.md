@@ -373,6 +373,8 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - Another very **useful thing you could do is to set the `isolation: isolate` on the `#root` element of your React application**. This guarantees that any modals (injected via portals) which render at the level of the `#root` element do not overlap with any elements from within the application itself.
 
+- Note that **other CSS properties also implicitly create stacking context**. [View the list on MDN here](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Understanding_z-index/Stacking_context#description).
+
 ### Fixed positioning
 
 - The `position: fixed` declaration makes the element **behave as if `absolute` but it will also follow you when you scroll**.
