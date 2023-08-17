@@ -84,9 +84,7 @@ The idea is that you could have a different "loading experience" if it is the fi
 
 When I first read about this "feature," my excitement levels were very high. How often have you used `Suspense` to lazy load your component, only for the `placeholder` prop to "flash" for a split second, creating a suboptimal experience? I'm describing a real issue on faster connections, where downloading JS takes a split second.
 
-I thought React 18 would solve that problem for me, as the first pass of the Suspense API introduced the `timeout` property that got removed. It turns out **the "issue" persists in React 18, and if you want to ensure that the fallback does not "flash", you have to implement it yourself**.
-
-Having said that, this is much easier to achieve in React 18 because React 18 will not insert DOM nodes of the half-committed tree, so the structure of your HTML stays intact.
+It turns out, **the feature is natively implemented in React 18** ([article link](https://andreigatej.dev/blog/on-react-suspense-throttling)), but there is no way to configure the delay, so you might want to do it yourself.
 
 ### Making sure placeholders do not flash manually
 

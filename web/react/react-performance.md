@@ -353,8 +353,7 @@ Every time you click the button, you will see the `child function invoked` log m
 
 The **reason why** it's happening, is because **React will re-create the _prop object_ of the `Child` component every time the parent changes**. By the _prop object_ I mean the object that is created when JSX is parsed to the object representation.
 
-So let's say the `Child` is expensive to render in some way, or you want to reuse it in multiple places.
-Since we do not have `slots` per se (like in angular) you might want to pass it as a prop.
+So let's say the `Child` is expensive to render in some way, or you want to reuse it in multiple places. Since we do not have `slots` per se (like in angular) you might want to pass it as a prop.
 
 Like this
 
@@ -385,7 +384,8 @@ This is because the `Child` component **props did not change because the `Child`
 
 So this is a neat optimization technique you might use.
 
-Also do not be afraid of putting components as props. It's completely natural thing to do, especially if you know how JSX works under the hood.
+Also do **not be afraid of putting components as props. It's completely natural thing to do, especially if you know how JSX works under the hood**.
+Putting **components as props will help you with "yet another prop syndrome"**. You can read more about this problem [here](https://kyleshevlin.com/quit-your-yapping).
 
 ## Profiling with `React.Profiler`
 

@@ -545,3 +545,44 @@ These components are **prerendered on the server and hydrated on the client**. T
 - **Asynchronous RSCs are rendered in parallel if they are on the same nesting level**.
 
 - The `Suspense` allows streaming. This can speed up the perceived performance of the page because React will render something, be it the fallback, as soon as possible.
+
+## Server actions
+
+- At the time of writing, they are marked as _alpha_ in Next.js
+
+- Allow you to create **ad-hoc backend endpoints** which then you can use to **submit form data or use them as RPC calls from the frontend**.
+
+- While I like the premise, **the creation of ad-hoc backend endpoints scares me**.
+
+  - People usually **ignore the fact that these could be an entry point to your system when attacked**.
+
+  - Reading blog posts and other materials on these, **people fail to think about rate-limiting** on those endpoints.
+
+- There is a **real danger of leaking secrets or other sensitive data** if you are not careful.
+
+  - The framework has to serialize the underlying parameters you pass to the _server action_. If you pass a secret from the frontend, you have leaked it! (of course having the access to secrets on the frontend is a whole another discussion).
+
+- You can either import a _server action_ into a RCC or define a _server action_ as a function in RCC.
+
+```ts
+'use client'
+
+import {myServerAction} from './actions';
+
+function SomeForm() {
+  return (<form action = {myServerAction}>
+    <label htmlFor ="name">Name</label>
+    <input name = "name" id = "name" type = "text">
+  </form>)
+}
+
+// Or you could do
+
+async function myInlineServerAction(userId: string) {
+  'use server'
+
+  assertValidUserId(userId);
+
+  await db.get(userId)
+}
+```
