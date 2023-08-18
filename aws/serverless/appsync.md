@@ -1,5 +1,17 @@
 # AppSync
 
+## JavaScript / TypeScript resolvers
+
+VTL is no longer the single way to write resolvers. At first AWS announced the support for [JavaScript pipeline resolvers](https://aws.amazon.com/blogs/aws/aws-appsync-graphql-apis-supports-javascript-resolvers/), and then enchanted the feature with the support for [JavaScript unit resolvers](https://aws.amazon.com/blogs/mobile/aws-appsync-now-supports-javascript-for-all-resolvers-in-graphql-apis/).
+
+This is great news, as writing the resolvers is much easier now than it was before. Especially given the ability to write them in TypeScript and lint the code using `eslint`.
+
+### Gotchas
+
+- The **pagination token returned from DynamoDB is encrypted** and I **could not find a way to decrypt it**. Usually this would not be a problem, but it might be [since DynamoDB returns the `NextToken` even when there might not be "next results"](https://stackoverflow.com/questions/64422854/appsync-pagination-issue-where-no-items-are-returned-but-a-nexttoken-is).
+
+  - This is the price we pay of abstracting the DynamoDB calls. You can [see the solution to this problem here](https://github.com/WojciechMatuszewski/dynamodb-pagination-gotcha). The TLDR is: **use AWS Lambda AppSync integration instead of VTL resolver for this particular use-case**.
+
 ## DataSources and IAM
 
 The AWS AppSync service has a notion of DataSources. These are services (like Lambda, DynamoDB, RDS, etc...) which will be used to provide data given a mapping template.
@@ -140,9 +152,7 @@ Now we can directly attach a resolver to the `UnhydratedTweetsPage` and not inte
 
 This is the approach I would recommend anyone uses.
 
-With pipeline resolvers, you do not have to introduce intermediate types, you instead introduce intermediate resolver which will hydrate the results.
-
-With _pipeline resolvers_ we would be able to get back to our previous schema definition
+With pipeline resolvers, you do not have to introduce intermediate types, you instead introduce intermediate resolver which will hydrate the results.With _pipeline resolvers_ we would be able to get back to our previous schema definition
 
 ```graphql
 type Query {
@@ -163,7 +173,7 @@ There are many ways of guarding against such behavior. Some resort to computing 
 
 We can implement one of such heuristics in _AppSync_. I personally feel like this way of checking query complexity might not be sufficient for all but will most likely get the job done in 80% of scenarios.
 
-### The `selectionSetList` context attribute.
+### The `selectionSetList` context attribute
 
 One might use the `selectionSetList` VTL context attribute to determine the cost of a query. The first axis to look at would be the **length of the list**. The second would be **the depth of the queries contained in the list**.
 
