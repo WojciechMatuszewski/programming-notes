@@ -79,6 +79,34 @@ The `submitted` class would be added in JavaScript. I could not find any other w
 
 #### How JavaScript fits the picture
 
+You know how, when you use the native HTML validation, the browser will display validation errors in the popovers? You can **control the contents of those popovers by using JS and the `Constraint Validation API`**.
+
+```js
+function FormStuff() {
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current.addEventListener("input", (element) => {
+      if (element.currentTarget.validity.typeMismatch) {
+        element.currentTarget.setCustomValidity(
+          "I am expecting an email address!"
+        );
+      }
+    });
+  }, []);
+
+  return (
+    <form>
+      <input ref={inputRef} type="email" required={true} minLength="2" />
+    </form>
+  );
+}
+```
+
+Now, upon submitting the form, the error the user will see is the one that you specified (of course, given the email is invalid). There is a [very good article on this topic on MDN](https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation#validating_forms_using_javascript).
+
+You can push this technique quite far. You could, instead of using `setCustomValidity`, append the error message to some kind of `span` (just ensure it is accessible). Then, you got yourself a quite capable form validation story.
+
 ### Form errors
 
 Based on [this great video](https://www.accessibilityoz.com/resources/videos/error-messages-in-forms/).
