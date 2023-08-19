@@ -14,11 +14,76 @@ This button will have native browser styles, which you most likely would want to
 
   This option is good when you do not need any _droppable_ areas for your files (you most likely need them). Read more about [this pseudo-element on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/::file-selector-button). You can also find more [information here](https://www.stefanjudis.com/today-i-learned/how-to-style-the-select-button-of-file-inputs).
 
-## Accessible form errors
+### Resetting the input after file upload
+
+It is imperative to reset the input value after the file was uploaded. If we fail to do this, the user will NOT be able to upload the same file again. People often forget to do this and this leads to bugs.
+
+```jsx
+function FormStuff() {
+  return (
+    <form>
+      <input
+        type="file"
+        onChange={(event) => {
+          const files = event.currentTarget.files;
+          // process the files
+
+          // Reset the input
+          event.currentTarget.value = "";
+        }}
+      />
+    </form>
+  );
+}
+```
+
+## Form errors & validation
+
+### Attribute-based validation
+
+While for more robust forms, you might need to reach out for a JS API, in some cases, you might get away with an HTML-only validation of inputs. There are many attributes on the native HTML form elements that could aid you.
+
+- The `minLength`
+- The `required`
+- The `pattern`
+
+Also, let us not forget about the `type` property of the input. The most common are `type="email"` or `type="tel"`.
+
+#### Visual cues
+
+The input elements have different "states" represented by pseudo-classes. You can use them to style the inputs based on their validity.
+
+- The `:invalid` pseudo-class **allows you to target invalid inputs, but the `:invalid` is also applied when the first first loads!**.
+
+- The `:user-invalid` is **very similar to `:invalid` but IS NOT applied when the page first loads**.
+
+  - Sadly, the **browser support for `:user-invalid` is lacking**, so we cannot really rely on it.
+
+The one technique to "fix" the surprising (at least to me) behavior of the `:invalid` pseudo-class is to the `:not(:placeholder-shown)` to only set the invalid styles when the input is filled.
+
+```css
+input:not(:placeholder-shown):invalid {
+  border: 1px solid red;
+}
+```
+
+This **requires your inputs to have placeholders**. If they do not have placeholders, you might want to try to style the inputs `:invalid` state, only when the form was submitted.
+
+```css
+form.submitted input:invalid {
+  border: 1px solid red;
+}
+```
+
+The `submitted` class would be added in JavaScript. I could not find any other way to make this work.
+
+#### How JavaScript fits the picture
+
+### Form errors
 
 Based on [this great video](https://www.accessibilityoz.com/resources/videos/error-messages-in-forms/).
 
-### Inline errors
+#### Inline errors
 
 There are three things you have to do to correctly annotate the input as invalid with an error message.
 
@@ -59,7 +124,7 @@ input[aria-invalid="true"] {
 
 We are using the `aria-invalid` here instead of `:invalid` because we are not using the native HTML form validation. Instead I've opted to use the `react-hook-form` library.
 
-### Global form errors
+#### Global form errors
 
 Imagine a situation where the form fields are valid, but upon form submission, an error is returned from the API. Since the error is not associated with any fields, this error pertains to the form as a whole. In such case, we have to use other method of notifying the user about the error.
 
