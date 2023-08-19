@@ -8,6 +8,7 @@ I believe that there are two main misconceptions people usually make whenever th
 2. The other version of no 1. would be to assume that **some** commands are synchronous.
 
 Here is the kicker, **all `Cypress` commands are asynchronous, they are using promise-like structures under the hood**.
+
 Please take a note of the _promise-like_, **`Cypress` commands are NOT promises**. Native promise implementation does not have the concept of retry-ability. Imagine the `cy.get` not retrying, that would be horrible!
 
 Here is an example piece of code that a person who assumes no 2. would write.
@@ -23,6 +24,23 @@ cy.log(username);
 ```
 
 The `cy.log` will always print `null`. This is because the **`cy.get` is scheduled to be run and asynchronous**.
+
+### The `cypress-await` plugin
+
+> [Link to the plugin](https://github.com/bahmutov/cypress-await/tree/main).
+
+While we cannot go around this "limitation", we can make our life easier with Cypress plugins. One of such plugins is the `cypress-await` plugin.
+At the most basic level, the plug would allow you to re-write the code from above to the following.
+
+```js
+cy.visit("index.html");
+
+const username = await cy.get("#username").invoke("text");
+
+cy.log(username);
+```
+
+The plugin will **transform your code to use the `then` syntax**, but will do that behind the scenes. Of course, now you have to pay the price of having a "black box" transform your code. But I think it is easy to refactor the `await` into the `then` syntax if I were to remove this plugin, so the tradeoff seem to be worth it.
 
 ## The power of `cy.task`
 
