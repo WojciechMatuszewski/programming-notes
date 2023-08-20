@@ -122,6 +122,34 @@
 
 ## Layouts
 
-### The stack
+### The Stack
 
-<https://every-layout.dev/layouts/stack/>
+- The stack component is used to provide vertical spacing between boxes.
+
+- The stack takes advantage of the **`owl selector` which looks like `.someClass > * + *`**.
+
+  - You can [read more about the _owl selector_ here](https://alistapart.com/article/axiomatic-css-and-lobotomized-owls/).
+
+  - Using the _owl_ selector (it looks like an OWLs face), ensures that the elements have consistent vertical spacing and that there are no margin "left overs". Some people call them "margin glue".
+
+```css
+  .stack > * + * {
+    margin-block-end: 1.5rem;
+  }
+
+  /* Or you can use the recursive version. */
+
+  .stack-recursive * + * {
+    margin-block-end: 1.5rem;
+  }
+```
+
+- Using the "recursive variant" ensures that you can interleave the _stacks_ with other elements and the spacing will be preserved.
+
+### The Box
+
+- The box as a container to **style any intrinsic properties, like `padding` or `border`**.
+
+  - We have the _Stack_ for margins (and it should only be responsible for that).
+
+- The book depicts the usage of the _owl_ selector for borders inside the `box`.
