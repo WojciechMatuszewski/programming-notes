@@ -192,3 +192,42 @@
   align-items: center;
 }
 ```
+
+- Notice that we do not use `px` or `rem` or `em` values for the `inline-size`. The `ch` are much better unit as they actually represent the text size.
+
+### The Cluster
+
+- _The Cluster_ component is for positioning elements in an _inline-like_ flow with consistent spacing between them.
+
+  - For such layouts, I usually reach out for `display: flex` and `flex-wrap: wrap`. So did the author.
+
+```css
+.cluster {
+  /* Keep in mind that you have the `justify-content` at your disposal! */
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space, 1rem);
+}
+```
+
+- **There was a lot of hoops to go through prior to `gap` property**. Without it, when elements wrapped, we would most likely end-up with excessive margins on both sides.
+
+  - To solve this issue, we had to apply negative margins on the container itself. It was not fun.
+
+    ```css
+      .cluster {
+        --space: 1rem;
+      }
+
+      .cluster > *{
+      display: flex;
+      flex-wrap: wrap;
+      /* ↓ multiply by -1 to negate the halved value */
+      margin: calc(var(--space) / 2* -1);
+      }
+
+      .cluster > *>* {
+        /*↓ half the value, because of the 'doubling up'*/
+        margin: calc(var(--space) / 2);
+      }
+    ```
