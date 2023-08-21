@@ -153,3 +153,42 @@
   - We have the _Stack_ for margins (and it should only be responsible for that).
 
 - The book depicts the usage of the _owl_ selector for borders inside the `box`.
+
+### The Center
+
+- The author argues that we should never use `text-align: center` on paragraphs, but rather reserve this declaration for headings and short lines of text. I agree with this. Centered paragraph looks weird and is difficult to read.
+
+- At it's core, the **_center_ component uses the `auto` value for the _inline_ margins**. This allows us to defer the margins calculations to the browser.
+
+  - The **author suggests being specific here, as the `margin: 0 auto` might undo some other margin styles** which, in some cases, is not desireable.Consider using the `margin-inline: auto` here.
+
+```css
+.center {
+  max-inline-size: 60ch;
+  margin-inline: auto;
+  /* This ensures that the max content inline size is 60ch and not 60ch - padding */
+  box-sizing: content-box;
+  /* Random padding value */
+  padding-inline: 12px;
+}
+```
+
+- In addition to the `margin-inline: auto` you might want to support **_intrinsic centering_. That is centering of elements based on their natural size**. Of course, this is optional stuff.
+
+  - To achieve this, use the `flexbox` alongside with `align-items` and `flex-direction`.
+
+```css
+.center {
+  max-inline-size: 60ch;
+  margin-inline: auto;
+  /* This ensures that the max content inline size is 60ch and not 60ch - padding */
+  box-sizing: content-box;
+  /* Random padding value */
+  padding-inline: 12px;
+
+  /* Intrinsic centering */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+```
