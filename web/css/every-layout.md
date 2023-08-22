@@ -231,3 +231,51 @@
         margin: calc(var(--space) / 2);
       }
     ```
+
+### The Sidebar
+
+- By designing to _ideal element dimensions_ you can do away with `@media` breakpoints (the viewport-based ones).
+
+  - Please note **that with introduction of `@container` queries, this is much easier to do**.
+
+  - An example of setting the _ideal element dimensions_ is the `flex-basis` and `flex-wrap: wrap` rule.
+
+- **Keep in mind that `flex-basis` is only a suggestion to the browser. Even if you set `flex-basis: 0` the box will NEVER be smaller than its content**.
+
+  - The author uses this knowledge to define the "content" of the sidebar part as such.
+
+    ```css
+    .not-sidebar {
+      flex-basis: 0;
+      /* The `flex-grow` is denotes a proportion, not an actual value in px or rems */
+      flex-grow: 999;
+      min-inline-size: 50%
+    }
+    ```
+
+  - Similar trick could be achieved with the `flex-shrink` ratio, where the two adjacent boxes shrink with different "speed".
+
+Here is the full CSS snippet
+
+```css
+.with-sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gutter, 1rem);
+}
+
+.sidebar {
+  /* The `flex-basis` here is optional. We might want to inherit the width from children */
+  flex-basis: 20rem;
+  flex-grow: 1;
+}
+
+.not-sidebar {
+  flex-basis: 0;
+  /* When the wrapping happens, the element will fill all the width of the parent */
+  flex-grow: 999;
+  min-inline-size: 50%;
+}
+```
+
+### The Switcher
