@@ -279,3 +279,71 @@ Here is the full CSS snippet
 ```
 
 ### The Switcher
+
+The problem this component tries to solve is the following: when using `flex-wrap: wrap` and `flex-grow: 1`, the element that just wrapped, might span the whole parent. This **is, in most cases, undesirable as it could be perceived as "picked out" by the user**.
+
+```text
+┌──────────────┐ ┌───────────┐
+│              │ │           │
+└──────────────┘ └───────────┘
+
+┌────────────────────────────┐
+│ Element that sticks out    │
+└────────────────────────────┘
+```
+
+To solve this, author presents the **so-called _Flexbox Holy Albatross_ technique** which leans heavily on `flex-basis` and a very clever usage of calc. [Here is an article on the topic](https://heydonworks.com/article/the-flexbox-holy-albatross-reincarnated/).
+
+```css
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.switcher > * {
+  flex-grow: 1;
+  /* 30rem is an arbitrary number */
+  flex-basis: calc((30rem - 100%) * 999)
+}
+```
+
+The **key to understanding this piece of code is to understand how the `flex-basis` works**.
+
+- The `flex-basis` is a suggestion. The content might grow above the defined `flex-basis`, but it will NEVER have value less than the content of the box it applies to.
+
+- **Negative `flex-basis` valued are ignored**.
+
+Given the points above, we can deconstruct the `flex-basis: calc((30rem - 100%) * 999)`;
+
+- If the container `inline-size` is less than `30rem`, the `flex-basis` is a big negative number. As such the `flex-basis` is ignored. The `flex-grow` takes over. This makes all the elements to take all available space and makes them wrap.
+
+- If the container `inline-size` is greater than `30rem`, the `flex-basis` is a big positive number. As such the elements will NOT wrap and take all available space within a given row.
+
+```
+  -n * 999             n * 999
+
+┌──┐ ┌──┐ ┌──┐        ┌─────┐
+└──┘ └──┘ └──┘        └─────┘
+
+                      ┌─────┐
+                      └─────┘
+
+                      ┌─────┐
+                      └─────┘
+```
+
+- To support gutters use the `gap` property.
+
+- To support different proportions of the children, use the `flex-grow: X`.
+
+  ```css
+  .switcher > :nth-child(2) {
+    flex-grow: 2;
+  }
+  ```
+
+#### Quantity query
+
+What if you want to ensure that, if the `switcher` contains more than X children, you always present the "pancake" layout instead of having the elements sit in one row? **This is possible to achieve without any media queries**. Enter the world of _quantity queries_.
+
+TODO: <https://alistapart.com/article/quantity-queries-for-css/>
