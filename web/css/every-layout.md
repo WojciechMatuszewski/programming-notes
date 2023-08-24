@@ -315,9 +315,9 @@ The **key to understanding this piece of code is to understand how the `flex-bas
 
 Given the points above, we can deconstruct the `flex-basis: calc((30rem - 100%) * 999)`;
 
-- If the container `inline-size` is less than `30rem`, the `flex-basis` is a big negative number. As such the `flex-basis` is ignored. The `flex-grow` takes over. This makes all the elements to take all available space and makes them wrap.
+- If the container `inline-size` is greater than `30rem`, the `flex-basis` is a big negative number. As such the `flex-basis` is ignored. The `flex-grow` takes over. This makes all the elements grows to tak up an equal proportion of horizontal space.
 
-- If the container `inline-size` is greater than `30rem`, the `flex-basis` is a big positive number. As such the elements will NOT wrap and take all available space within a given row.
+- If the container `inline-size` is less than `30rem`, the `flex-basis` is a big positive number. As such the elements will wrap as the `flex-basis` is much bigger number than the container `inline-size`.
 
 ```
   -n * 999             n * 999
@@ -346,4 +346,63 @@ Given the points above, we can deconstruct the `flex-basis: calc((30rem - 100%) 
 
 What if you want to ensure that, if the `switcher` contains more than X children, you always present the "pancake" layout instead of having the elements sit in one row? **This is possible to achieve without any media queries**. Enter the world of _quantity queries_.
 
-TODO: <https://alistapart.com/article/quantity-queries-for-css/>
+First, you need to be aware of the `nth-last-child` selector. This selector allows you to pick the "nth-child" **counting from the end**.
+
+```text
+     :nth-last-child(3)
+┌────┐ ┌────┐ ┌────┐ ┌────┐
+│    │ │ XX │ │    │ │    │
+└────┘ └────┘ └────┘ └────┘
+```
+
+Then, you can combine this with the `n+X` syntax you can pass into the `:nth-last-child`. **Remember that `n` starts counting from 0, not 1** (this, of course makes sense), but the **CSS starts counting elements from 1**.
+
+```text
+    :nth-last-child(n+3)
+┌────┐ ┌────┐ ┌────┐ ┌────┐
+│ XX │ │ XX │ │    │ │    │
+└────┘ └────┘ └────┘ └────┘
+```
+
+Then, you can apply the `~` selector to select all elements that are preceded by a given element.
+
+```text
+
+   :nth-last-child(n+3),
+   :nth-last-child(n+3) ~ *
+┌────┐ ┌────┐ ┌────┐ ┌────┐
+│ XX │ │ XX │ │ XX │ │ XX │
+└────┘ └────┘ └────┘ └────┘
+```
+
+This means that **you can effectively apply styles if the container has equal or more than X children**. Note that, if there were 2 boxes, the selector would not apply any styles as there is no "3rd child counting from the end".
+
+```text
+ :nth-last-child(n+3),
+ :nth-last-child(n+3) ~ *
+┌──────────┐  ┌──────────┐
+│          │  │          │
+│          │  │          │
+└──────────┘  └──────────┘
+```
+
+You can **reverse the count – make the query apply when there are equal or fewer than X children** as well. This is done with the combination of `:nth-last-child` and `:first-child`. **If the `:nth-last-child` is also `:first-child` that means that the list has less than or equal to elements**.
+
+```
+           :nth-last-child(-n + 3):first-child
+     ┌─────────┐   ┌─────────┐   ┌─────────┐
+     │         │   │         │   │         │
+     │   XX    │   │         │   │         │
+     └─────────┘   └─────────┘   └─────────┘
+
+
+         :nth-last-child(-n + 3):first-child
+┌──────────┐  ┌────────┐ ┌────────┐ ┌───────┐
+│          │  │        │ │        │ │       │
+│          │  │        │ │        │ │       │
+└──────────┘  └────────┘ └────────┘ └───────┘
+```
+
+To style all the "rest" elements, use the `~` selector. Like in the case of "more than or equal to" query.
+
+### The Cover
