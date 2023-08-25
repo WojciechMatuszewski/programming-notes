@@ -80,6 +80,14 @@ This guarantee makes sense as it would suck if the effect would fire before Reac
 
 The idea is that you could have a different "loading experience" if it is the first time you visit the application (one single big spinner) vs. when some of the resources are already available and when the data fetching is done in a given part of an application.
 
+### Suspense in different component types
+
+- For **client-side rendering** the `Suspense` will show a fallback while the `React.lazy` loads. You can control the errors via the `ErrorBoundary`.
+
+- For **server-side rendering** the `Suspense` will also **selectively hydrate the components wrapped in `Suspense`**.
+
+- For **server components** the `Suspense` will also **stream the components to the client in stages**.
+
 ## Placeholder throttling
 
 When I first read about this "feature," my excitement levels were very high. How often have you used `Suspense` to lazy load your component, only for the `placeholder` prop to "flash" for a split second, creating a suboptimal experience? I'm describing a real issue on faster connections, where downloading JS takes a split second.
