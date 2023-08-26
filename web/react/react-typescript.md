@@ -141,6 +141,58 @@ You should prefer default value assignment here. Really. Otherwise the definitio
 
 This is because by using the _casting_ we are loosing the `defaultProps` typings which `forwardRef` normally provides.
 
+### The `Slot` component as alternative to `as`
+
+The `as` prop and the whole notion of _polymorphic components_ is pretty complex, especially the types. Would it not be nice to have an interface that is just _as good as_ the `as` prop, but have it be much less complex? **Enter the `Slot` component**.
+
+> Do not mistake the `Slot` component with the notion of _component slots_ as props. These are two different things!
+
+The premise is the following: **if you pass a certain prop, you are responsible for rendering the correct element type. The `Slot` component will only merge the props**.
+
+```tsx
+// Imagine that the `Button` implements some complex logic and passes the props to `children`
+<Button asChild = {true}>
+  <a href = "#">My button rendered as link with merged props</a>
+</Button>
+```
+
+And here is how the `Slot` component looks and is used.
+
+```tsx
+function Slot({
+  children,
+  ...props
+}: { children: React.ReactNode } & React.HTMLAttributes<HTMLElement>) {
+  if (React.Children.count(children) !== 1) {
+    throw new Error("boom");
+  }
+
+  if (React.isValidElement(children)) {
+    return React.cloneElement(children, {
+      ...props,
+      ...children.props
+    });
+  }
+
+  return null;
+}
+```
+
+The role of the `Slot` component is to **merge the props passed to it with the props of the child if wraps**. The user of the `Button` component would never be exposed to the `Slot` component.
+
+```tsx
+function Button({children, ...props}) {
+  const myButtonComplexStateAndProps = {}
+  if (props.asChild) {
+    return <Slot {...props} {...myButtonComplexStateAndProps}>{children}</Slot>
+  }
+
+  return <button {...props} {...myButtonComplexStateAndProps}>{children}</button>
+}
+```
+
+This makes the interface a bit more explicit. You also use one of the most powerful features React has to offer – composability! While typing the `asChild={true}` might be a bit weird at first, this approach is starting to get traction. The most notable uses (and probably inventors) of this pattern is the [`radix-ui` library](https://github.com/radix-ui/primitives).
+
 ## `ref` being immutable
 
 I do not know about you, but whenever I write `React.useRef` I want to be as explicit as possible. This often leads me to write something like this
