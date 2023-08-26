@@ -143,6 +143,8 @@ This is because by using the _casting_ we are loosing the `defaultProps` typings
 
 ### The `Slot` component as alternative to `as`
 
+> Based on [this blog post](https://www.jacobparis.com/content/react-as-child).
+
 The `as` prop and the whole notion of _polymorphic components_ is pretty complex, especially the types. Would it not be nice to have an interface that is just _as good as_ the `as` prop, but have it be much less complex? **Enter the `Slot` component**.
 
 > Do not mistake the `Slot` component with the notion of _component slots_ as props. These are two different things!

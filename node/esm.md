@@ -64,3 +64,13 @@ const require = createRequire(import.meta.url);
 Personally, I'm not sure I love the way we let the `require` statement still be present in the "new world" of ESM modules. While I completely understand that having it will make the migration easier, why not enable importing `json` files through `import` directly?
 
 It turns out that is on the horizon, [there is the JSON modules flag that enables you to do that](https://nodejs.org/api/esm.html#esm_experimental_json_modules).
+
+### The ability to import from URL
+
+Native in browsers, **experimental in NodeJs**. If you use the `--experimental-loader` flag, you **can import the modules from a remote source, like a `HTTP` endpoint**. This allows you to create a `RPC` mechanism, like [demonstrated here](https://betterprogramming.pub/http-modular-my-node-js-library-for-converting-server-side-functions-into-es-modules-ac78799899ce).
+
+```js
+// Only an example...
+import foo from 'https://google.com'
+foo()
+```
