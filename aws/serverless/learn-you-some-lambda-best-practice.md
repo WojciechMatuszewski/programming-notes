@@ -90,6 +90,14 @@ What if your favorite way of writing lambdas is by using bash? Or maybe you want
 
 - remember that RIE has to start before your runtime starts, thus you have to point RIE at a binary (or script). RIE will handle bootstrapping that binary.
 
+### "Hacking" AWS Lambda runtime
+
+> Based on [this fascinating article](https://medium.com/@galbash/aws-lambda-internals-part-2-going-deeper-1e12b9d2515f).
+
+- it turns out, **one can ssh into AWS Lambda function and download the runtime code**. With the code on your machine, you can **call internal AWS Lambda functions**.
+
+- with internal functions unlocked **you CAN escape the AWS Lambda timeout limit**. But this is huge hack, you are kind of abusing the system.
+
 ## Tuning function memory
 
 - the more memory your lambda has and the longer is runs it will cost you more

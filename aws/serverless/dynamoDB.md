@@ -787,8 +787,6 @@ As they often say, the data is the new gold. I support this statement as, in mos
 
 How can we ensure we do not violate data integrity if data is so important?
 
-### Data types
-
 When writing to DynamoDB, you have to explicitly tell the service what the data type of a given attribute is. This alone does not guarantee protection against writing the wrong type of data for a given attribute, but it forces developers to at least think about it.
 
 I would say that the solution here would be to validate the data you will write against a JSONSchema. That should give you enough confidence.
@@ -808,3 +806,41 @@ This approach will save you time and money in debugging time.
 ### Resources
 
 - <https://serverlessfirst.com/data-integrity-considerations-writing-to-dynamodb>
+
+## Common Single-Table design modeling mistakes
+
+> Based on [this talk](https://www.youtube.com/watch?v=XMEkNZby95M)
+
+- Separate your attributes from key fields. **Do not be afraid of duplicating small pieces of data**.
+
+- Use delimiters to create a hierarchical keys. For example `city#state#zip`.
+
+  - **Start wide and make the data more specific the more "left" to the start it is**.
+
+- **Zero-pad numbers if the number can be estimated**.
+
+  - The reason for this is **sorting**. This is especially vital for numbers in the _sort key_. Of course not every number can be zero-padded as numbers that cannot be estimated cannot be zero-padded.
+
+- **Normalize dates in the key attributes**. Again, do not be afraid to duplicate the data.
+
+  - You can have dates in different formats, for example `YYYY/MM/DD` for the _sort key_, but `MM/DD/YYYY` for the "presentational" attribute.
+
+    - **Consider always sticking to either timestamps for formats similar to `YYYY/MM/DD`** – they work great with lexical sorting DynamoDB uses by default.
+
+      - Timestamps are not a silver bullet as they are not human-readable.
+
+- Isolate entities within the single table.
+
+  - This usually entails **prefixing keys with the entity "type"**.
+
+  - You can also **have the "entity type" in the middle of the key**. It all depends on what kind of access pattern you want to enable.
+
+    - The **place where you put the "entity type" influences how granular the partition is**.
+
+- **Version the keys**. Usually you add `#v` to the "entity type".
+
+  - This will help you when migrating entities.
+
+- Sharding can help you with hot partitions. **Keep in mind that sharding also increases complexity of data-access patterns**.
+
+  - You can always reverse compute the shard, but you have to know the full key before hand.
