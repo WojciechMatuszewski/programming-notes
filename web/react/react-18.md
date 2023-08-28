@@ -454,6 +454,18 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
   - That is not the case in most of the apps today. Currently we "fetch on render" most of the times.
 
+#### Notes from "Server Components are NOT islands" part of the Ryan Carniato stream
+
+> [Source](https://youtu.be/2zhYwg_nBqQ?t=9913).
+
+- The static data appears twice in the downloaded HTML. Once in the script, once in the HTML markup itself.
+
+  - Imagine a situation that the static content is _initially hidden with a client toggle_. You **would not want to make a server request when we toggle the content on the client**. That is why **even the "path not taken" is included in the initial markup**.
+
+    - **This is why Server Components render all the "server tree", no matter if it's visible or not**.
+
+Finished <https://youtu.be/2zhYwg_nBqQ?t=11558>
+
 ### React Client Components
 
 These components are **prerendered on the server and hydrated on the client**. This means that **when using RCCs you pay the cost of shipping JS to the client**. These are your "standard" Next.js components from the `page` directory.
