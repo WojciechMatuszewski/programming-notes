@@ -464,7 +464,13 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
     - **This is why Server Components render all the "server tree", no matter if it's visible or not**.
 
-Finished <https://youtu.be/2zhYwg_nBqQ?t=11558>
+- `Suspense` allows out-of-order streaming
+
+  - When streaming, **you do not know which components are going to be used**. This means you have to serialize all the props for all the components that you steam.
+
+    - As a solution, one might **delay streaming some content until JS loads**. This way, you will know which components are used, and serialize the props accordingly.
+
+- The bottom line is that the problem space is very hard to reason about. This most likely means that we are looking at the problem from the wrong angle.
 
 ### React Client Components
 
