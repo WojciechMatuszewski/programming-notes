@@ -406,3 +406,43 @@ You can **reverse the count – make the query apply when there are equal or few
 To style all the "rest" elements, use the `~` selector. Like in the case of "more than or equal to" query.
 
 ### The Cover
+
+- There are many ways to _vertically_ center the content in the CSS.
+
+- Before the introduction of Flexbox it was quite hard.
+
+  - One could use the `position:relative` and `position:absolute` / `transform: translateY`, but it did not guarantee that the content would not overflow.
+
+- A go-to solution for _vertically_ centering stuff, is the `justify-content: center` in flexbox.
+
+  - Depending on the amount of items, you might also want to look into `justify-content: space-between`.
+
+### The Grid
+
+- We should **create CSS based on the content, not the width**.
+
+  - In some cases, we know the number of columns up-front, but those cases are rare.
+
+- To achieve a fluid grid layout, we will need to use the `repeat`, `auto-fit` and `minmax` keywords when defining the columns
+
+  ```css
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  ```
+
+  The problem here is the hardcoded value in `minmax`. With `flex-basis` we only told the browser the _ideal_ width, but here it is a hard boundary. **It might cause overflow!**
+
+- To **"fix" the issue with hardcoded value inside `minmax`, use the `min` CSS function**.
+
+  ```css
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+  }
+  ```
+
+  Here, **there is no hardcoded value as the `min` will always yield `100%` if the column is less than `250px`**.
+
+### The frame
