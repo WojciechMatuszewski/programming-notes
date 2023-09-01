@@ -472,3 +472,13 @@ To style all the "rest" elements, use the `~` selector. Like in the case of "mor
   ```
 
   **Take a note of the `aspect-ratio` property**. Before it was widely supported, we had to rely on the `padding` to do the work for us (with a very specific percentage-based values).
+
+### The Reel
+
+TODO:
+
+- Indicator that the area is scrollable
+
+- Understand the spacing problems
+
+- <https://lea.verou.me/blog/2012/04/background-attachment-local/>
