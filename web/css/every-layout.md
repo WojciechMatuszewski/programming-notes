@@ -446,3 +446,29 @@ To style all the "rest" elements, use the `~` selector. Like in the case of "mor
   Here, **there is no hardcoded value as the `min` will always yield `100%` if the column is less than `250px`**.
 
 ### The frame
+
+- `img` along with `iframe`, `video` and `embed` tags are so-called _replaced_ elements.
+
+  - The _replaced_ elements are elements **whos contents are NOT affected by the current document's styles**. If you think about it, they are pretty unique.
+
+- While you could use `background-image` to embed images on a site, **it is preferable to use the `img` tag**. Due to specific user settings, the `background-image` could be removed.
+
+- **The `display: flex` does not affect _replaced_ elements**. This means that our `frame` element could target both _replaced_ and _non-replaced_ elements.
+
+  ```css
+  .frame {
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .frame > :is(img, video) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+  ```
+
+  **Take a note of the `aspect-ratio` property**. Before it was widely supported, we had to rely on the `padding` to do the work for us (with a very specific percentage-based values).
