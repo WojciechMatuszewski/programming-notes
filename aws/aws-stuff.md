@@ -289,6 +289,12 @@
   - Not all is lost, though. You can **front the Lambda Function URL with CloudFront**. This gives you the ability to
     use WAF but only on the CloudFront domain URL.
 
+    - **Using CloudFront also enables you to disable the "default" AWS Lambda URL endpoint** and force users to use the CloudFront endpoint instead.
+
+      - Basically, you enable an IAM auth on the AWS Lambda URL, and then **use AWS Lambda@Edge to sign the request to the AWS Lambda function URL**. This way, your customers have to go through the CloudFront URL, otherwise they will not be able to invoke the AWS Lambda function URL.
+
+      
+
   - When it comes to throttling, you could use the **reserved concurrency** feature of AWS Lambda. Not ideal, but an
     alternative nevertheless.
 
