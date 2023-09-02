@@ -293,7 +293,7 @@
 
       - Basically, you enable an IAM auth on the AWS Lambda URL, and then **use AWS Lambda@Edge to sign the request to the AWS Lambda function URL**. This way, your customers have to go through the CloudFront URL, otherwise they will not be able to invoke the AWS Lambda function URL.
 
-      
+      [This article contains more details](https://aws.amazon.com/blogs/compute/protecting-an-aws-lambda-function-url-with-amazon-cloudfront-and-lambdaedge/).
 
   - When it comes to throttling, you could use the **reserved concurrency** feature of AWS Lambda. Not ideal, but an
     alternative nevertheless.
