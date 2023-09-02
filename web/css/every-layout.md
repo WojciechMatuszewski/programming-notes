@@ -482,3 +482,30 @@ To style all the "rest" elements, use the `~` selector. Like in the case of "mor
 - **You can implement the "there is more to scroll" visual features using `background-attachment` property**.
 
   - Read [this blog for more information](https://lea.verou.me/blog/2012/04/background-attachment-local). The technique is pretty fascinating.
+
+### The Imposter
+
+- The `transform: translate` property **takes the element dimensions into the account**.
+
+  - This means that, the `transform: translate(50%, 50%)` will transform the position of the element in respect to the element dimensions.
+
+  ```css
+    .imposter {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50;
+      transform: translate(-50%, -50%);
+    }
+  ```
+
+  Of course, this is only part of the story, as we also have to worry about the overflow. To ensure no overflow happens, once could set the maximum dimensions for width and height.
+
+  ```css
+  .imposter {
+    <!-- stuff from earlier -->
+    max-inline-size: 100%;
+    max-block-size: 100%;
+  }
+  ```
+
+- The **`position: absolute` is, in this case, used to center the element based on the document or positioning container**. We should swap the `position: absolute` to `position: fixed` to center things in relation to the _viewport_.
