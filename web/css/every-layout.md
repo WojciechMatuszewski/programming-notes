@@ -475,10 +475,10 @@ To style all the "rest" elements, use the `~` selector. Like in the case of "mor
 
 ### The Reel
 
-TODO:
+- At its most basic level, the carousel could be implemented as scrollable container.
 
-- Indicator that the area is scrollable
+  - You can enhance it with many modern features, [like the `scroll-snap`](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type).
 
-- Understand the spacing problems
+- **You can implement the "there is more to scroll" visual features using `background-attachment` property**.
 
-- <https://lea.verou.me/blog/2012/04/background-attachment-local/>
+  - Read [this blog for more information](https://lea.verou.me/blog/2012/04/background-attachment-local). The technique is pretty fascinating.
