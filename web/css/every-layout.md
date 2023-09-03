@@ -509,3 +509,42 @@ To style all the "rest" elements, use the `~` selector. Like in the case of "mor
   ```
 
 - The **`position: absolute` is, in this case, used to center the element based on the document or positioning container**. We should swap the `position: absolute` to `position: fixed` to center things in relation to the _viewport_.
+
+### The Icon
+
+- Use `svg` for icons. Stay away from font-based icons. [They are not good](https://cloudfour.com/thinks/seriously-dont-use-icon-fonts/).
+
+  - You have to do a LOT of work to have a good font-based icons system in place. That is not the case for SVGs.
+
+- `SVGs` are `inline` elements by default. **To change their vertical alignment one could use `flexbox` or `vertical-align: middle/baseline` properties**.
+
+  - **The `vertical-align: middle` result is not necessary what you would expect**. You will most likely need to hand-roll a `px/rem` value here.
+
+- There is a lot of gotchas with matching the icon to the font height. You will need to tweak the `height` / `width` values according to whether the copy after the font starts with an uppercase or lowercase letters.
+
+```css
+.icon {
+  /* Have the same height as the font */
+  height: 0.75em;
+  height: 1cap;
+
+  /* Have the same width as the font */
+  width: 0.75em;
+  width: 1cap;
+}
+
+.with-icon {
+  /* Eliminates any "magic" space created by inline elements */
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+```
+
+- When using **icons without any text, consider using `aria-label` attribute to ensure they are accessible!**
+
+  - Quite an important detail which will help you with testing as well (assuming you use a library with `getByRole` or `getByLabelText` selectors).
+
+- The author also **recommends setting the `role="img` to the `svg` when it is used without any text**.
+
+  - Seems nice and makes sense – the screen reader will announce it as labelled image.
