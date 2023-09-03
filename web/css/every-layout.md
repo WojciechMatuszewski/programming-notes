@@ -548,3 +548,42 @@ To style all the "rest" elements, use the `~` selector. Like in the case of "mor
 - The author also **recommends setting the `role="img` to the `svg` when it is used without any text**.
 
   - Seems nice and makes sense – the screen reader will announce it as labelled image.
+
+## The bottom line
+
+Here are the things that struck me as important / things I learned.
+
+- Hardcoding width/heights in the context of layout is a red flag. It might be warranted, but in most cases it is not.
+
+- The _lobotomized owl selector_ is very interesting, though we have the `gap` property now.
+
+  ```css
+  .container {
+
+  }
+
+  .container > * + * {
+    margin-inline-start: 1rem;
+  }
+  ```
+
+- The _holy albatross technique_ is mind-blowing. Very handy.
+
+  ```css
+  .container {
+    display: flex;
+    --breakpoint: 40rem;
+  }
+
+  .container > * {
+    flex-grow: 1;
+    <!-- It is vital to understand that the `--breakpoint` is about the CONTAINER width -->
+    flex-basis: calc((var(--breakpoint) - 100%) * 999)
+  }
+  ```
+
+  If the container is bigger than the breakpoint, th `flex-basis` will be ignored. If it's smaller, then it will be a big positive number;
+
+- One can "count" elements via the `:nth-last-child` selectors.
+
+  - Quite amazing.
