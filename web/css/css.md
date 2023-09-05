@@ -628,3 +628,26 @@ Why is this useful? **In the age of components, it is very hard to style them ac
 ```
 
 The syntax is very familiar. One addition is that you have to "name" your container to use the `@container` query.
+
+## `display: contents` blows my mind
+
+The `display: contents` will make it so that the **element will not generate any box, as such the children will be treated as if it did not exist in terms of layout**.
+
+```html
+
+<div style = "display: flex">
+  <!-- As if this div \/ did not exist from the layout perspective -->
+  <div style = "display: contents;">
+  <!-- The children are subject to the flex algorithm -->
+    <span>foo</span>
+    <span>bar</span>
+  </div>
+</div>
+
+```
+
+- The colors and fonts inherit from the `display: contents` parent.
+
+- The **padding, width and all box-related properties are ignored**.
+
+TODO: <https://rachelandrew.co.uk/archives/2017/07/20/why-display-contents-is-not-css-grid-layout-subgrid/>
