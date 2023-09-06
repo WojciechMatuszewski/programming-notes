@@ -72,6 +72,14 @@ There is a difference between `exports =` and `module.exports =`. **Always prefe
 
 What if your favorite way of writing lambdas is by using bash? Or maybe you want to do some funky stuff before your handler runs? All of this is possible with _custom runtimes_.
 
+### Creating a custom runtime
+
+Nothing is stopping you from creating your own custom AWS Lambda runtime. **Why would you be interested in doing so**?
+
+The best use-case I've seen for this, is to **enable running traditional request-response applications on AWS Lambda, like an express app**. Your custom runtime would be changing the JSON payload the AWS Lambda receives, to a request/response object. Then you would pass that into the application, and wait for the response. In fact, **this is what the [AWS Lambda web adapter](https://github.com/awslabs/aws-lambda-web-adapter) is doing**.
+
+I've also took a stab at writing a custom runtime with Go. [You can check the code here](https://github.com/WojciechMatuszewski/lambda-go-custom-runtime-example).
+
 ### Custom runtime and Lambda Runtime API
 
 - they are like a middleman between _AWS Lambda Runtime API_ and your handler. The Runtime API exposes an HTTP API that the runtime can use.

@@ -389,7 +389,14 @@
 
 - **When you use the layer, AWS pulls that layer into your account**. This means that **if the external layer were to be deleted, your function will still work as expected**.
 
-##### Lambda extensions and performance concerns
+##### Lambda layers and extensions with container deployments
+
+- lambda layers are not directly supported with the container deployments
+
+- to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build
+  with a image that contains the layer**
+
+#### Lambda extensions and performance concerns
 
 - It **used to be that the AWS Lambda would wait for your extension to finish** before yielding back the result.
 
@@ -402,13 +409,6 @@
     - The **Telemetry API provides you with X-Ray traces**. That is **not the case for the Logs API**.
 
     - The Telemetry API **also provides you with much more granular events related to the AWS Lambda lifecycle than the Logs API**.
-
-##### Lambda layers and extensions with container deployments
-
-- lambda layers are not directly supported with the container deployments
-
-- to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build
-  with a image that contains the layer**
 
 #### Container deployments
 
