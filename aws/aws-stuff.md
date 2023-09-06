@@ -6669,19 +6669,17 @@ What is very important to understand is that **LONG POOLING CAN END MUCH EARLIER
 
 - one approach would be to create a _catch-all_ rule that forwards the events to a log group.
 
-  Another would be to create additional log group target for each rule.
-  No matter which approach you pick **remember about the CloudWatch costs. Use the _input transformer_ to ensure you log
-  only what you need**
+  Another would be to create additional log group target for each rule. No matter which approach you pick **remember about the CloudWatch costs. Use the _input transformer_ to ensure you log only what you need**
 
-- while adding artifical targets to test the event filtering works, how one might go about **seeing the output of the
-  target rule?**.
+- while adding artifical targets to test the event filtering works, how one might go about **seeing the output of the target rule?**.
 
   - very **handy** when the **rule invokes another service**
 
-  - i would **recommend using _CloudTrail_** and **looking at the service event that the rule triggers**
+  - I would **recommend using _CloudTrail_** and **looking at the service event that the rule triggers**
 
-  - **to my best knowledge** there is **no other way to track success of the delivery** – apart from **CloudWatch
-    metrics**.
+    - for AWS Lambda functions, I recommend reading [this article](https://medium.com/@mr.mornesnyman/debug-failed-invocations-for-aws-eventbridge-rules-27689ec4fe09).
+
+  - **to my best knowledge** there is **no other way to track success of the delivery** – apart from **CloudWatch metrics**.
 
 ##### Event Sampling
 

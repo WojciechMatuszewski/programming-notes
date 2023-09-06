@@ -80,6 +80,8 @@ The best use-case I've seen for this, is to **enable running traditional request
 
 I've also took a stab at writing a custom runtime with Go. [You can check the code here](https://github.com/WojciechMatuszewski/lambda-go-custom-runtime-example).
 
+> You can find the demo of AWS Lambda web adapter [here](https://www.youtube.com/watch?v=ArsTZ2y7u80).
+
 ### Custom runtime and Lambda Runtime API
 
 - they are like a middleman between _AWS Lambda Runtime API_ and your handler. The Runtime API exposes an HTTP API that the runtime can use.
