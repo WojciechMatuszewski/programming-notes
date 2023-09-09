@@ -379,13 +379,14 @@ export default function App() {
 }
 ```
 
-So what will happen now? **You will only see 1 log in you console, no matter how many times you press the button**.
-This is because the `Child` component **props did not change because the `Child` is rendered in the `App`**. The App component in itself will not "change" at all.
+So what will happen now? **You will only see 1 log in you console, no matter how many times you press the button**. This is because the `Child` component **props did not change because the `Child` is rendered in the `App`**. The App component in itself will not "change" at all.
 
 So this is a neat optimization technique you might use.
 
 Also do **not be afraid of putting components as props. It's completely natural thing to do, especially if you know how JSX works under the hood**.
 Putting **components as props will help you with "yet another prop syndrome"**. You can read more about this problem [here](https://kyleshevlin.com/quit-your-yapping).
+
+- [Another great article related to composability](https://julesblom.com/writing/parents-owners-data-flow)
 
 ## Profiling with `React.Profiler`
 
