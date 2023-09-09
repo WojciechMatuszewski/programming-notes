@@ -474,7 +474,11 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
 ### React Client Components
 
-These components are **prerendered on the server and hydrated on the client**. This means that **when using RCCs you pay the cost of shipping JS to the client**. These are your "standard" Next.js components from the `page` directory.
+These components are **the regular components you have been using so far**. **In the context of Next.js** these are the components **that get executed on the server (either statically built or via SSR) and hydrated**. This means that **when using RCCs you pay the cost of shipping JS to the client**.
+
+**You cannot import RSC into RCC** because **RSC never "re-renders"**. Imagine a scenario where you would be able to render RSC in client components. What should happen if the state in the client component updates and you are passing this prop into the RSC? **The RSC would not update, and your app would look like it is broken!** That is why you can only import RSC in other RSC.
+
+This "limitation" promotes composability. If you cannot import components, you have to compose them. Composability is a great way to ensure your code is scalable and responds to change in requirements well.
 
 #### Notes from the "Dan Abramov explores React Server Components with us!"
 
