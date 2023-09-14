@@ -691,3 +691,15 @@ TODO: <https://rachelandrew.co.uk/archives/2017/07/20/why-display-contents-is-no
       <p>I will NOT have a "leftover" spacing at the bottom</p>
     </section>
     ```
+
+## The `color-mix` function
+
+- There are multiple **color models or formats or spaces** (I've seen different wording used in different articles) now in CSS.
+
+  - These define how "rich" the color is on different displays, and also how the colors mix using the `color-mix` function.
+
+- The syntax looks like this: `color-mox(in oklab, white 30%, black)`
+
+- The **`color-mix` will allow you to implement the "darken(X)" semantics for a given color**.
+
+  - I used to have this `darken` function in my SCSS code back in the day.
