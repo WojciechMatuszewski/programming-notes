@@ -653,3 +653,41 @@ The `display: contents` will make it so that the **element will not generate any
 - The **padding, width and all box-related properties are ignored**.
 
 TODO: <https://rachelandrew.co.uk/archives/2017/07/20/why-display-contents-is-not-css-grid-layout-subgrid/>
+
+## The _lobotomized owl_ selector
+
+- Its name from from how the selector "looks" when written: `* + *`.
+
+- It **used to be more widely used since we did not have `gap` property at our disposal**.
+
+  - Without the `gap` property, adding spacing between children was a bit tricky. If you were not careful, you could introduce the "leftover" spacing.
+
+    - If you did, in most cases you also had to apply negative margins.
+
+    ```html
+    <style>
+      p {
+        margin-block-end: 1rem;
+      }
+    </style>
+    <section>
+      <p>foo</p>
+      <p>foo</p>
+      <p>I will have a "leftover" spacing at the bottom</p>
+    </section>
+    ```
+
+    Contrast this with the following. The `margin-block-end` is only applies to the _second_ paragraph (in this particular case, using `margin-block-start` would be a better option).
+
+    ```html
+    <style>
+      section p + p {
+        margin-block-end: 1rem;
+      }
+    </style>
+    <section>
+      <p>foo</p>
+      <p>foo</p>
+      <p>I will NOT have a "leftover" spacing at the bottom</p>
+    </section>
+    ```
