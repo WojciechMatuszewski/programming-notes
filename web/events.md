@@ -165,3 +165,29 @@ emitter.dispatchEvent(new Event("..."));
 ```js
 emitter.addEventListener("..")
 ```
+
+## The `setPointerCapture` function
+
+Imagine a scenario where you want to implement a "drag" feature for some UI element. From the experiences you already had, you most likely assume you should be able to "drag" the element, even if your thumb/mouse moves OUTSIDE of this element.
+
+To achieve this effect, you will **need to listen to future pointer events that might happen "outside" of a given element**. To achieve this, you should consider using the `setPointerCapture` function on the event.
+
+```js
+const box = document.querySelector(".box");
+
+const handlePointerMove = (event) => {
+  event.target.style.transform = `translateX(${event.clientX - 50}px)`;
+};
+
+box.addEventListener("pointerdown", (event) => {
+  event.target.setPointerCapture(event.pointerId);
+  event.target.addEventListener("pointermove", handlePointerMove);
+});
+
+box.addEventListener("pointerup", (event) => {
+  event.target.removeEventListener("pointermove", handlePointerMove);
+  event.target.releasePointerCapture(event.poinsterId);
+});
+```
+
+[MDN has a very good documentation regarding this event](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture). Check out the demo – start dragging, then move your pointer down. Notice that you can still drag the element, despite having the pointer outside of its bounds!
