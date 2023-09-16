@@ -14,6 +14,16 @@
 
   - This means sending the serialized state, HTML AND the JS required to make the application work. This means we have to send a lot of stuff twice!
 
+### Why efficient hydration is hard
+
+> Notes from [this article](https://dev.to/this-is-learning/why-efficient-hydration-in-javascript-frameworks-is-so-challenging-1ca3)
+
+- Hydration and state preservation are complex. The framework has to encode the application state into the HTML and then send it to the browser. This makes the HTML document size bigger.
+
+- Initializing the framework from the state embedded in the HTML takes time. If the amount of state is large, you might freeze the browser.
+
+- There are various ways to defer the hydration work. Those include  generating static sites, using progressive or out-of-order hydration or creating "islands of reactivity".
+
 ### Hydrating SPAs
 
 - Deferring hydration is not an option. Hydration can take a lot of time. If the user interacts with a page, would you want them to wait?
