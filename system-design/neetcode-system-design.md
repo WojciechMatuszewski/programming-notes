@@ -118,3 +118,67 @@
     - At least this one is documented. I could not find the information about the S3 expiry delay.
 
   - The latency will be much higher than the S3 version, since there are a lot of services involved.
+
+## Design Twitter
+
+- Read heavy system. This points to a usage of Redis or any other caches.
+
+### Requirements
+
+- Following others.
+
+- Creating tweets. With images and videos.
+
+- Viewing "the feed". This one is particularly interesting due to the sheer amount of users on the platform.
+
+### Non-functional requirements
+
+- Most people will be viewing tweets, not creating them. This means a lot of reads.
+
+- Since the tweets could be "media rich", the storage capacity of the system needs to be huge.
+
+  - This usually points to the fact that we do NOT need strong consistency.
+
+    - As a sidenote, I think you do not need strong consistency in almost all cases.
+
+### Implementation
+
+- Consider using NoSQL for the tweets, and some kind of Graph Database for the "follow" functionality.
+
+  - This will enable you to scale better. Keeping everything in one DB (even sharded) might not be a good solution due to the amount of data.
+
+    - When talking about the relational DB here, consider sharding based on userId. You can have a hash function compute the correct shard for a given user.
+
+- Object storage for the media. **Remember about the CDN**.
+
+  - Here the teacher talks about the different ways to populate data on the CDN.
+
+    - You can have the "pull-based" CDN (sometimes called _reverse proxy_), where the asset is cached only after requested.
+
+    - You can have the "push-based" CDN, where, as soon as the asset is uploaded, it is also uploaded to the CDN.
+
+    - In this particular case, **consider the "pull-based" CDN approach**. Pushing everything into the CDN might create a lot of overhead.
+
+- The way to distribute tweets is to use a queue with a worker pool that creates a feed for a given user and saves it to the cache.
+
+  - There might be a problem with this approach for people with huge amount of followers. You would need to re-compute the feed for all people who are following that one person.
+
+    - **Insert the celebrity tweet at runtime**. Do NOT fan-out when the celebrity tweets. Instead fetch that tweet when the user requests their feed.
+
+    - Do NOT compute the feed for inactive users.
+
+### Thinking in AWS
+
+- The CDN would be CloudFront. I think, by default, it uses the "reverse-proxy/pull" mechanism.
+
+- The Servers would most likely be some kind of containers. Using AWS Lambdas at that scale does not make sense.
+
+  - I would pick Fargate or ECS here.
+
+- The Cache would be ElastiCache. Keep in mind that you can use Memcached or Redis under the hood.
+
+- For Object Storage one cannot go wrong with S3.
+
+- To compute the feed, I would use SQS with a combination of Fargate of ECS. Please note that you have to manually pull messages, you have to set that in your code!
+
+  - If you need a fan-out, I propose SNS, as it supports millions of subscribers.
