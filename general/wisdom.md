@@ -40,4 +40,4 @@ We often think about ourselves as "Software Engineers". We like to solve hard te
 
 But the truth is, **in your programming job, you must also be thinking like a businessman**. You will have a unique ability to understand the technical aspects of your business that others do NOT have.
 
-Always remember, that the **code is only a means to the end, not the other way around**. Business is business, and, in the end, it does not matter what is "under the hood". What matters is how much money it brings – this is they money that pays your bills!
+Always remember, that the **code is only a means to the end, not the other way around**. Business is business, and, in the end, it does not matter what is "under the hood". What matters is how much money it brings – this is the money that pays your bills!
