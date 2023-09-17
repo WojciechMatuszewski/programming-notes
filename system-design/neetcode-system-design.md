@@ -182,3 +182,53 @@
 - To compute the feed, I would use SQS with a combination of Fargate of ECS. Please note that you have to manually pull messages, you have to set that in your code!
 
   - If you need a fan-out, I propose SNS, as it supports millions of subscribers.
+
+## Design Discord
+
+### Functional Requirements
+
+- Servers
+
+- Channels
+
+  - The most interesting functionality is the "show me the first unread message" when navigating to a given channel.
+
+### Implementation
+
+- Receiving messages via WebSockets or Polling. Polling is not a great solution as it creates a lot of traffic.
+
+  - You could also try using _Server Sent Events_ here, but please note that these are uni-directional.
+
+    - You [can read more about SSE here](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events).
+
+- Shard the database based on the `channelId`. There will be more channels than servers.
+
+- Ordering based on the date the message was sent is quite important. The `sent_at` should be the index.
+
+- To derive the "mentions" and "you have x unread messages" use a second table depicting the user activity.
+
+  - Each time the message mentions the user, update the user activity table with that information.
+
+  - You also need to keep track of the `last_read_at` for a given user + channel combination.
+
+### Thinking in AWS
+
+- For the WebSockets, I would definitely use the IoT Core MQTT.
+
+  - It supports huge scale, is serverless and has powerful filtering capabilities.
+
+- For the database, I would reach for DynamoDB.
+
+  - We can group the user activity collections nicely.
+
+- To asynchronously update the user activity for a given message, one could use DynamoDB streams with AWS Lambda integration.
+
+  - This will work for small scale, but for a high traffic, I would push the DynamoDB messages to Kinesis.
+
+    - **Kinesis with AWS Lambda has a much higher throughput than DynamoDB Stream + AWS Lambda subscriber**.
+
+- Should we even cache the messages for a given channel?
+
+  - The cache would be updated very frequently since there could be a lot of messages posted every second.
+
+    - I do not have a great answer to this question. "It depends" :p
