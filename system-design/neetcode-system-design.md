@@ -284,3 +284,59 @@
   - **To implement resumability, consider using the _multipart upload_**.
 
     - This is not so easy to do, as you might need to create a presigned URL for each part.
+
+## Design Google Maps
+
+### Functional requirements
+
+- Navigate from source to destination in the shortest amount of time.
+
+  - This does not necessarily mean that the route is the shortest.
+
+- Track user location.
+
+- Get the ETA.
+
+### Non-functional requirements
+
+- Accuracy.
+
+- It is okay to have some latency.
+
+- Reliability is important. You do not want the app crash / data to be missing when user is navigating.
+
+### Spatial Indexing
+
+Before we dive into the implementation, one has to understand the concept of **_spatial indexing_**.
+
+**_Spatial indexing_ is the process of diving the area in squares**. With area divided into N squares, you can **attach a number, or some kind of hash to that square**. If you have that, you can address a given square pretty easy, as each "area" starts with the same hash, then you can recursively traverse the hash to pinpoint a given square. **Attaching hashes to the squares on the map is called _Geohashing_**.
+
+It seems like, in the world of Amazon, DynamoDB is pushed as the database to hold the geo-related data.
+
+- [The dynamodb-geo library](https://github.com/amazon-archives/dynamodb-geo).
+
+- [Series of articles on this subject](https://aws.amazon.com/blogs/mobile/geo-library-for-amazon-dynamodb-part-1-table-structure/).
+
+### Implementation
+
+- Two services – the _Route Service_ and the _Location Service_.
+
+  - The _Route Service_ reads from the _Location Service_. This allows to compute the best route given the traffic.
+
+- The _Location Service_ is a write-heavy system. You will need some kind of time-series based database for the entires.
+
+- To view the map, we have to serve images to the user. Since returning an image for the entire world is not feasible, the service would have to return multiple images for the frontend to stich them together.
+
+  - Serve images via the CDN.
+
+### Thinking in AWS
+
+- For the geo-data one could use DynamoDB.
+
+  - If you need a graph-based database, consider [Amazon Neptune](https://aws.amazon.com/neptune/).
+
+- The CDN is obviously CloudFront.
+
+- For the _Location Service_, I would use [Amazon Timestream](https://aws.amazon.com/timestream/).
+
+  - For ingestion, consider Kinesis.
