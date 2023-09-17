@@ -232,3 +232,55 @@
   - The cache would be updated very frequently since there could be a lot of messages posted every second.
 
     - I do not have a great answer to this question. "It depends" :p
+
+## Design Youtube
+
+### Non-functional requirements
+
+- Reliability of the data.
+
+  - A single video could be watched by a massive amount of people.
+
+- Favour availability instead of consistency.
+
+  - Given the amount of data, using strong-consistency is not feasible.
+
+### Implementation
+
+- Videos stored in the Object Storage. To achieve high availability, those should be replicated across AZs.
+
+- Video metadata in a NoSQL database. There are no relations so it makes sense.
+
+  - Even if you have to "join" some data, you could de-normalize it and allow some duplication.
+
+- Encoding should be async. Use a message queue to push the "this video needs to be encoded" to the "encoding" service.
+
+  - We will have multiple video artifacts. One is the "raw" video, one is the "encoded" video.
+
+    - To distribute the videos, we will use a CDN.
+
+- To improve latency, load small chunks of the video. There is no need to send the user the whole video.
+
+  - **Use TCP for the streaming. The UDP is a good choice for live-streaming, but for a video that is already encoded, TCP is a better choice**.
+
+    - We should favour reliability. You do not want to have any "gaps" in the video.
+
+    - For live-streams, you the video feed to always display the "freshest" chunks, so it makes sense to sacrifice a couple of seconds of missing video to stay "up-to-date" with the stream.
+
+### Thinking in AWS
+
+- The CDN is CloudFront
+
+- The Object Store is S3
+
+- The mechanism to encode videos could use the _Elemental_ suite of offerings from AWS.
+
+  - The `MediaConvert` service integrates with S3. Perfect fit! We do not have to have any queues in the architecture.
+
+- For the metadata store, one could use DynamoDB
+
+- To upload the video, one could use AWS S3 presigned URLs.
+
+  - **To implement resumability, consider using the _multipart upload_**.
+
+    - This is not so easy to do, as you might need to create a presigned URL for each part.
