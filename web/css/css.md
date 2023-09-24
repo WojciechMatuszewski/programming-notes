@@ -443,6 +443,46 @@ In my opinion, the most compelling use-case for these is that **you can animate 
 
 > [Here is the MDN documentation regarding this topic](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Types)
 
+### Computed CSS variables gotcha
+
+Let us say you have the following CSS.
+
+```css
+/* This is equivalent to the HTML document, but it also applies to SVG elements "root" */
+:root {
+  --font-size: 1rem;
+  --font-size-large: calc(2 * var(--font-size));
+}
+
+h1 {
+  --font-size: 2rem;
+  font-size: var(--font-size-large);
+}
+```
+
+Would you expect the `font-size` to now be `4rem`? It certainly would make sense would not it? **The problem is that this will not be the case**.
+The **calculation happens as soon as the browser processes the definition**. This means that the **computed values, in this case, in the `:root` are immutable and only inheritable**. This behavior is not specific to `:root`.
+
+> [You can read more about this particular gotcha here](https://moderncss.dev/how-custom-property-values-are-computed/?ck_subscriber_id=1352906140#inheritable-values-become-immutable).
+
+To make this code work, we would have to change where the computation happens.
+
+```css
+:root {
+  --font-size: 1rem;
+}
+
+.font-resize {
+  font-size: calc(var(--font-size-adjust, 1) * var(--font-size));
+}
+
+.font-large {
+  --font-size-adjust: 2.5
+}
+```
+
+Then, you **would use the `font-resize` and `font-large` classes on the same element**. This adherers to the rules of the cascade – we are not trying to update the parent, we are updating the "current element" styles.
+
 ## Cascade layers
 
 Have you ever had problems with CSS selectors' specificity? In the end, most of us gave up and added the `!important` to the rule (or if it is evil, declare the property as a transition which will override the `!important`). You are not alone, and the web community has your back! – enter _cascade layers_.
