@@ -483,6 +483,107 @@ To make this code work, we would have to change where the computation happens.
 
 Then, you **would use the `font-resize` and `font-large` classes on the same element**. This adherers to the rules of the cascade – we are not trying to update the parent, we are updating the "current element" styles.
 
+### Conditional CSS
+
+Would it not be awesome to have the ability to apply some CSS styles conditionally? Yes, one could use JavaScript to do this, but I think there is something to be said about doing all of that in CSS. Note that I'm not talking about conditions based on the viewport. I'm talking about the conditions based on the "state" of the rules themselves!
+
+It turns out that is possible, and, at the time of writing this, there are at two ways I can think of that allow us to apply conditions in CSS.
+
+#### The "space toggle"
+
+> Based on resources [from this GH repo](https://github.com/propjockey/css-sweeper?tab=readme-ov-file#basics-of-space-toggle). Also, check [this article out](https://www.bram.us/2023/09/16/solved-by-css-scroll-driven-animations-detect-if-an-element-can-scroll-or-not).
+
+This works, because **an empty space is a valid CSS custom-property value**. If the **The space value essentially acts as `true` value in other programming languages**.
+
+```css
+.box {
+  /* notice the space here! */
+  --toggler: ;
+  /* read this as "if toggler then .." */
+  --red-if-toggler: var(--toggler) red;
+
+  /* the background will be red */
+  background: var(--red-if-toggler, blue);
+  width: 50px;
+  height: 50px;
+}
+```
+
+Okay, so if empty space acts as a "true", how do we represent the `false` value? **To represent the `false` use the `initial` keyword**.
+
+```css
+.box {
+  --toggler: initial;
+  /* read this as "if toggler then .." */
+  --red-if-toggler: var(--toggler) red;
+
+  /* the background will be blue */
+  background: var(--red-if-toggler, blue);
+  width: 50px;
+  height: 50px;
+}
+```
+
+You can toggle the "toggler" using _media queries_.
+
+```css
+.box {
+  --toggler: initial;
+  --red-if-toggler: var(--toggler) red;
+  background: var(--red-if-toggler, blue);
+  width: 50px;
+  height: 50px;
+}
+
+@media(max-width: 600px) {
+  .box {
+    --toggler: ;
+  }
+}
+```
+
+The space toggle **biggest benefit is that it works cross-browser**. This behavior is well defined in the CSS spec. The **biggest drawback is that it looks like a hack and could be hard to understand for others**. Use it wisely!
+
+I first learned about the "space toggle" while reading [this article](https://www.bram.us/2023/09/16/solved-by-css-scroll-driven-animations-detect-if-an-element-can-scroll-or-not). **It showcases how to detect if the element is scrollable via CSS only**. Amazing technique!
+
+#### The style query
+
+At the time of writing, this only works in newest Chrome-based browsers.
+
+```css
+.container {
+  container-type: inline-size;
+  container-name: box-container;
+  --toggle: 0;
+}
+
+@media (max-width: 600px) {
+  .container {
+    --toggle: 1;
+  }
+}
+
+.box {
+  background: var(--bg);
+  width: 50px;
+  height: 50px;
+}
+
+@container box-container style(--toggle: 1) {
+  .box {
+    --bg: red;
+  }
+}
+
+@container box-container style(--toggle: 0) {
+  .box {
+    --bg: blue;
+  }
+}
+```
+
+Using **_style queries_ is, at least for me, much more readable**. There is no "magic" with the empty space, but the syntax is much more verbose.
+
 ## Cascade layers
 
 Have you ever had problems with CSS selectors' specificity? In the end, most of us gave up and added the `!important` to the rule (or if it is evil, declare the property as a transition which will override the `!important`). You are not alone, and the web community has your back! – enter _cascade layers_.
