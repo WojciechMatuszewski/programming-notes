@@ -29,7 +29,7 @@ include: [ALL_TEST_FILES, ALL_APPLICATION_FILES]
 
 Next, **add the `noUncheckedIndexedAccess` to the root `tsconfig.json` and EXCLUDE all test files**. This way, TypeScript will not scream at you whenever you do not explicitly perform null-checks when accessing array items in your test files.
 
-That's all
+**The good rule to follow is this**: every layer in your application should have a separate `tsconfig.json` file. The tests, the e2e tests, the application code etc... Otherwise, you will "leak" global types, or types that should only be available in the test files to other parts of your application.
 
 #### The problem
 
