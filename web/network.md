@@ -1,10 +1,74 @@
-# Http Caching
+
+# Network
+
+## The `fetchPriority`
+
+The browser can make a lot of network requests when the user lands on the page. All the CSS / JavaScript and other asset has to be downloaded from somewhere. Each request has a priority (look it up in the network tab of the developer tools). **Developers can control the priority of the fetches via the _priority hints_**.
+
+### Assets and links in HTML
+
+One of the ways one can prioritize a network request is via many attributes that exist on the `a` tag.
+
+- There is the `rel="preload"` attribute which tells the browser that the resource MUST be downloaded. As such the browser will issue a **high priority fetch for this resource**.
+
+- There is `rel="prefetch"` which tells the browser to download a given resource for later. **The browser might ignore this request depending on various factors, one of which is network bandwidth**.
+
+> There is also `async` and `defer` attributes which denote when browser is supposed to "parse" a given resource.
+
+In addition to the `preload` and `prefetch` one can **use `fetchpriority` prop**. The `fetchpriority` prop overrides the default importance of the network request as computed by the browser. **`fetchpriority` is a hint not a directive**. This means that the browser might or might not respect the preference set by the developer.
+
+You could, for example, use the `rel="preload` to start the fetch of the resource as soon as possible, but denote it as `fetchpriority="low"` to deprioritize it. [Check this article out for more information](https://web.dev/fetch-priority/#the-fetchpriority-attribute).
+
+### In fetch requests
+
+**By default** all the `fetch` requests are of high priority. You can **control the priority of the requests using the `priority` prop**. You might think that setting the `priority` to `low` for analytics-related fetches is a good idea. Why would it not be?
+
+It is! but what will happen if you initialize the request and then switch pages? It turns out there is a high chance the request you have just made will be cancelled. This is **quite important** to understand since it has major implications – your backend might not receive all the requests.
+
+**How can we deal wit the fact that the `fetch` requests might get cancelled?** We can use the `keepalive` prop!
+
+The `keepalive` prop tells the browser **to carry the request to completion even when the page is terminated**.
+
+#### `sendBeacon` alternative
+
+This API was **specifically designed for sending analytics requests**. It combines the benefit of the `fetch` with `keepalive` and makes the request low priority. Here is how one could use it.
+
+```js
+document.addEventListener("visibilitychange", function logData() {
+  if (document.visibilityState === "hidden") {
+    navigator.sendBeacon("/log", analyticsData);
+  }
+});
+```
+
+But, **the API has its limitations**.
+
+- You can only send a POST request. That is usually not the problem.
+
+- **It does not natively support adding custom headers**. That is a much bigger problem, but there is a way out.
+
+To add custom headers to the `sendBeacon` API call, one has to create a `Blob`.
+
+```js
+<a href="/some-other-page" id="link">Go to Page</a>
+
+<script>
+  document.getElementById('link').addEventListener('click', (e) => {
+    const blob = new Blob([JSON.stringify({ some: "data" })], { type: 'application/json; charset=UTF-8' });
+    navigator.sendBeacon('/log', blob));
+  });
+</script>
+```
+
+And there it is! Now you have both the semantics of the `keepalive` with low fetch priority and custom headers.
+
+## Http Caching
 
 While working with _React_ or other frameworks you might get caught up in thinking only about the _client side_ cache.
 Libraries like _react-query_ and _apollo client_ make caching on the client easy.
 But we can do more, we can cache our data on the _http_ layer as well.
 
-## `max-age` header
+### `max-age` header
 
 There are many _http cache headers_ but this one is by far the most important one. This will **give a hint** to a browser on how **long should given object live in cache**.
 Now, this is a hint, not a demand, not something authoritative. You might end up in a situation where that object will not be cleared at all, but more on that later.
@@ -27,7 +91,7 @@ server.listen(3000);
 
 With this simple header we are able to cache some content for some period of time, after that time expires, **without any additional changes**, browser will request the resource again.
 
-## `ETag` header
+### `ETag` header
 
 `ETag` header is there as a **mechanism to tell the browser that the content is still the same**. I think this image tells the whole story:
 
@@ -67,7 +131,7 @@ server.listen(3000);
 
 So easy right? Now imagine what you can do with _GraphQL_ and other stuff.
 
-## `max-age` on the CDN level
+### `max-age` on the CDN level
 
 If you are doing any kind of _Static Site Generation_ you might have faced a problem where your customers are getting stale data even though you changed the content. This is probably because you set a high `max-age` header because your content is, well, static.
 
