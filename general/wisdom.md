@@ -41,3 +41,49 @@ We often think about ourselves as "Software Engineers". We like to solve hard te
 But the truth is, **in your programming job, you must also be thinking like a businessman**. You will have a unique ability to understand the technical aspects of your business that others do NOT have.
 
 Always remember, that the **code is only a means to the end, not the other way around**. Business is business, and, in the end, it does not matter what is "under the hood". What matters is how much money it brings – this is the money that pays your bills!
+
+## Domain knowledge is more important than coding skills
+
+> Based on [this article](https://vadimkravcenko.com/shorts/things-they-didnt-teach-you/#h-domain-knowledge-is-more-important-than-your-coding-skills).
+
+As previously stated in this document, being a good software engineer is also being a good business man. You **cannot be a good business man without having a deep understating of the domain you are working in**. Knowledge of the domain will make your life much easier.
+
+Picture two people, they have the same coding skills, but one person is intimately familiar with the business domain, and the other is not. If you give them the same task, the results will be widely different.
+
+The person familiar with the domain, will most likely ask a lot of good, clarifying questions. **They may even conclude that writing code is not necessary to do the job they were given**. Since the code is only ONE way to get the job done, and not writing code is always better than writing it, the outcome will be very beneficial to the company as a whole.
+
+Contrast this with the artifact produced by the person who does not understand the business domain. They might default to writing code, which in itself is not a bad thing. The worst thing is that the code might work, but it does not really do what it suppose to. This wastes everyone's time and energy.
+
+So, **whatever you are working on, please make sure you have a deep understating of the domain you are working in**.
+
+## Being a "kind engineer"
+
+> Based on [this youtube video](https://www.youtube.com/watch?v=wTezaqqyzlk) and [this blog post](https://kind.engineering/).
+
+- During the code review, **ask about the why. Do not be dogmatic**.
+
+  - People do what they think is right given their current understanding of things.
+
+    - **Always assume that others meant good**. People do not wake up one day and choose to do nefarious things.
+
+- Always be honest. **Do not create fake personas at work**. While it might seem beneficial at first, in the long run, it will wear you down.
+
+  - Being your "true self" is liberating. It allows you to focus on what matters the most – the product, your colleagues and the shared goal you are marching towards.
+
+  - **Care about the people you are working with**. People are not one-dimensional.
+
+- Being kind also means giving direct feedback. Sometimes that feedback can be negative. That is okay.
+
+  - People will respect you if you are honest with them. Even when talking about hard things, it is very important to be honest.
+
+- **Encourage feedback. Be vulnerable**. If you want others to share what is on their mind, you have to show that you are also able to do that.
+
+  - I find that talking openly about your problems, your life (of course, be reasonable here) really does wonders when it comes to psychological safety.
+
+  - **Start by asking for criticism**. Stop giving it. This shows you are open, you are vulnerable. This build trust.
+
+- **People should be accountable for things they do, but you should not blame them**. There is **literally ZERO benefit in blaming someone for something**.
+
+  - You will not resolve the issue faster if you blame someone for something.
+
+  - _We succeed together and we fail together_.
