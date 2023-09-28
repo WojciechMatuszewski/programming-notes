@@ -584,6 +584,8 @@ Here are the things that struck me as important / things I learned.
 
   If the container is bigger than the breakpoint, th `flex-basis` will be ignored. If it's smaller, then it will be a big positive number;
 
+  **You can use this technique to implement "fluid toggles"** [as presented here](https://ishadeed.com/article/conditional-border-radius/).
+
 - One can "count" elements via the `:nth-last-child` selectors.
 
   - Quite amazing.

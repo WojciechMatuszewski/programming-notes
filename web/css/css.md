@@ -844,3 +844,7 @@ TODO: <https://rachelandrew.co.uk/archives/2017/07/20/why-display-contents-is-no
 - The **`color-mix` will allow you to implement the "darken(X)" semantics for a given color**.
 
   - I used to have this `darken` function in my SCSS code back in the day.
+
+## The `tabular-nums`
+
+- Use the `font-variant-numeric: tabular-nums;` every where you do not want the content shifting when some number changes. I bet you encountered a situation where changing from `10` to `12` caused a slight layout shift. If you were using the `tabular-nums` that would not be the case.
