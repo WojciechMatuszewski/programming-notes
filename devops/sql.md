@@ -16,7 +16,27 @@
 
     - For that to work, you might want to use _cascading deletes_.
 
+- There are also **composite indexes**, just like in DynamoDB.
+
+  ```sql
+    create index full_name_index on customers (last_name, first_name)
+  ```
+
+### Establishing relationships
+
+- To establish a relationship between the tables, you have to create a _foreign key_.
+
+  - The name _foreign key_ indicates that the value of the key might also **might** live in another table.
+
+  - Note that **the _foreign key_ can reference any unique attribute on the other table, it does not have a to be a primary key**.
+
+    - Though there has to be an `UNIQUE` constraint on the column you are trying to reference (the primary key already has that).
+
+> <https://pgexercises.com/questions/basic/union.html>
+
 ## Filtering
+
+### The `WHERE` clause
 
 - Use the `WHERE` clause to filter stuff.
 
@@ -44,7 +64,20 @@
                 );
     ```
 
-## Conditional logic
+### Aggregate functions
+
+- They calculate a given value based on the column. For example you could get the "latest" date within the dataset.
+
+  ```sql
+    select max(joindate) as latest
+      from cd.members
+  ```
+
+- **Using aggregate functions after the `WHERE` clause might cause performance issues**.
+
+  - Ideally, you would use them BEFORE the `WHERE` clause.
+
+## Conditional logic (CASE)
 
 - To create conditions, use the [`CAUSE`](https://mode.com/sql-tutorial/sql-case/) statement.
 
@@ -58,14 +91,34 @@
 
     Notice how I'm adding a new column by using `as` here. So the end result would be a column `name` and `cost`.
 
-## Establishing relationships
+## Combining results
 
-- To establish a relationship between the tables, you have to create a _foreign key_.
+### The `UNION` clause
 
-  - The name _foreign key_ indicates that the value of the key might also **might** live in another table.
+- You can combine the results of two or more `SELECT` statements with the `UNION` keyword.
 
-  - Note that **the _foreign key_ can reference any unique attribute on the other table, it does not have a to be a primary key**.
+  - The results you want to combine **must have the same number of columns and compatible data types**.
 
-    - Though there has to be an `UNIQUE` constraint on the column you are trying to reference (the primary key already has that).
+- Using `UNION` **will not produce duplicates**. If you want to have duplicate entires, use the `UNION ALL` operator.
 
-> <https://pgexercises.com/questions/basic/union.html>
+  ```sql
+  select name as surname from cd.facilities
+    union
+  select surname from cd.members
+  ```
+
+  Notice the `as surname`. If I did not add it, the resulting column would have a name `name`.
+
+### Joins – `inner join`, `left join` and `right join`
+
+- Combine rows from two or more tables based on a related column between them.
+
+- **Think of joins as Venn Diagrams**.
+
+  - `inner join` will only produce results that have "something in common". The property you are joining on must be present in all the tables.
+
+  - the `left join` will print all the results from the left column and join them with results from the right column. If the "common field" is missing, the column will have no values.
+
+  - the `right join` is basically the `left join` but in reverse.
+
+<https://pgexercises.com/questions/joins/self.html>
