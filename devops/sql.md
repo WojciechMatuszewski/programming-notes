@@ -64,6 +64,22 @@
                 );
     ```
 
+- You can also **use _sub-queries_ in the SELECT block**
+
+  ```sql
+    select
+      mems.firstname || ' ' || mems.surname as member,
+      (select recs.firstname || ' ' || recs.surname as recommender
+        from cd.members recs
+        where recs.memid = mems.recommendedby
+      )
+      from
+        cd.members mems
+    order by member
+  ```
+
+  - You **can filter in the `where` clause on columns created by the sub-query.
+
 ### Aggregate functions
 
 - They calculate a given value based on the column. For example you could get the "latest" date within the dataset.
@@ -91,6 +107,31 @@
 
     Notice how I'm adding a new column by using `as` here. So the end result would be a column `name` and `cost`.
 
+- **You cannot filter based on a newly created column**. The `CASE` creates a new column, as such doing something like
+
+  ```sql
+       select name,
+        case when monthlymaintenance > 100 then 'expensive'
+            when monthlymaintenance < 100 then 'cheap'
+            end as cost
+    from cd.facilities
+    <!-- This does not work! -->
+    where cost = 'expensive'
+  ```
+
+  will not work.
+
+  In such case, **you will need to repeat the conditions from the `case` clause** which kind of sucks.
+
+  ```sql
+       select name,
+        case when monthlymaintenance > 100 then 'expensive'
+            when monthlymaintenance < 100 then 'cheap'
+            end as cost
+    from cd.facilities
+    where monthlymaintenance > 100
+  ```
+
 ## Combining results
 
 ### The `UNION` clause
@@ -109,7 +150,7 @@
 
   Notice the `as surname`. If I did not add it, the resulting column would have a name `name`.
 
-### Joins – `inner join`, `left join` and `right join`
+### Joins – `inner join`, `left (outer) join` and `right (outer) join`
 
 - Combine rows from two or more tables based on a related column between them.
 
@@ -121,4 +162,25 @@
 
   - the `right join` is basically the `left join` but in reverse.
 
-<https://pgexercises.com/questions/joins/self.html>
+  - The term `outer join` is basically either a `left` or `right` join.
+
+    - There is also the `full join` that treats both right and left side as optional in terms of the match.
+
+- It is **completely okay to join a table on itself**.
+
+- You can **perform multiple joins in a single query**.
+
+  - Keep in mind that result of a join is another table, this means we can chain the joins.
+
+    ```sql
+    select distinct mem.firstname || ' ' || mem.surname as member, fc.name
+    from cd.members mem
+      inner join cd.bookings as bk
+        on bk.memid = mem.memid
+      inner join cd.facilities as fc
+        on bk.facid = fc.facid
+        and fc.name like 'Tennis Court %'
+    order by member, fc.name
+    ```
+
+<https://pgexercises.com/questions/updates/>
