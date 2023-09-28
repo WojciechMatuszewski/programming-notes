@@ -596,6 +596,10 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - With `flex-wrap: wrap` you can re-create the behavior of _inline positioned_ elements.
 
+- **By default, the `width` of a flex element is at lest its content. This can cause issues when the element wont wrap even if it overflows its parent**.
+
+  - You can **"fix" that by adding `min-width: 0`**. I bet you encountered similar situations where this was a problem.
+
 ### Groups and gaps
 
 - Use **the `gap` property to create gaps between items**. This property is supported in all major browsers
