@@ -2932,6 +2932,10 @@ There are a few approaches when it comes to scaling with dynamoDB
 
   - Whatever you do, **do not make an assumption about the maximum time it takes Dynamo to replicate your data**. Any assumption you make and bake into your system will most likely be wrong!
 
+- The **TTL is NOT FREE when replicating to another tables** in another region. [Source](https://www.youtube.com/watch?v=tNMWD71o82Y).
+
+  - Definitely an important consideration.
+
 ##### Replication between databases
 
 - **transactions will replicate as separate updates**. While you can use the `Transact` API for atomic updates on the primary, that is not the case when the data replicates.
@@ -2986,6 +2990,8 @@ There are a few approaches when it comes to scaling with dynamoDB
   - For me, **the biggest difference between the old and the new versions is the TTL behavior**. The old version of the Global Tables **forced you to set TTL only on the primary, not on replicas**. This **requirement is gone in the new version**.
 
   - This begs a question: how in the world I never heard of this. I guess I was pretty lucky.
+
+  - The **newer version of global tables uses less WCU for replication**. [Source](https://youtu.be/tNMWD71o82Y?t=838). This means it will be cheaper to run.
 
 - AWS CDK supports the new version via the `replicationRegions` property (they still are using the `AWS::DynamoDB::Table` resource).
 

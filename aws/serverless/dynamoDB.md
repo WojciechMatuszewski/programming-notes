@@ -774,12 +774,13 @@ But maybe, during the lifecycle of your application, you started noticing patter
 
 #### Ramping up to avoid throttling
 
-The _Auto Scaling_ takes time to catch up, it's not perfect. When you have some scripts that perform a lot of operations,
-add logic so that the writes are spread and increase gradually.
+The _Auto Scaling_ takes time to catch up, it's not perfect. When you have some scripts that perform a lot of operations, add logic so that the writes are spread and increase gradually.
 
 #### Update the _Provisioned Capacity_ settings before a big spike
 
-Usually done before big events that are very profitable for your business. In such critical moments, it's better to burn a bit more on a database, than to crash because of the load.
+Usually done before big events that are very profitable for your business. In such critical moments, it's better to burn a bit more on a database, than to crash because of the load. **After switching to _Provisioned Capacity_ you can switch back to the _On Demand_ billing mode**. [Source](https://youtu.be/KbNH_VIbqJU?t=1845).
+
+All of this is called _pre-warming_ the database.
 
 ## Data integrity
 
