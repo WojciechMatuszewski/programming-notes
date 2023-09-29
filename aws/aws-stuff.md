@@ -5371,7 +5371,7 @@ or create union products**.
 
 - you can have **up to 5 enhanced fanout consumers per shard level**
 
-- Kinesis **pushes (instead of pooling operation done by the regular consumer)** data **to the enhanced fanout
+- Kinesis **pushes (instead of polling operation done by the regular consumer)** data **to the enhanced fanout
   consumer** therefore that consumer does not have to pool the data.
 
 - enhanced fanout consumer costs more (can be much more) than the regular consumers.
@@ -6273,19 +6273,17 @@ or create union products**.
 - you can also set up **DelaySeconds (Delay Queue)**. This will make sure that **any new message will be invisible for X
   seconds for consumers before being available for processing**. DO not mistake this with _Visibility timeout_
 
-##### Pooling
+##### Polling
 
-- there is a notion of **pooling**.
+- there is a notion of **polling**.
 
-  - **short pooling**: up to **10 messages** at once. You **constantly have to check the queue**
+  - **short polling**: up to **10 messages** at once. You **constantly have to check the queue**
 
-  - **long pooling**: you **initialize long pool request**. You **wait for that request to finish**. This **request
-    will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **
-    avoid empty API calls**
+  - **long polling**: you **initialize long pool request**. You **wait for that request to finish**. This **request will finish when wait-time exceeds specified time (max 20s) OR queue is not empty**. This will enable you to **avoid empty API calls**
 
-What is very important to understand is that **LONG POOLING CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection** is **always open**, it just waits for ANY message to be visible.
+What is very important to understand is that **LONG polling CAN END MUCH EARLIER THAN THE TIMEOUT**. The **connection** is **always open**, it just waits for ANY message to be visible.
 
-- you can **control how long the long pooling takes** by **specifying ReceiveMessageWaitTimeSeconds attribute**
+- you can **control how long the long polling takes** by **specifying ReceiveMessageWaitTimeSeconds attribute**
 
 > The length of time, in seconds, for which a ReceiveMessage action waits for a message to arrive
 
@@ -6414,7 +6412,7 @@ What is very important to understand is that **LONG POOLING CAN END MUCH EARLIER
 
 - SNS and SQS combined (more or less)
 
-- can be **integrated with much more services than SQS or SNS (natively, without pooling)**.
+- can be **integrated with much more services than SQS or SNS (natively, without polling)**.
   What's more important that you can **integrate natively with 3rd party AWS service providers**.
   Since these are going through APIGW the integration could also be done using SQS or SNS.
 
