@@ -63,3 +63,53 @@ There are spectrums of hydration. One can mix them accordingly. For example, you
 - _Replayable hydration_ is when you re-store the state of the components as the server seen them.
 
   - This means you only ship the app state and "replay" the framework to a given state.
+
+## Data fetching
+
+> Notes from [this video](https://youtu.be/8ObxzMSIqKA)
+
+- It seems like we are making a full circle in terms of data fetching.
+
+  1. API as HTML
+
+  2. API as XML/JSON – AJAX
+
+  3. API as State – Redux
+
+  4. API as Normalized Cache – GraphQL
+
+  5. API as Query Cache – React Query
+
+  6. API as Page Cache – gSSP / Loaders
+
+  7. API as JSX(HTML) – RSCs, HTMX
+
+  Notice that the `no.7` is really `no.1` but better.
+
+- Data fetching **ties very closely with the router the application uses**. Here is a very brief evolution of client-side routing.
+
+  1. Simple client router – no consideration for data fetching
+
+  2. Ember Router - MVC for the Browser – had hooks to fetch the data when the route changes. It was a game-changer
+
+  3. React router 4 regression - "we are not responsible for data fetching anymore"
+
+      - One could do _Link preloading_, but that did not mean _data preloading_
+
+  4. Sapper Router, Nuxt Router, Solid's App Router, React Router 6
+
+- Data fetching and the SSR also evolved. At the beginning, the APIs were synchronous (`renderJSXtoString`). How does data-fetching fit in this scenario?
+
+  1. _Prepass_ would render till it hits a data-fetching call. Then it would wait for the data to finish fetching and continue rendering. This is very slow and creates a lot of waterfalls.
+
+  2. _gSSP/Loader_ would parallelize the data fetching BEFORE rendering. This means that you avoid SOME waterfalls, and the rendering is not interleaved with data-fetching.
+
+  3. _Suspense with hoisting_ allowed us to start rendering and data-fetch AT THE SAME TIME. This means we are shifting the first render left. Unlike the _gSSP/Loaders_ where we first had to fetch all the data to start rendering.
+
+      - Of course, **one can also make a mistake here**. The key is to start data-fetching **at the route level or even higher**. If you are fetching in your components, then we are pretty much back to the _prepass_ scenario.
+
+  4. _RSCs_ (blocking) is not better than the _Suspense with hoisting_. In fact, it is much worse. That is why the Remix people were skeptical about RSCs in the first place. Since the data-fetching is not hoisted at the top, we cannot make parallel requests (one could do them, but only inside a single RSC which is a best practice).
+
+- In an ideal world, we would be able to use _Context_ API and RSCs at the same time. If that would be the case, we could hoist the data fetching to the top, and not have to deal with prop-drilling.
+
+  - Ryan thinks about solving this problem with signals. **Signal will only block when read**, so you can "mark" the resource as fetching, but then continue down the tree. Only stop rendering and fetch when the signal is read in the JSX.
