@@ -6,7 +6,7 @@
 
 As of the time of writing this, **VS Code DOES NOT support custom `tsconfig` file names**. If you wish to have a configuration with multiple `tsconfig.json` files which utilize the _project references_, you **need** to have **at least one `tsconfig.json` somewhere in your project** for the VS Code to pick your configuration up.
 
-It is very frustrating, I know, but it is a limitation that I'm very much in doubt is lifted anytime soon.
+**Please note that, even with _project references_ VSCode might not show up TS Errors in the IDE**. Some errors might only show up after you run the `tsc`. This is supper annoying and **works as expected in WebStorm**.
 
 #### Scoping given `compilerOptions` to a set of files
 
