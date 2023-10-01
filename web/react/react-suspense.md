@@ -51,6 +51,16 @@ From the app developer perspective, **the most important thing to understand** a
 
 For example, image **putting a Suspense boundary at the top of your application. This is an anti-pattern because the hydration of the whole app will be considered "non-urgent"**. If everything is no-urgent, then what is the point of using the Suspense at all?
 
+Of course, this is not a silver bullet. While wrapping some parts of the application in Suspense could help with _First Input Delay_ metric, there are some drawbacks.
+
+- The "non-urgent" hydration takes more time.
+
+- The additional functionality comes at the CPU cost. While the app will not be frozen (depending on how much work each component does), the overall CPU usage might be higher.
+
+- **Please keep in mind that the "non-urgent" updates DO NOT help with rendering expensive components**. The minimal unit of compute for React is a component. If one component takes 1 second to update, there is no way to "split" that work into chunks.
+
+  - Other frameworks, like Solid or Qwik are much more granular – the unit of compute is a single dom node. This means that they possibly could implement a more granular "non-urgent" updates.
+
 You [can read more about this topic here](https://3perf.com/talks/react-concurrency/#suspense).
 
 ### Effects and Suspense
