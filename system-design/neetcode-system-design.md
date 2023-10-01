@@ -340,3 +340,39 @@ It seems like, in the world of Amazon, DynamoDB is pushed as the database to hol
 - For the _Location Service_, I would use [Amazon Timestream](https://aws.amazon.com/timestream/).
 
   - For ingestion, consider Kinesis.
+
+## Design a Key-Value Store
+
+- The _isolation_ is the norm in SQL databases.
+
+  - **_Isolation_ means that if two transactions were dispatched at the same time, they will appear as if they happened right after each other**.
+
+    - This means that some transactions might wait for others to finish.
+
+    - You can achieve the same thing in DynamoDB with `ConditionExpression` to check if the value you are trying to read/update is what you think it is.
+
+      - This will require a read of the item before writing, so there might be some inconsistencies.
+
+      - DynamoDB uses _last writer-wins_ strategy when replicating data.
+
+- For indexing, most databases use some kind of tree-structure, like B-Tree or other.
+
+  - There is also the LSM Tree used in databases like Cassandra. This one is optimized for writes.
+
+- When talking about replication, we have to be mindful of consistency.
+
+  - Here, the famous CAP theorem comes into play – it's two out of three things _Consistency_, _Availability_ and _Partition_.
+
+    - Most databases sacrifice on consistency. I would argue that availability is the most important thing.
+
+  - There **is also the concept of the Quorum**. It dictates how many nodes have to be in-sync for the write/read to be accepted.
+
+- When talking about partitioning, the hashing algorithm is imperative.
+
+  - Ideally, you would be able to spread the data evenly.
+
+  - Even better, if we **virtualize the nodes into vnodes. This should help if one of the nodes goes down**.
+
+    - If we do not virtualize the nodes, and one node goes down, a single node might be suddenly taking on much more writes.
+
+      - With virtual nodes, even though one node is down, the granularity of vnodes allow us to spread the writes more evenly across available nodes.
