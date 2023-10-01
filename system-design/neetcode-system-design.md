@@ -376,3 +376,23 @@ It seems like, in the world of Amazon, DynamoDB is pushed as the database to hol
     - If we do not virtualize the nodes, and one node goes down, a single node might be suddenly taking on much more writes.
 
       - With virtual nodes, even though one node is down, the granularity of vnodes allow us to spread the writes more evenly across available nodes.
+
+## Design Message Queue
+
+- _Subscriber_ and _consumer_
+
+- _Publisher_ and _producers_
+
+- _At least once delivery_ is the way to go. It is very hard to guarantee only single delivery due to possible network issues.
+
+- The video describes an architecture with a _metadata store_ where we keep track of how many topics received a given message (one message could go into multiple topics).
+
+  - With this knowledge, we could delete the message from the database if all the topics received a given message.
+
+- One also has to consider whether the system is a _push_ or _pull_ based.
+
+  - In the _pull_ based system, the subscriber might over-poll the messages. Also, _pull_ based systems are usually slower as the polling happens only so often. Having said that, the polling allows for batching which is a great optimization.
+
+  - In the _pull_ based system, the subscriber will never over-poll as it processed the messages as they come in. **This system is not suitable for batching, but the batching could be done on the publisher side (sending multiple messages in one single payload)**.
+
+    - In AWS, **SQS is a _pull_ based and SNS is a _push_ based system**.
