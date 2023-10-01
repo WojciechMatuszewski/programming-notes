@@ -41,11 +41,17 @@ As per [this post](https://github.com/reactwg/react-18/discussions/7) React team
 
 React 18 improved the capabilities of the Suspense feature.
 
-The most notable change is that **the Suspense works on the server!**. This change is thanks to the new server-side renderer that is asynchronous and **capable of streaming data to the browser** (what SSR streaming in React context refers to).
+The most notable change is that **the Suspense works on the server**! This change is thanks to the new server-side renderer that is asynchronous and **capable of streaming data to the browser** (what SSR streaming in React context refers to).
 
 Next, we have **new features** like **_placeholder throttling_ and transitions**. The new semantics of "I can interrupt any render and do other work" makes all these features possible.
 
 I'm most excited about **data fetching with Suspense** and **_placeholder throttling_**. All of these and more are the subject of further discussions below.
+
+From the app developer perspective, **the most important thing to understand** about the Suspense is that **the Suspense creates a "non-urgent hydration" boundary**. This is **mostly applicable to SSR apps (CSR does not hydrate)**, and **has huge consequences**.
+
+For example, image **putting a Suspense boundary at the top of your application. This is an anti-pattern because the hydration of the whole app will be considered "non-urgent"**. If everything is no-urgent, then what is the point of using the Suspense at all?
+
+You [can read more about this topic here](https://3perf.com/talks/react-concurrency/#suspense).
 
 ### Effects and Suspense
 
