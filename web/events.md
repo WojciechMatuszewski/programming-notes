@@ -130,7 +130,7 @@ Notice that I've created a new instance of the listener in the `addEventListener
 
 - You can read more about many other `AbortController` use cases [here](https://whistlr.info/2022/abortcontroller-is-your-friend/).
 
-## Custom events and the `EventEmitter`
+## Custom events and the `EventEmitter` (PubSub pattern)
 
 There is an API for creating custom events that you can incorporate to your application. **The events can be scoped to a given "emitter" or global**.
 This makes some of the npm packages obsolete. Of course the packages might provide some additional sugar on top, but in most cases, you will not need them!
@@ -164,6 +164,64 @@ emitter.dispatchEvent(new Event("..."));
 
 ```js
 emitter.addEventListener("..")
+```
+
+#### Scoped events with a custom class
+
+You can extend the `EventTarget` class to create your own custom emitter. Sadly, there are some issues related to TypeScript – the `EventTarget` class is not generic, as such you have to write some additional code to ensure its type safety.
+
+In my humble opinion, adding overloads is the most readable option.
+
+```ts
+interface CustomEventTarget<E extends CustomEvent = CustomEvent>
+  extends EventTarget {
+  addEventListener(
+    type: string,
+    callback: EventListenerOrEventListenerObject | null,
+    options?: EventListenerOptions | boolean
+  ): void;
+  addEventListener(
+    type: string,
+    callback: (event: E) => void,
+    options?: EventListenerOptions
+  ): void;
+
+  removeEventListener(
+    type: string,
+    callback: EventListenerOrEventListenerObject | null,
+    options?: EventListenerOptions | boolean
+  ): void;
+  removeEventListener(
+    type: string,
+    callback: (event: E) => void,
+    options?: EventListenerOptions
+  ): void;
+}
+```
+
+And here is the usage.
+
+```ts
+const customEventTarget = EventTarget as {
+  new (): CustomEventTarget;
+  prototype: CustomEventTarget;
+};
+
+class State extends customEventTarget {
+  // code...
+}
+```
+
+Not great, but unless the typings change, we are stuck with this approach (or any alternative, which is also not that great).
+
+PS. When **adding methods to the class, remember to use the _arrow functions_ so that the `this` points to the "enclosing scope"**.
+
+```ts
+class State extends customEventTarget {
+  public increment = () => {
+    // code ...
+  }
+}
 ```
 
 ## The `setPointerCapture` function
