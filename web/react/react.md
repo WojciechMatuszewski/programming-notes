@@ -648,12 +648,9 @@ Many people say
 
 While true, do they really understand what `to rerender` mean?
 
-- `render` is React calling your `render` function or the `FC` itself. It gets
-  the DOM that way (as we know React operates on Virtual DOM and diffs previous
-  DOM with next one)
+- `render` is React calling your `render` function or the `FC` itself. It gets the DOM that way (as we know React operates on Virtual DOM and diffs previous DOM with next one)
 
-- `reconciliation` is the phase of diffing the newly acquired DOM with Virtual
-  one.
+- `reconciliation` is the phase of diffing the newly acquired DOM with Virtual one.
 
 - `commit` is the phase of react actually updating the DOM.
 
@@ -661,12 +658,9 @@ So when people say that
 
 > My app is slow because I have many components that re-render
 
-They may really say that they have slow `commit` phases (granted re-renders can
-also cause an issue)
+They may really say that they have slow `commit` phases (granted re-renders can also cause an issue)
 
-Actually, when component re-renders, DOM actually do not have to be updated.
-Again, this stems from the fact that `render` is just calling one function and
-getting new DOM (which can be the same as previous one)
+Actually, when component re-renders, DOM actually do not have to be updated. Again, this stems from the fact that `render` is just calling one function and getting new DOM (which can be the same as previous one)
 
 ## Future
 
