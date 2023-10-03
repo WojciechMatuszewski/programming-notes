@@ -87,3 +87,15 @@ So, **whatever you are working on, please make sure you have a deep understating
   - You will not resolve the issue faster if you blame someone for something.
 
   - _We succeed together and we fail together_.
+
+## Do not solve problems you do not have
+
+> Based on [this article](https://renegadeotter.com/2023/09/10/death-by-a-thousand-microservices.html)
+
+Before embarking on solving any problem, be it related to software or otherwise, always ask yourself this one question: "What problem do I need to solve?"
+
+Having this in mind will guide you towards the actual solution (in some cases, this solution could be different than the one you had in mind), but most importantly, it will shield you from overthinking and over-engineering.
+
+Nowadays, we have so many things to think about when building services. One has to take scale, resiliency, backups, overall architecture, frameworks, CI/CD, load testing, and so the list continues. But in most cases, **what you are building does not require most of these**. You are not Google or some other huge company (unless you are, but then that is a different discussion).
+
+Focus on the essentials and product value. Be the person who engineers for the customers, not for their own ego. If you do, I would argue that you stand a higher chance of achieving success than doing it any other way.
