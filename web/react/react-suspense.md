@@ -31,6 +31,8 @@ The scope and the functionality changed in a significant way in-between React 16
 
 In React 16, the Suspense supported a single-use case – code splitting via the `React.lazy` API, and it **did not work on the server**.
 
+> Side note regarding code splitting. Keep in mind that, **the more assets you load, the bigger the congestion on the network layer**. This is **quite important in terms of which HTTP protocol version your site is using**. Usually, this is **not a problem with HTTP2 and above, but might be a problem in HTTP1.x**.
+
 The Suspense API controlled the visibility of the content **via `display:none` CSS property**. This behavior caused some people a lot of issues, especially in cases where parent components of the suspending child are listening to the "mount" event. For more information regarding this behavior, refer to [this link](https://github.com/reactjs/rfcs/blob/main/text/0213-suspense-in-react-18.md#behavior-change-committed-trees-are-always-consistent).
 
 Since this version of React guaranteed that if a component started rendering, it would finish rendering no matter what, the Suspense API was limited in scope. It does not perform _placeholder throttling_(a feature where the Suspense wrapper will not render the placeholder immediately) or streaming.
