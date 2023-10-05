@@ -1,6 +1,68 @@
 
 # Network
 
+## The HTTP protocol
+
+Notes [based on this video](https://www.youtube.com/watch?v=gxF9fLo5XQw).
+
+### How web works
+
+- You fire a request for web page through your browser.
+
+- The browser requests an IP address from the DNS server.
+
+  - There are a lot of intermediary steps here, but these are not that important.
+
+- The browser will open a TCP connection with the server under a given IP address.
+
+- The browser will request the `index.html` page.
+
+- As the browser parses the HTML, the browser might request additional resources from the server (think media, stylesheets or scripts).
+
+### What is the HTTP
+
+- HTTP is a protocol, initially designed for transferring `.html` files over the internet.
+
+- Nowadays it is used to transfer many other different documents and formats, even binary data.
+
+### Evolution of the HTTP protocol
+
+- The initial version of the HTTP protocol (0.9) only supported a `GET` methods and was very bare-bones.
+
+- The **HTTP 1.0 introduced headers, `POST` and `OPTIONS` methods and response codes**.
+
+- The HTTP 1.1 introduced new headers, better caching methods and **the `Connection: keep-alive` header also known as _persistent connections_**.
+
+  - This helps when requesting multiple resources. The browser does not have to re-establish connections to the server all the time.
+
+  - This behavior **is the default behavior for any HTTP 1.1 enabled servers**.
+
+#### Problems with HTTP 1.x
+
+- As websites grow in complexity, the amount of additional assets that the browser needs to download follows. **Since HTTP 1.x does not support parallel resource loading, this was a big problem**.
+
+  - Some browsers would open multiple connections at the same time, but the number maximum number of connections the browser would open was pretty low.
+
+    - But this is **not a silver bullet**. While `keep-alive` might help, the more connections you have to open, the bigger the overhead since we have to establish X unique connections.
+
+- When sending the request, the **headers are not compressed**. This might seem insignificant, but **considering that the SCP headers are quite big, and the amount of requests the browser makes is rather large** this adds up.
+
+- There is no prioritization of requests. This might lead to bandwidth congestion and throttling.
+
+### The HTTP 2.0 solutions
+
+- Works on the basis of **TCP streams**. This means that **multiple requests can be send via a single stream**.
+
+  - This is called **multiplexing**.
+
+  - This allowed for SSE events to be more useful. You are pretty much no longer limited in terms of amount of connections.
+
+- The server can implement something called _server push_. It can update browser assets without the browser making any requests.
+
+  - There is a risk of saturating the network if the server is not smart about when to use the _server push_.
+
+- **Since the communication happens across multiple devices, it might happen that one of the devices the request is router through does not support HTTP 2.0**. This is something called _mixed mode_ and can cause overall slowdowns.
+
 ## The `fetchPriority`
 
 The browser can make a lot of network requests when the user lands on the page. All the CSS / JavaScript and other asset has to be downloaded from somewhere. Each request has a priority (look it up in the network tab of the developer tools). **Developers can control the priority of the fetches via the _priority hints_**.

@@ -122,17 +122,19 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 
 ### The Box Model
 
+- First, understand that **every element on the page is effectively a box**. You can think **of the term _box model_ as the implicit box that wraps every element**.
+
 - The box model describes **how big a given element will be**.
 
   - The box model **describes how the content, `padding`, `border` and `margin`** interact with each other.
 
-- By default, the browsers specify the `box-sizing` to have a value of `content-box`.
+- By default, the browsers specify the **`box-sizing` to have a value of `content-box`**.
 
-  - This means that, the `width` and `height` of the child does not take into the account the padding and the margin of that element.
+  - This means that, **the `width` and `height` of the child does not take into the account the padding and the margin of that element**.
 
   - Since the behavior described above might be confusing, one can use the `box-sizing: border-box` declaration.
 
-    - The `border-box` means that `width` and the `height` properties should account for padding, margin and border properties of a given element.
+    - The **`border-box` means that `width` and the `height` properties should account for padding, margin and border properties of a given element**.
 
 #### Padding
 
@@ -209,6 +211,8 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 - The **browser treats _inline_ elements as typography. This means that they have a "magic" bottom space" attached to them**.
 
   - The reason kind of makes sense for text – this ensures that the text is not crammed. But it does not make sense for the `img` tag.
+
+  - In addition, for the **_inline_ elements, one can only specify the horizontal paddings and margins**.
 
 - The **`inline-block` elements behave as _inline_ for the parent, but they accept _block_ element properties**.
 
@@ -1539,6 +1543,8 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   - You might want to use `overflow: hidden` on the parent element to manage "spill-over" of the element you apply the `scale` on.
 
 - The **order of operations for the `transform` property is important**. The operations are applied **sequentially one after each other – RIGHT TO LEFT!**.
+
+ > Side note on the order of properties. It seems like the browsers are also matching the selectors from right to left.
 
 - The **`transform` property does not work with `inline` elements**.
 
