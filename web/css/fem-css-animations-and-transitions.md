@@ -107,3 +107,47 @@ As such, consider using `transition` for "simple" animations, and the `keyframes
   - This is pretty good advice. I always wondered how they did it.
 
   - Of course, **you do not have to scale some elements**. It all depends on how you want the animation look like. For some, you might opt into transitioning the `transform` property.
+
+## Reactive Animations
+
+- Reactive animations depend on the input of the user. They can change mid-animations depending on what the user does.
+
+- You can send the values from the JavaScript land to CSS land.
+
+  - Remember that the values you get in CSS might be _unitless_. **Use `calc` to transform an _unitless_ value into a value with an unit**.
+
+    ```css
+    transform: translateX(
+      calc(var(--x) * 1px)
+    )
+    ```
+
+- David demonstrates the **`lerp`** technique which allows us to create animations based on the movement of some element, like a pointer.
+
+  - Pretty neat.
+
+- Not everyone wants animations. You can detect user settings via the `@media` query.
+
+  ```css
+  @media (prefers-reduced-motion: reduce) {
+    <!-- styles -->
+  }
+  ```
+
+- What blew my mind is the way David animated the text reveal from the right.
+
+  - He used the `clip-path` with a polygon and then started revealing the text under that polygon.
+
+  - This created an effect as if the animation reveals a letter at a time. You mind find [this page useful](https://bennettfeely.com/clippy/).
+
+    ```css
+    @keyframes reveal-text {
+      from {
+        clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+      }
+
+      to {
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+      }
+    }
+    ```
