@@ -793,7 +793,15 @@ The `display: contents` will make it so that the **element will not generate any
 
 - The **padding, width and all box-related properties are ignored**.
 
-TODO: <https://rachelandrew.co.uk/archives/2017/07/20/why-display-contents-is-not-css-grid-layout-subgrid/>
+### But what about `subgrid`?
+
+While using the `display: contents` might be useful in some other situations, the first time I've learned about this property, my mind immediately started comparing how the `display: contents` works [with the `subgrid` property](https://web.dev/css-subgrid).
+
+**The main difference is that, with `subgrid` you preserve the dimensions of the parent**. This means that you have more control over the parents dimensions. The `display: contents` makes the box "invisible" to the HTML, so the children will be at the mercy of the grandparent dimensions. Also, using the `display: contents` to make `subgrid` work is a workaround. While the layout might work, the intent behind the code is kind of lost.
+
+Where `subgrid` shines is the ability to have consistent heights of rows across different elements, like cards. The **children can use the rows from the parent, and the columns from the grandparent, or some combination of both**.
+
+[Here is a good video about this topic](https://www.youtube.com/watch?v=rmF_iE0lMzw).
 
 ## The _lobotomized owl_ selector
 
