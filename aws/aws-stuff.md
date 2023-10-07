@@ -6704,10 +6704,13 @@ Consider giving it a read!
 
 - send HTTP requests via EventBridge - no lambda needed!
 
-- unlike the SNS that can also send HTTP requests, the **EventBridge API Destinations handle authorization**.
-  That means that you can **sent request to endpoints guarded by OAuth, basic auth or API key auth**.
+- unlike the SNS that can also send HTTP requests, the **EventBridge API Destinations handle authorization**. That means that you can **sent request to endpoints guarded by OAuth, basic auth or API key auth**.
 
 - the **service will retry the request** and also allow you to **control throttling options**.
+
+  - this means that **you could create a rate-limiter without any code**.
+
+    - of course, there is also the issue of observability. Currently there is no good way to monitor failures apart from CW metrics, but those will not give you logs, only the number of failures / successes.
 
 - the credentials for the three variants of authorization are stored in secrets manager.
 
