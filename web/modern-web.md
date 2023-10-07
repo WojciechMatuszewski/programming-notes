@@ -24,6 +24,8 @@
 
 - There are various ways to defer the hydration work. Those include  generating static sites, using progressive or out-of-order hydration or creating "islands of reactivity".
 
+> A note regarding the island architecture. As good as it might seem, if separate islands needs to share the state, you might run into problems. You cannot pass the state down, since that would make the parent of those island and island as well. The most common solution to this problem I've seen is to use a store for a given set of islands. Read [this blog for more information](https://frontendatscale.com/blog/islands-architecture-state/).
+
 ### Hydrating SPAs
 
 - Deferring hydration is not an option. Hydration can take a lot of time. If the user interacts with a page, would you want them to wait?
