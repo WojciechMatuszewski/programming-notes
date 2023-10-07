@@ -6712,6 +6712,8 @@ Consider giving it a read!
 
     - of course, there is also the issue of observability. Currently there is no good way to monitor failures apart from CW metrics, but those will not give you logs, only the number of failures / successes.
 
+    - you **could chain the API Destination with a AWS Lambda Function URL if need a bit of extra observability**.
+
 - the credentials for the three variants of authorization are stored in secrets manager.
 
 - here is an [example of mine](https://github.com/WojciechMatuszewski/eb-destinations-example)
