@@ -14,6 +14,12 @@
 
   - This means sending the serialized state, HTML AND the JS required to make the application work. This means we have to send a lot of stuff twice!
 
+- **Hydration is ordered**. It must start at the entry point of the application and work itself towards leaves. Hydration **can not skip some parts of the tree**. It can prioritize different parts, but in the end, the whole tree has to be hydrated.
+
+  - **Hydration might cause your lazy-loaded components to load eagerly**. Unless the _lazy-loaded_ component is not on the current page (maybe different route, or is not initially rendered), hydration has to consume all components to uncover the components hierarchy.
+
+  [You can read more about this topic here](https://www.builder.io/blog/hydration-sabotages-lazy-loading).
+
 ### Why efficient hydration is hard
 
 > Notes from [this article](https://dev.to/this-is-learning/why-efficient-hydration-in-javascript-frameworks-is-so-challenging-1ca3)

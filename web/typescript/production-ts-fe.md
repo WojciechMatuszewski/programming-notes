@@ -148,7 +148,9 @@ import { User, User } from "./user";
 ```
 
 This is possible because TypeScript _lives in different namespace_ if you will from your JavaScript code, this is why having types named the same as your symbols is possible.
+
 Normally this is not a problem, but sometimes, the compiler might get confused which thing to import and which thing to just strip away while bundling / compiling code.
+
 This used to be a problem while working with _firebase_. (or really working with code splitting in general, where you import types from modules that you are splitting)
 
 ```ts
