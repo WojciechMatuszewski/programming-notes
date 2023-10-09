@@ -135,3 +135,35 @@ Overall, this is a great API to be familiar with. If you are using a framework, 
 - Apart from the regular selectors, you get access to the `:host` and `:host-context` pseudo-classes.
 
   - These only exist in the context of the Shadow DOM.
+
+## The `time` and `dateTime`
+
+For dates, consider using the `time` tag. As [described by the MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/time) it represents specific period in time. A common use-case when displaying timestamps, for example under posts of a given user.
+
+```html
+<article>
+  <header>
+    <a href = "profile">Wojciech Matuszewski</a>
+  </header>
+  <footer>
+    <time datetime="2018-07-07">July 7</time>
+  </footer>
+ </article>
+```
+
+Notice that **the `datetime` does not have to have the same format as the date you display**. The `datetime` is for SEO robots and other machines.
+
+## The `dl` tag
+
+From what I could gather, the _description lists_ are for grouping `key:value` pairs of content. Think categories and items that belong to a given category.
+
+To style the _description lists_, the `grid` type of layout should most likely be the "go-to" as it nicely works with the `key:value` pair model of the elements within the _description list_.
+
+```html
+<dl>
+  <dt>Job</dt>
+  <dd>President</dd>
+  <dt>Email</dt>
+  <dd>kobayashi.aoi@acme.co</dd>
+</dl>
+```
