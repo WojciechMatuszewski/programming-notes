@@ -234,3 +234,98 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
 - You can **pass the `key` prop to a `React.Fragment`, but you have to use the "long" form, i.e the `Fragment` component**.
 
 ### Conditional Rendering
+
+- While you cannot put JavaScript statements in the _expression slot_, we can pull those statements outside of JSX and use the result in JSX.
+
+  ```jsx
+  /*
+    This will not work.
+    Think about this in terms of the `React.createElement` calls.
+  */
+  <div>
+    {if(foo) {
+      return ""
+    }}
+  </div>
+
+  let result = "baz";
+  if (foo) {
+    result = "bar";
+  }
+
+  /*
+    This will work as you would expect.
+    Again – think in terms of the `React.createElement` calls.
+  */
+  <div>
+    {result}
+  </div>
+  ```
+
+- There is also the `&&` syntax which **is an expression rather than a statement**. As such we can use it inside the _expression slots_ directly.
+
+  - Keep in mind the gotcha with `&&` and numbers.
+
+    ```jsx
+    // The following will render `0` in the JSX.
+    const items = [];
+    const numOfItems = items.length;
+
+    <div>
+      {numOfItems && <Button>bar</Button>}
+    </div>
+    ```
+
+    The above will **render `0`. Why is that**? It is because **the `&&` does not return true of false, it returns either left or right side of the expression**. Check out the [mdn documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND).
+
+  - As a rule of thumb: **always use a ternary operator instead of `&&`**.
+
+    - Keep in mind that the **ternary operator will short-circuit branches depending on the initial condition**.
+
+      ```js
+      console.log("foo")
+        ? console.log("bar")
+        : console.log("other")
+      ```
+
+      In the above example, `bar` is never logged as this part of the code is never executed. **The `&&` operator works in a similar fashion**.
+
+### Range Utility
+
+- Very useful for creating arrays. Think when you have a "rating" and you need to create N stars to display the rating visually.
+
+- There is no native function to do this.
+
+- What works for me is the `Array.from({length: X}, mapFN)` syntax.
+
+  - There is also the `Array(X).fill()`.
+
+- Josh recommends creating a special utility function.
+
+- **Keys do not have to be globally or "component" unique**. They **have to be unique within a given scope**. [See the React docs section about keys](https://react.dev/learn/rendering-lists#rules-of-keys).
+
+  ```jsx
+  return (
+    <div className="grid">
+      {rows.map((rowIndex) => {
+        return (
+          // It's okay, the `rowIndex` is unique within this array.
+          <div class="row" key={rowIndex}>
+            {cols.map((colIndex) => {
+          // It's okay, the `colIndex` is unique within this array.
+              return <div className="cell" key={colIndex} />;
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+  ```
+
+### Styling in React
+
+- Josh recommends using CSS Modules at the beginning.
+
+  - I completely agree. With the rise of RCSs, the CSS-in-JS libraries are a bit problematic, due to how they propagate the theme and all.
+
+    - There are also other solutions that work similar to CSS-in-JS libraries but do not require a runtime component. Those seem to be the most widely adopted these days.

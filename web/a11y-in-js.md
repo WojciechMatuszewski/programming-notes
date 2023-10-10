@@ -14,12 +14,14 @@ As developers, we have a tendency to overuse some techniques. Like in the case o
 
 3. When **copying code with ARIA attributes, ensure you understand what you are copying**. Watch out for `id` definitions and how they relate to existing ARIA attributes in the markup.
 
-## Visibility vs Opacity vs Visually-Hidden vs Display
+## Visibility vs Opacity vs Visually-Hidden vs Display vs `aria-label`
 
 ### Visibility
 
 - element still occupies given space (width and height)
+
 - is invisible as in like `opacity:0`
+
 - **takes accessibility information away**
 
 ### Opacity
@@ -29,17 +31,27 @@ As developers, we have a tendency to overuse some techniques. Like in the case o
 ### Visually-Hidden
 
 - preserves accessibility information
+
 - enables focusing **granted you keep the element dimensions to 1x1 and not 0x0**.
+
   - on some browsers, if you set the dimensions to 0x0 px, the elements will not be focusable.
 
 ### Display
 
 - pulls element from the DOM flow
+
 - **takes accessibility information away**
+
+### `aria-label`
+
+- **can only be used on interactive elements like `buttons` or `inputs`**.
+
+- sometimes it is hard to get right. Using `VisuallyHidden` is, in my opinion, a bit easier.
 
 ## Accessibility Tree
 
 - parallel structure to the DOM
+
 - uses platform a11y APIs (Mac is different from Windows)
 
 ## TabIndex
