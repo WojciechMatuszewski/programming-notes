@@ -38,3 +38,47 @@ ul.appendChild(fragment)
 > The key difference is due to the fact that the document fragment isn't part of the active document tree structure. Changes made to the fragment don't affect the document.
 
 In short, the API was made just for this use-case.
+
+## Date format relative to certain date
+
+> Inspired by [this article](https://www.builder.io/blog/relative-time).
+
+The web has made lots of improvements with date handling. The `Intl.X` family of APIs is expanding and enabling developers to do more with less 3rd party code or libraries.
+
+Have you ever had a situation where you had to produce a string akin to `20 minutes ago`? I bet you have.
+
+Some of you might have used a library called `moment.js` to achieve what you needed, but that library is pretty heavy. Nowadays there are numerous replacements for the `moment.js` library that are much smaller, for example the `date-fns` function.
+
+But adding a library to a project comes at a cost. You have to update it from time to time, and ensure there are no security vulnerabilities. What if we could calculate that relative string via vanilla js? Here is where the `Intl.RelativeTimeFormat` comes into the picture.
+
+```js
+export function getRelativeTimeString(
+  date: Date | number,
+  lang = navigator.language
+): string {
+  // Allow dates or times to be passed
+  const timeMs = typeof date === "number" ? date : date.getTime();
+
+  // Get the amount of seconds between the given date and now
+  const deltaSeconds = Math.round((timeMs - Date.now()) / 1000);
+
+  // Array representing one minute, hour, day, week, month, etc in seconds
+  const cutoffs = [60, 3600, 86400, 86400 * 7, 86400 * 30, 86400 * 365, Infinity];
+
+  // Array equivalent to the above but in the string representation of the units
+  const units: Intl.RelativeTimeFormatUnit[] = ["second", "minute", "hour", "day", "week", "month", "year"];
+
+  // Grab the ideal cutoff unit
+  const unitIndex = cutoffs.findIndex(cutoff => cutoff > Math.abs(deltaSeconds));
+
+  // Get the divisor to divide from the seconds. E.g. if our unit is "day" our divisor
+  // is one day in seconds, so we can divide our seconds by this to get the # of days
+  const divisor = unitIndex ? cutoffs[unitIndex - 1] : 1;
+
+  // Intl.RelativeTimeFormat do its magic
+  const rtf = new Intl.RelativeTimeFormat(lang, { numeric: "auto" });
+  return rtf.format(Math.floor(deltaSeconds / divisor), units[unitIndex]);
+}
+```
+
+Yes, it requires some work, and ideally we would have a single `Intl.X` method to handle all of this for us. But let us not forget that the alternative is adding a library which is not always the best choice.
