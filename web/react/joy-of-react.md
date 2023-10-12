@@ -329,3 +329,69 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
   - I completely agree. With the rise of RCSs, the CSS-in-JS libraries are a bit problematic, due to how they propagate the theme and all.
 
     - There are also other solutions that work similar to CSS-in-JS libraries but do not require a runtime component. Those seem to be the most widely adopted these days.
+
+## Working With State
+
+### Event Handlers
+
+- Using the `onX` callbacks instead of attaching the listeners directly via `addEventListener` gives us a few benefits.
+
+  - React is able to optimize the event handlers and can do batching (especially important for state updates).
+
+  - React will automatically clean the event handlers. If we go the `addEventListener` route we have to do it ourselves.
+
+### The `useState` hook
+
+- Each time react "re-renders" the component, it will take that component output and compare with the previous output.
+
+  - If the outputs differ, they React will commit changes to the DOM.
+
+  - This means that **"re-rendering" does not mean updating the DOM**. It means comparing the outputs of the components.
+
+  - The **process of comparing the "snapshots" is called _reconciliation_**.
+
+- The state updates are async. This is to optimize performance. This allows **for batching of state updates to occur**.
+
+### Forms
+
+- The _controlled_ vs. _uncontrolled_ components.
+
+- React dispatches so-called **_synthetic events_**.
+
+  - These events are special objects created by React to ensure compatibility across different browsers.
+
+  - You can still access the "native event" via the `.nativeEvent` property.
+
+- When working with `select` tag, check out the `optgroup` which allows you to group options.
+
+  - This pattern can be useful when also having a default "select a value" option.
+
+    ```html
+    <select>
+      <option value = "">Select a value</option>
+      <optgroup label = "Pets">
+        <option value = "dog">Dog</option>
+        <option value = "cat">cat</option>
+      </optgroup>
+    </select>
+    ```
+
+- **You might not need state for forms**. If you do not have to display the values from the inputs somewhere else, you could get away with only listening to `onSubmit` callback.
+
+  ```jsx
+    <form onSubmit = {event => {
+      event.preventDefault();
+      console.log(event.currentTarget.elements['name'].value) // the value of the name field.
+    }}>
+      <label htmlFor = "name">Name</label>
+      <input type ="text" id = "name" name = "name"/>
+    </form>
+  ```
+
+- **Consider NOT disabling the buttons**. There are [various problems with disabling buttons](https://adamsilver.io/blog/the-problem-with-disabled-buttons-and-what-to-do-instead/).
+
+### Props vs. State
+
+- Use props to "funnel" the state around the application.
+
+### Complex state
