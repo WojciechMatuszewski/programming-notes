@@ -175,3 +175,39 @@ trait Collidable<T> {
     }
 }
 ```
+
+## Tuple Structs
+
+I like to think of _tuple structs_ as a way to derive unique types from a primitive or collection of types. There are many different names for this technique in many different languages.
+
+```rust
+struct UserId(String);
+
+fn update_user(id: UserId) {}
+
+update_user(UserId(String::from("bar")));
+update_user("bar"); // error
+```
+
+In Go, this would be called a _type definition_ (not to be mistaken with a type alias). Like in rust, one can attach methods to the type, but there is less type safety as it seems the underlying value is _coerced_ into the _type definition_ value.
+
+```go
+type UserId string;
+// This would be a type alias -> type UserId = string
+
+func updateUser(id UserId) {}
+
+updateUser(UserId("foo")) // ok
+updateUser("bar") // also okay, works a bit differently than rust code
+```
+
+In TypeScript, one might use _type branding_ to achieve a very similar result (though we do not have a way to bind methods to the type).
+
+```ts
+type UserId = string & {__brand: "userId"}
+
+function updateUser(id: UserId) {}
+
+updateUser("foo" as UserId) // ok
+updateUser("bar") // error
+```
