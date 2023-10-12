@@ -82,3 +82,20 @@ export function getRelativeTimeString(
 ```
 
 Yes, it requires some work, and ideally we would have a single `Intl.X` method to handle all of this for us. But let us not forget that the alternative is adding a library which is not always the best choice.
+
+## Comparing strings
+
+There are multiple ways to compare string in JavaScript.
+
+One might use the `>` or `<` operators but those do not really work as I would expect them to work (at least not the same way lexical comparison works in DynamoDB).
+
+Another way might be to use the `"somestring".localeCompare("someOtherString")`. This works, **but you have no control many variables, for example whether we should favour upper-case strings or not**.
+
+Guess, what. There is an `Intl` class for that. The `Intl.Collator`. [It is pretty magical. Read the docs here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator).
+
+```js
+["a", "z","g"].sort(new Intl.Collator().compare)
+// ["a", "g", "z"]
+```
+
+The best part is that **this class enables you to really take control over locales, and all the other various options**. I have to say, I'm impressed how configurable this class is. Kudos for the spec creators.
