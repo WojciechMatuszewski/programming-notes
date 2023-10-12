@@ -395,3 +395,56 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
 - Use props to "funnel" the state around the application.
 
 ### Complex state
+
+- Never mutate the React state, even if it appears to be working.
+
+  ```js
+  colors[index] = "foo"; // mutation
+  setColors([...colors])
+  ```
+
+  This might work, but it does not guarantee that this will always work. It is better to flip the operation order, like so.
+
+  ```js
+  const newColors = [...colors];
+  newColors[index] = "foo";
+  setColors(newCoors);
+  ```
+
+### Dynamic Key Generation
+
+- In some cases, you will have to generate a random ID for the data you are iterating over.
+
+- The **best solution would be to create some kind of random identifier when you are going to append a new item into the array** (assuming you start with an empty array).
+
+  - There are various libraries that could help here, like `uuid` or `ulidx`.
+
+  - There is also **native way to generate UUIDs, via the `crypto.randomUUID` function**.
+
+- You could also generate the key **based on some unique properties of a given item**, though this might be slippery slope. While the data looks a certain way today, will it look the same way in the future?
+
+### Component Instances
+
+Have you ever wondered, how it is possible to use `useState` at all? Like the value resides?
+
+Because if you think about it, when React invokes our component, it also invokes the `useState` with it's initializer. Would not that mean that each re-render we would "revert back" to the state value that was initially defined? Why is that not the case?
+
+```jsx
+function Component() {
+  const [state, setState] = useState(0)
+
+  return (
+    <button onClick = {() => setState(prev => prev+1)}>click</button>
+  )
+}
+```
+
+Clicking the button will cause React to re-invoke the `Component`. As such, we should start with the `state` 0, but the `state` will be 1.
+
+**The answer to this question lies to a concept called _component instance_**. It is the **_component instance_ that is a long-lived object managed by React that actually holds the state value**. React **will create the _component instance_ when the component is rendered for the first time**. It is the **rendering that creates the instances**.
+
+If you **remove the component from the output, the _component instance_ is destroyed**. You can see this in action whenever you toggle some component that then holds the state. If you toggle it on-off-on the state is lost!
+
+This concept is critical to understanding how the state works. I'm amazed that after spending so many years with React, I did not have this intuition.
+
+## Word Game

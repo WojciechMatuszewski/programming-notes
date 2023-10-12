@@ -39,10 +39,6 @@ expect(dateFromMockCalls.getTime()).toBeLessOrEqual(post.getTime())
 
 - for generating test data you can you `test-data-bot` library. With that you can communicate clearly whats important in your tests and whats not by creating random fake data and specific strings that stand out, specifically created by you, not by `test-data-bot`
 
-## Getting all elements of form from `event`
-
-Use `event.target.elements` to get all form elements. **You have to add name prop to the form elements**
-
 ## `JSX` pragma
 
 Sometimes when scrolling through some library (usually UI-related) documentation, you might encounter this syntax:

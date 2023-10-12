@@ -224,3 +224,36 @@ connect(
 ### Performance
 
 Use `reselect`. To learn this properly you probably should write yourn own app. It's similar to Angular (ngrx) selectors.
+
+## "Preserving" the old state
+
+Suppose you are working on a functionality where the user can add and remove some pieces of data. The data could be modified by the user before its removed. Users can add a new item into the data, but as soon as they do, the new item has an "initial" value rather than the value it had when they removed it.
+
+How would you ensure that whenever user adds a new item, that item displays the data it had when the user removed it?
+
+You might be tempted to reach out for another piece of state to track the "deleted" array. Or maybe you encode the state into the URL somehow and use the forward/backwards mechanism.
+
+All of these are valid solutions, but the problem with them is that **they are quite complex**. There exists a quite beautiful solution that does not require that much effort. **Instead of tracking the deleted items, track how many items are displayed at a given time. Keep the items data in separate piece of state you change when the user makes changes**.
+
+```jsx
+function Component() {
+  const [data, setData] = useState(["initial", "initial", "initial"])
+  const [displayedDataCount, setDisplayedDataCount] = useState(0);
+
+  function onChangeData(index, payload) {
+    const newData = [...data];
+    newData[index] = payload;
+    setData(newData)
+  }
+
+  function onAddData() {
+    // And for remove we would subtract one here
+    setDisplayedDataCount(displayedDataCount+1)
+  }
+
+
+  // render based on the `displayedDataCount`. NOT the `data` variable
+}
+```
+
+This solution is pretty great. Yes, we have to have additional piece of state, but that state is only a single primitive value. And there is a risk of that state getting out of sync with the "data" state, but that would also be the risk with any other solution.

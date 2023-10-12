@@ -3,6 +3,14 @@
 When working on any kind of application, you will need to write HTML forms. It is very rare that your application does not have any kind of inputs.
 Since you will be writing forms (probably a lot of them), it is essential to learn how `form` HTML tag works, and tags related to it.
 
+## Getting all elements of form from `event`
+
+Use `event.target.elements` to get all form elements. **You have to add name prop to the form elements**
+
+## Resetting the form values after submission (uncontrolled)
+
+You can use the `target.reset()` to reset the form values.
+
 ## The `type=file` input
 
 ### Styling the native button
