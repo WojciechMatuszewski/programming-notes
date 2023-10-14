@@ -1,5 +1,30 @@
 # SQL / PostgreSQL
 
+## Adding / deleting data
+
+- There is a **difference between the `''` and `""`**. The **single tick refers to a string, double tick refers to a _database identifier** like a table or a column.
+
+  - This was a gotcha (at least for me) when inserting data into the table.
+
+- You are able to grab the existing data when inserting. This is pretty neat as such thing is impossible in DynamoDB.
+
+  - For that, use the `insert into ... SELECT` query.
+
+    ```sql
+    update cd.facilities
+      set
+    guestcost = (select guestcost from cd.facilities where facid = 0) * 1.1,
+    membercost = (select membercost from cd.facilities where facid = 0) * 1.1
+      where
+    facid = 1
+    ```
+
+- There are multiple ways to delete rows from the table, which I find fascinating.
+
+  - There is the `delete from TABLE_NAME`.
+
+  - There is the `truncate TABLE_NAME`. This one is **not safe in all circumstances**, but it is faster.
+
 ## Keys
 
 - You can have _serial integers_ that increment every time an item is added. I do not think that is a good idea. You could run out of number space (depending on the underlying data type for the _number value_)!
@@ -31,8 +56,6 @@
   - Note that **the _foreign key_ can reference any unique attribute on the other table, it does not have a to be a primary key**.
 
     - Though there has to be an `UNIQUE` constraint on the column you are trying to reference (the primary key already has that).
-
-> <https://pgexercises.com/questions/basic/union.html>
 
 ## Filtering
 
@@ -183,4 +206,20 @@
     order by member, fc.name
     ```
 
-<https://pgexercises.com/questions/updates/>
+## Pagination
+
+- There are numerous ways to do pagination in SQL.
+
+  - You **should NOT be doing the offset-based pagination**. This way of paginating over results is quite inefficient as **it requires the database to get all the rows and then "cut them" based on the pagination parameters**.
+
+    - Of course, there are pros to this approach as well. **It allows you to "jump" to any page at a given time**. This is not really possible with other pagination methods.
+
+    - Keep in mind that **this method of pagination might be problematic whenever records from the previous page are deleted**. Since we rely on the amount of items and their order, the pagination might return duplicate results!
+
+  - Another way is to use the **cursor-based approach**. This is **how pagination works in AWS APIs**.
+
+    - You have a "next" and sometimes "previous" cursor at your disposal. These are opaque strings that encode all the index information. Then the backend decodes them and returns you the result.
+
+      - Since you have to unpack the cursor and parse it on the backend, this pagination is _stateful_. Usually not a problem, but something to mention nevertheless.
+
+      - One also has to **consider the complexity of the `where` query when using the _cursor-based_ pagination**. The more columns you are sorting against, the tricker the `WHERE` condition will be.
