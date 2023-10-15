@@ -447,4 +447,42 @@ If you **remove the component from the output, the _component instance_ is destr
 
 This concept is critical to understanding how the state works. I'm amazed that after spending so many years with React, I did not have this intuition.
 
-## Word Game
+## React Hooks
+
+- Some hooks, like `useId` or `useState` are coupled to the _component instance_.
+
+### `useId` Hook
+
+- Generates unique id for every component instance.
+
+- **The id is the same on the server (when SSRing) and on the client (during hydration)**.
+
+  - This is a huge benefit of this hook. **This is not the case for 3rd party libraries like `uuid`**.
+
+  - The **returned value is _stable_. It will not change**.
+
+### Rules of Hooks
+
+- React relies on the _order in which the hooks are called_. The order has to be the same between different invocations of the component.
+
+  - This sounds bad to me. Relying on the order of the code may points to a bad internal design.
+
+- In most cases, you will violate the rules by trying to render hooks conditionally.
+
+  - You can refactor the code to pull the hooks closer to where they are used. Most likely to a separate component.
+
+  - You can move the hooks before the condition. It is okay to use them even though they might be used in a component which is rendered conditionally.
+
+### Refs
+
+- Unlike state, one **should mutate the output of `useRef`**.
+
+- You might be wondering why the `useRef` returns an object with a `current` property. **This is so that one could "escape" closures** or rather always have a fresh value within a given closure.
+
+  - When passing the `ref` as a parameter, we pass the object as a reference. Any mutation of the `current` property will be reflected in the captured reference.
+
+  - [You can read more about it here](https://github.com/WojciechMatuszewski/programming-notes/blob/master/web/react/react.md#why-does-useref-have-the-current-property).
+
+- React will not re-render when the ref changes.
+
+### Side Effects

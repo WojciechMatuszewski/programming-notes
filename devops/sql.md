@@ -71,6 +71,8 @@
 
     - Unlike DynamoDB, where the database mostly prevents you from doing insufficient queries, here, one could _sort_ and _order_ on items that are not marked as a key.
 
+- Use the `EXTRACT` function to get values out of `timestamp` field.
+
 ### Sub-queries
 
 - After the `WHEN` clause, you might want to perform another query to feed the results of that inner query into the filtering statement.
@@ -112,9 +114,9 @@
       from cd.members
   ```
 
-- **Using aggregate functions after the `WHERE` clause might cause performance issues**.
+- The **aggregate functions are applied AFTER the `WHERE` clause**.
 
-  - Ideally, you would use them BEFORE the `WHERE` clause.
+- You **cannot use an aggregate with `WHERE` clause**. You probably should look into `HAVING` clause.
 
 ## Conditional logic (CASE)
 
