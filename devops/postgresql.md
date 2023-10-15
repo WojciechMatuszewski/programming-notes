@@ -1,4 +1,51 @@
-# SQL / PostgreSQL
+# PostgreSQL
+
+- The PostgreSQL differs from MySQL.
+
+## Schema
+
+- The data you have in the database should be the smallest possible.
+
+  - The more compact the schema is, the faster the database can access the data.
+
+  - The more compact the schema is, the faster the index access will be on that schema.
+
+- The type of the column really matters.
+
+  - In terms of numbers, there are a lot of choices. If you are not careful, the type you specified might not be the best fit (you might have a bigger number that the type allows).
+
+    - **There is a way to change the type of the column via the `ALERT TABLE` syntax**.
+
+    - While in PostgreSQL this applies to all indexes, in DynamoDB you can change the type of all keys except the primary key.
+
+### Computed columns
+
+- Instead of doing the work inside your application, you can derive one column from another. This ensures that the values between two columns are always in-sync.
+
+  ```sql
+    create table emails (
+      email varchar(255),
+      domain varchar(255) generated always as (split_part(email, '@', -1)) stored
+  );
+  ```
+
+  In this example, the `domain` column will always be in sync with the `email` column. No need for custom logic within our application. **Pretty neat. I wish DynamoDB had a similar feature**.
+
+  - Generated columns could be either **_virtual_ or _stored_**.
+
+    - _Virtual_ means generated when it is read and does not take up any disk space. **This means it might take longer to compute**.
+
+    - _Stored_ means calculated during data insertion or update and is saved into the disk. You are making the work upfront so that the reads are faster.
+
+- There are many transformations you can make to extract the column. The one that blew my mind is the `json` syntax.
+
+  ```sql
+    create table emails (
+      email varchar(255),
+      json json,
+      domain varchar(255) generated always as (json ->> 'email') stored
+    );
+  ```
 
 ## Adding / deleting data
 
