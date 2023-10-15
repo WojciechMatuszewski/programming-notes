@@ -2,6 +2,8 @@
 
 - The PostgreSQL differs from MySQL.
 
+- Most of the contents of this document applies to SQL, but there are some PostgreSQL specific things as well.
+
 ## Schema
 
 - The data you have in the database should be the smallest possible.
@@ -17,6 +19,21 @@
     - **There is a way to change the type of the column via the `ALERT TABLE` syntax**.
 
     - While in PostgreSQL this applies to all indexes, in DynamoDB you can change the type of all keys except the primary key.
+
+## Tables
+
+- There is a term that is called a _join table_. A _join table_ is a table which is used to create many-to-many relationships.
+
+  - It holds only foreign keys. Consider the following schema
+
+    ```sql
+      userId varchar(100)
+      followerId varchar(100)
+    ```
+
+    Both the `userId` and `followerId` are indexed. This allows you to lookup the relationship between `userId` and the people following that user.
+
+    Note that the **index on such tables is usually a _composite index_**. An index consisting of two or more columns.
 
 ### Computed columns
 
