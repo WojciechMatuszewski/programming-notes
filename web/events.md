@@ -249,3 +249,30 @@ box.addEventListener("pointerup", (event) => {
 ```
 
 [MDN has a very good documentation regarding this event](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture). Check out the demo – start dragging, then move your pointer down. Notice that you can still drag the element, despite having the pointer outside of its bounds!
+
+## One click can fire multiple events
+
+Imagine a scenario where you have a button which does something when the user clicks on it.
+
+```jsx
+<button onClick = {() => {
+  // some work
+}}>Click me</button>
+```
+
+Now, it just so happens that, the the user can also use keyboard to trigger the `onClick` function. This is pretty good as it allows us to treat those interactions as regular click events. For example, using the `space` key to "click" the button also invokes the `keydown` event. [Consult the `userEvent` package tests to see the list of all events](https://github.com/testing-library/user-event/blob/d7483f049a1ec2ebf1ca1e2c1f4367849fca5997/tests/pointer/click.ts#L8).
+
+This all might sound good on paper, but in practice might lead to subtle bugs. Bugs where **you have two listeners that do different things and might interfere with each other**.
+
+```jsx
+document.addEventListener("keydown", () => {
+  // some code
+})
+
+
+<button onClick = {() => {
+  // some other code
+}}>Click me</button>
+```
+
+In this case, whenever the user uses `space` or `enter` to interact with the button, both the `onClick` and the registered listener will fire. **This can lead to subtle bugs. Be mindful of this behavior**.

@@ -486,3 +486,19 @@ This concept is critical to understanding how the state works. I'm amazed that a
 - React will not re-render when the ref changes.
 
 ### Side Effects
+
+- **Mind the _strict mode_**! In _strict mode_ the `useEffect` will fire twice.
+
+- **Before using `useEffect`** try to put the logic you would normally put there **into the event handler, if that is possible**.
+
+  - Of course, **if there are multiple places where the state changes, you should consider `useEffect`**.
+
+- Before using the `useEffect` + `ref` to focus the element, **consider using the `autofocus` attribute.
+
+  - Sadly, **this attribute will not work for client-rendered apps** as the DOM node has to be there when the page first loads.
+
+- When the `useEffect` runs, first it will **run previously queued cleanup functions**.
+
+  - Of course, on the initial render there is no cleanup function.
+
+- **Ask yourself is the thing you want to put into `useEffect` is really an effect**. Questioning your intuition most likely will result in better design.

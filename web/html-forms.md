@@ -262,3 +262,13 @@ Notice a couple of things.
 1. The `requestAnimationFrame` inside the `onError` is here to ensure we get the browser the chance to change styles on our "form error" container. Otherwise, we might try to focus an element tha has `tabIndex=-1`.
 
 2. I hid the heading "Failed to submit the form" behind the `sr-only` class. I do not think it's valuable to display it for all the users.
+
+## Focusing the inputs
+
+There is the `autofocus` property one might use. This should help you with establishing the focus on a given input when the page first loads. **Sadly, this approach does not work with client-side rendered applications**. The DOM node has to be there already when the page loads. This attribute applies to **all elements, not just form-controls**.
+
+```html
+<input name = "some name" autofocus/>
+```
+
+Of course, this is not a silver bullet. There are a lot of things to consider when using this attribute. If the form is below the fold, the page might unexpectedly scroll, leaving the user confused.
