@@ -125,9 +125,7 @@ If you are using linting rules for hooks, you will be greeted with an warning
 
 > [...] will likely have changed by the time this effect cleanup function runs. If this ref ...
 
-This is completely reasonable message to throw here as **cleanup function is ran after the new view was rendered**.
-This means that, exactly as the message said, the `ref` might have been mutated - could possibly be `null` since the element that _Ref_ is attached to,
-might no longer exist.
+This is completely reasonable message to throw here as **cleanup function is ran after the new view was rendered**. This means that, exactly as the message said, the `ref` might have been mutated - **could possibly be `null` since the element that _Ref_ is attached to, might no longer exist**.
 
 I'm aware of two ways to handle this issue
 

@@ -489,6 +489,10 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
 - **Mind the _strict mode_**! In _strict mode_ the `useEffect` will fire twice.
 
+  - Keep in mind that _strict mode_ is not re-creating components. It will re-run functions multiple times without changing the _component instance_.
+
+    - This is why it is not really possible to simulate it. You would need access to React internals.
+
 - **Before using `useEffect`** try to put the logic you would normally put there **into the event handler, if that is possible**.
 
   - Of course, **if there are multiple places where the state changes, you should consider `useEffect`**.
@@ -502,3 +506,22 @@ This concept is critical to understanding how the state works. I'm amazed that a
   - Of course, on the initial render there is no cleanup function.
 
 - **Ask yourself is the thing you want to put into `useEffect` is really an effect**. Questioning your intuition most likely will result in better design.
+
+### Custom Hooks
+
+- Hooks should obey the same rules as normal functions would – **hooks should be deep with a small interface**.
+
+  - This means declaring as much state, variables and other related stuff inside the hook itself.
+
+  - This makes the hook joy to use as the user of the hook does not have to worry about a lot of stuff.
+
+- You can create a `toggle` hook via `useReducer`.
+
+  ```jsx
+  function useToggle(initialValue = false){
+    return useReducer(
+      (state) => !state,
+      initialValue
+    )
+  }
+  ```
