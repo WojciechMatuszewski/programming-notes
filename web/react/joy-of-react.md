@@ -525,3 +525,70 @@ This concept is critical to understanding how the state works. I'm amazed that a
     )
   }
   ```
+
+### Data Fetching
+
+- The `fetch` **will not throw when the response status code is different than 2xx**.
+
+  - This make sense. From the `fetch` perspective, the request succeeded. The server responded with data.
+
+  - The **`fetch` will only throw when there is some network communication issue between the client and the server**.
+
+- Common gotcha is to try to use `async` functions inside the `useEffect`. No dice. You have to create an inner async function you then call.
+
+  - Async functions are not compatible with `useEffect` API. The effect has to be synchronous, otherwise React would not be able to call the cleanup function in time (due to the promise still pending).
+
+
+### Memoization
+
+- **Re-rendering is NOT the same as re-painting**! Keep this in mind.
+
+  - If the UI did not change, React will not commit to the DOM.
+
+- **Every re-render is triggered by a state change**.
+
+  - React will re-render **all children** of a component where state changed.
+
+  - **Props have nothing to do with re-renders**. It is the state change, not the prop change that triggers re-renders.
+
+- You can use the `React.memo` to signal to React that you want to skip re-renders of a given component when the props did not change.
+
+  - This will stop the children of this component from re-rendering as well.
+
+- We often over-estimate how expensive re-renders are. Again, committing to the DOM is usually much slower.
+
+- The `useMemo`, while having a similar signature to `useEffect` runs at a very different time.
+
+  - **`useMemo` runs synchronously during render**.
+
+  - **`useEffect` runs synchronously AFTER rendering**.
+
+- You can always implement `useCallback` with `useMemo`, but `useCallback` is much more convenient for functions.
+
+  ```jsx
+  const handleAddCount = useMemo(() => {
+    return () => {
+      setCount((current) => current + 10)
+    }
+  },[])
+
+  const handleAddCount2 = useCallback(() => {
+    setCount(current => current + 10)
+  })
+  ```
+
+- **Before using memoization** consider using composition and moving components to `children`.
+
+  - Remember: **if the "owner" of component state changes, all the children will re-render**. **You get to decide who is the owner**.
+
+  ```jsx
+    function App() {
+      return (
+        <ComponentThatReRendersOften>
+          <ExpensiveChild/>
+        </ComponentThatReRendersOften>
+      )
+    }
+  ```
+
+  In this case, the `ExpensiveChild` will **not re-render when `ComponentThatReRendersOften` re-renders**. This is because **the `App` component _owns_ the `ExpensiveChild`, not the `ComponentThatReRendersOften`**. This is crucial to understand. Using composition is a free optimization. It will also make your application more robust.
