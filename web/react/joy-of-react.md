@@ -592,3 +592,52 @@ This concept is critical to understanding how the state works. I'm amazed that a
   ```
 
   In this case, the `ExpensiveChild` will **not re-render when `ComponentThatReRendersOften` re-renders**. This is because **the `App` component _owns_ the `ExpensiveChild`, not the `ComponentThatReRendersOften`**. This is crucial to understand. Using composition is a free optimization. It will also make your application more robust.
+
+## Component API Design
+
+- Just like backend APIs, React components also expose an API – the props.
+
+  - The "better" the API, the easier the component is to use.
+
+  - The ideal component does what it needs to do and only that.
+
+- Instead of passing the whole object as a prop, consider passing only the properties a given component would need.
+
+  - This way, you are not forcing your fellow developers to see what props are used in a given component when refactoring.
+
+    - Of course, if you are using TypeScript, while still valid, that advice is not that applicable anymore.
+
+- When wrapping native HTML tags **consider forwarding all the native HTML props into the element you are rendering**.
+
+  - I've seen many components that do not do this and it is always a pain to work with them. In such situation, you will most likely end up expanding the props of the component.
+
+  - The **placing of the `{...deleted}` has a huge implications**. If you are not careful, customers of the component could override properties which you intended to have control over.
+
+- Just like forwarding all the native HTML properties, **consider allowing the `className` as well**.
+
+  - Very useful for CSS-in-JS libraries. `const styledButton = styled(Button)`.
+
+  - Gives a bit more control to developers. While you might deem it a bad thing at first, consider that a lot of designs have "one-off" variations of a given component. If we do not accommodate for this, developers might create duplicate of the component. Not something we would want.
+
+- The **`ref` is a reserved keyword in React**. Like the `key`, it **lives beside the `prop` property when using `React.createElement`**.
+
+  ```jsx
+    console.log(React.createElement(Button, {
+      props: {
+        // This property will be ignored.
+        ref: ...
+      }
+    }))
+  ```
+
+  There are two solutions to passing the `ref` into the component.
+
+    1. Use a different prop than `ref`. This approach works, but since all other native HTML tags take the `ref` prop, I do not think it is a good idea in most cases (in some cases, where typing the component props could be very challenging, I think it is acceptable).
+
+      ```jsx
+        const ref = useRef()
+        <Button forwardedRef = {ref}/>
+      ```
+
+    2. Use the `forwardRef` function. This is usually what other developers do.
+
