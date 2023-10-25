@@ -641,3 +641,81 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
     2. Use the `forwardRef` function. This is usually what other developers do.
 
+
+- When creating _polymorphic components_ (components that change their underlying tag), make sure to use upper-cased names for the tag.
+
+  ```jsx
+  function PolymorphicButton({href, ...delegated})  {
+    const Tag = typeof href === "string" ? "a" : "button";
+    return <Tag {...delegated}>
+  }
+  ```
+
+  If I were to use `tag` instead of `Tag`, the **jsx compiler would interpret the `tag` as a HTML `tag` rather than a variable holding some value**.
+
+- **Josh makes a case against _compound components_**. While I'm a big fan of this approach, his points resonate with me
+
+  1. This pattern might be confusing to new developers.
+
+  2. It prevents tree-shaking from working correctly.
+
+    - I would say this is valid feedback, but does it really matter at such a granular level?
+
+  3. **You might have issues in Next.js when using this pattern**.
+
+    - Since this is very framework-specific, I'm unsure about the merit of this argument, but it is an argument nevertheless.
+
+### Slots
+
+- When using `children` prop, you are already leveraging the _slots_ pattern.
+
+- The `children` prop is great, but we can only have a single `children` prop. What if we want to provide more "slot-like" props for the component?
+
+  - In this case, **consider adding other, `children`-like components**. There is nothing wrong with having props take JSX.
+
+    - In fact, it could be very good for performance-reasons as the slots are owned by the parent, but rendered within the child. If the child changes, the slots will not re-render!
+
+- _Slots_ **are not a silver bullet**. Imagine the following scenario.
+
+  ```jsx
+    <IconButton icon = {<Star size = {999}/>}>Some Text</IconButton>
+  ```
+
+  We certainly do not want the consumer to be able to specify a huge icon like that. **We want the customer to have a flexibility of providing the markup, but we want the `IconButton` to control the props**.
+
+  How do we solve the problem?
+
+    1. Use the `cloneElement` API and override the props.
+
+    ```jsx
+    function App() {
+      return (
+        <IconButton icon = {<Star size = {999}>}/>
+      )
+    }
+
+    function IconButton({icon}) {
+      const iconModified = React.cloneElement(icon, {
+        // override the props here
+        size: 20
+      })
+    }
+    ```
+
+    2. Pass the `icon` as a reference. Do no render it in the parent.
+
+    ```jsx
+    function App() {
+      return (
+        <IconButton Icon = {Size}/>
+      )
+    }
+
+    function IconButton({Icon}) {
+      return <button>{<Icon size = {20}/>}</button>
+    }
+    ```
+
+  Both approaches are valid.
+
+### Context
