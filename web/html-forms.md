@@ -238,7 +238,7 @@ function App() {
       <br />
       <button type="submit">Submit</button>
       <div
-        style={{ visibility: isError ? "visible" : "hidden" }}
+        // You cannot use `visibility: none` here as that will make this container inaccessible
         ref={formErrorRef}
         role="alert"
         tabIndex={isError ? 0 : -1}
