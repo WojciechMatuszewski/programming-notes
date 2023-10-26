@@ -125,6 +125,29 @@ Why would this work? Well, know `React.memo` will be diffing between **primitive
 
 ## Hooks
 
+### Hooks and their lifecycle
+
+It is quite important to know when a given hook callback runs. So here it is
+
+1. First React will `render` your component. **Keep in mind that RENDERING DOES NOT MEAN CHANGING THE DOM**. It only means invoking your function.
+
+2. Then React will run the _lazy initializers_. These are the functions you pass to `useState`. Also this applies to the _lazy ref pattern_.
+
+3. Then React will **update the DOM if there were any changes**. Keep in mind that **the browser has not painted yet**.
+
+4. Then React runs the cleanup functions for the `useLayoutEffect` hook.
+
+5. Then React runs the `useLayoutEffect` callbacks. **The browser still has not painted to the screen**.
+
+6. After the `useLayoutEffect` callbacks were executed and there are no state updates, then the browser paints.
+
+7. Then React runs the `useEffect` cleanup functions.
+
+8. Then React runs the `useEffect` callbacks.
+
+So, by following this list, you should have a good idea why using expensive calculations inside `useLayoutEffect` is quite dangerous – they delay painting! **This also applies to the _lazy initializers_** callbacks.
+
+
 ### `useReducer` is the cheat mode of hooks
 
 > Based on [this article piece](https://overreacted.io/a-complete-guide-to-useeffect/#why-usereducer-is-the-cheat-mode-of-hooks)
@@ -161,6 +184,14 @@ function Counter({ step }) {
 Here, the `reducer` is defined outside of the `Counter`. The functionality **appears to behave the same way as before BUT it is NOT**. Every time the `step` changes we will clear the interval (rightfully so). That has an implication that we will start counting from 0 up to the specified time to run the interval callback.
 
 This is not the case when you use the "trick" Dan describes. There, when the step changes, we will never clear the interval, so there wont be this "delay" in counting the number.
+
+### `useLayoutEffect` and performance implications
+
+The **code inside the `useLayoutEffect` and any state changes caused by running that code is guaranteed to run BEFORE the browser paints the screen**. This could be very useful, for example when we want to measure a certain DOM element. **But is can also cause severe performance problems**.
+
+Imagine a scenario where you update some state inside the `useLayoutEffect`. This means that the code that "reacts" to that state change will also run synchronously before the browser gets a chance to paint the screen. **If the state change causes an expensive computation, you will delay paying the screen making the app feel unresponsive**.
+
+Of course, the same issue can happen if the calculations inside the `useLayoutEffect` are expensive.
 
 ### Lesser known hooks
 
