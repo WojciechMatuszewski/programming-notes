@@ -737,6 +737,12 @@ There are **two ways of dealing with such situations**:
 
 Both of them perform the same optimization - having the user profile item "weight" less, thus making each operation on that item cheaper.
 
+### Keep the attribute names short
+
+Unlike the data you put into the attribute, **you cannot compress the attribute names**. While at small scales it does not matter that much, on larger scale it adds up.
+
+For example, instead of `fullname` consider an attribute called `fn`. Such optimizations might feel weird at first, but, as I mentioned before, they really add up at scale.
+
 #### Splitting items and global tables
 
 Be aware of the eventual consistency when using the "split-item" pattern and global tables. Since you have to issue multiple writes to update an item associated with a single identity, there might be a point in time when some parts of the item are in inconsistent state (The `name` item is up to date, but the `surname` item write is still in-flight).
