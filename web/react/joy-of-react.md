@@ -719,3 +719,41 @@ This concept is critical to understanding how the state works. I'm amazed that a
   Both approaches are valid.
 
 ### Context
+
+- The `Context` API is mainly there to prevent _prop drilling_.
+
+  - Keep in mind that **the API is not for state management, but rather for distributing data that does not change often**.
+
+- Having multiple _context providers_ is a good idea.
+
+  - It makes the app more performant, as the more granular the context, the more granular data access could be. You would not want a component which depends on `user` to change when some other piece of data in the context changes.
+
+  - In addition, it makes the code more modular. This is quite important, especially when it comes to testing.
+
+- Keep in mind **that the `Context` API is like a hidden prop. If your component uses `React.memo`, context change will ALWAYS trigger a re-render**.
+
+  - Since the prop is "implicit" or "hidden", you cannot compare its previous value with the current value and skip re-rendering.
+
+  - Either way, **if the place you render the provider in can change, you should memoize the context value**.
+
+    ```jsx
+      function Provider({children}) {
+        const [state, setState] = useState({
+          // some values
+        })
+
+        const value = useMemo(() => {
+          return {state, setValue}
+        }, [state])
+        return <Context.Provider value = {value}>{children}</Context.Provider>
+      }
+    ```
+
+    If we did not use `useMemo` in the example above, the `value` object would change every time the `Provider` re-renders (for example when the parent updates). This would trigger a re-render of every consumer of the context, as the `value` would be a new object!
+
+
+  - **Memoizing the _Provider_ component does not make much sense – the `children` will always be different if the parent changes**!
+
+    - The `children` is an object (result of calling the `React.createElement`). As such, it will always have a different reference when the parent changes.
+
+      - This is also true for the _slot props_.
