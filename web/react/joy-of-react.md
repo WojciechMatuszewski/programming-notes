@@ -752,8 +752,41 @@ This concept is critical to understanding how the state works. I'm amazed that a
     If we did not use `useMemo` in the example above, the `value` object would change every time the `Provider` re-renders (for example when the parent updates). This would trigger a re-render of every consumer of the context, as the `value` would be a new object!
 
 
-  - **Memoizing the _Provider_ component does not make much sense – the `children` will always be different if the parent changes**!
+  - **Memoizing the _Provider_ component might be a mistake – the `children` will ALMOST always be different if the parent changes**!
 
-    - The `children` is an object (result of calling the `React.createElement`). As such, it will always have a different reference when the parent changes.
+    - The `children` is an object (result of calling the `React.createElement`). As such, it will **almost always** have a different reference when the parent changes.
 
-      - This is also true for the _slot props_.
+    - I wrote _almost always_ since there is a "trick" you can utilize to make the component constants.
+
+      ```jsx
+      const constantChild = <Child/>
+
+      function App() {
+        return (
+          <MemoizedComponent>
+            {constantChild}
+          </MemoizedComponent>
+        )
+      }
+      ```
+
+      As an alternative, you can `useMemo` a given component.
+
+
+      ```jsx
+      function App() {
+        const child = useMemo = (() => {
+          return <Child prop = {value}>
+        }, [value]);
+
+        return (
+          <MemoizedComponent>
+            {child}
+          </MemoizedComponent>
+        )
+      }
+      ```
+
+      **This only works if the `Child` does not take any props, or the props are "static" (not derived from state)**.
+
+      Credit goes to [this article](https://timtech.blog/posts/react-memo-is-good-actually/#3.-%E2%80%9Creact.memo-doesn't-work-with-react-element-%2F-children-props%E2%80%9D).
