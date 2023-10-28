@@ -790,3 +790,130 @@ This concept is critical to understanding how the state works. I'm amazed that a
       **This only works if the `Child` does not take any props, or the props are "static" (not derived from state)**.
 
       Credit goes to [this article](https://timtech.blog/posts/react-memo-is-good-actually/#3.-%E2%80%9Creact.memo-doesn't-work-with-react-element-%2F-children-props%E2%80%9D).
+
+## Happy practices
+
+### Leveraging Keys
+
+- Consider using **the `key` prop to "reset" a given component**.
+
+  - React will re-create a component when the `key` changes.
+
+  - Whenever you do this, remember that **what you are really telling React is that the element is different, as such React will re-create a given component**.
+
+  - Sometimes you will have to derive the key from state. That is totally fine, especially if you want the component to be re-created only when a given portion of the state changes.
+
+### Elements Revisited
+
+- **React keeps track of which state belongs to which component based on their place in the UI tree**. To illustrate, consider the following.
+
+  ```tsx
+    function Component() {
+      const [color, setColor] = useState(undefined)
+
+      return (
+        <div>
+        {color ? <Button color = {color}/> : <Button/>}
+        // color picker
+        </div>
+      )
+    }
+
+    function Button({color}) {
+      const [state, setState] = useState(0)
+
+      return (<button style = {{color}} onClick = {() => setState(prev => prev+1)}>click</button>)
+    }
+  ```
+
+  What suppose happens if you increment the state inside the `Button` and then change the color? Would the button state be reset? **That is not the case because the `Button` is still the same component in the tree**. The `key` of that component did not change, as such React will preserve the component instance.
+
+  This is also the reason why the following buttons do not share the state ([example from official React docs](https://react.dev/learn/preserving-and-resetting-state)).
+
+  ```jsx
+    export default function App() {
+      const counter = <Counter />;
+
+      return (
+        <div>
+          {counter}
+          {counter}
+        </div>
+      );
+    }
+  ```
+
+  **You might think that the `Counter` shares the state here – THAT is not the case**! Both counters are rendered in different parts of the tree. Also **keep in mind that `React.createElement` gets a reference to the component function**.
+
+  Always remember that the **component instance is tied to the place in the tree**. Even if you have conditionals and so on, **if the position in the tree is the same between re-renders, the state is preserved**.
+
+### Deriving State
+
+- If something can be derived from state, it probably should be derived from state.
+
+- **As apps more grow in complexity, the state will also grow in complexity**. If you derive from the state as much as possible, you inherently make the state less complex.
+
+- **Deriving from state will also make your app simpler**. Sometimes we try to _sync_ the state with another state via `useEffect`. This is usually not a good idea. It makes the app more complex, and you will most likely make a mistake.
+
+  - Syncing the state with another state causes _at least_ two re-render cycles. First, caused by the original state update, second by syncing the state.
+
+- Of course, **this is not a silver bullet**. By deriving from the state, we are coupling the state with another part of the application that uses the derived state.
+
+  - Usually this is not a problem, and event if it becomes one, it is **much easier to refactor derived state into its own state, than to have the state be separate in the first place**.
+
+### Lifting Content Up
+
+- _Lifting Content Up_ is to structure your application in a way that leverages composition. Either through `children` or _slots_ props.
+
+- Apart from **parent and child relationship** there is also the **concept of owners and ownees**.
+
+  ```jsx
+  function App() {
+    <SomeComponent>
+      <OtherComponent/>
+    </SomeComponent>
+  }
+  ```
+
+  In the example above, **it is the `App` that owns both the `SomeComponent` and `OtherComponent`**. It can decide what that component props are. **The `SomeComponent` is a parent of `OtherComponent`**.
+
+- This technique is not to be applied everywhere (but in most cases it is beneficial). Be pragmatic. Sometimes it is not worth complicating the API.
+
+### Single Source of Truth
+
+- Components should either be _controlled_ or _uncontrolled_. **You should never have a mix of two**.
+
+
+  Consider the following example. In the example below, we are mixing the _controlled_ and _uncontrolled_ paradigms. **This makes the code hard to read and very prone to bugs**.
+
+  ```jsx
+    function App() {
+      const [counter, setCounter] = useState(0)
+
+      return (
+        <div>
+          <Counter value ={counter} onChange={setCounter}/>
+          <Reset onReset = {() => setCounter(0)}/>
+        </div>
+      )
+    }
+
+    function Counter({value, onChange}) {
+      const [internalValue, setInternalValue] = useState(value);
+
+      useEffect(() => {
+        setInternalValue(value)
+      }, [value])
+
+      return <button onClick = {() => {
+        const newValue = internalValue + 1;
+        setInternalValue(newValue);
+        onChange(newValue);
+      }}>{internalValue}</button>
+    }
+  ```
+
+  The solution would be to **make the `Counter` to be controlled – get rid of the internal state**! As an alternative, one **might use the `key` prop to reset the `Counter` state**. This is a valid solution as well.
+
+- Keep in mind that **it is okay to copy props into state when the props are "initial props"**.
+
