@@ -791,7 +791,7 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
       Credit goes to [this article](https://timtech.blog/posts/react-memo-is-good-actually/#3.-%E2%80%9Creact.memo-doesn't-work-with-react-element-%2F-children-props%E2%80%9D).
 
-## Happy practices
+## Happy Practices
 
 ### Leveraging Keys
 
@@ -917,3 +917,18 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
 - Keep in mind that **it is okay to copy props into state when the props are "initial props"**.
 
+
+### Portals
+
+- When creating portals, remember that you can inject inside the `document.body` directly.
+
+  ```jsx
+    return createPortal(
+      <div data-react-portal-host>
+        {children}
+      </div>,
+      document.body
+    )
+  ```
+
+  Look how easy it is! No need for `useEffects` and tracking of DOM elements!
