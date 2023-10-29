@@ -932,3 +932,135 @@ This concept is critical to understanding how the state works. I'm amazed that a
   ```
 
   Look how easy it is! No need for `useEffects` and tracking of DOM elements!
+
+## Full Stack React
+
+
+### Client vs. Server Rendering
+
+- **_Hydration_ refers to a process of turning an initial static HTML file into interactive web app**.
+
+  - React has some optimizations built-in so that the process is not that compute-expensive.
+
+  - Having said that, _hydration_ will always be a source of performance issues on larger sites with lots of interactive elements.
+
+
+- There are many flavours of server rendering.
+
+  - You could SSR on-demand, while the user is requesting your page (and ideally cache the results afterwards).
+
+    - If you cache the results afterwards, it would be called _incremental static regeneration_.
+
+    - This is **quite a good fit for websites displaying personalized content**.
+
+  - You could SSR before the request (during build time). This is called _static site generation_.
+
+    - The **_SSG_ is not really good fit for personalized content**.
+
+    - The **_SSG_ is not a good fit for websites gated by auth**.
+
+      - If you generate the markup up-front, someone could easily steal the content of the site (unless you do a redirects via some kind of proxy before the request gets to the user).
+
+### React Server Components
+
+- Can work with our without SSR
+
+- _RSCs_ are about "pre-rendering" and SSR is about generating HTML.
+
+  - These two are totally different. They are designed to play nice together, but as I mentioned, you do not have to use one to use another.
+
+- You can import _client components_ into _server components_. **You cannot do the same thing in reverse**.
+
+  - This is because React has to "pre-render" ALL server components during build/server request. The client component could render the server component conditionally, in such case, generating it at the first pass would not be possible.
+
+    - React has to "pre-render" ALL server components because there is no way of knowing which component will be used. So, if you conditionally render server component inside a server component, we would not want to make additional network request to fetch the first component then the second. As such React has to render ALL server components during the initial pass.
+
+### SSR Gotchas
+
+**The biggest SSR gotcha is the fact that `window` is not defined when your code runs for the first time**. This makes sense, as the markup is generated on the server, where the `window` (or any browser-related APIs) are not defined.
+
+A good example would be a component that tries to initialize its state from `localStorage`.
+
+```jsx
+function Component() {
+  const [state, setState] = useState(
+    () => window.localStorage.getItem("foo")
+  )
+}
+```
+
+This code will crash when the server tries to generate the markup.
+
+Some people might fix it by using the `typeof window === "undefined"` check.
+
+```jsx
+function Component() {
+  const [state, setState] = useState(
+    () => {
+      if (typeof window === "undefined") {
+        return null
+      }
+
+        return window.localStorage.getItem("foo")
+      }
+  )
+}
+```
+
+**This is not a good way to fix this issue – you will create _hydration mismatch_ errors**. _Hydration mismatch_ errors are **the second biggest issue I've seen in SSR context**.
+
+The error occurs when the markup generated from the server does not correspond to the markup generated on the client. These errors might seem harmless, but they can wreak havoc on page layouts.
+
+One way to fix it is to set the _correct_ initial value in `useEffect` (or `useLayoutEffect`). The `useEffect` does not run on the server, so it is "SSR safe".
+
+```jsx
+function Component() {
+  const [state, setState] = useState(
+    null
+  )
+
+  useEffect(() => {
+    setState(window.localStorage.getItem("foo"))
+  }, [])
+}
+```
+
+This **might work, but the first render could potentially contain wrong data**! Keep in mind that the `useEffect` runs AFTER the browser has already painted to the screen so there might be a flicker the user sees.
+
+You might be tempted to fix it via `useLayoutEffect`. Since `useLayoutEffect` runs BEFORE the browser had a chance to pain, the user should see the correct UI right? (of course the initial, generated HTML would still be "invalid").
+
+```jsx
+function Component() {
+  const [state, setState] = useState(
+    null
+  )
+
+  useLayoutEffect(() => {
+    setState(window.localStorage.getItem("foo"))
+  }, [])
+
+  useEffect(() => {
+    window.localStorage.setItem("foo", state):
+  }, [state])
+}
+```
+
+This **will work in non-strict mode of React**. In strict mode, the effects are invoked twice. Here is how it would break.
+
+1. The `useLayoutEffect` fires.
+
+2. The code inside the `useLayoutEffect` sets the state to some filled value.
+
+3. The state update in `useLayoutEffect` causes a synchronous state change – the `state` changes.
+
+4. The `useEffect` fires **but with the `null` as the value for the state**. Why is that? It is because when we first invoked this component, the `useEffect` closed over the initial state value – `null`.
+
+5. The `useEffect` updates the _localStorage_ with `null`.
+
+6. The `useLayoutEffect` is invoked again, this time the value in the local storage is `null`.
+
+7. The `useLayoutEffect` updates the state to `null`
+
+And your UI is broken again!
+
+**Yet another solution would be to show some kind of "placeholder" for this component before hydration finishes**. This way, we do not have to worry about mismatches and showing incorrect UI to the user that flips to the correct value. The placeholder is there to indicate that the content is loading. As soon as the loader disappears, app shows the correct UI.
