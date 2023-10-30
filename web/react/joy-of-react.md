@@ -1064,3 +1064,121 @@ This **will work in non-strict mode of React**. In strict mode, the effects are 
 And your UI is broken again!
 
 **Yet another solution would be to show some kind of "placeholder" for this component before hydration finishes**. This way, we do not have to worry about mismatches and showing incorrect UI to the user that flips to the correct value. The placeholder is there to indicate that the content is loading. As soon as the loader disappears, app shows the correct UI.
+
+### React Cache
+
+- **per-request cache built-in React**
+
+- Not yet in the official React release. **This API is included in Next.js, but not yet available as a official React export**.
+
+- Think of this as `React.memo` but for functions (that live outside of React lifecycle).
+
+### Suspense
+
+- Suspense is very powerful because it allows React to **progressively hydrate parts of the UI**.
+
+  - This is especially relevant when you fetch data. If one part of the tree is paused because it fetches data, React can work on the other parts of the tree when the data is loading.
+
+- Next.js uses the concept of `loading` routes to define Suspense boundaries at the layout level.
+
+---
+
+- If you were to use SSR without Suspense, the **server would have to fetch all the data before rendering the markup of the page**.
+
+  - This is undesirable. It makes the whole app feel slow as the data fetching might take some time. During that time, the user would be looking at a blank page (the HTML was not yet sent).
+
+- If you were to use SSR with client-side-fetching, **the client would kick-off the network request after hydration**.
+
+  - Again, not that great. The initial HTML will be there faster, but the proper page data might take a while to show up.
+
+  - **This approach is, in most cases, even worse than the SSR without Suspense**.
+
+So there is a tradeoff between those two approaches.
+
+1. Do you want the initial HTML take a bit longer to load, but have all the content visible when the page first loads?
+
+2. Do you want the initial HTML to be very fast, but have the user look at loading screens?
+
+While **Suspense is not a silver bullet (it is more complicated concept to grasp)**, it is a hybrid between those two approaches.
+
+- It will start fetching the data as soon as possible.
+
+- In the meantime, it will continue rendering the application.
+
+---
+
+- Suspense is not only for loading data.
+
+  - **Suspense denotes "low priority" hydration boundaries**. It allows for **selective hydration**.
+
+    - React will prioritize hydrating those parts of the app, the user has interacted with.
+
+    - This also means that **if you wrap your whole app with `Suspense`, you will opt-out of this benefit**. If every interaction triggers an "this hydration is urgent", none of the operations really are urgent.
+
+  - **Suspense allows you to lazy-load and split your application if chunks**.
+
+    - You will see gains even if you are lazy-loading a couple of chunks on the same page. This is because the Suspense fetches data/chunks in parallel!
+
+- **The real neat trick to do with Suspense and Server Components is to pass promises as props**
+
+  In the example below, I could have also moved the `commentsResource` inside the `Comments` directly. I've defined the resource inside the `ServerComponent` to show that one can pass a promise as a prop.
+
+  ```jsx
+    function ServerComponent() {
+      const commentsResource = fetchComments()
+
+      return (
+        <>
+          <div>
+            <h1>Some other markup</h1>
+          </div>
+          <Suspense>
+            <Comments commentsResource = {commentsResource}/>
+          </Suspense>
+        </>
+      )
+    }
+
+    async function Comments({commentsResource}) {
+      const comments = await commentsResource;
+
+      return (
+        <ul>
+          {comments.map(comment => {
+            // the regular
+          })}
+        </ul>
+      )
+    }
+  ```
+
+### Lazy Loading
+
+- TIL that **you do not have to wrap the `React.lazy` with `Suspense`**.
+
+  - Of course, in any real-world scenario, you most likely want to do that.
+
+- Of course, using `React.lazy` is just one way to lazy-load stuff.
+
+  - For example, there is also `loading="lazy"` available on the `img` tags.
+
+- Next.js exposes `dynamic` function with is a wrapper over `React.lazy` with some additional APIs
+
+  1. It allows you to "bake in" a loading state for a given import.
+
+    ```jsx
+      const component = dynamic(() => import("./Component"), {
+        loading: Spinner
+      })
+    ```
+
+  2. It also allows you to skip rendering given chunk of the server altogether.
+
+    ```jsx
+      const component = dynamic(() => import("./Component"), {
+        loading: Spinner,
+        ssr: false
+      })
+    ```
+
+    This allows you to create chunks that load lazily, but are not invoked at all during server side rendering. Could be useful when the chunk is not compatible with server runtime (for example uses the `localStorage` API).
