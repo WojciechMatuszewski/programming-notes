@@ -372,7 +372,7 @@ Before you learn anything about how they work, you should know that **this is a 
 
 ---
 
-Here you **stream non-interactive HTML code from the server to the client**. This is **similar to `getServerSideProps` in Next.js**, but it is **NOT the same**. The main difference between _React Server Components_ and `getServerSideProps` are.
+Here you **stream non-interactive serialized representation of _virtual DOM_ from the server to the client**. This is **similar to `getServerSideProps` in Next.js**, but it is **NOT the same**. The main difference between _React Server Components_ and `getServerSideProps` are.
 
 - With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server Components_.
 
@@ -406,6 +406,8 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
         - This [blog from the remix team](https://remix.run/blog/react-server-components#the-react-teams-demo) confirms my suspicions. Unless you kickoff all the promises to start fetching and pass them down to components, you will get into fetch-render-fetch-render cycle that causes waterfalls.
 
+  - Here is [an additional video on the subject of RSCs](https://portal.gitnation.org/contents/simplifying-server-components)
+
 #### Notes from the "React Server Components with Dan Abramov, Joe Savona, and Kent C. Dodds"
 
 [Full link to the video here](https://www.youtube.com/watch?v=h7tur48JSaw).
@@ -420,23 +422,23 @@ Here you **stream non-interactive HTML code from the server to the client**. Thi
 
 1. According to Dan, [RSC automatically de-duplicate requests](https://youtu.be/h7tur48JSaw?t=2257).
 
-    - I'm not sure that is true for _native_ RSC? It is a [feature of Next.js 13](https://beta.nextjs.org/docs/data-fetching/fundamentals#automatic-fetch-request-deduping).
+   - I'm not sure that is true for _native_ RSC? It is a [feature of Next.js 13](https://beta.nextjs.org/docs/data-fetching/fundamentals#automatic-fetch-request-deduping).
 
-    - And [here, Kent talks about overloading the fetch](https://youtu.be/h7tur48JSaw?t=2441). I think that he is referring to the Next.js 13 implementation?
+   - And [here, Kent talks about overloading the fetch](https://youtu.be/h7tur48JSaw?t=2441). I think that he is referring to the Next.js 13 implementation?
 
-      - It [turns out there is a new "fetch" exposed by React](https://youtu.be/h7tur48JSaw?t=2517). **They are talking about `react-fetch` package that leverages the cache API**.
+     - It [turns out there is a new "fetch" exposed by React](https://youtu.be/h7tur48JSaw?t=2517). **They are talking about `react-fetch` package that leverages the cache API**.
 
 ---
 
 1. As it stands now, you cannot have one server component and client component live in the same file.
 
-    - This is not a limitation of the architecture. It is a conscious decision.
+   - This is not a limitation of the architecture. It is a conscious decision.
 
 ---
 
 1. [Here Kent talks about how we should structure the application that uses server components](https://youtu.be/h7tur48JSaw?t=5145).
 
-    - This is a shift in how we usually write React apps, where the `children` prop is used but not to that extend.
+   - This is a shift in how we usually write React apps, where the `children` prop is used but not to that extend.
 
 - Server components as island architecture?
 
@@ -516,7 +518,7 @@ This "limitation" promotes composability. If you cannot import components, you h
 
 1. The **_Server and Client Components_ do NOT replace SSR**. Keep in mind that **SSR can render HTML output of client components**. That is how they are implemented in Next.js.
 
-  > Client Components enable you to add client-side interactivity to your application. In Next.js, they are pre-rendered on the server and hydrated on the client. You can think of Client Components as how components in the Pages Router have always worked.
+> Client Components enable you to add client-side interactivity to your application. In Next.js, they are pre-rendered on the server and hydrated on the client. You can think of Client Components as how components in the Pages Router have always worked.
 
 2. Now you **have a greater control over what runs where**. I'm not sure if that is a good thing or not. Most likely not since it should be an "opt-in" rather a "must-do". These concerns are addressed by frameworks like Qwik and Marko where the place where component executes is opaque to the developer.
 
