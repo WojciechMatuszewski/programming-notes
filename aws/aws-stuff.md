@@ -1714,7 +1714,7 @@ An example for s3-prefix (folder)
 
   - this requires you to turn on the **_data events_ which will cost you additional $$**
 
-- you can also **turn on _server access logging**. Keep in **mind that if the number of requests to the bucket is huge, your CW bill will increase**.
+- you can also **turn on _server access logging_**. Keep in **mind that if the number of requests to the bucket is huge, your CW bill will increase**.
 
 ##### Inventory
 
@@ -6372,7 +6372,9 @@ What is very important to understand is that **LONG polling CAN END MUCH EARLIER
 
 ##### Integration with AWS Lambda
 
-- AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**
+- ~AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**~
+
+  - This is no longer true. Now the **scalling is much more flexible at 300 concurrent executions in 1**. [See the blog post here](https://aws.amazon.com/blogs/compute/introducing-faster-polling-scale-up-for-aws-lambda-functions-configured-with-amazon-sqs/).
 
 - The AWS Lambda service (in reallity the ESM) **uses long polling for the integration**. This makes sense as it would be ineficient to use anything else but long polling. See [this documentation section](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-scaling).
 
@@ -7359,7 +7361,7 @@ Consider giving it a read!
 
 - you can read more about resource identifiers [here](https://betterdev.blog/understanding-logical-ids-in-cdk-and-cloudformation).
 
-- when working with _CloudFormation_ you will be dealing with two types of identifiers.  **The _logical resource id_ and the _physical resource id_**.
+- when working with _CloudFormation_ you will be dealing with two types of identifiers. **The _logical resource id_ and the _physical resource id_**.
 
 - about the _psychical resource id_
 
