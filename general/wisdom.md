@@ -30,7 +30,7 @@ At this exact moment, you should stop and evaluate your thoughts/decisions caref
 
 See, there is a certain kind of wisdom in the "old code". Since the code age is relatively high, **it is most likely battle-tested and is edge-case free**. These edge cases are the most problematic – you will most likely miss them! By **rewriting the code, you will increase the maintainability**. The code will be different, the bugs will be different, and worst of all, it will not be as battle-tested as the old, well-aged code.
 
-Of course, sometimes the situation is so bad that there is no other way than to rewrite the code. The so-called "big ball of mud" can suck the life out of developers and make projects grind to a complete stop. In such cases, I would also tell caution – start very small, piece by piece, and resist the temptation to rewrite "everything"**.
+Of course, sometimes the situation is so bad that there is no other way than to rewrite the code. The so-called "big ball of mud" can suck the life out of developers and make projects grind to a complete stop. In such cases, I would also tell caution – start very small, piece by piece, and resist the temptation to rewrite "everything"\*\*.
 
 ## Software businessman mindset
 
@@ -221,3 +221,19 @@ When defaulting to "this person means good", we can employ empathy and compassio
 You will be talking with that person differently. Not as a frustrated colleague, but rather concerned friend. Concerned about the future of the team, the code quality and similar. **This also makes the other person feel safe and gives them the chance to open up**. In most cases, the issue you have with a given person only stems from misunderstanding or cultural differences.
 
 So, always assume good intent. No matter what other people at work do. It is very unlikely that the person woke up one day and decided to be a bad person. This almost never happens.
+
+## Sense of Urgency vs Sense of Purpose
+
+> Based on [this wonderful piece](https://medium.com/@kimber_lockhart/don-t-create-a-sense-of-urgency-foster-a-sense-of-purpose-724e309ecdb0)
+
+Have you ever been on a team where the management was pushing for a certain deadline? Most of us have. Now ask yourself this: were you aware of WHY the deadline is set for a certain day? Or maybe the deadline felt arbitrary to you?
+
+If the deadline felt arbitrary, you experienced management trying to create a _sense of urgency_. This is done by management to supposedly speed up the development process. They think that, by creating a _sense of urgency_ the project will finish faster. While this might be the case in some scenarios, **creating a _sense of urgency_ will most likely back-fire**.
+
+Why? The _sense of urgency_ creates detachment from the _project purpose_. **The _sense of purpose_ is the thing that drives innovation and excellence within the team**. The **_sense of urgency_ proliferates burnout and mistakes due to rushing**.
+
+Have you ever coded for work during the weekend without anyone asking you to do so? If so, you most likely cared for the project so much that you decided it would be neat to fix this one little but, or maybe create this little feature in your free time, because that would make the project better. **This is the _sense of purpose_**. You knew WHY of the project, you were able to emphasize with users and decided to take the time out of your day and work a bit more. Nobody forced you to do this.
+
+Contrast this with the dynamics of the _sense of urgency_. Your boss asked you to code during the weekend. Because you do not know WHY the deadline is so tight weekend coding is required, you are not looking forward to sacrificing your weekend for job-related stuff (why should I do X when I could spend my time doing Y?). **Now you rush to implement what you have been asked to do and deliver the feature. Since you rushed, you made some shortcuts**. In addition, your boss is probably micromanaging you ensuring that you actually work during the weekend. Not a fun experience.
+
+**Always create a _sense of purpose_ (ensure engineers and you know the WHY)**. Skip deadlines that seem arbitrary, always ask the WHY question until.
