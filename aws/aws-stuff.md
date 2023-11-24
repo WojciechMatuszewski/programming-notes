@@ -511,6 +511,8 @@
 
   - this was not the case before. Prior to this feature, one would have to ensure all tasks are idempotent and then retry the WHOLE state machine.
 
+    - in addition to simplicity, this also will save you money. Since you can retry from a given step, you do not have to incur charges for all the tasks
+
 #### Best Practices
 
 - use timeouts to avoid stuck executions
