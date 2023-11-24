@@ -503,6 +503,14 @@
 
 - **does not** integrate with **Mechanical Turk**. You will need **SWF for that**.
 
+#### Resiliency
+
+- you can add retries to each task via the SFN language configuration
+
+- **you can redrive the state machine from a given failed state**
+
+  - this was not the case before. Prior to this feature, one would have to ensure all tasks are idempotent and then retry the WHOLE state machine.
+
 #### Best Practices
 
 - use timeouts to avoid stuck executions
@@ -523,9 +531,10 @@
 - _Step Functions_ can be used to ensure service idempotency
 
 - Possible because the `startExecution` API is idempotent itself
+
   - If you provide the same `executionId` parameter multiple times, an error will be thrown
-  - This mechanism is similar to how `TransactWriteItem` works in _DynamoDB_ with the `clientToken` attribute (do not
-    mistake this with _atomic counters_ using `PutItem` API. The `PutItem` API is NOT idempotent)
+
+  - This mechanism is similar to how `TransactWriteItem` works in _DynamoDB_ with the `clientToken` attribute (do not mistake this with _atomic counters_ using `PutItem` API. The `PutItem` API is NOT idempotent)
 
 #### Step Functions and concurrency control
 
@@ -538,6 +547,7 @@
 
 - Sometimes, you have to control the sum of concurrency of **separate** _Step Functions_ executions. This is where **the
   second** approach is useful.
+
   - In this approach we are going to leverage [_
     DynamoDB_ with semaphores](https://aws.amazon.com/blogs/compute/controlling-concurrency-in-distributed-systems-using-aws-step-functions/)
 
