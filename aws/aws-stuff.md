@@ -1970,6 +1970,10 @@ So when to use what?
 - you can create **POST** or **PUT** signed urls. The **POST** version allow you to specify **conditions**. The
   conditions are pretty powerful, you can for example, assert on the size of the object being uploaded.
 
+- one pattern I saw is to **delete the object when it was first accessed**. This is pretty **good for very sensitive data, like sharing credentials with 3rd party over a file**.
+
+  - this would be done via the _Event Bridge_ "GetObject" event. **You will need to enable CloudTrail** for those events to show up.
+
 ##### Access logs
 
 - **server access logs are delivered to another s3 bucket**
