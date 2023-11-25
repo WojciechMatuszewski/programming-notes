@@ -1,4 +1,3 @@
-
 # Network
 
 ## The HTTP protocol
@@ -133,17 +132,17 @@ But we can do more, we can cache our data on the _http_ layer as well.
 ### `max-age` header
 
 There are many _http cache headers_ but this one is by far the most important one. This will **give a hint** to a browser on how **long should given object live in cache**.
-Now, this is a hint, not a demand, not something authoritative. You might end up in a situation where that object will not be cleared at all, but more on that later.
-All you have to do is to set the header, here is an example in `nodejs`
+
+Now, this is a hint, not a demand, not something authoritative. You might end up in a situation where that object will not be cleared at all, but more on that later. All you have to do is to set the header, here is an example in `nodejs`
 
 ```js
 const http = require("http");
 
 const server = http.createServer(function requestListener(request, response) {
-    response.setHeader("content-type", "text/html");
-    response.setHeader("cache-control", "max-age=10");
-    response.writeHead(200);
-    response.end("<div>works</div>");
+  response.setHeader("content-type", "text/html");
+  response.setHeader("cache-control", "max-age=10");
+  response.writeHead(200);
+  response.end("<div>works</div>");
 });
 
 server.listen(3000);
@@ -153,47 +152,7 @@ server.listen(3000);
 
 With this simple header we are able to cache some content for some period of time, after that time expires, **without any additional changes**, browser will request the resource again.
 
-### `ETag` header
-
-`ETag` header is there as a **mechanism to tell the browser that the content is still the same**. I think this image tells the whole story:
-
-![](../assets/ETag.png)
-
-You can send whatever really, as long as you can determine if the content changed or not.
-Browser will send you back the `If-None-Match` header after the `max-age` is expired.
-
-If the `ETag` is different - you send the resource along with new set of headers, otherwise you just return with _304_ status code.
-
-Here is the `nodejs` sample
-
-```js
-const http = require("http");
-
-const server = http.createServer(function requestListener(request, response) {
-    if (
-        request.headers["if-none-match"]
-        && request.headers["if-none-match"] === "1"
-    ) {
-        response.writeHead(304);
-        response.end("");
-    } else if (request.url === "/") {
-        response.setHeader("content-type", "text/html");
-        response.setHeader("ETag", "1");
-        response.setHeader("cache-control", "max-age=10");
-        response.writeHead(200);
-        response.end("<div>works</div>");
-    } else {
-        response.setHeader("content-type", "text/html");
-        response.end("<div>works2</div>");
-    }
-});
-
-server.listen(3000);
-```
-
-So easy right? Now imagine what you can do with _GraphQL_ and other stuff.
-
-### `max-age` on the CDN level
+#### `max-age` on the CDN level
 
 If you are doing any kind of _Static Site Generation_ you might have faced a problem where your customers are getting stale data even though you changed the content. This is probably because you set a high `max-age` header because your content is, well, static.
 
@@ -212,3 +171,59 @@ The workflow you presumably look as follows
 2. You introduce a cache in the content to some of them
 3. You purge existing entries in CDN which correspond to the pages you have changed
 4. You deploy your changes
+
+### `ETag` header
+
+`ETag` header is there as a **mechanism to tell the browser that the content is still the same**. I think this image tells the whole story:
+
+![](../assets/ETag.png)
+
+You can send whatever really, as long as you can determine if the content changed or not.
+Browser will send you back the `If-None-Match` header after the `max-age` is expired.
+
+If the `ETag` is different - you send the resource along with new set of headers, otherwise you just return with _304_ status code.
+
+Here is the `nodejs` sample
+
+```js
+const http = require("http");
+
+const server = http.createServer(function requestListener(request, response) {
+  if (
+    request.headers["if-none-match"] &&
+    request.headers["if-none-match"] === "1"
+  ) {
+    response.writeHead(304);
+    response.end("");
+  } else if (request.url === "/") {
+    response.setHeader("content-type", "text/html");
+    response.setHeader("ETag", "1");
+    response.setHeader("cache-control", "max-age=10");
+    response.writeHead(200);
+    response.end("<div>works</div>");
+  } else {
+    response.setHeader("content-type", "text/html");
+    response.end("<div>works2</div>");
+  }
+});
+
+server.listen(3000);
+```
+
+So easy right? Now imagine what you can do with _GraphQL_ and other stuff.
+
+### The only two cache-related headers you need
+
+> In addition check [out this talk](https://www.youtube.com/watch?v=qVQjGwm_mmw).
+
+- The **`cache-control` header** combines multiple headers together allowing you to specify a kind of _directive_ on how the file should be cached.
+
+  ```txt
+    cache-control: private, max-age=300, must-revalidate
+  ```
+
+- The `etag` allows you to revalidate a given file when the contents of that file changed. The value of the header is a hash of the file.
+
+  ```txt
+    etag: 123AAbbcc
+  ```
