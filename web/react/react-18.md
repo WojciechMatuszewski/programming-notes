@@ -610,3 +610,32 @@ async function myInlineServerAction(userId: string) {
   await db.get(userId)
 }
 ```
+
+## Client Actions
+
+- They have **the same syntax as _server actions_, but they differ in behavior**.
+
+  - They **do not create ad-hoc backend endpoints**.
+
+  - They **integrate with _Suspense_ and _Error Boundaries_**.
+
+- They are useful for streamlining the form handling and **integrating with the `useFormStatus` hook**.
+
+## `server-only` and `client-only` packages
+
+- These packages allow you to mark a given file to be accessible only on the client or the server.
+
+  - This is an additional protective layer against unwanted data transition from the server and the client.
+
+- **They work on the basis of _conditional `package.json` exports_. I find this mechanism pretty interesting**.
+
+  ```json
+  // server-only package.json
+  "exports": {
+    ".": {
+      "react-server": "./empty.js",
+      "default": "./index.js" // this file throws an error
+    }
+  ```
+
+  Now, if someone tries to use the file with `server-only` import outside of the `react-server` "condition" (check out the `--conditions` Node.js flag), the bundler will throw an error! Pretty smart.
