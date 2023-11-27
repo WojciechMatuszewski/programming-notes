@@ -204,6 +204,18 @@
 - **very constrained in terms of what they can do**. Full comparison
   table [available here](https://aws.amazon.com/blogs/aws/introducing-cloudfront-functions-run-your-code-at-the-edge-with-low-latency-at-any-scale/?utm_source=newsletter&utm_medium=email&utm_content=offbynone&utm_campaign=Off-by-none%3A%20Issue%20%23140)
 
+##### The CloudFront functions KeyValueStore
+
+- Prior to this change, you had to embed the configuration within the code itself.
+
+  - Think configuration for redirects or A/B tests.
+
+  - In addition, the configuration you put there does not contribute to the size of the function. This is quite important as the size of the function is somewhat constrained.
+
+- With _KeyValueStore_ one can update the values via an SDK in a separate process. This enables you to **skip the deployment of the functions when the config changes**. A very welcomed change if you ask me.
+
+- **There are constrains on the size of the store itself**. As they are much lower than DynamoDB limits, this feature might be using some different technology.
+
 #### Event Source Mapping
 
 - this is where **lambda service reads from other service and invokes your function**
