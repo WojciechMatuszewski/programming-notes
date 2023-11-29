@@ -20,7 +20,7 @@ This button will have native browser styles, which you most likely would want to
 
 1. Use the `::file-selector-button` pseudo-element
 
-  This option is good when you do not need any _droppable_ areas for your files (you most likely need them). Read more about [this pseudo-element on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/::file-selector-button). You can also find more [information here](https://www.stefanjudis.com/today-i-learned/how-to-style-the-select-button-of-file-inputs).
+This option is good when you do not need any _droppable_ areas for your files (you most likely need them). Read more about [this pseudo-element on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/::file-selector-button). You can also find more [information here](https://www.stefanjudis.com/today-i-learned/how-to-style-the-select-button-of-file-inputs).
 
 ### Resetting the input after file upload
 
@@ -168,8 +168,7 @@ Imagine a situation where the form fields are valid, but upon form submission, a
 
 ```jsx
 <form>
-  <div role = "alert" tabIndex = {-1}>
-  </div>
+  <div role="alert" tabIndex={-1}></div>
 </form>
 ```
 
@@ -177,8 +176,10 @@ Imagine a situation where the form fields are valid, but upon form submission, a
 
 ```jsx
 <form>
-  <div role = "alert" tabIndex={0} aria-labelledby="formErrorHeading">
-    <h2 id = "formErrorHeading" className = "sr-only">Failed to submit the form</h2>
+  <div role="alert" tabIndex={0} aria-labelledby="formErrorHeading">
+    <h2 id="formErrorHeading" className="sr-only">
+      Failed to submit the form
+    </h2>
     <span>Your error message</span>
   </div>
 </form>
@@ -207,14 +208,14 @@ function App() {
       requestAnimationFrame(() => {
         formErrorRef.current?.focus();
       });
-    }
+    },
   });
-  const formErrorRef = useRef<HTMLDivElement>(null);
+  const formErrorRef = useRef < HTMLDivElement > null;
 
   const { handleSubmit, register, formState } = useForm({
     defaultValues: {
-      name: ""
-    }
+      name: "",
+    },
   });
 
   const nameError = formState.errors.name;
@@ -254,7 +255,6 @@ function App() {
 }
 
 export default App;
-
 ```
 
 Notice a couple of things.
@@ -265,10 +265,10 @@ Notice a couple of things.
 
 ## Focusing the inputs
 
-There is the `autofocus` property one might use. This should help you with establishing the focus on a given input when the page first loads. **Sadly, this approach does not work with client-side rendered applications**. The DOM node has to be there already when the page loads. This attribute applies to **all elements, not just form-controls**.
+There is the `autofocus` property one might use. This should help you with establishing the focus on a given input when it is inserted into HTML. **This means that adding this attribute dynamically to an already rendered element WILL NOT WORK**.
 
 ```html
-<input name = "some name" autofocus/>
+<input name="some name" autofocus />
 ```
 
 Of course, this is not a silver bullet. There are a lot of things to consider when using this attribute. If the form is below the fold, the page might unexpectedly scroll, leaving the user confused.

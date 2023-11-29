@@ -91,3 +91,62 @@
   - One thing that I worries me is the crazy route names Kent had to create. He is using some kind of library for `remix` to make the routes "flat". I guess it is just a matter of getting used to those.
 
 - Kent mentions a term I was not familiar with – the **_Splat route_**. The _splat route_ is a _wildcard route_. It sounds kind of cool!
+
+## Web Forms
+
+- Kent uses the `noValidate` attribute on the form and relies on the server-side validation.
+
+  - **We still keep the HTML validation attributes for screen reader support**
+
+  - Note that the `noValidate` does not turn off every validation attribute.
+
+  - Kent also uses the `useHydrated` hook to add the `noValidate` dynamically. We would not want to add this attribute when the JavaScript has not loaded yet. To me, the `useHydrated` hook leaks internal implementation details of the framework :C
+
+    ```js
+    function useHydrated() {
+      const [hydrated, setHydrated] = useState(false);
+      useEffect(() => setHydrated(true), []);
+      return hydrated;
+    }
+    ```
+
+    This works **because `useEffect` never runs on the server**.
+
+- According to the workshop material, the **support for `aria-errormessage` is quite poor**. You should be using `aria-describedby` and `aria-invalid` instead.
+
+- Kent mentions that one should either set the `aria-invalid` to `true` or `undefined` so that it is not rendered in the HTML.
+
+  - I could not find any reference as to why setting the `aria-invalid` to `undefined` is better than setting it to either `true` or `false`.
+
+    - While searching, I found [this great resource](https://russmaxdesign.github.io/accessible-forms/index.html) on different attributes and how they work with screen readers
+
+- **The _accessability_ tab for a given element in DevTools is great!**. When it doubt what kind of `role` the element has, look it up there!
+
+- The `tabIndex` of `-1` means that **users cannot focus the element via keyboard, but you can focus it programmatically**.
+
+- The way Kent handled focus management is quite elegant. Instead of checking for each field status, we focus either the whole form, or the first invalid element.
+
+  ```jsx
+  useEffect(() => {
+    const formEl = formRef.current;
+    if (!formEl) {
+      return;
+    }
+
+    if (actionData?.status !== "error") {
+      return;
+    }
+
+    if (formEl.matches('[aria-invalid="true"]')) {
+      formEl.focus();
+      return;
+    }
+
+    const firstInvalidEl = formEl.querySelector('[aria-invalid="true"]');
+    if (firstInvalidEl instanceof HTMLElement) {
+      firstInvalidEl.focus();
+    }
+  }, [actionData?.status]);
+  ```
+
+  I was unaware of the `matches` method. Quite useful!
