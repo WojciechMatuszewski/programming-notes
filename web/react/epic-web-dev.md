@@ -96,7 +96,9 @@
 
 - Kent uses the `noValidate` attribute on the form and relies on the server-side validation.
 
-  - **We still keep the HTML validation attributes for screen reader support**
+  - **We still keep the HTML validation attributes for screen reader support**.
+
+  - Specifying the `noValidate` **does not disable the support for the pseudo-classes like `:invalid`** which is pretty nice.
 
   - Note that the `noValidate` does not turn off every validation attribute.
 
@@ -150,3 +152,7 @@
   ```
 
   I was unaware of the `matches` method. Quite useful!
+
+- Encoding the "global" error on the `''` field seem to be a common practice. I've done this several times, but I always felt like I'm doing something wrong.
+
+- Kent uses the `conform` library to manage the id of the fields, validation and errors. The library seems nice, but is it really worth it pulling _yet another library_?

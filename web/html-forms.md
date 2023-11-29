@@ -137,7 +137,7 @@ Here is an example.
   type="text"
   id="name"
   aria-invalid={nameError ? true : undefined}
-  aria-describedby="nameError"
+  aria-describedby={nameError ? "nameError": undefined}
   {...register("name", { required: "This field is required" })}
 />
 <br />
@@ -231,7 +231,7 @@ function App() {
         type="text"
         id="name"
         aria-invalid={nameError ? true : undefined}
-        aria-describedby="nameError"
+        aria-describedby={nameError ? "nameError" : undefined}
         {...register("name", { required: "This field is required" })}
       />
       <br />
