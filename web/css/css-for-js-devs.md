@@ -23,8 +23,10 @@ p {
 It just so happens that the most popular _media feature_ overlaps with a quite popular css _property_ (the `max-width` or `min-width`). You **cannot** use css properties with `@media` syntax.
 
 ```css
-@media (max-width: 300px) {} /* valid */
-@media (font-size: 32px) {} /* invalid */
+@media (max-width: 300px) {
+} /* valid */
+@media (font-size: 32px) {
+} /* invalid */
 ```
 
 ### Selectors
@@ -60,13 +62,13 @@ There are many units one can use. Here are some notable ones:
 
 2. The `rem` unit which **is relative to the ROOT font size**. **By default**, the root HTML font size is `16px` (this can be changed in the settings).
 
-  You should not be setting the `html` tag font size explicitly. Doing so **will override the default font size of the user settings**. Instead, use percentages!
+You should not be setting the `html` tag font size explicitly. Doing so **will override the default font size of the user settings**. Instead, use percentages!
 
-  ```css
-  html {
-    font-size: 120%;
-  }
-  ```
+```css
+html {
+  font-size: 120%;
+}
+```
 
 3. The `px` unit which **is NOT relative to anything**.
 
@@ -105,8 +107,8 @@ For the the font-related properties, the most common are `font-weight`, `font-si
     ```js
     const result = {
       ...pStyles,
-      ...aStyles
-    }
+      ...aStyles,
+    };
     ```
 
   - When determining the end-result, one has to also take into the account the **specificity of a given CSS selector**.
@@ -176,25 +178,25 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 
     1. Use the `calc` on the `img` tag.
 
-        ```css
-        img {
-          margin: 0 -32px;
-          <!-- using with 100% will NOT work as the width is calculated based on the parent -->
-          width: calc(100% + 64px);
-        }
-        ```
+       ```css
+       img {
+         margin: 0 -32px;
+         <!-- using with 100% will NOT work as the width is calculated based on the parent -->
+         width: calc(100% + 64px);
+       }
+       ```
 
     2. Wrap the `img` with a `div` and let the `div` do the "escaping".
 
-        ```css
-        img {
-          width: 100%;
-        }
+       ```css
+       img {
+         width: 100%;
+       }
 
-        .img-container {
-          margin: 0 -32px;
-        }
-        ```
+       .img-container {
+         margin: 0 -32px;
+       }
+       ```
 
 ### Flow layout
 
@@ -246,28 +248,20 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 
 - Margins **must be "touching" in order for them to collapse (padding, border and other in-between elements will make elements NOT touch)**. This is very interesting. It means that, the following WILL NOT collapse
 
-    ```html
-    <p style = {{margin-bottom: 20px}}>
-      foo
-    </p>
-    <br/>
-    <p style = {{margin-top: 20px}}>
-      bar
-    </p>
-    ```
+  ```html
+  <p style="{{margin-bottom:" 20px}}>foo</p>
+  <br />
+  <p style="{{margin-top:" 20px}}>bar</p>
+  ```
 
   But, the following WILL collapse
 
-    ```html
-    <div>
-    <p style = {{margin-bottom: 20px}}>
-      foo
-    </p>
-    </div>
-    <p style = {{margin-top: 20px}}>
-      bar
-    </p>
-    ```
+  ```html
+  <div>
+    <p style="{{margin-bottom:" 20px}}>foo</p>
+  </div>
+  <p style="{{margin-top:" 20px}}>bar</p>
+  ```
 
   The biggest takeaway here is that **margin is used to create a space between sibling elements, even if it means "transferring" margin to the parent**.
 
@@ -354,12 +348,10 @@ There is a lot of thing you can do with only margin, padding and some colors.
   - The **value of the `z-index` is compared relative to all the elements in a given stacking context**. A very important nuance to understand as this is the reason you sometimes find yourself bumping the `z-index` to a very high value to no avail.
 
     ```html
-    <header zIndex = "2" position="relative">
-      My header
-    </header>
+    <header zIndex="2" position="relative">My header</header>
 
-    <main zIndex = "1" position="relative">
-      <div zIndex = "999999">VeryHigh</div>
+    <main zIndex="1" position="relative">
+      <div zIndex="999999">VeryHigh</div>
     </main>
     ```
 
@@ -430,16 +422,16 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - To **hide the content from the screen, but make it available to screen readers, use the `visuallyHidden` trick**.
 
   ```js
-    const visuallyHidden = {
-      position: 'absolute',
-      overflow: 'hidden',
-      clip: 'rect(0 0 0 0)',
-      height: '1px',
-      width: '1px',
-      margin: '-1px',
-      padding: 0,
-      border: 0,
-    }
+  const visuallyHidden = {
+    position: "absolute",
+    overflow: "hidden",
+    clip: "rect(0 0 0 0)",
+    height: "1px",
+    width: "1px",
+    margin: "-1px",
+    padding: 0,
+    border: 0,
+  };
   ```
 
   - Using `aria-label` is okay as well.
@@ -556,9 +548,9 @@ There is a lot of thing you can do with only margin, padding and some colors.
     - The `flex: 1` expands to the following.
 
       ```css
-        flex-grow: 1;
-        flex-shrink: 1;
-        flex-basis: 0%;
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 0%;
       ```
 
       The `flex-basis` is crucial here. If the width is 0, then we can evenly distribute space, even if the content of the children is different.
@@ -577,24 +569,24 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - It is vital to understand what the `flex: 1` declaration really means. If you do not, you might try to write the following.
 
-    ```css
-    .item {
-      flex: 1;
-      width: 200px;
-    }
-    ```
+  ```css
+  .item {
+    flex: 1;
+    width: 200px;
+  }
+  ```
 
-    In this case, **the `width` is ignored as `flex-basis` (0px) will ALWAYS win**. This is a rare case where the order of the declarations does not matter.
+  In this case, **the `width` is ignored as `flex-basis` (0px) will ALWAYS win**. This is a rare case where the order of the declarations does not matter.
 
-    What you ought to do, in such situation, is the following.
+  What you ought to do, in such situation, is the following.
 
-    ```css
-    .item {
-      flex: 1 1 200px;
-    }
-    ```
+  ```css
+  .item {
+    flex: 1 1 200px;
+  }
+  ```
 
-    Now, the `flex-basis` is set to `200px`. As it should have been.
+  Now, the `flex-basis` is set to `200px`. As it should have been.
 
 ### Wrapping
 
@@ -710,7 +702,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 #### Shorthand Gotchas
 
-- The most common gotcha is **setting the `width/height` and using the `flex` shorthand together.
+- The most common gotcha is \*\*setting the `width/height` and using the `flex` shorthand together.
 
   - Keep in mind that **the `flex-basis` will ALWAYS override the `width`/`height`**. The **order of CSS declarations does not matter here!**.
 
@@ -796,11 +788,9 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - There is also this special `meta` tag which relates to how should mobile devices render your webpage.
 
-    ```html
-    <meta
-      name = "viewport"
-      content="width=device-width, initial-scale=1">
-    ```
+  ```html
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  ```
 
   This will tell the mobile browser to match the viewport width with the device width and set the "zoom" to 1 (so the default).
 
@@ -833,9 +823,11 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - There is another group of media queries: the **preference-based media queries**. These gained a lot of traction in recent years.
 
   ```css
-  @media (prefers-reduced-motion: no-preference) {}
+  @media (prefers-reduced-motion: no-preference) {
+  }
 
-  @media (prefers-color-scheme: dark) {}
+  @media (prefers-color-scheme: dark) {
+  }
   ```
 
 ### Breakpoints
@@ -858,7 +850,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
     ```css
     @property --text-color {
-      syntax: '<color>';
+      syntax: "<color>";
       inherits: false;
       initial-value: black;
     }
@@ -931,11 +923,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
     ```css
     .wrapper {
-      width: clamp(
-        /* minimum */ 500px,
-        /* ideal */ 65%,
-        /* maximum */ 800px
-      );
+      width: clamp(/* minimum */ 500px, /* ideal */ 65%, /* maximum */ 800px);
       max-width: 100%;
     }
     ```
@@ -951,18 +939,18 @@ There is a lot of thing you can do with only margin, padding and some colors.
   - Use the following snippet:
 
     ```javascript
-      const findOverflows = () => {
-        const documentWidth = document.documentElement.offsetWidth;
-        document.querySelectorAll('*').forEach(element => {
-          const box = element.getBoundingClientRect();
-          if (box.left < 0 || box.right > documentWidth) {
-              console.log(element);
-              element.style.border = '1px solid red';
-          }
-        });
-      };
+    const findOverflows = () => {
+      const documentWidth = document.documentElement.offsetWidth;
+      document.querySelectorAll("*").forEach((element) => {
+        const box = element.getBoundingClientRect();
+        if (box.left < 0 || box.right > documentWidth) {
+          console.log(element);
+          element.style.border = "1px solid red";
+        }
+      });
+    };
 
-      findOverflows();
+    findOverflows();
     ```
 
 ### Responsive Typography
@@ -987,7 +975,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
         1.5rem,
         4vw + 1rem /* 1rem scales with browser zoom */,
         3rem
-      )
+      );
     }
     ```
 
@@ -1032,9 +1020,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
     - These can come in very handy when must ensure words stay together, like `10 USD`.
 
       ```html
-      <p>
-          That sandwich costs $10&nbsp;USD
-      </p>
+      <p>That sandwich costs $10&nbsp;USD</p>
       ```
 
 - TIL that there is an alternative text layout algorithm created by Adobe. It uses JavaScript to modify the HTML in a way that, arguably, is more appealing to the eye.
@@ -1104,7 +1090,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   ```css
   .title {
-    font-family: 'Lato', Futura, Helvetica, Arial, sans-serif;
+    font-family: "Lato", Futura, Helvetica, Arial, sans-serif;
   }
   ```
 
@@ -1114,9 +1100,8 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
   ```css
   p {
-  font-family:
-    -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
-    helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe
+        ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   }
   ```
 
@@ -1239,7 +1224,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
     <source
       type="image/avif"
       srcset="
-        /cfj-mats/responsive-diamond.avif 1x,
+        /cfj-mats/responsive-diamond.avif    1x,
         /cfj-mats/responsive-diamond@2x.avif 2x,
         /cfj-mats/responsive-diamond@3x.avif 3x
       "
@@ -1247,15 +1232,12 @@ There is a lot of thing you can do with only margin, padding and some colors.
     <source
       type="image/webp"
       srcset="
-        /cfj-mats/responsive-diamond.webp 1x,
+        /cfj-mats/responsive-diamond.webp    1x,
         /cfj-mats/responsive-diamond@2x.webp 2x,
         /cfj-mats/responsive-diamond@3x.webp 3x
       "
     />
-    <img
-      alt=""
-      src="/cfj-mats/responsive-diamond.png"
-    />
+    <img alt="" src="/cfj-mats/responsive-diamond.png" />
   </picture>
   ```
 
@@ -1314,13 +1296,15 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - **Unlike `flexbox`** the **size you give each column/row are HARD limits, not suggestions** (the difference between `flex-basis` and `width`, remember that `flex-basis` always wins!).
 
-- You can think of the `fr` unit as `flex-grow` proportions, but keep in mind that, instead of working on children, it scales the columns/rows instead.
+- **You can think of the `fr` unit as `flex-grow` proportions** (this means they will grow/shrink according to the size and also what they contain), but keep in mind that, instead of working on children, it scales the columns/rows instead.
 
 - To create rows in `grid` layout, use `grid-template-rows`. To create columns, use `grid-template-columns`.
 
   - There are multiple nifty functions you can use while creating rows/columns.
 
 - Keep in mind that you can **mix `grid` with `flexbox` (on children)**.
+
+- **Be mindful of the tab order when placing items in the grid**. The tab order will, by default, honour the DOM order. If you put items all over the place, the users might have problems traversing the page with keyboard.
 
 #### Alignment
 
@@ -1340,14 +1324,13 @@ There is a lot of thing you can do with only margin, padding and some colors.
   .wrapper {
     display: grid;
     grid-template-areas:
-      'sidebar header'
-      'sidebar main';
+      "sidebar header"
+      "sidebar main";
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 80px 2fr;
   }
 
-  <!-- And so on... -->
-  .sidebar {
+  <!-- And so on... -- > .sidebar {
     grid-area: sidebar;
   }
   ```
@@ -1366,7 +1349,7 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
     ```css
     .grid-child {
-      grid-row: 1 / -1 /* Spans all the rows, no matter how many of them there are */
+      grid-row: 1 / -1; /* Spans all the rows, no matter how many of them there are */
     }
     ```
 
@@ -1430,22 +1413,22 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 Instead of using `flexbox`, like so
 
-  ```css
-  .wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  ```
+```css
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+```
 
 You could use `grid`, like so:
 
-  ```css
-  .wrapper {
-    display: grid;
-    place-content: center;
-  }
-  ```
+```css
+.wrapper {
+  display: grid;
+  place-content: center;
+}
+```
 
 The `place-content: center` is a shorthand for `justify-content: center` and `align-content: center`. Personally, I see it more of a party trick than anything else. We are saving one line of CSS, but the probability of someone having an understanding of this snippet is, I would argue, low.
 
@@ -1509,6 +1492,7 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   2. Using the `1fr` unit in the context of CSS grid and the `auto` on the child you want to center relatively.
 
 - Wrapping elements with borders and creating vertical space between the borders is surprisingly challenging.
+
   1. One could use the `:after` or `:before` elements with a given `height` to simulate the border. Then you can also set margins on the `:after` or `:before`.
   2. You can create a wrapping elements which only do the border. This approach seems simpler and easier to understand.
 
@@ -1533,9 +1517,9 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   - Keep in mind that you **can mix units using the `calc` function**.
 
     ```css
-      .element {
-        transform: translateX(calc(100% + 50px));
-      }
+    .element {
+      transform: translateX(calc(100% + 50px));
+    }
     ```
 
 - The **`scale` will transform the children of the element as well as the element itself**. If not countered, you will see the children stretch.
@@ -1544,7 +1528,7 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 
 - The **order of operations for the `transform` property is important**. The operations are applied **sequentially one after each other – RIGHT TO LEFT!**.
 
- > Side note on the order of properties. It seems like the browsers are also matching the selectors from right to left.
+> Side note on the order of properties. It seems like the browsers are also matching the selectors from right to left.
 
 - The **`transform` property does not work with `inline` elements**.
 
@@ -1553,9 +1537,9 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - You can **animate multiple properties using a comma separated list**.
 
   ```css
-    .wrapper {
-      transition: transform 250ms, opacity 400ms;
-    }
+  .wrapper {
+    transition: transform 250ms, opacity 400ms;
+  }
   ```
 
   Notice that each property has a different timing.
@@ -1668,13 +1652,12 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   - To enable _hover_ state **only on mouse-powered devices** use the `hover` and `pointer` **media features**.
 
     ```css
-      .wrapper {
-        @media (hover: hover) and (pointer: fine) {
-          &:hover {
-
-          }
+    .wrapper {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
         }
       }
+    }
     ```
 
 - Sometimes, to achieve the animation you want, you will need to duplicate the HTML.
@@ -1694,9 +1677,9 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   - You can apply multiple of them onto a single element.
 
     ```css
-      .wrapper {
-          filter: brightness(120%) contrast(110%) grayscale(50%);
-      }
+    .wrapper {
+      filter: brightness(120%) contrast(110%) grayscale(50%);
+    }
     ```
 
 #### Blur Filter
@@ -1712,12 +1695,9 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - The `backdrop-filter` can also be used with other properties, not only the `blur`.
 
   ```css
-    .header {
-      backdrop-filter:
-        brightness(150%)
-        hue-rotate(30deg)
-        blur(5px);
-    }
+  .header {
+    backdrop-filter: brightness(150%) hue-rotate(30deg) blur(5px);
+  }
   ```
 
 ### Border Radius
@@ -1820,7 +1800,7 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 
       button::after {
         --tap-increment: -8px;
-        content: '';
+        content: "";
         position: absolute;
         top: var(--tap-increment);
         left: var(--tap-increment);
@@ -1850,26 +1830,16 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - You can even animate the transition going from different `clip-path` values! Check this out.
 
   ```css
-    .triangle {
-      clip-path: polygon(
-        0% 0%,
-        100% 0%,
-        100% 100%,
-        0% 100%
-      );
-      transition: clip-path 250ms;
-      will-change: transform;
-    }
+  .triangle {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transition: clip-path 250ms;
+    will-change: transform;
+  }
 
-    .triangle-wrapper:hover .triangle,
-    .triangle-wrapper:focus .triangle {
-      clip-path: polygon(
-        0% 0%,
-        100% 50%,
-        100% 50%,
-        0% 100%
-      );
-    }
+  .triangle-wrapper:hover .triangle,
+  .triangle-wrapper:focus .triangle {
+    clip-path: polygon(0% 0%, 100% 50%, 100% 50%, 0% 100%);
+  }
   ```
 
   Pretty amazing if you ask me.
@@ -1884,7 +1854,7 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 
 #### With shadows
 
-- The `drop-shadow` function applies **before the `clip-path`.
+- The `drop-shadow` function applies \*\*before the `clip-path`.
 
   - This means that you will most likely not see the shadow as it will be clipped.
 
@@ -1957,11 +1927,11 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
 - It enables you to **style the parent based on the focus state of the child**.
 
   ```css
-    .parent {
-      &:focus-within {
-        background: red;
-      }
+  .parent {
+    &:focus-within {
+      background: red;
     }
+  }
   ```
 
 #### Focus Outlines

@@ -156,3 +156,40 @@
 - Encoding the "global" error on the `''` field seem to be a common practice. I've done this several times, but I always felt like I'm doing something wrong.
 
 - Kent uses the `conform` library to manage the id of the fields, validation and errors. The library seems nice, but is it really worth it pulling _yet another library_?
+
+  - Okay, after working with nested fields, I can say that the library is pretty good. First time seeing a form library actually use the `fieldset` for something. This is great! It means the author is aware of how awesome `fieldset` is.
+
+- First time seeing the `refine` from `zod` in action. The API seems very useful.
+
+  ```js
+  {
+    file: z.instanceof(File).refine(
+      (file) => {
+        return file.size <= MAX_UPLOAD_SIZE;
+      },
+      { message: "File is too large" }
+    );
+  }
+  ```
+
+- While still marked as unstable, `remix` has nice APIs for handling the `multipart/form-data` requests.
+
+- While working on adding and removing form items, Kent mentioned a very interesting quirk – **if you hit "enter" on any input, the browser will find the first "submit" button and "click" it**. Usually this is not a problem, but in some cases, it might trigger a button which you do not want to trigger. In our case, by default, the browser would trigger the "delete item" button!
+
+  - The solution was to create a hidden submit button rendered before any other buttons.
+
+- First time hearing the **term _honeypot_ as it relates to bots and forms**.
+
+  - It turns out (I'm not that surprised tbh) that bots submit random forms with back links to a given site.
+
+  - **Fundamental concept here is an input that the regular user is very unlikely to fill in**. Think an input with `display:none` or similar.
+
+    - Bots are usually not sophisticated enough to deduce this input is a "honeypot" so they will fill it. Then you can check on the backend if this particular input was filled and take action (most likely returning a vague error message).
+
+    - **Kent recommends using a library for this**. The [remix-utils](https://github.com/sergiodxa/remix-utils/blob/76fcb4bc706976a485e32a3e26b93404d49b3dc4/src/react/honeypot.tsx) implementation is pretty legit, but it is coupled to remix. A good source of reference implementation though.
+
+      - The encrypted "time" field is quite interesting. It is an additional layer of protection. When form submits, we calculate the delta between the value in that field and current time. If the delta is less than X (for example 1 second), we deem the submission to come from a bot.
+
+        - One has to have it set up so that tests do not trigger this behavior.
+
+        - Note that the value of this "time" field is encrypted. This is yet another layer of protection against tampering with that field.
