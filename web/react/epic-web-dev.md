@@ -193,3 +193,11 @@
         - One has to have it set up so that tests do not trigger this behavior.
 
         - Note that the value of this "time" field is encrypted. This is yet another layer of protection against tampering with that field.
+
+- The **protection against CSRF boils down to generating a special token you send to the frontend and include in the forms**.
+
+  - The idea is that this token is unique on **per user-session basis**. An attacker cannot possibly craft a request with this token as it is always unique.
+
+    - **If you do not specify the `expires` when creating the cookie, the browser will make this cookie a _session cookie_**. This means it will expire as soon as user session ends.
+
+  - You might think that CORS would be enough to protect against CSRF. That is not the case, as some requests are so-called _simple request_ that do not require the preflight requests. As such, even if you have very narrow CORS headers, an attacker might still be able to send a request to your backend from different domain.
