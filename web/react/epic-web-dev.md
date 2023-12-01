@@ -201,3 +201,60 @@
     - **If you do not specify the `expires` when creating the cookie, the browser will make this cookie a _session cookie_**. This means it will expire as soon as user session ends.
 
   - You might think that CORS would be enough to protect against CSRF. That is not the case, as some requests are so-called _simple request_ that do not require the preflight requests. As such, even if you have very narrow CORS headers, an attacker might still be able to send a request to your backend from different domain.
+
+## Data Modeling Deep Dive
+
+- The prisma client has the _prisma studio_
+
+  ```bash
+  npx prisma studio
+  ```
+
+  Pretty neat tool to see what you have in your database.
+
+- Kent shows a neat trick related to sqlite and exporting the data to another db.
+
+  - You can run the dump on the sqlite and then use that file to re-create what you have in sqlite in another database.
+
+  - Of course, note that there are differences between databases. Some fields are unique to PostgreSQL and so on.
+
+- **Kent recommends avoiding polymorphisms in schema design**. I do agree.
+
+  - At the start, it might seem like having a model like _file_ and using that to create _image_ which is shared between an user and a note is a good idea. Inventively you hit the case where you start to embed model-specific ids on that _image_ model. The _image_ model is now anemic – it has a lot of optional properties and those point to other different models.
+
+    - To avoid this problem altogether, create separate models that do one thing and are used only in one context.
+
+  - Storing images in the database makes sense for the small scale we are dealing here with.
+
+- When talking about migrations, **Kent mentions the _widen then narrow_ or _expand and contract_ pattern for performing zero downtime migrations**.
+
+  - The basic idea is to expand the application and database schema to allow for all the possible cases, then gradually narrow the application and database schema.
+
+  - This process could pose a lot of challenges, especially if the migrations are not done fast enough. In the worst case scenario, your application stays in the "wide" state because you did not have the time to migrate all the data.
+
+    - This is not bad from the data perspective (apart from having duplicate data, but storage is cheap nowadays). It is bad from maintainability and operations perspective.
+
+- Prisma has this neat feature of _nested writes_ where you can create multiple entities that rely on each other with a single API call (of course, underneath the library is performing a transaction).
+
+  ```js
+  await prisma.note.create({
+    data: {
+      id: "d27a197e",
+      title: "Basic Koala Facts",
+      content:
+        "Koalas are found in the eucalyptus forests of eastern Australia. They have grey fur with a cream-coloured chest, and strong, clawed feet, perfect for living in the branches of trees!",
+      ownerId: kody.id,
+      images: {
+        create: [...],
+      },
+    },
+  });
+  ```
+
+  **Many times I wanted similar feature in DynamoDB, where I could reference ID of one item in another operation**. While it is not surfaced to the API, this is what is happening underneath – the `note` gets created and then the `nodeId` is propagated to the `images`. **This propagation of IDs is specific to _nested writes_**. There is the `$transaction` API, but it does not surface this functionality.
+
+  Sadly I could not find any relevant information on how this feature is really implemented.
+
+- The _seed_ script should be idempotent. I've been in situations where that is not the case, and it was a bit of a pain.
+
+  - In addition, Kent ensures that the data is really unique across the whole script lifetime (by creating _unique value enforcer_). Pretty good practice!
