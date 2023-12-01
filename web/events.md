@@ -140,7 +140,7 @@ This makes some of the npm packages obsolete. Of course the packages might provi
 Use the `dispatchEvent` API available on the `window`.
 
 ```js
-window.dispatchEvent(new Event("..."))
+window.dispatchEvent(new Event("..."));
 ```
 
 Then you can listen in any other part of your application.
@@ -148,7 +148,7 @@ Then you can listen in any other part of your application.
 ```js
 window.addEventListener("foo", () => {
   // ...
-})
+});
 ```
 
 ### "Scoped" events
@@ -163,7 +163,7 @@ emitter.dispatchEvent(new Event("..."));
 ```
 
 ```js
-emitter.addEventListener("..")
+emitter.addEventListener("..");
 ```
 
 #### Scoped events with a custom class
@@ -220,7 +220,7 @@ PS. When **adding methods to the class, remember to use the _arrow functions_ so
 class State extends customEventTarget {
   public increment = () => {
     // code ...
-  }
+  };
 }
 ```
 
@@ -255,9 +255,13 @@ box.addEventListener("pointerup", (event) => {
 Imagine a scenario where you have a button which does something when the user clicks on it.
 
 ```jsx
-<button onClick = {() => {
-  // some work
-}}>Click me</button>
+<button
+  onClick={() => {
+    // some work
+  }}
+>
+  Click me
+</button>
 ```
 
 Now, it just so happens that, the the user can also use keyboard to trigger the `onClick` function. This is pretty good as it allows us to treat those interactions as regular click events. For example, using the `space` key to "click" the button also invokes the `keydown` event. [Consult the `userEvent` package tests to see the list of all events](https://github.com/testing-library/user-event/blob/d7483f049a1ec2ebf1ca1e2c1f4367849fca5997/tests/pointer/click.ts#L8).
@@ -276,3 +280,7 @@ document.addEventListener("keydown", () => {
 ```
 
 In this case, whenever the user uses `space` or `enter` to interact with the button, both the `onClick` and the registered listener will fire. **This can lead to subtle bugs. Be mindful of this behavior**.
+
+## Events in React
+
+At the time of writing this, React uses a few global listeners instead of attaching the listener to each node when dealing with events. [See the code here](https://github.com/facebook/react/blob/3e97c00debbd6706b6ec6b7da15094bf2ba81ef4/packages/react-dom/src/client/ReactDOMRoot.js#L239)
