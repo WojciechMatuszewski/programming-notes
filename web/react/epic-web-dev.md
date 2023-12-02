@@ -258,3 +258,59 @@
 - The _seed_ script should be idempotent. I've been in situations where that is not the case, and it was a bit of a pain.
 
   - In addition, Kent ensures that the data is really unique across the whole script lifetime (by creating _unique value enforcer_). Pretty good practice!
+
+- Prisma will, by default, use _lazy initialization_ and connect to the database upon first request to the database. This might be something you do not want to do. If you want to connect eagerly, call the `$connect` method yourself.
+
+- Kent uses a `singleton` function to make the Prisma client a singleton. Not strictly necessary on production, **but very handy during development where HMR will re-require the files. If the Prisma client is not a singleton, you will end up with multiple instances of the client!**
+
+- Nested queries (with the `select` keyword) are pretty awesome.
+
+  ```js
+  prisma.user.findUnique({
+    where: {
+      username: params.username,
+    },
+    select: {
+      name: true,
+      notes: { select: { id: true } }, // nested query
+    },
+  });
+  ```
+
+  Having said that, just like in GraphQL, there is a danger that nesting too many levels will cause the query performance to drop. Internally Prisma is doing joins and joins consume CPU and memory.
+
+- Prisma also has a "nested updates" API. The API is just as, if not more, powerful as the nested queries one.
+
+  ```js
+  await prisma.note.update({
+    select: { id: true },
+    where: { id: params.noteId },
+    data: {
+      title,
+      content,
+      images: {
+        deleteMany: {
+          id: { notIn: imageUpdates.map((i) => i.id) },
+        },
+        create: newImages.map((newImage) => {
+          return { ...newImage };
+        }),
+        updateMany: imageUpdates.map((imageUpdate) => {
+          return {
+            where: {
+              id: imageUpdate.id,
+            },
+            data: {
+              ...imageUpdate,
+              id: imageUpdate.blob ? cuid() : imageUpdate.id,
+            },
+          };
+        }),
+      },
+    },
+  });
+  ```
+
+  This will create necessary transactions and updates. Of course, it would be wise to see what kind of queries prisma executes.
+
+Finished: Query optimization
