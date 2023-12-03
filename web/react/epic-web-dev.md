@@ -370,3 +370,15 @@
 - Consider adding indexes on non-unique foreign keys.
 
 ## Web Auth
+
+- **For authentication purposes, strongly consider using cookies instead of `localStorage`**. There are several problems with `localStorage`.
+
+  1. It is not accessible on the server. This means that the initial render of the page has to be either a loading spinner, or a very generic shell which then updates to reflect the signed-in user. Both options are not that great.
+
+  2. It is accessible by extensions and scripts. Image a malicious extension/script which steals the user data. Not fun.
+
+  There are probably more, but those came to my mind first. As you can see, the **security aspect of `localStorage` is not that great**.
+
+- I wonder what is the story behind authorization in loaders/actions.
+
+  - Since each loader/action is like a separate API endpoint, having authorization piece before request makes it to those functions seems crucial to me.
