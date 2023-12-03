@@ -92,6 +92,12 @@
 
 - Kent mentions a term I was not familiar with – the **_Splat route_**. The _splat route_ is a _wildcard route_. It sounds kind of cool!
 
+### Wrapping up
+
+- Use the `type="reset"` on the button to implement "reset" functionality. This blew my mind. So simple, yet I think not so many people know this.
+
+- Single-element forms with buttons are a good idea.
+
 ## Web Forms
 
 - Kent uses the `noValidate` attribute on the form and relies on the server-side validation.
@@ -201,6 +207,22 @@
     - **If you do not specify the `expires` when creating the cookie, the browser will make this cookie a _session cookie_**. This means it will expire as soon as user session ends.
 
   - You might think that CORS would be enough to protect against CSRF. That is not the case, as some requests are so-called _simple request_ that do not require the preflight requests. As such, even if you have very narrow CORS headers, an attacker might still be able to send a request to your backend from different domain.
+
+### Wrapping up
+
+- It looks to me that using `noValidate` but still providing those HTML-based validation attributes is the way to go. It makes sense as it allows assistive technologies to read out validation spec for the end user, while also allowing us to have our custom "look and feel" for error messages.
+
+  - You can even go further and add it only when React hydrated the page.
+
+- To properly associate the HTML input element with an error message, use the `aria-describedby="some_id"` and `aria-invalid={true}`.
+
+- First time seeing the concept of a _honeypot_ in action. Very useful pattern.
+
+- The CSRF token makes sense. It prevents an attacker _forging_ a request to our site from a 3rd party domain.
+
+  - Keep in mind that CORS is not enough here. Some request might classify as "simple request". For those, the browser will not send the OPTIONS (preflight) request.
+
+  - Encrypting the CSRF token is a very good idea.
 
 ## Data Modeling Deep Dive
 
@@ -336,3 +358,15 @@
       Without indexes, the database would have to create a temporary B-TREE structure for the `ORDER BY` clause. **If you add an index for (`ownerId`,`updatedAt`) the database will use the index for the `ORDER BY` clause**. If I were to reverse the order of columns, the database would not be able to use the index for the `ORDER BY` clause, as **the leading column is not used in the `WHERE` clause**.
 
       A good metaphor here is a set of folders. First, you want to go into a folder for a given `ownerId`, then see the first folder in that folder (folders are already sorted since we have an index on `updatedAt`).
+
+### Wrapping up
+
+- While using the `$transaction` API in Prisma is a valid choice, consider nesting the operations. This way prisma will take care of the transactions for you.
+
+- Do not be afraid of writing manual SQL. Sometimes it is necessary.
+
+- Monitoring the queries speed is important. Without it, you would not be able to know if a certain query is slow.
+
+- Consider adding indexes on non-unique foreign keys.
+
+## Web Auth
