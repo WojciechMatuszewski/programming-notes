@@ -313,4 +313,26 @@
 
   This will create necessary transactions and updates. Of course, it would be wise to see what kind of queries prisma executes.
 
-Finished: Query optimization
+- Some databases will automatically add an index for non-unique foreign keys. Some will not.
+
+  - If adding such index would be beneficial to your application performance, use the `@@index` keyword in the Prisma DSL.
+
+  - **To know if adding an index is a good idea, use the `EXPLAIN QUERY PLAN` command to see if the database is scanning without an index**. If that is the case, adding index on the column you are filtering/ordering by would make a lot of sense.
+
+- You might want to consider adding **multi-column indexes to speed up your queries as well**.
+
+  - There is an **important thing to consider: the order in which the columns are defined in the index matters!**
+
+    - Consider the following query
+
+      ```sql
+        SELECT Note.updatedAt
+        FROM Note
+        WHERE Note.ownerId = user.id
+        ORDER BY Note.updatedAt DESC
+        LIMIT 1
+      ```
+
+      Without indexes, the database would have to create a temporary B-TREE structure for the `ORDER BY` clause. **If you add an index for (`ownerId`,`updatedAt`) the database will use the index for the `ORDER BY` clause**. If I were to reverse the order of columns, the database would not be able to use the index for the `ORDER BY` clause, as **the leading column is not used in the `WHERE` clause**.
+
+      A good metaphor here is a set of folders. First, you want to go into a folder for a given `ownerId`, then see the first folder in that folder (folders are already sorted since we have an index on `updatedAt`).
