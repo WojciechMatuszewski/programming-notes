@@ -639,5 +639,3 @@ async function myInlineServerAction(userId: string) {
   ```
 
   Now, if someone tries to use the file with `server-only` import outside of the `react-server` "condition" (check out the `--conditions` Node.js flag), the bundler will throw an error! Pretty smart.
-
-https://youtu.be/veKm9MDVVg8?t=9728

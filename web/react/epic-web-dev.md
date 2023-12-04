@@ -382,3 +382,23 @@
 - I wonder what is the story behind authorization in loaders/actions.
 
   - Since each loader/action is like a separate API endpoint, having authorization piece before request makes it to those functions seems crucial to me.
+
+- Kent implements the _theme switch_ by sending a request to a backend and returning a response with a specific `set-cookie` header.
+
+  - Very good idea. Holding the theme in the cookie means that the page already has the necessary classes when it is rendered as the theme is available during SSR.
+
+    - **In Next.js accessing the cookie in RSC will make the whole page dynamic. This might not be what you want**.
+
+  - To add the _system preferences default_ one has to inject a little script into the `head` of the document that checks the preferences and sets the necessary attributes on the HTML. This is pretty much a standard way of doing the dark-mode toggle without the flash of white/dark theme.
+
+- Kent shows how to implement **_cookie flash pattern_** (it has nothing to do with Adobe Flash) for displaying a notification for the user when they delete a note. **First time hearing about this pattern**.
+
+  - When user deletes a note, we want to redirect him to the "notes list" page and display a toast that the note was deleted. **We keep the state of the toast in a cookie scoped to user session**.
+
+    - Alternatives would be a bit harder to implement. It boils down to moving the state from the server to the client that works across different pages and, in the `remix` case, loaders. Cookies are an ideal mechanism for this!
+
+  - **When we read the cookie in the loader, we also unset it, so that the toast only shows once**.
+
+  - The name "flash" comes from the fact that we are using this cookie once to, supposedly, display some kind of information. After that's done, the cookie is no longer of use for us.
+
+Next: start user session module (20)
