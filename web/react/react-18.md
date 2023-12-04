@@ -174,6 +174,58 @@ To understand how `useDeferredValue` works, we must understand one of the follow
 
 I think [this GitHub comment](https://github.com/reactwg/react-18/discussions/129#discussioncomment-2440646) is the best explanation of this feature one can ever get.
 
+## `flushSync` (from `react-dom`)
+
+Most of the `setState` calls are queued. For example
+
+```jsx
+<button
+  onClick={() => {
+    setName("foo");
+    setNumber(1);
+  }}
+>
+  Click me
+</button>
+```
+
+The two `setXX` calls in the `onClick` handler will be queued together and processed together resulting in only one re-render pass. **While this behavior is mostly what you want, sometimes it makes certain things hard to do. One of them being focus management**.
+
+Imagine a scenario where you are flipping between `input` and a `button`. You want to focus the input when you click the button and vice-versa. **However, you do not want to focus the button when the `blur` event fires on the `input`**. This could be achieve by adding additional state to the application. You would track the _last action_ and then in `layoutEffect` conditionally call the `.focus` on the right element reference.
+
+Would it be nice to get rid of the `layoutEffect` altogether? We have to use it, because the changes to `setEditing(true/false)` are reflected asynchronously.
+
+```jsx
+<button
+  onClick={() => {
+    setEditing(true);
+    // You cannot call the `focus` here as the UI has not been updated yet.
+  }}
+>
+  Edit
+</button>
+```
+
+**The `flushSync` API allows us to achieve just that**. If we wrap the `setEditing` in the `flushSync`, we tell React to **update the UI synchronously**.
+
+```jsx
+<button
+  onClick={() => {
+    flushSync(() => {
+      setEditing(true);
+    });
+    // You CAN call the `focus` here. The UI was updated.
+    inputRef.current.focus();
+  }}
+>
+  Edit
+</button>
+```
+
+**Wrapping state updates within `flushSync` is a _deoptimization_**. Since the update cannot be interrupted as it is synchronous, **React will not perform transitions**. In most cases that is a big deal, but **it is completely fine if the state update only affects a small portion of the tree**. In our case, we only are flipping between an `input` and a `button` HTML tags so the _deoptimization_ introduced by `flushSync` is not a big deal.
+
+Check out [this great tweet explaining the API based on the example I alluded to above](https://twitter.com/ryanflorence/status/1722358755499913582).
+
 ## `useSyncExternalStore`
 
 It seems like the `useSyncExternalStore` is meant to be a drop-in replacement for _subscription-like_ hooks. The idea is to make sure tearing never happens. Let us write `useIntervalHook` that utilizes the `useSyncExternalStore`.
