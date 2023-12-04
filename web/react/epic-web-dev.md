@@ -422,3 +422,4 @@
     ```
 
 Now: Login (36)
+Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
