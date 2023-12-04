@@ -1,5 +1,72 @@
 # CSS
 
+## The `height: 100%` does not work!
+
+How many times have you written the following snippet of CSS only to realize it is not doing what you expect.
+
+```css
+.some-class {
+  height: 100%;
+}
+```
+
+Especially, in the case where you want to style some kind of "main" container
+
+```html
+<html>
+  <head>
+    <style>
+      main {
+        /* does not work! */
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>content</main>
+  </body>
+</html>
+```
+
+In retrospective, in almost all cases I can think of, it was the `height` that did not do what I was expecting it would do, and not the `width`. Why is that? **It has to do how browsers calculate the `height` and `width`**.
+
+> [Check out this great video for a full explanation](https://youtu.be/Xt1Cw4qM3Ec?t=736)
+
+- To calculate the `width` browsers look at the parent of a given element. This is recursive. The last parent is the `html` element that has the default width of the document.
+
+- To calculate the `height` browsers look at the **children of a given element**. This "looking at the children" can create recursive conditions that render the `height: 100%` useless.
+
+If we apply this logic to our example, we can see why the `height: 100%` is not working.
+
+1. The `main` wants to be `height: 100%` of its parent.
+2. The parent of `main` (the `body`) asks `main` how tall is it.
+3. The `main` answers that it wants to be `height: 100%` of its parent.
+4. And so on...
+
+To break this recursive chain, one has to specify the height on the `html` and the `body`.
+
+```html
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      main {
+        /* works as expected */
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>content</main>
+  </body>
+</html>
+```
+
+Now, the `body` can ask the `html` about the `height` and answer the question from `main`. Remember that the `html` has the height of a document (implied height of the screen).
+
 ## Spacing
 
 Instead of trying to memorize the order of the sides in the `padding` or `margin` properties, use **`padding-inline` (left-right) and `padding-block` (top-down)**. The same applies to margins. One has to swap the `padding` for margin.
@@ -191,16 +258,24 @@ would be too good to be true. **Support for this is quite meh**.
 
 The `:is` and `:where` selectors are used to eliminating repetition that sometimes you have to deal with when selecting multiple children of a given element.
 
-  ```css
-  :is(article) h2,h3,h4,h5,h6 {
-    color: var(--fire-red)
-  }
+```css
+:is(article) h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--fire-red);
+}
 
-  // the same as \/
-  article h2, article h3, article h4, article h5, article h6 {
-    color:var(--fire-red)
-  }
-  ```
+// the same as \/
+article h2,
+article h3,
+article h4,
+article h5,
+article h6 {
+  color: var(--fire-red);
+}
+```
 
 The only difference between the `:is` and `:where` selectors is the specificity. The **`:where` selector has a specificity of 0, whereas the `:is` adheres to the regular specificity rules of selectors**.
 
@@ -210,15 +285,15 @@ The `:has` selector enables you to **style the parent based on it's the children
 
 The following is an example of the `:has` selector where we specify the number of columns based on the list items.
 
-  ```css
-  ul:has(li:nth-child(6)) {
-    columns: 2;
-  }
+```css
+ul:has(li:nth-child(6)) {
+  columns: 2;
+}
 
-  ul:has(li:nth-child(11)) {
-    columns: 3;
-  }
-  ```
+ul:has(li:nth-child(11)) {
+  columns: 3;
+}
+```
 
 Pretty amazing stuff.
 
@@ -234,9 +309,9 @@ Did you notice that, if you click a link, the focus outline is not there? **But 
 Well supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators and spaces.
 
 ```css
-element:not(img); /*ok*/
-div:not(.someClass); /*can be also an id*/
-div:not(ul li); /*will not work, there is a space, it's not a simple selector*/
+element: not(img); /*ok*/
+div: not(.someClass); /*can be also an id*/
+div: not(ul li); /*will not work, there is a space, it's not a simple selector*/
 ```
 
 #### Using the `:not` with elements that DO NOT contain certain properties
@@ -361,7 +436,7 @@ Why should you bother? **There are at least two big reasons**.
 1. **Using logical properties are named after the box model**. This makes the code more consistent.
 
 2. **Using logical properties gives you the support for different writing modes by default**. Some languages read left to right or in other direction.
-  Luckily for us, the browser will handle other writing modes automatically for us if we use logical properties.
+   Luckily for us, the browser will handle other writing modes automatically for us if we use logical properties.
 
 Even if you do not have a requirement for page translation now, consider how many people use the translate plugin available in the browsers. I know you had used it at least once!
 
@@ -477,7 +552,7 @@ To make this code work, we would have to change where the computation happens.
 }
 
 .font-large {
-  --font-size-adjust: 2.5
+  --font-size-adjust: 2.5;
 }
 ```
 
@@ -535,7 +610,7 @@ You can toggle the "toggler" using _media queries_.
   height: 50px;
 }
 
-@media(max-width: 600px) {
+@media (max-width: 600px) {
   .box {
     --toggler: ;
   }
@@ -777,16 +852,14 @@ The syntax is very familiar. One addition is that you have to "name" your contai
 The `display: contents` will make it so that the **element will not generate any box, as such the children will be treated as if it did not exist in terms of layout**.
 
 ```html
-
-<div style = "display: flex">
+<div style="display: flex">
   <!-- As if this div \/ did not exist from the layout perspective -->
-  <div style = "display: contents;">
-  <!-- The children are subject to the flex algorithm -->
+  <div style="display: contents;">
+    <!-- The children are subject to the flex algorithm -->
     <span>foo</span>
     <span>bar</span>
   </div>
 </div>
-
 ```
 
 - The colors and fonts inherit from the `display: contents` parent.

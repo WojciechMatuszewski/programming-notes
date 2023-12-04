@@ -220,7 +220,7 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 
   - This allows you to provide a margins and other properties to the element, but still have it flow _inline_.
 
-  - Keep in mind that **`inline-block` elements do not wrap**.
+  - Keep in mind that **`inline-block` elements do not wrap**. **The ability to wrap without any additional CSS is unique to `inline` elements**.
 
 #### Width Algorithms
 
