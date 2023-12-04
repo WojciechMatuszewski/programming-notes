@@ -371,6 +371,41 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 - Note that **other CSS properties also implicitly create stacking context**. [View the list on MDN here](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Understanding_z-index/Stacking_context#description).
 
+- **Think of the stacking context and `z-index` as versioning scheme**. Check this out
+
+```html
+<style>
+  header,
+  main,
+  .tooltip {
+    /* Needed for the layout to switch from the "flow" to "positioned". "flow" layout does not implement `z-index` */
+    position: relative;
+  }
+
+  header {
+    z-index: 2;
+  }
+
+  main {
+    z-index: 1;
+  }
+
+  .tooltip {
+    z-index: 9999;
+  }
+</style>
+
+<!-- Version 2.0 -->
+<header></header>
+<!-- Version 1.0 -->
+<main>
+  <!-- Version 1.9999 It cannot possibly go higher than 2 -->
+  <div class="tooltip">tooltip</div>
+</main>
+```
+
+> Check out [this talk for more information](https://youtu.be/Xt1Cw4qM3Ec?t=1696).
+
 ### Fixed positioning
 
 - The `position: fixed` declaration makes the element **behave as if `absolute` but it will also follow you when you scroll**.
