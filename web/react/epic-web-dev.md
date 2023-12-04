@@ -401,4 +401,24 @@
 
   - The name "flash" comes from the fact that we are using this cookie once to, supposedly, display some kind of information. After that's done, the cookie is no longer of use for us.
 
-Next: start user session module (20)
+- A few recommendations regarding passwords that Kent made (I'm still not convinced about implementing the auth myself, but I think the concepts in this sections are pretty interesting and worth knowing, especially the knowledge around cookies).
+
+  - Do not encrypt passwords. The encryption key might get lost. Instead hash the passwords with a strong hashing algorithm. You should also add salt for each hashing call you perform.
+
+  - Do not store passwords on the same table you store other user data. Moving the passwords to a separate database makes it less likely for someone to accidentally send that data to the frontend when they should not have.
+
+  - Of course, this is a tip of the iceberg. **I still think that creating a custom auth implementation is not a good idea**.
+
+- The `zod` `refine` or `superRefine` transformations are pretty handy when dealing with authentication stuff.
+
+  - In our case, we first check if the form data matches the schema, then we use `superRefine` to verify that the `username` is not taken, and then use the `transform` function to create the user and return the data.
+
+    ```js
+    SignupFormSchema.superRefine(async (data, ctx) => {
+      // validate that the user does not exist
+    }).transform(async (data) => {
+      // create the user and return
+    });
+    ```
+
+Now: Login (36)
