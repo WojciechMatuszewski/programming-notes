@@ -421,5 +421,15 @@
     });
     ```
 
-Now: Login (36)
+- To unset a given cookie, `remix` sets the `expires` attribute to time in the past.
+
+- Creating "authenticated" and "non authenticated" routes requires us to add more code into the _loaders_ and _actions_.
+
+  - While this works, I wonder if there is a better way to do it. I can encapsulate that logic within a function, but it would be nice to have it in one single place. Maybe doing that work in root loader would be a better idea?
+
+    - Sadly [this does not seem to be possible](https://remix.run/docs/en/main/guides/faq#how-can-i-have-a-parent-route-loader-validate-the-user-and-protect-all-child-routes).
+
+- Kent mentions very important detail when implementing the "redirectTo" search param functionality. **Main, you should not trust this param – you should check if it starts with `/`**. Otherwise you risk a malicious actor crafting a specific URL that redirects the user to a 3rd party domain. This would enable the attacker to steal the users credentials.
+
+Now: Permissions (64)
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
