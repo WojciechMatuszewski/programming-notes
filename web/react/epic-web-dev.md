@@ -431,5 +431,21 @@
 
 - Kent mentions very important detail when implementing the "redirectTo" search param functionality. **Main, you should not trust this param – you should check if it starts with `/`**. Otherwise you risk a malicious actor crafting a specific URL that redirects the user to a 3rd party domain. This would enable the attacker to steal the users credentials.
 
-Now: Permissions (64)
+- While preparing the codebase for the roles and permissions related features, I had to manually update the migration script to "pre seed" the database so that the roles and permissions are already there when application starts up.
+
+  - This could also have been done with some kind of script running on CI before we deploy the application to production.
+
+- Something that I've noticed is that the `loader` and `action` functions code tend to grow quite fast, even if you abstract the blocks of inner logic to separate functions.
+
+- In one of the modules, we have switched from purely cookie-managed sessions, to a combination of a database and cookie-managed sessions.
+
+  - The main benefit of this approach is that **each "sign in" has its own session record in the database. If we delete that record, we will effectively log the user out**.
+
+  - This was not possible with purely cookie-managed solution as we did not have a way to indicate that a given cookie should be considered "expired" before it `expires` property.
+
+    - Instead of holding the `userId` in the cookie, we now hold the `sessionId` instead.
+
+  - The **main drawback** is that some operations, like logging in or logging out now take more time. I think this is a fair price to pay, as users do not necessarily expect the login process to be super quick.
+
+Now: Email (82)
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
