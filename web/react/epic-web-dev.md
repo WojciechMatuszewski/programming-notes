@@ -421,6 +421,8 @@
     });
     ```
 
+    **The `transform` API allows you to validate and return data in a single pass. You cannot do that with `superRefine`**.
+
 - To unset a given cookie, `remix` sets the `expires` attribute to time in the past.
 
 - Creating "authenticated" and "non authenticated" routes requires us to add more code into the _loaders_ and _actions_.
@@ -447,5 +449,42 @@
 
   - The **main drawback** is that some operations, like logging in or logging out now take more time. I think this is a fair price to pay, as users do not necessarily expect the login process to be super quick.
 
-Now: Email (82)
+- One pattern that I really like, is the **usage of `zod` for checking if `.env` variables exists and inferring the type of the `.env` schema**.
+
+  - I usually write those types by hand, but I think I will start using `zod` or any kind of validation library for this, just like Kent does it.
+
+  ```ts
+  const schema = z.object({
+    NODE_ENV: z.enum(["production", "development", "test"] as const),
+    SESSION_SECRET: z.string(),
+    HONEYPOT_SECRET: z.string(),
+    RESEND_API_KEY: z.string(),
+  });
+
+  declare global {
+    namespace NodeJS {
+      interface ProcessEnv extends z.infer<typeof schema> {}
+    }
+  }
+  ```
+
+- The **`fetch` API will throw when there is some kind of network issue, and will return successfully with `ok=false` if the status code is 4xx or 5xx**
+
+  - Always worth keeping in mind. This got me so many times!
+
+- Kent uses the [`close-with-grace` package](https://www.npmjs.com/package/close-with-grace). Pretty neat library.
+
+- Kent uses cookies to communicate between different pages.
+
+  - The flow is as follows: first the user provides the email, then they are redirected to the onboarding flow. Doing this with state might be tricky as we want to keep the user on that onboarding route even if they refresh the page!
+
+  - Seeing how Kent uses cookies, I have to say I've been underusing that API.
+
+- In the TOTP (_time-based one time password_) flow, Kent decided to automatically verify the user if they land on the `/verify` page with certain set of query params. **This this approach sounds nice, it has drawbacks which Kent also mentioned**.
+
+  - For one, **some email clients might "click" the links to check for viruses and spam**. If that is the case, it would not be the user who verifies the email, but a bot. If user were to try to click that link, they would land on a page with an error because the verification was already deleted from the DB.
+
+  - This "automatic" verification might be confusing for users. If I get an email regarding verification, I would expect to land on some kind of "verification page" with the form pre-filled. If we redirect the users automatically, they might be confused about what just happened (at first I was confused as well!)
+
+Now: Change email (106)
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
