@@ -237,3 +237,15 @@ Have you ever coded for work during the weekend without anyone asking you to do 
 Contrast this with the dynamics of the _sense of urgency_. Your boss asked you to code during the weekend. Because you do not know WHY the deadline is so tight weekend coding is required, you are not looking forward to sacrificing your weekend for job-related stuff (why should I do X when I could spend my time doing Y?). **Now you rush to implement what you have been asked to do and deliver the feature. Since you rushed, you made some shortcuts**. In addition, your boss is probably micromanaging you ensuring that you actually work during the weekend. Not a fun experience.
 
 **Always create a _sense of purpose_ (ensure engineers and you know the WHY)**. Skip deadlines that seem arbitrary, always ask the WHY question until.
+
+## On the separation between the design and web teams
+
+Have you ever worked in environment where the "design team" handed off designs to the "web team"? That how it works in most organizations. I'm not saying this way of working is good or bad (in fact, I quite enjoy this dynamic), but **what is important is how the "design team" and "web team" cooperate together**.
+
+Imagine a scenario where the "design team" literally hands-off ready set of mockups to the "web team". There were no consultations made. The process of creating the designs was purely on the "design team" side. How does that feel to you as a member of the "web team"? Do you feel like you have a say in the products direction? Not really, right? This dynamic between two teams is dysfunctional as the **"design team" cannot be solely responsible for the UI mockups. It is the user requirement that should drive the UI, not the other way around**.
+
+Let us reverse this scenario. Imagine a world where you, as a member of the "web team", implement the 80% of the UI – the common stuff. You do this without bothering the "design team". You can do that since you understand what you are working on. You have enough domain knowledge to decide what would "feel right" for the user (of course you might be wrong, but that is not the point). Of course you do not work within a silo. You "work in public", you notify people who might be interested in your progress, you listen and gather feedback.
+
+Now, when that tricky 20% of UI design work comes, you lean heavily on the "design team" **while trying to learn their process as well!**. In the end, you should learn how the "design team" operates, what tools they use and learn to use those tools as well!
+
+**The UI work is just as collaborative as any. Remember that it is the requirement that should drive the UI look and feel, not the other way around**.
