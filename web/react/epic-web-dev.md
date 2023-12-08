@@ -486,5 +486,14 @@
 
   - This "automatic" verification might be confusing for users. If I get an email regarding verification, I would expect to land on some kind of "verification page" with the form pre-filled. If we redirect the users automatically, they might be confused about what just happened (at first I was confused as well!)
 
-Now: Change email (106)
+- When working with images or blobs of data, sometimes you see them encoded as _Data URLs_. For example, a _data url_ for an image could look like this
+
+  ```text
+    data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOQAAADkCAYAAACIV4iNAAAAAklEQVR4AewaftIAAAxnSURBVO3BQY4cy5LAQDLR978yR0tfBZCoaineHzezP1hrXeFhrXWNh7XWNR7WWtd4WGtd42GtdY2HtdY1HtZa13hYa13jYa11jYe11jUe1lrXeFhrXeNhrXWNh7XWNR7WWtf44UMqf1PFicpUcaJyUvGbVKaKm6icVEwqU8Wk8kbFicpUMan8TRWfeFhrXeNhrXWNh7XWNX74sopvUvkmlZOKSWWq+ITKicpJxYnKVDGpTBWTyknFScVJxaRyovJNFd+k8k0Pa61rPKy1rvGw1rrGD79M5Y2KN1SmikllqphUJpWpYlKZKiaVNyreUPkmlZOKSeWkYlJ5o+JE5ZtU3qj4TQ9rrWs8rLWu8bDWusYP60jljYoTlROVqWKqmFSmit9UMalMKlPFicqkMlWcVPwveVhrXeNhrXWNh7XWNX74H6PyRsWJylQxqUwVJxUnFZPKGyrfpPJGxW+q+F/2sNa6xsNa6xoPa61r/PDLKv5LVKaKk4pJ5Y2KSeWk4g2VqWJSOamYVKaKSeWkYqqYVCaVqeKbKm7ysNa6xsNa6xoPa61r/PBlKv9SxaRyojJVTCpTxaQyVUwqU8WkMlVMKicqU8UnKiaVqWJSmSomlROVqWJSOVGZKk5Ubvaw1rrGw1rrGg9rrWv88KGKm6icqEwVk8qJyonKGxWfqPhExRsqn1CZKk4qPlHxX/Kw1rrGw1rrGg9rrWv88CGVqWJS+aaKqeJE5TdVTCpTxaRyUnGi8ptUTireqDhR+UTFico3Vfymh7XWNR7WWtd4WGtd44d/rGJSmSpOVKaKqeJE5RMqJypTxYnKVDGpnFR8omJSOVE5qfhExaQyqUwVb1Tc5GGtdY2HtdY1HtZa17A/+CKVqWJSmSomlTcq3lB5o+INlaniRGWqmFSmiknlmypOVKaKSeUTFZPKJypOVL6p4hMPa61rPKy1rvGw1rqG/cEvUvlExYnKScWkclIxqUwVk8pUMalMFZPKScWk8kbFicpU8YbKGxXfpPKbKk5UpopPPKy1rvGw1rrGw1rrGj98mcpU8YbKpDJVTBWTyhsVb6hMFScVJxUnKlPFJ1SmiknljYpJZaqYVE4qJpWpYqo4UZkq3lCZKn7Tw1rrGg9rrWs8rLWu8cOHVKaKSWWqmFSmir9J5aTiEypvVLyhclIxVZxUTCpTxTdVvKEyVUwqb6i8oTJVfNPDWusaD2utazysta7xwz9WcaIyVUwqb1R8QuWkYqo4UZlU3qiYVCaVk4pJZao4UZkqPqEyVUwqk8pUcaIyVZyonKhMFZ94WGtd42GtdY2HtdY17A/+IZWTikllqphUTipOVKaKE5WpYlJ5o2JSOak4UTmpmFSmik [... MORE STUFF]
+  ```
+
+  In our case, we encode the QRCode image to a _data url_. Then we send that _data url_ to the frontend.
+  You [can read more about data urls here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs).
+
+Now: Disable Two Factor Auth (126)
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
