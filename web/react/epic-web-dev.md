@@ -526,5 +526,15 @@
 
     **This works because the `sessionStorage` is a singleton**. One could also use the `new Proxy` API here.
 
-Now: OAuth (136)
+- The implementation of the OAuth flow for Github was pretty straightforward.
+
+  - To ensure our application could work offline, we did mock some of the internals of the library we are using when the environment variables start with a certain string. In our case, they had to start with `MOCK_`
+
+    - While the written mocks rely on the internal logic of the library (as only HTTP calls are mocked), I think it is a good idea.
+
+      - Keep in mind that we only mock the APIs when the environment variables start with `MOCK_`. This gives us freedom to isolate set of e2e tests to test the real thing and not bother in others.
+
+      - One could argue that it is not worth mocking. I would also agree. It all depends on the team you are working on and how much "offline-first" development minded others are.
+
+Now: Connection Errors (146)
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
