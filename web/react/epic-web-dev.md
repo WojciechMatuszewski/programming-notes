@@ -495,5 +495,36 @@
   In our case, we encode the QRCode image to a _data url_. Then we send that _data url_ to the frontend.
   You [can read more about data urls here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs).
 
-Now: Disable Two Factor Auth (126)
+- **Every time you _commit_ the session, you have to specify when it expires**. If you do not, the default will apply. The default is to have the cookie live only till the end of user session.
+
+  - To "fix" this issue, in one of the exercises, we had to monkey-patch the `commitSession` API. We did this via the `Object.defineProperty`
+
+    ```js
+    const originalCommitSession = sessionStorage.commitSession;
+    Object.defineProperty(sessionStorage, "commitSession", {
+      value: async (...args: Parameters<typeof originalCommitSession>) => {
+        const [session, options] = args;
+
+        if (options?.expires) {
+          session.set("expires", options.expires);
+        }
+
+        if (options?.maxAge) {
+          const expiresAt = new Date(Date.now() + options.maxAge * 1_000);
+          session.set("expires", expiresAt);
+        }
+
+        // We either set it prior, or the cookie already had the `expires` or it is a "session" cookie.
+        const expires = session.get("expires");
+        return await originalCommitSession(session, {
+          ...options,
+          expires,
+        });
+      },
+    });
+    ```
+
+    **This works because the `sessionStorage` is a singleton**. One could also use the `new Proxy` API here.
+
+Now: OAuth (136)
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
