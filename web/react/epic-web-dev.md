@@ -536,5 +536,44 @@
 
       - One could argue that it is not worth mocking. I would also agree. It all depends on the team you are working on and how much "offline-first" development minded others are.
 
-Now: Connection Errors (146)
+- There are a lot of edge cases to think about when creating a "login with..." feature.
+
+  - What if the user clicks "login with..." and the email the provider account is associated with already exists in our database?
+
+    - We should create a "connection" for the user and let them in.
+
+  - What if the user tries to add 3rd party connection and the email the provider account is associated with another user?
+
+    - We should display a rather vague error.
+
+### Wrapping up
+
+- **Cookies are not only for auth-related state**. We heavily utilized cookies for `redirectTo` parameters.
+
+  - In fact, cookies were an ideal mechanism for this, as they enabled us to share state in-between routes.
+
+  - **When implementing the `redirectTo` feature you should not trust the value of that param. Always sanitize/validate it**. You would not want an attacker crafting URL with `redirectTo` to some kind of 3rd party domain.
+
+- The **_cookie flash_ pattern** is very useful.
+
+  - First, at the root of your application, you set code that reads the cookie that contains "toast payload" (if it exists of course).
+
+    - After getting that information from the cookie, you want to destroy that cookie so that the user does not see the toast multiple times when they refresh the page.
+
+  - Then you pass that information to React, displaying the toast if the payload is defined.
+
+  - Now, in whatever route you want, you set the "toast payload" and redirect the user.
+
+    - When user lands on a given page, a toast is displayed. **This is, IMHO, much better than using URL for the toast state. Using the URL would pollute the URL and make it less readable**.
+
+- Implementing the QRcode and one-time-password is not that scary.
+
+  - Sure, it involves a lot of work, but it is not that super complex.
+
+- The OAuth spec is quite complex. You would be better off using a library for the redirect dance that has to occur.
+
+- You can monkey-patch objects via the `Object.defineProperty`.
+
+- Creating separate models for passwords, connections and verifications (one-time password prompt) is a good idea.
+
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
