@@ -576,4 +576,62 @@
 
 - Creating separate models for passwords, connections and verifications (one-time password prompt) is a good idea.
 
+## Web Application Testing
+
+- **I cannot stress enough how handy is the _accessibility_ view for a given element in the dev tools**.
+
+  - How many times have you written the `getByRole` query only to realize it does not select the element you want? In most cases, this was because I provided wrong _role_ parameter.
+
+    - The _accessibility_ tab displays the _role_ and much more information about a given DOM node.
+
+- Fixtures allow you to create temporary resources to be used in the test. I like them better than using the `beforeEach` and `afterEach` hooks for creating the resources as you do not have to create "temporary" variables.
+
+  ```ts
+  const test = base.extend<{
+    insertNewUser(): Promise<{
+      id: string;
+      name: string | null;
+      username: string;
+    }>;
+  }>({
+    insertNewUser: async ({}, runTheTest) => {
+      const userData = createUser();
+
+      await runTheTest(async () => {
+        const newUser = await prisma.user.create({
+          data: userData,
+          select: { id: true, name: true, username: true },
+        });
+        return newUser;
+      });
+
+      await prisma.user.deleteMany({ where: { username: userData.username } });
+    },
+  });
+
+  const expect = test.expect;
+  ```
+
+  Contrast this with the `beforeEach` and `afterEach`
+
+  ```ts
+    let user;
+
+    beforeEach(async () => {
+      user = ...
+    })
+
+    afterEach(async () => {
+      if (user) {
+        await deleteUser(user)
+      }
+    })
+  ```
+
+- To communicate between different processes, Kent uses the file system.
+
+  - The process A writes to the file system.
+
+  - The process B (_Playwright_) reads from the file system.
+
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
