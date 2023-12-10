@@ -634,4 +634,79 @@
 
   - The process B (_Playwright_) reads from the file system.
 
+- It is **imperative to keep the stdout/stderr clean while running tests**.
+
+  - Kent mentions how hard it was to develop tests while working in a codebase where running them polluted the logs. I can definitely relate.
+
+    - Apart from the difficult of adding new tests, having **unnecessary** logs in the test output is pretty demoralizing. I find it works on the same basis as the famous "broken window" – since one is broken, why not break another and another. With that mindset you end up in a codebase where nobody cares about having clean test logs.
+
+  - For logs in particular, you might want to use spies for the console. **Make sure to reset the spy after you assert on it**.
+
+    - The resetting part is most likely best done in various before/after hooks the testing library you use provides.
+
+    ```ts
+    // You probably want all this code in some kind of setup file.
+    const originalConsoleError = console.error;
+    let consoleError: SpyInstance<Parameters<typeof console.error>>;
+
+    beforeEach(() => {
+      consoleError = vi
+        .spyOn(console, "error")
+        .mockImplementation((...args) => {
+          originalConsoleError(...args);
+          // This will cause the test to fail if one does not mock the error.
+          throw new Error(
+            "`console.error` called. If you expect this to happen, mock the console.error"
+          );
+        });
+    });
+
+    // The vitest and jest can automatically restore mocks so we do not have to call `mockRestore` here.
+    afterEach(() => {});
+    ```
+
+- In the section about _component testing_ Kent mentions three kind of users
+
+  1. The end user
+  2. The developer user
+  3. The "test user"
+
+  **You want to avoid testing like "test user" would use your app**. Who is the "test user"? The "test user" is knowledgeable about the internals of the components of your app. **If you test like "test user" you start to test implementation details end users do not care about**. This is a bad place to be since **it is the end users who are brining the money, not the "test user"**.
+
+  Note on the _developer user_. Those users are also very important. Here, we ensure that the components are easy to use. If they are, other developers are more likely to ship faster.
+
+- Testing react hooks in isolation has many benefits, especially if those hooks are critical to your app functionality. But there is also a drawback – **testing react hooks in isolation facilities testing implementation details**.
+
+  - As discussed earlier, testing implementation details, in most cases, is not ideal. Of course, sometimes that is the right thing to do.
+
+  - Kent proposes an alternative – a **concept called _a test component_**. So instead of testing the hook itself, you create a "stub" component which uses the hook API. Think of it as writing a "story", but not for a component, but rather for the hook.
+
+  ```tsx
+  function TestComponent() {
+    const [defaultPrevented, setDefaultPrevented] = useState<
+      "idle" | "no" | "yes"
+    >("idle");
+
+    const dc = useDoubleCheck();
+
+    return (
+      <div>
+        <output>Default Prevented: {defaultPrevented}</output>
+        <button
+          {...dc.getButtonProps({
+            onClick: (e) =>
+              setDefaultPrevented(e.defaultPrevented ? "yes" : "no"),
+          })}
+        >
+          {dc.doubleCheck ? "You sure?" : "Click me"}
+        </button>
+      </div>
+    );
+  }
+  ```
+
+  In the test, you assert on the output HTML rather than on `result.current` as it is the case with `renderHook` function. This solution is also far from ideal. I personally thing there is a room for both approaches, but if I were to choose, I would choose the _test component_ approach.
+
+Finished: testing remix (44)
+
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
