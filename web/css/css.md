@@ -929,3 +929,100 @@ Where `subgrid` shines is the ability to have consistent heights of rows across 
 ## The `tabular-nums`
 
 - Use the `font-variant-numeric: tabular-nums;` every where you do not want the content shifting when some number changes. I bet you encountered a situation where changing from `10` to `12` caused a slight layout shift. If you were using the `tabular-nums` that would not be the case.
+
+## CSS Grid and custom names
+
+- At the time of writing, there are two ways to create custom names when defining grid layouts.
+
+  1. Naming the lines.
+
+  2. Naming the areas.
+
+  **Naming the lines is different than naming the areas**. The syntax is different and, overall, the end-result is a bit different.
+
+### Naming the lines
+
+Below is an example of naming the lines and then using them.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>HTML + CSS</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
+      }
+
+      .main-content {
+        /* Notice the name here */
+        grid-area: content;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="main-content">
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+**Notice that I did not specify the `-start` and `-end` within the `grid-area` definition**. [According to the MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Grid_layout_using_named_grid_lines) this is a built-in feature. I was not aware of this!
+
+> While you can choose any name, if you append -start and -end to the lines around an area, as I have in the example above, grid will create you a named area of the main name used.
+
+One important detail here is to understand that the `content` area lives between the first and the third column. I'm naming the lines here, not the areas!
+
+### Naming the areas
+
+Here, we are going to use `grid-template-areas`. I find this approach a bit easier to understand.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>HTML + CSS</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas: "sider-1 content sider-2";
+      }
+
+      .main-content {
+        /* Notice the name here */
+        grid-area: content;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="main-content">
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+**Note that the value of `sider content sider` would not be valid**. If you were to write `grid-area: sider` where would the browser put the element? Split it in two and assign to each side? If you switch from naming lines to naming areas, you might try to write such definition and wonder why it does not work.
