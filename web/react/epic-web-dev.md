@@ -743,6 +743,60 @@
 
   - The `cookie` header is for passing the cookie value. Here, we simulate the browser behavior where the browser includes the `cookie` in each request we make to the backend.
 
-Finished: custom assertions (68)
+- Creating separate database for the tests is the way to go.
 
-Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
+  - Luckily for us, we are using SQlite as a database. This means we can use a `.db` file. This means we can create the file when test are starting.
+
+    - Another way to ensure isolation is to introduce some kind of segregation of data in your application. Most applications are _tenancy-based_ meaning the data is separated between tenants. If that is the case, you just put the test data for one test into randomly generated tenant (like `userId`).
+
+      - If that is NOT the case, it might be worth introducing tenancy if only for the sake of testing. Believe me, it is very hard to write tests on singleton resources.
+
+  - We can take things further and create a `.db` file per worker the test framework is using. Usually, testing frameworks are parallelizing tests in separate processes. To avoid collisions and data contention, you might want to create an _instance_ of the database per the worker.
+
+    - In `vitest` we can use the `VITEST_POOL_ID` environment variable.
+
+      ```js
+      const databaseFile = `./tests/prisma/data.${
+        process.env.VITEST_POOL_ID ?? 0
+      }.db`;
+
+      const databasePath = path.join(process.cwd(), databaseFile);
+      ```
+
+  - In addition, one could use `globalSetup` where they create a "golden database" which is copied for each worker. No need for seeding each time worker runs!
+
+### Wrapping up
+
+- Testing in Playwright or Cypress is awesome.
+
+  - It is a shame that Kent did not showcase the _component testing_ capabilities of those tools.
+
+    - I feel like we had to write a lot of setup code (albeit that could be abstracted) for integration tests of the components. Having said that, **it is awesome that remix exposes the `createRemixStub` function**. It would be so nice for Next.js to do this as well!
+
+- With `vitest` being 1.0 it seems to be a defacto testing tool now.
+
+- Custom assertions are worth your time.
+
+- Creating some kind of segregation, be it at database, or data-level is essential in testing. Without that, you will not be able to have parallel tests going.
+
+## Overall
+
+- Very good workshop. I've learned a ton.
+
+  - Especially around cookies.
+
+- The workshops are centered around `remix`. As such, sometimes I felt like I'm learning more about the framework than the web itself.
+
+- The **forms workshop is very worth your time**.
+
+  - I'm glad that Kent spent some time on accessibility. Tying the error messages with the form fields, and doing it in a way that is accessible is very important skill to have.
+
+    - As a reminder, you specify the `aria-describedby` and `aria-invalid` on the input, and then `id` which points to `aria-describedby` on the wrapped that displays the error.
+
+      - Consider using the `useId` for the ids.
+
+  - The "trick" with specifying the validation-related HTML attributes and setting `noValidate={true}` was new to me.
+
+    - The deal is that, we want to validate in JS to have custom error popups, but we want the screen-readers to read out to users the constraint for a given field. Of course, sometimes it is not necessary to define them in plain HTML, but in most cases that is possible.
+
+  - Resetting the form via `type="reset"` button was new to me as well. TIL!
