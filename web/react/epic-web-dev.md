@@ -707,6 +707,42 @@
 
   In the test, you assert on the output HTML rather than on `result.current` as it is the case with `renderHook` function. This solution is also far from ideal. I personally thing there is a room for both approaches, but if I were to choose, I would choose the _test component_ approach.
 
-Finished: testing remix (44)
+- I was very pleasantly surprised that `remix` exposes the `createRemixStub` function. This function will setup all the necessary context providers so that you can test the component/route that utilizes _loader_ or any other API.
+
+  ```tsx
+  const user = createFakeUser();
+
+  // from @remix-run/testing. Pretty sweet!
+  const App = createRemixStub([
+    {
+      path: "/users/:username",
+      Component: UsernameRoute,
+      loader: async () => {
+        return json({
+          user,
+          userJoinedDisplay: user.createdAt.toLocaleDateString(),
+        });
+      },
+    },
+  ]);
+
+  await render(<App initialEntries={[`/users/${user.username}`]} />, {
+    wrapper: ({ children }) => (
+      <AuthenticityTokenProvider token="test-csrf-token">
+        {children}
+      </AuthenticityTokenProvider>
+    ),
+  });
+  ```
+
+- When testing authenticated requests via `vitest` I could not shake the feeling that the amount of code we have to write is quite big.
+
+  - I think it would be easier to test those loaders/components in `playwright` where we can authenticate users much more easily.
+
+- The `set-cookie` header is for creating a cookie. This is where you specify all the properties that the cookie should have, like `httpOnly` and other stuff.
+
+  - The `cookie` header is for passing the cookie value. Here, we simulate the browser behavior where the browser includes the `cookie` in each request we make to the backend.
+
+Finished: custom assertions (68)
 
 Before: https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one/?utm_source=stefanjudis
