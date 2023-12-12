@@ -379,6 +379,21 @@ Another approach would be to pass the `icon` as a function rather than JSX. Then
 <Button icon={InfoIcon}>Foo</Button>
 ```
 
+**Before you use the `cloneElement` API note that the [docs say that using this API could lead to fragile code](https://react.dev/reference/react/cloneElement)**. I'm personally okay with the API, but you should also consider other alternatives like render props.
+
+**The _render-props_ pattern allow you to achieve what you implemented with `cloneElement` without indirection**.
+
+```jsx
+function Button({ renderIcon, disabled, children }) {
+  const iconProps = disabled ? {color: "gray"} : {}
+  const Icon = renderIcon(iconProps);
+
+  return <button>{children}<Icon></button>
+}
+```
+
+Of course, this requires the consumer of the `Button` to actually use the object you have passed into the `renderIcon` function.
+
 ## Compound Components
 
 ### Non-flexible Compound Components
