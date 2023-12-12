@@ -330,7 +330,7 @@ function Component({ prop }) {
 }
 ```
 
-## Layout Components
+## Layout Components (passing props as children)
 
 It is considered best practice to use the _composition_ characteristics of React. Instead of _prop drilling_ you should consider using the `children` (or other props) to _compose_ components together. This helps to reduce the chance of breaking something when refactoring, as there will be less changes to make, since there is less prop drilling.
 
@@ -351,6 +351,33 @@ function Main() {
 ```
 
 This example is very contrived, but it showcases the power of so called "slots". This is not an "official" concept, we are still using the regular React props. **The main point I want to drive here is that it is OKAY to use props different than `children` for composition of components**.
+
+### The downside of this approach
+
+The main downside of this approach is the fact that **this pattern is too flexible**. Yes you heard me right, it is too flexible. Often, with flexibility comes the danger of misuse.
+
+Let us imagine a `Button` component taking the `icon` as a prop.
+
+```jsx
+<Button icon={<InfoIcon />}>Foo</Button>
+```
+
+What if this button is disabled? We most likely would want to change the color of the button, and the color of the icon. If that is the case, we would have to ensure that the consumer of the `Button` component changes the color somehow. There is a solution, but it is rather complex.
+
+```jsx
+function Button({ icon, disabled, children }) {
+  const iconProps = disabled ? { ...icon.props, color: "gray" } : icon.props; // keep in mind that JSX are really objects.
+
+  const ClonedIcon = React.cloneElement(icon, iconProps);
+  return <button>{children}<ClonedIcon></button>
+}
+```
+
+Another approach would be to pass the `icon` as a function rather than JSX. Then the `Button` could render it with the right props. Again, that is not a silver bullet as it now requires more logic in the `Button` to specify the right "default" props like size.
+
+```jsx
+<Button icon={InfoIcon}>Foo</Button>
+```
 
 ## Compound Components
 
@@ -447,10 +474,14 @@ The basic idea is to create the **context of dealing with the portal, and the co
 
 ```jsx
 <SidebarProvider>
-  <Sidebar/> // -> The place where you want to render the content
-  <RectangleProvider> // -> Provider for the trigger
+  <Sidebar /> // -> The place where you want to render the content
+  <RectangleProvider>
+    {" "}
+    // -> Provider for the trigger
     <Rectangle /> // -> The trigger
-    <SidebarPortal> // -> The portal to render it in a different place
+    <SidebarPortal>
+      {" "}
+      // -> The portal to render it in a different place
       <RectangleStyler /> // -> The trigger "content"
     </SidebarPortal>
   </RectangleProvider>
@@ -528,7 +559,7 @@ The `getInputProps` is responsible for _pseudo-composing_ the `onChange` handler
 Sometimes your components might expose the "initialX" API (can also be named "defaultX"). Like the `input` HTML component that exposes the "defaultValue".
 
 ```tsx
-<input type = "text" defaultValue = "foo"/>
+<input type="text" defaultValue="foo" />
 ```
 
 This is all nice, but **what would happen if the `defaultValue` changed when the `input` component is already mounted?**. Especially when your component exposes a reset function. Should we _reset_ to the "initial initial" value or the "new initial" value?
