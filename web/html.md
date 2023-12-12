@@ -6,11 +6,11 @@ Have you ever tried to disable multiple form inputs at one? It could get repetit
 
 ```html
 <form>
-    <fieldset disabled>
-        <label htmlFor = "name">Name</label>
-        <input type = "text" id = "name" name = "name"/>
-        <button type = "submit">Submit</button>
-    </fieldset>
+  <fieldset disabled>
+    <label htmlFor="name">Name</label>
+    <input type="text" id="name" name="name" />
+    <button type="submit">Submit</button>
+  </fieldset>
 </form>
 ```
 
@@ -22,17 +22,17 @@ In some situations, the submit button of a `form` element lives in a completely 
 
 ```html
 <form>
-    <label>
-        Name
-        <input type = "text" name = "name"/>
-    </label>
+  <label>
+    Name
+    <input type="text" name="name" />
+  </label>
 </form>
 
 <!-- Somewhere else in the HTML -->
 <modal>
-    Are you sure you want to submit the form?
-    <button type = "button">Cancel</button>
-    <button type = "submit">Yes</button>
+  Are you sure you want to submit the form?
+  <button type="button">Cancel</button>
+  <button type="submit">Yes</button>
 </modal>
 ```
 
@@ -41,18 +41,18 @@ In such cases, especially while using JSX, you might be **tempted to use `ref` o
 **To associate the `form` with a button, use the `form` attribute on the button**. Give the `form` an id, then use that id as the value for the `form` attribute. Here is an example.
 
 ```html
-<form id = "form-with-confirmation">
-    <label>
-        Name
-        <input type = "text" name = "name"/>
-    </label>
+<form id="form-with-confirmation">
+  <label>
+    Name
+    <input type="text" name="name" />
+  </label>
 </form>
 
 <!-- Somewhere else in the HTML -->
 <modal>
-    Are you sure you want to submit the form?
-    <button type = "button">Cancel</button>
-    <button type = "submit" form = "form-with-confirmation">Yes</button>
+  Are you sure you want to submit the form?
+  <button type="button">Cancel</button>
+  <button type="submit" form="form-with-confirmation">Yes</button>
 </modal>
 ```
 
@@ -88,7 +88,7 @@ Pretty cool if you ask me!
 You might be familiar with the `multiple` attribute on the `input` element when used in conjunction with the `file` type. It turns out that **the `multiple` attribute also works for inputs of type `email`**.
 
 ```html
-<input type = "email" multiple = "true">
+<input type="email" multiple="true" />
 ```
 
 While you can do this, **you might want to think twice before allowing the user to submit multiple email addresses**. Here are few things to consider.
@@ -103,7 +103,7 @@ While you can do this, **you might want to think twice before allowing the user 
 
 At some point you might encounter a website where the number of the DOM nodes is huge. This might be a blog, this might be some other interactive site. But the problem is the same – the amount of the DOM nodes causes the browser to freeze when rendering the initial content.
 
-**If you are dealing with a list consider virtualizing the content**. But what if that is not possible? What if the content is structured in a way that makes it impossible to collect into a list? Luckily, the browser vendors come with some help. **Enter the `content-visibility` property.
+**If you are dealing with a list consider virtualizing the content**. But what if that is not possible? What if the content is structured in a way that makes it impossible to collect into a list? Luckily, the browser vendors come with some help. \*\*Enter the `content-visibility` property.
 
 The **`content-visibility` is a NATIVE way to tell the browser to defer rendering some parts of the webpage to when the content enters the viewport**. It is like a native virtualization, but of course it does not handle all the cases that super well (but it is a built-in API that requires 0 KiB of JS to implement).
 
@@ -143,12 +143,12 @@ For dates, consider using the `time` tag. As [described by the MDN](https://deve
 ```html
 <article>
   <header>
-    <a href = "profile">Wojciech Matuszewski</a>
+    <a href="profile">Wojciech Matuszewski</a>
   </header>
   <footer>
     <time datetime="2018-07-07">July 7</time>
   </footer>
- </article>
+</article>
 ```
 
 Notice that **the `datetime` does not have to have the same format as the date you display**. The `datetime` is for SEO robots and other machines.
@@ -167,3 +167,38 @@ To style the _description lists_, the `grid` type of layout should most likely b
   <dd>kobayashi.aoi@acme.co</dd>
 </dl>
 ```
+
+## The `template` element
+
+The `template` HTML element creates the so-called _inert_ DOM tree. **You would use is to "prepare" a tree and then clone its contents to the real DOM**. The HTML parser will not evaluate the `template` element, though it will "process" it to ensure the contents of the `template` element are syntactically valid. [You can read more about the `template` element on MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template).
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>HTML + CSS</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="main"></div>
+    <script>
+      const main = document.querySelector("#main");
+
+      const template = document.createElement("template");
+
+      // Much faster than directly writing to `main`
+      template.innerHTML = `
+        <p>first</p>
+        <p>second</p>
+      `;
+
+      main.appendChild(template.content);
+    </script>
+  </body>
+</html>
+```
+
+[According to this blog post](https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one) the `template` was originally designed for _web components_, but now is at the core of many web frameworks (used to update the DOM).

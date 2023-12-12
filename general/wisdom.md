@@ -249,3 +249,5 @@ Let us reverse this scenario. Imagine a world where you, as a member of the "web
 Now, when that tricky 20% of UI design work comes, you lean heavily on the "design team" **while trying to learn their process as well!**. In the end, you should learn how the "design team" operates, what tools they use and learn to use those tools as well!
 
 **The UI work is just as collaborative as any. Remember that it is the requirement that should drive the UI look and feel, not the other way around**.
+
+TODO: https://thedecisionlab.com/biases/ostrich-effect?ref=members.vadimkravcenko.com
