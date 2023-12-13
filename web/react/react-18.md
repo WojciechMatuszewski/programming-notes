@@ -331,7 +331,36 @@ function Checkbox() {
 
 The million-dollar question is: how the hell do they maintain the stability of the ID between SSR render and hydration. The API is designed to be called inside the component body, so it must be called twice and return the same unique value.
 
-From what I was able to gather in [this PR](https://github.com/facebook/react/pull/22644), the **`useId` uses the components tree position (which should not change between SSR and hydration, to generate a stable identifier**. Literally 200 IQ move.
+From what I was able to gather in [this PR](https://github.com/facebook/react/pull/22644), the **`useId` uses the components tree position (which should not change between SSR and hydration), to generate a stable identifier**. Literally 200 IQ move.
+
+## `useFormState`
+
+The `useFormState` is a handy hook that exposes the `actions` submit value as well as the function to call submit the form.
+
+```ts
+const [submitValue, action] = useFormStatus(serverOrClientAction, initialValue)
+
+<form action = {action}></form>
+```
+
+**Note that the `action` could be used in either _client action_ or _server action_ context**.
+
+You might also think that one could use the `action` in any kind of function and not only in the context of forms. **That is the case – you can invoke it manually as long as you have `formData` object handy**
+
+```tsx
+<button
+  type="button"
+  onClick={() => {
+    const formData = new FormData();
+    formData.set("text", "value");
+    dispatch(formData);
+  }}
+>
+  Submit
+</button>
+```
+
+Whether you should do that is another matter entirely. I think it would be better to have a form with a submit button here.
 
 ## `useInsertionEffect`
 
