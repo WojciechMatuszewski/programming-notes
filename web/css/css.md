@@ -1026,3 +1026,9 @@ Here, we are going to use `grid-template-areas`. I find this approach a bit easi
 ```
 
 **Note that the value of `sider content sider` would not be valid**. If you were to write `grid-area: sider` where would the browser put the element? Split it in two and assign to each side? If you switch from naming lines to naming areas, you might try to write such definition and wonder why it does not work.
+
+## The usefulness of `user-select`
+
+You most likely wanted to copy some ID from somewhere right? Did you have a hard time selecting the whole ID string? I know I have.
+
+With [the `user-select: all`](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) the browser would select the whole string if you clicked on it! Pretty neat.

@@ -109,4 +109,29 @@
   <!-- And so on... -->
   ```
 
-Finished part 4, 26:27 https://frontendmasters.com/workshops/tailwindcss/ https://tailwind-workshop.vercel.app/variants
+- Steve showcases an interesting CSS definition – `columns`. You can use it to create... column-like layouts.
+
+  - It kind of work like masonry layout, but not quite.
+
+  - BTW, there the is the [experimental masonry layout support in CSS Grid](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Masonry_layout).
+
+- While playing around with CSS grid, I've noticed that the `grid-cols-NUMBER_OF_COLUMNS` produces CSS snippet that I did not expect.
+
+  ```css
+  .grid-cols-2: {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  ```
+
+  Why not `repeat(2, 1fr)` you might ask? **By default, the `repeat(2, 1fr)` will not produce 2 equal-size columns!**.
+
+  The `fr` unit **represents a fraction of available space in the grid container and, by default, minimum width of a grid column is `auto`**.
+  This means that, if a column content is bigger than the available space, it might overflow! See [this GitHub issue](https://github.com/rachelandrew/cssgrid-ama/issues/25). This issue is **similar to the flexbox overflow when specifying the `flex-basis`**.
+
+- Writing complex grid layouts might be worth defining in a CSS file rather than inline. It gets hard to read.
+
+- Steve showcases the **`user-select` (`select-X` in tailwind) CSS definition**. Holy smokes it is very useful.
+
+  - You most likely wanted to copy some ID from somewhere right? Did you have a hard time selecting the whole ID string? I know I have.
+
+    - With [the `user-select: all`](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) the browser would select the whole string if you clicked on it! Pretty neat.
