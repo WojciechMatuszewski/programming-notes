@@ -135,3 +135,15 @@
   - You most likely wanted to copy some ID from somewhere right? Did you have a hard time selecting the whole ID string? I know I have.
 
     - With [the `user-select: all`](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) the browser would select the whole string if you clicked on it! Pretty neat.
+
+## Wrapping up
+
+- The `@apply` mechanism is quite nice, but I would be cautious here. Apparently there are some issues with purging / deduplicating CSS when classes are used inline and within the scope of the `@apply` directive.
+
+- The `user-select` is quite nice. I'm glad I learned about that one.
+
+- Remember that the `user-invalid` is different (most likely what you want) than the `invalid` pseudo-classes.
+
+- There is a difference between `1fr` and `minmax(0, 1fr)` and it has to do with growing and shrinking content.
+
+  - Think of this as the infamous `min-width: 0` "fix" in flexbox.
