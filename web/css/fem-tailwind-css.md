@@ -44,4 +44,69 @@
 
   And now you can go ahead and use `btn` class in your HTML. **I did not have to put the `.btn` definition inside the `@layer`**. This is only to ensure the proper hierarchy of CSS specificity is preserved.
 
-Finished day 2, 28:54 https://frontendmasters.com/workshops/tailwindcss/ https://tailwind-workshop.vercel.app/variants
+- Remember about the `accent` group of classes! They are very handy for styling checkboxes.
+
+- There is a difference between `:invalid` and `:user-invalid`.
+
+  - The `:invalid` **applies to all states of the input, even if the user did not interact with it yet**.
+
+    - This makes it hard to work with as the visuals will be applied to all inputs when page loads. To work around it, you might want to use the `:not(:placeholder-shown)`.
+
+  - The `:user-invalid` **is mostly what you want – it only applies when user interacted with the input**.
+
+- There is a difference between `:placeholder-shown` and `:empty`
+
+  - The `:placeholder-shown` is for inputs.
+
+  - The `:empty` matches all elements that actually are empty – they do not have any children.
+
+- The _peer modifier_ could be used to style **next siblings of a given element**. This is quite useful for error messages.
+
+  ```html
+  <input
+    type="email"
+    name="email"
+    id="email"
+    required
+    class="peer"
+    placeholder="email"
+  />
+
+  <div class="invisible text-red-500 peer-[:user-invalid]:visible">error!</div>
+  ```
+
+  At the time of writing this, Tailwind does not natively support the `:user-invalid` so I have to use an escape hatch.
+
+- The _group modifier_ allows you to **style descendants of a given element**.
+
+  ```html
+  <div class="group h-24 w-24 bg-red-500">
+    <span class="decoration-purple-100 group-hover:underline">foo</span>
+  </div>
+  ```
+
+  In this case, the `span` will have the underline applied when we hover over the `div`.
+
+- You can use the `:dark` variant to implement different styles based on the "dark mode heuristics".
+
+  - The default way Tailwind detects the dark mode is via media query.
+
+  - Of course, you can change this behavior.
+
+- There is a **handy `container` class** which automatically applies the breakpoints.
+
+  ```css
+  .container {
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      max-width: 640px;
+    }
+  }
+
+  <!-- And so on... -->
+  ```
+
+Finished part 4, 26:27 https://frontendmasters.com/workshops/tailwindcss/ https://tailwind-workshop.vercel.app/variants
