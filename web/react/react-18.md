@@ -43,6 +43,24 @@ When you use `startTransition`, the **React will prepare a new tree in the backg
 
 The **`startTransition` API will not help you in the case of CPU-heavy operations**. If the main thread is blocked, then it will be blocked, regardless if you wrap the computation with `startTransition` or not.
 
+### `startTransition` and the `hydrateRoot` API
+
+React 18 changed how the entrypoint to the application looks like. If your application uses SSR, now you have to use `hydrateRoot` instead of `hydrate`. For CSR, you have to switch from `render` to `root.render`. **But did you know there are taggable benefits in wrapping the `hydrateRoot` with `startTransition`?**
+
+The `startTransition` marks the update as non-blocking. This is quite important as it **allows the browser to more efficiently manage resources**. If your hydration takes a long time and is resource intensive, the website will not longer be "locked" or "frozen".
+
+```tsx
+startTransition(() => {
+  hydrateRoot(...)
+})
+```
+
+[I've noticed the usage of `startTransition` in one of the the Epic Web Dev codebases](https://github.com/epicweb-dev/web-auth/blob/143e4eea6451397094cc48fa49eb6d0a2ff00fcb/exercises/01.cookies/01.problem.fetcher/app/entry.client.tsx#L5). [See official `remix` docs](https://remix.run/docs/en/main/file-conventions/entry.client) and also [this twitter thread](https://twitter.com/dan_abramov/status/1567852606642348032).
+
+[Next.js also does this](https://github.com/vercel/next.js/blob/90bfbe72bb79a0f6951c9e0eae24d6aa8a6c342d/packages/next/src/client/app-index.tsx#L308) which would confirm that this is a performance optimization, [like this post on GitHub](https://github.com/vercel/next.js/discussions/40691).
+
+Sadly, the official React documentation does not mention using `startTransition` with `hydrateRoot`.
+
 ### Regarding the state updates
 
 Remember that with _React_ 18, the state updates are batched together. In previous versions in _React_, this was not necessarily always the case.
