@@ -224,6 +224,10 @@
 
   - Encrypting the CSRF token is a very good idea.
 
+- The **browser is only capable of using `POST` or `GET` method on forms**. The framework might, and in this case, will handle `DELETE` form methods, but when JavaScript has not loaded yet, using `DELETE` method on a form will trigger a `POST` request – most likely not something you want. [Kent talks about this limitation in this video](https://www.epicweb.dev/tips/only-use-get-and-post).
+
+As a rule of thumb, consider only using `POST` and `GET` methods on the form.
+
 ## Data Modeling Deep Dive
 
 - The prisma client has the _prisma studio_
