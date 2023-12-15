@@ -202,3 +202,50 @@ The `template` HTML element creates the so-called _inert_ DOM tree. **You would 
 ```
 
 [According to this blog post](https://nolanlawson.com/2023/12/02/lets-learn-how-modern-javascript-frameworks-work-by-building-one) the `template` was originally designed for _web components_, but now is at the core of many web frameworks (used to update the DOM).
+
+## Native Accordion (collapsible)
+
+Yea you could use the `button` & `div` and look at a11y spec but... **there is a native way of doing collapsible boxes**.
+You can use `summary` and `detail` HTML tags.
+
+```html
+<details>
+  <summary>title</summary>
+  <p>content</p>
+</details>
+```
+
+Sadly at the time of writing this, there is **no built-in way of animating the collapse state**.
+
+## Native Combobox
+
+Again, the same with as with `Accordion`. There is a native way of doing this by using `input` and `datalist`.
+
+```html
+<input list="languages" placeholder="Choose language" />
+
+<datalist id="languages">
+  <option>Python</option>
+  <option>Javascript</option>
+  <option>Java</option>
+</datalist>
+```
+
+The main benefit of this approach is also it's main drawback. Since it is a native implementation, it is not that flexible. **You will have a hard time styling it**. I could not find a way to style it even a tiny bit. **The demos I've encountered seem to work on CodePen but does not work when I run them locally via plain `index.html` and my browser**.
+
+## Native Dialog
+
+Some time ago, browsers started to introduce the `dialog` element! This is a huge win as modals/dialogs are notoriously hard to get right (mainly the aspect of focus management and accessibility).
+
+Another neat thing about this element is that **you do not have to use `z-index` to position it on top of the content**. The contents of the `dialog` are displayed in a special layer called **_top layer_**. No more `z-index` wars!
+
+```html
+<dialog>
+  <form method="dialog">
+    <p>Some text</p>
+    <button type="submit">Close</button>
+  </form>
+</dialog>
+```
+
+You will need some JavaScript to show the dialog/modal and most likely get the return value when it closes, but apart from that, the implementation requires no JavaScript at all!

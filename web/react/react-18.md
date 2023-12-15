@@ -309,6 +309,15 @@ export default App;
 
 The alternative being using `useRef` and `useState`. I would say the `useSyncExternalState` version is much easier to reason about (especially since the pub-sub model is so widely used).
 
+### At odds with concurrent features
+
+Here is the sad part: the updates you trigger via the `useSyncExternalStore` will not work with `useTransition` and will **cause React to bail-out out of the concurrent features**. **The only way, at the time of writing this, to hold state and make it work with concurrent features is to use `useState` and `useReducer`**.
+
+- [Here is Tanner talking about reactivity and concurrent features](https://twitter.com/tannerlinsley/status/1732474127712481371)
+- [Here is the creator of `zustand` talking about the de-opt behavior of `useSyncExternalStore`](https://blog.axlight.com/posts/why-use-sync-external-store-is-not-used-in-jotai/)
+
+It seems like we cannot have the cake and eat it too. At least not now. I wonder how this discussion/issue will progress as larger community is relying more and more on signals/fine-grain reactivity primitives.
+
 ## `useId`
 
 Imagine you are using SSR. You create some ID in the body of the component and pass that ID as a prop. Since your component will be invoked twice (once on a server, once on a client), **you will most likely face hydration mismatches due to different ID values on the server and the client**.

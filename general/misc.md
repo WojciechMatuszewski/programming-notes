@@ -98,34 +98,3 @@ import expensiveWorkerized from "workerize-loader!./expensive";
 ```
 
 **BOOM!**. Thats all. Granted now methods exposed by `expensiveWorkerized` are _async_ but that should not be a problem.
-
-## HTML Stuff
-
-### Accordion (collapsible)
-
-Yea you could use the `button` & `div` and look at a11y spec but... **there is a native way of doing collapsible boxes**.
-You can use `summary` and `detail` HTML tags.
-
-```html
-<details>
-  <summary>title</summary>
-  <p>content</p>
-</details>
-```
-
-Sadly at the time of writing this, there is **no built-in way of animating the collapse state**.
-
-### Combobox
-
-Again, the same with as with `Accordion`. There is a native way of doing this by using `input` and `datalist`
-
-```html
-<input list="languages" placeholder="Choose language" />
-<datalist id="languages">
-  <option>Python</option>
-  <option>Javascript</option>
-  <option>Java</option>
-</datalist>
-```
-
-I mean how cool is that? **Every keyboard navigation event is handled for you!**.
