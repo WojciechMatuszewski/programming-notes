@@ -1032,3 +1032,40 @@ Here, we are going to use `grid-template-areas`. I find this approach a bit easi
 You most likely wanted to copy some ID from somewhere right? Did you have a hard time selecting the whole ID string? I know I have.
 
 With [the `user-select: all`](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) the browser would select the whole string if you clicked on it! Pretty neat.
+
+## The `appearance: none` and styling inputs
+
+If you wish to re-style the default user-agent input styles (like checkboxes and other inputs), you might want to use `appearance: none`. This definition tells the browser that you wish to be able to override the UA styles. Here is a sample CSS (I'm using native CSS nesting).
+
+```css
+input[type="checkbox"] {
+  appearance: none;
+
+  position: relative;
+  background: lightgray;
+  height: 1rem;
+  width: 1rem;
+  border: 1px solid black;
+  vertical-align: middle;
+
+  &::before {
+    content: "";
+    display: none;
+    width: 10px;
+    height: 10px;
+    background: red;
+    position: absolute;
+    inset-block: 0;
+    inset-inline: 0;
+    transform: translateY(50%);
+  }
+
+  &:checked::before {
+    display: block;
+  }
+}
+```
+
+To my best knowledge, there are some subtle bugs with this property in older browsers (MDN mentions it). Having said that, I could not find any definite answer regarding which browser versions are affected.
+
+Some UI libraries do not use this property – they hide the native checkbox, either by using `opacity: 0` or some other technique. Some UI libraries use this property with custom styling directly applied on the `checkbox`.
