@@ -94,6 +94,8 @@
     type StringOrNumber = NullableStringOrNumber & {}; // string | number
     ```
 
+    This is actually how `NonNullable` works!
+
   - Another use-case for this type is to add autocomplete to a function that takes an union of well defined symbols and a `string` type.
 
     ```ts
@@ -105,3 +107,64 @@
     ```
 
     Check out [this StackOverflow reply for more information](https://stackoverflow.com/a/61048124).
+
+- The `never` is a bottom type. It has wide range of uses. In the workshop, Mike showcases one – ensuring that we exhausted all possible checks.
+
+  ```ts
+  function getValue(): string | boolean | number {
+    return 3;
+  }
+  let myValue = getValue();
+
+  if (typeof myValue === "string") {
+  } else if (typeof myValue === "number") {
+  } else {
+    // This would error out at type-check time.
+    // We are not handling all possible cases!
+    const _: never = myValue;
+  }
+  ```
+
+## Nullish values
+
+- Mike recommends the following.
+
+  1. Use `null` to indicate that the value does not contain a value. It means "it contains nothing". Here a good example would be an optional "email" field. The field is there, most likely also in our database, but the user might leave it empty.
+
+  2. Use `undefined` to indicate that the value might not have been set in the first place. Here a good example would be any optional fields on an object.
+
+- To work with nullish values, you might want to use the _nullish coalescing operator_ (`??`) and _optional chaining operator_ (`?`).
+
+  - When using `??` keep in mind that it behaves differently than `||` and in most, if not all, cases this is the behavior we want.
+
+    ```ts
+    const value: number | undefined = 0;
+
+    const value2 = value ?? 10; // 0
+    const value3 = value || 10; // 10, not good!
+    ```
+
+## Modules & CJS Interop
+
+- When importing types, consider using `import type {} ...` syntax or the `import {type XX} ...` syntax. It helps bundlers with tree-shaking and dead code elimination.
+
+  - The latter [was introduced in 4.5](https://devblogs.microsoft.com/typescript/announcing-typescript-4-5/#type-on-import-names) and allows you to have a single import from a file where you import both types and values.
+
+    ```ts
+    import { type Foo, CalculateAverage } from "./calculator";
+    ```
+
+- **Using `esModuleInterop` in a library will force all of the packages that use the library to also use this option**.
+
+  - While using this option might help you a bit with CJS -> TypeScript, it is not a good idea to use in a library. As an alternative, consider the following.
+
+    ```ts
+    // This only works in TypeScript!!!!
+    import Melon = require("./melon");
+    ```
+
+- The `.cjs` and `.mjs` file extensions will be treated as `CJS` and `ESM` files respectively. You do not have to add anything into `package.json` for that to happen.
+
+  - You would add the `type: "module"` to `package.json` for Node to treat all your `.js` files as ESM.
+
+  - Having different file extensions also allows you to set different linting rules for different "environment" in an easy way.
