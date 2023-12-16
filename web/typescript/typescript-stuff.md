@@ -156,8 +156,8 @@ Here is how to do it.
 declare global {
   // Uses interface merging
   interface Window {
-    Cypress: MY_TYPE
-    Monaco: MY_TYPE
+    Cypress: MY_TYPE;
+    Monaco: MY_TYPE;
   }
 }
 ```
@@ -171,7 +171,7 @@ const addAllOfThisToWindow = {
   add: (a: number, b: number) => a + b,
   subtract: (a: number, b: number) => a - b,
   multiply: (a: number, b: number) => a * b,
-  divide: (a: number, b: number) => a / b
+  divide: (a: number, b: number) => a / b,
 };
 
 Object.assign(window, addAllOfThisToWindow);
@@ -185,7 +185,7 @@ const addAllOfThisToWindow = {
   add: (a: number, b: number) => a + b,
   subtract: (a: number, b: number) => a - b,
   multiply: (a: number, b: number) => a * b,
-  divide: (a: number, b: number) => a / b
+  divide: (a: number, b: number) => a / b,
 };
 
 declare global {
@@ -202,8 +202,8 @@ That is it!
 
 ```ts
 declare global {
-  var myGlobalVariable: string
-  function myGlobalFunction(): string
+  var myGlobalVariable: string;
+  function myGlobalFunction(): string;
 }
 ```
 
@@ -304,7 +304,6 @@ declare global {
   }
 }
 
-
 // file bar.ts
 declare global {
   interface MyGlobalInterface {
@@ -385,7 +384,7 @@ When working with global types, you might encounter a world _ambient_. For examp
 
 ```ts
 declare global {
-  declare function myFunc(): boolean // ERROR: A 'declare' modifier cannot be used in an already ambient context.
+  declare function myFunc(): boolean; // ERROR: A 'declare' modifier cannot be used in an already ambient context.
 }
 ```
 
@@ -402,7 +401,7 @@ In the example above, the implementation of the `global` does not live within th
 Sometimes you might want to have a property which can take either a well defined value or any value of a given type. In such situations, ideally, we want to keep the autocomplete functionality we have, when the type is scoped to only a couple of well-defined values.
 
 ```js
-function getFontSize(size: "sm" | "xs" ) {
+function getFontSize(size: "sm" | "xs") {
   // Here I would like to also allow for `any` size where I fallback to some value
 }
 ```
@@ -410,20 +409,28 @@ function getFontSize(size: "sm" | "xs" ) {
 One way to do that, would be to expand the `size` prop to accept the `string` type.
 
 ```js
-function getFontSize(size: "sm" | "xs" | string ) {
-}
+function getFontSize(size: "sm" | "xs" | string) {}
 ```
 
 The **problem with this approach is that we are going to loose autocomplete**. TypeScript will **expand the `size` to accept strings**. There is no way to provide autocomplete on "all" strings.
 
-The **solution is to scope the `string` type**, by omitting the well-defined values.
+**One solution is to scope the `string` type**, by omitting the well-defined values.
 
-```js
-function getFontSize(size: "sm" | "xs" | Omit<string, "sm" | "xs"> ) {
-}
+```ts
+function getFontSize(size: "sm" | "xs" | Omit<string, "sm" | "xs">) {}
 ```
 
 Now, the autocomplete works as expected. It's either `sm`, `xs` or all the strings (except the `sm` or `xs` value).
+
+**Another solution is to use the `{}` type**.
+
+```ts
+function getFontSize(size: "sm" | "xs" | (string & {})) {}
+```
+
+
+Check out [this StackOverflow reply for more information](https://stackoverflow.com/a/61048124).
+
 
 ## What the `d.ts` file is good for and what it is NOT good for
 
@@ -807,20 +814,20 @@ You can use the `Exclude` utility type with interfaces and types. Check this out
 ```ts
 type Event =
   | {
-      type: 'click'
-      x: number
-      y: number
+      type: "click";
+      x: number;
+      y: number;
     }
   | {
-      type: 'focus'
+      type: "focus";
     }
   | {
-      type: 'change'
-      value: string
-    }
+      type: "change";
+      value: string;
+    };
 
-type ClickAndFocusEvent = Exclude<Event, {type: 'click'}> // { type: 'focus' } | { type: 'change', value: string }
-type OnlyChangeEvent = Exclude<Event, {type: 'click' | 'focus'}> // { type: 'change', value: string }
+type ClickAndFocusEvent = Exclude<Event, { type: "click" }>; // { type: 'focus' } | { type: 'change', value: string }
+type OnlyChangeEvent = Exclude<Event, { type: "click" | "focus" }>; // { type: 'change', value: string }
 ```
 
 In the above example, we were dealing with a discriminant on the `type` property. **But the `Exclude` also works without a discriminant**.
@@ -828,18 +835,18 @@ In the above example, we were dealing with a discriminant on the `type` property
 ```ts
 type Evnt =
   | {
-      x: number
-      y: number
+      x: number;
+      y: number;
     }
   | {
-      name: string
+      name: string;
     }
   | {
-      type: 'change'
-      value: string
-    }
+      type: "change";
+      value: string;
+    };
 
-type ClickAndFocusEvent = Exclude<Evnt, {name?: string, value?: string}> // { x:number, y:number }
+type ClickAndFocusEvent = Exclude<Evnt, { name?: string; value?: string }>; // { x:number, y:number }
 ```
 
 ## Combining Exclude And Pick
@@ -982,19 +989,27 @@ Here I've used _infer_ to both get the hold of the function arguments, but also 
 Did you know you can **place a constraint on what you infer**? The syntax looks as follows.
 
 ```ts
-type FakeReturnTypeString<F> = F extends ((...args: any[]) => (infer R extends string)) ? R : never;
+type FakeReturnTypeString<F> = F extends ((
+  ...args: any[]
+) => infer R extends string)
+  ? R
+  : never;
 
 function returnNumber() {
-  return 3
+  return 3;
 }
 
-type test = FakeReturnTypeString<typeof returnNumber> // never
+type test = FakeReturnTypeString<typeof returnNumber>; // never
 ```
 
 It is as if you were to say: **infer this type ONLY WHEN it matches my constraint**. Seems pretty useful, **especially if the alternative is to perform a nested ternary check**.
 
 ```ts
-type FakeReturnTypeString<F> = F extends (...args: any[]) => infer R ? R extends string ? R : never : never
+type FakeReturnTypeString<F> = F extends (...args: any[]) => infer R
+  ? R extends string
+    ? R
+    : never
+  : never;
 ```
 
 The version with a constraint on the `infer` seems much cleaner.
@@ -1062,12 +1077,14 @@ As of writing this, this is relatively new addition to the language.
 Keep in mind that **you can also alter what we "iterate" over**. This is **very handy when dealing with an union**.
 
 ```ts
-type MyUnion = {
-  type: "banana",
-  color: "yellow"
-} | { type: "apple", color: "red"}
+type MyUnion =
+  | {
+      type: "banana";
+      color: "yellow";
+    }
+  | { type: "apple"; color: "red" };
 
-type ToObject = {[K in MyUnion as K["type"]]: K} // banana: {type: "banana", color: "yellow"} and so on...
+type ToObject = { [K in MyUnion as K["type"]]: K }; // banana: {type: "banana", color: "yellow"} and so on...
 ```
 
 If you try to "iterate" over the union without the `as` keyword, you will get an error. It is super handy since `K` is the whole object (member of the union), and not a primitive value.
@@ -1087,16 +1104,16 @@ export function makeEventHandlers<T extends Record<string, unknown> = {}>(obj: {
 }
 
 const obj = makeEventHandlers({
-  click: name => {
+  click: (name) => {
     console.log(name); // name is `click`
 
     type test = Expect<Equal<typeof name, "click">>;
   },
-  focus: name => {
+  focus: (name) => {
     console.log(name); // name is `focus`
 
     type test = Expect<Equal<typeof name, "focus">>;
-  }
+  },
 });
 ```
 
@@ -1469,12 +1486,12 @@ This technique is **very useful for `filter` or `reduce` callbacks where you wan
 ```ts
 const values = [1, 2, undefined, 3];
 
-const theRegularFilter = values.filter(val => val != null) // (number | undefined)[]
-const theTypeCastFilter = values.filter(val => val != null) as number[] // number[]
+const theRegularFilter = values.filter((val) => val != null); // (number | undefined)[]
+const theTypeCastFilter = values.filter((val) => val != null) as number[]; // number[]
 
 const theTypeGuardFilter = values.filter((val): val is number => {
-  return val != null
-}) // number[]
+  return val != null;
+}); // number[]
 ```
 
 The `theTypeGuardFilter` is quite nice. It works on the similar basis as the `as` keyword **in terms of type-safety**, but is is much robust solution.
@@ -1537,7 +1554,9 @@ type Fruits = "apple" | "banana" | "orange";
 Now, you would like to create a type that only contains the `"apple"` or `"banana"`. To do so, you might be tempted to write the type like this.
 
 ```ts
-type AppleOrBanana = Fruit extends "apple"| "banana" ?  "apple"| "banana"  : never
+type AppleOrBanana = Fruit extends "apple" | "banana"
+  ? "apple" | "banana"
+  : never;
 ```
 
 Sadly this **will not work as you would expect**. The underlying type is still `never`. This is because **the _distributive_ part of the types is only applied when we are dealing with generics**.
@@ -1545,7 +1564,9 @@ Sadly this **will not work as you would expect**. The underlying type is still `
 In the example above, TypeScript will **compare the WHOLE `Fruits` type to the WHOLE union type you created by hand**. This is not want you want. You want to compare each member of `Fruits` with each member of the union type. To do so, you must use generics.
 
 ```ts
-type AppleOrBanana<TFruit> = TFruit extends "apple"| "banana" ?  "apple"| "banana"  : never
+type AppleOrBanana<TFruit> = TFruit extends "apple" | "banana"
+  ? "apple" | "banana"
+  : never;
 ```
 
 This time, TypeScript will compare each member of `TFruit` with each member of the `"apple"| "banana"` union.
@@ -1660,16 +1681,16 @@ function getRolePrivileges(role: string): AnonymousPrivileges {
       return {
         sitesCanDelete: [],
         sitesCanEdit: [],
-        sitesCanVisit: []
+        sitesCanVisit: [],
       };
     case "user":
       return {
         sitesCanEdit: [],
-        sitesCanVisit: []
+        sitesCanVisit: [],
       };
     default:
       return {
-        sitesCanVisit: []
+        sitesCanVisit: [],
       };
   }
 }
@@ -1689,16 +1710,16 @@ function getRolePrivileges(
       return {
         sitesCanDelete: [],
         sitesCanEdit: [],
-        sitesCanVisit: []
+        sitesCanVisit: [],
       };
     case "user":
       return {
         sitesCanEdit: [],
-        sitesCanVisit: []
+        sitesCanVisit: [],
       };
     default:
       return {
-        sitesCanVisit: []
+        sitesCanVisit: [],
       };
   }
 }
@@ -1748,20 +1769,20 @@ it("Should force you to pass a second argument when you choose an event with a p
 
   sendEvent("click", {
     // @ts-expect-error
-    x: "oh dear"
+    x: "oh dear",
   });
 
   sendEvent(
     "click",
     // @ts-expect-error
     {
-      y: 1
+      y: 1,
     }
   );
 
   sendEvent("click", {
     x: 1,
-    y: 2
+    y: 2,
   });
 });
 
@@ -1850,8 +1871,10 @@ interface User {
   name: string;
 }
 
-type IsUser<O extends Record<string, unknown>> = O extends {id: string} ? true : false;
-type Result = IsUser<User> // Type 'User' does not satisfy the constraint 'Record<string, unknown>'. Index signature for type 'string' is missing in type 'User'
+type IsUser<O extends Record<string, unknown>> = O extends { id: string }
+  ? true
+  : false;
+type Result = IsUser<User>; // Type 'User' does not satisfy the constraint 'Record<string, unknown>'. Index signature for type 'string' is missing in type 'User'
 ```
 
 The error happens because we are trying to **pass a very strict definition to a more generic one**. In this case **an interface with well defined keys into a `Record` type with unknown keys**. TypeScript will not let us to do that. Now, if I specify the `O` to extends the `object`, the `IsUser` generic type will work as expected.
@@ -1862,8 +1885,8 @@ interface User {
   name: string;
 }
 
-type IsUser<O extends object> = O extends {id: string} ? true : false;
-type Result = IsUser<User> // true
+type IsUser<O extends object> = O extends { id: string } ? true : false;
+type Result = IsUser<User>; // true
 ```
 
 **Interestingly, if I were to type the `User` as a `type`, TypeScript would not complain**.
@@ -1872,10 +1895,12 @@ type Result = IsUser<User> // true
 type User = {
   id: string;
   name: string;
-}
+};
 
-type IsUser<O extends Record<string, unknown>> = O extends {id: string} ? true : false;
-type Result = IsUser<User>
+type IsUser<O extends Record<string, unknown>> = O extends { id: string }
+  ? true
+  : false;
+type Result = IsUser<User>;
 ```
 
 It turns out that **this is the intended behavior**. As I understand it, since the `types` cannot be _augmented_ in place, it is safe to allow them to be "indexed". You can [read more about this here](https://github.com/microsoft/TypeScript/issues/15300#issuecomment-332366024).
@@ -1886,21 +1911,22 @@ The example we have looked so far was about objects. Both the `Record` and the `
 
 ```ts
 type MyObject = object;
-const fakeObject: MyObject = () => null // No errors. Behaves as per spec, but undesirable in our case.
+const fakeObject: MyObject = () => null; // No errors. Behaves as per spec, but undesirable in our case.
 ```
 
 There is a way to do so, but it is a bit hacky.
 
 ```ts
 type MyObject = object;
-const fakeObject: MyObject = () => null
+const fakeObject: MyObject = () => null;
 
-type MyStrictObject = object & {call?: never} & {bind?: never} & {push?: never};
+type MyStrictObject = object & { call?: never } & { bind?: never } & {
+  push?: never;
+};
 const fakeObject2: MyStrictObject = () => null; // Error
 const fakeObject3: MyStrictObject = []; // Error
 
-
-const obj: Record<string, unknown> = {}
+const obj: Record<string, unknown> = {};
 const realObject: MyStrictObject = obj; // Ok
 ```
 
@@ -1914,17 +1940,17 @@ This type **represents all values except `null` or `undefiled` values**. This ty
 ```ts
 type Maybe<T extends {}> = T | null | undefined;
 
-Maybe<null> // error
-Maybe<undefined> // error
-Maybe<false> // ok
-Maybe<() => null> // ok
+Maybe<null>; // error
+Maybe<undefined>; // error
+Maybe<false>; // ok
+Maybe<() => null>; // ok
 ```
 
 If you go by the definition from above, it should not be surprising that this works. Strings, Booleans and other types have multiple of properties on them, thanks to _boxing_.
 
 ```js
-true.valueOf()
-"ss".includes("xx")
+true.valueOf();
+"ss".includes("xx");
 
 // and so on...
 ```
@@ -1976,23 +2002,22 @@ You learned that the `enum` keyword is not ideal as it could bloat your bundle a
 ```ts
 enum MyEnum {
   foo,
-  bar
+  bar,
 }
 
 declare function withTSEnum(enumValue: MyEnum): void;
-withTSEnum("foo") // error!
-withTSEnum(MyEnum.foo) // ok
+withTSEnum("foo"); // error!
+withTSEnum(MyEnum.foo); // ok
 
 const nativeEnum = {
   foo: "foo",
-  bar: "bar"
+  bar: "bar",
 } as const;
-type NativeEnumValues = keyof typeof nativeEnum
+type NativeEnumValues = keyof typeof nativeEnum;
 
-
-declare function withObjectEnum(enumValue: NativeEnumValues): void
-withObjectEnum("foo") // ok
-withObjectEnum(nativeEnum.foo) // ok
+declare function withObjectEnum(enumValue: NativeEnumValues): void;
+withObjectEnum("foo"); // ok
+withObjectEnum(nativeEnum.foo); // ok
 ```
 
 I would argue that the `enum object` pattern is even better than the TS version. Notice that you can provide literal values as well as the property of a given object. **If you are not convinced, consider looking at the following resources**.
@@ -2533,7 +2558,7 @@ type RGB = [red: number, green: number, blue: number];
 const palette: Record<Colors, string | RGB> = {
   red: [255, 0, 0],
   green: "#00ff00",
-  blue: [0, 0, 255]
+  blue: [0, 0, 255],
 };
 
 const redComponent = palette.red; // string | RGB
@@ -2548,8 +2573,8 @@ type RGB = [red: number, green: number, blue: number];
 const palette = {
   red: [255, 0, 0],
   green: "#00ff00",
-  blue: [0, 0, 255]
-} satisfies Record<Colors, string | RGB> ;
+  blue: [0, 0, 255],
+} satisfies Record<Colors, string | RGB>;
 
 const redComponent = palette.red; // [number, number, number]
 ```
@@ -2831,19 +2856,19 @@ The best example would be a `compare` function.
 ```ts
 declare function compare<A>(a: A, b: A): boolean;
 
-compare(1, "123") // "123" is not assignable to type number
-compare("123", 1) // 1 is not assignable to type string
+compare(1, "123"); // "123" is not assignable to type number
+compare("123", 1); // 1 is not assignable to type string
 ```
 
 Notice that the type parameter `A` got inferred from it's first occurrence. We can **change this behavior by leveraging lazy evaluation of the type parameters**. This is possible **with conditional types, as when TypeScript sees `?`, it will defer the inference until after the T is resolved**.
 
 ```ts
-type NoInfer<T> = [T][T extends any ? 0 : never]
+type NoInfer<T> = [T][T extends any ? 0 : never];
 
 declare function compare<A>(a: NoInfer<A>, b: A): boolean;
 
-compare(1, "123") // 1 is not assignable to type string
-compare("123", 1) // "123" is not assignable to type number
+compare(1, "123"); // 1 is not assignable to type string
+compare("123", 1); // "123" is not assignable to type number
 ```
 
 Now it's the second parameter that is used for the inference. How this method could help us solve our problem?
@@ -2909,8 +2934,8 @@ In some cases, especially when you perform a recursive build-up of types (think 
 Here is what I mean.
 
 ```ts
-type Foo = Record<string, string> & Record<"foo", string> // The type will allow for any string
-type Bar = {} & Record<"foo", string> // The type will allow only for the "foo" key.
+type Foo = Record<string, string> & Record<"foo", string>; // The type will allow for any string
+type Bar = {} & Record<"foo", string>; // The type will allow only for the "foo" key.
 ```
 
 This is very important in generic signatures.
@@ -2942,15 +2967,19 @@ const foo2 = "bar"; // foo2 is of type "string"
 This is very handy – it enables you to be strict and explicit with the values you are passing (keep in mind that the `as const` also adds `readonly` to object properties). **What is nice is the ability to use the _const annotations_ in the context of generic parameters**. Starting from TypeScript v5, the following is a valid code.
 
 ```ts
-declare function router<const R extends readonly string[]>(routes: R): Record<R[number], unknown>;
-const foo = router(["a", "b"]) // Record<"a" | "b", unknown>
+declare function router<const R extends readonly string[]>(
+  routes: R
+): Record<R[number], unknown>;
+const foo = router(["a", "b"]); // Record<"a" | "b", unknown>
 ```
 
 If I were to create a similar function signature in TypeScript v4.x, the inference would fallback to the `string`.
 
 ```ts
-declare function router<R extends string[]>(routes: R): Record<R[number], unknown>;
-const foo = router(["a", "b"]) // Record<"string", unknown>
+declare function router<R extends string[]>(
+  routes: R
+): Record<R[number], unknown>;
+const foo = router(["a", "b"]); // Record<"string", unknown>
 ```
 
 Keep in mind that, **for the _const annotation_ to take an effect here, one has to use the `readonly` modifier on the array**. Otherwise TypeScript will fall back to the old behavior.
@@ -2971,8 +3000,8 @@ This mostly happens because:
 The situation number 1 often happens when you are typing a _higher order function_.
 
 ```ts
-export const withRouter = <TProps,>(Component: React.ComponentType<TProps>) => {
-  const NewComponent = (props: Omit<TProps, 'router'>) => {
+export const withRouter = <TProps>(Component: React.ComponentType<TProps>) => {
+  const NewComponent = (props: Omit<TProps, "router">) => {
     const router = useRouter();
     /**
      * TypeScript is not able to deduce that
@@ -2999,13 +3028,13 @@ As for the option number 2. This one ensures that you do not make a silly mistak
 ```ts
 // Type '"bar"' is not assignable to type 'T'.
 // '"bar"' is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of constraint '"foo" | "bar"'.
-const foo = <T extends 'foo' | 'bar'>(arg: T = 'bar') => {}
+const foo = <T extends "foo" | "bar">(arg: T = "bar") => {};
 ```
 
 This makes sense as you could, in theory, in your code, do the following:
 
 ```ts
-foo<'foo'>()
+foo<"foo">();
 ```
 
 Which then creates a really weird situation for the default `arg` value.
@@ -3140,12 +3169,12 @@ When we call the `isValidPassword` we get the correct type – the `PasswordValu
 If you decide to use the _type branding_ technique without any abstractions, you will be type-casting all over the place. Not ideal. In my humble opinion, the **_type branding_ combines well with a function that explicitly casts the type for you**. While that function is very shallow, and violates one of the core principles of good design, I like it much better than having `as XX` scattered thought the codebase.
 
 ```ts
-type Email = string & {_brand_: "EMAIL"};
+type Email = string & { _brand_: "EMAIL" };
 
 // The name is very contrived. Change it according to your use-case.
 const asBrandedEmail = (email: string): Email => {
-  return email as Email
-}
+  return email as Email;
+};
 
 const foo: Email = asBrandedEmail("wojciech@stedi.com");
 ```
@@ -3161,7 +3190,7 @@ class MyError extends Error {}
 
 function foo(error: MyError) {} // used as a type
 
-const error = new MyError() // used as a runtime value
+const error = new MyError(); // used as a runtime value
 ```
 
 ### Type Predicates and Classes
@@ -3170,7 +3199,7 @@ You can **leverage the type predicates (guards) on the methods of the class**. T
 
 ```ts
 class UserValues {
-  error?: string
+  error?: string;
   constructor(private values: Record<string, string>) {}
 
   // Notice this wild piece of syntax
@@ -3181,14 +3210,14 @@ class UserValues {
 
 // On the caller side
 
-const userValues = new UserValues({firstName: "", lastName: ""})
+const userValues = new UserValues({ firstName: "", lastName: "" });
 
 if (!userValues.areValid()) {
-  userValues.error // string
-  return
+  userValues.error; // string
+  return;
 }
 
-userValues.error // string | undefined
+userValues.error; // string | undefined
 ```
 
 Since we do not have a parameter for the `areValid` function, the only way to refer to the "current scope" is through the use of `this` keyword.
@@ -3198,7 +3227,7 @@ Please note that the **type predicates can also influence the types inside the c
 
 ```ts
 class UserValues {
-  error?: string
+  error?: string;
   constructor(private values: Record<string, string>) {}
 
   // Notice this wild piece of syntax
@@ -3207,13 +3236,13 @@ class UserValues {
   }
 
   public login() {
-    const areValid = this.areValid()
+    const areValid = this.areValid();
     if (!areValid) {
-      this.error // string
-      return
+      this.error; // string
+      return;
     }
 
-    this.error // string | undefined
+    this.error; // string | undefined
   }
 }
 ```
