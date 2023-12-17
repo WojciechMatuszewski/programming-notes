@@ -163,8 +163,113 @@
     import Melon = require("./melon");
     ```
 
+    Keep in mind that this import syntax might not be available on the newest `target` settings like ES2022. In that case, you should consider amending how the underlying dependency is structured or maybe replacing it with an alternative?
+
 - The `.cjs` and `.mjs` file extensions will be treated as `CJS` and `ESM` files respectively. You do not have to add anything into `package.json` for that to happen.
 
   - You would add the `type: "module"` to `package.json` for Node to treat all your `.js` files as ESM.
 
   - Having different file extensions also allows you to set different linting rules for different "environment" in an easy way.
+
+## Generics Scopes And Constraints
+
+- You most likely used _generics constraints_ in many places in your application.
+
+  ```ts
+  function listToDict<T extends { id: string }>(list: T[]): Record<string, T> {
+    // implementation
+  }
+
+  const foo = listToDict([id: "1", value: "something"]) // Record<string, {id: string, value: string}>
+  ```
+
+  Notice that, by default, TypeScript fallbacks to the widest possible type – despite having literal types in the array, the result type is "general" (the literals are replaced with `string` type).
+
+  To narrow down the types, **use the `const` generics constraints**.
+
+  ```ts
+  function listToDict<const T extends { id: string }>(list: T[]): Record<string, T> {
+    // implementation
+  }
+
+  const foo = listToDict([id: "1", value: "something"]) // Record<string, {id: "1", value: "something"}>
+  ```
+
+- For **generic constraints, always use the lowest common denominator**. Consider the example below.
+
+  ```ts
+  interface HasId {
+    id: string;
+  }
+
+  function example1<T extends HasId[]>(list: T) {
+    return list.pop();
+  }
+
+  function example2<T extends HasId>(list: T[]) {
+    return list.pop();
+  }
+
+  const result1 = example1([
+    { id: "1", color: "blue" },
+    { id: "2", value: "notBlue" },
+  ]); // HasId
+
+  const result2 = example2([
+    { id: "1", color: "blue" },
+    { id: "2", value: "notBlue" },
+  ]); // {id: string, color: string, value?: string} | {...}
+  ```
+
+  **Notice that, when the generic constraint is a `HasId` rather than `HasId[]` we get richer return type information**. This is why you should consider always using the "lowest" possible type in the generic constraint.
+
+## Conditional & Mapped Types
+
+- **Passing an union to a type-parameter is like expanding this union to two separate calls**.
+
+  ```ts
+  type IsLowNumber<T> = T extends 1 | 2 ? true : false;
+
+  type Test = IsLowNumber<10 | 2>; // boolean
+  // You can think of this as
+  type Test2 = IsLowNumber<10> | IsLowNumber<2>;
+  ```
+
+  There is a way to change this behavior. **If you want to stop TypeScript from expanding the union, consider "clothing" the type-parameter**.
+
+  ```ts
+  type IsLowNumber<T> = [T] extends [1 | 2] ? true : false;
+
+  type Test = IsLowNumber<10 | 2>; // false
+  ```
+
+- **You can now add the `extends` to the `infer` keyword**. Previously this was not possible (new feature in TypeScript 5.x).
+
+  ```ts
+  type GetFirstStringIshElement<T> = T extends readonly [
+    infer S extends string, // <- The new stuff
+    ..._: any[]
+  ]
+    ? S
+    : never;
+
+  // Prior to this feature being available, I had to write the following
+  type GetFirstStringIshElement<T> = T extends readonly [infer S, ..._: any[]]
+    ? S extends string
+      ? S
+      : never
+    : never;
+  ```
+
+- Remember that you can transform each key in the _mapped types_ iteration
+
+  ```ts
+  interface API {
+    getFoo: () => string;
+    getBar: () => string;
+  }
+  type CapitalizedAPI = {
+    // You can also do `extend` with `never` here to drop the keys!
+    [Key in keyof API as `${Capitalize<Key>}`]: API[Key];
+  };
+  ```

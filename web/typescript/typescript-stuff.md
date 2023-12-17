@@ -428,9 +428,7 @@ Now, the autocomplete works as expected. It's either `sm`, `xs` or all the strin
 function getFontSize(size: "sm" | "xs" | (string & {})) {}
 ```
 
-
 Check out [this StackOverflow reply for more information](https://stackoverflow.com/a/61048124).
-
 
 ## What the `d.ts` file is good for and what it is NOT good for
 
@@ -2776,7 +2774,7 @@ type string = string // union with 1 member
 It should be clear to us that as long as we use the _naked_ `never` type in a conditional type context, the result will always be `never`.
 How can we express our intent without distributing over an empty union? (See _distributive conditional types_ if you are still unsure what that means)
 
-Well, we learned about _clothed_ types right? When a type parameter is a singular _clothed_ type, it will not be a subject to the _distribution_.
+Well, **we learned about _clothed_ types right**? When a type parameter is a singular _clothed_ type, it will not be a subject to the _distribution_.
 
 With that information, all we have to do is to amend our existing snippet just a tiny bit
 
