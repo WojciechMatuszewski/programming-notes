@@ -273,3 +273,17 @@
     [Key in keyof API as `${Capitalize<Key>}`]: API[Key];
   };
   ```
+
+## Variance Over Type Params
+
+- Mike presents the `in` and `out` tokens you could use before the generic type parameters.
+
+  - To be completely honest, I do not really understand what they do. They relate to a concept of _invariance_ and _bivariance_ and apparently could speed up the type checking A LOT when you are dealing with nested types.
+
+## Wrapping up
+
+A great refresher on all things TypeScript. It gave me an opportunity to rehash some of the concepts and learn new ones.
+
+- The `const` token before the generic parameters to improve inference.
+
+- The `import foo = require("bar")` so that one does not have to use `esModuleInterop` option which is "viral" and will require the consumers of your package to change their `tsconfig.json`.
