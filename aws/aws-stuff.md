@@ -585,6 +585,16 @@
 
       - Pretty neat, the "reduce" step is somewhat implemented for you automatically.
 
+#### Waiting for network calls? Try Step Functions instead
+
+- At the end of 2023, AWS added a very requested feature – **the ability to call any HTTP endpoint** via `Task` in any state machine.
+
+  - Prior to this announcement, your only options were using EventBridge Destinations, or using AWS Lambda functions. Please note **that you could invoke APIGW with StepFunctions but that required... APIGW to be there**.
+
+    - The issue with EventBridge Destinations is the fact that you do not get to do anything with the response. It is a fire and forget type of operation.
+
+    - Interestingly, this feature utilizes EventBridge Connections which also is used by EventBridge Destinations.
+
 ### IAM
 
 - **IAM** is universal, **is global**, does not apply to regions
@@ -906,8 +916,7 @@ An example for s3-prefix (folder)
 #### Resource Based Policies
 
 - these are **special subset of policies** which are **attached to AWS Services**.
-  Think allowing _APIGW_ to invoke your lambda function. You would **add that policy on the target resource, not the
-  source of the event**
+  Think allowing _APIGW_ to invoke your lambda function. You would **add that policy on the target resource, not the source of the event**
 
 - they have **Principal field**. This is due to the fact that they are evaluated whenever some principal access given
   resource. IAM role / group policies does not have that because they are applied to principals from the beginning.
