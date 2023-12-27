@@ -21,3 +21,76 @@ WIP
   - If you want the model to have memory, you need to enrich it's data-set with such memory.
 
     - This is where the _RAG_ technique comes in to play.
+
+- In the first exercise to generate report from stock data, we passed the "raw" API response as the "user" parameter and it worked!
+
+  - I'm pretty amazed that it did. Of course the result is not that great, but the fact that OpenAI can deduce something from unformatted API response is quite amazing!
+
+    - Of course, **passing the "raw" API response will most likely consume more tokens**. This means that the API call to OpenAI will be more expensive.
+
+- The **`max_tokens` settings does not control how concise the answer of the AI is**. All it does it **controls the "cut-off" length of the response**.
+
+  - If you set the `max_tokens` to some low number, the response from the AI might be cut-off mid sentence.
+
+- **Consider using the `stop_sequence`** to control how long the output is.
+
+  - As soon as the model produces a string included in the `stop_sequence` it will return and stop producing further results.
+
+    - If you tune your stop sequence, you might be able to produce a coherent output while saving some cost.
+
+      - A good example is asking for a list of books. Usually the model produces a numbered list. If your stop sequence includes some number, for example `3.`, the model response will only include two books.
+
+      - Another example is the _newline_ symbol. If you want your answer to be a single paragraph, without giving explicit instructions to the model, consider adding `\n` to the `stop_sequence` array.
+
+        - Having said that, this might produce half-finished answer. It might be better to give the model explicit instructions regarding how long the output should be.
+
+- The OpenAI playground is very helpful.
+
+  1. It uses your API key and offers pretty much the same experience as the "chat app".
+
+  - This is nice if you interact with the OpenAI seldomly and the 20 USD / month would not be justified for your purpose.
+
+  2. It allows you to export what you did straight to code.
+
+- The **_temperature_ controls how "daring" / deterministic the answer is**.
+
+  - If you set the temperature high, the answer might be a bit random. **Some times you will get complete random words strung together**.
+
+  - **The higher the temperature, the longer the response time**.
+
+  - **Use lower setting for temperature to lessen the chance of factual errors**.
+
+- There is the **"single shot" and "few shot" approaches when modeling the system message**.
+
+  - The "single shot" means you are not giving any examples for the AI.
+
+  - The "few shot" approach means you are providing some example answers for the AI. **This allows you to influence the answer of the AI more**.
+
+  Consider the following payload. Notice that examples are surrounded by `###` blocks.
+
+  ```js
+  const messages = [
+    {
+      role: "system",
+      content: `You are a robotic doorman for an expensive hotel. When a customer greets you, respond to them politely. Use examples provided between ### to set the style and tone of your response.`,
+    },
+    {
+      role: "user",
+      // You can add examples in the "user" or the "system" messages.
+      content: `Good day!
+        ###
+        Good evening kind Sir. I do hope you are having the most tremendous day and looking forward to an evening of indulgence in our most delightful of restaurants.
+        ###
+  
+        ###
+        Good morning Madam. I do hope you have the most fabulous stay with us here at our hotel. Do let me know how I can be of assistance.
+        ###
+  
+        ###
+        Good day ladies and gentleman. And isn't it a glorious day? I do hope you have a splendid day enjoying our hospitality.
+        ### `,
+    },
+  ];
+  ```
+
+  - **The main drawback of the "few shot" approach is the cost factor**. Since you have to provide more tokens, the API call is more expensive. **The computation time will also be higher** since the system has to parse more tokens.
