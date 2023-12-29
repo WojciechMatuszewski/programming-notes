@@ -4,6 +4,8 @@ WIP
 
 > Notes from [this course](https://scrimba.com/learn/aiengineer).
 
+## Into to AI Engineering
+
 - OpenAI models will not give you the same answer given the same question if you repeat the question.
 
   - This is quite fascinating. I bet there is some aspect of randomness that influences the answers structure.
@@ -94,3 +96,47 @@ WIP
   ```
 
   - **The main drawback of the "few shot" approach is the cost factor**. Since you have to provide more tokens, the API call is more expensive. **The computation time will also be higher** since the system has to parse more tokens.
+
+- The AI security is a huge topic. For now consider the following.
+
+  - _"Know your customer"_ – you might want to authenticate the user before allowing them to use the AI capabilities.
+
+  - Consider using the OpenAI _moderation_ API to flag input/outputs.
+
+    - If the input or the output is flagged, you can intervene and stop the user.
+
+  - Stress test your application. Try to engineer malicious prompt and so on.
+
+## Open-source AI Models
+
+- The _HuggingFace_ website is THE place to go for open-source models.
+
+  - They also have a nice TypeScript SDK.
+
+- Historically, models and data-sets used to train those models were shared publicly.
+
+  - This changed with ChatGPT.
+
+- Nowadays, there are various closed-source and open-source models.
+
+  - What open-source community lacks in funding, it makes up the difference with sheer amount of contributors.
+
+- **_Inference_ refers to the process of getting predictions or decisions from a pre-trained model**.
+
+  - Think feeding new data to pre-trained model and looking at the results.
+
+- I'm very surprised that one can use the HuggingFace API for free.
+
+  - And they also host various models for you, though not all. That is understandable.
+
+    - There is a small print on the model page if the inference API is turned on/off for a given model.
+
+- TIL **that you can create URLs from `Blob` via `URL.createObjectURL(blob)`**.
+
+  - This is quite useful if you want to "load" some resource and then update DOM element with `src` pointing to that URL.
+
+    - In my case, it was the "speech Blob" returned from the API that I had to turn into URL and provide to the `audio` element.
+
+- **You can download the models locally, to the browser and use the via the `pipeline`**.
+
+  - This is quite amazing.
