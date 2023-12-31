@@ -204,3 +204,88 @@ WIP
   - **While this approach is the simplest to implement, it does not scale very well**. The input has to fit into a given token limit.
 
     - The OpenAI documentation recommends summarizing previous parts of conversation, or performing _semantic search_ on a conversation history and only providing the API with relevant parts of the conversation. Clever!
+
+## Learn AI Agents
+
+- **AI Agents are like managers in the factory**.
+
+  - They can use tools to achieve the goals you set for them.
+
+- The concept of _prompt engineering_ is kind of related to AI Agents.
+
+  - The term _prompt engineering_ refers to crafting a good prompts. The prompts that will help the model to give you the best answers.
+
+    1. The prompt has to be specific.
+
+    2. Use technical terms you already know.
+
+    3. Provide context.
+
+    4. Consider **giving examples of answers to related questions**.
+
+  - **The queries you provide to LLMs could be long – that is okay!** We have been trained to reduce our questions to a few words as this is how search engines usually operate – the fewer keywords the better results.
+
+- Agents **could be based on a technique called _ReAct_**. [You can read more about it here](https://cobusgreyling.medium.com/react-synergy-between-reasoning-acting-in-llms-36fc050ae8c7).
+
+  1. First, agent reasons about the input.
+
+  2. Then, agent performs actions based the first step. It might involve calling an API or something else.
+
+  3. Then, the agent will observe the results from the second action. Here, the agent might have enough information to answer the query. If not, the agent will repeat the steps.
+
+- You might be thinking: _how to make the LLM be able to perform tasks?_. **At the very basic level: you cannot**. You can give hints to LLM on what to answer and then, based on the answer, provide more data to keep the conversation going.
+
+  - Here is an **example _system prompt_ that will turn ChatGPT into a mini-agent**.
+
+    <details>
+      <summary>Click to expand</summary>
+
+    ```txt
+      You cycle through Thought, Action, PAUSE, Observation. At the end of the loop you output a final Answer. Your final answer should be highly specific to the observations you have from running the actions.
+
+      1. Thought: Describe your thoughts about the question you have been asked.
+      2. Action: run one of the actions available to you - then return PAUSE.
+      3. PAUSE
+      4. Observation: will be the result of running those actions.
+
+      Available actions:
+      - getCurrentWeather:
+          E.g. getCurrentWeather: Salt Lake City
+          Returns the current weather of the location specified.
+      - getLocation:
+          E.g. getLocation: null
+          Returns user's location details. No arguments needed.
+
+      Example session:
+      Question: Please give me some ideas for activities to do this afternoon.
+      Thought: I should look up the user's location so I can give location-specific activity ideas.
+      Action: getLocation: null
+      PAUSE
+
+      You will be called again with something like this:
+      Observation: "New York City, NY"
+
+      Then you loop again:
+      Thought: To get even more specific activity ideas, I should get the current weather at the user's location.
+      Action: getCurrentWeather: New York City
+      PAUSE
+
+      You'll then be called again with something like this:
+      Observation: { location: "New York City, NY", forecast: ["sunny"] }
+
+      You then output:
+      Answer: <Suggested activities based on sunny weather that are highly specific to New York City and surrounding areas.>
+    ```
+
+    </details>
+
+    Then, in the code, you would have to parse the answers, call the functions and add the `Observation: ${result_of_calling_the_action}` in your code.
+    **But there is a better way! Enter _OpenAI Functions_**.
+
+- The **OpenAI functions allow you to "embed" capabilities into the data you send to the API**.
+
+  - First, you register the functions. You do that via the `tools` property when you first prompt the model.
+
+  - Then, you parse the response. If the LLM wants to call the function, the response have all the necessary properties for you to understand which function to call – **you no longer have to manually parse the LLM text response!**
+
+  - Then you call the function and provide the data to LLM via the `role: "tools"` prompt.
