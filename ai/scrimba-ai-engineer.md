@@ -289,3 +289,11 @@ WIP
   - Then, you parse the response. If the LLM wants to call the function, the response have all the necessary properties for you to understand which function to call – **you no longer have to manually parse the LLM text response!**
 
   - Then you call the function and provide the data to LLM via the `role: "tools"` prompt.
+
+- **When you are done building the agents using _tools_, consider using the `runTools` SDK method**.
+
+  - What you were doing manually, the SDK will do for you.
+
+  - The only thing you have to do is to provide the functions and some metadata.
+
+TODO: Solo project
