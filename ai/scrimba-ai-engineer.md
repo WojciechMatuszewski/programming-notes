@@ -296,4 +296,40 @@ WIP
 
   - The only thing you have to do is to provide the functions and some metadata.
 
-TODO: Solo project
+- **You can really make it meta – allow agents to invoke a RAG-based system OR make a Google search**.
+
+  - Now, the agent will do all the work for you. Pretty neat!
+
+## Assistants API
+
+- The _Assistants API_ allows you **to build AI agents with ease. It's even easier than using the `runTools` API**.
+
+  - It seems like the lines are a bit blurry between an _OpenAI assistant_ and _Agent_. I think the _OpenAI Assistant_ is a "sub-type" of an _Agent_.
+
+- The _Assistants API_ removes the need for
+
+  1. Keeping the conversation memory. It is all handled internally by OpenAI.
+
+  2. Managing vector database for RAG. **You can upload files right into OpenAI and they will manage storing it as vectors!**
+
+  3. Implementing the _ReAct_ loop. Again, all handled by OpenAI.
+
+  There were many startups that went out of business when OpenAI announced this API. Now I understand why.
+
+- **It is not all sunshine and rainbows**.
+
+  - The **storage costs are insane**. Compared to platforms like S3, or your own deployment of a vector database.
+
+  - There is also the concern of data privacy. I think one can negotiate with OpenAI that their data will not be used for training, but for the rest of us, I would not count for it.
+
+## Build AI Apps with LangChain
+
+- This part of the course is mainly a refresher in what we have done before.
+
+- `langchain` is a good library to use, though every abstraction has it cost.
+
+  - If you rely on abstractions too much for any mission-critical features, when something breaks, you might not have the ability to debug the issues properly due to "black box" library.
+
+- The **_standalone question_ is the user-provided question reduced to the very essence of the question**.
+
+  - We do not control what the user asks for. Since the output of the LLM depends on the "quality" of the question, to ensure better UX, one might consider **refining the user question**.
