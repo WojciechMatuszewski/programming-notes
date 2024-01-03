@@ -333,3 +333,80 @@ WIP
 - The **_standalone question_ is the user-provided question reduced to the very essence of the question**.
 
   - We do not control what the user asks for. Since the output of the LLM depends on the "quality" of the question, to ensure better UX, one might consider **refining the user question**.
+
+  - What is even more interesting is the fact that **LLMs understand the meaning of the term _standalone question_**. This means that you can **ask the LLM to rephrase a given question into _standalone question_, then ask the _standalone question_ to LLM**.
+
+  - You **might also think about _standalone question_ as a question that is LESS context dependant than the original, most likely, _contextual question_**.
+
+    - See [this comment](https://community.openai.com/t/chat-completion-architechture/139590/2).
+
+- There are two ways to _compose_ functions and constructs in `langchain`.
+
+  - There is the `pipe` method. This one is quite basic.
+
+  - The `RunnableSequence` class. This one is very flexible and used to create complex chains.
+
+- **I find the _composability_ story of `langchain` to be very strong**. This makes DX quite good.
+
+  ```ts
+  const standaloneQuestionTemplate = `Given a question, convert it to a standalone question. Question: {question}, standalone question:`;
+  const standaloneQuestionPrompt = PromptTemplate.fromTemplate(
+    standaloneQuestionTemplate
+  );
+  const standaloneQuestionChain = RunnableSequence.from([
+    standaloneQuestionPrompt,
+    llm,
+    new StringOutputParser(),
+  ]);
+
+  const contextChain = RunnableSequence.from([retriever, combineDocuments]);
+
+  const answerTemplate = `You are a helpful and enthusiastic support bot who can answer a given question about Scrimba based on the context provided. Try to find the answer in the context. If you really don't know the answer, say "I'm sorry, I don't know the answer to that." And direct the questioner to email help@scrimba.com. Don't try to make up an answer. Always speak as if you were chatting to a friend.
+    context: {context}
+    question: {question}
+    answer:
+    `;
+  const answerPrompt = PromptTemplate.fromTemplate(answerTemplate);
+  const answerChain = RunnableSequence.from([answerPrompt, llm]);
+
+  /*
+    Pretty neat.
+    As if I'm doing functional programming.
+  */
+  const chain = RunnableSequence.from([
+    {
+      standalone_question: standaloneQuestionChain,
+      original_input: new RunnablePassthrough(),
+    },
+    {
+      context: (data) => contextChain.invoke(data.standalone_question),
+      question: (data) => data.original_input.question,
+    },
+    answerChain,
+  ]);
+
+  const response = await chain.invoke({
+    question:
+      "What are the technical requirements for running Scrimba? I only have a very old laptop which is not that powerful.",
+  });
+
+  console.log(response.content);
+  ```
+
+## The bottom line
+
+- The course quality is really good. I now have much better understanding of how things work.
+
+  - Looking back, I had no idea what I was doing while working [on the _pdf to prompt_ project using Bedrock](https://github.com/WojciechMatuszewski/pdf-to-prompt).
+
+- The `langchain` library is nice, but do not start with it. It is imperative to learn the core concepts first.
+
+  - The _ReAct_ loop.
+
+  - What is an _AI agent_ and how to build one.
+
+  - How much of the result depends on the prompt.
+
+  - All the OpenAI API settings.
+
+  And much more...
