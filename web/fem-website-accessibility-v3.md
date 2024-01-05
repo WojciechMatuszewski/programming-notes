@@ -104,4 +104,132 @@ Taking notes based [on this course](https://frontendmasters.com/workshops/access
   </html>
   ```
 
-Finished Part 3, 33:49
+### Debugging HTML exercise
+
+- You cannot have both `role="banner"` and a `header` tag rendered at the same time.
+
+  - There can only be one "banner" on the page.
+
+- The `aside` tag has to be "top-level" meaning it is not wrapped within any other landmark element like `main`.
+
+- **It is perfectly fine to have `hx` tags that are "sr-only"**.
+
+- The `inert` does not work well in React. It seems like passing `inert={true}` on a node will not do anything. I assume it has to do with JSX transpiler rejecting the attribute since it's not a "known" attribute.
+
+  ```jsx
+  <div inert={true}>foo</div> // Does not work!
+  ```
+
+  What you might want to do instead is to leverage _callback refs_ or using a different value than `true` for the attribute.
+
+  ```jsx
+  <div>
+    <div
+      ref={(node) => {
+        node.setAttribute("inert", "true"); // Works
+      }}
+    >
+      foo
+    </div>
+    <div inert="">Another node</div> // Also works
+  </div>
+  ```
+
+  This will ensure that the attribute is applied correctly.
+
+- Images should have the right `alt` text. There is no excuse to not having one, especially in the era of AI tools.
+
+## ARIA
+
+- Its best to err on the side of NOT using `aria-` attributes.
+
+  - If you do not know what you are doing, you can make things worse.
+
+- ARIA encompasses _roles_, _states_ or _attributes_.
+
+  - The **_role_ tell us what a given element does**.
+
+    - Is it a button? Then there is `aria-role="button"` and so on.
+
+    - **Semantic HTML tags often have implicit roles**. This is good, you do not want to change them!
+
+      - For example, the `button` tag has an implicit _role_ of "button".
+
+- You can use **ARIA in CSS selectors**.
+
+  ```css
+  [role="checkbox"][aria-disabled="true"] {
+  }
+  ```
+
+  Side note: let us not forget the `data-` attributes! They also could come in very handy.
+
+  ```css
+  [data-open="true"] {
+  }
+  ```
+
+- To provide more context to a given element, you have the `aria-label`, `aria-labelledby` and `aria-describedby` to choose from.
+
+  - The `aria-label` works with a text value.
+
+  - Both the `aria-labelledby` and `aria-describedby` work with element ID.
+
+    - **Use `aria-labelledby` to _name_ the element, use `aria-describedby` to _describe_ the element**.
+
+      - The _name_ would be much shorter than _description_.
+
+    - **`aria-labelledby` will OVERRIDE the existing label**.
+
+### Live Regions
+
+- They are used to **make the screen reader read out things that happen on elements that the user is not currently focused on**.
+
+  - A very good example are toasts messages when there is an auto-save feature.
+
+    - In that case, the users focus is most likely on some kind of input field. It would be neat to make the user aware that their changes were saved then they finished typing. This is where the concept of _live regions_ comes in!
+
+- To create a _region_, use the `region` attribute or the `role` attribute.
+
+  ```html
+  <div aria-live="polite">foo</div>
+
+  <div aria-live="assertive">bar</div>
+
+  <div role="status">Loading...</div>
+  ```
+
+  There are various additional attributes you could use to supplement the `role` or `aria-live`. The most critical thing to understand is that **when using `assertive`, any changes within the element will STOP what the screen reader is currently saying and announce the change to that element**. The `polite` changes will be announced once screen reader is "idle".
+
+  One additional technique is to **wrap the _regions_ with `sr-only` class**. Again, these are mostly for screen readers.
+
+  ```tsx
+    <div>
+    <NotificationIcon>
+      <div aria-live="polite" className = {"sr-only"}>
+      You have 5 notifications
+      <div>
+    </div>
+  ```
+
+- Please do not overuse the _live regions_. Imagine some element constantly re-rendering. It might be the case that the screen reader will announce those re-renders. This will be VERY frustrating for the end-users.
+
+## Focus Management
+
+- Use the keyboard to navigate the application you are working on. Is it even possible?
+
+  - If you use semantic HTML, you should be able to do this. **You do not have to use any `aria-` attributes to make your website accessible to keyboard-only users!**
+
+- Any website should consider adding _skip links_.
+
+  - Here, it is also crucial to understand how `tabIndex` works.
+
+    1. The positive values will influence the _tab order_ of the page.
+
+    2. The zero value will make element "tabbable".
+
+    3. The negative value will **make the element "invisible" to the tab ordering, but still be able to receive focus**.
+
+    In the face of _skip links_, you mostly want the target of the link to have a negative `tabIndex`. It will be `main` or `footer` either way.
+
+Finished part 5 59:52
