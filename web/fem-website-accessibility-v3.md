@@ -232,4 +232,70 @@ Taking notes based [on this course](https://frontendmasters.com/workshops/access
 
     In the face of _skip links_, you mostly want the target of the link to have a negative `tabIndex`. It will be `main` or `footer` either way.
 
-Finished part 5 59:52
+- When managing focus, **use the `activeElement` property**. It will tell you what is the currently focused element.
+
+  - To save yourself a lot of hassle, consider using _live expression_ with it. Otherwise you will have to re-query it every time it changes.
+
+## Visual Considerations
+
+- Color and visual contrast is important. Many people might have issues reading the content on your page if the ratio does not meet the guidelines.
+
+- **Test your website with a bigger zoom setting (it should work well up to 200%)**.
+
+  - Ask anyone older to hand you their phone. You will notice that they have enlarged UI.
+
+    - You need to build pages accessible for anyone!
+
+- There are two very common APIs that pertain to user preference.
+
+  - The `prefers-reduced-motion`. This one tells you whether the user is "motion sensitive". If that is the case, you might want to disable / reduce animations.
+
+  - The `prefers-color-scheme`. This one tells you whether the user wants the _light_ or _dark_ theme.
+
+## Wrapping up
+
+- **Accessibility is important and vital to product success**.
+
+  - There is a correlation between accessibility and how "good" the webpage feels. You probably want your web page to feel pretty good to users right?
+
+- Marcy left us with **a great list of awesome tools to add to our workflow**.
+
+  1. [The accessibility insights](https://accessibilityinsights.io/docs/web/overview/).
+
+  2. [The Web Developer Toolbar](https://accessibilityinsights.io/docs/web/overview/). This one is truly amazing.
+
+  3. I've also learned that service like [stark exist](https://www.getstark.co/brave/). Could come in handy.
+
+- Use `aria-labelledby` or `aria-describedby`.
+
+  - I found these to be very useful for modals. When you use those attributes, you can query the modal with `getByRole("modal", "my title")` while testing stuff.
+
+- **Use semantic HTML**.
+
+  - Landmarks are there – the `nav`, `header`, `main`, `aside` and `footer`.
+
+  - Some landmarks are "top-level" landmarks, meaning they should not be nested within other landmarks.
+
+- **Ensure you have correct heading hierarchy**.
+
+  - Use the tools I've listed above to check.
+
+- **Consider adding `role="status` for containers that display any loading indicators**.
+
+  - This enables screen readers to announce that the content is loading.
+
+  - Remember that, by default, the `role="status"` has "polite" assertiveness. This is most likely what you want in this case.
+
+- Be aware that _aria regions_ are a thing. Use them!
+
+- Use the `.sr-only` (or similar) class to provide meaningful description for items that should not contain any visual content.
+
+  - This is very common practice for so-called _Icon Buttons_ – a button that only renders some kind of icon.
+
+    - In this case, also ensure that the button has enough padding around it, so that users visiting on mobile can click it!
+
+- For navigation, use only the keyboard for a day or two. How did it go?
+
+  - If you are having problems using your product, imagine users who have no choice but to use the keyboard.
+
+Overall, great workshop. I wish there was a bit more practice.
