@@ -250,4 +250,36 @@ Now, when that tricky 20% of UI design work comes, you lean heavily on the "desi
 
 **The UI work is just as collaborative as any. Remember that it is the requirement that should drive the UI look and feel, not the other way around**.
 
-TODO: https://thedecisionlab.com/biases/ostrich-effect?ref=members.vadimkravcenko.com
+## On estimates
+
+Why do we estimate? Do we need to estimate how long a given task will take?
+
+Having an estimate gives our bosses a way to calculate risk. Their job is to make a decision given information about those estimates. But that leaves us in an awkward position.
+
+If you make a bad estimate, your boss will most likely make a bad decision. Some might argue that the fault lies solely on you. Missing an estimate also has psychological effects – it leads to stress and could cause developer burnout.
+
+So, do we need to estimate? I would argue that **we do not need to estimate everything. We only need to estimate the most critical tasks, which SHOULD appear very seldomly**.
+
+If you manage to build trust and collaborative spirit in your organization, you will notice that, without estimation, the tasks are done much quicker. Why? Because nobody is stressed about the deadline and most people want to do their best work. That also means delivering things as fast as possible while keeping architectural and other aspects in mind.
+
+**Focus on building trust and inclusion instead of having deadlines**. You might consider the deadline a motivational factor, but it only creates a **fake sense of urgency**.
+
+Now, some deadlines are so-called _"hard deadlines"_. Think of running ads on TV or something similar. In that case, **the most reasonable way to estimate would be to provide stakeholders with percentages for a given timeframe**.
+
+"The probability we will get this done by Friday is about 30%. The probability we will get this done by next Tuesday is about 50%", and so on.
+
+This gives your boss enough information to decide, but if something unexpected happens, you tell the truth – that you cannot predict the future.
+
+## When joining new team
+
+Here are some ideas about what to do when joining a new team.
+
+- **Use the product**, a lot. Take some time and try to understand who the users are. What are the "personas". How do we cater to each of them?
+
+- **Understand where the system fails**. Doing so will give you A LOT of ideas on what to improve. Discuss those ideas in a larger group and **implement them** — [related blog post](https://blog.staysaasy.com/p/new-hires-learn-how-the-system-breaks?utm_source=profile&utm_medium=reader2).
+
+- **Start adding tests**. Other engineers will love you. If the codebase does not have that many tests (from my experience, that is the case for almost all codebases), start writing them.
+
+- **Update onboarding documents**. They are outdated. Unless the project's README is up-to-date (it never is), your first contribution could be "Update the README" PR.
+
+- **Do the tedious, so-called "dirty work"**. Yes, it might not be super fun, but guess what? You will learn a tone while doing so.
