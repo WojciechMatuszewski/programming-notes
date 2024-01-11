@@ -62,4 +62,48 @@ Notes from [this course](https://frontendmasters.com/workshops/enterprise-access
 
   - The a11y tree lives alongside the DOM tree.
 
-Finished part 3, 32:25;
+- If you are serious about accessibility and how screen reader works with your website **you need to test on Windows as well!**
+
+  - You are most likely on MacOS, but some of your customers might not be.
+
+- TIL that `role="application"` exists. [You can read about it here](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/application_role).
+
+  - It seem to completely disable any kind of focus-management that could be done by browser.
+
+  - Allows you to customize all the interactions, but there is a danger that you will miss something and make the experience worse.
+
+- **Consider wrapping images with `figure`**.
+
+  - In addition to being more semantic, you can use `figcaption`. In addition, using the `figure` might positively impact SEO.
+
+## Accessibility in JS Apps
+
+- First, understand that it is okay to use JS.
+
+  - In fact, some of the patterns recommended by many a11y-focused organizations require JS to implement.
+
+  - In most cases, it boils down to having inaccessible HTML, not the fact that we website uses a given framework.
+
+  - There is the [`navigation` API](https://developer.mozilla.org/en-US/docs/Web/API/Navigation_API) but it is still considered experimental. Many people hope that using this API will solve a11y problems with client-side routing.
+
+- **Routing gets quite tricky with client-side apps**.
+
+  - Make sure the router you are using thinks about a11y and implements features like focus switches when you navigate between pages.
+
+  - To be honest, **the best solution would be to use MPA frameworks**.
+
+- **Consider using `:focus-visible` instead of `:focus`**.
+
+  - It will show the outline only when user is navigating via keyboard or similar device.
+
+  - It WILL NOT show the outline whenever you click on stuff.
+
+- A neat thing shown in the workshop is the `ReactAriaLiveAnnouncer` from `@react-aria`.
+
+  - It will automatically inject a `div` with `aria-live` and `aria-relevant` attributes to the DOM and append the messages you invoke the module with.
+
+    - Super handy.
+
+## Test Automation for Accessibility
+
+Finished part 5 1:19:45
