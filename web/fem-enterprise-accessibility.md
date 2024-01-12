@@ -106,4 +106,32 @@ Notes from [this course](https://frontendmasters.com/workshops/enterprise-access
 
 ## Test Automation for Accessibility
 
-Finished part 5 1:19:45
+- **Realistically** you can **automate about 50% of a11y related testing**.
+
+  - Things like focus order, alt text quality and so on is rather hard to test.
+
+- There are multiple tools you could use to test accessibility.
+
+  - There are linter plugins and plugins for your favorite testing library.
+
+- Consider making the a11y tests fail CI.
+
+## Organizational Skill-Building
+
+- In the end, you cannot do it alone. **It is imperative to foster a culture where everyone cares about accessibility**. This is where you come in.
+
+  - Speak about the downsides of having inaccessible website: lower margins, potential lawsuits and so on.
+
+  - Make everyone responsible for it.
+
+  - **Share your knowledge**.
+
+- **Make the accessibility easy to test**.
+
+- **Make accessibility in your _definition of done_**.
+
+  - It is much harder to fix issues later on.
+
+## Wrapping up
+
+The workshop was more theoretical than practical. I personally would prefer more hands-on exercises, but one cannot overlook the _soft_ part of building a11y accountability within the organization.
