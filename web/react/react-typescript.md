@@ -6,35 +6,35 @@ This is especially useful when building any re-usable components. Picture a situ
 You most likely have some _design-system specific_ props and you would also like to accept all other props the `button` HTML can.
 
 ```tsx
-type DesignSystemProps =  {
-  leadingIcon: Icon,
-  variant: string
+type DesignSystemProps = {
+  leadingIcon: Icon;
+  variant: string;
   // and so on
-}
+};
 
-type Props = DesignSystemProps
+type Props = DesignSystemProps;
 
-const MyButton = ({leadingIcon, variant, ...rest}: Props) => {
+const MyButton = ({ leadingIcon, variant, ...rest }: Props) => {
   // the `rest` is typed as {}
-  return <button>...</button>
-}
+  return <button>...</button>;
+};
 ```
 
 There are various ways to do it, but I think the most straightforward one is to use the `ComponentProps` type from React typings.
 
 ```tsx
-type DesignSystemProps =  {
-  leadingIcon: Icon,
-  variant: string
+type DesignSystemProps = {
+  leadingIcon: Icon;
+  variant: string;
   // and so on
-}
+};
 
-type Props = DesignSystemProps & ComponentProps<"button">
+type Props = DesignSystemProps & ComponentProps<"button">;
 
-const MyButton = ({leadingIcon, variant, ...rest}: Props) => {
+const MyButton = ({ leadingIcon, variant, ...rest }: Props) => {
   // the `rest` contains all the props the `button` can have.
-  return <button>...</button>
-}
+  return <button>...</button>;
+};
 ```
 
 Also, when we are at it, **make sure you forward the ref to the button**. Being unable to use the `ref` on the consumer side is a bit soul crushing.
@@ -51,7 +51,7 @@ function myGenericFn<T>(a: T) {}
 **While in JSX files, the syntax to define a generic slot for an arrow function looks a bit different**. This is most likely due to the potential confusion of you editor where it is unable to distinguish a JSX tag vs a generic slot syntax.
 
 ```ts
-const MyComponent = <T,>(props:T) => {}
+const MyComponent = <T>(props: T) => {};
 ```
 
 **Notice the `,` here**. Pretty weird, but it works.
@@ -153,8 +153,8 @@ The premise is the following: **if you pass a certain prop, you are responsible 
 
 ```tsx
 // Imagine that the `Button` implements some complex logic and passes the props to `children`
-<Button asChild = {true}>
-  <a href = "#">My button rendered as link with merged props</a>
+<Button asChild={true}>
+  <a href="#">My button rendered as link with merged props</a>
 </Button>
 ```
 
@@ -172,7 +172,7 @@ function Slot({
   if (React.isValidElement(children)) {
     return React.cloneElement(children, {
       ...props,
-      ...children.props
+      ...children.props,
     });
   }
 
@@ -183,13 +183,21 @@ function Slot({
 The role of the `Slot` component is to **merge the props passed to it with the props of the child if wraps**. The user of the `Button` component would never be exposed to the `Slot` component.
 
 ```tsx
-function Button({children, ...props}) {
-  const myButtonComplexStateAndProps = {}
+function Button({ children, ...props }) {
+  const myButtonComplexStateAndProps = {};
   if (props.asChild) {
-    return <Slot {...props} {...myButtonComplexStateAndProps}>{children}</Slot>
+    return (
+      <Slot {...props} {...myButtonComplexStateAndProps}>
+        {children}
+      </Slot>
+    );
   }
 
-  return <button {...props} {...myButtonComplexStateAndProps}>{children}</button>
+  return (
+    <button {...props} {...myButtonComplexStateAndProps}>
+      {children}
+    </button>
+  );
 }
 ```
 
@@ -409,12 +417,12 @@ Now, depending on the editor you are using, you will still get a code completion
 ```tsx
 type ModalProps =
   | {
-    variant: "no-title";
-  }
+      variant: "no-title";
+    }
   | {
-    variant: "title";
-    title: string;
-  };
+      variant: "title";
+      title: string;
+    };
 
 // Works
 export const Modal = (props: ModalProps) => {
@@ -426,7 +434,7 @@ export const Modal = (props: ModalProps) => {
 };
 
 // Does not work
-export const Modal = ({variant, ...props}: ModalProps) => {
+export const Modal = ({ variant, ...props }: ModalProps) => {
   if (props.variant === "no-title") {
     return <div>No title</div>;
   } else {
@@ -457,7 +465,10 @@ React exposes various type-helpers to help you type your components/hooks faster
 Writing `children: React.ReactNode` might get cumbersome after a while. To save you a little bit of typing, one might use `PropsWithChildren` type-helper.
 
 ```tsx
-const Component = ({someProp, children}: React.PropsWithChildren<{someProp: number}>) => {}
+const Component = ({
+  someProp,
+  children,
+}: React.PropsWithChildren<{ someProp: number }>) => {};
 ```
 
 Of course, I **strongly think you should NOT use this type-helper for every component**. As it was the case with `React.FC`, marking every component as taking `children` prop is misleading as some of them will not do anything with the `children` prop.
@@ -470,12 +481,12 @@ To help you achieve that goal, you should **consider using `ComponentPropsWithou
 
 ```tsx
 interface Props extends React.ComponentPropsWithoutRef<"button"> {
-  scale: "small" | "large" | "medium"
+  scale: "small" | "large" | "medium";
 }
 
-const MyCustomButton = ({scale, ...buttonHTMLProps}: Props) => {
-  return <button {...buttonHTMLProps}>SomeButton</button>
-}
+const MyCustomButton = ({ scale, ...buttonHTMLProps }: Props) => {
+  return <button {...buttonHTMLProps}>SomeButton</button>;
+};
 ```
 
 Of course, **this only applies if you DO NOT want to `forwardRef` which I argue you SHOULD do in this case**. It is quite frustrating as a library consumer not to have the ability to get the `ref` of the underlying element. **For that, use the `React.ComponentPropsWithRef`**.
@@ -485,7 +496,7 @@ Of course, **this only applies if you DO NOT want to `forwardRef` which I argue 
 When using the `useRef` hook, you most likely want to pass a type to the generic slot of the hook.
 
 ```ts
-const ref = useRef<SomeTypeHere>()
+const ref = useRef<SomeTypeHere>();
 ```
 
 The problem is, that sometimes, it is hard to know what the `SomeTypeHere` supposed to be. Usually it is a HTMLElement type, but sometimes it could be a custom type, especially when you use `useImperativeHandle`.
@@ -497,32 +508,33 @@ import { ElementRef, forwardRef, useImperativeHandle, useRef } from "react";
 
 function App() {
   // Works well
-  const someElementRef = useRef<ElementRef<"audio">>()
+  const someElementRef = useRef<ElementRef<"audio">>();
 
   // Also works well!
-  const componentWithForwardedRef = useRef<ElementRef<typeof ComponentWithForwardedRef>>()
+  const componentWithForwardedRef =
+    useRef<ElementRef<typeof ComponentWithForwardedRef>>();
 
   // This one as well!
-  const componentWithImperativeHandle = useRef<ElementRef<typeof ComponentWithImperativeHandle>>();
+  const componentWithImperativeHandle =
+    useRef<ElementRef<typeof ComponentWithImperativeHandle>>();
 
-  return (
-    <div>it works</div>
-  );
+  return <div>it works</div>;
 }
 
 const ComponentWithForwardedRef = forwardRef<HTMLDivElement>((props, ref) => {
-  return <div>works</div>
-})
+  return <div>works</div>;
+});
 
-
-const ComponentWithImperativeHandle = forwardRef<{ someFunc: VoidFunction }>((props, ref) => {
-  useImperativeHandle(ref, () => {
-    return {
-      someFunc: () => { }
-    }
-  })
-  return <div>works</div>
-})
+const ComponentWithImperativeHandle = forwardRef<{ someFunc: VoidFunction }>(
+  (props, ref) => {
+    useImperativeHandle(ref, () => {
+      return {
+        someFunc: () => {},
+      };
+    });
+    return <div>works</div>;
+  }
+);
 
 export default App;
 ```

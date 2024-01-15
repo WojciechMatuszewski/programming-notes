@@ -6,13 +6,13 @@
 
 ## Stack vs the Heap
 
-Since, when writing rust code, one has to think a little bit about the memory management, it is paramount to understand what the _heap_ and the _stack_ is. You might have a vague idea what these things are – after all every basic CS course teaches those things. Having said that, I found myself often guessing where a given variable lands (if it's on a _heap_ or a stack_). Let us explore those concepts in terms of rust code.
+Since, when writing rust code, one has to think a little bit about the memory management, it is paramount to understand what the _heap_ and the _stack_ is. You might have a vague idea what these things are – after all every basic CS course teaches those things. Having said that, I found myself often guessing where a given variable lands (if it's on a _heap_ or a _stack_). Let us explore those concepts in terms of rust code.
 
 - **_stack_ is much faster than the _heap_**.
 
 - **_stack_ is much smaller than the _heap_**.
 
-- **You want your stuff to be on the _stack_ most of the times**. If the _stack_ is faster, then there is no reason to allocate to the _heap_ without a reason.
+- **You want your stuff to be on the _stack_ most of the time**. It is because the _stack_ is faster and will consume less memory.
 
 - **Depending on what you return from the functions, you might be allocating on the _heap_ or on the _stack_**.
 
@@ -22,13 +22,21 @@ Since, when writing rust code, one has to think a little bit about the memory ma
 
     - For example defining variables inside a function that live on the _heap_.
 
-  - If you do not use a structure that lives on the _stack_, you will not be allocating on the _heap.
+  - If you do not use a structure that lives on the _stack_, you will not be allocating on the _heap_.
+
+    - **If the size of the thing you declared cannot be computed up-front, you will allocate on the heap**.
+
+      - The nice thing about Rust is that memory management of the heap is done automatically. There is no `free` or `malloc` functions.
 
 - **For every thing you store on the heap, there is something (a pointer) stored on the stack**.
 
   - This helps with cleaning up the memory.
 
 ### Borrowing and owning
+
+- Each variable has to have a single owner.
+
+  - But there can be multiple _borrows_ for a single variable.
 
 - When **passing a value to a function, that function will _consume_ the value**.
 
@@ -61,6 +69,14 @@ When I first started learning rust, I was very confused about the two types in t
 Imagine you have a huge wall of text you would like to work on. If you were to always work on the `String` type, you would be copying this huge wall of text all over your program. This is very inefficient in terms of memory.
 
 With the `&str` type, you can declare a "view" into particular parts (or the whole thing) of that text block. **Since the `&str` cannot grow**, by passing the `&str` around you are not making any copies. **It is a pointer**.
+
+### Raw strings
+
+These come in very handy when you need to craft a JSON payload by hand. Basically, the compiler will do all the scaping for you.
+
+```rust
+let payload = r#"{"foo": "bar"}"#
+```
 
 ## Type placeholders
 
@@ -204,10 +220,10 @@ updateUser("bar") // also okay, works a bit differently than rust code
 In TypeScript, one might use _type branding_ to achieve a very similar result (though we do not have a way to bind methods to the type).
 
 ```ts
-type UserId = string & {__brand: "userId"}
+type UserId = string & { __brand: "userId" };
 
 function updateUser(id: UserId) {}
 
-updateUser("foo" as UserId) // ok
-updateUser("bar") // error
+updateUser("foo" as UserId); // ok
+updateUser("bar"); // error
 ```
