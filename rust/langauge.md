@@ -227,3 +227,29 @@ function updateUser(id: UserId) {}
 updateUser("foo" as UserId); // ok
 updateUser("bar"); // error
 ```
+
+## Macros
+
+Macros are for augmenting existing methods/structs and meta-programming. I would err on the side of NOT using those until your really really need it.
+
+### Declarative Macros
+
+The _declarative macros_ use the `!` syntax. For example, the `format!` or the `debug!` macro.
+
+### Procedural Macros
+
+Unlike the _declarative macros_, the _procedural macros_ have different "types".
+
+- There are macros written to work with the `[derive()]` syntax.
+
+- There are macros that you can call like functions – similar to _declarative macros_.
+
+- There are macros that have `#[macro_name]` syntax. Those are called _attribute like macros_.
+
+## Smart Pointers
+
+In rust we either store things on the _heap_ or the _stack_. Some values, like primitives, are, by default, stored on the _stack_. Since the **_stack_ is limited in size**, you would not want to put huge amounts of data there. Think arrays with millions of elements and so on.
+
+To **"manually" put data on the _heap_, one might use the `Box` smart pointer**. They are also very useful for creating recursive structures, like linked-lists or graph-like data structures.
+
+There are other smart pointers, but the `Box` is the most common.
