@@ -1069,3 +1069,44 @@ input[type="checkbox"] {
 To my best knowledge, there are some subtle bugs with this property in older browsers (MDN mentions it). Having said that, I could not find any definite answer regarding which browser versions are affected.
 
 Some UI libraries do not use this property – they hide the native checkbox, either by using `opacity: 0` or some other technique. Some UI libraries use this property with custom styling directly applied on the `checkbox`.
+
+## Clickable target sizes and how to make them bigger
+
+> Based on [this great article](https://ishadeed.com/article/target-size/).
+
+The web nowadays is full of rich interactions. Those interactions are are mostly triggered by user actions, like click or touch. **As developers we need to make sure the icons/buttons user is to click on are big enough**. If not, the user might not be able to get to a certain spot in the website or complete the purchase – imagine the "buy" button being a tiny one.
+
+While the designers usually do a great job of making sure "action buttons" are large enough for everyone to click/tap onto, they might miss the need to make icons and other contextual buttons large enough! This is where your expertise come in.
+
+First, know that there are guidelines for how large a "clickable" target should be. They differ from company to company, but you should be safe with 44x44px. Yes, you have read that right, it is 44x44 not 16x16 or some other lower number.
+
+### Add padding around the element
+
+**Before adding padding to anything, understand that this could affect the layout of the page**. It could make the parent container larger, and sometimes it is not desired behavior. Think the "close" button in the modal header. If you add a lot of padding to that button, the overall size of the header might increase.
+
+Having said that, it is the easiest way to improve the UX of the "clickable" elements.
+
+### Use _pseudo-classes_
+
+This one is interesting. Instead of adding `padding` to the element, we will be increasing the size of the "clickable" area by using _pseudo-classes_.
+
+```css
+.card {
+  /* Some styles */
+  position: relative;
+}
+
+a:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+```
+
+In the example above, we have a card with a link inside it. We would like the card click to correspond to the `a` click. We can achieve that by using _pseudo-selectors_! **Note that this particular example might pose a11y concerns as it makes the contents of the card non-selectable**.
+
+There are more great examples in the article I've linked to at the very start.
+
+### Make buttons "full width"
+
+This practice is quite common. Instead of having buttons side-by-side, we display them in a block-order. Of course, increasing padding will also work here.
