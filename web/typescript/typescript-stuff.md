@@ -93,6 +93,44 @@ This whole issue stems from the fact that **sometimes TypeScript cannot be sure 
 
 As a rule of thumb, you should always check how the declaration file is looking before attempting to import any 3rd party module. **Test might not help you. If you forgot to set `__esModule:true` while mocking, the wrong import will still work due to interop settings**.
 
+### The `moduleDetection` setting
+
+Go and do this in your project now.
+
+1. Create an empty `.ts` file. The name does not matter.
+
+2. Add the following code to that file:
+
+```ts
+const name = "FooBar";
+```
+
+Are you staring at a TypeScript error? I was just as baffled when you are now.
+
+> Cannot redeclare block-scoped variable 'name'.ts(2451)
+> lib.dom.d.ts(27241, 15): 'name' was also declared here.
+
+What is going on??
+
+It turns out, **TypeScript, by default, assumes that each file lives in "global" namespace**.
+
+If you do not export anything from the file, or set the `moduleDetection` to a specific value, it thinks that all the files in your project will merge with the "global" environment. It just happens that the `name` variable is already defined as a global variable when using `lib: "dom"`.
+
+**We have three potential solutions to the problem**.
+
+1. Add an empty export to the file, like so:
+
+   ```ts
+   const name = "FooBar";
+   export {};
+   ```
+
+2. Change the `moduleDetection` to `force`.
+
+3. Add the `type:"module"` to your `package.json`.
+
+**You most likely never seen this error popup in your codebase**. Why? Because when creating a file, you most likely export from it or you have the `type:"module"` set in your `package.json` file – otherwise your bundler wont work.
+
 ## _type space_ vs _value space_
 
 While working with Typescript, you will be operating in 2 different _spaces_.
