@@ -478,6 +478,8 @@ Before React 18 existed, you had two choices
 
 Before you learn anything about how they work, you should know that **this is a spec rather than a technology**. It just so happens that Next.js is the first meta-framework to implement it.
 
+Whenever I think about _RSC_ I also think about the **_React Server_ and _Components_**. We used to have only "React", now we have _React Server_ and the _Components_ which could be either _Client_ or _Server_. [This blog post explains this topic further](https://bobaekang.com/blog/rsc-is-react-server-plus-component).
+
 ---
 
 Here you **stream non-interactive serialized representation of _virtual DOM_ from the server to the client**. This is **similar to `getServerSideProps` in Next.js**, but it is **NOT the same**. The main difference between _React Server Components_ and `getServerSideProps` are.

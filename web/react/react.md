@@ -147,7 +147,6 @@ It is quite important to know when a given hook callback runs. So here it is
 
 So, by following this list, you should have a good idea why using expensive calculations inside `useLayoutEffect` is quite dangerous – they delay painting! **This also applies to the _lazy initializers_** callbacks.
 
-
 ### `useReducer` is the cheat mode of hooks
 
 > Based on [this article piece](https://overreacted.io/a-complete-guide-to-useeffect/#why-usereducer-is-the-cheat-mode-of-hooks)
@@ -652,7 +651,7 @@ Not having the `listener` in the dependency array is not a bug. The linter is sm
 
 ```js
 function SomeComponent() {
-  const [state, setState] = useState(false)
+  const [state, setState] = useState(false);
 
   function listener() {
     state;
@@ -827,7 +826,7 @@ other _user inputs_ can be processed until that `render` task is done.
 This is kinda a bummer.
 
 With `Time-Slicing` React will be able to _slice_ the main `render` task and
-insert that _user input_ inbetween.
+insert that _user input_ in-between.
 
 ### Moving away from `.defaultProps`
 
