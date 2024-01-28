@@ -773,6 +773,8 @@ button.addEventListener("click", function onButtonClick() {
 }
 ```
 
+This technique is used in [this free course](https://www.epicweb.dev/tutorials/fluid-hover-cards-with-tailwind-css). Looking at the performance snapshot from Chrome, animating height this way will cause **layout and style recalculation** but **it seems to be much cheaper than reflow**.
+
 ## CSS-in-JS
 
 CSS-in-JS became de-facto day of styling our apps. Let us explore how it works on the high level and learn about it's potential drawbacks as well as the benefits it brings to the table.
