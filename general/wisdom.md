@@ -283,3 +283,21 @@ Here are some ideas about what to do when joining a new team.
 - **Update onboarding documents**. They are outdated. Unless the project's README is up-to-date (it never is), your first contribution could be "Update the README" PR.
 
 - **Do the tedious, so-called "dirty work"**. Yes, it might not be super fun, but guess what? You will learn a tone while doing so.
+
+## The spectrum of speed and robustness
+
+Engineering is an art of balancing between tradeoffs. One axis is the tradeoff between the speed and robustness.
+
+Do you want something out _very_ fast? I could skip the testing, the documentation and thinking about the big picture. I could _just_ make the feature work.
+
+Do you want something out a bit slower, but more robust in implementation? Something that will not collapse under the weight of extension? Well, then I need to write tests, think about the big picture and spend some time on design.
+
+So, which approach is better? **Of course, there are no silver bullets**. One might argue that the latter approach is always better. One might argue otherwise.
+
+The thing is, **the best approach is the blend of those two, but you have to keep your engineering discipline in check**. **Some things are non-negotiable**, like thinking about the big picture or writing tests. Some thing could be skipped. The **most important thing is to not let yourself become the so-called [_tactical tornado_](https://medium.com/@parallelit/tactical-tornado-f5e0414087af)** – if you do, your colleagues might start to resent you.
+
+The best engineers live on the spectrum. They have a set of things that are "non-negiotable" at the core of their practice, but they are flexible to move from one end to another (and stay in the middle most of the times).
+
+It is up to you, and nobody else to decide what approach is the right one. Do not let product managers, your bosses and anyone else to dictate where on the spectrum you need to be to deliver the feature. Remember – **you are the one doing the job, not your boss or product-manager**.
+
+Of course, speaking in "nevers" and "always" is not a good approach either. Your work, like life, if _fluid_. The better you are at "bending and twisting", the more situations you can handle.
