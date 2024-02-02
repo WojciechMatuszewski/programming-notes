@@ -150,3 +150,28 @@ This way, the minimum value is either `300px` or `100%` of the viewport dependin
 If you use the **`background-image`, by default, the image will REPEAT if the element is large enough**. You most likely do not want that. Hopefully you cough this behavior while testing, but **keep in mind that most elements resize based on content/viewport size**. As such you might have missed it in your application.
 
 To solve this issue, consider using the `background-repeat: no-repeat` on the element that has the `background-image` property.
+
+## CSS Variable Fallback
+
+When writing TypeScript/JavaScript code, you most likely used the `??` or the _default assignment_ operator. We use those to apply defaults to variable if the variable does not exist.
+
+```ts
+const { data: posts = [] } = useGetPosts();
+
+// or
+
+const { data } = useGetPosts();
+const posts = data ?? [];
+```
+
+**We can also apply default to CSS Variables**. This ability comes in very handy when we create those variables dynamically.
+
+```css
+.container {
+  max-width: calc(100% - var(--actions-width, 70px));
+}
+```
+
+If, for some reason, the script does not load, or there is some kind of error, the `max-width` will have the value of `70px` (this assumes we set the `actions-width` dynamically via JavaScript).
+
+I've used this technique a couple of times with great success. It allowed me to simplify the code in many places.
