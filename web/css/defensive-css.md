@@ -175,3 +175,15 @@ const posts = data ?? [];
 If, for some reason, the script does not load, or there is some kind of error, the `max-width` will have the value of `70px` (this assumes we set the `actions-width` dynamically via JavaScript).
 
 I've used this technique a couple of times with great success. It allowed me to simplify the code in many places.
+
+## Fixed Sizes
+
+I would argue that, the more experience you have creating UIs, the less you rely on fixed sized for elements. Of course, there are times where having a fixed size makes sense, but those are usually few and far between.
+
+Instead of using fixed sizes for element dimensions (`width` and `height` are the biggest offenders, but this could also apply to spacing), consider the following tactics.
+
+1. Use the `min-width` or `min-height` instead of `width` or `height`. Let the elements grow!
+
+2. Use the `min`, `minmax` or `clamp` functions. These allow us to create _fluid layouts_ that look well on all screen sizes.
+
+Side note: I feel like the `clamp` is very much underused in the day-to-day development (I'm also guilty forgetting it exists).
