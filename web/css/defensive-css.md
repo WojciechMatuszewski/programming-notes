@@ -117,9 +117,9 @@ The **`auto-fit` or `auto-fill` is to a CSS grid like `flex-wrap: wrap` is to CS
 
 The **main difference between `auto-fill` and `auto-fit` is how the items stretch when there is more available space than the `min` value in `minmax`**.
 
-1. The `auto-fill` will NOT expand the grid items if there is an available space.
+1. The `auto-fill` will NOT expand the grid items if there is an available space. You can think of this as _filling available grid item placeholders_.
 
-2. The `auto-fit` WILL expand the grid items if there is an available space.
+2. The `auto-fit` WILL expand the grid items if there is an available space. You can think of this as _fitting the available grid item placeholders_ to the amount of children the container has.
 
 What are the implications? **While using the `auto-fit` property, the last item in the grid, if it is pushed into separate row, might look stretched**. You most likely want to use `auto-fill` and reserve the `auto-fit` for rare occasions.
 
@@ -144,3 +144,9 @@ What happens if the viewport gets smaller than 300px? Then, the page will start 
 ```
 
 This way, the minimum value is either `300px` or `100%` of the viewport depending on the viewport size. Pretty neat!
+
+## Background Repeat
+
+If you use the **`background-image`, by default, the image will REPEAT if the element is large enough**. You most likely do not want that. Hopefully you cough this behavior while testing, but **keep in mind that most elements resize based on content/viewport size**. As such you might have missed it in your application.
+
+To solve this issue, consider using the `background-repeat: no-repeat` on the element that has the `background-image` property.
