@@ -91,3 +91,56 @@ A bit of tangential topic, but still important. Let us consider the following ma
 In this case, **the name of the user will overflow out of the flex container**. Remember that **flex items will NOT shrink below its minimum content size**. To address this issue, we use the `min-width: 0` property on the `username_meta` class.
 
 The **`min-width` will override the `flex-basis` and `width`**. Trying to fix this issue with `width` or `flex-basis` will not fly.
+
+## Content Spacing
+
+This blog post touches on the importance of ensuring that elements have enough space between them to "breath". **Side note: you should not embed margins on components but rather have the layout take care of spacing components out**.
+
+This could be achieved in many ways.
+
+1. Using the `margin` property. Bonus for using _logical properties_ like `margin-inline` or `margin-block`.
+
+2. Using the `gap` property on either `grid` or `flex` children.
+
+## `auto-fit` vs `auto-fill` in `minmax`
+
+There is this "famous" CSS Grid syntax snippet you probably seen.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+```
+
+The **`auto-fit` or `auto-fill` is to a CSS grid like `flex-wrap: wrap` is to CSS flexbox**. Of course, there are some differences, but in the simplest terms, using those two keywords will allow you to create "responsive" grids.
+
+The **main difference between `auto-fill` and `auto-fit` is how the items stretch when there is more available space than the `min` value in `minmax`**.
+
+1. The `auto-fill` will NOT expand the grid items if there is an available space.
+
+2. The `auto-fit` WILL expand the grid items if there is an available space.
+
+What are the implications? **While using the `auto-fit` property, the last item in the grid, if it is pushed into separate row, might look stretched**. You most likely want to use `auto-fill` and reserve the `auto-fit` for rare occasions.
+
+### With the `min` function
+
+So you have your responsive grid defined like so.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+```
+
+What happens if the viewport gets smaller than 300px? Then, the page will start to scroll – we most likely do not want that. How we can go about making sure our grid is "truly responsive"? **We can leverage the `min` function for the minimum value of the `minmax`**
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+}
+```
+
+This way, the minimum value is either `300px` or `100%` of the viewport depending on the viewport size. Pretty neat!
