@@ -73,11 +73,25 @@ function cloneDeep(values: Record<string, unknown>): Record<string, unknown> {
 
 Look at this! So nice. Also much more readable. I bet that with the `JSON.stringify` you will get a question about what is going on.
 
-## Event loop and promises
+## Event loop
+
+> Taking notes while reading [this article](https://blog.frontend-almanac.com/event-loop-myths-and-reality).
+
+- The _event loop_ is not regulated by JavaScript spec. **It is regulated by the `host`, the environment your code runs on**.
+
+  - This means that, in theory, the _event loop_ might behave differently between the browser and Node.js deployments.
+
+    - In reality, every server-side runtime depends on the `libuv` for the _event loop_ implementation so there are no differences in the functionality.
+
+- The **[`libuv` mentions that the _event loop_ implementation is NOT thread safe](https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop)**.
+
+- The _event loop_ itself does not comprise of _microtasks_ and _tasks_ but rather from structures called a _microtask queue_ and _task queue_.
+
+### Event loop and promises
 
 It turns out you can block the event loop with promises. Yup, you've heard me right. And all of this is possible because how the promises interact with the event loop.
 
-### The native layer
+#### The native layer
 
 Remember about all the Node.js queues that exist? The _macrotask queue_ and the _task queue_ and other queues? Turns out some of them - mainly the **microtask queue** and the **nextTick queue** are executed by so called _native layer_.
 
@@ -85,7 +99,7 @@ The _native layer_ is nothing more than the place where _libuv_ resides and exec
 
 The _native layer_ **runs before the event loop starts**.
 
-### When does native layer run
+#### When does native layer run
 
 The _native layer_ **runs in-between every event loop cycle**. When **_native layer_ runs, the event loop is BLOCKED**.
 So if the _native layer_ can block the event loop, **it can happen that your promises block the event loop, since they are drained by the native layer**.
@@ -93,7 +107,7 @@ So if the _native layer_ can block the event loop, **it can happen that your pro
 Here is an illustration that shows how the event loop interacts with the _native layer_.
 ![event loop interacting with the native layer](../assets/native-layer-event-loop.png)
 
-### Code example
+#### Code example
 
 To drive the point further, let us look at some code to make sure we understand how the _native layer_ operates.
 Here is an, albeit very contrived, example of a sample Node.js program.
@@ -152,7 +166,7 @@ immediate
 6. Control is yielded back to the event loop, since the _timers queue_ is run before the _immediate queue_, we see the `timer` log first, then the `setImmediate` callback is invoked
 7. The _native layer_ gets to work, the last `then` callback is invoked.
 
-### More on promises
+#### More on promises
 
 - the `Promise.resolve` and `foo()` (where `foo` is an async function) is basically the same
 
@@ -183,13 +197,13 @@ immediate
 
   will block
 
-### Error handling
+#### Error handling
 
 Not handling errors correctly will result in **memory leaks** and problems with **file descriptors back-pressure problems**.
 
 The biggest lesson here is to **not mix callbacks and promises**. There are many Node.js APIs which default form do not work natively with promises - like `eventEmitter` or similar.
 
-#### Creating branches
+##### Creating branches
 
 Defining the `.then` and `.catch` callbacks on the promise object is like creating different branches. If you are not careful this might trip you up.
 
@@ -218,7 +232,7 @@ try {
 }
 ```
 
-### Evaluation
+#### Evaluation
 
 You already know that the synchronous code within an `async` function is run synchronously. Remember though that **promises are resolved asynchronously**. This means that even though you might thrown an error within the `async` function, the status of the promise will still be `pending` till it's resolved.
 
