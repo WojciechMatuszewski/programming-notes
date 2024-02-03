@@ -1,6 +1,4 @@
-# Webpack5
-
-Webpack 5 is comming, and it's closer than further so lets get into it.
+# Webpack
 
 ## Federation
 
@@ -26,3 +24,29 @@ It's still quite early but there are a few usages:
 - Footers and headers. Nothing to say here really
 
 - A/B testing across multiple sites. One package shares all the logic / components. Acts like a separate site. 🤯
+
+## The `require.context` function
+
+- This is a **webpack-specific API** that does not exist in node.
+
+- This **API allows you to produce paths for nested directory structures**. It is quite powerful.
+
+  ```js
+  const pages = require.context("./pages", true, /\.js$/u, "lazy");
+
+  const render = async () => {
+    const { pathname } = window.location;
+
+    if (pages.keys().includes(`.${pathname}`)) {
+      renderHtml(await pages(`.${pathname}`));
+    } else {
+      renderHtml("Not found");
+    }
+  };
+  ```
+
+- **The `import` API cannot do the same thing the `require.context` does**.
+
+  - You cannot "produce" paths with `import` ahead of time and use those paths to import components asynchronously.
+
+  - This is super handy when you have a list of well known import paths, but the list is huge and there is no easy way to "pre-compute" them. Specifying each import by hand would be very tedious.

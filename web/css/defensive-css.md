@@ -187,3 +187,9 @@ Instead of using fixed sizes for element dimensions (`width` and `height` are th
 2. Use the `min`, `minmax` or `clamp` functions. These allow us to create _fluid layouts_ that look well on all screen sizes.
 
 Side note: I feel like the `clamp` is very much underused in the day-to-day development (I'm also guilty forgetting it exists).
+
+## Minimum Content Size in CSS Grid
+
+Remember the issue we had with `flexbox` children when the content inside the children was too long? Where the child would "escape" its parent since **flex items, by default, will not shrink below its original content size**.
+
+The same thing happens in CSS Grid.
