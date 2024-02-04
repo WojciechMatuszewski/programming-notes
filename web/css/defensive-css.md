@@ -193,3 +193,91 @@ Side note: I feel like the `clamp` is very much underused in the day-to-day deve
 Remember the issue we had with `flexbox` children when the content inside the children was too long? Where the child would "escape" its parent since **flex items, by default, will not shrink below its original content size**.
 
 The same thing happens in CSS Grid.
+
+## Minimum size in Flexbox and Grid
+
+We have already touched on this, but I believe it is worth repeating – the **default size of a `flex` child is `auto` meaning it will NOT shrink below its initial size. The same applies for grid (but the width of the element is `min-content`)**.
+
+So, given the following CSS
+
+```css
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 250px;
+}
+```
+
+It is possible to create an overflow effect on that 1fr column. **Add the `min-width` to the column or use the `min(0, 1fr)` for the column size**.
+
+## Sticky Position Gotcha
+
+Concerns over using the `position:sticky` as it relates to accessability on mobile devices aside, there is one gotcha you might have encountered while working with `position: sticky`.
+
+Sometimes, you add the necessary declarations, but they do not seem to have an effect.
+
+```css
+.foo {
+  position: sticky;
+  top: 0;
+}
+```
+
+**Always look how much space is the `position:sticky` element taking. If the `position: sticky` is "not working", it might be due to stretching of the element**. This occurs in flexbox and grid layouts!
+
+The solution is to ensure the element has **`align-self: start`**. This will ensure it does not "stretch" to match the "highest" element in the container.
+
+## Scroll chaining
+
+Picture this: you open a modal on a page with a scrollbar. The modal also scrolls. You scroll to the bottom of the modal and then the page starts scrolling! Super frustrating right?
+
+In most cases, you do not want this behavior. **Use the `overscroll-behavior` to change this. Now the "scroll" events will be encapsulated within the element that has this definition until you move your mouse to another scrollable element**.
+
+This is was one of those "I really wish I know this earlier" moments for me when I first encountered this property. It would save me so much time in the past!
+
+## Vertical media queries
+
+There is the `@media(min-width)` query, and **there is also the `@media(min-height)` query**. To be honest, it is the first time I'm writing it. It never occurred to me that one can also query the height of the viewport.
+
+## Accidental hover on mobile
+
+This one is a good one. How many times have you written CSS similar to the following.
+
+```css
+.card:hover {
+  /* some styles */
+}
+```
+
+**The problem is that this class will also trigger whenever someone clicks on the `.card` on mobile devices**. This behavior is **dependant on the browser, but in most cases, it is NOT what you want**.
+
+A more robust implementation of the above would look like this
+
+```css
+@media (hover: hover) {
+  .card:hover {
+    /* some styles */
+  }
+}
+```
+
+There are other "device inputs" you can query based on. CSS is vast and there is a lot to learn :)
+
+---
+
+While the TailwindCSS docs do not mention it, the generated CSS **seem to be correct with a special flag on: `hoverOnlyWhenSupported`**. [See this PR for more details](https://github.com/tailwindlabs/tailwindcss/pull/8394).
+
+## Minimum button size
+
+While the action buttons on the website you are working on might look good, it is not always the case for other languages.
+
+Let us consider the word "Done". Given a button with the copy of "Done" and some padding, the button would look ok – not too big, not too small.
+Now consider other languages where word "Done" might be a single symbol. If that is the case, the button will look too small!
+
+That is why you **should strongly consider adding a `min-width` to all of your buttons**. This will ensure it they look repesentable no matter the inner content.
+
+```css
+.button {
+  /* Of course, this is only an example */
+  min-width: 100px;
+}
+```

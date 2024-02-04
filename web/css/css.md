@@ -295,7 +295,59 @@ ul:has(li:nth-child(11)) {
 }
 ```
 
-Pretty amazing stuff.
+---
+
+In addition, **you can use the `:has` as the so-called _anywhere_ selector**. The **name stems from the usage of `:has` on the `body` tag**.
+
+```css
+body:has(input.blur-answer:checked) .answer {
+  filter: blur(5px);
+}
+```
+
+---
+
+If you are well-versed with CSS selectors, **you can achieve behavior that seemingly defies the cascade – apply style "backwards"**.
+
+```css
+ul li:has(+ .select-before) {
+  /* styles */
+}
+```
+
+This will **element that occurs BEFORE the `.select-before`**. Let that sink in... we are styling backwards! This technique is quite useful for styling labels if the input value is invalid.
+
+```css
+label:has(+ input:user-invalid) {
+  /* some styles */
+}
+```
+
+---
+
+You can even produce layouts that have **different styles based on the amount of children a given container has**.
+
+```css
+.container:has(> *:nth-child(10)) {
+  /* This only selects the container if it has 10 or more children */
+}
+```
+
+How cool is that??
+
+Side note: instead of `:invalid` you most likely want to use the new `:user-invalid`. [Read more about it on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid).
+
+---
+
+What about styling **all the siblings but not the element we are interacting with**? Hell yes!
+
+```css
+.card-list:has(.card:hover) .card:not(:hover) {
+  scale: 0.9;
+}
+```
+
+Wave your goodbyes to using JavaScript for this!
 
 ### `:focus-visible`
 

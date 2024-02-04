@@ -109,13 +109,21 @@ The instructor discussed the difference between the `first-child` and the `first
 - The `:is` and `:where` selectors are used to eliminating repetition that sometimes you have to deal with when selecting multiple children of a given element.
 
   ```css
-  :is(article) h2,h3,h4,h5,h6 {
-    color: var(--fire-red)
+  :is(article) h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--fire-red);
   }
 
   // the same as \/
-  article h2, article h3, article h4, article h5, article h6 {
-    color:var(--fire-red)
+  article h2,
+  article h3,
+  article h4,
+  article h5,
+  article h6 {
+    color: var(--fire-red);
   }
   ```
 
