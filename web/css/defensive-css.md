@@ -281,3 +281,7 @@ That is why you **should strongly consider adding a `min-width` to all of your b
   min-width: 100px;
 }
 ```
+
+## Bottom line
+
+The [defensive.css](defensivecss.dev) is a **great resource**. Some of the tips were new, some I already kew about. Either way,
