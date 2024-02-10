@@ -365,7 +365,7 @@ From what I was able to gather in [this PR](https://github.com/facebook/react/pu
 The `useFormState` is a handy hook that exposes the `actions` submit value as well as the function to call submit the form.
 
 ```ts
-const [submitValue, action] = useFormStatus(serverOrClientAction, initialValue)
+const [submitValue, action] = useFormState(serverOrClientAction, initialValue)
 
 <form action = {action}></form>
 ```
@@ -388,6 +388,26 @@ You might also think that one could use the `action` in any kind of function and
 ```
 
 Whether you should do that is another matter entirely. I think it would be better to have a form with a submit button here.
+
+## `useFormStatus`
+
+This one is interesting. I'm not a fan of the API as, at least to me, is a bit magical. Check this out.
+
+```jsx
+<form>
+  <Button>Click me</Button>
+</form>;
+
+function Button() {
+  const { pending } = useFormStatus();
+
+  // stuff
+}
+```
+
+**The most frustrating thing is that the `useFormStatus` can only be used within a `form` element**. This means that the **`form` element magically becomes a "context provider"**. This could be quite **misleading** and also **makes it impossible to have a submit button that lives outside of the `form` element which is a valid pattern**.
+
+Have not found a good alternative yet, but [others proposed theirs](https://allanlasser.com/posts/2024-01-26-avoid-using-reacts-useformstatus).
 
 ## `useInsertionEffect`
 
