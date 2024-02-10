@@ -757,6 +757,81 @@ Another nice thing about cascade layers is that they are **declared only once** 
 }
 ```
 
+## Inheritance and "proximity"
+
+> Based on [this blog post](https://jwdallas.com/posts/nesteddarkmode/).
+
+Consider the following snippet.
+
+```html
+<style>
+  [data-theme="red"] a {
+    color: red;
+  }
+
+  [data-theme="blue"] a {
+    color: blue;
+  }
+</style>
+
+<div data-theme="blue">
+  <a>Should be blue</a>
+  <div data-theme="red">
+    <a>Should be red (but is actually blue)</a>
+  </div>
+</div>
+```
+
+CSS compares two selectors in isolation. Since both selectors have the same specificity, the one that was last declared wins (due to _cascading_ nature of CSS).
+
+How could we make these styles work? **We can achieve the desired end-result via inheritance**.
+
+```html
+<style>
+  [data-theme="red"] {
+    color: red;
+  }
+
+  [data-theme="blue"] {
+    color: blue;
+  }
+</style>
+
+<div data-theme="blue">
+  <a>Is blue</a>
+  <div data-theme="red">
+    <a>Is red</a>
+  </div>
+</div>
+```
+
+Notice that we do not target any specific tag. **If two or more ancestor elements have set values, the child element will always use the value from its closest parent**. While this might not be super helpful for the `color`, you should know that **custom properties also are subject of inheritance**.
+
+```html
+<style>
+  [data-theme="red"] {
+    --background-color: red;
+  }
+
+  [data-theme="blue"] {
+    --background-color: blue;
+  }
+
+  a {
+    background-color: var(--background-color);
+  }
+</style>
+
+<div data-theme="blue">
+  <a>Is blue</a>
+  <div data-theme="red">
+    <a>Is red</a>
+  </div>
+</div>
+```
+
+Now we are talking are we not? **This could be used for theming specific sections of a given page**!
+
 ## Animating the height property
 
 Since the beginning of CSS (?), we have been unable to animate the height of the element from "auto" to 0 (or vice-versa). That lead us to use various "hacks" to create toggles. With time, these "hacks" became the go-to solutions for creating a "hide/show" animation.
