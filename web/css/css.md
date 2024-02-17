@@ -1239,3 +1239,22 @@ There are more great examples in the article I've linked to at the very start.
 ### Make buttons "full width"
 
 This practice is quite common. Instead of having buttons side-by-side, we display them in a block-order. Of course, increasing padding will also work here.
+
+## The `fit-content` property
+
+Have you ever wanted to make the element size to _exactly_ match its contents? Well, you have the `width: fit-content` at your disposal!
+
+This property is quite useful if you want to center an element with dynamic width (you cannot predict what it will be). In addition to `fit-content`, consider using the `max-width` property as well.
+
+```css
+.centered {
+  position: fixed;
+  inset: 0;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  max-width: 80dvw;
+}
+```
+
+There are also the `min-content` and `max-content`. The `fit-content` makes it so that the element will stretch, but will never exceed the `max-content` value.
