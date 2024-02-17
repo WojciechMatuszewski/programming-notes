@@ -623,3 +623,30 @@ The last thing you want is for 3rd party API call to succeed, only for other ins
 - [AWS Compute article](https://aws.amazon.com/blogs/compute/handling-lambda-functions-idempotency-with-aws-lambda-powertools/)
 - [This article](https://adrianhesketh.com/2020/11/27/idempotency-and-once-only-processing-in-lambda-part-2)
 - [This GitHub issue](https://github.com/awslabs/aws-lambda-powertools-roadmap/issues/28)
+
+## The illusion of atomic deploys
+
+Whenever you deploy AWS Lambda functions, it might _seem_ like the deployment happens in an atomic fashion. You look at the CloudFormation and one of the items is the AWS Lambda updating. Seems like a single operation right?
+
+Sadly, **there is no way to atomically update the AWS Lambda function configuration and code**. Most people are not aware of this, and I completely understand why is that the case – the UI does not tell that story and I could not find any mentions of this in AWS documentation.
+
+**You would only be aware of this "issue" if you were using the AWS APIs directly to update your AWS Lambda functions**. There are separate APIs for updating the code and updating the configuration. CloudFormation uses those APIs under the hood when performing the deployment.
+
+The most **common scenario where this issue surfaces is when making a change to AWS Lambda environment variables and updating the code to use that environment variable**. Such deployment creates a race condition – it is either the configuration or the code change that propagates first. If it's the configuration change (the environment variables), you are in luck! If its the code – well, you might be looking at a pager duty incident (the code tries to read environment variable that is not yet defined).
+
+### Mitigation
+
+I can think of two ways to mitigate this issue.
+
+1. Split the deployment in two.
+
+   - First, deploy the configuration change.
+   - Then, deploy the code change.
+
+2. Use [AWS Lambda function aliases](https://docs.aws.amazon.com/lambda/latest/dg/configuration-aliases.html) and switch to "live" alias only after the deployment succeeded.
+
+The first approach is the "most straightforward" one as it most likely does not influence your infrastructure. Having said that, I suspect there are times where this method is not possible.
+
+The second approach is the more robust one, and it could require changes in your infrastructure to accommodate for the usage of aliases.
+
+In the end, **it is imperative that you are aware of this "problem"**. It could save you hours of debugging time!
