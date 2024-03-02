@@ -349,8 +349,29 @@ What about styling **all the siblings but not the element we are interacting wit
 
 Wave your goodbyes to using JavaScript for this!
 
-### `:focus-visible`
+#### `:has` and inputs
 
+The `:has` selector is very powerful when combined with inputs. Check out this example with checkbox.
+
+```html
+<style>
+    .notice {
+        display: none;
+    }
+    
+  .body:has(#toggle:checked) .notice {
+      display: block;
+  }
+</style>
+
+<input type = "checkbox" id = "toggle" />
+<div class="notice">Some notice</div>
+```
+ 
+Quite powerful if you ask me. And you are not limited to checkboxes. Keep in mind that other input types also have "internal state" (the `text` has the value, the `file` has the file name).
+
+### `:focus-visible`
+ 
 The `:focus-visible` uses browser UA heuristics to determine when to display the focus outline. **This is not the case with the "regular" `:focus` pseudo-class** which is "dumb" in that regard. You **might have needed this to disable the focus outline on link clicks**.
 
 In fact, most (if not all) of the browsers, migrated from `:focus` to `:focus-visible` in their UA styles.
@@ -358,7 +379,7 @@ Did you notice that, if you click a link, the focus outline is not there? **But 
 
 ### `:not`
 
-Well supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators and spaces.
+Well-supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators and spaces.
 
 ```css
 element: not(img); /*ok*/
