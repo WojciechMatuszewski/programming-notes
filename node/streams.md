@@ -149,3 +149,24 @@ const readable = response.getReader();
 
 const chunk = await readable.read();
 ```
+
+## For-of-loop
+
+**In Node** (it does not seem to be working in the browser for me), you can use the `for await (let chunk of stream)`
+syntax to consume the stream.
+
+```js
+const stream = new ReadableStream({
+    start(controller) {
+        controller.enqueue("foo");
+        controller.enqueue("bar");
+    }
+})
+
+for await (const chunk of stream) {
+    console.log(chunk)
+}
+```
+
+Pretty neat!
+
