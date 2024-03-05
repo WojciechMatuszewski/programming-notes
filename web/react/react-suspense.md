@@ -123,7 +123,7 @@ This guarantee makes sense as it would suck if the effect would fire before Reac
 the `Suspense` component conditionality based on the lifecycle state (if it is a first "render" or not).
 
 The idea is that you could have a different "loading experience" if it is the first time you visit the application (one
-single big spinner) vs. when some of the resources are already available and when the data fetching is done in a given
+single big spinner) vs. when some resources are already available and when the data fetching is done in a given
 part of an application.
 
 ### Suspense in different component types
@@ -209,7 +209,7 @@ return (
 I think this implementation is an excellent compromise between _not rendering anything_ and _making sure the placeholder
 does not "flash"_.
 
-### When does placeholder throttling occurs
+### When does placeholder throttling occur
 
 > Before we start, know this – I'm not sure whether what I'm about to talk about is the so-called _placeholder
 throttling_. I've tried searching for an example but could not find any. I'm basing this section on my gut instinct and
@@ -371,3 +371,16 @@ return (
 For more information, please
 check [this great article](https://buildui.com/posts/instant-search-params-with-react-server-components)
 which also touches on the usage of the `key` prop on the `Suspense` component.
+
+## `Suspense` and asset loading
+
+The `Suspense` plays a key role in
+the [asset loading](https://react.dev/blog/2024/02/15/react-labs-what-we-have-been-working-on-february-2024#new-features-in-react-canary)
+feature.
+Whenever you load, for example, a _stylesheet_, React will _suspend_ the component.
+
+This is **quite powerful as you can combine it with `startTransition`**.
+Imagine dynamically loading CSS files and _suspending_ when they are not
+done.
+
+[Here is the video showcasing this pattern](https://www.youtube.com/watch?v=dxWLp-8mXes).
