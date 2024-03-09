@@ -15,7 +15,7 @@ if (loading) {
 // Do something with the data
 ```
 
-Luckily for us, React team decided to introduce the Suspense API. The idea behind the Suspense API is to make a "
+Luckily for us, a React team decided to introduce the Suspense API. The idea behind the Suspense API is to make a "
 _loading state_" a first-class citizen of React programming paradigm.
 
 ```jsx
@@ -117,7 +117,7 @@ function Lifecycle({ onEffectFired }) {
 
 This guarantee makes sense as it would suck if the effect would fire before React is done with the Suspense Boundary.
 
-#### Where would I use this fact
+#### Where would I use this fact?
 
 [This video](https://www.youtube.com/watch?v=sOkgIa560qM) walks through one fascinating use case – rendering
 the `Suspense` component conditionality based on the lifecycle state (if it is a first "render" or not).
