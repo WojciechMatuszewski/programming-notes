@@ -33,4 +33,25 @@
     - Sometimes mocking the dependency is not the right choice.
     - It all **depends** on the "level" of the test (unit, integration, or e2e) and how critical a given dependency is.
 
-Finished part 2, 4:30
+- Testing helps you answer the **WHY** question – arguably, the most important question in software development.
+  - WHY are we doing what we are doing?
+  - WHY this function works the way it works?
+  - WHY do we have these constraints?
+
+- Use the `it.todo` or `test.todo` to **describe the requirements of the function/module you are testing**.
+  - Super helpful for keeping the context and also gives you an overview of the work remaining.
+    - Of course, you will most likely forget to include some requirements. That is fine. We are all only human.
+
+- TIL that the callback function you provide to `test` or `it` takes `expect` as an argument.
+
+  ```js 
+    it("works", ({expect}) => {})
+  ```
+  
+  Misko mentions using this `expect` rather than the "global" one works much better when running multiple tests in parallel.
+
+- When testing a module which uses `fetch`, Misko decided to use _dependency injection_ rather than a library like MSW.
+  - This is quite an interesting choice. Personally, I like the MSW approach better.
+  - Having said that, I'm very happy to se the _dependency injection_ used here. I think that people still forget how powerful this technique is.
+
+Finished part 4 58:29
