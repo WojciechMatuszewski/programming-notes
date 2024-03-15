@@ -54,4 +54,55 @@
   - This is quite an interesting choice. Personally, I like the MSW approach better.
   - Having said that, I'm very happy to se the _dependency injection_ used here. I think that people still forget how powerful this technique is.
 
-Finished part 4 58:29
+
+- When dealing with _time_, Misko opted to pass the "delay" function as a parameter.
+  - I have to admit, I did not expect this choice. I would expect the "timeoutMs" to be passed as a parameter instead.
+  - In my humble opinion, passing the `delay` function as a parameter exposes implementation details.
+
+    ```ts
+    fetchMock = vi.fn<Parameters<Fetch>, ReturnType<Fetch>>(mockPromiseFactory);
+    delayMock = vi.fn<[number], Promise<void>>(mockPromiseFactory);
+    
+    api = new GithubApi("TOKEN", fetchMock, delayMock);
+    ```
+
+- I'm also not a fan of how Misko abstracted the "setup" functions.
+  - While I agree with abstracting the mocks, I'm unsure if abstracting the `api` to the global setup is a good choice.
+    - Reason against: each test should declare all the necessary dependencies it needs. Otherwise, they are not completely isolated and might override each other.
+
+    ```ts
+    let fetchMock: Mock<Parameters<Fetch>, ReturnType<Fetch>>;
+    let delayMock: Mock<[number], Promise<void>>;
+    let api: GithubApi;
+
+    beforeEach(() => {
+        fetchMock = vi.fn<Parameters<Fetch>, ReturnType<Fetch>>(mockPromiseFactory);
+        delayMock = vi.fn<[number], Promise<void>>(mockPromiseFactory);
+        // What is the tests run in parallel?
+        api = new GithubApi("TOKEN", fetchMock, delayMock);
+    });
+    ```
+    
+- I've noticed that Misko does not "wait" for `assert` to be fulfilled while dealing with promises.
+
+    ```ts
+    const pendingFetch1 = api.fetchSomething();
+    expect(mockFetch).toHaveBeenCalledWith("foo");
+
+    // Instead of
+    const pendingFetch2 = api.fetchSomething();
+
+    await vi.waitFor( () => {
+        expect(mockFetch).toHaveBeenCalledWith("foo")
+    })
+    ```
+  
+    This is quite problematic and source of issues in the workshop. The `expect` could run BEFORE we started to fetch something. As such the tests could end up flaky.
+
+- Misko touches on the importance of **breaking up the _business logic_ and "construction code"**.
+
+- Snapshots are difficult to read. **Consider using the `toMatchInlineSnapshot` if you can**.
+  - By putting the snapshot inside the "test code" you will be less tempted to have huge snapshots you have to scroll through.
+  - Snapshots **could be useful for legacy systems to ensure that nothing changed**, but if you fear change to a system, you are in a deep trouble.
+
+Finished part 5 (start)
