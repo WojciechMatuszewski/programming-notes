@@ -532,7 +532,7 @@ simple, other, layout.
 
 How would we go about detecting if we can use grid ?
 
-Well it turns out there is are so called **CSS Feature Queries**.
+Well, it turns out there is are so called **CSS Feature Queries**.
 
 These can be use to detect if a CSS feature is available on given browser.
 
@@ -574,12 +574,44 @@ Why should you bother? **There are at least two big reasons**.
 Even if you do not have a requirement for page translation now, consider how many people use the translate plugin
 available in the browsers. I know you had used it at least once!
 
-You
-can [learn more about the logical properties here](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values).
+You can [learn more about the logical properties here](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values).
+
+### Logical properties values gotchas
+
+So you started adapting the _logical properties_. Nice!
+
+The other day, you wanted to create a container that spans 50% of the viewport width. Naturally, you do something like the following:
+
+```css
+.container {
+    inline-size: 50vw;
+}
+```
+
+Without a second thought, you push the code to production – we are done right? **Sadly, you just nullified the benefit of _logical properties_ by using `50vw`**.
+The **`vw` unit is not "responsive" to the changes in writing direction**. You ought to use a _logical properties_ equivalent of `vw` (and `vh` for that matter).
+
+Enter the `vi` and `vb` units.
+
+- The `vi` is for the _inline direction_.
+- The `vb` is for the _block direction_.
+
+
+So, the previous snippet should be rewritten to the following
+
+```css
+.container {
+    inline-size: 50vi;
+}
+```
+
+[You can learn more about those units here](https://www.stefanjudis.com/today-i-learned/viewport-units-can-consider-the-writing-mode).
+
+
 
 ## The Many Kinds of Viewport Units
 
-Gone are the days where we only had `vh` and `vw`. **Now we have multiple ways to define the viewport units. Most of
+Gone are the days when we only had `vh` and `vw`. **Now we have multiple ways to define the viewport units. Most of
 them are driven by the mobile use-case where they are dynamic due to browser address bar appearing/disappearing**. There
 are **too many to list here, but the most interesting unit for me is the _dynamic_ one**. This one scales based on the
 state of the address bar (if it is hidden or not).
