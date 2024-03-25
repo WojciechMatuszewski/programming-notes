@@ -640,7 +640,7 @@ _Server_. [This blog post explains this topic further](https://bobaekang.com/blo
 ---
 
 Here you **stream non-interactive serialized representation of _virtual DOM_ from the server to the client**. This is *
-*similar to `getServerSideProps` in Next.js**, but it is **NOT the same**. The main difference between _React Server
+*similar to `getServerSideProps` in Next.js**, but it is **different**. The main difference between _React Server
 Components_ and `getServerSideProps` are.
 
 - With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server
@@ -650,6 +650,9 @@ Components_ and `getServerSideProps` are.
 
     - Using `getServerSideProps` is **to display a non-interactive version of the _client_ component** and then hydrate
       it for interactivity. There is **no hydration using _React Server Components_**.
+
+    - The `getServerSideProps` could be problematic in cases where you have conditionals based on the props you pass down from the server.
+      - See [this article](https://www.rexforde.com/blog/conditional-render-problem) for an example where this could be problematic.
 
 - With _React Server Components_ you can **fetch as your render**, where the component definition is asynchronous.
 
