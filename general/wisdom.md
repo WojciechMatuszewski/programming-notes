@@ -327,3 +327,27 @@ The kicker is that **you can leverage the Conway Law to ensure the team builds w
 — Need a monolithic, centralized architecture? Have a "architecture team" or similar so that all other teams depend on that team.
 
 **Thinking about the team structure first, then about the architecture is so-called "reverse Conway maneuver"**.
+
+## Divergence & convergence in software
+
+[Based on this article](https://khalilstemmler.com/letters/divergence-convergence-spaghetti-code/).
+
+Have you ever met the so-called _tactical tornado_ programmers? I bet you did. 
+
+Those people focus on code and only on the code. What matters is what works, not how it is built.
+Of course, there is a time and place for working in such a manner. 
+When building an MVP, you most likely lean a bit more towards the "tactical tornado" style of writing code.
+
+**The problem surfaces when ALL you do is to write code in that way**. 
+The act of programming tactically akin to _divergence_. 
+
+You make a mess, you prototype, you probe the system to see what works.
+**After _divergence_ there ought to be a period of _convergence_** where you "clean up" the code – create abstractions, refactor based on what you learned in the previous "phase".
+
+If you stay in the _divergence_ phase for too long, you will make a mess. A mess that everyone will be scared to touched. A mess that will hinder product development.
+**A good engineer is able to cycle through _divergence_ and _convergence_ phases** and ensures that they ALWAYS have a _convergence_ phase after the _divergence_ phase.
+
+
+
+
+
