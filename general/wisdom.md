@@ -304,7 +304,7 @@ Of course, speaking in "nevers" and "always" is not a good approach either. Your
 
 ## Conway Law and software
 
-[Based on this article](https://medium.com/@fwynyk/conways-law-in-team-topolgies-did-you-really-get-it-69c1a4d702af)
+> [Based on this article](https://medium.com/@fwynyk/conways-law-in-team-topolgies-did-you-really-get-it-69c1a4d702af)
 
 The law states
 
@@ -330,7 +330,7 @@ The kicker is that **you can leverage the Conway Law to ensure the team builds w
 
 ## Divergence & convergence in software
 
-[Based on this article](https://khalilstemmler.com/letters/divergence-convergence-spaghetti-code/).
+> [Based on this article](https://khalilstemmler.com/letters/divergence-convergence-spaghetti-code/).
 
 Have you ever met the so-called _tactical tornado_ programmers? I bet you did. 
 
@@ -347,7 +347,28 @@ You make a mess, you prototype, you probe the system to see what works.
 If you stay in the _divergence_ phase for too long, you will make a mess. A mess that everyone will be scared to touched. A mess that will hinder product development.
 **A good engineer is able to cycle through _divergence_ and _convergence_ phases** and ensures that they ALWAYS have a _convergence_ phase after the _divergence_ phase.
 
+## Abstractions and Illusions
 
+> [Based on this talk](https://www.youtube.com/watch?v=aWZFRk-w3ng)
 
+As software engineers, we are hired to solve problems. In most cases, people who pay for our work do not care _how_ we solve those problems.
+But if we are not careful, our peers might suffer from our recklessness and tactical thinking. **This happens when you solve the problems without building good abstractions**.
 
+The art of building good abstractions is hard to master. It is because **abstractions can become _illusions_** which are quite dangerous.
+
+- Those _illusions_ will make you assume incorrect facts about the system.
+- Those _illusions_ will make you design for X when, in reality, you should design for Y.
+
+Let us consider RPC. RPC often is though as "local calls" with zero network latency. **That is not the case**!
+Now, consider a fellow software engineer who builds a system with this assumption. The RPC gives him the _illusion_ of "safety", but the reality is different.
+
+So, how do we design good abstractions that are NOT "illusions"?.
+
+- **Do not abstract too much**. Abstract what is necessary, but allow for flexibility.
+  - This is VERY hard to get right. 
+- **Do not name things by the pieces it is made out**.
+  - This makes the abstraction useless. It "leaks implementation" details.
+    - A good example is the "gas pedal" in cars. For petrol-powered vehicles, it kind of makes sense. But what about the electric vehicles?
+- **Create a new vocabulary for the abstraction**.
+  - This shifts the "level" at which you communicate through the interface. The vocabulary should be rather generic.
 
