@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 56
+Page 76
 
 ## Introduction
 
@@ -53,3 +53,40 @@ Page 56
     -   Picture yourself touring a country you do not know the main language of. How do you feel? Insecure? Lost at times?
         **This is exactly how developers feel if your code is a mess**. It is, like you are speaking a "foreign", hard to
         understand language.
+
+## Software Craftsmanship
+
+-   The _software craftsmanship_ is **professionalism** in the field of software development.
+
+    -   You do your job well, on time and produce zero defects.
+    -   You think pragmatically about problems. You do not let dogmatic ideas rule your work.
+
+-   While you might not work on "mission-critical" systems, think of the people who are.
+
+    -   If the software you wrote for the MRI machine has a bug, people might get killed or injured – this actually
+        happened. See the `Therac-25` machine.
+
+-   The "top-down" approach of waterfall resembles factory conditions.
+
+    -   It has the "I'm smarter than you, so do what I say" vibes which leads to hostility and "us vs. them" mindset.
+    -   Overall, not a good idea.
+
+-   Lots of people are familiar with the _agile manifesto_, but do you know there is also the _software craftsmanship
+    manifesto_?
+
+    -   Consult [this wikipedia page](https://en.wikipedia.org/wiki/Software_craftsmanship) to learn more.
+
+-   Khalil mentions an essential fact: **your employer is NOT responsible for ensuring you grow professionally – you
+    are**.
+
+    -   I cannot stress this enough. As a developer, you HAVE TO learn new things, constantly, to improve your craft.
+
+-   The following really resonated with me: **_when you know the domain, the code becomes a metaphor for what happens in
+    real life_**.
+
+    -   And guess what – if you have a good DLS in place, it is easier, for EVERYONE, to grasp what is happening in the
+        code.
+
+-   The world is not all sunshine and rainbows – most people are not aware of the concept of _software craftsmanship_. So
+    the question becomes: _how do I get the buy-in I need to practice its principles_?
+    -   Since _money rules the world_, you have to showcase how practicing TDD or XP **makes or saves money in the long term**.
