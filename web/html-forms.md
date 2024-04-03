@@ -30,6 +30,16 @@ This is not ideal, as the user might be confused what just happened (his focus i
 but it will provide the same _semantics_ as the `disabled` attribute. The "click prevention" part should be handled
 within the application itself.
 
+### What about the `pointer-events`?
+
+I oftentimes see developers use the `pointer-events: none` in hopes of disabling "interactions" for certain elements.
+**The issue with `pointer-events: none` is that it does not prevent keyboard events**.
+
+Usually, a **better alternative is the `insert` attribute**. This one is a bit nuclear, as it will prevent any clicks,
+keyboard and other interactions, but in most cases, it is what should be used instead.
+
+Note that the `insert` is _relatively_ new attribute. Please check the browser support before using it.
+
 ## The `type=file` input
 
 ### Styling the native button
