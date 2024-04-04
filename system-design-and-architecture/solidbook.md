@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 76
+Page 97
 
 ## Introduction
 
@@ -48,7 +48,7 @@ Page 76
         exploring the routes you can take to solve the problem, the _tactical programing_ is a viable technique. **The
         problem arises when you default to _tactical programming_ and never clean up your mess**.
 
--   Code is **also a vital way for communication**. Yes, the language is quite "foreign", but your collegues are speaking
+-   Code is **also a vital way for communication**. Yes, the language is quite "foreign", but your colleagues are speaking
     it!
     -   Picture yourself touring a country you do not know the main language of. How do you feel? Insecure? Lost at times?
         **This is exactly how developers feel if your code is a mess**. It is, like you are speaking a "foreign", hard to
@@ -90,3 +90,48 @@ Page 76
 -   The world is not all sunshine and rainbows – most people are not aware of the concept of _software craftsmanship_. So
     the question becomes: _how do I get the buy-in I need to practice its principles_?
     -   Since _money rules the world_, you have to showcase how practicing TDD or XP **makes or saves money in the long term**.
+
+## A 5000ft View of Software Design
+
+-   To be a good _architect_, you have to understand the _low-level details_ of the system.
+
+    -   You **cannot be a good engineer without understanding the _high-level_ details**
+    -   If you do not understand them, you will turn into the _tactical tornado_ programmer. Not a good place to be.
+
+-   **Understanding the _high-level_ details of the applications will enable you to cater to customers better**.
+
+-   Khalil shows a "map" of _software design_. There is a lot to learn!
+
+-   Keep in mind that, **any additions to your code, even when using the "best" _design pattern_, could increase the complexity of the code**.
+
+    -   There are no "free lunches" in software. Everything has a price.
+
+-   The software of today, at the core architectural level, does not differ that much from the software from X years ago.
+    -   The tools have changed, but the same patterns still apply.
+
+This chapter was a high-level overview of what's to come, so I did not take that many notes. We will be touching on everything included in this chapter in detail later on.
+
+## Part 2: Humans & Code
+
+-   It is vital to remember that the application has **two types of customers: the users and your fellow developers**.
+
+    -   Applying the principles of XP and software design, helps us cater to both groups.
+
+-   By running various pools and researching what "experts" have to say, Khalil noticed that the **clean code is as much about the humans who read the code as it is about the structure of the code**.
+
+    -   That makes sense, since **most of our time is spent reading code, than writing code**.
+
+-   A good place to start is to **establish a _coding standard_**.
+
+    -   Think code formatting, structure, naming things and other stuff.
+    -   **_Coding standard_ avoids bike shedding**. You all agreed on X, so let us stick to X.
+        -   Of course, there is additional benefit of consistency. A very vital aspect of software. Humans like patterns.
+
+-   The following are key concepts pertaining to _clean code_ as noted by researching "experts" opinions and various pools.
+
+    -   Runs all the tests.
+    -   Contains no duplication.
+    -   Maximizes clarity.
+    -   Has fewer elements.
+
+        They all make sense. They also could be applied to things outside of software (especially the _has fewer elements_), for example, to things like cars.
