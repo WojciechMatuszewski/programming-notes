@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 97
+Page 123
 
 ## Introduction
 
@@ -135,3 +135,32 @@ This chapter was a high-level overview of what's to come, so I did not take that
     -   Has fewer elements.
 
         They all make sense. They also could be applied to things outside of software (especially the _has fewer elements_), for example, to things like cars.
+
+-   Writing code is the constant tug-of-war between _structure_ and _developer experience_.
+
+    -   While working on problems, you decided on a given _structure_. This decision, usually, has huge implications on other developers.
+        -   The more complex the _structure_ is, the harder it will be to contribute to the project.
+
+-   Depending on the company you work for, _developer experience_ might be an essential aspect to the company surviving.
+    -   For others, it might not be that critical (but, I would argue, it should). **How important the DX is, reflects on the culture inside the company**.
+
+## Human-Centered Design For Developers
+
+-   Just like there are the _software design principles_, there is a list of _human-centered design principles_.
+    -   Why should you care? Well, in most cases, you work with other people right?
+        -   Being mindful about your colleagues will help you achieve a good balance between purist approach (where you only are concerned with structure) and the DX approach (where you are only concerned about DX).
+
+> HDC (Human-Centered Design) is a design philosophy that puts the users' needs, behavior, characteristics, pain points, and motivations first.
+
+-   The **crucial goal of HDC** is to **optimize for _discoverability_ and _understanding_**
+
+    -   Think about the last time you had to onboard to a new team. To be productive as soon as possible, you had to learn how the code works and how it is structured.
+        -   If we make that process as easy and as fast as possible, we get ourselves a big benefit that yields dividends over-time.
+
+-   When performing any action (like adding a new feature to the codebase), we go through several stages that get us from "How do I do this" to "Did it work?"
+
+    -   A lot is happening in between those states. The faster we can go through them, the better the structure and design of our code.
+
+-   The **affordance** is about _familiar_ properties of an object, that allows you to perform the desired action WITHOUT learning all about that object.
+    -   For example, doors contain handles. Handles are for pushing or pulling, therefore, there is a good chance you will open the door by pushing or pulling.
+    -   This **matters in code**. You want **to use concepts that are familiar and well established**. This is very dependent on the language you use.
