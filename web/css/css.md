@@ -13,19 +13,18 @@ How many times have you written the following snippet of CSS only to realize it 
 Especially, in the case where you want to style some kind of "main" container
 
 ```html
-
 <html>
-<head>
-    <style>
-        main {
-            /* does not work! */
-            height: 100%;
-        }
-    </style>
-</head>
-<body>
-<main>content</main>
-</body>
+    <head>
+        <style>
+            main {
+                /* does not work! */
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <main>content</main>
+    </body>
 </html>
 ```
 
@@ -34,11 +33,11 @@ do, and not the `width`. Why is that? **It has to do how browsers calculate the 
 
 > [Check out this great video for a full explanation](https://youtu.be/Xt1Cw4qM3Ec?t=736)
 
-- To calculate the `width` browsers look at the parent of a given element. This is recursive. The last parent is
-  the `html` element that has the default width of the document.
+-   To calculate the `width` browsers look at the parent of a given element. This is recursive. The last parent is
+    the `html` element that has the default width of the document.
 
-- To calculate the `height` browsers look at the **children of a given element**. This "looking at the children" can
-  create recursive conditions that render the `height: 100%` useless.
+-   To calculate the `height` browsers look at the **children of a given element**. This "looking at the children" can
+    create recursive conditions that render the `height: 100%` useless.
 
 If we apply this logic to our example, we can see why the `height: 100%` is not working.
 
@@ -50,24 +49,23 @@ If we apply this logic to our example, we can see why the `height: 100%` is not 
 To break this recursive chain, one has to specify the height on the `html` and the `body`.
 
 ```html
-
 <html>
-<head>
-    <style>
-        html,
-        body {
-            height: 100%;
-        }
+    <head>
+        <style>
+            html,
+            body {
+                height: 100%;
+            }
 
-        main {
-            /* works as expected */
-            height: 100%;
-        }
-    </style>
-</head>
-<body>
-<main>content</main>
-</body>
+            main {
+                /* works as expected */
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <main>content</main>
+    </body>
 </html>
 ```
 
@@ -79,8 +77,8 @@ the height of a document (implied height of the screen).
 Instead of trying to memorize the order of the sides in the `padding` or `margin` properties, use **`padding-inline` (
 left-right) and `padding-block` (top-down)**. The same applies to margins. One has to swap the `padding` for margin.
 
-There is an additional benefit to using these properties instead of the "regular" `margin` and `padding` properties. *
-*They take the `writing-mode`, `direction`, and `text-orientation` property into the account**, which makes your code
+There is an additional benefit to using these properties instead of the "regular" `margin` and `padding` properties. \*
+\*They take the `writing-mode`, `direction`, and `text-orientation` property into the account\*\*, which makes your code
 more reusable.
 
 ## Selectors
@@ -89,9 +87,9 @@ more reusable.
 
 Specificity is based on column-like structure (0-0-0).
 
-- 1-0-0 for `#`
-- 0-1-0 for `.`
-- 0-0-1 for `element`
+-   1-0-0 for `#`
+-   0-1-0 for `.`
+-   0-0-1 for `element`
 
 Whichever column has the bigger number in the left-most column wins. **If
 selectors are identical the bottom most wins (cascading styles)**
@@ -101,7 +99,6 @@ selectors are identical the bottom most wins (cascading styles)**
 There are quite a few of them. Let's consider following structure
 
 ```html
-
 <ol>
     <li class="some_class">item1</li>
     <li>item2</li>
@@ -154,7 +151,7 @@ li.some_class ~ li {
 
 ### Attribute Selectors
 
-- you can query by attribute presence, **value does not matter**
+-   you can query by attribute presence, **value does not matter**
 
 ```css
 /*
@@ -164,21 +161,21 @@ element[alt] {
 }
 ```
 
-- you can query by exact value
+-   you can query by exact value
 
 ```css
-element[alt="some image description"] {
+element[alt='some image description'] {
 }
 ```
 
-- value begins with something, **it ignores any dashes that come after it**.
-  Mostly used on languages attributes.
+-   value begins with something, **it ignores any dashes that come after it**.
+    Mostly used on languages attributes.
 
 ```css
 /*
     match all element that has alt which starts with: "some"
 */
-element[alt|="some"] {
+element[alt|='some'] {
     /*
     <element lang = "some-us">
     <element lang = "some">
@@ -186,19 +183,19 @@ element[alt|="some"] {
 }
 ```
 
-- you can query by value which starts with (`^`) ends or (`$`) or has (`*`) some
-  query
+-   you can query by value which starts with (`^`) ends or (`$`) or has (`*`) some
+    query
 
 ```css
-element[alt$="some"],
-element[alt*="some"],
-element[alt^="some"] {
+element[alt$='some'],
+element[alt*='some'],
+element[alt^='some'] {
 }
 ```
 
-- you can also force case insensitivity using `i` When using
-  `element[alt="some"]` that query inside quotes will match using case
-  sensitivity by default. You can change that behavior
+-   you can also force case insensitivity using `i` When using
+    `element[alt="some"]` that query inside quotes will match using case
+    sensitivity by default. You can change that behavior
 
 ```css
 element[alt="some" i]
@@ -208,17 +205,17 @@ element[alt="some" i]
 
 These are:
 
-- `:enabled`
-- `:disabled`
-- `:checked`
-- `indeterminate`
+-   `:enabled`
+-   `:disabled`
+-   `:checked`
+-   `indeterminate`
 
 And many more, just read the docs...
 
 For example:
 
 ```css
-input[type="checkbox"]:checked + label {
+input[type='checkbox']:checked + label {
     color: red;
 }
 ```
@@ -227,17 +224,17 @@ input[type="checkbox"]:checked + label {
 
 These include:
 
-- `:only-child`
-- `:nth-of-type`
-    - even
-    - odd
-    - an + b (offset can be negative)
+-   `:only-child`
+-   `:nth-of-type`
+    -   even
+    -   odd
+    -   an + b (offset can be negative)
 
 And more... But what peaked my interest are those:
 
-- `:root` (Angular2+ similarity?)
-- `:empty`
-- `:blank`
+-   `:root` (Angular2+ similarity?)
+-   `:empty`
+-   `:blank`
 
 #### `:root`
 
@@ -257,14 +254,7 @@ Not really supported. Works like `:empty` but can contain whitespace.
 This one is wild. Look at the syntax
 
 ```css
-element:
-matches
-
-(
-#home, .someClass, [title]
-
-)
-;
+element: matches (#home, .someClass, [title]);
 ```
 
 Pretty neat huh? This one is almost like `querySelectorAll`. Of course this
@@ -286,10 +276,7 @@ h6 {
     color: var(--fire-red);
 }
 
-/
-/
-the same as \/
-article h2,
+/ / the same as \/ article h2,
 article h3,
 article h4,
 article h5,
@@ -382,7 +369,6 @@ Wave your goodbyes to using JavaScript for this!
 The `:has` selector is very powerful when combined with inputs. Check out this example with checkbox.
 
 ```html
-
 <style>
     .notice {
         display: none;
@@ -393,7 +379,7 @@ The `:has` selector is very powerful when combined with inputs. Check out this e
     }
 </style>
 
-<input type="checkbox" id="toggle"/>
+<input type="checkbox" id="toggle" />
 <div class="notice">Some notice</div>
 ```
 
@@ -416,30 +402,9 @@ Well-supported. The gotcha is that the **selector inside parenthesis must be sim
 and spaces.
 
 ```css
-element:
-not
-
-(
-img
-
-)
-; /*ok*/
-div:
-not
-
-(
-.someClass
-
-)
-; /*can be also an id*/
-div:
-not
-
-(
-ul li
-
-)
-; /*will not work, there is a space, it's not a simple selector*/
+element: not (img); /*ok*/
+div: not (.someClass); /*can be also an id*/
+div: not (ul li); /*will not work, there is a space, it's not a simple selector*/
 ```
 
 #### Using the `:not` with elements that DO NOT contain certain properties
@@ -493,7 +458,7 @@ the DOM, you cannot highlight it.
 p::before,
 p::after {
     /*required!!!*/
-    content: "";
+    content: '';
     display: block;
     width: 50px;
     height: 50px;
@@ -593,9 +558,8 @@ The **`vw` unit is not "responsive" to the changes in writing direction**. You o
 
 Enter the `vi` and `vb` units.
 
-- The `vi` is for the _inline direction_.
-- The `vb` is for the _block direction_.
-
+-   The `vi` is for the _inline direction_.
+-   The `vb` is for the _block direction_.
 
 So, the previous snippet should be rewritten to the following
 
@@ -606,8 +570,6 @@ So, the previous snippet should be rewritten to the following
 ```
 
 [You can learn more about those units here](https://www.stefanjudis.com/today-i-learned/viewport-units-can-consider-the-writing-mode).
-
-
 
 ## The Many Kinds of Viewport Units
 
@@ -627,7 +589,6 @@ that you can scope the visibility of variables, like in any other programming la
 To declare a _global variable_, use the `:root` scope.
 
 ```html
-
 <style>
     :root {
         --my-color: black;
@@ -642,7 +603,6 @@ To declare a _global variable_, use the `:root` scope.
 To declare a _scoped variable_, declare the variable inside a given scope.
 
 ```html
-
 <style>
     :root {
         --my-color: black;
@@ -677,7 +637,7 @@ semantics of a given property**. It is pretty magical. Check this out.
 
 ```css
 @property --my-color {
-    syntax: "<color>";
+    syntax: '<color>';
     inherits: false;
     initial-value: black;
 }
@@ -931,13 +891,12 @@ inside content**.
 Consider the following snippet.
 
 ```html
-
 <style>
-    [data-theme="red"] a {
+    [data-theme='red'] a {
         color: red;
     }
 
-    [data-theme="blue"] a {
+    [data-theme='blue'] a {
         color: blue;
     }
 </style>
@@ -956,13 +915,12 @@ wins (due to _cascading_ nature of CSS).
 How could we make these styles work? **We can achieve the desired end-result via inheritance**.
 
 ```html
-
 <style>
-    [data-theme="red"] {
+    [data-theme='red'] {
         color: red;
     }
 
-    [data-theme="blue"] {
+    [data-theme='blue'] {
         color: blue;
     }
 </style>
@@ -980,13 +938,12 @@ will always use the value from its closest parent**. While this might not be sup
 know that **custom properties also are subject of inheritance**.
 
 ```html
-
 <style>
-    [data-theme="red"] {
+    [data-theme='red'] {
         --background-color: red;
     }
 
-    [data-theme="blue"] {
+    [data-theme='blue'] {
         --background-color: blue;
     }
 
@@ -1042,7 +999,7 @@ This one is entirely new for me. Instead of animating height-related properties,
 Combine it with the `overflow: hidden` property, and you have a beautiful "collapse" animation.
 
 ```js
-document.getElementById("app").innerHTML = `
+document.getElementById('app').innerHTML = `
 <button type = "button" id = "toggle">Toggle</button>
 <div class = "box">
   <div class = "box-inner">
@@ -1052,20 +1009,20 @@ document.getElementById("app").innerHTML = `
     <p>content</p>
   </div>
 </div>
-`;
+`
 
-const button = document.getElementById("toggle");
-const box = document.querySelector(".box");
+const button = document.getElementById('toggle')
+const box = document.querySelector('.box')
 
-button.addEventListener("click", function onButtonClick() {
-    const isHidden = box.classList.contains("hidden");
+button.addEventListener('click', function onButtonClick() {
+    const isHidden = box.classList.contains('hidden')
     if (isHidden) {
-        box.classList.remove("hidden");
-        return;
+        box.classList.remove('hidden')
+        return
     }
 
-    box.classList.add("hidden");
-});
+    box.classList.add('hidden')
+})
 ```
 
 ```css
@@ -1096,48 +1053,48 @@ potential drawbacks as well as the benefits it brings to the table.
 
 ### Syntax
 
-- You write your CSS, either via some kind of `css` function or via `styled.TAG_NAME`.
+-   You write your CSS, either via some kind of `css` function or via `styled.TAG_NAME`.
 
-    - These were popularized by _emotion.js_ and _styled-components_ libraries.
+    -   These were popularized by _emotion.js_ and _styled-components_ libraries.
 
-- The big advantage here is that you can use React-declared variables to style the elements. This **makes the styles
-  dynamic**.
+-   The big advantage here is that you can use React-declared variables to style the elements. This **makes the styles
+    dynamic**.
 
-    - Keep in mind that **you can pretty much do the same thing with CSS variables**.
+    -   Keep in mind that **you can pretty much do the same thing with CSS variables**.
 
 ### How does CSS-in-JS work?
 
 > Based on [this article](https://www.lauchness.com/blog/emotion-under-the-hood)
 
-- The styles you wrote are **serialized into CSS**.
+-   The styles you wrote are **serialized into CSS**.
 
-    - For **static styles**, this could happen at build time or at runtime.
+    -   For **static styles**, this could happen at build time or at runtime.
 
-    - For **dynamic styles**, this happen at runtime, **when your component runs**.
+    -   For **dynamic styles**, this happen at runtime, **when your component runs**.
 
-    - **Serialization is costly**. It is the major performance hot-spot in many libraries.
+    -   **Serialization is costly**. It is the major performance hot-spot in many libraries.
 
-- Then these styles are **injected into the HTML**. This also takes a bit of time.
+-   Then these styles are **injected into the HTML**. This also takes a bit of time.
 
-    - CSS-in-JS libraries usually leverage catching so not to include the same definitions multiple times. The more
-      granular the serialized CSS is, the less duplication.
+    -   CSS-in-JS libraries usually leverage catching so not to include the same definitions multiple times. The more
+        granular the serialized CSS is, the less duplication.
 
 ### The benefits
 
-- The ability to co-locate CSS and JSX in the same file
+-   The ability to co-locate CSS and JSX in the same file
 
-- Speed of development and DX. It is easy to pick up and learn.
+-   Speed of development and DX. It is easy to pick up and learn.
 
 ### The drawbacks
 
 > Learn more [by reading this article](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b)
 
-- Performance issues due to serialization and runtime dependency.
+-   Performance issues due to serialization and runtime dependency.
 
-- Increased JS bundle size.
+-   Increased JS bundle size.
 
-- **Using CSS-in-JS library can clutter your React dev-tools**. Most libraries inject special components responsible for
-  handling context (theme) and other stuff.
+-   **Using CSS-in-JS library can clutter your React dev-tools**. Most libraries inject special components responsible for
+    handling context (theme) and other stuff.
 
 ### The bottom line
 
@@ -1180,7 +1137,6 @@ The `display: contents` will make it so that the **element will not generate any
 treated as if it did not exist in terms of layout**.
 
 ```html
-
 <div style="display: flex">
     <!-- As if this div \/ did not exist from the layout perspective -->
     <div style="display: contents;">
@@ -1191,9 +1147,9 @@ treated as if it did not exist in terms of layout**.
 </div>
 ```
 
-- The colors and fonts inherit from the `display: contents` parent.
+-   The colors and fonts inherit from the `display: contents` parent.
 
-- The **padding, width and all box-related properties are ignored**.
+-   The **padding, width and all box-related properties are ignored**.
 
 ### But what about `subgrid`?
 
@@ -1202,122 +1158,125 @@ property, my mind immediately started comparing how the `display: contents`
 works [with the `subgrid` property](https://web.dev/css-subgrid).
 
 **The main difference is that, with `subgrid` you preserve the dimensions of the parent**. This means that you have more
-control over the parents dimensions. The `display: contents` makes the box "invisible" to the HTML, so the children will
-be at the mercy of the grandparent dimensions. Also, using the `display: contents` to make `subgrid` work is a
-workaround. While the layout might work, the intent behind the code is kind of lost.
+control over the parents dimensions.
 
-Where `subgrid` shines is the ability to have consistent heights of rows across different elements, like cards. The *
-*children can use the rows from the parent, and the columns from the grandparent, or some combination of both**.
+The `display: contents` makes the box "invisible" to the HTML, so the children will be at the mercy of the grandparent dimensions.
+Also, using the `display: contents` to make `subgrid` work is a workaround. While the layout might work, the intent behind the code is kind of lost.
+
+Where `subgrid` shines is the ability to have consistent heights of rows across different elements, like cards.
+The **children can use the rows from the parent, and the columns from the grandparent, or some combination of both**.
 
 [Here is a good video about this topic](https://www.youtube.com/watch?v=rmF_iE0lMzw).
 
+[And here is a demo with a form, where all inputs "start" at the same width](https://codepen.io/chriscoyier/pen/YzxqJap).
+
 ## The _lobotomized owl_ selector
 
-- Its name from from how the selector "looks" when written: `* + *`.
+-   Its name from how the selector "looks" when written: `* + *`.
 
-- It **used to be more widely used since we did not have `gap` property at our disposal**.
+-   It **used to be more widely used since we did not have `gap` property at our disposal**.
 
-    - Without the `gap` property, adding spacing between children was a bit tricky. If you were not careful, you could
-      introduce the "leftover" spacing.
+    -   Without the `gap` property, adding spacing between children was a bit tricky. If you were not careful, you could
+        introduce the "leftover" spacing.
 
-        - If you did, in most cases you also had to apply negative margins.
+        -   If you did, in most cases you also had to apply negative margins.
 
-      ```html
-      <style>
-        p {
-          margin-block-end: 1rem;
-        }
-      </style>
-      <section>
-        <p>foo</p>
-        <p>foo</p>
-        <p>I will have a "leftover" spacing at the bottom</p>
-      </section>
-      ```
+        ```html
+        <style>
+            p {
+                margin-block-end: 1rem;
+            }
+        </style>
+        <section>
+            <p>foo</p>
+            <p>foo</p>
+            <p>I will have a "leftover" spacing at the bottom</p>
+        </section>
+        ```
 
-      Contrast this with the following. The `margin-block-end` is only applies to the _second_ paragraph (in this
-      particular case, using `margin-block-start` would be a better option).
+        Contrast this with the following. The `margin-block-end` is only applies to the _second_ paragraph (in this
+        particular case, using `margin-block-start` would be a better option).
 
-      ```html
-      <style>
-        section p + p {
-          margin-block-end: 1rem;
-        }
-      </style>
-      <section>
-        <p>foo</p>
-        <p>foo</p>
-        <p>I will NOT have a "leftover" spacing at the bottom</p>
-      </section>
-      ```
+        ```html
+        <style>
+            section p + p {
+                margin-block-end: 1rem;
+            }
+        </style>
+        <section>
+            <p>foo</p>
+            <p>foo</p>
+            <p>I will NOT have a "leftover" spacing at the bottom</p>
+        </section>
+        ```
 
 ## The `color-mix` function
 
-- There are multiple **color models or formats or spaces** (I've seen different wording used in different articles) now
-  in CSS.
+-   There are multiple **color models or formats or spaces** (I've seen different wording used in different articles) now
+    in CSS.
 
-    - These define how "rich" the color is on different displays, and also how the colors mix using the `color-mix`
-      function.
+    -   These define how "rich" the color is on different displays, and also how the colors mix using the `color-mix`
+        function.
 
-- The syntax looks like this: `color-mox(in oklab, white 30%, black)`
+-   The syntax looks like this: `color-mox(in oklab, white 30%, black)`
 
-- The **`color-mix` will allow you to implement the "darken(X)" semantics for a given color**.
+-   The **`color-mix` will allow you to implement the "darken(X)" semantics for a given color**.
 
-    - I used to have this `darken` function in my SCSS code back in the day.
+    -   I used to have this `darken` function in my SCSS code back in the day.
 
 ## The `tabular-nums`
 
-- Use the `font-variant-numeric: tabular-nums;` every where you do not want the content shifting when some number
-  changes. I bet you encountered a situation where changing from `10` to `12` caused a slight layout shift. If you were
-  using the `tabular-nums` that would not be the case.
+-   Use the `font-variant-numeric: tabular-nums;` every where you do not want the content shifting when some number
+    changes. I bet you encountered a situation where changing from `10` to `12` caused a slight layout shift. If you were
+    using the `tabular-nums` that would not be the case.
 
 ## CSS Grid and custom names
 
-- At the time of writing, there are two ways to create custom names when defining grid layouts.
+-   At the time of writing, there are two ways to create custom names when defining grid layouts.
 
-    1. Naming the lines.
+    1.  Naming the lines.
 
-    2. Naming the areas.
+    2.  Naming the areas.
 
-  **Naming the lines is different than naming the areas**. The syntax is different and, overall, the end-result is a bit
-  different.
+    **Naming the lines is different than naming the areas**. The syntax is different and, overall, the end-result is a bit
+    different.
 
 ### Naming the lines
 
 Below is an example of naming the lines and then using them.
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>HTML + CSS</title>
-    <link rel="stylesheet" href="styles.css"/>
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>HTML + CSS</title>
+        <link rel="stylesheet" href="styles.css" />
+        <style>
+            .grid-container {
+                display: grid;
+                grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
+            }
 
-        .main-content {
-            /* Notice the name here */
-            grid-area: content;
-        }
-    </style>
-</head>
-<body>
-<div class="grid-container">
-    <div class="main-content">
-        <p>...</p>
-        <p>...</p>
-        <p>...</p>
-        <p>...</p>
-        <p>...</p>
-    </div>
-</div>
-</body>
+            .main-content {
+                /* Notice the name here */
+                grid-area: content;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="grid-container">
+            <div class="main-content">
+                <p>...</p>
+                <p>...</p>
+                <p>...</p>
+                <p>...</p>
+                <p>...</p>
+            </div>
+        </div>
+    </body>
 </html>
 ```
 
@@ -1336,38 +1295,38 @@ naming the lines here, not the areas!
 Here, we are going to use `grid-template-areas`. I find this approach a bit easier to understand.
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>HTML + CSS</title>
-    <link rel="stylesheet" href="styles.css"/>
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-areas: "sider-1 content sider-2";
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>HTML + CSS</title>
+        <link rel="stylesheet" href="styles.css" />
+        <style>
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-areas: 'sider-1 content sider-2';
+            }
 
-        .main-content {
-            /* Notice the name here */
-            grid-area: content;
-        }
-    </style>
-</head>
-<body>
-<div class="grid-container">
-    <div class="main-content">
-        <p>...</p>
-        <p>...</p>
-        <p>...</p>
-        <p>...</p>
-        <p>...</p>
-    </div>
-</div>
-</body>
+            .main-content {
+                /* Notice the name here */
+                grid-area: content;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="grid-container">
+            <div class="main-content">
+                <p>...</p>
+                <p>...</p>
+                <p>...</p>
+                <p>...</p>
+                <p>...</p>
+            </div>
+        </div>
+    </body>
 </html>
 ```
 
@@ -1390,7 +1349,7 @@ use `appearance: none`. This definition tells the browser that you wish to be ab
 sample CSS (I'm using native CSS nesting).
 
 ```css
-input[type="checkbox"] {
+input[type='checkbox'] {
     appearance: none;
 
     position: relative;
@@ -1401,7 +1360,7 @@ input[type="checkbox"] {
     vertical-align: middle;
 
     &::before {
-        content: "";
+        content: '';
         display: none;
         width: 10px;
         height: 10px;
@@ -1460,7 +1419,7 @@ area by using _pseudo-classes_.
 }
 
 a:before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
 }
