@@ -1109,11 +1109,12 @@ another container and it's width did not necessarily depended on the width of th
 was not something you enjoyed.
 
 **Now you can base the size of the child out of the size of the parent**. If the parent shrinks, the child can also
-shrink. **The container queries are like media queries but instead of looking at viewport, they look at the parent**.
-Very useful stuff.
+shrink. **The container queries are like media queries, but instead of looking at viewport, they look at the parent**.
 
-Why is this useful? **In the age of components, it is very hard to style them according to the viewport**. Components
-are composable, they might "appear" in different contexts. Ideally they should "just work" no matter who the parent is.
+Handy stuff.
+
+Why is this useful? **In the age of components, it is hard to style them according to the viewport**. Components
+are composable, they might "appear" in different contexts. Ideally, they should "just work" no matter who the parent is.
 
 ```css
 .parent {
@@ -1130,6 +1131,37 @@ are composable, they might "appear" in different contexts. Ideally they should "
 ```
 
 The syntax is very familiar. One addition is that you have to "name" your container to use the `@container` query.
+
+### Pitfalls
+
+Every API/feature has pitfalls. This one is no different.
+
+1. **The container has to have an explicit size or come from `flex` or `grid` layout and NOT from its children**.
+
+```css
+.nav {
+    container: nav / inline-size;
+    display: flex;
+    gap: 1rem;
+}
+```
+
+In the code above, the `width` of the container will have an effective width of zero. Use `flex: 1` to fix that problem.
+
+2. You **cannot query the container against itself**.
+
+```css
+.nav {
+    container: nav / inline-size;
+    display: flex;
+    gap: 1rem;
+}
+
+@container nav (min-width: 700px) {
+    /*This will not work!*/
+    background: red;
+}
+```
 
 ## `display: contents` blows my mind
 
