@@ -344,6 +344,7 @@
 -   if you do not provide the key yourself, the service will use _AWS Managed_ key
 
 -   environment variables **are decrypted for you in the console and at Lambda runtime level**
+    -   This is why you see them in _plain text_ in the AWS Console.
 
 #### Infinite loops and lambda
 
@@ -705,23 +706,27 @@
     -   to use the _SourceIdentity_ when assuming a role, the `AssumeRole` (trust policy) has to have
         the `sts:SetSourceIdentity` action enabled.
 
-        ``````text
-                    ...
-                    Actions:
-                    	- sts:AssumeRole
-                    	- sts:SetSourceIdentity
-                    Principal:
-                    	Service / AWS
-                    	..
-                    ```
+        ````````text
+                            ...
+                            Actions:
+                            	- sts:AssumeRole
+                            	- sts:SetSourceIdentity
+                            Principal:
+                            	Service / AWS
+                            	..
+                            ```
 
-                **Remember that the `Principal` needs the permissions to do these actions.**.
+                        **Remember that the `Principal` needs the permissions to do these actions.**.
 
-                ````
+                        ````
 
-            `````
+                    `````
 
-        ``````
+                ``````
+
+            ```````
+
+        ````````
 
     -   How the "stickiness" of the _SourceIdentity_ is
         preserved? [This article explains](https://aws.amazon.com/blogs/security/how-to-relate-iam-role-activity-to-corporate-identity/)
@@ -7078,7 +7083,7 @@ Consider giving it a read!
 
 -   you can have **CRON expression** for **scheduled builds**
 
-##### Envioriment Variables
+##### Environment Variables
 
 -   there are some **reserved environment variables**. For `CodeBuild`, they have a prefix of `CODEBUILD_`
 
@@ -7425,18 +7430,22 @@ Consider giving it a read!
 
     -   you declare them whenever you declare a resource within the template
 
-        ``````yaml
-                    Resources:
-                    	MY_LOGICAL_RESOURCE_ID:
-                    		Type: ...
-                    		Properties: ...
-                    ```
+        ````````yaml
+                            Resources:
+                            	MY_LOGICAL_RESOURCE_ID:
+                            		Type: ...
+                            		Properties: ...
+                            ```
 
-                ````
+                        ````
 
-            `````
+                    `````
 
-        ``````
+                ``````
+
+            ```````
+
+        ````````
 
     -   available for every resource.
 
