@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 123
+Page 153
 
 ## Introduction
 
@@ -162,5 +162,65 @@ This chapter was a high-level overview of what's to come, so I did not take that
     -   A lot is happening in between those states. The faster we can go through them, the better the structure and design of our code.
 
 -   The **affordance** is about _familiar_ properties of an object, that allows you to perform the desired action WITHOUT learning all about that object.
+
     -   For example, doors contain handles. Handles are for pushing or pulling, therefore, there is a good chance you will open the door by pushing or pulling.
     -   This **matters in code**. You want **to use concepts that are familiar and well established**. This is very dependent on the language you use.
+
+-   The **signifiers** are **marks or sound or other things that can communicate intended behavior to a person**.
+
+    -   Think of having a "PUSH" or "PULL" sticker on the door.
+    -   They go hand-in-hand with affordances.
+        -   Design patterns.
+        -   Comments.
+        -   Tests.
+        -   Good variable names.
+
+-   **Constraints limit set of possible actions we can take**.
+
+    -   This is **vital and powerful technique in software development**.
+    -   **Constrain what humans need to know about to use the class or module effectively**
+        -   Make the _interface_ thin, and the implementation deep.
+        -   Also known as creating a _minimal interface_.
+
+-   The **_mapping_ is about the relationship between two sets of things**.
+
+    -   In code, that means grouping items similar to each other by proximity. This is also known as _cohesion_.
+    -   The DOM APIs are a good example – the `.getAttribute` is defined on the _element_, it also defines all other similar methods.
+
+-   There will always be tension between the _structure_ AND _developer experience_.
+    -   In some cases, putting more emphasis on _structure_ makes sense. In enterprise, since the domain is quite complex, using _structure_ to "tame" that complexity is warranted.
+    -   On the other hand, creating a tool for other developers to use might require more emphasis on DX.
+    -   It is **your job** to recognize and decide the level of balance between those two forces.
+
+## Organizing things
+
+-   Symptoms of a _poor project structure_ include the following (non-exhaustive list):
+
+    -   Forgetting what the system does.
+    -   It is hard to locate features.
+    -   You spent a lot of time flipping back and forth between files (low cohesion).
+
+-   Some of the common project structure approaches include the following:
+
+    -   _"Just evolve it over time"_. This one **is a recipe for bike shedding and conflicts if you work in a team**.
+        -   Your fellow developers have to spend a lot of time thinking: _where should I put this file?_
+            -   Of course, after some time, they give up and put it somewhere random. **You are most likely guilty of this as well**.
+    -   _"Package by infrastructure/technology/type"_. Here, **the features are spread across multiple files and the names of the directories does not tell a "story"** of what the project does.
+        -   While these problems were also present in _"just evolve it over time"_ approach, here they are even more profound.
+        -   Again, with this approach, it is hard to onboard new people.
+    -   _"Package by domain"_.
+        -   We have the "User" concept in our application, as such everything that has to do with users goes there.
+            -   This **MIGHT give you a basic idea of what the application does when you look at the directory structure**.
+        -   This approach also MIGHT help you locate features – but you have to understand the top-level domains.
+        -   There still might be some file-flipping going on, so **this approach is not that great either**.
+
+-   So, how should we group project files? **Consider structuring your project against _features_**.
+
+    -   Yes, _features_. This is most likely what you are working on right?
+        -   From the business perspective, **the _feature_ is the unit of work, NOT some kind of controller that you wrote**.
+
+-   Consider the case of **_screaming architecture_**.
+    -   If you open the application, and it _screams_ "React app" or some other technology, the project is poorly structured.
+        -   The technology used is **an implementation detail**. The technologies come and go.
+    -   However, if you open the application, and it _screams_ "fitness app" or some other domain, you did a good job.
+        -   It will be much easier to work in such application.
