@@ -218,9 +218,56 @@ This chapter was a high-level overview of what's to come, so I did not take that
 
     -   Yes, _features_. This is most likely what you are working on right?
         -   From the business perspective, **the _feature_ is the unit of work, NOT some kind of controller that you wrote**.
+    -   If you structure your project this way, you can apply this the following rule: **_if it does not belong to a `feature`, it goes into the `shared` folder_**.
+        -   This greatly reduces the _burden of choice_ and makes it more obvious where a given file should land.
 
 -   Consider the case of **_screaming architecture_**.
+
     -   If you open the application, and it _screams_ "React app" or some other technology, the project is poorly structured.
         -   The technology used is **an implementation detail**. The technologies come and go.
     -   However, if you open the application, and it _screams_ "fitness app" or some other domain, you did a good job.
-        -   It will be much easier to work in such application.
+        -   It will be much easier to work on such application.
+
+-   The most important takeaway is this: **group related files together to increase the _cohesion_ of the code**.
+
+    -   It might be unrealistic to refactor the code structure in large projects.
+
+-   In the **frontend application, features live on pages**. Therefore, consider structuring the project with respect to _pages_.
+    -   On the **backend, the features _are_ use cases**. Therefore, consider structuring the project with respect to use cases.
+
+## Documentation & Repositories
+
+-   Use **tests as the MAIN tool for documentation**.
+
+    -   Code comments are okay, but use them sparingly. Only when you need to explain the WHY and not how.
+        -   The "how question" should be addressed by tests.
+    -   The test should also explain how a given feature works. Ideally, new developers would be learning about the domain _through tests_.
+
+-   **Push as much complexity downwards as possible**.
+    -   This will, not only help with onboarding, but also with cognitive load while adding new features.
+
+## Naming things
+
+-   Think about all the programing courses you have attended. Did they teach you _how to name things_?
+    -   Sadly, for most of us, this is not the case, and yet, _naming things_ is **one of the most challenging problems we face as software engineers**.
+        -   Naming things is not hard – it is the **act of naming things well that is hard**.
+
+### Consistency & uniqueness
+
+-   **Given how we learn (through repetition), having consistent names is paramount**.
+
+    -   It improves how fast others will be able to grasp as given concept.
+    -   It improves how well others can search through the codebase.
+
+-   **Consistency not only applies to naming**. It applies to everything you have in the codebase.
+
+    -   How you structure the application.
+    -   How you define functions, properties, and classes.
+
+-   One of the **worst things you can do is to have similar, but different, names for the same concept**.
+
+    -   This confuses everyone and makes them question the whole _convention_.
+
+-   **Do NOT recycle** names.
+    -   This is just plain laziness. There is no excuse to do that.
+    -   Again, this only creates confusion and makes the code harder to read.
