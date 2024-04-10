@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 153
+Page 180
 
 ## Introduction
 
@@ -254,6 +254,8 @@ This chapter was a high-level overview of what's to come, so I did not take that
 
 ### Consistency & uniqueness
 
+> Each concept should be represented by a single, unique name.
+
 -   **Given how we learn (through repetition), having consistent names is paramount**.
 
     -   It improves how fast others will be able to grasp as given concept.
@@ -271,3 +273,77 @@ This chapter was a high-level overview of what's to come, so I did not take that
 -   **Do NOT recycle** names.
     -   This is just plain laziness. There is no excuse to do that.
     -   Again, this only creates confusion and makes the code harder to read.
+
+### Understandability
+
+> A name should describe the concept it represents.
+
+-   Remember the concept of the _knowledge in the world_ vs. _knowledge in the head_?
+
+    -   The _knowledge in the head_ is based on memory and current context.
+    -   The _knowledge in the world_ is based on culture, something deeply ingrained inside us.
+    -   **You want to name things based on _knowledge in the world_ as much as possible**.
+        -   Doing so will reduce the amount of time one has to think about the variable to understand what it does.
+        -   **You want to name the thing after a real world concept**.
+
+-   The best name for a given construct is the name understandable by everyone, not only programmers.
+
+    -   Yes, there is a required body of knowledge related to the _business domain_, but that is a given.
+
+-   **Avoid overly technical or ambiguous names**.
+
+    -   `Processor`, `Manager`, and `Helper` are all pretty vague.
+
+-   Either **document the _side effects_ the function does, or push the _side effects_ to a separate function**
+    -   If the `createUser` also sends a verification email, make sure that fellow developers know that is the case.
+        -   You would need to rename the `createUser` to `createUserAndSendVerificationEmail`.
+            -   **Using `and` within the name suggest that the function does too many things!**
+        -   Or, better, extract the `sendVerificationEmail` to a separate function.
+
+### Specificity
+
+> A name should not be overly vague or overly specific
+
+-   **It is okay to start with overly specific name** granted you refactor the name later on.
+
+    -   That first step of having overly specific name oftentimes signals to us that we ought to split the variable / function in multiple pieces.
+
+-   **Every variable should have _justification_ for its existence**.
+
+    -   The fewer variables, the less context we have to keep in our heads.
+
+-   **A name should describe what is inside the variable – nothing more, nothing less**.
+    -   There is no need to get fancy and try to make the variable sound _technical_ or _smart_ (that will only undermine their usefulness).
+
+```js
+// Very vague.
+function cloneArray(arr1, arr2) {}
+
+// vs.
+
+// "Just right", explicit.
+function cloneArray(source, destination) {}
+```
+
+```js
+async function exists(userId) {
+    // Overly specific.
+    const tempUserToDetermineIfExistsOrNot = this.userRepo.getUser()
+    return !!tempUserToDetermineIfExistsOrNot
+}
+
+// vs.
+async function exists(userId) {
+    const user = this.userRepo.getUser()
+    // "Just right". No need for additional variable.
+    return !!user
+}
+```
+
+-   **Name things by their _roles_ in the application**.
+    -   Perhaps, instead of using `User` everywhere, we could leverage domain concept names like `Admin`, `Editor` or `Employee`?
+        -   Of course, this is highly dependent on the application.
+
+### Brevity
+
+> A name should be neither overly short nor overly long.
