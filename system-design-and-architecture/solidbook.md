@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 180
+Page 198
 
 ## Introduction
 
@@ -248,6 +248,8 @@ This chapter was a high-level overview of what's to come, so I did not take that
 
 ## Naming things
 
+> This whole section is based on [this book](https://www.namingthings.co/).
+
 -   Think about all the programing courses you have attended. Did they teach you _how to name things_?
     -   Sadly, for most of us, this is not the case, and yet, _naming things_ is **one of the most challenging problems we face as software engineers**.
         -   Naming things is not hard – it is the **act of naming things well that is hard**.
@@ -347,3 +349,110 @@ async function exists(userId) {
 ### Brevity
 
 > A name should be neither overly short nor overly long.
+
+-   Code that is too verbose **is hard to read**. The code that is too succinct is **also hard to read**.
+
+    -   There is a constant tension between _compression_ and _context_.
+
+-   To explain something, you need to provide enough context.
+    -   But if you provide too much context, we can lose the "main" takeaway.
+
+> **Communicate _what_ with names, explain _why_ with context**
+
+-   The _why_ should be reserved for code comments.
+
+    -   The _what_ is reserved for variable names.
+
+-   **Some practical** rules to follow:
+    -   Remove unnecessary words, like `in order to`, `be able to`, `in the event that` and so on. All of these have much shorter equivalents.
+    -   Stay away from single-letter variables _unless_ they are a convention, like within loops.
+    -   A good example is the `for (let i; i = 0; i++)` code.
+        -   The **conventions are _knowledge in the world_**. Keep it consistent!
+    -   Grouping things **is paramount as it enables you to make the names shorter**.
+        -   Operations on the `User` object will NOT have to repeat the `User` in their name. This makes them easier to read, but accessing them preserves context -> `User.findOne`.
+
+### Searchability
+
+> A name should be easily found across code, documentation, and other resources.
+
+I can't stress enough how important this is. If you can't find something fast, how are you supposed to make changes to it!?
+
+-   Making sure the name is _searchable_ has several benefits
+
+    -   It makes the refactoring easier.
+    -   The name can be located in the documentation.
+    -   The name can be understood where and how it works throughout the codebase.
+
+-   **This characteristic is greatly influenced by other we have talked so far**.
+
+    -   If the name is too short, or too generic or perhaps outdated, we will struggle with finding what we want.
+
+-   **Practical tips** include:
+    -   Avoiding _magic numbers_ and creating constants instead.
+    -   Keeping the documentation up to date (this one is quite hard, is it not?).
+    -   Ensuring that the names are not too short, nor too long (_context_ vs. _succinctness_)
+
+### Pronounceability
+
+**It is imperative that you can _pronounce_ the name correctly and without effort**.
+The name is what you will be referring to when talking with other people.
+
+Some of those people might not be your fellow developers, but other stakeholders.
+You want **ALL** groups to understand what you are talking about, not only the people who directly contribute to the code.
+
+-   **Some practical** rules to follow:
+    -   Use abbreviations if they are considered _knowledge in the world_.
+        -   `ssn`, `vat` and similar are universally understood by anyone.
+    -   Use _camelCase_ to signal world breaks in variables.
+    -   And my favourite: **booleans should ask a question or make an assertion**.
+        -   `potIsEmpty()`, `isPostEmpty()` are good examples.
+        -   **DO NOT** try to shorten the names unnecessarily. You gain zero leverage by doing so.
+    -   Instead of `tmStmp` use `timeStamp`.
+
+### Austerity
+
+> A name should not be clever or rely on temporary concepts.
+
+This boils down to keeping it professional. In the comments and with naming the variables. Everyone likes to laugh, but let's keep being snarky outside of the code.
+
+-   **Some practical** rules to follow:
+    -   Avoid being cute, funny or clever. **The easier the name is to understand**, the better.
+    -   Do not include popular culture references.
+        -   I would argue that one should not include ANY cultural references.
+
+## Comments
+
+A good comment can be very beneficial.
+A bad comment could introduce _uncertainty_ in your understanding of the concept which hinders you from progressing.
+
+**It is hard** to write a good comment. But not all is lost! Given few guidelines, you can increase your chance at writing a good comment.
+
+-   Follow the rule: **code explains what and how, comments explain why**.
+
+    -   For real, focus on the _why_. When writing a comment, always ask yourself WHY we wrote this code. DO NOT repeat what the code is doing.
+    -   **Refactor the code to answer the _how_ question** better.
+
+-   Comments, in general, contribute to _"visual noise"_ and clutter the code.
+
+    -   That is why most people skip writing them. **But skipping comments is not a way to go**.
+        -   As I mentioned before, always focus on the _why_.
+
+-   One of the cardinal sins of writing comments is **repeating what the code does, but in a different language**.
+
+    ```js
+    class UserService {
+    // This method gets the user by user id. -> A bad comment. Explains what the code does
+    	getUserByUserId(userId: string): Promise<User>;
+    }
+    ```
+
+## Formatting & Style
+
+-   Code formatting is _very subjective_.
+
+    -   **The most important** for any team is to come up with some kind of convention and stick to it.
+    -   If you are working solo, do what works for you.
+
+-   While _very subjective_ in nature, **there are some universal** rules about formatting that applies to everyone:
+-   **Use whitespace to create "blocks" of related code** and separate those blocks.
+    -   Whitespace is free. It is a very powerful tool in making the code more readable.
