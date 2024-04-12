@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 198
+Page 224
 
 ## Introduction
 
@@ -455,4 +455,111 @@ A bad comment could introduce _uncertainty_ in your understanding of the concept
 
 -   While _very subjective_ in nature, **there are some universal** rules about formatting that applies to everyone:
 -   **Use whitespace to create "blocks" of related code** and separate those blocks.
+
     -   Whitespace is free. It is a very powerful tool in making the code more readable.
+
+-   Here are **a few practical rules** to follow:
+
+    -   _Use obvious spacing rules_. How to apply then is never _explicitly_ taught, but after a while you develop an intuition when one should use them.
+
+        -   I'm referring to spacing between _keywords_, _identifiers_, _operators_ and _literals_.
+
+        -   Keep the **code "density" low**.
+
+    -   Do not have large chunks of code without indentation. **Group related statements together**.
+
+    -   Break things on the horizontal axis if they are too long.
+        -   This should be the job of your code formatter.
+
+-   Next, Khalil makes a point about _smaller files_.
+
+    -   I'm torn on this one.
+        -   On the one hand, smaller files are easier to read.
+        -   On the other, **smaller files often prevent you from seeing the duplication** thus making it hard to create good abstractions.
+    -   My advice would be to pick what works best for you and stick to it.
+        -   I'm unsure if being dogmatic about file size is a good strategy to have. Life and programing is almost never "black and white".
+
+### Consistent whitespace
+
+-   We touched about _consistency_ before, and this aspect is also quite important in the context of _style and formatting_.
+    -   Stick to the same casing style (be it _camelCase_ or _snake_case_).
+    -   **It does not matter what casing you choose**. What matters is that you stick to it.
+
+### Storytelling
+
+-   Reading the code is like reading a newspaper. **You want to _front-load_ the most important bits of the code**, and have the less important ones at the bottom.
+    -   This **principle is called _Newspaper Code Principle_**.
+
+```js
+class RecordingStudio {
+    // Quite important method. Let us keep it at the very top.
+    public recordSong(...) {
+    }
+
+    // ... Other stuff
+
+    // Not that important, but still vital to understand. Can be at the bottom.
+    private someInternalDetails() {
+    }
+}
+```
+
+```tsx
+// Quite important. It contains what we see on the screen.
+function MyAweSomeComponent() {
+    const data = getData()
+    return (
+        // some JSX
+    )
+}
+
+// Not that important. Can be at the bottom.k
+function getData() {
+}
+```
+
+-   **Do your best to keep the level of abstraction consistent** throughout the function.
+    -   Do not start at the very high level, utilizing a _deep_ abstraction only to dive into very minute details at the end.
+        -   Hide those details into another abstraction and use that.
+        -   This way, the reader knows what to expect.
+
+### Tooling
+
+-   **You should NEVER have to think about formatting (apart from vertical whitespace)** in your codebase.
+    -   Use tools like `Prettier` and `ESLint` to do the job for you.
+    -   If you do not, use are wasting yours and everyone else's time.
+
+## Types
+
+-   There are two main _type systems_ for any given programming language to choose from:
+
+    -   The **static type system**. Here, the types are a concrete construct used to describe that will be stored in a variable.
+    -   The **dynamic type system**. Here, the types are _implied_ and _hidden_ from the programmer.
+
+-   One type system is not necessarily better than the other. It all depends on the people you work with and how you like to work.
+
+    -   Having said that, **usually, the _statically_ and _"strong"_ typed languages will save you more time in the long run**.
+        -   They will save you from silly mistakes we all do.
+        -   But the most important thing is that **statically typed languages allow you to communicate via contracts and not concrete implementations**.
+            -   This is HUGE for code composition.
+
+-   Communicating via _contracts_ means using _interfaces_ or _types_ rather than concrete classes or objects.
+    -   This way, you can implement the necessary contract differently in tests and differently in the runtime code.
+    -   While you could do the same with _dynamically typed_ language, the language will not check against that contract.
+        -   In other worlds, the "machine" will not work for you, you will have to work for the "machine" and ensure the contract is valid.
+
+```ts
+interface BookSaver {
+    saveBook(): Promise<void>
+}
+
+// TypeScript will check the contract here.
+// If you pass something that does not contain `saveBook` method, TypeScript will complain.
+async function createNewBook(saver: BookSaver) {
+    await saver.saveBook()
+}
+```
+
+-   _Statically typed languages_ are also better at communicating the intent.
+    -   They often have a keywords related to a given pattern (or family of patterns).
+        -   Keywords like `abstract` or `private`, used in the right context, _scream_ a given pattern right away.
