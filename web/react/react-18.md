@@ -967,15 +967,18 @@ async function myInlineServerAction(userId: string) {
     -   This is an additional protective layer against unwanted data transition from the server and the client.
 
 -   **They work on the basis of _conditional `package.json` exports_. I find this mechanism pretty interesting**.
+    -   The **key to make that work is the `--conditions` flag in Node.js**.
 
-    ```json
-    // server-only package.json
-    "exports": {
-    	".": {
-    		"react-server": "./empty.js",
-    		"default": "./index.js" // this file throws an error
-    	}
-    ```
+```json5
+// server-only package.json
+{
+  "exports": {
+    ".": {
+      "react-server": "./empty.js",
+      "default": "./index.js"
+      // this file throws an error
+    }
+  }
+```
 
-    Now, if someone tries to use the file with `server-only` import outside of the `react-server` "condition" (check out
-    the `--conditions` Node.js flag), the bundler will throw an error! Pretty smart.
+Now, if someone tries to use the file with `server-only` import outside the `react-server` "condition" (check out the `--conditions` Node.js flag), the bundler will throw an error! Pretty smart.
