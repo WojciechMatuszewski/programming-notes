@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 224
+Page 273
 
 ## Introduction
 
@@ -561,5 +561,122 @@ async function createNewBook(saver: BookSaver) {
 ```
 
 -   _Statically typed languages_ are also better at communicating the intent.
+
     -   They often have a keywords related to a given pattern (or family of patterns).
         -   Keywords like `abstract` or `private`, used in the right context, _scream_ a given pattern right away.
+
+-   Khalil touches on the fact that _dynamically typed_ languages _could_ improve **initial** productivity, but that often comes at a later cost.
+
+    -   I completely agree. I would argue that the temptation of doing "magic stuff" with _dynamically typed_ languages is much higher.
+
+-   **TypeScript** uses a **_structural type system_**.
+    -   This means, the type compatibility and equivalence are determined by the computed type's actual structure.
+
+```ts
+class Instrument {
+    doSomething: () => {}
+}
+
+class Guitar extends Instrument {}
+
+class Synth extends Instrument {}
+
+declare function pluckGuitar(guitar: Guitar): void
+
+pluckGuitar(new Guitar())
+pluckGuitar(new Synth()) // Should not be allowed but it is! This is Duck Typing!
+```
+
+The rest of this chapter talks about the basics of TypeScript. I've skipped making note for those as I'm pretty comfortable with the language already.
+
+## Errors and exceptions
+
+-   **Errors and how we handle them** should not be an afterthought.
+
+    -   They are an integral part of any application, because things fail, all the time.
+
+-   Khalil mentions **two _common_ error-handling approaches that are pretty bad**.
+
+    -   First, you have the "log and return `null`" pattern. It looks like this:
+
+        ```ts
+        function CreateUser(email: string, password: string) {
+            const isEmailValid = validateEmail(email)
+            const isPassowrdValid = validatePassowrd(password)
+
+            if (!isEmailValid) {
+                console.log('Invalid email')
+                return null
+            }
+
+            if (!isPasswordValid) {
+                console.log('Invalid password')
+                return null
+            }
+        }
+        ```
+
+        This does not work well, because **the caller has no idea what failed**. It is quite bad.
+
+    -   Another approach one might take would be to "log and throw."
+        -   Again, not that great since you have to surround everything with `try/catch` blocks.
+            -   Also, you **have to dig into the implementation of the function to know if it fails or not**.
+
+-   There is a **difference between an _error_ and an _exception_**.
+
+    -   **An _error_ is something expected**. Something that might happen. Think a duplicate email in the signup form.
+        -   These are **domain-specific and ought to use domain-specific language**.
+    -   **An _exception_ is something unexpected**. Think network connection timeout.
+
+-   **To handle _errors_, consider the `Either` type**.
+    -   If you are coding in Rust, that would be the `Result` type.
+    -   In Go, that is returning a _non-nil_ error from the function.
+    -   **Whatever you do, return the error rather throwing it**.
+        -   I completely agree. After playing with Go and Rust, I can't stand how JS (and TS) handle errors.
+
+```ts
+class DomainError extends Error {}
+
+// Return this instead of throwing!
+class EmailInvalidError extends DomainError {
+    constructor(email: string) {
+        super('This email is invalid')
+    }
+}
+```
+
+-   Ok, so we know how to handle _errors_. What about the _exceptions_ ?
+-   The key here is to **wrap the code that you do not own with `try/catch` statements and return with a _generic_ error**.
+    -   This will greatly increase the _expressiveness_ of your code and will give the caller chance to react to a "generic" error.
+
+```ts
+async function createUser(email: string) {
+    try {
+        await db.createUser(email)
+    } catch (error) {
+        return new ApplicationError(error)
+    }
+}
+```
+
+-   The main goal of using _domain errors_ or "generic" application errors (derived from exceptions) is to **make the implicit explicit**.
+    -   The _implicit_ is not great in programming. You do not want anyone guessing what you had in mind when writing code, so you do not want anyone guessing what the errors could be.
+
+## Features (use-cases) are the key
+
+-   Since _features_ are what users are after, why don't we develop application in a _feature-driven way_?
+    -   When you think about it, it makes little sense to do it any differently.
+        -   **Using _features_ as our main motivation allows us to be _strategic_ rather than _tactical_ in our approach**.
+            -   The _strategy_ does not have to be very forward-looking.
+
+### Code-first approaches to software development
+
+-   There are few notable _code-first_ approaches.
+    -   The **tactical programming** is where you mostly brute-force the solution. You code until "it works" and then you stop.
+        -   Sadly, you are not done. Your code has bugs and is hard to extend. This violates the goals of software engineering.
+    -   The **imperative programming**. The _API-first_, _database-first_ or the _UI-first_ approaches.
+    -   Since you want to tackle the **essential complexity** (and reduce the amount of _accidental complexity_), starting with the _API-first_ design is the most optimal solution.
+        -   You describe the _contract_ between the UI and the backend applications.
+            -   Having said that, all of those have flaws. **You ought to design the domain contracts first** rather than anything else.
+            -   By only looking at the API, you **have limited view about the _behaviors_ of the endpoints**.
+                -   You can also miss subtle connections in this "idealized" view.
