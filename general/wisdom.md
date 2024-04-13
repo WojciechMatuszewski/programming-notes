@@ -579,3 +579,28 @@ reverse to happen.
 A lot of _vanity metrics_ should be treated as something, we software engineers do by default.
 Writing tests, code reviews and so on. These things are part of our job – **that
 is what you are paid to do**.
+
+## Playing a "dumb" engineer or a manager
+
+> These are my random thoughts. Probably all nonsense.
+
+**First of all, there are NO "dumb" managers or engineers, just like there are no dumb questions**.
+
+So, let us say you want to extract some knowledge from other team or peers. It might be how the project is doing in terms of a deadline,
+or it might be something else. Either way, the **objective is to extract information without making the other party feel rushed or under pressure** more than they already are.
+
+To do that, you can leverage the fact that humans **like to feel like experts by explaining something to others**.
+Think about the time your colleague asked you to explain something to them. It did feel good right? It felt like you are valuable and needed!
+
+So, even if you know the answer to the question, try playing "dumb". Pretend that you do not have the necessary knowledge required in your work.
+
+_"Hey. I'm unsure if I understand the complexity of project X. Would you mind elaborating on it?"_
+
+Then, when the person answers, you can add: _"oh this seems complex. Given all of that, are you sure you will make it by Y date?"_
+
+You "tricked" the other person giving you an honest answer. Ideally, you would not need to _"trick"_ anyone, but oftentimes, it is necessary.
+The answer you get, is the honest, and the most accurate one (most likely).
+
+Why? Because you "gained" trust of the other person by asking for help (and giving your peer the chance to show his expertise).
+
+Playing _"dumb"_ will not hurt anyone. **Please do not overdo it**. It is a good tactic, but is might backfire in the long term.
