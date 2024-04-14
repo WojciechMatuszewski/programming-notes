@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 273
+Page 291
 
 ## Introduction
 
@@ -672,6 +672,7 @@ async function createUser(email: string) {
 ### Code-first approaches to software development
 
 -   There are few notable _code-first_ approaches.
+
     -   The **tactical programming** is where you mostly brute-force the solution. You code until "it works" and then you stop.
         -   Sadly, you are not done. Your code has bugs and is hard to extend. This violates the goals of software engineering.
     -   The **imperative programming**. The _API-first_, _database-first_ or the _UI-first_ approaches.
@@ -679,4 +680,66 @@ async function createUser(email: string) {
         -   You describe the _contract_ between the UI and the backend applications.
             -   Having said that, all of those have flaws. **You ought to design the domain contracts first** rather than anything else.
             -   By only looking at the API, you **have limited view about the _behaviors_ of the endpoints**.
-                -   You can also miss subtle connections in this "idealized" view.
+                -   You can also miss subtle connections in this "idealized" view. You are at risk of **missing to uncover the _essential complexity_**.
+
+-   **_Code-first_ approaches tend to create "Anemic Domain Models"**.
+    -   These are models where the _domain objects_ contain little or no business logic.
+        -   You think you are encapsulating the behavior, but in reality, you put all the burden of data-validation and calculations on the caller.
+            -   **If you perform a lot of checking / calculations is the _services_ layer, your domain model is _anemic_**.
+
+### A feature/use-case driven philosophy for software design
+
+-   First, you have the entropy. The _big idea_, the _knowledge in your head_ how things ought to work.
+
+    -   Then, **your job is to translate that into a well-defined _domain model_ DRIVEN by _features_**.
+        -   You know, the things that the customer expects.
+
+-   As an expert, while talking with customers, you need to sniff for _features_ (feature = use case).
+-   **If you are hyper focused on the _feature_, you will notice when you write pointless code**.
+    -   Code that does not serve the feature (be it functional or non-functional) is only adding to _accidental complexity_.
+
+### The anatomy of the feature
+
+#### Data
+
+-   The following are the **most common types of data**:
+    -   The **input data** is necessary to _execute_ the feature.
+        -   You might need to perform validation or bend the data in your logic. That is okay.
+    -   The **dependencies** are sometimes needed to accommodate features.
+        -   Think fetching from a network or persisting to a database.
+    -   **Output data** is critical to get right.
+        -   Remember that **features can fail**. You ought to **encode the _errors_ and _exceptions_ is an expressive way** (hint: the `Result` type).
+    -   **Output events** could be used to notify other systems that something happened.
+        -   Using events **allows you to _chain_ features together but keep the decoupled**.
+
+#### Behavior
+
+-   **Side effects** are everywhere. The **key is to push them towards _edge_ of the operation**.
+    -   This allows you to perform "all or nothing" updates. Very handy if you need to notify the other system via events when operation succeeded.
+    -   Here, a good pattern to have in mind is the **_Transactional Outbox_** pattern.
+        -   Think sending events based on changes to a given table, rather than performing a _transaction_ (side effect + event);
+
+#### Name-spacing
+
+-   Just like you break your code into smaller pieces, **the _domain_ could also be broken down to smaller _subdomains_**.
+    -   A _subdomain_ is a smaller piece of the entire problem space.
+        -   Dealing with smaller pieces of the problem, helps with mental overhead. In addition, such split increases _cohesion_ and _discoverability_.
+
+### The lifecycle of a feature
+
+-   Khalil mentions the following _lifecycle of a feature_:
+    -   Discovery
+    -   Planning
+    -   Estimation
+    -   Architecture
+    -   Acceptance tests
+    -   Design & implementation
+
+I do agree with the above, but **keep in mind that all of this happens in a short cycle**.The last thing you want is to introduce a waterfall approach in your team.
+I'm not saying that the waterfall approach is bad, but rather that, for the project you work on, it _most likely_ is not the right choice.
+
+-   **I like the concept of the _outer_ and the _inner_ feedback loop**.
+    -   The outer loop could be an end-to-end test validating the whole feature.
+    -   The inner loop could be a specific unit test validating a small piece of functionality.
+        -   **When both loops are passing, you introduced just enough _essential complexity_**. Stop right there and refactor!
+            -   Do not add any more code.
