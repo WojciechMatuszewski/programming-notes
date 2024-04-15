@@ -2,7 +2,7 @@
 
 > Taking notes while watching [this workshop](https://frontendmasters.com/workshops/css-grid-flexbox-v3/).
 
-Finished Part 3 09:05
+Finished Part 5 23:43
 https://grid-flexbox.css.education/ch6.html
 
 ## Intro to Grid
@@ -85,3 +85,22 @@ https://grid-flexbox.css.education/ch6.html
         'giant-last  giant-last';
 }
 ```
+
+## Grid and media queries
+
+-   There are two overarching approaches you can take.
+
+    -   The **mobile-first** approach.
+    -   The **desktop-first** approach.
+
+-   I tend to lean more towards the **mobile-first approach as when you design for mobile, you have to ensure your site has all the content that it will even need**.
+    -   Then you can sprinkle additional bits here and there when widening the viewport.
+    -   If we went the other way around (desktop-first), you are at risk of removing critical content from your site.
+
+Sidenote (and as a reminder): the `box-sizing: border-box` makes it so that the `width` includes the `padding`, `margin` and the `border` properties.
+If you do not use that rule, the `width` will refer only to padding and can make your life harder when assigning `width` to elements.
+
+## Grid tricks
+
+-   Grid allows you to **overlap items without using `position: absolute`**.
+    -   All you have to do is to ensure the `grid-column` and `grid-row` overlap between multiple items.
