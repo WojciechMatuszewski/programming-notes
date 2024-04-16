@@ -2,8 +2,8 @@
 
 > Taking notes while watching [this workshop](https://frontendmasters.com/workshops/css-grid-flexbox-v3/).
 
-Finished Part 5 23:43
-https://grid-flexbox.css.education/ch6.html
+Finished Part 6 37:18
+https://grid-flexbox.css.education/ch9.html
 
 ## Intro to Grid
 
@@ -103,4 +103,12 @@ If you do not use that rule, the `width` will refer only to padding and can make
 ## Grid tricks
 
 -   Grid allows you to **overlap items without using `position: absolute`**.
+
     -   All you have to do is to ensure the `grid-column` and `grid-row` overlap between multiple items.
+
+-   **Vertical (block-level) margins do NOT collapse** when using grid.
+
+    -   You might need to disable margins when using grip and favor the `gap` property.
+
+-   The `minmax` allows you to create effect similar to `flex-basis` where one column shrinks _first_ and then all other columns follow.
+    -   But if you want that kind of behavior, `flexbox` might be a better choice.
