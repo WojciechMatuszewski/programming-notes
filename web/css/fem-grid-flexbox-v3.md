@@ -2,7 +2,7 @@
 
 > Taking notes while watching [this workshop](https://frontendmasters.com/workshops/css-grid-flexbox-v3/).
 
-Finished Part 6 37:18
+Finished Part 7 01:53
 https://grid-flexbox.css.education/ch9.html
 
 ## Intro to Grid
@@ -112,3 +112,28 @@ If you do not use that rule, the `width` will refer only to padding and can make
 
 -   The `minmax` allows you to create effect similar to `flex-basis` where one column shrinks _first_ and then all other columns follow.
     -   But if you want that kind of behavior, `flexbox` might be a better choice.
+
+## Subgrid
+
+-   The `subgrid` allows you to **make the children of the grid items align in accordance to the "outer" grid**.
+
+    -   This is very handy with _cards_ where you want the headings, the content and the footer of the card to align.
+
+```css
+.parent {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.child {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: subgrid;
+}
+```
+
+-   You might have heard about `display: contents` and how, prior to `subgrid` availability, could allow us to achieve the same thing.
+    -   **While `display: contents` COULD, in some cases, help us to achieve the same design, in most cases, it is not a substitute for `subgrid`**.
+        -   The `display: contents` removes the "box" from the element and **removes that element from the _accessibility tree_**.
+            -   This is now how `subgrid` works!
