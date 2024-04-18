@@ -2,8 +2,8 @@
 
 > Taking notes while watching [this workshop](https://frontendmasters.com/workshops/css-grid-flexbox-v3/).
 
-Finished Part 7 01:53
-https://grid-flexbox.css.education/ch9.html
+Finished Part 8 59:08
+https://grid-flexbox.css.education/ch11.html
 
 ## Intro to Grid
 
@@ -137,3 +137,30 @@ If you do not use that rule, the `width` will refer only to padding and can make
     -   **While `display: contents` COULD, in some cases, help us to achieve the same design, in most cases, it is not a substitute for `subgrid`**.
         -   The `display: contents` removes the "box" from the element and **removes that element from the _accessibility tree_**.
             -   This is now how `subgrid` works!
+
+## Putting it all together
+
+-   When you use `subgrid`, **make sure to set `grid-rows` on the element that has `subgrid` definition`**
+    -   Otherwise, all the items will stack on top of each other, no matter what you set for `grid-row` or `grid-column`.
+
+```css
+.parent {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, auto);
+}
+
+.child {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: subgrid;
+
+    /*Without this, you will not go far*/
+    grid-row: span 3;
+}
+```
+
+## Flexbox
+
+-   For a series of boxes that are different sizes.
+    -   Not possible to do with grid.
+-   For a series of boxes that are NOT in an evenly sized grid.
+-   _Flexbox_ supposed to be _flexible_.
