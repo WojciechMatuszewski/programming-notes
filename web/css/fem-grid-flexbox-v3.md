@@ -178,3 +178,18 @@ If you do not use that rule, the `width` will refer only to padding and can make
     -   That is quite interesting as images are not text right?
     -   It works **because the `text-align` aligns all _inline-level_ content inside a given block**.
         -   The `img` tag, by default, is an _inline_ element.
+
+## Responsive images
+
+-   The `picture` tag (combined with `srcset` property on `img`) **allows you to load only a single image best suited for a given resolution/screen**.
+
+    -   You DO NOT want to hide images with CSS.
+        -   Even if you hide them from users, **the browser will still load those images**. This will delay the loading of your page.
+    -   You DO NOT want to download big images only to scale them to smaller screens.
+        -   While this might "work" visually, it will hinder the performance of your application!
+
+-   There are multiple formats for images. **Pick the ones that best suit your needs**.
+
+    -   It is okay to combine multiple formats!
+
+-   Pixel density is a thing.
