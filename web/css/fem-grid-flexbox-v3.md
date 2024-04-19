@@ -164,3 +164,17 @@ If you do not use that rule, the `width` will refer only to padding and can make
     -   Not possible to do with grid.
 -   For a series of boxes that are NOT in an evenly sized grid.
 -   _Flexbox_ supposed to be _flexible_.
+
+-   The `flex-flow` is a shorthand for `flex-wrap` and `flex-direction`.
+
+-   With flexbox, you can use the `order` property to order given boxes ahead of other boxes.
+
+-   Remember about `flex-basis`!
+
+    -   It works similar to `width` (or `height` depending on the `flex-direction`), but it is _flexible_.
+        -   The `width` or `height` are "hardcoded" values. They will not "flex."
+
+-   While working on the navbar, Jen used the `text-align` to center an image.
+    -   That is quite interesting as images are not text right?
+    -   It works **because the `text-align` aligns all _inline-level_ content inside a given block**.
+        -   The `img` tag, by default, is an _inline_ element.
