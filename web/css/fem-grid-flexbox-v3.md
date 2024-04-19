@@ -2,7 +2,7 @@
 
 > Taking notes while watching [this workshop](https://frontendmasters.com/workshops/css-grid-flexbox-v3/).
 
-Finished Part 8 59:08
+Finished Part 10 46:36
 https://grid-flexbox.css.education/ch11.html
 
 ## Intro to Grid
