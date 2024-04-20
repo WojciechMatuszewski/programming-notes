@@ -193,3 +193,105 @@ If you do not use that rule, the `width` will refer only to padding and can make
     -   It is okay to combine multiple formats!
 
 -   Pixel density is a thing.
+
+```html
+<picture>
+    <source srcset="https://assets.codepen.io/296057/fem-moons-large.jpg" media="(min-width: 1200px)" />
+    <source srcset="https://assets.codepen.io/296057/fem-moons-med.jpg" media="(min-width: 900px)" />
+    <source srcset="https://assets.codepen.io/296057/fem-moons-small.jpg" media="(min-width:600px)" />
+    <img
+        src="https://assets.codepen.io/296057/fem-moons-default.jpg"
+        alt="Io, Europa, Ganymede, and Callisto, showing relative size."
+/></picture>
+```
+
+## Container Queries
+
+-   _Container Size Queries_ are fairly well-supported.
+
+-   _Container Style Queries_ are not really that well-supported.
+
+-   The biggest difference between a _media query_ and a _container size query_ is the _subject_ the query "observes".
+    -   The _media query_ looks at the viewport.
+    -   The _container size query_ looks at the container.
+        -   You define the _container_. You have all the flexibility to denote which element is THE _container_.
+        -   Of course, you can have multiple containers on the webpage.
+
+**One important gotcha** is that **you can't style _container_ itself within the _container query_**.
+
+```html
+<style>
+    .card {
+        container-name: card;
+        container-type: inline-size;
+    }
+
+    @container card and (max-width: 200px) {
+        .card {
+            /*This will not work!*/
+            background: red;
+        }
+    }
+</style>
+
+<body>
+    <div class="card">
+        <h2>my card</h2>
+    </div>
+</body>
+```
+
+## Container Style Queries
+
+-   This **allows you to apply the CSS rules dynamically based on a CSS variable**.
+    -   Previously, you were unable to do this. You had to use JavaScript to do this.
+
+```html
+<style>
+    .card {
+        --featured: false;
+    }
+
+    .card:first-of-type {
+        --featured: true;
+    }
+
+    @container style(--featured: true) {
+        .card {
+            background: red;
+        }
+    }
+</style>
+
+<body>
+    <div class="card">
+        <article></article>
+    </div>
+    <div class="card">
+        <article></article>
+    </div>
+</body>
+```
+
+-   The container style queries could be handy for setting _dark theme_ on your page.
+
+```css
+.color-test {
+    --dark-theme: false;
+}
+
+.color-test:has(input:checked) {
+    --dark-theme: true;
+}
+
+/*There can't be a space between "style" and (*/
+@container style(--dark-theme: true) {
+    .card {
+        background: black;
+    }
+}
+```
+
+## Wrapping up
+
+A great workshop. I would definitely recommend it to anyone as a refresher or a resource to learn new things!
