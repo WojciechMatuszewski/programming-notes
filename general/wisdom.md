@@ -608,6 +608,7 @@ Playing _"dumb"_ will not hurt anyone. **Please do not overdo it**. It is a good
 ## Definition of fixed and definition of done
 
 Each task should have a _"definition of done"_.
+
 Having such definition prevents scope creep and ensures we de-scoped the feature into the smallest deliverable.
 What about the bugs? Have you ever considered having a _"definition of fixed"_ in place? What would that look like?
 
