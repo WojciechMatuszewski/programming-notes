@@ -586,7 +586,7 @@ is what you are paid to do**.
 
 **First of all, there are NO "dumb" managers or engineers, just like there are no dumb questions**.
 
-So, let us say you want to extract some knowledge from other team or peers. It might be how the project is doing in terms of a deadline,
+So, let us say you want to extract some knowledge from another team or peers. It might be how the project is doing in terms of a deadline,
 or it might be something else. Either way, the **objective is to extract information without making the other party feel rushed or under pressure** more than they already are.
 
 To do that, you can leverage the fact that humans **like to feel like experts by explaining something to others**.
@@ -599,8 +599,24 @@ _"Hey. I'm unsure if I understand the complexity of project X. Would you mind el
 Then, when the person answers, you can add: _"oh this seems complex. Given all of that, are you sure you will make it by Y date?"_
 
 You "tricked" the other person giving you an honest answer. Ideally, you would not need to _"trick"_ anyone, but oftentimes, it is necessary.
-The answer you get, is the honest, and the most accurate one (most likely).
+The answer you get is the honest, and the most accurate one (most likely).
 
 Why? Because you "gained" trust of the other person by asking for help (and giving your peer the chance to show his expertise).
 
 Playing _"dumb"_ will not hurt anyone. **Please do not overdo it**. It is a good tactic, but is might backfire in the long term.
+
+## Definition of fixed and definition of done
+
+Each task should have a _"definition of done"_.
+Having such definition prevents scope creep and ensures we de-scoped the feature into the smallest deliverable.
+What about the bugs? Have you ever considered having a _"definition of fixed"_ in place? What would that look like?
+
+I've noticed this trend where engineers, upon discovering the issue, change the code and announce that the bug was fixed.
+**I deem the bug only partially fixed in this case, because we did not add any guardrails to prevent us from introducing this bug into the code again**.
+
+How certain are we that a new person joining the team will not repeat the mistake that we did? – **without a test, we can't**.
+That is why one of the best things you can do is to **start with a failing test, then fix the issue**.
+
+The test will guide you towards the solution. In addition, the **test will act as documentation for other programmers**.
+**Unless the production is on fire, always start with a failing test**. This requires discipline. This requires putting a bit of thought
+into what you are doing BEFORE jumping into code.
