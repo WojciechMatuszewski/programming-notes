@@ -394,11 +394,16 @@
 
 -   You **want to use Layers for things that rarely change**.
 
--   **Layers are regional, if you want to share your Layer, and your layer is popular, you will have to deploy this Layer to every region**.
+-   **Layers are regional if you want to share your Layer, and your layer is popular you will have to deploy this Layer to every region**.
 
--   Unless you want to specify the exact path of the layers artifact at runtime, **use specific directory names in your layers**
+-   Unless you want to specify the exact path of the layer artifact at runtime, **use specific directory names in your layers**
 
     -   You can find the list of the specific directory names for a given runtime here: <https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path>
+
+-   **If you are pulling a layer, you do not control what is included in your code**.
+    -   Layers can bundle the whole SDK, but only use a part of it.
+        -   Such a layer would **greatly** slow down your AWS Lambda Function.
+        -   [Check out this video](https://youtu.be/2EDNcPvR45w?t=807) about this issue.
 
 ##### Pulling the layer from the ARN
 
