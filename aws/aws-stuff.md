@@ -405,6 +405,16 @@
         -   Such a layer would **greatly** slow down your AWS Lambda Function.
         -   [Check out this video](https://youtu.be/2EDNcPvR45w?t=807) about this issue.
 
+##### Cold Starts
+
+> Based on [this talk](https://www.youtube.com/watch?v=2EDNcPvR45w)
+
+-   **Increasing memory above 256mb** will not help you with cold-starts.
+
+    -   Remember that during the initialization, the function has all the CPUs at its disposal.
+
+-   Since AWS runs servers and allocates a chunk of them for your functions, you might think that setting a higher CPU would result in longer cold starts since it would take longer to find the right amount of compute for your function.
+
 ##### Pulling the layer from the ARN
 
 -   You can pull the layer from the ARN. These are usually layers published by others and they have sufficient permissions attached to the layer which enable you to use that layer.
