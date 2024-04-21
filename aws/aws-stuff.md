@@ -46,6 +46,11 @@
 
 -   executions are **billed by the millisecond**
 
+#### Scaling
+
+-   The AWS Lambda scaling quota is **per function** (it used to be _per-region_).
+    -   It can scale **1k instances every 10 seconds**.
+
 ##### Compute saving plans
 
 -   in similar fashion to EC2 and containers, **you can sign up for a saving plan for AWS Lambda usage**.
@@ -117,15 +122,14 @@
 
 -   you have to have a **function version** or an **alias that DOES NOT point to $latest** to turn it on.
 
--   it will basically **keep concurrently X clones of execution environments ready** thus making cold starts obsolete (
-    unless you make more requests than you have provisioned for).
+-   it will basically **keep concurrently X clones of execution environments ready** thus making cold starts obsolete (unless you make more requests than you have provisioned for).
 
--   can be **auto-scaled by using Application AutoScaling**. Do not mistake this with auto scaling groups.
+-   it can be **auto-scaled by using Application AutoScaling**. Do not mistake this with auto scaling groups.
 
 -   Do not confuse this with **reserved capacity**. Here we are **provisioning workers**, in the other case we are **
     reserving the amount of time a lambda can be invoked**
 
--   **if you throw an error outside of the handler body**, the _provisioned concurrency_ **rollout will fail and you will not be able to retry it**.
+-   **if you throw an error outside the handler body**, the _provisioned concurrency_ **rollout will fail, and you will not be able to retry it**.
 
     -   the fix is to release a new AWS Lambda version.
 
@@ -135,7 +139,7 @@
 
     -   your init code will run as if it was invoked with the CPU equivalent to the amount of memory allocated ot the AWS Lambda.
 
-    -   this is **completely different than the init phase of the "regular" AWS Lambda functions**, [where you get one full CPU for free](https://youtu.be/NZVNAEK6shc?t=2184) regardless of the memory settings of your AWS Lambda.
+    -   this is **completely different from the init phase of the "regular" AWS Lambda functions**, [where you get one full CPU for free](https://youtu.be/NZVNAEK6shc?t=2184) regardless of the memory settings of your AWS Lambda.
 
 #### On-demand (unreserved) concurrency and proactive initialization
 
@@ -348,7 +352,7 @@
 
 #### Infinite loops and lambda
 
--   with event based architecture, it may happen that you cause an infinite loop of invocations (think s3 events)
+-   with event-based architecture, it may happen that you cause an infinite loop of invocations (think s3 events)
 
 -   you can troubleshoot the problem by **setting reserved concurrency limit to 0**. This will make it so your function is not invoked at all. There is a **built-in option for that within the UI**.
 
@@ -407,7 +411,7 @@
 -   lambda layers are not directly supported with the container deployments
 
 -   to make layers work, you would have to **bake the layer directly into your container** or **use a multi-stage build
-    with a image that contains the layer**
+    with an image that contains the layer**
 
 #### Lambda extensions and performance concerns
 
@@ -6415,7 +6419,7 @@ What is very important to understand is that **LONG polling CAN END MUCH EARLIER
 
 -   very often used with `ReceiveCount` attribute, like **specifying `maxReceiveCount`**.
 
--   you can redrive messages from DQL using [replay-aws-dlq](https://github.com/garryyao/replay-aws-dlq), you probably
+-   you can re-drive messages from DQL using [replay-aws-dlq](https://github.com/garryyao/replay-aws-dlq), you probably
     want to use `npx` for that.
 
     -   aws **introduced an SDK API to perform the redrive**. You should favour that instead. See [this link](https://aws.amazon.com/blogs/aws/a-new-set-of-apis-for-amazon-sqs-dead-letter-queue-redrive).
@@ -6424,9 +6428,9 @@ What is very important to understand is that **LONG polling CAN END MUCH EARLIER
 
 -   ~AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**~
 
-    -   This is no longer true. Now the **scalling is much more flexible at 300 concurrent executions in 1**. [See the blog post here](https://aws.amazon.com/blogs/compute/introducing-faster-polling-scale-up-for-aws-lambda-functions-configured-with-amazon-sqs/).
+    -   This is no longer true. Now the **scaling is much more flexible at 300 concurrent executions in 1**. [See the blog post here](https://aws.amazon.com/blogs/compute/introducing-faster-polling-scale-up-for-aws-lambda-functions-configured-with-amazon-sqs/).
 
--   The AWS Lambda service (in reallity the ESM) **uses long polling for the integration**. This makes sense as it would be ineficient to use anything else but long polling. See [this documentation section](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-scaling).
+-   The AWS Lambda service (in reality, the ESM) **uses long polling for the integration**. This makes sense as it would be ineficient to use anything else but long polling. See [this documentation section](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-scaling).
 
 -   What is interesting is that the API and the _pollers_ are deployed on AWS Lambda. This insight was shared in "Amazon builders’ library: Operational excellence at Amazon" re:Invent 2021 talk.
 
@@ -6436,7 +6440,7 @@ What is very important to understand is that **LONG polling CAN END MUCH EARLIER
 
     -   SQS message `visibility timeout`: to at least 6 times your AWS lambda timeout. This should ensure that you can retry the batch multiple times before the messages land in DLQ
 
-        -   If you think about, AWS recommends really high visiblity timeout. I wonder if it's the case of "better safe than sorry" or something else.
+        -   If you think about, AWS recommends really high-visibility timeout. I wonder if it's the case of "better safe than sorry" or something else.
 
 ###### Maximum concurrency
 
