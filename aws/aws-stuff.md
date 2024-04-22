@@ -415,6 +415,9 @@
 
 -   Since AWS runs servers and allocates a chunk of them for your functions, you might think that setting a higher CPU would result in longer cold starts since it would take longer to find the right amount of compute for your function.
 
+  - That **is not true**. And to be honest, I'm quite surprised that this is not the case.
+
+
 ##### Pulling the layer from the ARN
 
 -   You can pull the layer from the ARN. These are usually layers published by others and they have sufficient permissions attached to the layer which enable you to use that layer.
