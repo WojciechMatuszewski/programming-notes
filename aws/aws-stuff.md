@@ -415,12 +415,23 @@
 
 -   Since AWS runs servers and allocates a chunk of them for your functions, you might think that setting a higher CPU would result in longer cold starts since it would take longer to find the right amount of compute for your function.
 
-  - That **is not true**. And to be honest, I'm quite surprised that this is not the case.
+-   That **is not true**. And to be honest, I'm quite surprised that this is not the case.
 
+    -   **That is not true**. To be honest, I'm quite amazed that they managed to keep the cold start time the same, no matter how much CPU your function uses.
+
+-   The **cold start != _init duration_**.
+
+    -   I always thought that was the case.
+    -   The _init duration_ log does not include **loading code from s3 which takes a lot of time for large AWS Lambda Functions (even if you do not use any of the code)**.
+    -   **Apply _lazy-loading_ to make the cold start faster**.
+
+-   Do not run the "defaults".
+    -   Frameworks apply defaults for AWS Lambda Function memory.
+        -   Those defaults are usually no the best.
 
 ##### Pulling the layer from the ARN
 
--   You can pull the layer from the ARN. These are usually layers published by others and they have sufficient permissions attached to the layer which enable you to use that layer.
+-   You can pull the layer from the ARN. These are usually layers published by others, and they have sufficient permissions attached to the layer which enable you to use that layer.
 
 -   **When you use the layer, AWS pulls that layer into your account**. This means that **if the external layer were to be deleted, your function will still work as expected**.
 
