@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 291
+Page 309
 
 ## Introduction
 
@@ -42,10 +42,10 @@ Page 291
 
 -   Khalil proposes a few strategies to mitigate the complexity.
 
-    -   **Strategic programing**: instead of brute forcing your way through the feature, you have both your fellow
+    -   **Strategic programming**: instead of brute forcing your way through the feature, you have both your fellow
         developers AND customers in mind. This lessens the change of making a mess.
     -   **There is a place and time for _tactical programming_ as well!** If you are building a prototype, or perhaps
-        exploring the routes you can take to solve the problem, the _tactical programing_ is a viable technique. **The
+        exploring the routes you can take to solve the problem, the _tactical programming_ is a viable technique. **The
         problem arises when you default to _tactical programming_ and never clean up your mess**.
 
 -   Code is **also a vital way for communication**. Yes, the language is quite "foreign", but your colleagues are speaking
@@ -250,7 +250,7 @@ This chapter was a high-level overview of what's to come, so I did not take that
 
 > This whole section is based on [this book](https://www.namingthings.co/).
 
--   Think about all the programing courses you have attended. Did they teach you _how to name things_?
+-   Think about all the programming courses you have attended. Did they teach you _how to name things_?
     -   Sadly, for most of us, this is not the case, and yet, _naming things_ is **one of the most challenging problems we face as software engineers**.
         -   Naming things is not hard – it is the **act of naming things well that is hard**.
 
@@ -404,7 +404,7 @@ You want **ALL** groups to understand what you are talking about, not only the p
     -   Use abbreviations if they are considered _knowledge in the world_.
         -   `ssn`, `vat` and similar are universally understood by anyone.
     -   Use _camelCase_ to signal world breaks in variables.
-    -   And my favourite: **booleans should ask a question or make an assertion**.
+    -   And my favorite: **booleans should ask a question or make an assertion**.
         -   `potIsEmpty()`, `isPostEmpty()` are good examples.
         -   **DO NOT** try to shorten the names unnecessarily. You gain zero leverage by doing so.
     -   Instead of `tmStmp` use `timeStamp`.
@@ -477,7 +477,7 @@ A bad comment could introduce _uncertainty_ in your understanding of the concept
         -   On the one hand, smaller files are easier to read.
         -   On the other, **smaller files often prevent you from seeing the duplication** thus making it hard to create good abstractions.
     -   My advice would be to pick what works best for you and stick to it.
-        -   I'm unsure if being dogmatic about file size is a good strategy to have. Life and programing is almost never "black and white".
+        -   I'm unsure if being dogmatic about file size is a good strategy to have. Life and programming is almost never "black and white".
 
 ### Consistent whitespace
 
@@ -602,7 +602,7 @@ The rest of this chapter talks about the basics of TypeScript. I've skipped maki
         ```ts
         function CreateUser(email: string, password: string) {
             const isEmailValid = validateEmail(email)
-            const isPassowrdValid = validatePassowrd(password)
+            const isPasswordValid = validatePassword(password)
 
             if (!isEmailValid) {
                 console.log('Invalid email')
@@ -743,3 +743,76 @@ I'm not saying that the waterfall approach is bad, but rather that, for the proj
     -   The inner loop could be a specific unit test validating a small piece of functionality.
         -   **When both loops are passing, you introduced just enough _essential complexity_**. Stop right there and refactor!
             -   Do not add any more code.
+
+## Planning
+
+-   **There is no room for heroism in software development**.
+
+    -   This is a marathon, not a race.
+    -   There is no place for _all-nighters_ to meet the deadlines.
+        -   Software development is a marathon, not a race.
+
+-   In XP, you are in a constant loop of _prioritizing_, _coordinating_ and _recalibrating_.
+
+    -   Prioritize – do the most important stories first.
+
+    -   Coordinate – keep everyone synced up and in the know.
+
+        -   Especially critical in remote-work scenario. It is better to repeat yourself several times, than not communicating enough.
+
+    -   Recalibrate – get back on track when we get off track.
+        -   Things change. Estimates change. **It is very likely that you will get off track at some point**. That is okay!
+            -   Again, communicate with others.
+
+### How planning works
+
+-   First, you _scope_ the project.
+    -   Here, you are probing for _functional_ and _non-functional_ requirements **at the high level**.
+        -   You should be roughly able to estimate how much time the work will take, but that estimate might not be accurate.
+
+After scoping the project, the estimate might be quite long. The customer might object the estimate. **That is to be expected**.
+This is where you **work with the customer on the _essential_ rather than _nice-to-have_ features**.
+
+What feature would bring the most value? – that is the question to ask at this stage.
+
+-   Next, Khalil talks about _measuring velocity_ and how it **allows us to be honest about the amount of work we are able to do**.
+
+    -   I like the principle, but I never been to a place where this concept was executed properly.
+        -   Using _story points_ is a good idea, but in experience, it falls short (we tend to vote the same amount of points as our colleagues did).
+
+-   The concept of using _velocity_ as the measure of how much work the team can take on is called _yesterday's weather_.
+    -   You can get as much done as you did last week, or last day.
+
+## Customers
+
+-   **The customer is an integral part of the team**.
+    -   They might not participate in the _"day-to-day"_ of coding and meetings, but their voice is **essential** in getting the priorities right.
+
+> It is not stakeholder knowledge but developers' ignorance that gets deployed into production
+
+-   **Writing software is like driving the car with two people in it**.
+
+    -   You have the **driver – the engineers** concerned with the technical and the "manual".
+        -   They have to operate the wheel, change gears and stop on red.
+    -   You have the **navigator – the customer**. They **chart the direction of the trip**.
+        -   The road can change, the directions can change.
+
+-   You might think of _the customer_ as a single person.
+
+    -   That is not the case – **your customer is the _whole team_** consisting of domain experts, product managers, business analysts and so on.
+
+-   In most teams, that customer is the product manager.
+    -   **Having a _"proxy"_ for the customer is not ideal, but it is better than nothing**.
+        -   It is like **playing the _telephone game_** where each "gateway" for communication distorts the original message.
+            -   The less of those "gateways" the better.
+
+To finish up our _"driving a car"_ analogy, consider the following quote:
+
+> If you get lost driving, it is not the car's fault, it is the driver's
+
+**You are the driver**. It is your responsibility to follow the direction, but also take your surroundings into consideration.
+
+## Learning the Domain
+
+-   **The code should use _"the common language"_** to describe what it does.
+    -   The names, and the vocabulary seen throughout the codebase ought to be **dictated by the domain** we are working in.
