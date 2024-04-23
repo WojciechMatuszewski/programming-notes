@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 309
+Page 333
 
 ## Introduction
 
@@ -848,4 +848,27 @@ To finish up our _"driving a car"_ analogy, consider the following quote:
     - This might be a good opportunity to create those teams if they do not exist already!
 
 - **Commands are your features**.
+
   - Commands will trigger events that then other parts of the system (or other systems) subscribe to.
+
+- **We perform commands _against_ aggregates**.
+
+  - They encapsulate rules and decide whether a particular command should succeed or fail.
+
+- The **subdomains could be coupled together to some degree**.
+
+  - For example, ordering an item would most likely involve billing.
+    - This _might_ be solved using a event-driven system.
+    - **Creating a "map" of relationships between different subdomains _might_ also be helpful here**.
+
+- You will find **queries especially useful for web applications**.
+
+  - Most of web applications fetch data rather than change it.
+  - **To correctly scope any UI work, you ought to have designs + the queries at the ready**.
+    - Otherwise, your estimates will be wildly off due to the lack of information.
+
+- **There is an alternative technique to _event storming_ called _event modelling_**.
+  - It works on the similar basis to _event storming_, in addition to:
+    1. It incorporates rough sketches of the UI into the _timeline_.
+    2. It **allows you to create different _swimlanes_ for subdomains**.
+    - This is very vital, as some events might flip-and-fourth between different subdomains making it challenging to place them on one timeline.
