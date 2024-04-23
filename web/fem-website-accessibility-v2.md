@@ -43,9 +43,7 @@
 - You might want to add `aria-label` to links. Usually the text within the link is not really descriptive.
 
 ```html
-<a href="google.com" aria-label="descriptive label"
-  >Click here (not really descriptive)</a
->
+<a href="google.com" aria-label="descriptive label">Click here (not really descriptive)</a>
 ```
 
 ## ARIA

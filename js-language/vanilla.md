@@ -24,7 +24,7 @@ A much better way to solve this problem would be to use `documentFragment`. We c
 let items = [...Array(1000).keys()].map((i) => `Item ${i}`);
 
 let ul = document.getElementById("myList");
-let fragment = document.createDocumentFragment()
+let fragment = document.createDocumentFragment();
 
 for (let item of items) {
   let li = document.createElement("li");
@@ -32,7 +32,7 @@ for (let item of items) {
   fragment.appendChild(li);
 }
 
-ul.appendChild(fragment)
+ul.appendChild(fragment);
 ```
 
 > The key difference is due to the fact that the document fragment isn't part of the active document tree structure. Changes made to the fragment don't affect the document.
@@ -94,7 +94,7 @@ Another way might be to use the `"somestring".localeCompare("someOtherString")`.
 Guess, what. There is an `Intl` class for that. The `Intl.Collator`. [It is pretty magical. Read the docs here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator).
 
 ```js
-["a", "z","g"].sort(new Intl.Collator().compare)
+["a", "z", "g"].sort(new Intl.Collator().compare);
 // ["a", "g", "z"]
 ```
 

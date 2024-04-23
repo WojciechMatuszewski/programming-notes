@@ -187,7 +187,7 @@ async function safe({ promise, signal }) {
           () => {
             reject();
           },
-          { signal: listenerController.signal }
+          { signal: listenerController.signal },
         );
       }),
     ]);

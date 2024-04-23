@@ -9,16 +9,15 @@ You **cannot change the data chunk once you send it to the stream**.
 What you can do, is to create an _illusion_ of _out-of-order streaming_ via JavaScript.
 
 ```js
-controller.equeue("<span id = 'gretting'>Hi</span>")
+controller.equeue("<span id = 'gretting'>Hi</span>");
 
-controller.equeue("<span>Wojciech</span>")
-
+controller.equeue("<span>Wojciech</span>");
 
 controller.equeue(`
     <script>
         document.getElementById('greeting').textContent = 'goodbye';
     </script>
-`)
+`);
 ```
 
 Given the stream above, it will look as if the first chunk changed. That is not the case.
@@ -74,16 +73,16 @@ const { Readable } = require("stream");
 
 let reads = 0;
 const myStream = new Readable({
-    read() {
-        reads += 1;
+  read() {
+    reads += 1;
 
-        // Do not return, the `null` indicate that you are done
-        if (reads === 0) {
-            this.push(null);
-        } else {
-            this.push("SOME_CONTENT");
-        }
-    },
+    // Do not return, the `null` indicate that you are done
+    if (reads === 0) {
+      this.push(null);
+    } else {
+      this.push("SOME_CONTENT");
+    }
+  },
 });
 ```
 
@@ -98,7 +97,7 @@ when reading from a request.
 
 ```js
 const request = http.request("foo.com", (response) => {
-    pipeline(response, writable, console.log);
+  pipeline(response, writable, console.log);
 });
 request.on("error", console.log);
 ```
@@ -114,15 +113,15 @@ _generators_
 const { pipeline } = require("stream");
 
 async function* upperCase(readable) {
-    for await (chunk of readable) {
-        yield chunk.toString().toUpperCase();
-    }
+  for await (chunk of readable) {
+    yield chunk.toString().toUpperCase();
+  }
 }
 
 pipeline(process.stdin, upperCase, process.stdout, (err) => {
-    if (err) {
-        console.log(err);
-    }
+  if (err) {
+    console.log(err);
+  }
 });
 ```
 
@@ -157,16 +156,15 @@ syntax to consume the stream.
 
 ```js
 const stream = new ReadableStream({
-    start(controller) {
-        controller.enqueue("foo");
-        controller.enqueue("bar");
-    }
-})
+  start(controller) {
+    controller.enqueue("foo");
+    controller.enqueue("bar");
+  },
+});
 
 for await (const chunk of stream) {
-    console.log(chunk)
+  console.log(chunk);
 }
 ```
 
 Pretty neat!
-

@@ -264,9 +264,7 @@ const StateContext = React.createContext(null);
 const StateProvider = ({ children }) => {
   const [state, setState] = React.useState(1);
 
-  return (
-    <StateContext.Provider value={state}>{children}</StateContext.Provider>
-  );
+  return <StateContext.Provider value={state}>{children}</StateContext.Provider>;
 };
 
 const Comp = () => {
@@ -290,9 +288,7 @@ export default function SearchInput() {
     <FlyOut>
       <FlyOut.Input placeholder="Enter an address, city, or ZIP code" />
       <FlyOut.List>
-        <FlyOut.ListItem value="San Francisco, CA">
-          San Francisco, CA
-        </FlyOut.ListItem>
+        <FlyOut.ListItem value="San Francisco, CA">San Francisco, CA</FlyOut.ListItem>
         <FlyOut.ListItem value="Seattle, WA">Seattle, WA</FlyOut.ListItem>
         <FlyOut.ListItem value="Austin, TX">Austin, TX</FlyOut.ListItem>
         <FlyOut.ListItem value="Miami, FL">Miami, FL</FlyOut.ListItem>

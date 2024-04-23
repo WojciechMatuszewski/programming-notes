@@ -90,39 +90,39 @@ So, **whatever you are working on, please make sure you have a deep understating
 
 > Based on [this youtube video](https://www.youtube.com/watch?v=wTezaqqyzlk) and [this blog post](https://kind.engineering/).
 
--   During the code review, **ask about the why. Do not be dogmatic**.
+- During the code review, **ask about the why. Do not be dogmatic**.
 
--   People do what they think is right given their current understanding of things.
+- People do what they think is right given their current understanding of things.
 
--   **Always assume that others meant good**. People do not wake up one day and choose to do nefarious things.
+- **Always assume that others meant good**. People do not wake up one day and choose to do nefarious things.
 
--   Always be honest. **Do not create fake personas at work**. While it might seem beneficial at first, in the long run,
-    it will wear you down.
+- Always be honest. **Do not create fake personas at work**. While it might seem beneficial at first, in the long run,
+  it will wear you down.
 
--   Being your "true self" is liberating. It allows you to focus on what matters the most – the product, your
-    colleagues and the shared goal you are marching towards.
+- Being your "true self" is liberating. It allows you to focus on what matters the most – the product, your
+  colleagues and the shared goal you are marching towards.
 
--   **Care about the people you are working with**. People are not one-dimensional.
+- **Care about the people you are working with**. People are not one-dimensional.
 
--   Being kind also means giving direct feedback. Sometimes that feedback can be negative. That is okay.
+- Being kind also means giving direct feedback. Sometimes that feedback can be negative. That is okay.
 
--   People will respect you if you are honest with them. Even when talking about hard things, it is very important to
-    be honest.
+- People will respect you if you are honest with them. Even when talking about hard things, it is very important to
+  be honest.
 
--   **Encourage feedback. Be vulnerable**. If you want others to share what is on their mind, you have to show that you
-    are also able to do that.
+- **Encourage feedback. Be vulnerable**. If you want others to share what is on their mind, you have to show that you
+  are also able to do that.
 
--   I find that talking openly about your problems, your life (of course, be reasonable here) really does wonders when
-    it comes to psychological safety.
+- I find that talking openly about your problems, your life (of course, be reasonable here) really does wonders when
+  it comes to psychological safety.
 
--   **Start by asking for criticism**. Stop giving it. This shows you are open, you are vulnerable. This build trust.
+- **Start by asking for criticism**. Stop giving it. This shows you are open, you are vulnerable. This build trust.
 
--   **People should be accountable for things they do, but you should not blame them**. There is **literally ZERO benefit
-    in blaming someone for something**.
+- **People should be accountable for things they do, but you should not blame them**. There is **literally ZERO benefit
+  in blaming someone for something**.
 
--   You will not resolve the issue faster if you blame someone for something.
+- You will not resolve the issue faster if you blame someone for something.
 
--   _We succeed together and we fail together_.
+- _We succeed together and we fail together_.
 
 ## Do not solve problems you do not have
 
@@ -420,21 +420,21 @@ cannot predict the future.
 
 Here are some ideas about what to do when joining a new team.
 
--   **Use the product**, a lot. Take some time and try to understand who the users are. What are the "personas". How do we
-    cater to each of them?
+- **Use the product**, a lot. Take some time and try to understand who the users are. What are the "personas". How do we
+  cater to each of them?
 
--   **Understand where the system fails**. Doing so will give you A LOT of ideas on what to improve. Discuss those ideas
-    in a larger group and **implement them
-    ** — [related blog post](https://blog.staysaasy.com/p/new-hires-learn-how-the-system-breaks?utm_source=profile&utm_medium=reader2).
+- **Understand where the system fails**. Doing so will give you A LOT of ideas on what to improve. Discuss those ideas
+  in a larger group and **implement them
+  ** — [related blog post](https://blog.staysaasy.com/p/new-hires-learn-how-the-system-breaks?utm_source=profile&utm_medium=reader2).
 
--   **Start adding tests**. Other engineers will love you. If the codebase does not have that many tests (from my
-    experience, that is the case for almost all codebases), start writing them.
+- **Start adding tests**. Other engineers will love you. If the codebase does not have that many tests (from my
+  experience, that is the case for almost all codebases), start writing them.
 
--   **Update onboarding documents**. They are outdated. Unless the project's README is up-to-date (it never is), your
-    first contribution could be "Update the README" PR.
+- **Update onboarding documents**. They are outdated. Unless the project's README is up-to-date (it never is), your
+  first contribution could be "Update the README" PR.
 
--   **Do the tedious, so-called "dirty work"**. Yes, it might not be super fun, but guess what? You will learn a tone
-    while doing so.
+- **Do the tedious, so-called "dirty work"**. Yes, it might not be super fun, but guess what? You will learn a tone
+  while doing so.
 
 ## The spectrum of speed and robustness
 
@@ -531,8 +531,8 @@ solve the problems without building good abstractions**.
 The art of building good abstractions is hard to master. It is because **abstractions can become _illusions_** which are
 quite dangerous.
 
--   Those _illusions_ will make you assume incorrect facts about the system.
--   Those _illusions_ will make you design for X when, in reality, you should design for Y.
+- Those _illusions_ will make you assume incorrect facts about the system.
+- Those _illusions_ will make you design for X when, in reality, you should design for Y.
 
 Let us consider RPC. RPC often is though as "local calls" with zero network latency. **That is not the case**!
 Now, consider a fellow software engineer who builds a system with this assumption. The RPC gives him the _illusion_ of "
@@ -540,14 +540,14 @@ safety", but the reality is different.
 
 So, how do we design good abstractions that are NOT "illusions"?.
 
--   **Do not abstract too much**. Abstract what is necessary, but allow for flexibility.
--   This is VERY hard to get right.
--   **Do not name things by the pieces it is made out**.
--   This makes the abstraction useless. It "leaks implementation" details.
--   A good example is the "gas pedal" in cars. For petrol-powered vehicles, it kind of makes sense. But what about
-    the electric vehicles?
--   **Create a new vocabulary for the abstraction**.
--   This shifts the "level" at which you communicate through the interface. The vocabulary should be rather generic.
+- **Do not abstract too much**. Abstract what is necessary, but allow for flexibility.
+- This is VERY hard to get right.
+- **Do not name things by the pieces it is made out**.
+- This makes the abstraction useless. It "leaks implementation" details.
+- A good example is the "gas pedal" in cars. For petrol-powered vehicles, it kind of makes sense. But what about
+  the electric vehicles?
+- **Create a new vocabulary for the abstraction**.
+- This shifts the "level" at which you communicate through the interface. The vocabulary should be rather generic.
 
 ## Vanity metrics
 
@@ -571,10 +571,10 @@ reverse to happen.
 
 **Make sure the metrics you are tracking are as "close" to your product as possible**.
 
--   Number of paying users.
--   Growth of paying users over time.
--   Churn.
--   Bug count.
+- Number of paying users.
+- Growth of paying users over time.
+- Churn.
+- Bug count.
 
 A lot of _vanity metrics_ should be treated as something, we software engineers do by default.
 Writing tests, code reviews and so on. These things are part of our job – **that

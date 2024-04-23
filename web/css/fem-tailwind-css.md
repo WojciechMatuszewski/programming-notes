@@ -63,14 +63,7 @@
 - The _peer modifier_ could be used to style **next siblings of a given element**. This is quite useful for error messages.
 
   ```html
-  <input
-    type="email"
-    name="email"
-    id="email"
-    required
-    class="peer"
-    placeholder="email"
-  />
+  <input type="email" name="email" id="email" required class="peer" placeholder="email" />
 
   <div class="invisible text-red-500 peer-[:user-invalid]:visible">error!</div>
   ```

@@ -208,9 +208,7 @@ return function Provider({ children }) {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   return (
     <StateContext.Provider value={state}>
-      <DispatchContext.Provider value={dispatch}>
-        {children}
-      </DispatchContext.Provider>
+      <DispatchContext.Provider value={dispatch}>{children}</DispatchContext.Provider>
     </StateContext.Provider>
   );
 };
@@ -254,10 +252,7 @@ Let's use previous pattern to implement `safeDispatch`
 
 ```jsx
 const canDispatch = React.useRef(true);
-const safeDispatch = React.useCallback(
-  (...args) => canDispatch.current && dispatch(...args),
-  []
-);
+const safeDispatch = React.useCallback((...args) => canDispatch.current && dispatch(...args), []);
 
 React.useEffect(() => () => (canDispatch.current = false), []);
 
@@ -404,9 +399,7 @@ and `React.cloneElement` combo.
 ```jsx
 function Counter({ children }) {
   const [count, setCount] = React.useState(0);
-  return React.Children.map(children, (child) =>
-    React.cloneElement(child, { count })
-  );
+  return React.Children.map(children, (child) => React.cloneElement(child, { count }));
 }
 ```
 
@@ -464,9 +457,7 @@ As an addition to _flexible compound components_ pattern you will often see an `
 function useProvider() {
   const context = React.useContext(ProviderContext);
   if (!context) {
-    throw Error(
-      "`useProvider` cannot be used outside of the `ProviderContext`"
-    );
+    throw Error("`useProvider` cannot be used outside of the `ProviderContext`");
   }
 
   return context;
@@ -702,11 +693,9 @@ function Component({ open }) {
   const isControlled = open != null;
   const { current: wasControlled } = React.useRef(isControlled);
 
-  if (wasControlled && !isControlled)
-    console.error("Hey, you went from controlled to uncontrolled");
+  if (wasControlled && !isControlled) console.error("Hey, you went from controlled to uncontrolled");
 
-  if (isControlled && !wasControlled)
-    console.error("Hey, you went from uncontrolled to controlled");
+  if (isControlled && !wasControlled) console.error("Hey, you went from uncontrolled to controlled");
 }
 ```
 
@@ -891,9 +880,7 @@ const myDebounce = (...props) => {
 export default function App() {
   const [inputValue, setInputValue] = useState("");
 
-  const onChange = useRef(
-    myDebounce((e) => setInputValue(e.target.value), 200)
-  );
+  const onChange = useRef(myDebounce((e) => setInputValue(e.target.value), 200));
 
   return (
     <div>
@@ -924,7 +911,7 @@ export default function App() {
 
   const onChange = useCallback(
     myDebounce((e) => setInputValue(e.target.value), 200),
-    []
+    [],
   );
 
   return (
@@ -944,10 +931,7 @@ Two problems here.
 We can eliminate the linter warnings by changing the implementation to the following.
 
 ```jsx
-const onChange = useCallback(
-  (e) => myDebounce((e) => setInputValue(e.target.value), 200)(e),
-  []
-);
+const onChange = useCallback((e) => myDebounce((e) => setInputValue(e.target.value), 200)(e), []);
 ```
 
 But, even with this modified form, we **still suffer from the initial problem of re-creating the `debounce`d function every time the component re-renders**.

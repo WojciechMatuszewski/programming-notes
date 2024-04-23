@@ -28,7 +28,7 @@
 
 - Initializing the framework from the state embedded in the HTML takes time. If the amount of state is large, you might freeze the browser.
 
-- There are various ways to defer the hydration work. Those include  generating static sites, using progressive or out-of-order hydration or creating "islands of reactivity".
+- There are various ways to defer the hydration work. Those include generating static sites, using progressive or out-of-order hydration or creating "islands of reactivity".
 
 > A note regarding the island architecture. As good as it might seem, if separate islands needs to share the state, you might run into problems. You cannot pass the state down, since that would make the parent of those island and island as well. The most common solution to this problem I've seen is to use a store for a given set of islands. Read [this blog for more information](https://frontendatscale.com/blog/islands-architecture-state/).
 
@@ -102,7 +102,7 @@ There are spectrums of hydration. One can mix them accordingly. For example, you
 
   3. React router 4 regression - "we are not responsible for data fetching anymore"
 
-      - One could do _Link preloading_, but that did not mean _data preloading_
+     - One could do _Link preloading_, but that did not mean _data preloading_
 
   4. Sapper Router, Nuxt Router, Solid's App Router, React Router 6
 
@@ -114,7 +114,7 @@ There are spectrums of hydration. One can mix them accordingly. For example, you
 
   3. _Suspense with hoisting_ allowed us to start rendering and data-fetch AT THE SAME TIME. This means we are shifting the first render left. Unlike the _gSSP/Loaders_ where we first had to fetch all the data to start rendering.
 
-      - Of course, **one can also make a mistake here**. The key is to start data-fetching **at the route level or even higher**. If you are fetching in your components, then we are pretty much back to the _prepass_ scenario.
+     - Of course, **one can also make a mistake here**. The key is to start data-fetching **at the route level or even higher**. If you are fetching in your components, then we are pretty much back to the _prepass_ scenario.
 
   4. _RSCs_ (blocking) is not better than the _Suspense with hoisting_. In fact, it is much worse. That is why the Remix people were skeptical about RSCs in the first place. Since the data-fetching is not hoisted at the top, we cannot make parallel requests (one could do them, but only inside a single RSC which is a best practice).
 

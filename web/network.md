@@ -189,10 +189,7 @@ Here is the `nodejs` sample
 const http = require("http");
 
 const server = http.createServer(function requestListener(request, response) {
-  if (
-    request.headers["if-none-match"] &&
-    request.headers["if-none-match"] === "1"
-  ) {
+  if (request.headers["if-none-match"] && request.headers["if-none-match"] === "1") {
     response.writeHead(304);
     response.end("");
   } else if (request.url === "/") {

@@ -34,13 +34,13 @@ You can access the course [material here](https://frontendmasters.com/courses/cs
 
 - **If you animate multiple properties, you can pick different durations for each property**. The same applies to the easing function.
 
-    ```css
-    transition-property: background, opacity;
-    <!-- background, opacity -->
-    transition-duration: 1s, 3s;
-    <!-- background, opacity -->
-    transition-timing-function: linear, eas-in-out
-    ```
+  ```css
+  transition-property: background, opacity;
+  <!-- background, opacity -->
+  transition-duration: 1s, 3s;
+  <!-- background, opacity -->
+  transition-timing-function: linear, eas-in-out
+  ```
 
 - You **either have to define the `transition` on each element or define it on the parent and use `transition:inherit` on the children**.
 
@@ -77,7 +77,7 @@ As such, consider using `transition` for "simple" animations, and the `keyframes
 - You can define CSS Variables in the HTML, inline.
 
   ```html
-  <div style = "--variable-name: 3">foo</div>
+  <div style="--variable-name: 3">foo</div>
   ```
 
 - You **can not have two animations running at the same time that modify the same property**.
@@ -117,9 +117,7 @@ As such, consider using `transition` for "simple" animations, and the `keyframes
   - Remember that the values you get in CSS might be _unitless_. **Use `calc` to transform an _unitless_ value into a value with an unit**.
 
     ```css
-    transform: translateX(
-      calc(var(--x) * 1px)
-    )
+    transform: translateX(calc(var(--x) * 1px));
     ```
 
 - David demonstrates the **`lerp`** technique which allows us to create animations based on the movement of some element, like a pointer.

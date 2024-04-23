@@ -92,7 +92,7 @@
   function isTypedArray<T>(
     arr: unknown,
     // A regular function returning a boolean wont do here!
-    guard: (element: T) => element is T
+    guard: (element: T) => element is T,
   ): arr is T[] {
     if (!Array.isArray(arr)) {
       return false;

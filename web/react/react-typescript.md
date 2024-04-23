@@ -91,14 +91,11 @@ type BaseProps<E extends React.ElementType> = {
   someBaseProp: string;
 };
 
-type ComponentProps<E extends React.ElementType> = BaseProps<E> &
-  Omit<React.ComponentProps<E>, keyof BaseProps<E>>;
+type ComponentProps<E extends React.ElementType> = BaseProps<E> & Omit<React.ComponentProps<E>, keyof BaseProps<E>>;
 
 const baseElement = "button";
 
-function Button<E extends React.ComponentType = typeof baseElement>(
-  props: ComponentProps<E>
-) {
+function Button<E extends React.ComponentType = typeof baseElement>(props: ComponentProps<E>) {
   const Element = props.as ?? baseElement;
   return <Element {...props} />;
 }
@@ -121,16 +118,12 @@ That means that we have to use _casting_. This is possible due to the fact that 
 
 ```tsx
 // previous code
-type ButtonWithRef = <E extends React.ElementType = typeof defaultElement>(
-  props: ComponentProps<E>
-) => JSX.Element;
+type ButtonWithRef = <E extends React.ElementType = typeof defaultElement>(props: ComponentProps<E>) => JSX.Element;
 
-const Button = React.forwardRef(
-  (props: ButtonBaseProps, ref: React.Ref<unknown>) => {
-    // code
-    // remember to pas `ref` to the <Element/>
-  }
-) as ButtonWithRef;
+const Button = React.forwardRef((props: ButtonBaseProps, ref: React.Ref<unknown>) => {
+  // code
+  // remember to pas `ref` to the <Element/>
+}) as ButtonWithRef;
 ```
 
 There is no possibility for us to know the `React.Ref` parameter so I've opted to use `unknown here`.
@@ -161,10 +154,7 @@ The premise is the following: **if you pass a certain prop, you are responsible 
 And here is how the `Slot` component looks and is used.
 
 ```tsx
-function Slot({
-  children,
-  ...props
-}: { children: React.ReactNode } & React.HTMLAttributes<HTMLElement>) {
+function Slot({ children, ...props }: { children: React.ReactNode } & React.HTMLAttributes<HTMLElement>) {
   if (React.Children.count(children) !== 1) {
     throw new Error("boom");
   }
@@ -465,10 +455,7 @@ React exposes various type-helpers to help you type your components/hooks faster
 Writing `children: React.ReactNode` might get cumbersome after a while. To save you a little bit of typing, one might use `PropsWithChildren` type-helper.
 
 ```tsx
-const Component = ({
-  someProp,
-  children,
-}: React.PropsWithChildren<{ someProp: number }>) => {};
+const Component = ({ someProp, children }: React.PropsWithChildren<{ someProp: number }>) => {};
 ```
 
 Of course, I **strongly think you should NOT use this type-helper for every component**. As it was the case with `React.FC`, marking every component as taking `children` prop is misleading as some of them will not do anything with the `children` prop.
@@ -511,12 +498,10 @@ function App() {
   const someElementRef = useRef<ElementRef<"audio">>();
 
   // Also works well!
-  const componentWithForwardedRef =
-    useRef<ElementRef<typeof ComponentWithForwardedRef>>();
+  const componentWithForwardedRef = useRef<ElementRef<typeof ComponentWithForwardedRef>>();
 
   // This one as well!
-  const componentWithImperativeHandle =
-    useRef<ElementRef<typeof ComponentWithImperativeHandle>>();
+  const componentWithImperativeHandle = useRef<ElementRef<typeof ComponentWithImperativeHandle>>();
 
   return <div>it works</div>;
 }
@@ -525,16 +510,14 @@ const ComponentWithForwardedRef = forwardRef<HTMLDivElement>((props, ref) => {
   return <div>works</div>;
 });
 
-const ComponentWithImperativeHandle = forwardRef<{ someFunc: VoidFunction }>(
-  (props, ref) => {
-    useImperativeHandle(ref, () => {
-      return {
-        someFunc: () => {},
-      };
-    });
-    return <div>works</div>;
-  }
-);
+const ComponentWithImperativeHandle = forwardRef<{ someFunc: VoidFunction }>((props, ref) => {
+  useImperativeHandle(ref, () => {
+    return {
+      someFunc: () => {},
+    };
+  });
+  return <div>works</div>;
+});
 
 export default App;
 ```

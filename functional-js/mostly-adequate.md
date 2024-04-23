@@ -11,7 +11,7 @@ here.
 
 ```js
 // capitalize :: String -> String
-const capitalize = s => toUpperCase(head(s)) + toLowerCase(tail(s));
+const capitalize = (s) => toUpperCase(head(s)) + toLowerCase(tail(s));
 
 capitalize("smurf"); // 'Smurf'
 ```
@@ -23,7 +23,7 @@ syntax is a little bit different (it's more like a convention)
 
 ```js
 // identity :: a -> a
-const identity = x => x;
+const identity = (x) => x;
 ```
 
 So here, `a` can be any type.
@@ -90,12 +90,12 @@ Lets create a container
 
 ```js
 class Container {
-    constructor(x) {
-        this.$value = x;
-    }
-    static of(x) {
-        return new Container(x);
-    }
+  constructor(x) {
+    this.$value = x;
+  }
+  static of(x) {
+    return new Container(x);
+  }
 }
 Container.of(3);
 // Container(3)
@@ -118,8 +118,8 @@ Since our container holds value, we can make it a _Functor_
 
 ```js
 // map :: (a -> b) -> Container a -> Container b
-Container.prototype.map = function(f) {
-    return Container.of(f(this.$value));
+Container.prototype.map = function (f) {
+  return Container.of(f(this.$value));
 };
 ```
 
@@ -133,25 +133,25 @@ complex.
 
 ```js
 class Maybe {
-    static of(x) {
-        return new Maybe(x);
-    }
+  static of(x) {
+    return new Maybe(x);
+  }
 
-    get isNothing() {
-        return this.$value === null || this.$value === undefined;
-    }
+  get isNothing() {
+    return this.$value === null || this.$value === undefined;
+  }
 
-    constructor(x) {
-        this.$value = x;
-    }
+  constructor(x) {
+    this.$value = x;
+  }
 
-    map(fn) {
-        return this.isNothing ? this : Maybe.of(fn(this.$value));
-    }
+  map(fn) {
+    return this.isNothing ? this : Maybe.of(fn(this.$value));
+  }
 
-    inspect() {
-        return this.isNothing ? "Nothing" : `Just(${inspect(this.$value)})`;
-    }
+  inspect() {
+    return this.isNothing ? "Nothing" : `Just(${inspect(this.$value)})`;
+  }
 }
 ```
 
@@ -159,9 +159,7 @@ class Maybe {
 checking if the value is _falsy_ and handling that case.
 
 ```js
-Maybe.of({ age: 10 })
-    .map(prop("someRandomProp"))
-    .map(addTen); // Nothing
+Maybe.of({ age: 10 }).map(prop("someRandomProp")).map(addTen); // Nothing
 ```
 
 No errors, it just returns `Nothing` in this case since we have null checking
@@ -178,8 +176,8 @@ key difference with Maybe though (except having different sub-types). `Either`
 information).
 
 ```js
-Either.of("rain").map(str => `b${str}`); // Right(str)
-Either.of(123).map(num => num.toLowerCase); // Left(e)
+Either.of("rain").map((str) => `b${str}`); // Right(str)
+Either.of(123).map((num) => num.toLowerCase); // Left(e)
 ```
 
 To get the values we usually use `fold` operator. This operator allows us to
@@ -187,8 +185,11 @@ supply arguments for `Left` callback and `Right` callback.
 
 ```js
 Either.of("rain")
-    .map(str => str)
-    .fold(e => console.log(e), val => console.log(val));
+  .map((str) => str)
+  .fold(
+    (e) => console.log(e),
+    (val) => console.log(val),
+  );
 // rain
 ```
 
@@ -202,14 +203,14 @@ creating a grenade from all the impure stuff and then pulling the pin.
 ```js
 const windowIO = IO.of(() => window);
 
-windowIO.map(window => window.innerWidth);
+windowIO.map((window) => window.innerWidth);
 
 // HOW GOOD IS THAT!
 windowIO
-    .map(prop("location"))
-    .map(prop("href"))
-    // it can also be called run or smth
-    .value();
+  .map(prop("location"))
+  .map(prop("href"))
+  // it can also be called run or smth
+  .value();
 ```
 
 You should not think about inner `IO` value as a function. That is

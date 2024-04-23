@@ -47,7 +47,7 @@ box1.addEventListener(
   (e) => {
     console.log("box-1");
   },
-  true
+  true,
 );
 
 box2.addEventListener("click", () => console.log("box-2"), true);
@@ -74,7 +74,7 @@ box1.addEventListener(
     e.stopPropagation();
     console.log("box-1");
   },
-  true
+  true,
 );
 
 box2.addEventListener("click", () => console.log("box-2"));
@@ -173,29 +173,20 @@ You can extend the `EventTarget` class to create your own custom emitter. Sadly,
 In my humble opinion, adding overloads is the most readable option.
 
 ```ts
-interface CustomEventTarget<E extends CustomEvent = CustomEvent>
-  extends EventTarget {
+interface CustomEventTarget<E extends CustomEvent = CustomEvent> extends EventTarget {
   addEventListener(
     type: string,
     callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean
+    options?: EventListenerOptions | boolean,
   ): void;
-  addEventListener(
-    type: string,
-    callback: (event: E) => void,
-    options?: EventListenerOptions
-  ): void;
+  addEventListener(type: string, callback: (event: E) => void, options?: EventListenerOptions): void;
 
   removeEventListener(
     type: string,
     callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean
+    options?: EventListenerOptions | boolean,
   ): void;
-  removeEventListener(
-    type: string,
-    callback: (event: E) => void,
-    options?: EventListenerOptions
-  ): void;
+  removeEventListener(type: string, callback: (event: E) => void, options?: EventListenerOptions): void;
 }
 ```
 

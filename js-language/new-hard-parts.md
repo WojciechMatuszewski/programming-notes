@@ -8,7 +8,7 @@ We all know by now that JS is single-threaded and has synchronous execution mode
 
 ```js
 function display(data) {
-    console.log(data);
+  console.log(data);
 }
 
 // thread blocking function which waits for remote response
@@ -35,7 +35,7 @@ All of these are not JS features.
 
 ```js
 function printHello() {
-    console.log("Hello");
+  console.log("Hello");
 }
 
 // setTimeout does not guarantee to call that function exactly after 1000ms. It will be invoked after no less than 1000ms!
@@ -55,10 +55,10 @@ What happens if we have main thread blocking function running at the same time?
 
 ```js
 function printHello() {
-    console.log("hello");
+  console.log("hello");
 }
 function blockFor1Second() {
-    // self explanatory
+  // self explanatory
 }
 
 setTimeout(printHello, 0);
@@ -87,7 +87,7 @@ Promises do two things at the same time. One in JS-land one in the Browser.
 
 ```js
 function display(data) {
-    console.log(data);
+  console.log(data);
 }
 const futureData = fetch("someurl");
 futureData.then(display);
@@ -121,10 +121,10 @@ We learned about `setTimeout` and `fetch` so far so let's combine them.
 
 ```js
 function display(data) {
-    console.log(data);
+  console.log(data);
 }
 function printHello() {
-    console.log("Hello");
+  console.log("Hello");
 }
 function blockFor300ms() {}
 
@@ -156,14 +156,14 @@ To start things out let's write a simple function that tracks current element an
 
 ```js
 function createFunction(array) {
-    var currentIndex = 0;
-    // closure
-    function inner() {
-        var element = array[currentIndex];
-        currentIndex++;
-        return element;
-    }
-    return inner;
+  var currentIndex = 0;
+  // closure
+  function inner() {
+    var element = array[currentIndex];
+    currentIndex++;
+    return element;
+  }
+  return inner;
 }
 
 const returnNextElement = createFunction([1, 2, 3, 4, 5]);
@@ -182,14 +182,14 @@ When creating _iterators_ using _generators_ returned object has `.next` method 
 
 ```js
 function createFlow(array) {
-    var i = 0;
-    return {
-        next: function nextFn() {
-            var element = array[i];
-            i++;
-            return element;
-        },
-    };
+  var i = 0;
+  return {
+    next: function nextFn() {
+      var element = array[i];
+      i++;
+      return element;
+    },
+  };
 }
 const returnNextElement = createFlow([4, 5, 6]);
 const element1 = returnNextElement.next(); // 4
@@ -201,9 +201,9 @@ Generators create iterators.
 
 ```js
 function* createFlow() {
-    yield 4;
-    yield 5;
-    yield 6;
+  yield 4;
+  yield 5;
+  yield 6;
 }
 const returnNextElement = createFlow();
 const element1 = returnNextElement.next(); // {value: 4, done: false}
@@ -223,13 +223,13 @@ This is very nice. Check it out:
 
 ```js
 function* createFlow() {
-    const num = 10;
-    // return 10
-    // this expression never had a chance to assign anything to newNum
-    // since the execution context got 'paused' when we yielded
-    const newNum = yield num;
-    yield 5 + newNum;
-    yield 6;
+  const num = 10;
+  // return 10
+  // this expression never had a chance to assign anything to newNum
+  // since the execution context got 'paused' when we yielded
+  const newNum = yield num;
+  yield 5 + newNum;
+  yield 6;
 }
 const returnNextElement = createFlow();
 const element1 = returnNextElement.next(); // 10
@@ -250,8 +250,8 @@ Another example to better understand this concept **which is kinda crucial**
 
 ```js
 function* createGen(i) {
-    var j = 5 * (yield i * 10);
-    var k = yield j / 4;
+  var j = 5 * (yield i * 10);
+  var k = yield j / 4;
 }
 const it = createGen(10);
 it.next(20); // value: 100, 20 is ignored since we never had 'previous' yield call to assign to
@@ -264,11 +264,11 @@ With the power of yield we can mimic how `async/await` works
 
 ```js
 function* createFlow() {
-    // yield out fetch, never had the ability to assign to data
-    // after the second .next we've received result of this fetch as data
-    var data = yield fetch("...");
-    // fetch response
-    console.log(data);
+  // yield out fetch, never had the ability to assign to data
+  // after the second .next we've received result of this fetch as data
+  var data = yield fetch("...");
+  // fetch response
+  console.log(data);
 }
 const iterator = createFlow();
 // future data is a promise
@@ -283,9 +283,9 @@ With `async / await` we do not have to trigger 'going back' to `createFlow` _exe
 
 ```js
 async function createFlow() {
-    console.log("me first");
-    const data = await fetch("...");
-    console.log(data);
+  console.log("me first");
+  const data = await fetch("...");
+  console.log(data);
 }
 createFlow();
 console.log("me second");

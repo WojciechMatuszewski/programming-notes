@@ -6,11 +6,11 @@ Have you ever tried to disable multiple form inputs at one? It could get repetit
 
 ```html
 <form>
-    <fieldset disabled>
-        <label htmlFor="name">Name</label>
-        <input type="text" id="name" name="name" />
-        <button type="submit">Submit</button>
-    </fieldset>
+  <fieldset disabled>
+    <label htmlFor="name">Name</label>
+    <input type="text" id="name" name="name" />
+    <button type="submit">Submit</button>
+  </fieldset>
 </form>
 ```
 
@@ -22,17 +22,17 @@ In some situations, the submit button of a `form` element lives in a completely 
 
 ```html
 <form>
-    <label>
-        Name
-        <input type="text" name="name" />
-    </label>
+  <label>
+    Name
+    <input type="text" name="name" />
+  </label>
 </form>
 
 <!-- Somewhere else in the HTML -->
 <modal>
-    Are you sure you want to submit the form?
-    <button type="button">Cancel</button>
-    <button type="submit">Yes</button>
+  Are you sure you want to submit the form?
+  <button type="button">Cancel</button>
+  <button type="submit">Yes</button>
 </modal>
 ```
 
@@ -42,17 +42,17 @@ In such cases, especially while using JSX, you might be **tempted to use `ref` o
 
 ```html
 <form id="form-with-confirmation">
-    <label>
-        Name
-        <input type="text" name="name" />
-    </label>
+  <label>
+    Name
+    <input type="text" name="name" />
+  </label>
 </form>
 
 <!-- Somewhere else in the HTML -->
 <modal>
-    Are you sure you want to submit the form?
-    <button type="button">Cancel</button>
-    <button type="submit" form="form-with-confirmation">Yes</button>
+  Are you sure you want to submit the form?
+  <button type="button">Cancel</button>
+  <button type="submit" form="form-with-confirmation">Yes</button>
 </modal>
 ```
 
@@ -93,9 +93,9 @@ You might be familiar with the `multiple` attribute on the `input` element when 
 
 While you can do this, **you might want to think twice before allowing the user to submit multiple email addresses**. Here are few things to consider.
 
--   Keep in mind that you will have to parse this list to extract individual addresses (most likely).
--   Keep in mind that **the validation error messages vary from browser to browser**.
--   Keep in mind that the **iOS keyboard does not include the comma by default**. This might result in a cumbersome experience for users on mobile.
+- Keep in mind that you will have to parse this list to extract individual addresses (most likely).
+- Keep in mind that **the validation error messages vary from browser to browser**.
+- Keep in mind that the **iOS keyboard does not include the comma by default**. This might result in a cumbersome experience for users on mobile.
 
 ## Huge amounts of DOM nodes and the `content-visibility`
 
@@ -109,9 +109,9 @@ The **`content-visibility` is a NATIVE way to tell the browser to defer renderin
 
 You have three values to choose from.
 
--   The `auto`.
--   The `visible`.
--   The `hidden`
+- The `auto`.
+- The `visible`.
+- The `hidden`
 
 Of course, me being me, I always lean towards the simplest, the most "out-of-the-box" solution possible, so the `auto` property is very appealing to me. The browser will do most of the work for me, and I do not have to manage the state myself.
 
@@ -124,17 +124,17 @@ Overall, this is a great API to be familiar with. If you are using a framework, 
 
 ### Shadow DOM
 
--   This concept is **used in the context of custom web components**.
+- This concept is **used in the context of custom web components**.
 
--   It is **separate from the "main" DOM**.
+- It is **separate from the "main" DOM**.
 
-    -   This means you can have multiple IDs that repeat, and you do not have to worry about specificity rules.
+  - This means you can have multiple IDs that repeat, and you do not have to worry about specificity rules.
 
--   The main benefit is the **style isolation. Your CSS will NOT clash with any other CSS on the page**.
+- The main benefit is the **style isolation. Your CSS will NOT clash with any other CSS on the page**.
 
--   Apart from the regular selectors, you get access to the `:host` and `:host-context` pseudo-classes.
+- Apart from the regular selectors, you get access to the `:host` and `:host-context` pseudo-classes.
 
-    -   These only exist in the context of the Shadow DOM.
+  - These only exist in the context of the Shadow DOM.
 
 ## The `time` and `dateTime`
 
@@ -142,12 +142,12 @@ For dates, consider using the `time` tag. As [described by the MDN](https://deve
 
 ```html
 <article>
-    <header>
-        <a href="profile">Wojciech Matuszewski</a>
-    </header>
-    <footer>
-        <time datetime="2018-07-07">July 7</time>
-    </footer>
+  <header>
+    <a href="profile">Wojciech Matuszewski</a>
+  </header>
+  <footer>
+    <time datetime="2018-07-07">July 7</time>
+  </footer>
 </article>
 ```
 
@@ -161,10 +161,10 @@ To style the _description lists_, the `grid` type of layout should most likely b
 
 ```html
 <dl>
-    <dt>Job</dt>
-    <dd>President</dd>
-    <dt>Email</dt>
-    <dd>kobayashi.aoi@acme.co</dd>
+  <dt>Job</dt>
+  <dd>President</dd>
+  <dt>Email</dt>
+  <dd>kobayashi.aoi@acme.co</dd>
 </dl>
 ```
 
@@ -175,29 +175,29 @@ The `template` HTML element creates the so-called _inert_ DOM tree. **You would 
 ```html
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>HTML + CSS</title>
-        <link rel="stylesheet" href="styles.css" />
-    </head>
-    <body>
-        <div id="main"></div>
-        <script>
-            const main = document.querySelector('#main')
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>HTML + CSS</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="main"></div>
+    <script>
+      const main = document.querySelector("#main");
 
-            const template = document.createElement('template')
+      const template = document.createElement("template");
 
-            // Much faster than directly writing to `main`
-            template.innerHTML = `
+      // Much faster than directly writing to `main`
+      template.innerHTML = `
         <p>first</p>
         <p>second</p>
-      `
+      `;
 
-            main.appendChild(template.content)
-        </script>
-    </body>
+      main.appendChild(template.content);
+    </script>
+  </body>
 </html>
 ```
 
@@ -210,8 +210,8 @@ You can use `summary` and `detail` HTML tags.
 
 ```html
 <details>
-    <summary>title</summary>
-    <p>content</p>
+  <summary>title</summary>
+  <p>content</p>
 </details>
 ```
 
@@ -225,9 +225,9 @@ Again, the same with as with `Accordion`. There is a native way of doing this by
 <input list="languages" placeholder="Choose language" />
 
 <datalist id="languages">
-    <option>Python</option>
-    <option>Javascript</option>
-    <option>Java</option>
+  <option>Python</option>
+  <option>Javascript</option>
+  <option>Java</option>
 </datalist>
 ```
 
@@ -241,10 +241,10 @@ Another neat thing about this element is that **you do not have to use `z-index`
 
 ```html
 <dialog>
-    <form method="dialog">
-        <p>Some text</p>
-        <button type="submit">Close</button>
-    </form>
+  <form method="dialog">
+    <p>Some text</p>
+    <button type="submit">Close</button>
+  </form>
 </dialog>
 ```
 
@@ -261,24 +261,24 @@ The "looper" is a collection of `radio` elements with the same name.
 
 ```html
 <fieldset id="looperGroup">
-    <legend>The Looper</legend>
+  <legend>The Looper</legend>
 
-    <label>
-        Option 1
-        <input type="radio" name="the-looper" checked value="option-1" />
-    </label>
-    <label>
-        Option 2
-        <input type="radio" name="the-looper" value="option-2" />
-    </label>
-    <label>
-        Option 3
-        <input type="radio" name="the-looper" value="option-3" />
-    </label>
-    <label>
-        Option 4
-        <input type="radio" name="the-looper" value="option-4" />
-    </label>
+  <label>
+    Option 1
+    <input type="radio" name="the-looper" checked value="option-1" />
+  </label>
+  <label>
+    Option 2
+    <input type="radio" name="the-looper" value="option-2" />
+  </label>
+  <label>
+    Option 3
+    <input type="radio" name="the-looper" value="option-3" />
+  </label>
+  <label>
+    Option 4
+    <input type="radio" name="the-looper" value="option-4" />
+  </label>
 </fieldset>
 ```
 

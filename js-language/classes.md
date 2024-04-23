@@ -43,18 +43,18 @@ It also has **_super_** keyword
 
 ```javascript
 class Workshop {
-    constructor(teacher) {
-        this.teacher = teacher;
-    }
-    ask(question) {
-        console.log(this.teacher, question);
-    }
+  constructor(teacher) {
+    this.teacher = teacher;
+  }
+  ask(question) {
+    console.log(this.teacher, question);
+  }
 }
 
 class AnotherWorkshop extends Workshop {
-    ask(msg) {
-        super.ask(msg.toUpperCase());
-    }
+  ask(msg) {
+    super.ask(msg.toUpperCase());
+  }
 }
 ```
 
@@ -62,12 +62,12 @@ Classes still have dynamic **_this_**
 
 ```javascript
 class Workshop {
-    constructor(teacher) {
-        this.teacher = teacher;
-    }
-    ask(question) {
-        console.log(this.teacher, question);
-    }
+  constructor(teacher) {
+    this.teacher = teacher;
+  }
+  ask(question) {
+    console.log(this.teacher, question);
+  }
 }
 var deepJS = new Workshop("KYle");
 setTimeout(deepJS.ask, 100, "Still losing this");
@@ -82,11 +82,11 @@ Under the class syntax-sugar
 
 ```javascript
 function Workshop(teacher) {
-    this.teacher = teacher;
+  this.teacher = teacher;
 }
 
-Workshop.prototype.ask = function(question) {
-    console.log(this.teacher, question);
+Workshop.prototype.ask = function (question) {
+  console.log(this.teacher, question);
 };
 
 var deepJS = new Workshop("Kyle");
@@ -104,16 +104,16 @@ When you try to shadow and not using class system, you are stepping on the edge
 
 ```javascript
 function Workshop(teacher) {
-    this.teacher = teacher;
+  this.teacher = teacher;
 }
-Workshop.prototype.ask = function(question) {
-    console.log(this.teacher, question);
+Workshop.prototype.ask = function (question) {
+  console.log(this.teacher, question);
 };
 var deepJS = new Workshop("Kyle");
-deepJS.ask = function(question) {
-    // this.__proto__ => Workshop.prototype
-    // binding so that we invoke our method instead of non capitalized one
-    this.__proto__.ask.call(this, question.toUpperCase());
+deepJS.ask = function (question) {
+  // this.__proto__ => Workshop.prototype
+  // binding so that we invoke our method instead of non capitalized one
+  this.__proto__.ask.call(this, question.toUpperCase());
 };
 deepJS.ask("...");
 // uppercase console .log
@@ -128,18 +128,18 @@ Objects linked using prototype
 
 ```javascript
 function Workshop(teacher) {
-    this.teacher = teacher;
+  this.teacher = teacher;
 }
-Workshop.prototype.ask = function(question) {
-    console.log(this.teacher, question);
+Workshop.prototype.ask = function (question) {
+  console.log(this.teacher, question);
 };
 
 function AnotherWorkshop(teacher) {
-    Workshop.call(this, teacher);
+  Workshop.call(this, teacher);
 }
 AnotherWorkshop.prototype = Object.create(Workshop.prototype);
-AnotherWorkshop.prototype.speakUp = function(msg) {
-    this.ask(msg.toUppercase());
+AnotherWorkshop.prototype.speakUp = function (msg) {
+  this.ask(msg.toUppercase());
 };
 var JSRecentParts = new AnotherWorkshop("Kyle");
 JSRecentParts.speakUp("Is this actually inheritance");
@@ -159,18 +159,18 @@ So the call site looks like this
 
 ```javascript
 var Workshop = {
-    setTeacher(teacher) {
-        this.teacher = teacher;
-    },
-    ask(question) {
-        console.log(this.teacher, question);
-    },
+  setTeacher(teacher) {
+    this.teacher = teacher;
+  },
+  ask(question) {
+    console.log(this.teacher, question);
+  },
 };
 
 var AnotherWorkshop = Object.assign(Object.create(Workshop), {
-    speakUp(msg) {
-        this.ask(msg.toUpperCase());
-    },
+  speakUp(msg) {
+    this.ask(msg.toUpperCase());
+  },
 });
 
 var JSRecentParts = Object.create(AnotherWorkshop);

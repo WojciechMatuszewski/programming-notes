@@ -77,11 +77,11 @@ STREAM**. Now lets see an example:
 
 ```typescript
 source$.pipe(
-    // switchMap can fail
-    switchMap(something => from(resourceGetterFn(something))).pipe(
-        // resolveResourceResponse can fail
-        mergeMap(response => resolveResourceResponse(response)),
-    ),
+  // switchMap can fail
+  switchMap((something) => from(resourceGetterFn(something))).pipe(
+    // resolveResourceResponse can fail
+    mergeMap((response) => resolveResourceResponse(response)),
+  ),
 );
 ```
 
@@ -89,10 +89,10 @@ Now, what would happen when we did this:
 
 ```typescript
 source$.pipe(
-    // previous code with switchMap etc
-    catchError(_ => {
-        return of();
-    }),
+  // previous code with switchMap etc
+  catchError((_) => {
+    return of();
+  }),
 );
 ```
 
@@ -109,13 +109,13 @@ what code you are writing). To solve this problem we just need to move
 
 ```typescript
 source$.pipe(
-    // switchMap can fail
-    switchMap(something => from(resourceGetterFn(something))).pipe(
-        mergeMap(response => resolveResourceResponse(response)),
-        catchError(_ => {
-            return of();
-        }),
-    ),
+  // switchMap can fail
+  switchMap((something) => from(resourceGetterFn(something))).pipe(
+    mergeMap((response) => resolveResourceResponse(response)),
+    catchError((_) => {
+      return of();
+    }),
+  ),
 );
 ```
 
@@ -193,14 +193,7 @@ const touchStart$ = fromEvent(element, "touchstart");
 const touchMove$ = fromEvent(element, "touchmove");
 const touchEnd$ = fromEvent(element, "touchend");
 
-const drag$ = touchStart.pipe(
-    switchMap(() =>
-        touchMove$.pipe(
-            takeUntil(touchEnd$),
-            concat(), /*some observable*/
-        )
-    ),
-);
+const drag$ = touchStart.pipe(switchMap(() => touchMove$.pipe(takeUntil(touchEnd$), concat() /*some observable*/)));
 ```
 
 This pattern is really powerful when combined with `defer`. (Remember that
@@ -235,9 +228,7 @@ const mouseMove$ = fromEvent(element, "mousemove");
 
 const stop$ = merge(mouseLeave$, mouseUp$);
 
-const dragAndDrop$ = mouseDown$.pipe(
-    exhaustMap(() => mouseMove$.pipe(takeUntil($stop))),
-);
+const dragAndDrop$ = mouseDown$.pipe(exhaustMap(() => mouseMove$.pipe(takeUntil($stop))));
 ```
 
 ### Prevent double click
@@ -249,9 +240,7 @@ This is very useful :).
 const button = querySelector("element");
 const buttonClick$ = fromEvent(button, "click");
 
-const preventDoubleSubmit$ = buttonClick$.pipe(
-    exhaustMap(() => http.post(/* something */)),
-);
+const preventDoubleSubmit$ = buttonClick$.pipe(exhaustMap(() => http.post(/* something */)));
 ```
 
 ## Uncommon Types
@@ -267,8 +256,8 @@ Example:
 
 ```js
 of(1)
-    .pipe(mapTo(new Notification("E")))
-    .subscribe(console.log);
+  .pipe(mapTo(new Notification("E")))
+  .subscribe(console.log);
 /*
     Notification {kind: "E", value: undefined, error: undefined, hasValue: false, constructor: Object}
     kind: "E"
@@ -302,27 +291,25 @@ Example:
 ```js
 // sample stream
 interval(500)
-    .pipe(
-        mapTo("normal value"),
-        // sometimes value, sometimes throw
-        map(v => {
-            if (randomInt() > 50) {
-                throw new Error("boom!");
-            } else return v;
-        }),
-        materialize(),
-        // turns Observable<T> into Notification<Observable<T>>
-        // so we can delay or use other operators.
-        delay(500),
-        // Notification of value (error message)
-        map(
-            n => (n.hasValue ? n : new Notification("N", n.error.message, null))
-        ),
-        // back to normal
-        dematerialize(),
-    )
-    // now it never throw so in console we will have
-    // `normal value` or `boom!` but all as... normal values (next() emission)
-    // and delay() works as expected
-    .subscribe(v => console.log(v));
+  .pipe(
+    mapTo("normal value"),
+    // sometimes value, sometimes throw
+    map((v) => {
+      if (randomInt() > 50) {
+        throw new Error("boom!");
+      } else return v;
+    }),
+    materialize(),
+    // turns Observable<T> into Notification<Observable<T>>
+    // so we can delay or use other operators.
+    delay(500),
+    // Notification of value (error message)
+    map((n) => (n.hasValue ? n : new Notification("N", n.error.message, null))),
+    // back to normal
+    dematerialize(),
+  )
+  // now it never throw so in console we will have
+  // `normal value` or `boom!` but all as... normal values (next() emission)
+  // and delay() works as expected
+  .subscribe((v) => console.log(v));
 ```

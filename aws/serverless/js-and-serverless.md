@@ -104,9 +104,7 @@ const outpath = `./dist/functions/${id}-${scope.node.uniqueId}`;
 try {
   require.resolve("source-map-support");
 } catch (e) {
-  throw new Error(
-    "package `source-map-support` is required when using this Construct"
-  );
+  throw new Error("package `source-map-support` is required when using this Construct");
 }
 
 /**
@@ -118,9 +116,7 @@ const entrypointBackup = `${props.entrypoint}.tmp`;
 execSync(`cp -fp '${props.entrypoint}' '${entrypointBackup}'`);
 
 // Add the import statement to the original handler
-execSync(
-  `echo 'import "source-map-support/register"' | cat - '${entrypointBackup}' > '${props.entrypoint}'`
-);
+execSync(`echo 'import "source-map-support/register"' | cat - '${entrypointBackup}' > '${props.entrypoint}'`);
 
 const cmd = `npx esbuild --bundle --target=es2019 --platform=node ....MORE COMMANDS`;
 

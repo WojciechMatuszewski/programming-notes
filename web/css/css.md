@@ -6,7 +6,7 @@ How many times have you written the following snippet of CSS only to realize it 
 
 ```css
 .some-class {
-    height: 100%;
+  height: 100%;
 }
 ```
 
@@ -14,17 +14,17 @@ Especially, in the case where you want to style some kind of "main" container
 
 ```html
 <html>
-    <head>
-        <style>
-            main {
-                /* does not work! */
-                height: 100%;
-            }
-        </style>
-    </head>
-    <body>
-        <main>content</main>
-    </body>
+  <head>
+    <style>
+      main {
+        /* does not work! */
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>content</main>
+  </body>
 </html>
 ```
 
@@ -33,11 +33,11 @@ do, and not the `width`. Why is that? **It has to do how browsers calculate the 
 
 > [Check out this great video for a full explanation](https://youtu.be/Xt1Cw4qM3Ec?t=736)
 
--   To calculate the `width` browsers look at the parent of a given element. This is recursive. The last parent is
-    the `html` element that has the default width of the document.
+- To calculate the `width` browsers look at the parent of a given element. This is recursive. The last parent is
+  the `html` element that has the default width of the document.
 
--   To calculate the `height` browsers look at the **children of a given element**. This "looking at the children" can
-    create recursive conditions that render the `height: 100%` useless.
+- To calculate the `height` browsers look at the **children of a given element**. This "looking at the children" can
+  create recursive conditions that render the `height: 100%` useless.
 
 If we apply this logic to our example, we can see why the `height: 100%` is not working.
 
@@ -50,22 +50,22 @@ To break this recursive chain, one has to specify the height on the `html` and t
 
 ```html
 <html>
-    <head>
-        <style>
-            html,
-            body {
-                height: 100%;
-            }
+  <head>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
 
-            main {
-                /* works as expected */
-                height: 100%;
-            }
-        </style>
-    </head>
-    <body>
-        <main>content</main>
-    </body>
+      main {
+        /* works as expected */
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>content</main>
+  </body>
 </html>
 ```
 
@@ -87,9 +87,9 @@ more reusable.
 
 Specificity is based on column-like structure (0-0-0).
 
--   1-0-0 for `#`
--   0-1-0 for `.`
--   0-0-1 for `element`
+- 1-0-0 for `#`
+- 0-1-0 for `.`
+- 0-0-1 for `element`
 
 Whichever column has the bigger number in the left-most column wins. **If
 selectors are identical the bottom most wins (cascading styles)**
@@ -100,16 +100,16 @@ There are quite a few of them. Let's consider following structure
 
 ```html
 <ol>
-    <li class="some_class">item1</li>
-    <li>item2</li>
-    <li>
-        item3
-        <ul>
-            <li>item3.1</li>
-            <li>item3.2</li>
-            <li>item3.3</li>
-        </ul>
-    </li>
+  <li class="some_class">item1</li>
+  <li>item2</li>
+  <li>
+    item3
+    <ul>
+      <li>item3.1</li>
+      <li>item3.2</li>
+      <li>item3.3</li>
+    </ul>
+  </li>
 </ol>
 ```
 
@@ -151,7 +151,7 @@ li.some_class ~ li {
 
 ### Attribute Selectors
 
--   you can query by attribute presence, **value does not matter**
+- you can query by attribute presence, **value does not matter**
 
 ```css
 /*
@@ -161,41 +161,41 @@ element[alt] {
 }
 ```
 
--   you can query by exact value
+- you can query by exact value
 
 ```css
-element[alt='some image description'] {
+element[alt="some image description"] {
 }
 ```
 
--   value begins with something, **it ignores any dashes that come after it**.
-    Mostly used on languages attributes.
+- value begins with something, **it ignores any dashes that come after it**.
+  Mostly used on languages attributes.
 
 ```css
 /*
     match all element that has alt which starts with: "some"
 */
-element[alt|='some'] {
-    /*
+element[alt|="some"] {
+  /*
     <element lang = "some-us">
     <element lang = "some">
     */
 }
 ```
 
--   you can query by value which starts with (`^`) ends or (`$`) or has (`*`) some
-    query
+- you can query by value which starts with (`^`) ends or (`$`) or has (`*`) some
+  query
 
 ```css
-element[alt$='some'],
-element[alt*='some'],
-element[alt^='some'] {
+element[alt$="some"],
+element[alt*="some"],
+element[alt^="some"] {
 }
 ```
 
--   you can also force case insensitivity using `i` When using
-    `element[alt="some"]` that query inside quotes will match using case
-    sensitivity by default. You can change that behavior
+- you can also force case insensitivity using `i` When using
+  `element[alt="some"]` that query inside quotes will match using case
+  sensitivity by default. You can change that behavior
 
 ```css
 element[alt="some" i]
@@ -205,18 +205,18 @@ element[alt="some" i]
 
 These are:
 
--   `:enabled`
--   `:disabled`
--   `:checked`
--   `indeterminate`
+- `:enabled`
+- `:disabled`
+- `:checked`
+- `indeterminate`
 
 And many more, just read the docs...
 
 For example:
 
 ```css
-input[type='checkbox']:checked + label {
-    color: red;
+input[type="checkbox"]:checked + label {
+  color: red;
 }
 ```
 
@@ -224,17 +224,17 @@ input[type='checkbox']:checked + label {
 
 These include:
 
--   `:only-child`
--   `:nth-of-type`
-    -   even
-    -   odd
-    -   an + b (offset can be negative)
+- `:only-child`
+- `:nth-of-type`
+  - even
+  - odd
+  - an + b (offset can be negative)
 
 And more... But what peaked my interest are those:
 
--   `:root` (Angular2+ similarity?)
--   `:empty`
--   `:blank`
+- `:root` (Angular2+ similarity?)
+- `:empty`
+- `:blank`
 
 #### `:root`
 
@@ -273,7 +273,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: var(--fire-red);
+  color: var(--fire-red);
 }
 
 / / the same as \/ article h2,
@@ -281,7 +281,7 @@ article h3,
 article h4,
 article h5,
 article h6 {
-    color: var(--fire-red);
+  color: var(--fire-red);
 }
 ```
 
@@ -298,11 +298,11 @@ The following is an example of the `:has` selector where we specify the number o
 
 ```css
 ul:has(li:nth-child(6)) {
-    columns: 2;
+  columns: 2;
 }
 
 ul:has(li:nth-child(11)) {
-    columns: 3;
+  columns: 3;
 }
 ```
 
@@ -313,7 +313,7 @@ on the `body` tag**.
 
 ```css
 body:has(input.blur-answer:checked) .answer {
-    filter: blur(5px);
+  filter: blur(5px);
 }
 ```
 
@@ -324,7 +324,7 @@ backwards"**.
 
 ```css
 ul li:has(+ .select-before) {
-    /* styles */
+  /* styles */
 }
 ```
 
@@ -333,7 +333,7 @@ technique is quite useful for styling labels if the input value is invalid.
 
 ```css
 label:has(+ input:user-invalid) {
-    /* some styles */
+  /* some styles */
 }
 ```
 
@@ -343,7 +343,7 @@ You can even produce layouts that have **different styles based on the amount of
 
 ```css
 .container:has(> *:nth-child(10)) {
-    /* This only selects the container if it has 10 or more children */
+  /* This only selects the container if it has 10 or more children */
 }
 ```
 
@@ -358,7 +358,7 @@ What about styling **all the siblings but not the element we are interacting wit
 
 ```css
 .card-list:has(.card:hover) .card:not(:hover) {
-    scale: 0.9;
+  scale: 0.9;
 }
 ```
 
@@ -370,13 +370,13 @@ The `:has` selector is very powerful when combined with inputs. Check out this e
 
 ```html
 <style>
-    .notice {
-        display: none;
-    }
+  .notice {
+    display: none;
+  }
 
-    .body:has(#toggle:checked) .notice {
-        display: block;
-    }
+  .body:has(#toggle:checked) .notice {
+    display: block;
+  }
 </style>
 
 <input type="checkbox" id="toggle" />
@@ -414,7 +414,7 @@ tag?
 
 ```css
 img:not([alt]) {
-    outline: 5px solid red;
+  outline: 5px solid red;
 }
 ```
 
@@ -430,8 +430,8 @@ you can create _book-like_ text
 
 ```css
 p::first-letter {
-    font-size: 40px;
-    color: red;
+  font-size: 40px;
+  color: red;
 }
 ```
 
@@ -445,7 +445,7 @@ This is pretty neat!.
   all selected paragraphs will have red color
 */
 p::selection {
-    color: red;
+  color: red;
 }
 ```
 
@@ -457,11 +457,11 @@ the DOM, you cannot highlight it.
 ```css
 p::before,
 p::after {
-    /*required!!!*/
-    content: '';
-    display: block;
-    width: 50px;
-    height: 50px;
+  /*required!!!*/
+  content: "";
+  display: block;
+  width: 50px;
+  height: 50px;
 }
 ```
 
@@ -470,7 +470,7 @@ all you can be a _pro leet hackorz_ and use `none`
 
 ```css
 p::before {
-    content: none;
+  content: none;
 }
 ```
 
@@ -478,11 +478,11 @@ You can also do citations with quotes, kinda nice
 
 ```css
 p::after {
-    content: close-quote;
+  content: close-quote;
 }
 
 p::before {
-    content: open-quote;
+  content: open-quote;
 }
 ```
 
@@ -516,15 +516,15 @@ the `inline` and `block` keywords**.
 
 ```css
 .foo {
-    margin-inline-start: 10px; /* AKA margin-right */
-    margin-inline-end: 10px; /* AKA margin-left */
-    block-size: 30px; /* AKA the height */
-    inline-size: 40px; /* AKA the width */
+  margin-inline-start: 10px; /* AKA margin-right */
+  margin-inline-end: 10px; /* AKA margin-left */
+  block-size: 30px; /* AKA the height */
+  inline-size: 40px; /* AKA the width */
 }
 
 .bar {
-    inset-inline-start: 10px; /* AKA left: 10px */
-    inset-inline-end: 20px; /* AKA right: 20px */
+  inset-inline-start: 10px; /* AKA left: 10px */
+  inset-inline-end: 20px; /* AKA right: 20px */
 }
 ```
 
@@ -549,7 +549,7 @@ The other day, you wanted to create a container that spans 50% of the viewport w
 
 ```css
 .container {
-    inline-size: 50vw;
+  inline-size: 50vw;
 }
 ```
 
@@ -558,14 +558,14 @@ The **`vw` unit is not "responsive" to the changes in writing direction**. You o
 
 Enter the `vi` and `vb` units.
 
--   The `vi` is for the _inline direction_.
--   The `vb` is for the _block direction_.
+- The `vi` is for the _inline direction_.
+- The `vb` is for the _block direction_.
 
 So, the previous snippet should be rewritten to the following
 
 ```css
 .container {
-    inline-size: 50vi;
+  inline-size: 50vi;
 }
 ```
 
@@ -590,13 +590,13 @@ To declare a _global variable_, use the `:root` scope.
 
 ```html
 <style>
-    :root {
-        --my-color: black;
-    }
+  :root {
+    --my-color: black;
+  }
 
-    button {
-        background: var(--my-color);
-    }
+  button {
+    background: var(--my-color);
+  }
 </style>
 ```
 
@@ -604,21 +604,21 @@ To declare a _scoped variable_, declare the variable inside a given scope.
 
 ```html
 <style>
-    :root {
-        --my-color: black;
-    }
+  :root {
+    --my-color: black;
+  }
 
-    button {
-        background: var(--my-color);
-    }
+  button {
+    background: var(--my-color);
+  }
 
-    .page {
-        --my-color: blue;
-    }
+  .page {
+    --my-color: blue;
+  }
 
-    .page button {
-        background: var(--my-color);
-    }
+  .page button {
+    background: var(--my-color);
+  }
 </style>
 ```
 
@@ -626,7 +626,7 @@ It is possible to **declare a fallback for a given variable**. Think using`??` s
 
 ```css
 .page button {
-    background: var(--i-do-not-exist, black);
+  background: var(--i-do-not-exist, black);
 }
 ```
 
@@ -637,13 +637,13 @@ semantics of a given property**. It is pretty magical. Check this out.
 
 ```css
 @property --my-color {
-    syntax: '<color>';
-    inherits: false;
-    initial-value: black;
+  syntax: "<color>";
+  inherits: false;
+  initial-value: black;
 }
 
 button {
-    background: var(--my-color);
+  background: var(--my-color);
 }
 ```
 
@@ -663,13 +663,13 @@ Let us say you have the following CSS.
 ```css
 /* This is equivalent to the HTML document, but it also applies to SVG elements "root" */
 :root {
-    --font-size: 1rem;
-    --font-size-large: calc(2 * var(--font-size));
+  --font-size: 1rem;
+  --font-size-large: calc(2 * var(--font-size));
 }
 
 h1 {
-    --font-size: 2rem;
-    font-size: var(--font-size-large);
+  --font-size: 2rem;
+  font-size: var(--font-size-large);
 }
 ```
 
@@ -684,15 +684,15 @@ To make this code work, we would have to change where the computation happens.
 
 ```css
 :root {
-    --font-size: 1rem;
+  --font-size: 1rem;
 }
 
 .font-resize {
-    font-size: calc(var(--font-size-adjust, 1) * var(--font-size));
+  font-size: calc(var(--font-size-adjust, 1) * var(--font-size));
 }
 
 .font-large {
-    --font-size-adjust: 2.5;
+  --font-size-adjust: 2.5;
 }
 ```
 
@@ -719,15 +719,15 @@ as `true` value in other programming languages**.
 
 ```css
 .box {
-    /* notice the space here! */
-    --toggler: ;
-    /* read this as "if toggler then .." */
-    --red-if-toggler: var(--toggler) red;
+  /* notice the space here! */
+  --toggler: ;
+  /* read this as "if toggler then .." */
+  --red-if-toggler: var(--toggler) red;
 
-    /* the background will be red */
-    background: var(--red-if-toggler, blue);
-    width: 50px;
-    height: 50px;
+  /* the background will be red */
+  background: var(--red-if-toggler, blue);
+  width: 50px;
+  height: 50px;
 }
 ```
 
@@ -736,14 +736,14 @@ the `initial` keyword**.
 
 ```css
 .box {
-    --toggler: initial;
-    /* read this as "if toggler then .." */
-    --red-if-toggler: var(--toggler) red;
+  --toggler: initial;
+  /* read this as "if toggler then .." */
+  --red-if-toggler: var(--toggler) red;
 
-    /* the background will be blue */
-    background: var(--red-if-toggler, blue);
-    width: 50px;
-    height: 50px;
+  /* the background will be blue */
+  background: var(--red-if-toggler, blue);
+  width: 50px;
+  height: 50px;
 }
 ```
 
@@ -751,17 +751,17 @@ You can toggle the "toggler" using _media queries_.
 
 ```css
 .box {
-    --toggler: initial;
-    --red-if-toggler: var(--toggler) red;
-    background: var(--red-if-toggler, blue);
-    width: 50px;
-    height: 50px;
+  --toggler: initial;
+  --red-if-toggler: var(--toggler) red;
+  background: var(--red-if-toggler, blue);
+  width: 50px;
+  height: 50px;
 }
 
 @media (max-width: 600px) {
-    .box {
-        --toggler: ;
-    }
+  .box {
+    --toggler: ;
+  }
 }
 ```
 
@@ -771,18 +771,18 @@ And here is the usage with the `hover` pseudo-selector;
 
 ```css
 :root {
-    /*Remember – empty space acts as a "true" value*/
-    --hover-false: ;
-    --hover-true: initial;
+  /*Remember – empty space acts as a "true" value*/
+  --hover-false: ;
+  --hover-true: initial;
 }
 
 a {
-    background: var(--hover-false, red) var(--hover-true, blue);
+  background: var(--hover-false, red) var(--hover-true, blue);
 }
 
 a:hover {
-    --hover-false: initial;
-    --hover-true: ;
+  --hover-false: initial;
+  --hover-true: ;
 }
 ```
 
@@ -801,33 +801,33 @@ At the time of writing, this only works in newest Chrome-based browsers.
 
 ```css
 .container {
-    container-type: inline-size;
-    container-name: box-container;
-    --toggle: 0;
+  container-type: inline-size;
+  container-name: box-container;
+  --toggle: 0;
 }
 
 @media (max-width: 600px) {
-    .container {
-        --toggle: 1;
-    }
+  .container {
+    --toggle: 1;
+  }
 }
 
 .box {
-    background: var(--bg);
-    width: 50px;
-    height: 50px;
+  background: var(--bg);
+  width: 50px;
+  height: 50px;
 }
 
 @container box-container style(--toggle: 1) {
-    .box {
-        --bg: red;
-    }
+  .box {
+    --bg: red;
+  }
 }
 
 @container box-container style(--toggle: 0) {
-    .box {
-        --bg: blue;
-    }
+  .box {
+    --bg: blue;
+  }
 }
 ```
 
@@ -846,15 +846,15 @@ alone, and the web community has your back! – enter _cascade layers_.
 
 /* Due to the explicit ordering definition, the buttons are red. */
 @layer declared_first {
-    button {
-        background: red;
-    }
+  button {
+    background: red;
+  }
 }
 
 @layer declared_second {
-    button {
-        background: black;
-    }
+  button {
+    background: black;
+  }
 }
 ```
 
@@ -865,22 +865,22 @@ inside content**.
 @layer declared_second, declared_first;
 
 @layer declared_first {
-    button {
-        background: red;
-    }
+  button {
+    background: red;
+  }
 }
 
 @layer declared_second {
-    button {
-        background: black;
-    }
+  button {
+    background: black;
+  }
 }
 
 /* Now the buttons have a red background with a blue text color. */
 @layer declared_first {
-    button {
-        color: blue;
-    }
+  button {
+    color: blue;
+  }
 }
 ```
 
@@ -892,20 +892,20 @@ Consider the following snippet.
 
 ```html
 <style>
-    [data-theme='red'] a {
-        color: red;
-    }
+  [data-theme="red"] a {
+    color: red;
+  }
 
-    [data-theme='blue'] a {
-        color: blue;
-    }
+  [data-theme="blue"] a {
+    color: blue;
+  }
 </style>
 
 <div data-theme="blue">
-    <a>Should be blue</a>
-    <div data-theme="red">
-        <a>Should be red (but is actually blue)</a>
-    </div>
+  <a>Should be blue</a>
+  <div data-theme="red">
+    <a>Should be red (but is actually blue)</a>
+  </div>
 </div>
 ```
 
@@ -916,20 +916,20 @@ How could we make these styles work? **We can achieve the desired end-result via
 
 ```html
 <style>
-    [data-theme='red'] {
-        color: red;
-    }
+  [data-theme="red"] {
+    color: red;
+  }
 
-    [data-theme='blue'] {
-        color: blue;
-    }
+  [data-theme="blue"] {
+    color: blue;
+  }
 </style>
 
 <div data-theme="blue">
-    <a>Is blue</a>
-    <div data-theme="red">
-        <a>Is red</a>
-    </div>
+  <a>Is blue</a>
+  <div data-theme="red">
+    <a>Is red</a>
+  </div>
 </div>
 ```
 
@@ -939,24 +939,24 @@ know that **custom properties also are subject of inheritance**.
 
 ```html
 <style>
-    [data-theme='red'] {
-        --background-color: red;
-    }
+  [data-theme="red"] {
+    --background-color: red;
+  }
 
-    [data-theme='blue'] {
-        --background-color: blue;
-    }
+  [data-theme="blue"] {
+    --background-color: blue;
+  }
 
-    a {
-        background-color: var(--background-color);
-    }
+  a {
+    background-color: var(--background-color);
+  }
 </style>
 
 <div data-theme="blue">
-    <a>Is blue</a>
-    <div data-theme="red">
-        <a>Is red</a>
-    </div>
+  <a>Is blue</a>
+  <div data-theme="red">
+    <a>Is red</a>
+  </div>
 </div>
 ```
 
@@ -999,7 +999,7 @@ This one is entirely new for me. Instead of animating height-related properties,
 Combine it with the `overflow: hidden` property, and you have a beautiful "collapse" animation.
 
 ```js
-document.getElementById('app').innerHTML = `
+document.getElementById("app").innerHTML = `
 <button type = "button" id = "toggle">Toggle</button>
 <div class = "box">
   <div class = "box-inner">
@@ -1009,36 +1009,36 @@ document.getElementById('app').innerHTML = `
     <p>content</p>
   </div>
 </div>
-`
+`;
 
-const button = document.getElementById('toggle')
-const box = document.querySelector('.box')
+const button = document.getElementById("toggle");
+const box = document.querySelector(".box");
 
-button.addEventListener('click', function onButtonClick() {
-    const isHidden = box.classList.contains('hidden')
-    if (isHidden) {
-        box.classList.remove('hidden')
-        return
-    }
+button.addEventListener("click", function onButtonClick() {
+  const isHidden = box.classList.contains("hidden");
+  if (isHidden) {
+    box.classList.remove("hidden");
+    return;
+  }
 
-    box.classList.add('hidden')
-})
+  box.classList.add("hidden");
+});
 ```
 
 ```css
 .box {
-    display: grid;
-    grid-template-rows: 1fr;
-    background: red;
-    transition: grid-template-rows 0.5s ease-in-out;
+  display: grid;
+  grid-template-rows: 1fr;
+  background: red;
+  transition: grid-template-rows 0.5s ease-in-out;
 }
 
 .box-inner {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .hidden {
-    grid-template-rows: 0fr;
+  grid-template-rows: 0fr;
 }
 ```
 
@@ -1053,48 +1053,48 @@ potential drawbacks as well as the benefits it brings to the table.
 
 ### Syntax
 
--   You write your CSS, either via some kind of `css` function or via `styled.TAG_NAME`.
+- You write your CSS, either via some kind of `css` function or via `styled.TAG_NAME`.
 
-    -   These were popularized by _emotion.js_ and _styled-components_ libraries.
+  - These were popularized by _emotion.js_ and _styled-components_ libraries.
 
--   The big advantage here is that you can use React-declared variables to style the elements. This **makes the styles
-    dynamic**.
+- The big advantage here is that you can use React-declared variables to style the elements. This **makes the styles
+  dynamic**.
 
-    -   Keep in mind that **you can pretty much do the same thing with CSS variables**.
+  - Keep in mind that **you can pretty much do the same thing with CSS variables**.
 
 ### How does CSS-in-JS work?
 
 > Based on [this article](https://www.lauchness.com/blog/emotion-under-the-hood)
 
--   The styles you wrote are **serialized into CSS**.
+- The styles you wrote are **serialized into CSS**.
 
-    -   For **static styles**, this could happen at build time or at runtime.
+  - For **static styles**, this could happen at build time or at runtime.
 
-    -   For **dynamic styles**, this happen at runtime, **when your component runs**.
+  - For **dynamic styles**, this happen at runtime, **when your component runs**.
 
-    -   **Serialization is costly**. It is the major performance hot-spot in many libraries.
+  - **Serialization is costly**. It is the major performance hot-spot in many libraries.
 
--   Then these styles are **injected into the HTML**. This also takes a bit of time.
+- Then these styles are **injected into the HTML**. This also takes a bit of time.
 
-    -   CSS-in-JS libraries usually leverage catching so not to include the same definitions multiple times. The more
-        granular the serialized CSS is, the less duplication.
+  - CSS-in-JS libraries usually leverage catching so not to include the same definitions multiple times. The more
+    granular the serialized CSS is, the less duplication.
 
 ### The benefits
 
--   The ability to co-locate CSS and JSX in the same file
+- The ability to co-locate CSS and JSX in the same file
 
--   Speed of development and DX. It is easy to pick up and learn.
+- Speed of development and DX. It is easy to pick up and learn.
 
 ### The drawbacks
 
 > Learn more [by reading this article](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b)
 
--   Performance issues due to serialization and runtime dependency.
+- Performance issues due to serialization and runtime dependency.
 
--   Increased JS bundle size.
+- Increased JS bundle size.
 
--   **Using CSS-in-JS library can clutter your React dev-tools**. Most libraries inject special components responsible for
-    handling context (theme) and other stuff.
+- **Using CSS-in-JS library can clutter your React dev-tools**. Most libraries inject special components responsible for
+  handling context (theme) and other stuff.
 
 ### The bottom line
 
@@ -1118,15 +1118,15 @@ are composable, they might "appear" in different contexts. Ideally, they should 
 
 ```css
 .parent {
-    container: NameForTheContainer / inline-size;
+  container: NameForTheContainer / inline-size;
 }
 
 .child {
-    color: red;
+  color: red;
 
-    @container NameForTheContainer (max-width: 400px) {
-        color: blue;
-    }
+  @container NameForTheContainer (max-width: 400px) {
+    color: blue;
+  }
 }
 ```
 
@@ -1140,9 +1140,9 @@ Every API/feature has pitfalls. This one is no different.
 
 ```css
 .nav {
-    container: nav / inline-size;
-    display: flex;
-    gap: 1rem;
+  container: nav / inline-size;
+  display: flex;
+  gap: 1rem;
 }
 ```
 
@@ -1152,14 +1152,14 @@ In the code above, the `width` of the container will have an effective width of 
 
 ```css
 .nav {
-    container: nav / inline-size;
-    display: flex;
-    gap: 1rem;
+  container: nav / inline-size;
+  display: flex;
+  gap: 1rem;
 }
 
 @container nav (min-width: 700px) {
-    /*This will not work!*/
-    background: red;
+  /*This will not work!*/
+  background: red;
 }
 ```
 
@@ -1170,18 +1170,18 @@ treated as if it did not exist in terms of layout**.
 
 ```html
 <div style="display: flex">
-    <!-- As if this div \/ did not exist from the layout perspective -->
-    <div style="display: contents;">
-        <!-- The children are subject to the flex algorithm -->
-        <span>foo</span>
-        <span>bar</span>
-    </div>
+  <!-- As if this div \/ did not exist from the layout perspective -->
+  <div style="display: contents;">
+    <!-- The children are subject to the flex algorithm -->
+    <span>foo</span>
+    <span>bar</span>
+  </div>
 </div>
 ```
 
--   The colors and fonts inherit from the `display: contents` parent.
+- The colors and fonts inherit from the `display: contents` parent.
 
--   The **padding, width and all box-related properties are ignored**.
+- The **padding, width and all box-related properties are ignored**.
 
 ### But what about `subgrid`?
 
@@ -1204,74 +1204,74 @@ The **children can use the rows from the parent, and the columns from the grandp
 
 ## The _lobotomized owl_ selector
 
--   Its name from how the selector "looks" when written: `* + *`.
+- Its name from how the selector "looks" when written: `* + *`.
 
--   It **used to be more widely used since we did not have `gap` property at our disposal**.
+- It **used to be more widely used since we did not have `gap` property at our disposal**.
 
-    -   Without the `gap` property, adding spacing between children was a bit tricky. If you were not careful, you could
-        introduce the "leftover" spacing.
+  - Without the `gap` property, adding spacing between children was a bit tricky. If you were not careful, you could
+    introduce the "leftover" spacing.
 
-        -   If you did, in most cases you also had to apply negative margins.
+    - If you did, in most cases you also had to apply negative margins.
 
-        ```html
-        <style>
-            p {
-                margin-block-end: 1rem;
-            }
-        </style>
-        <section>
-            <p>foo</p>
-            <p>foo</p>
-            <p>I will have a "leftover" spacing at the bottom</p>
-        </section>
-        ```
+    ```html
+    <style>
+      p {
+        margin-block-end: 1rem;
+      }
+    </style>
+    <section>
+      <p>foo</p>
+      <p>foo</p>
+      <p>I will have a "leftover" spacing at the bottom</p>
+    </section>
+    ```
 
-        Contrast this with the following. The `margin-block-end` is only applies to the _second_ paragraph (in this
-        particular case, using `margin-block-start` would be a better option).
+    Contrast this with the following. The `margin-block-end` is only applies to the _second_ paragraph (in this
+    particular case, using `margin-block-start` would be a better option).
 
-        ```html
-        <style>
-            section p + p {
-                margin-block-end: 1rem;
-            }
-        </style>
-        <section>
-            <p>foo</p>
-            <p>foo</p>
-            <p>I will NOT have a "leftover" spacing at the bottom</p>
-        </section>
-        ```
+    ```html
+    <style>
+      section p + p {
+        margin-block-end: 1rem;
+      }
+    </style>
+    <section>
+      <p>foo</p>
+      <p>foo</p>
+      <p>I will NOT have a "leftover" spacing at the bottom</p>
+    </section>
+    ```
 
 ## The `color-mix` function
 
--   There are multiple **color models or formats or spaces** (I've seen different wording used in different articles) now
-    in CSS.
+- There are multiple **color models or formats or spaces** (I've seen different wording used in different articles) now
+  in CSS.
 
-    -   These define how "rich" the color is on different displays, and also how the colors mix using the `color-mix`
-        function.
+  - These define how "rich" the color is on different displays, and also how the colors mix using the `color-mix`
+    function.
 
--   The syntax looks like this: `color-mox(in oklab, white 30%, black)`
+- The syntax looks like this: `color-mox(in oklab, white 30%, black)`
 
--   The **`color-mix` will allow you to implement the "darken(X)" semantics for a given color**.
+- The **`color-mix` will allow you to implement the "darken(X)" semantics for a given color**.
 
-    -   I used to have this `darken` function in my SCSS code back in the day.
+  - I used to have this `darken` function in my SCSS code back in the day.
 
 ## The `tabular-nums`
 
--   Use the `font-variant-numeric: tabular-nums;` every where you do not want the content shifting when some number
-    changes. I bet you encountered a situation where changing from `10` to `12` caused a slight layout shift. If you were
-    using the `tabular-nums` that would not be the case.
+- Use the `font-variant-numeric: tabular-nums;` every where you do not want the content shifting when some number
+  changes. I bet you encountered a situation where changing from `10` to `12` caused a slight layout shift. If you were
+  using the `tabular-nums` that would not be the case.
 
 ## CSS Grid and custom names
 
--   At the time of writing, there are two ways to create custom names when defining grid layouts.
+- At the time of writing, there are two ways to create custom names when defining grid layouts.
 
-    1.  Naming the lines.
+  1.  Naming the lines.
 
-    2.  Naming the areas.
+  2.  Naming the areas.
 
-    **Naming the lines is different than naming the areas**. The syntax is different and, overall, the end-result is a bit
-    different.
+  **Naming the lines is different than naming the areas**. The syntax is different and, overall, the end-result is a bit
+  different.
 
 ### Naming the lines
 
@@ -1280,35 +1280,35 @@ Below is an example of naming the lines and then using them.
 ```html
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>HTML + CSS</title>
-        <link rel="stylesheet" href="styles.css" />
-        <style>
-            .grid-container {
-                display: grid;
-                grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
-            }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>HTML + CSS</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr [content-start] 1fr [content-end] 1fr;
+      }
 
-            .main-content {
-                /* Notice the name here */
-                grid-area: content;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="grid-container">
-            <div class="main-content">
-                <p>...</p>
-                <p>...</p>
-                <p>...</p>
-                <p>...</p>
-                <p>...</p>
-            </div>
-        </div>
-    </body>
+      .main-content {
+        /* Notice the name here */
+        grid-area: content;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="main-content">
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+      </div>
+    </div>
+  </body>
 </html>
 ```
 
@@ -1329,36 +1329,36 @@ Here, we are going to use `grid-template-areas`. I find this approach a bit easi
 ```html
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>HTML + CSS</title>
-        <link rel="stylesheet" href="styles.css" />
-        <style>
-            .grid-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-areas: 'sider-1 content sider-2';
-            }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>HTML + CSS</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas: "sider-1 content sider-2";
+      }
 
-            .main-content {
-                /* Notice the name here */
-                grid-area: content;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="grid-container">
-            <div class="main-content">
-                <p>...</p>
-                <p>...</p>
-                <p>...</p>
-                <p>...</p>
-                <p>...</p>
-            </div>
-        </div>
-    </body>
+      .main-content {
+        /* Notice the name here */
+        grid-area: content;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="main-content">
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+        <p>...</p>
+      </div>
+    </div>
+  </body>
 </html>
 ```
 
@@ -1381,31 +1381,31 @@ use `appearance: none`. This definition tells the browser that you wish to be ab
 sample CSS (I'm using native CSS nesting).
 
 ```css
-input[type='checkbox'] {
-    appearance: none;
+input[type="checkbox"] {
+  appearance: none;
 
-    position: relative;
-    background: lightgray;
-    height: 1rem;
-    width: 1rem;
-    border: 1px solid black;
-    vertical-align: middle;
+  position: relative;
+  background: lightgray;
+  height: 1rem;
+  width: 1rem;
+  border: 1px solid black;
+  vertical-align: middle;
 
-    &::before {
-        content: '';
-        display: none;
-        width: 10px;
-        height: 10px;
-        background: red;
-        position: absolute;
-        inset-block: 0;
-        inset-inline: 0;
-        transform: translateY(50%);
-    }
+  &::before {
+    content: "";
+    display: none;
+    width: 10px;
+    height: 10px;
+    background: red;
+    position: absolute;
+    inset-block: 0;
+    inset-inline: 0;
+    transform: translateY(50%);
+  }
 
-    &:checked::before {
-        display: block;
-    }
+  &:checked::before {
+    display: block;
+  }
 }
 ```
 
@@ -1446,14 +1446,14 @@ area by using _pseudo-classes_.
 
 ```css
 .card {
-    /* Some styles */
-    position: relative;
+  /* Some styles */
+  position: relative;
 }
 
 a:before {
-    content: '';
-    position: absolute;
-    inset: 0;
+  content: "";
+  position: absolute;
+  inset: 0;
 }
 ```
 
@@ -1478,12 +1478,12 @@ In addition to `fit-content`, consider using the `max-width` property as well.
 
 ```css
 .centered {
-    position: fixed;
-    inset: 0;
-    width: fit-content;
-    height: fit-content;
-    margin: auto;
-    max-width: 80dvw;
+  position: fixed;
+  inset: 0;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  max-width: 80dvw;
 }
 ```
 

@@ -7,8 +7,8 @@
 ```javascript
 const num = 3;
 function multiplyBy2(inputNumber) {
-    const result = inputNumber * 2;
-    return result;
+  const result = inputNumber * 2;
+  return result;
 }
 const name = "Will";
 ```
@@ -97,11 +97,11 @@ Simple example:
 
 ```js
 function firstName(first) {
-    function fullName(last) {
-        // im going to put "first" inside my backpack :)
-        console.log(first + " " + last);
-    }
-    return fullName;
+  function fullName(last) {
+    // im going to put "first" inside my backpack :)
+    console.log(first + " " + last);
+  }
+  return fullName;
 }
 var name = firstName("Mister");
 name("Smith"); // Mister Smith

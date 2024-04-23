@@ -37,10 +37,10 @@ class Counter extends Component {
 
 ```js
 Object.assign(
-    {},
-    yourFirstCallToSetState,
-    yourSecondCallToSetState,
-    yourThirdCallToSetState, // wins
+  {},
+  yourFirstCallToSetState,
+  yourSecondCallToSetState,
+  yourThirdCallToSetState, // wins
 );
 ```
 
@@ -124,24 +124,24 @@ import { EventEmitter } from "events";
 import { users } from "../default-state.json";
 
 export default class UserStore extends EventEmitter {
-    users = users;
+  users = users;
 
-    createUser = ({ name, email }) => {
-        const user = {
-            id: Date.now().toString(),
-            name,
-            email,
-        };
-        this.users = [...this.users, user];
-        this.emit("change", this.users);
+  createUser = ({ name, email }) => {
+    const user = {
+      id: Date.now().toString(),
+      name,
+      email,
     };
+    this.users = [...this.users, user];
+    this.emit("change", this.users);
+  };
 
-    updateUser = updatedUser => {
-        this.users = users.map((user: any) => {
-            return user.id === updatedUser.id ? updatedUser : user;
-        });
-        this.emit("change", this.users);
-    };
+  updateUser = (updatedUser) => {
+    this.users = users.map((user: any) => {
+      return user.id === updatedUser.id ? updatedUser : user;
+    });
+    this.emit("change", this.users);
+  };
 }
 ```
 
@@ -149,9 +149,9 @@ Then you could be using this inside a component like this:
 
 ```jsx
 React.useEffect(() => {
-    const listener = users => setState({ users });
-    UserStore.on("change", listener);
-    return () => void UserStore.removeListener("change", listener);
+  const listener = (users) => setState({ users });
+  UserStore.on("change", listener);
+  return () => void UserStore.removeListener("change", listener);
 }, []);
 ```
 
@@ -165,12 +165,12 @@ That's why you probably should wrap your `Provider.value` with `useMemo`
 
 ```js
 const ProviderValue = React.useMemo(
-    () => ({
-        users: state.users,
-        onCreateUser: createUser,
-        onUpdateUser: updateUser,
-    }),
-    [state.users],
+  () => ({
+    users: state.users,
+    onCreateUser: createUser,
+    onUpdateUser: updateUser,
+  }),
+  [state.users],
 );
 ```
 
@@ -181,7 +181,7 @@ const ProviderValue = React.useMemo(
 I've actually never used this one. It's used to shorten the `dispatch(action_here)` notation
 
 ```js
-const createAddAction = amount => {
+const createAddAction = (amount) => {
   return { type: "add", payload: { amount } };
 };
 const dispatchAdd = bindActionCreators(createAddAction, store.dispatch);
@@ -237,20 +237,19 @@ All of these are valid solutions, but the problem with them is that **they are q
 
 ```jsx
 function Component() {
-  const [data, setData] = useState(["initial", "initial", "initial"])
+  const [data, setData] = useState(["initial", "initial", "initial"]);
   const [displayedDataCount, setDisplayedDataCount] = useState(0);
 
   function onChangeData(index, payload) {
     const newData = [...data];
     newData[index] = payload;
-    setData(newData)
+    setData(newData);
   }
 
   function onAddData() {
     // And for remove we would subtract one here
-    setDisplayedDataCount(displayedDataCount+1)
+    setDisplayedDataCount(displayedDataCount + 1);
   }
-
 
   // render based on the `displayedDataCount`. NOT the `data` variable
 }

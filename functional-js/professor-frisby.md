@@ -5,11 +5,11 @@
 So lets say you want to transform some string.
 
 ```js
-const nextCharForNumberString = str => {
-    const trimmed = str.trim();
-    const number = parseInt(trimmed);
-    const nextNumber = number + 1;
-    return String.fromCharCode(nextNumber);
+const nextCharForNumberString = (str) => {
+  const trimmed = str.trim();
+  const number = parseInt(trimmed);
+  const nextNumber = number + 1;
+  return String.fromCharCode(nextNumber);
 };
 
 const result = nextCharForNumberString(" 64 ");
@@ -23,13 +23,13 @@ There is one problem with this function. **It's full of side-effects!**.
 Let's try to avoid side-effects using composable operations like `map`
 
 ```js
-const nextCharForNumberString = str =>
-    // putting stuff into `container`
-    [str]
-        .map(s => s.trim())
-        .map(s => parseInt(s))
-        .map(i => i + 1)
-        .map(i => String.fromCharCode(i));
+const nextCharForNumberString = (str) =>
+  // putting stuff into `container`
+  [str]
+    .map((s) => s.trim())
+    .map((s) => parseInt(s))
+    .map((i) => i + 1)
+    .map((i) => String.fromCharCode(i));
 
 console.log(result[0]);
 ```
@@ -40,18 +40,18 @@ Turns out that `container` is a data type called `Functor`. To be exact **functo
 
 ```js
 // this is going to be our functor
-const Box = x => ({
-    map: f => Box(f(x)),
-    // used for extracting values
-    fold: f => f(x),
+const Box = (x) => ({
+  map: (f) => Box(f(x)),
+  // used for extracting values
+  fold: (f) => f(x),
 });
 
-const nextCharForNumberString = str =>
-    // putting stuff into `container`
-    Box(str)
-        .map(s => s.trim())
-        .map(s => parseInt(s))
-        .map(i => i + 1);
+const nextCharForNumberString = (str) =>
+  // putting stuff into `container`
+  Box(str)
+    .map((s) => s.trim())
+    .map((s) => parseInt(s))
+    .map((i) => i + 1);
 ```
 
 Now we have algebraic structure to work with. **Your first functor**👍
@@ -61,15 +61,15 @@ Now we have algebraic structure to work with. **Your first functor**👍
 `Either` type is defined as `Left` or `Right`.
 
 ```js
-const Right = x => ({
-    map: f => Right(f(x)),
-    fold: (f, g) => g(x),
+const Right = (x) => ({
+  map: (f) => Right(f(x)),
+  fold: (f, g) => g(x),
 });
 
-const Left = x => ({
-    map: f => Left(x),
-    // first function is treated as error callback
-    fold: (f, g) => f(x),
+const Left = (x) => ({
+  map: (f) => Left(x),
+  // first function is treated as error callback
+  fold: (f, g) => f(x),
 });
 ```
 
@@ -79,20 +79,20 @@ Let's say you have a method that can return `null` or `undefined` but you still 
 ```js
 // can return undefined
 function getColor(name) {
-    return { green: "a", blue: "b", yellow: "c" }[name];
+  return { green: "a", blue: "b", yellow: "c" }[name];
 }
 
 // protecting against null or undefined
 function fromNullable(x) {
-    return x != null ? Right(x) : Left(x);
+  return x != null ? Right(x) : Left(x);
 }
 
 fromNullable(getColor("someColor"))
-    .map() /*some kind of operation*/
-    .fold(
-        e => console.log("undefined or null, all maps ignored"),
-        data => console.log(data),
-    );
+  .map() /*some kind of operation*/
+  .fold(
+    (e) => console.log("undefined or null, all maps ignored"),
+    (data) => console.log(data),
+  );
 ```
 
 ### Another example
@@ -103,13 +103,13 @@ Let's say you want to read from file (using `fs` module) but you also want to gu
 const fs = require("fs");
 
 const getPort = () => {
-    try {
-        const str = fs.readFileSync("config.json");
-        const config = JSON.parse(str);
-        return config.port;
-    } catch (e) {
-        return 3000;
-    }
+  try {
+    const str = fs.readFileSync("config.json");
+    const config = JSON.parse(str);
+    return config.port;
+  } catch (e) {
+    return 3000;
+  }
 };
 
 const result = getPort();
@@ -129,10 +129,13 @@ function tryCatch(f) {
 }
 
 const getPort = () =>
-  tryCatch(fs.readFileSync('config.json'))
+  tryCatch(fs.readFileSync("config.json"))
     // but hey this returns Right(Left) or Left(Right) or Right(Left)....
-    .map(config => tryCatch(JSON.parse(config)))
-    .fold(e => 3000, config => config.port);
+    .map((config) => tryCatch(JSON.parse(config)))
+    .fold(
+      (e) => 3000,
+      (config) => config.port,
+    );
 ```
 
 Yea there is one problem, and that problem has to do with **multiple container types**. How to solve that problem?
@@ -143,11 +146,11 @@ You feel really powerful with your `Functor` but you encountered a problem.
 
 ```js
 const applyDiscount = (price, discount) =>
-    // 1 functor deep
-    moneyToFloat(price).map(cost =>
-        // 2 functors deep
-        percentToFloat(discount).map(savings => cost - cost * savings)
-    );
+  // 1 functor deep
+  moneyToFloat(price).map((cost) =>
+    // 2 functors deep
+    percentToFloat(discount).map((savings) => cost - cost * savings),
+  );
 // Box(Box(4))
 console.log(applyDiscount("$5.00", "20%"));
 ```
@@ -156,11 +159,11 @@ Oh no! You have **a Box within a Box**. That is bad. You might say _ok Wojtek, I
 
 ```js
 const applyDiscount = (price, discount) =>
-    // 1 functor deep
-    moneyToFloat(price).fold(cost =>
-        // 2 functors deep
-        percentToFloat(discount).fold(savings => cost - cost * savings)
-    );
+  // 1 functor deep
+  moneyToFloat(price).fold((cost) =>
+    // 2 functors deep
+    percentToFloat(discount).fold((savings) => cost - cost * savings),
+  );
 ```
 
 But that's not really the solution. It just feels bad.
@@ -172,8 +175,8 @@ Chain method allows us to **escape nested containers**.
 ```js
 // defined inside Monad
 function chain(f) {
-    // x is from closure
-    return f(x);
+  // x is from closure
+  return f(x);
 }
 ```
 
@@ -186,9 +189,9 @@ Now everywhere we have nested containers we can use chain to make everything _fl
 Very basic example of such type is `Sum` type.
 
 ```js
-const Sum = x => ({
-    x,
-    concat: ({ x: y }) => Sum(x + y),
+const Sum = (x) => ({
+  x,
+  concat: ({ x: y }) => Sum(x + y),
 });
 ```
 
@@ -225,8 +228,8 @@ Using the power of Monad types we can achieve delayed computation pretty easily.
 
 ```js
 const LazyBox = (g = {
-  map: f => LazyBox(() => f(g())),
-  fold: f => f(g())
+  map: (f) => LazyBox(() => f(g())),
+  fold: (f) => f(g()),
 });
 ```
 

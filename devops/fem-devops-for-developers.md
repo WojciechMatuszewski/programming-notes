@@ -82,11 +82,11 @@ This framework could help you **avoid unnecessary work**. By slowing down and as
 
 3. What are the requirements?
 
-    - Keep them honest. Do not add anything that you "wish" you could do.
+   - Keep them honest. Do not add anything that you "wish" you could do.
 
-    - Some requirements **appear to be "free" or low-cost, but in reality they are not**.
+   - Some requirements **appear to be "free" or low-cost, but in reality they are not**.
 
-        - These mostly come in the form of vendors offering you free stuff. The stuff is not free! Your teams will have to learn the tool which takes time.
+     - These mostly come in the form of vendors offering you free stuff. The stuff is not free! Your teams will have to learn the tool which takes time.
 
 4. How do we solve this problem?
 

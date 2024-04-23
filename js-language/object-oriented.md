@@ -6,12 +6,12 @@ It creates brand new empty object, using an existing object as the prototype of 
 
 ```javascript
 var myBasePrototype = {
-    sayName() {
-        console.log("Wojtek");
-    },
-    sayLastName() {
-        console.log("Matuszewski");
-    },
+  sayName() {
+    console.log("Wojtek");
+  },
+  sayLastName() {
+    console.log("Matuszewski");
+  },
 };
 var obj = Object.create(myBasePrototype);
 obj.sayName();
@@ -27,13 +27,13 @@ Going with the 'prefer composition over inheritance' we can create a factory fun
 
 ```javascript
 function userCreator(name, score) {
-    return {
-        name,
-        score,
-        increment() {
-            this.score += 1;
-        },
-    };
+  return {
+    name,
+    score,
+    increment() {
+      this.score += 1;
+    },
+  };
 }
 const user1 = userCreator("Phil", 4);
 user1.increment();
@@ -46,16 +46,16 @@ Remember about call-site context. With above example we created `this`-aware fun
 
 ```javascript
 function userCreator(name, score) {
-    return {
-        name,
-        score,
-        increment() {
-            this.score += 1;
-        },
-        sayScore() {
-            console.log(this.score);
-        },
-    };
+  return {
+    name,
+    score,
+    increment() {
+      this.score += 1;
+    },
+    sayScore() {
+      console.log(this.score);
+    },
+  };
 }
 const user1 = userCreator("Phil", 4);
 user1.increment();
@@ -77,20 +77,20 @@ You can combine factory functions with prototype to get some nice results.
 ```javascript
 // let us create a shared-base of functionalities
 var userFunctionStore = {
-    // this functions  has to be this-aware, they are meant to be reusable
-    increment() {
-        this.score++;
-    },
-    login() {
-        console.log("You are logged in");
-    },
+  // this functions  has to be this-aware, they are meant to be reusable
+  increment() {
+    this.score++;
+  },
+  login() {
+    console.log("You are logged in");
+  },
 };
 
 function userCreator(name, score) {
-    var newUser = Object.create(userFunctionStore);
-    newUser.name = name;
-    newUser.score = score;
-    return newUser;
+  var newUser = Object.create(userFunctionStore);
+  newUser.name = name;
+  newUser.score = score;
+  return newUser;
 }
 ```
 
@@ -160,16 +160,16 @@ This `.prototype` will be used to put all of our shared functions or properties.
 ```javascript
 // userCreator is a function object combo, that object has .prototype property
 function userCreator(name, score) {
-    this.name = name;
-    this.score = score;
+  this.name = name;
+  this.score = score;
 }
 
-userCreator.prototype.increment = function() {
-    this.score++;
+userCreator.prototype.increment = function () {
+  this.score++;
 };
 
-userCreator.prototype.login = function() {
-    console.log("login");
+userCreator.prototype.login = function () {
+  console.log("login");
 };
 
 // calling userCreator function
@@ -218,19 +218,19 @@ We are doing even less work with `class` keyword
 
 ```javascript
 class UserCreator {
-    //  assignment using this keyword inside the function
-    constructor(name, score) {
-        this.name = name;
-        this.score = score;
-    }
+  //  assignment using this keyword inside the function
+  constructor(name, score) {
+    this.name = name;
+    this.score = score;
+  }
 
-    // adding methods to a prototype
-    increment() {
-        this.score++;
-    }
-    login() {
-        console.log("login");
-    }
+  // adding methods to a prototype
+  increment() {
+    this.score++;
+  }
+  login() {
+    console.log("login");
+  }
 }
 
 const user1 = new UserCreator("Eva", 9);
@@ -242,7 +242,7 @@ const user1 = new UserCreator("Eva", 9);
 
 ```javascript
 var obj = {
-    num: 3,
+  num: 3,
 };
 obj.num; // 3
 obj.hasOwnProperty("num"); // this comes from __proto__
@@ -341,18 +341,18 @@ paidUserCreator.prototype.increaseBalance = function() {
 
 ```javascript
 class userCreator {
-    constructor(name, score) {
-        // assigning props to this context created by new keyword
-        this.name = name;
-        this.score = score;
-    }
-    // adding props to .prototype
-    sayName() {
-        console.log(this.name);
-    }
-    increment() {
-        this.score++;
-    }
+  constructor(name, score) {
+    // assigning props to this context created by new keyword
+    this.name = name;
+    this.score = score;
+  }
+  // adding props to .prototype
+  sayName() {
+    console.log(this.name);
+  }
+  increment() {
+    this.score++;
+  }
 }
 
 // using extends does is equivalent to doing one of this
@@ -362,16 +362,16 @@ class userCreator {
 // extends also sets .__proto__ on paidUserCreator to userCreator
 // so that when we call super it knows 'where to go'
 class paidUserCreator extends userCreator {
-    constructor(paidName, paidScore, accountBalance) {
-        // use userCreator to help with creating .this context (it knows that it's userCreator because .__proto__ is set to it)
-        super(paidName, paidScore);
-        // context is created inside userCreator and returned here
-        // now we can add more properties to it
-        this.accountBalance = accountBalance;
-    }
-    increaseBalance() {
-        this.accountBalance++;
-    }
+  constructor(paidName, paidScore, accountBalance) {
+    // use userCreator to help with creating .this context (it knows that it's userCreator because .__proto__ is set to it)
+    super(paidName, paidScore);
+    // context is created inside userCreator and returned here
+    // now we can add more properties to it
+    this.accountBalance = accountBalance;
+  }
+  increaseBalance() {
+    this.accountBalance++;
+  }
 }
 
 var paidUser1 = new paidUserCreator("Alyssa", 8, 25);

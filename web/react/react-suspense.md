@@ -20,9 +20,9 @@ _loading state_" a first-class citizen of React programming paradigm.
 
 ```jsx
 <Menu>
-    <Suspense fallback={<p>Loading...</p>}>
-        <Account />
-    </Suspense>
+  <Suspense fallback={<p>Loading...</p>}>
+    <Account />
+  </Suspense>
 </Menu>
 ```
 
@@ -35,7 +35,7 @@ In React 16, the Suspense supported a single-use case – code splitting via the
 on the server**.
 
 > Side note regarding code splitting. Keep in mind that, **the more assets you load, the bigger the congestion on the
-network layer**. This is **quite important in terms of which HTTP protocol version your site is using**. Usually, this
+> network layer**. This is **quite important in terms of which HTTP protocol version your site is using**. Usually, this
 > is **not a problem with HTTP2 and above, but might be a problem in HTTP1.x**.
 
 The Suspense API controlled the visibility of the content **via `display:none` CSS property**. This behavior caused some
@@ -84,8 +84,8 @@ Input Delay_ metric, there are some drawbacks.
   unit of compute for React is a component. If one component takes 1 second to update, there is no way to "split" that
   work into chunks.
 
-    - Other frameworks, like Solid or Qwik are much more granular – the unit of compute is a single dom node. This means
-      that they possibly could implement a more granular "non-urgent" updates.
+  - Other frameworks, like Solid or Qwik are much more granular – the unit of compute is a single dom node. This means
+    that they possibly could implement a more granular "non-urgent" updates.
 
 You [can read more about this topic here](https://3perf.com/talks/react-concurrency/#suspense).
 
@@ -96,22 +96,22 @@ It turns out that **effects will NOT fire unless the Suspense boundary the compo
 
 ```jsx
 function MyComponent() {
-    const [finishedSuspending, setFinishedSuspending] = useState(false);
+  const [finishedSuspending, setFinishedSuspending] = useState(false);
 
-    return (
-        <Suspense fallback={<p>Loading...</p>}>
-            <Suspender />
-            <Lifecycle onEffectFired={() => setFinishedSuspending(true)} />
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <Suspender />
+      <Lifecycle onEffectFired={() => setFinishedSuspending(true)} />
+    </Suspense>
+  );
 }
 
 function Lifecycle({ onEffectFired }) {
-    useEffect(() => {
-        onEffectFired();
-    }, [onEffectFired]);
+  useEffect(() => {
+    onEffectFired();
+  }, [onEffectFired]);
 
-    return null;
+  return null;
 }
 ```
 
@@ -155,9 +155,9 @@ internet there is high-speed, so the bundles download in a split second.
 const LazyList = lazy(() => import("./List"));
 
 return (
-    <Suspense fallback={<p>Loading...</p>}>
-        <LazyList />
-    </Suspense>
+  <Suspense fallback={<p>Loading...</p>}>
+    <LazyList />
+  </Suspense>
 );
 ```
 
@@ -174,9 +174,9 @@ The following is the first option.
 const LazyList = lazy(() => import("./List"));
 
 return (
-    <Suspense fallback={null}>
-        <LazyList />
-    </Suspense>
+  <Suspense fallback={null}>
+    <LazyList />
+  </Suspense>
 );
 ```
 
@@ -188,21 +188,21 @@ To solve this particular problem, one might look into implementing the second po
 
 ```jsx
 const wait = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(() => resolve(undefined), ms);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(undefined), ms);
+  });
 };
 
 const List = lazy(async () => {
-    const result = await Promise.all([wait(1000), import("./List")]);
+  const result = await Promise.all([wait(1000), import("./List")]);
 
-    return result[1];
+  return result[1];
 });
 
 return (
-    <Suspense fallback={null}>
-        <LazyList />
-    </Suspense>
+  <Suspense fallback={null}>
+    <LazyList />
+  </Suspense>
 );
 ```
 
@@ -212,7 +212,7 @@ does not "flash"_.
 ### When does placeholder throttling occur
 
 > Before we start, know this – I'm not sure whether what I'm about to talk about is the so-called _placeholder
-throttling_. I've tried searching for an example but could not find any. I'm basing this section on my gut instinct and
+> throttling_. I've tried searching for an example but could not find any. I'm basing this section on my gut instinct and
 > understanding of the React 18 features.
 
 If you have ever used the new `useTransition` (and the `startTransition` function) hook, you might have noticed that the
@@ -228,52 +228,49 @@ import { Suspense, lazy, useState, useTransition } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 const wait = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(() => resolve(undefined), ms);
-    });
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(undefined), ms);
+  });
 };
 
 const getComponentResource = () => {
-    const max = 1000;
-    const min = 200;
-    const delay = Math.random() * (max - min) + min;
+  const max = 1000;
+  const min = 200;
+  const delay = Math.random() * (max - min) + min;
 
-    return lazy(async () => {
-        const result = await Promise.all([
-            wait(delay),
-            Promise.resolve({ default: EagerList }),
-        ]);
+  return lazy(async () => {
+    const result = await Promise.all([wait(delay), Promise.resolve({ default: EagerList })]);
 
-        return result[1];
-    });
+    return result[1];
+  });
 };
 
 function App() {
-    const [resource, setResource] = useState(() => getComponentResource());
-    const onNewResource = () => {
-        startTransition(() => setResource(getComponentResource()));
-    };
+  const [resource, setResource] = useState(() => getComponentResource());
+  const onNewResource = () => {
+    startTransition(() => setResource(getComponentResource()));
+  };
 
-    const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
-    const Comp = resource;
-    return (
-        <div>
-            <button onClick={onNewResource}>New resource</button>
-            <div style={{ opacity: isPending ? 0.4 : 1 }}>
-                <ErrorBoundary fallback={<p>Error!</p>}>
-                    <Suspense fallback={<p>Loading...</p>}>
-                        <Comp />
-                    </Suspense>
-                </ErrorBoundary>
-            </div>
-        </div>
-    );
+  const Comp = resource;
+  return (
+    <div>
+      <button onClick={onNewResource}>New resource</button>
+      <div style={{ opacity: isPending ? 0.4 : 1 }}>
+        <ErrorBoundary fallback={<p>Error!</p>}>
+          <Suspense fallback={<p>Loading...</p>}>
+            <Comp />
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+    </div>
+  );
 }
 
 const EagerList = () => {
-    const number = Math.random();
-    return <div>{number}</div>;
+  const number = Math.random();
+  return <div>{number}</div>;
 };
 ```
 
@@ -288,17 +285,17 @@ application.
 
 ```jsx
 return (
-    <ErrorBoundary fallback={<p>Error!</p>}>
-        <Suspense fallback={<p>Loading...</p>}>
-            <div>
-                <MoreComponents />
-                <button onClick={onNewResource}>New resource</button>
-                <div style={{ opacity: isPending ? 0.4 : 1 }}>
-                    <Comp />
-                </div>
-            </div>
-        </Suspense>
-    </ErrorBoundary>
+  <ErrorBoundary fallback={<p>Error!</p>}>
+    <Suspense fallback={<p>Loading...</p>}>
+      <div>
+        <MoreComponents />
+        <button onClick={onNewResource}>New resource</button>
+        <div style={{ opacity: isPending ? 0.4 : 1 }}>
+          <Comp />
+        </div>
+      </div>
+    </Suspense>
+  </ErrorBoundary>
 );
 ```
 
@@ -315,19 +312,19 @@ boundary. If the library you are using supports Suspense, you can use that to yo
 
 ```jsx
 const User = () => {
-    const { data } = useFetchUser();
+  const { data } = useFetchUser();
 
-    return <p>User name is {data.name}</p>;
+  return <p>User name is {data.name}</p>;
 };
 
 const App = () => {
-    return (
-        <ErrorBoundary>
-            <Suspense fallback={<p>Loading user...</p>}>
-                <User />
-            </Suspense>
-        </ErrorBoundary>
-    );
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<p>Loading user...</p>}>
+        <User />
+      </Suspense>
+    </ErrorBoundary>
+  );
 };
 ```
 
@@ -340,9 +337,9 @@ nearest `ErrorBoundary` (or crash your application).
 
 ### Event better way to fetch data
 
-While _fetching while you render_ is much better than _fetching after render_ (usually with `useEffect`), we can *
-*combine the power of `Suspense` with pre-fetching**. We could **start fetching the data as soon as the user hovers over
-some element, or even before that – when they land on a given page**!
+While _fetching while you render_ is much better than _fetching after render_ (usually with `useEffect`), we can \*
+\*combine the power of `Suspense` with pre-fetching**. We could **start fetching the data as soon as the user hovers over
+some element, or even before that – when they land on a given page\*\*!
 
 By shifting the fetching as much as possible to the left, we get the best UX. The app might feel as if it does not fetch
 any data!
@@ -357,15 +354,15 @@ this behavior above.
 But what if you really want to show the `fallback` every time, even if the `startTransition` is used?
 You can use the `key` prop on the `Suspense` component.
 
-```jsx 
+```jsx
 // We assume the `setSearchParams` causes an update which will trigger the Suspense and it is wrapped with `startTransition`.
-const [searchParams, setSearchParams] = useSearchParams()
+const [searchParams, setSearchParams] = useSearchParams();
 
 return (
-    <Suspense key={JSON.stringify(searchParams)}>
-        <List searchParams={searchParams} />
-    </Suspense>
-)
+  <Suspense key={JSON.stringify(searchParams)}>
+    <List searchParams={searchParams} />
+  </Suspense>
+);
 ```
 
 For more information, please

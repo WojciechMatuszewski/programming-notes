@@ -173,7 +173,7 @@
       (file) => {
         return file.size <= MAX_UPLOAD_SIZE;
       },
-      { message: "File is too large" }
+      { message: "File is too large" },
     );
   }
   ```
@@ -654,15 +654,11 @@ As a rule of thumb, consider only using `POST` and `GET` methods on the form.
     let consoleError: SpyInstance<Parameters<typeof console.error>>;
 
     beforeEach(() => {
-      consoleError = vi
-        .spyOn(console, "error")
-        .mockImplementation((...args) => {
-          originalConsoleError(...args);
-          // This will cause the test to fail if one does not mock the error.
-          throw new Error(
-            "`console.error` called. If you expect this to happen, mock the console.error"
-          );
-        });
+      consoleError = vi.spyOn(console, "error").mockImplementation((...args) => {
+        originalConsoleError(...args);
+        // This will cause the test to fail if one does not mock the error.
+        throw new Error("`console.error` called. If you expect this to happen, mock the console.error");
+      });
     });
 
     // The vitest and jest can automatically restore mocks so we do not have to call `mockRestore` here.
@@ -687,9 +683,7 @@ As a rule of thumb, consider only using `POST` and `GET` methods on the form.
 
   ```tsx
   function TestComponent() {
-    const [defaultPrevented, setDefaultPrevented] = useState<
-      "idle" | "no" | "yes"
-    >("idle");
+    const [defaultPrevented, setDefaultPrevented] = useState<"idle" | "no" | "yes">("idle");
 
     const dc = useDoubleCheck();
 
@@ -698,8 +692,7 @@ As a rule of thumb, consider only using `POST` and `GET` methods on the form.
         <output>Default Prevented: {defaultPrevented}</output>
         <button
           {...dc.getButtonProps({
-            onClick: (e) =>
-              setDefaultPrevented(e.defaultPrevented ? "yes" : "no"),
+            onClick: (e) => setDefaultPrevented(e.defaultPrevented ? "yes" : "no"),
           })}
         >
           {dc.doubleCheck ? "You sure?" : "Click me"}
@@ -732,9 +725,7 @@ As a rule of thumb, consider only using `POST` and `GET` methods on the form.
 
   await render(<App initialEntries={[`/users/${user.username}`]} />, {
     wrapper: ({ children }) => (
-      <AuthenticityTokenProvider token="test-csrf-token">
-        {children}
-      </AuthenticityTokenProvider>
+      <AuthenticityTokenProvider token="test-csrf-token">{children}</AuthenticityTokenProvider>
     ),
   });
   ```
@@ -760,9 +751,7 @@ As a rule of thumb, consider only using `POST` and `GET` methods on the form.
     - In `vitest` we can use the `VITEST_POOL_ID` environment variable.
 
       ```js
-      const databaseFile = `./tests/prisma/data.${
-        process.env.VITEST_POOL_ID ?? 0
-      }.db`;
+      const databaseFile = `./tests/prisma/data.${process.env.VITEST_POOL_ID ?? 0}.db`;
 
       const databasePath = path.join(process.cwd(), databaseFile);
       ```

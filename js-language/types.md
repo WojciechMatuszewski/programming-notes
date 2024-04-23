@@ -61,7 +61,7 @@ typeof doesNotExist; // "undefined"
 var v = null;
 typeof v; // "object"
 
-v = function() {};
+v = function () {};
 typeof v; // "function"
 
 // array type is subset of object
@@ -261,10 +261,10 @@ Comparison operator works by comparing identity not structure
 
 ```javascript
 var workshop1 = {
-  name: "..."
+  name: "...",
 };
 var workshop2 = {
-  name: "..."
+  name: "...",
 };
 
 console.log(workshop1 === workshop2); // false

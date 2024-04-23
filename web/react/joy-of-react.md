@@ -33,8 +33,8 @@ Going through [this course](https://www.joyofreact.com/) and writing what I've l
       "div", // element
       {}, // props,
       null, // children
-      somethingHere
-    )
+      somethingHere,
+    );
     ```
 
     Image putting an `if` statement in place of `somethingHere`. That would not work right? You **cannot pass `if` statements as parameters to a function**! Maybe you could wrap it with an IFFIe, and that works.
@@ -45,11 +45,11 @@ Going through [this course](https://www.joyofreact.com/) and writing what I've l
       {},
       null,
       (() => {
-        if(true) {
-          return "foo"
+        if (true) {
+          return "foo";
         }
-      })()
-    )
+      })(),
+    );
     ```
 
     So you **can write complex logic inside the JSX** but you have to wrap it with an IFFIe.
@@ -62,22 +62,13 @@ Going through [this course](https://www.joyofreact.com/) and writing what I've l
       <strong>Days until Santa returns:</strong>
       {daysUntilSantaReturns}
     </div>
-  )
+  );
   ```
 
   This piece of JSX gets translated to the following:
 
   ```js
-  React.createElement(
-    "div",
-    {},
-    React.createElement(
-      "strong",
-      {},
-      "Days until Santa returns:"
-    ),
-    daysUntilSantaReturns
-  )
+  React.createElement("div", {}, React.createElement("strong", {}, "Days until Santa returns:"), daysUntilSantaReturns);
   ```
 
   Notice that there is no whitespace after `Santa returns:`. **This is causing the output to be "hugged together" without any spacing**.
@@ -98,18 +89,15 @@ Going through [this course](https://www.joyofreact.com/) and writing what I've l
 
   ```jsx
   <div>
-    <SomeComponent name = {"Wojciech"}/>
-  </div>
+    <SomeComponent name={"Wojciech"} />
+  </div>;
 
   // is the same as
   React.createElement(
-    'div',
+    "div",
     {}, // props
-    React.createElement(
-      SomeComponent,
-      { name: "Wojciech" },
-    ),
-  )
+    React.createElement(SomeComponent, { name: "Wojciech" }),
+  );
   ```
 
 - **While the prop name `children` is "reserved", it is not special in any kind from the `createElement` perspective**.
@@ -185,32 +173,24 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
 - Using the `map`, and other functions which output arrays, to produce lists of JSX elements works because **React will "unpack" an array inside the _expression slot_ for us**.
 
   ```jsx
-  return (
-    <div>{["hi", "there"]}</div>
-  )
+  return <div>{["hi", "there"]}</div>;
   ```
 
   Imagine using `map` inside the _expression slot_ instead of hardcoding the data. This is how the syntax works. There is no magic.
 
   ```jsx
   <ul>
-    {items.map(item => (
+    {items.map((item) => (
       <li>{item}</li>
     ))}
-  </ul>
+  </ul>;
 
   // Transforms to
   React.createElement(
     "ul",
     {},
-    items.map(item => (
-      React.createElement(
-        "li",
-        {},
-        item
-      )
-    ))
-  )
+    items.map((item) => React.createElement("li", {}, item)),
+  );
   ```
 
 #### Keys
@@ -224,11 +204,11 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
 - Please note that the `key` is a "reserved keyword" in React. Even if it seems like you are passing it as a prop, the component will not have this prop defined.
 
   ```jsx
-  <Button key = "123">foo</Button>
+  <Button key="123">foo</Button>;
 
-  const Button = ({key}) => {
-    console.log(key) // undefined
-  }
+  const Button = ({ key }) => {
+    console.log(key); // undefined
+  };
   ```
 
 - You can **pass the `key` prop to a `React.Fragment`, but you have to use the "long" form, i.e the `Fragment` component**.
@@ -271,9 +251,7 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
     const items = [];
     const numOfItems = items.length;
 
-    <div>
-      {numOfItems && <Button>bar</Button>}
-    </div>
+    <div>{numOfItems && <Button>bar</Button>}</div>;
     ```
 
     The above will **render `0`. Why is that**? It is because **the `&&` does not return true of false, it returns either left or right side of the expression**. Check out the [mdn documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND).
@@ -283,9 +261,7 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
     - Keep in mind that the **ternary operator will short-circuit branches depending on the initial condition**.
 
       ```js
-      console.log("foo")
-        ? console.log("bar")
-        : console.log("other")
+      console.log("foo") ? console.log("bar") : console.log("other");
       ```
 
       In the above example, `bar` is never logged as this part of the code is never executed. **The `&&` operator works in a similar fashion**.
@@ -312,7 +288,7 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
           // It's okay, the `rowIndex` is unique within this array.
           <div class="row" key={rowIndex}>
             {cols.map((colIndex) => {
-          // It's okay, the `colIndex` is unique within this array.
+              // It's okay, the `colIndex` is unique within this array.
               return <div className="cell" key={colIndex} />;
             })}
           </div>
@@ -368,10 +344,10 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
 
     ```html
     <select>
-      <option value = "">Select a value</option>
-      <optgroup label = "Pets">
-        <option value = "dog">Dog</option>
-        <option value = "cat">cat</option>
+      <option value="">Select a value</option>
+      <optgroup label="Pets">
+        <option value="dog">Dog</option>
+        <option value="cat">cat</option>
       </optgroup>
     </select>
     ```
@@ -379,13 +355,15 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
 - **You might not need state for forms**. If you do not have to display the values from the inputs somewhere else, you could get away with only listening to `onSubmit` callback.
 
   ```jsx
-    <form onSubmit = {event => {
+  <form
+    onSubmit={(event) => {
       event.preventDefault();
-      console.log(event.currentTarget.elements['name'].value) // the value of the name field.
-    }}>
-      <label htmlFor = "name">Name</label>
-      <input type ="text" id = "name" name = "name"/>
-    </form>
+      console.log(event.currentTarget.elements["name"].value); // the value of the name field.
+    }}
+  >
+    <label htmlFor="name">Name</label>
+    <input type="text" id="name" name="name" />
+  </form>
   ```
 
 - **Consider NOT disabling the buttons**. There are [various problems with disabling buttons](https://adamsilver.io/blog/the-problem-with-disabled-buttons-and-what-to-do-instead/).
@@ -400,7 +378,7 @@ And if you want to do this **without introducing unnecessary HTML elements**, yo
 
   ```js
   colors[index] = "foo"; // mutation
-  setColors([...colors])
+  setColors([...colors]);
   ```
 
   This might work, but it does not guarantee that this will always work. It is better to flip the operation order, like so.
@@ -431,11 +409,9 @@ Because if you think about it, when React invokes our component, it also invokes
 
 ```jsx
 function Component() {
-  const [state, setState] = useState(0)
+  const [state, setState] = useState(0);
 
-  return (
-    <button onClick = {() => setState(prev => prev+1)}>click</button>
-  )
+  return <button onClick={() => setState((prev) => prev + 1)}>click</button>;
 }
 ```
 
@@ -497,7 +473,7 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
   - Of course, **if there are multiple places where the state changes, you should consider `useEffect`**.
 
-- Before using the `useEffect` + `ref` to focus the element, **consider using the `autofocus` attribute.
+- Before using the `useEffect` + `ref` to focus the element, \*\*consider using the `autofocus` attribute.
 
   - Sadly, **this attribute will not work for client-rendered apps** as the DOM node has to be there when the page first loads.
 
@@ -518,11 +494,8 @@ This concept is critical to understanding how the state works. I'm amazed that a
 - You can create a `toggle` hook via `useReducer`.
 
   ```jsx
-  function useToggle(initialValue = false){
-    return useReducer(
-      (state) => !state,
-      initialValue
-    )
+  function useToggle(initialValue = false) {
+    return useReducer((state) => !state, initialValue);
   }
   ```
 
@@ -537,7 +510,6 @@ This concept is critical to understanding how the state works. I'm amazed that a
 - Common gotcha is to try to use `async` functions inside the `useEffect`. No dice. You have to create an inner async function you then call.
 
   - Async functions are not compatible with `useEffect` API. The effect has to be synchronous, otherwise React would not be able to call the cleanup function in time (due to the promise still pending).
-
 
 ### Memoization
 
@@ -568,13 +540,13 @@ This concept is critical to understanding how the state works. I'm amazed that a
   ```jsx
   const handleAddCount = useMemo(() => {
     return () => {
-      setCount((current) => current + 10)
-    }
-  },[])
+      setCount((current) => current + 10);
+    };
+  }, []);
 
   const handleAddCount2 = useCallback(() => {
-    setCount(current => current + 10)
-  })
+    setCount((current) => current + 10);
+  });
   ```
 
 - **Before using memoization** consider using composition and moving components to `children`.
@@ -582,13 +554,13 @@ This concept is critical to understanding how the state works. I'm amazed that a
   - Remember: **if the "owner" of component state changes, all the children will re-render**. **You get to decide who is the owner**.
 
   ```jsx
-    function App() {
-      return (
-        <ComponentThatReRendersOften>
-          <ExpensiveChild/>
-        </ComponentThatReRendersOften>
-      )
-    }
+  function App() {
+    return (
+      <ComponentThatReRendersOften>
+        <ExpensiveChild />
+      </ComponentThatReRendersOften>
+    );
+  }
   ```
 
   In this case, the `ExpensiveChild` will **not re-render when `ComponentThatReRendersOften` re-renders**. This is because **the `App` component _owns_ the `ExpensiveChild`, not the `ComponentThatReRendersOften`**. This is crucial to understand. Using composition is a free optimization. It will also make your application more robust.
@@ -632,15 +604,14 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
   There are two solutions to passing the `ref` into the component.
 
-    1. Use a different prop than `ref`. This approach works, but since all other native HTML tags take the `ref` prop, I do not think it is a good idea in most cases (in some cases, where typing the component props could be very challenging, I think it is acceptable).
+  1. Use a different prop than `ref`. This approach works, but since all other native HTML tags take the `ref` prop, I do not think it is a good idea in most cases (in some cases, where typing the component props could be very challenging, I think it is acceptable).
 
-      ```jsx
-        const ref = useRef()
-        <Button forwardedRef = {ref}/>
-      ```
+     ```jsx
+       const ref = useRef()
+       <Button forwardedRef = {ref}/>
+     ```
 
-    2. Use the `forwardRef` function. This is usually what other developers do.
-
+  2. Use the `forwardRef` function. This is usually what other developers do.
 
 - When creating _polymorphic components_ (components that change their underlying tag), make sure to use upper-cased names for the tag.
 
@@ -659,11 +630,11 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
   2. It prevents tree-shaking from working correctly.
 
-    - I would say this is valid feedback, but does it really matter at such a granular level?
+  - I would say this is valid feedback, but does it really matter at such a granular level?
 
   3. **You might have issues in Next.js when using this pattern**.
 
-    - Since this is very framework-specific, I'm unsure about the merit of this argument, but it is an argument nevertheless.
+  - Since this is very framework-specific, I'm unsure about the merit of this argument, but it is an argument nevertheless.
 
 ### Slots
 
@@ -678,43 +649,41 @@ This concept is critical to understanding how the state works. I'm amazed that a
 - _Slots_ **are not a silver bullet**. Imagine the following scenario.
 
   ```jsx
-    <IconButton icon = {<Star size = {999}/>}>Some Text</IconButton>
+  <IconButton icon={<Star size={999} />}>Some Text</IconButton>
   ```
 
   We certainly do not want the consumer to be able to specify a huge icon like that. **We want the customer to have a flexibility of providing the markup, but we want the `IconButton` to control the props**.
 
   How do we solve the problem?
 
-    1. Use the `cloneElement` API and override the props.
+  1. Use the `cloneElement` API and override the props.
 
-    ```jsx
-    function App() {
-      return (
-        <IconButton icon = {<Star size = {999}>}/>
-      )
-    }
+  ```jsx
+  function App() {
+    return (
+      <IconButton icon = {<Star size = {999}>}/>
+    )
+  }
 
-    function IconButton({icon}) {
-      const iconModified = React.cloneElement(icon, {
-        // override the props here
-        size: 20
-      })
-    }
-    ```
+  function IconButton({icon}) {
+    const iconModified = React.cloneElement(icon, {
+      // override the props here
+      size: 20
+    })
+  }
+  ```
 
-    2. Pass the `icon` as a reference. Do no render it in the parent.
+  2. Pass the `icon` as a reference. Do no render it in the parent.
 
-    ```jsx
-    function App() {
-      return (
-        <IconButton Icon = {Size}/>
-      )
-    }
+  ```jsx
+  function App() {
+    return <IconButton Icon={Size} />;
+  }
 
-    function IconButton({Icon}) {
-      return <button>{<Icon size = {20}/>}</button>
-    }
-    ```
+  function IconButton({ Icon }) {
+    return <button>{<Icon size={20} />}</button>;
+  }
+  ```
 
   Both approaches are valid.
 
@@ -737,20 +706,19 @@ This concept is critical to understanding how the state works. I'm amazed that a
   - Either way, **if the place you render the provider in can change, you should memoize the context value**.
 
     ```jsx
-      function Provider({children}) {
-        const [state, setState] = useState({
-          // some values
-        })
+    function Provider({ children }) {
+      const [state, setState] = useState({
+        // some values
+      });
 
-        const value = useMemo(() => {
-          return {state, setValue}
-        }, [state])
-        return <Context.Provider value = {value}>{children}</Context.Provider>
-      }
+      const value = useMemo(() => {
+        return { state, setValue };
+      }, [state]);
+      return <Context.Provider value={value}>{children}</Context.Provider>;
+    }
     ```
 
     If we did not use `useMemo` in the example above, the `value` object would change every time the `Provider` re-renders (for example when the parent updates). This would trigger a re-render of every consumer of the context, as the `value` would be a new object!
-
 
   - **Memoizing the _Provider_ component might be a mistake – the `children` will ALMOST always be different if the parent changes**!
 
@@ -759,19 +727,14 @@ This concept is critical to understanding how the state works. I'm amazed that a
     - I wrote _almost always_ since there is a "trick" you can utilize to make the component constants.
 
       ```jsx
-      const constantChild = <Child/>
+      const constantChild = <Child />;
 
       function App() {
-        return (
-          <MemoizedComponent>
-            {constantChild}
-          </MemoizedComponent>
-        )
+        return <MemoizedComponent>{constantChild}</MemoizedComponent>;
       }
       ```
 
       As an alternative, you can `useMemo` a given component.
-
 
       ```jsx
       function App() {
@@ -808,22 +771,26 @@ This concept is critical to understanding how the state works. I'm amazed that a
 - **React keeps track of which state belongs to which component based on their place in the UI tree**. To illustrate, consider the following.
 
   ```tsx
-    function Component() {
-      const [color, setColor] = useState(undefined)
+  function Component() {
+    const [color, setColor] = useState(undefined);
 
-      return (
-        <div>
-        {color ? <Button color = {color}/> : <Button/>}
+    return (
+      <div>
+        {color ? <Button color={color} /> : <Button />}
         // color picker
-        </div>
-      )
-    }
+      </div>
+    );
+  }
 
-    function Button({color}) {
-      const [state, setState] = useState(0)
+  function Button({ color }) {
+    const [state, setState] = useState(0);
 
-      return (<button style = {{color}} onClick = {() => setState(prev => prev+1)}>click</button>)
-    }
+    return (
+      <button style={{ color }} onClick={() => setState((prev) => prev + 1)}>
+        click
+      </button>
+    );
+  }
   ```
 
   What suppose happens if you increment the state inside the `Button` and then change the color? Would the button state be reset? **That is not the case because the `Button` is still the same component in the tree**. The `key` of that component did not change, as such React will preserve the component instance.
@@ -831,16 +798,16 @@ This concept is critical to understanding how the state works. I'm amazed that a
   This is also the reason why the following buttons do not share the state ([example from official React docs](https://react.dev/learn/preserving-and-resetting-state)).
 
   ```jsx
-    export default function App() {
-      const counter = <Counter />;
+  export default function App() {
+    const counter = <Counter />;
 
-      return (
-        <div>
-          {counter}
-          {counter}
-        </div>
-      );
-    }
+    return (
+      <div>
+        {counter}
+        {counter}
+      </div>
+    );
+  }
   ```
 
   **You might think that the `Counter` shares the state here – THAT is not the case**! Both counters are rendered in different parts of the tree. Also **keep in mind that `React.createElement` gets a reference to the component function**.
@@ -870,8 +837,8 @@ This concept is critical to understanding how the state works. I'm amazed that a
   ```jsx
   function App() {
     <SomeComponent>
-      <OtherComponent/>
-    </SomeComponent>
+      <OtherComponent />
+    </SomeComponent>;
   }
   ```
 
@@ -883,58 +850,56 @@ This concept is critical to understanding how the state works. I'm amazed that a
 
 - Components should either be _controlled_ or _uncontrolled_. **You should never have a mix of two**.
 
-
   Consider the following example. In the example below, we are mixing the _controlled_ and _uncontrolled_ paradigms. **This makes the code hard to read and very prone to bugs**.
 
   ```jsx
-    function App() {
-      const [counter, setCounter] = useState(0)
+  function App() {
+    const [counter, setCounter] = useState(0);
 
-      return (
-        <div>
-          <Counter value ={counter} onChange={setCounter}/>
-          <Reset onReset = {() => setCounter(0)}/>
-        </div>
-      )
-    }
+    return (
+      <div>
+        <Counter value={counter} onChange={setCounter} />
+        <Reset onReset={() => setCounter(0)} />
+      </div>
+    );
+  }
 
-    function Counter({value, onChange}) {
-      const [internalValue, setInternalValue] = useState(value);
+  function Counter({ value, onChange }) {
+    const [internalValue, setInternalValue] = useState(value);
 
-      useEffect(() => {
-        setInternalValue(value)
-      }, [value])
+    useEffect(() => {
+      setInternalValue(value);
+    }, [value]);
 
-      return <button onClick = {() => {
-        const newValue = internalValue + 1;
-        setInternalValue(newValue);
-        onChange(newValue);
-      }}>{internalValue}</button>
-    }
+    return (
+      <button
+        onClick={() => {
+          const newValue = internalValue + 1;
+          setInternalValue(newValue);
+          onChange(newValue);
+        }}
+      >
+        {internalValue}
+      </button>
+    );
+  }
   ```
 
   The solution would be to **make the `Counter` to be controlled – get rid of the internal state**! As an alternative, one **might use the `key` prop to reset the `Counter` state**. This is a valid solution as well.
 
 - Keep in mind that **it is okay to copy props into state when the props are "initial props"**.
 
-
 ### Portals
 
 - When creating portals, remember that you can inject inside the `document.body` directly.
 
   ```jsx
-    return createPortal(
-      <div data-react-portal-host>
-        {children}
-      </div>,
-      document.body
-    )
+  return createPortal(<div data-react-portal-host>{children}</div>, document.body);
   ```
 
   Look how easy it is! No need for `useEffects` and tracking of DOM elements!
 
 ## Full Stack React
-
 
 ### Client vs. Server Rendering
 
@@ -943,7 +908,6 @@ This concept is critical to understanding how the state works. I'm amazed that a
   - React has some optimizations built-in so that the process is not that compute-expensive.
 
   - Having said that, _hydration_ will always be a source of performance issues on larger sites with lots of interactive elements.
-
 
 - There are many flavours of server rendering.
 
@@ -983,9 +947,7 @@ A good example would be a component that tries to initialize its state from `loc
 
 ```jsx
 function Component() {
-  const [state, setState] = useState(
-    () => window.localStorage.getItem("foo")
-  )
+  const [state, setState] = useState(() => window.localStorage.getItem("foo"));
 }
 ```
 
@@ -995,15 +957,13 @@ Some people might fix it by using the `typeof window === "undefined"` check.
 
 ```jsx
 function Component() {
-  const [state, setState] = useState(
-    () => {
-      if (typeof window === "undefined") {
-        return null
-      }
+  const [state, setState] = useState(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
 
-        return window.localStorage.getItem("foo")
-      }
-  )
+    return window.localStorage.getItem("foo");
+  });
 }
 ```
 
@@ -1015,13 +975,11 @@ One way to fix it is to set the _correct_ initial value in `useEffect` (or `useL
 
 ```jsx
 function Component() {
-  const [state, setState] = useState(
-    null
-  )
+  const [state, setState] = useState(null);
 
   useEffect(() => {
-    setState(window.localStorage.getItem("foo"))
-  }, [])
+    setState(window.localStorage.getItem("foo"));
+  }, []);
 }
 ```
 
@@ -1124,32 +1082,32 @@ While **Suspense is not a silver bullet (it is more complicated concept to grasp
   In the example below, I could have also moved the `commentsResource` inside the `Comments` directly. I've defined the resource inside the `ServerComponent` to show that one can pass a promise as a prop.
 
   ```jsx
-    function ServerComponent() {
-      const commentsResource = fetchComments()
+  function ServerComponent() {
+    const commentsResource = fetchComments();
 
-      return (
-        <>
-          <div>
-            <h1>Some other markup</h1>
-          </div>
-          <Suspense>
-            <Comments commentsResource = {commentsResource}/>
-          </Suspense>
-        </>
-      )
-    }
+    return (
+      <>
+        <div>
+          <h1>Some other markup</h1>
+        </div>
+        <Suspense>
+          <Comments commentsResource={commentsResource} />
+        </Suspense>
+      </>
+    );
+  }
 
-    async function Comments({commentsResource}) {
-      const comments = await commentsResource;
+  async function Comments({ commentsResource }) {
+    const comments = await commentsResource;
 
-      return (
-        <ul>
-          {comments.map(comment => {
-            // the regular
-          })}
-        </ul>
-      )
-    }
+    return (
+      <ul>
+        {comments.map((comment) => {
+          // the regular
+        })}
+      </ul>
+    );
+  }
   ```
 
 ### Lazy Loading
@@ -1166,19 +1124,19 @@ While **Suspense is not a silver bullet (it is more complicated concept to grasp
 
   1. It allows you to "bake in" a loading state for a given import.
 
-    ```jsx
-      const component = dynamic(() => import("./Component"), {
-        loading: Spinner
-      })
-    ```
+  ```jsx
+  const component = dynamic(() => import("./Component"), {
+    loading: Spinner,
+  });
+  ```
 
   2. It also allows you to skip rendering given chunk of the server altogether.
 
-    ```jsx
-      const component = dynamic(() => import("./Component"), {
-        loading: Spinner,
-        ssr: false
-      })
-    ```
+  ```jsx
+  const component = dynamic(() => import("./Component"), {
+    loading: Spinner,
+    ssr: false,
+  });
+  ```
 
-    This allows you to create chunks that load lazily, but are not invoked at all during server side rendering. Could be useful when the chunk is not compatible with server runtime (for example uses the `localStorage` API).
+  This allows you to create chunks that load lazily, but are not invoked at all during server side rendering. Could be useful when the chunk is not compatible with server runtime (for example uses the `localStorage` API).

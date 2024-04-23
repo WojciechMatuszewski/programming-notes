@@ -27,7 +27,7 @@
 - There are several choices.
 
   - _Cookies_ are **NOT a good way to store data** since they are sent to the server. The more data you save in cookies, the bigger the request payload is. This is suboptimal.
-s
+    s
   - _Local storage_ is most widely used, but **it should not be**. There are better ways
 
     - The main reason for avoiding it is the performance. The API is synchronous. **For small amounts of data it is okay, but for larger payloads consider other solutions**.
@@ -137,8 +137,8 @@ s
 - The **API is interesting**. You **provide the path to an asset and the browser will download that asset and put it inside the cache in the background**.
 
   ```js
-    const imgCache = await caches.open("images");
-    imgCache.add("/public/foo.jpeg");
+  const imgCache = await caches.open("images");
+  imgCache.add("/public/foo.jpeg");
   ```
 
   Then you can query the cache. The **response is the HTTP response**.

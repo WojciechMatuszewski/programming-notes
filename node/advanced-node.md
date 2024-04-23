@@ -264,20 +264,14 @@ Here is a **bad example** from a blog post I've read recently.
 ```js
 // Create a promise that rejects after
 // `timeout` milliseconds
-const throwOnTimeout = (timeout) =>
-  new Promise((_, reject) =>
-    setTimeout(() => reject(new Error("Timeout")), timeout)
-  );
+const throwOnTimeout = (timeout) => new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), timeout));
 
 const fetchWithTimeout = (url, options = {}) => {
   const { timeout, ...remainingOptions } = options;
   // if the timeout option is specified, race the
   // fetch call
   if (timeout) {
-    return Promise.race([
-      fetch(url, remainingOptions),
-      throwOnTimeout(timeout),
-    ]);
+    return Promise.race([fetch(url, remainingOptions), throwOnTimeout(timeout)]);
   }
   return fetch(url, remainingOptions);
 };

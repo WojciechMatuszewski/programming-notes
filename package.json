@@ -1,5 +1,8 @@
 {
-	"devDependencies": {
-		"prettier": "3.2.5"
-	}
+  "scripts": {
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "prettier": "3.2.5"
+  }
 }

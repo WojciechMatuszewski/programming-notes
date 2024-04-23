@@ -40,9 +40,9 @@
 
 - TIL that **the `input` element has the `valueAsNumber` property**.
 
-    ```jsx
-    <input type = "number" onChange = {e => e.currentTarget.valueAsNumber}>
-    ```
+  ```jsx
+  <input type = "number" onChange = {e => e.currentTarget.valueAsNumber}>
+  ```
 
 - The `useState` uses the `useReducer` under the hood. That is why you see the `dispatch` in the `useState` callback types.
 

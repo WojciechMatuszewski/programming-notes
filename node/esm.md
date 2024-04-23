@@ -71,6 +71,6 @@ Native in browsers, **experimental in NodeJs**. If you use the `--experimental-l
 
 ```js
 // Only an example...
-import foo from 'https://google.com'
-foo()
+import foo from "https://google.com";
+foo();
 ```

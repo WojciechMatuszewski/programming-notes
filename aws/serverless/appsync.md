@@ -25,9 +25,7 @@ The act of doing so is rather straightforward, the most important thing to remem
 An example for aws-cdk
 
 ```ts
-const likeATweetRequest = appsync.MappingTemplate.fromFile(
-  getMappingTemplatePath("Mutation.like.request.vtl")
-)
+const likeATweetRequest = appsync.MappingTemplate.fromFile(getMappingTemplatePath("Mutation.like.request.vtl"))
   .renderTemplate()
   .replace("LikesTable", props.likesTable.tableName)
   .replace("TweetsTable", props.tweetsTable.tableName)
@@ -37,9 +35,7 @@ likesTableDataSource.createResolver({
   typeName: "Mutation",
   fieldName: "like",
   requestMappingTemplate: appsync.MappingTemplate.fromString(likeATweetRequest),
-  responseMappingTemplate: appsync.MappingTemplate.fromFile(
-    getMappingTemplatePath("Mutation.like.response.vtl")
-  ),
+  responseMappingTemplate: appsync.MappingTemplate.fromFile(getMappingTemplatePath("Mutation.like.response.vtl")),
 });
 
 // Add missing permissions

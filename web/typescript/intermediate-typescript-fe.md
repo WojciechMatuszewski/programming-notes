@@ -115,10 +115,7 @@ type FooKeys = keyof foo; // 1 | 2 | "bar"
 
 ```ts
 async function main() {
-  const apiResponse = await Promise.all([
-    fetch("http://example.com"),
-    Promise.resolve("white"),
-  ]);
+  const apiResponse = await Promise.all([fetch("http://example.com"), Promise.resolve("white")]);
 
   type ApiResponseType = typeof apiResponse; // [Response, string]
 }
@@ -233,9 +230,7 @@ type MyDict = { [key_name_does_not_matter: string]: string };
 
 ```ts
 type CapitalizeKeys<T, K extends keyof T> = {
-  [Key in keyof T as Key extends K & string
-    ? `${Capitalize<Key>}`
-    : Key]: T[Key];
+  [Key in keyof T as Key extends K & string ? `${Capitalize<Key>}` : Key]: T[Key];
 };
 
 type Properties = {

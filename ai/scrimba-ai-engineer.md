@@ -350,14 +350,8 @@ WIP
 
   ```ts
   const standaloneQuestionTemplate = `Given a question, convert it to a standalone question. Question: {question}, standalone question:`;
-  const standaloneQuestionPrompt = PromptTemplate.fromTemplate(
-    standaloneQuestionTemplate
-  );
-  const standaloneQuestionChain = RunnableSequence.from([
-    standaloneQuestionPrompt,
-    llm,
-    new StringOutputParser(),
-  ]);
+  const standaloneQuestionPrompt = PromptTemplate.fromTemplate(standaloneQuestionTemplate);
+  const standaloneQuestionChain = RunnableSequence.from([standaloneQuestionPrompt, llm, new StringOutputParser()]);
 
   const contextChain = RunnableSequence.from([retriever, combineDocuments]);
 

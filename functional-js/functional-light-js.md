@@ -593,17 +593,11 @@ function curry(fn) {
     // here we are appending previous arguments to currently passed ones
     // we basically did this with .bind before
     return function partiallyApplyCurriedArguments() {
-      return curried.apply(
-        null,
-        args.concat(Array.prototype.slice.call(arguments))
-      );
+      return curried.apply(null, args.concat(Array.prototype.slice.call(arguments)));
       // You could also if you really want use push here
       // make a copy so not to mutate args variable
       var argsToApply = args.slice();
-      Array.prototype.push.apply(
-        argsToApply,
-        Array.prototype.slice.call(arguments)
-      );
+      Array.prototype.push.apply(argsToApply, Array.prototype.slice.call(arguments));
       return curries.apply(null, argsToApply);
     };
   };
@@ -798,7 +792,7 @@ High-level API example
 var transducer = compose(
   // these functions might look scary but they are not that hard to write
   mapReducer(add1),
-  filterReducer(isOdd)
+  filterReducer(isOdd),
 );
 transduce(transducer, sum, 0, [1, 2, 3, 4]);
 // or

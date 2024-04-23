@@ -50,7 +50,10 @@
 
   ```ts
   class MyCustomError {
-    constructor(private name: string, private statusCode: number) {
+    constructor(
+      private name: string,
+      private statusCode: number,
+    ) {
       super(name);
     }
   }
@@ -248,17 +251,13 @@
   ```ts
   type GetFirstStringIshElement<T> = T extends readonly [
     infer S extends string, // <- The new stuff
-    ..._: any[]
+    ..._: any[],
   ]
     ? S
     : never;
 
   // Prior to this feature being available, I had to write the following
-  type GetFirstStringIshElement<T> = T extends readonly [infer S, ..._: any[]]
-    ? S extends string
-      ? S
-      : never
-    : never;
+  type GetFirstStringIshElement<T> = T extends readonly [infer S, ..._: any[]] ? (S extends string ? S : never) : never;
   ```
 
 - Remember that you can transform each key in the _mapped types_ iteration

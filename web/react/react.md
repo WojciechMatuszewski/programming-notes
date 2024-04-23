@@ -584,10 +584,7 @@ So what does this piece of code do?
 One crucial piece of code from this snippet is the following:
 
 ```ts
-return React.useCallback(
-  (...args: any[]) => callback.current.apply(void 0, args),
-  []
-) as T;
+return React.useCallback((...args: any[]) => callback.current.apply(void 0, args), []) as T;
 ```
 
 Lets try to return the `callback` with _point-free_ style.
@@ -765,7 +762,7 @@ let suspender = promise.then(
   (e) => {
     status = "error";
     result = e;
-  }
+  },
 );
 // ..
 ```
@@ -959,11 +956,7 @@ const PersonContext = React.createContext(null);
 function PersonProvider({ children }) {
   const [person, setPerson] = React.useState(initialState);
 
-  return (
-    <PersonContext.Provider value={[person, setPerson]}>
-      {children}
-    </PersonContext.Provider>
-  );
+  return <PersonContext.Provider value={[person, setPerson]}>{children}</PersonContext.Provider>;
 }
 ```
 

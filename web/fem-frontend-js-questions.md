@@ -68,22 +68,22 @@ Since we are talking about the event loop, let us consider **a couple of ways to
 
 - You **can schedule with `queueMicrotask` making the code run AT THE END of the current event cycle loop**. This **kind of works like `defer` from GO**.
 
-    ```js
-    function main() {
-      queueMicrotask(() => {
-        console.log("at the end");
-      });
+  ```js
+  function main() {
+    queueMicrotask(() => {
+      console.log("at the end");
+    });
 
-      if (Math.random() > 0.5) {
-        console.log("exiting");
-        return;
-      }
-
-      console.log("not exiting");
+    if (Math.random() > 0.5) {
+      console.log("exiting");
+      return;
     }
 
-    main();
-    ```
+    console.log("not exiting");
+  }
+
+  main();
+  ```
 
   In the example above, no matter what branch of the code is executed, the `at the end` will be executed (yes, even if we return early).
 
@@ -162,22 +162,22 @@ This one is about CSS specificity. I'm not sure how useful it is to memorize tho
   - The **`WeakMap`** works more like it was **holding references to the underlying values. If you "delete" the underlying value, the `WeakMap` will also remove it**.
 
 ```js
-var k1 = {a: 1};
-var k2 = {b: 2};
+var k1 = { a: 1 };
+var k2 = { b: 2 };
 
 var map = new Map();
 var wm = new WeakMap();
 
-map.set(k1, 'k1');
-wm.set(k2, 'k2');
+map.set(k1, "k1");
+wm.set(k2, "k2");
 
 k1 = null;
 map.forEach(function (val, key) {
-    console.log(key, val); // You can still access `k1` value, even though we "removed it" from the execution context.
+  console.log(key, val); // You can still access `k1` value, even though we "removed it" from the execution context.
 });
 
 k2 = null;
-wm.get(k2) // undefined. The value is gone.
+wm.get(k2); // undefined. The value is gone.
 ```
 
 ## Question 14
@@ -271,18 +271,18 @@ This one is about loading fonts and the `font-display` attribute. There are a lo
 
 - The `first-of-type` will target all elements that match this rule of different nesting levels.
 
-    ```html
-    <div>
+  ```html
+  <div>
+    <ul>
+      <!-- ul:first-of-type > li:first-of-type -->
+      <li>foo</li>
       <ul>
         <!-- ul:first-of-type > li:first-of-type -->
-        <li>foo</li>
-        <ul>
-          <!-- ul:first-of-type > li:first-of-type -->
-          <li>bar</li>
-        </ul>
+        <li>bar</li>
       </ul>
-    </div>
-    ```
+    </ul>
+  </div>
+  ```
 
 - If you want to target the "real" first occurrence, use the `first-child`
 

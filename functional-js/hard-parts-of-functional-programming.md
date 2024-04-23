@@ -18,11 +18,11 @@ Suppose we have a function `copyArrayAndMultiplyBy2`
 
 ```js
 function copyArrayAndMultiplyBy2(array) {
-    const output = [];
-    for (let i = 0; i < array.length; i++) {
-        output.push(array[i] * 2);
-    }
-    return output;
+  const output = [];
+  for (let i = 0; i < array.length; i++) {
+    output.push(array[i] * 2);
+  }
+  return output;
 }
 const myArray = [1, 2, 3];
 const result = copyArrayAndMultiplyBy2(myArray);
@@ -36,11 +36,11 @@ To make the function more flexible we can pass `instructions` (basically what we
 
 ```js
 function instructions(input) {
-    // manipulate input
-    // return manipulatedInput
+  // manipulate input
+  // return manipulatedInput
 }
 function copyArrayAndManipulate(array, instructions) {
-    // ...
+  // ...
 }
 ```
 
@@ -67,8 +67,8 @@ Reduce is very versatile, in fact its the most versatile function in fp.
 Below style of composition is still **not** a _true composition_ as in it does not build the one meta function from the functions but instead it steps through every function passing down the result.
 
 ```js
-const multiplyBy3 = x => x * 2;
-const add3 = x => x + 3;
+const multiplyBy3 = (x) => x * 2;
+const add3 = (x) => x + 3;
 const reducer = (input, fn) => fn(input);
 [multiplyBy3, add3].reduce(reducer, 11);
 ```
@@ -77,14 +77,14 @@ To reap every benefit of composition and lazy evaluation we have would have to g
 
 ```js
 function compose(...fns) {
-    // 'glue' functions together
-    return fns.reduce((f, g) => (...args) => f(g(...arg)));
+  // 'glue' functions together
+  return fns.reduce(
+    (f, g) =>
+      (...args) =>
+        f(g(...arg)),
+  );
 }
-compose(
-    fn1,
-    fn2,
-    fn3,
-)(/*some value*/);
+compose(fn1, fn2, fn3)(/*some value*/);
 ```
 
 ## Closure
@@ -95,7 +95,7 @@ Closure has been described previously in many of the notes, just a quick reminde
 ```js
 function adder(x) {
   // x is declared as local variable in this execution context
-  return function(y) {
+  return function (y) {
     // "remembering surroundings"
     return x + y;
   };
@@ -110,15 +110,15 @@ Example:
 
 ```js
 function outer() {
-    // these will get garbage collected
-    let something;
-    let otherSomething;
-    //
-    let counter = 0;
-    return function inner() {
-        counter++;
-        return counter;
-    };
+  // these will get garbage collected
+  let something;
+  let otherSomething;
+  //
+  let counter = 0;
+  return function inner() {
+    counter++;
+    return counter;
+  };
 }
 
 const adder = outer();
@@ -133,17 +133,17 @@ A note though, these paradigm is pretty similar to decorators, in fact decorator
 
 ```js
 function once(originalFn) {
-    let counter = 0;
-    // closure
-    return function runOnlyOnce(...args) {
-        if (counter < 1) {
-            counter++;
-            return originalFn(...args);
-        }
-        return null;
-    };
+  let counter = 0;
+  // closure
+  return function runOnlyOnce(...args) {
+    if (counter < 1) {
+      counter++;
+      return originalFn(...args);
+    }
+    return null;
+  };
 }
-const multiplyBy2 = num => num * 2;
+const multiplyBy2 = (num) => num * 2;
 // decorating original function
 const onceMulti = once(multiplyBy2);
 ```
@@ -165,15 +165,15 @@ Lets see an example of `strict curry` implementation. This is much harder to und
 
 ```js
 function strictCurry(fn) {
-    return (function nextCurried(prevArgs) {
-        return function curried(nextArg) {
-            const args = [...prevArgs, nextArg];
-            if (args.length < fn.length) {
-                return nextCurried(args);
-            }
-            return fn.apply(null, args);
-        };
-    })([]);
+  return (function nextCurried(prevArgs) {
+    return function curried(nextArg) {
+      const args = [...prevArgs, nextArg];
+      if (args.length < fn.length) {
+        return nextCurried(args);
+      }
+      return fn.apply(null, args);
+    };
+  })([]);
 }
 ```
 
@@ -183,15 +183,13 @@ Implementation of `partial application` or `non-strict currying`, imo, is much m
 
 ```js
 function partiallyApply(fn) {
-    return function partiallyApplied(...args) {
-        return fn.length > args.length
-            ? partiallyApplied.bind(null, ...args)
-            : fn.apply(null, args);
-    };
+  return function partiallyApplied(...args) {
+    return fn.length > args.length ? partiallyApplied.bind(null, ...args) : fn.apply(null, args);
+  };
 }
 
 function addThree(x, y, z) {
-    return x + y + z;
+  return x + y + z;
 }
 
 const test = partiallyApply(addThree);

@@ -103,9 +103,7 @@ const Globe = React.lazy(loadGlobe);
 function Component() {
   return (
     <div onFocus={loadGlobe} onMouseOver={loadGlobe}>
-      <React.Suspense fallback={<p>loading..</p>}>
-        {showGlobe && <Globe />}
-      </React.Suspense>
+      <React.Suspense fallback={<p>loading..</p>}>{showGlobe && <Globe />}</React.Suspense>
     </div>
   );
 }
@@ -140,9 +138,7 @@ So to prevent this, **do not toggle the `React.Suspense`, toggle the children**.
 
 ```jsx
 {
-  <React.Suspense fallback={<div>loading...</div>}>
-    {showGlobe && <Globe />};
-  </React.Suspense>;
+  <React.Suspense fallback={<div>loading...</div>}>{showGlobe && <Globe />};</React.Suspense>;
 }
 ```
 
@@ -190,9 +186,7 @@ const Context = React.createContext();
 
 function Provider({ children }) {
   const [state, setState] = React.useState();
-  return (
-    <Context.Provider value={{ state, setState }}>{children}</Context.Provider>
-  );
+  return <Context.Provider value={{ state, setState }}>{children}</Context.Provider>;
 }
 ```
 
@@ -246,17 +240,13 @@ function ParentComponent() {
 And so is this one (I would argue this one is even better).
 
 ```tsx
-function ParentComponent({children}) {
-    const [a, setA] = useState(0);
-    const [b, setB] = useState("text");
+function ParentComponent({ children }) {
+  const [a, setA] = useState(0);
+  const [b, setB] = useState("text");
 
-    const contextValue = {a, b};
+  const contextValue = { a, b };
 
-    return (
-      <MyContext.Provider value={contextValue}>
-      {children}
-      </MyContext.Provider>
-    )
+  return <MyContext.Provider value={contextValue}>{children}</MyContext.Provider>;
 }
 ```
 
@@ -475,10 +465,7 @@ It does feel weird to me that we would "sync external store" if that store is cr
 ```jsx
 const FormContext = createContext(null);
 
-const FormContextProvider = ({
-  children,
-  initialValue = { username: "", password: "" }
-}) => {
+const FormContextProvider = ({ children, initialValue = { username: "", password: "" } }) => {
   const stateRef = useRef(initialValue);
 
   const get = useCallback(() => stateRef.current, []);
@@ -496,15 +483,9 @@ const FormContextProvider = ({
     });
   }, []);
 
-  const contextValue = useMemo(() => ({ get, set, subscribe }), [
-    get,
-    set,
-    subscribe
-  ]);
+  const contextValue = useMemo(() => ({ get, set, subscribe }), [get, set, subscribe]);
 
-  return (
-    <FormContext.Provider value={contextValue}>{children}</FormContext.Provider>
-  );
+  return <FormContext.Provider value={contextValue}>{children}</FormContext.Provider>;
 };
 
 const useFormState = () => {

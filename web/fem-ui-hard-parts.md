@@ -152,22 +152,22 @@
 
 - At this point in the course, Will starts to slowly convert to the JSX syntax by representing the "to be created HTML" via arrays, like so
 
-    ```js
-      const divInfo = ["div", `Hi, ${name}`]
-    ```
+  ```js
+  const divInfo = ["div", `Hi, ${name}`];
+  ```
 
   The first item is the node "kind" and the second are the "props", in this particular case, the `children`.
 
   - The evolution of this approach is the `createVDOM` function
 
-      ```js
-      function createVDOM() {
-        return [
-          ["input", name, handle],
-          ["div", `Hello, ${name}`],
-        ]
-      }
-      ```
+    ```js
+    function createVDOM() {
+      return [
+        ["input", name, handle],
+        ["div", `Hello, ${name}`],
+      ];
+    }
+    ```
 
 ### Composition & Functional Components
 

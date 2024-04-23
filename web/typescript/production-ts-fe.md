@@ -8,13 +8,7 @@ This one is pretty nice, you no longer have to use weird hacks and know that som
 For example, this is how you could type a _type_ which allows only _json values_
 
 ```ts
-type JSONValue =
-  | number
-  | string
-  | null
-  | boolean
-  | JSONValue[]
-  | { [k: string]: JSONValue };
+type JSONValue = number | string | null | boolean | JSONValue[] | { [k: string]: JSONValue };
 ```
 
 Notice that I'm referring to `JSONValue` twice within it's declaration. Previously this was not allowed.
@@ -27,7 +21,7 @@ This is pretty neat, I still have to play around with it but it allow you to bas
 type Corner = `${"top" | "bottom"}-${"left" | "right"}`;
 ```
 
-I think it main usage will be in automatically typing _query parameters_ for you. Since it works with generics, you can do a lot of cool stuff here Keep in mind that an empty string fulfils the  `${string}` type. This detail is quite important when dealing with conditional types.
+I think it main usage will be in automatically typing _query parameters_ for you. Since it works with generics, you can do a lot of cool stuff here Keep in mind that an empty string fulfils the `${string}` type. This detail is quite important when dealing with conditional types.
 
 ### _@ts-expect-error_
 
@@ -121,12 +115,10 @@ function assertIsCorrectName(name: string): asserts name is "MY_FEATURE_FLAG" {
   }
 }
 
-jest
-  .spyOn(featureFlagService, "getFeatureFlag")
-  .mockImplementation((featureFlagName) => {
-    assertIsCorrectName(featureFlagName);
-    return true;
-  });
+jest.spyOn(featureFlagService, "getFeatureFlag").mockImplementation((featureFlagName) => {
+  assertIsCorrectName(featureFlagName);
+  return true;
+});
 ```
 
 This increases the confidence I have in my test suite. Every time I change the identifier for the feature flag, I should also be changing my tests.
@@ -246,10 +238,7 @@ Please note that this will **completely overwrite _@types_ definitions**.
 Use _type guards_ with _assert signatures_. One neat trick Mike shown is how to type the _type guard_ itself when it's passed as a parameter
 
 ```ts
-function isTypedArray<T>(
-  arg: any,
-  check: (val: any) => val is T
-): asserts arg is T[] {}
+function isTypedArray<T>(arg: any, check: (val: any) => val is T): asserts arg is T[] {}
 ```
 
 You would mostly use this when using _fetch_ API or similar. Basically anything that comes from the backend, maybe expect _GraphQL_ :)

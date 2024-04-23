@@ -55,15 +55,17 @@ Taking notes while watching [this course](https://frontendmasters.com/workshops/
   - This takes time. Of course some of those operations are cached on subsequent visits.
 
     > <www.frontendmasters.com> (the times are only an example)
-      1 – DNS query       –   100ms
-      2 – TCP connection  –   120ms
-      3 – SSL Negotiation –   150ms
-      4 – HTTP Request
+    > 1 – DNS query – 100ms
+    > 2 – TCP connection – 120ms
+    > 3 – SSL Negotiation – 150ms
+    > 4 – HTTP Request
+
           header – body
-      6 – Server process(backend time)    – 200ms to 500ms
-      7 – Browser HTML parsing
-      8 – Resource Discovery & Priority
-      9 – Render (layout, paint)
+
+    6 – Server process(backend time) – 200ms to 500ms
+    7 – Browser HTML parsing
+    8 – Resource Discovery & Priority
+    9 – Render (layout, paint)
 
 - Max gives a really interesting trivia background on why we push on HTTPs so much nowadays.
 
@@ -164,7 +166,7 @@ Taking notes while watching [this course](https://frontendmasters.com/workshops/
 - Avoid more than one roundtrip.
 
   > Here Max goes on a tangent related to units of measurement. There is a confusion that 1 KB is 1024 Bytes, but in fact it is 1000 Bytes.
-    The 1024 Bytes is 1 KiB. Max traces this to Windows that does not adhere to the official units of measurement and uses KB (and other similar units) in the place of KiB (and other similar units).
+  > The 1024 Bytes is 1 KiB. Max traces this to Windows that does not adhere to the official units of measurement and uses KB (and other similar units) in the place of KiB (and other similar units).
 
   - **On most Linux-based systems**, the **maximum packet size is 14.6 KiB**. If you can **fit the "above the fold" HTML and assets there**, you will benefit greatly in terms of performance metrics.
 

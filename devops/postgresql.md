@@ -66,7 +66,7 @@
 
 ## Adding / deleting data
 
-- There is a **difference between the `''` and `""`**. The **single tick refers to a string, double tick refers to a _database identifier** like a table or a column.
+- There is a **difference between the `''` and `""`**. The **single tick refers to a string, double tick refers to a \_database identifier** like a table or a column.
 
   - This was a gotcha (at least for me) when inserting data into the table.
 
@@ -167,7 +167,7 @@
     order by member
   ```
 
-  - You **can filter in the `where` clause on columns created by the sub-query.
+  - You \*\*can filter in the `where` clause on columns created by the sub-query.
 
 ### Aggregate functions
 
@@ -186,15 +186,15 @@
 
 - To create conditions, use the [`CAUSE`](https://mode.com/sql-tutorial/sql-case/) statement.
 
-    ```sql
-    select name,
-        case when monthlymaintenance > 100 then 'expensive'
-            when monthlymaintenance < 100 then 'cheap'
-            end as cost
-    from cd.facilities
-    ```
+  ```sql
+  select name,
+      case when monthlymaintenance > 100 then 'expensive'
+          when monthlymaintenance < 100 then 'cheap'
+          end as cost
+  from cd.facilities
+  ```
 
-    Notice how I'm adding a new column by using `as` here. So the end result would be a column `name` and `cost`.
+  Notice how I'm adding a new column by using `as` here. So the end result would be a column `name` and `cost`.
 
 - **You cannot filter based on a newly created column**. The `CASE` creates a new column, as such doing something like
 

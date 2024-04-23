@@ -16,7 +16,7 @@ class Observable {
   static timeout(time) {
     // look at the constructor
     return new Observable(function subscribe(observer) {
-      const timeoutRef = setTimeout(function() {
+      const timeoutRef = setTimeout(function () {
         observer.next();
         observer.complete();
       }, time);
@@ -24,7 +24,7 @@ class Observable {
       return {
         unsubscribe() {
           clearTimeout(timeoutRef);
-        }
+        },
       };
     });
   }
@@ -35,8 +35,8 @@ We wrote only 24 lines of code and yet, this implementation is already powerful.
 
 ```js
 const subscription = Observable.timeout(1000).subscribe({
-    next: () => console.log("next"),
-    complete: () => console.log("complete"),
+  next: () => console.log("next"),
+  complete: () => console.log("complete"),
 });
 
 // you can also unsubscribe
@@ -79,7 +79,7 @@ How we could use this method?
 ```js {.line-numbers}
 const btn = document.querySelector("button");
 Observable.fromEvent(btn, "click").subscribe({
-  next: () => console.log(this)
+  next: () => console.log(this),
 });
 ```
 
@@ -96,7 +96,7 @@ class Component {
     const btn = document.querySelector("button");
     Observable.fromEvent(btn, "click").subscribe({
       // logs Component context
-      next: () => console.log(this)
+      next: () => console.log(this),
     });
   }
 }
@@ -135,21 +135,21 @@ Well, map takes a _projection function_ an applies that function to a argument p
 
 ```js
 function map(projectionFn) {
-    // this is the inputObservable from .pipe
-    return function(inputObservable) {
-        // returning new observable so we can chain other methods
-        return new Observable(function subscribe(outputObserver) {
-            const subscription = inputObservable.subscribe({
-                // you could wrap this call into try catch also
-                next: x => outputObserver.next(projectionFn(x)),
-                complete: () => outputObserver.complete(),
-                error: err => outputObserver.error(err),
-            });
-            return {
-                unsubscribe: subscription.unsubscribe,
-            };
-        });
-    };
+  // this is the inputObservable from .pipe
+  return function (inputObservable) {
+    // returning new observable so we can chain other methods
+    return new Observable(function subscribe(outputObserver) {
+      const subscription = inputObservable.subscribe({
+        // you could wrap this call into try catch also
+        next: (x) => outputObserver.next(projectionFn(x)),
+        complete: () => outputObserver.complete(),
+        error: (err) => outputObserver.error(err),
+      });
+      return {
+        unsubscribe: subscription.unsubscribe,
+      };
+    });
+  };
 }
 ```
 
@@ -159,16 +159,16 @@ Now you can event _compose map operators_
 
 ```js
 Observable.fromEvent(btn, "click")
-    .pipe(
-        compose(
-            map(evt => 3),
-            map(num => num + 1),
-            map(num => num / 2),
-        ),
-    )
-    .subscribe({
-        next: console.log, // 2...
-    });
+  .pipe(
+    compose(
+      map((evt) => 3),
+      map((num) => num + 1),
+      map((num) => num / 2),
+    ),
+  )
+  .subscribe({
+    next: console.log, // 2...
+  });
 ```
 
 #### Filter
@@ -177,18 +177,18 @@ Very similar to '.map'
 
 ```js
 function filter(predicateFn) {
-    return function(inputObservable) {
-        return new Observable(function subscribe(outputObserver) {
-            return inputObservable.subscribe({
-                next: x => {
-                    if (predicateFn(x)) {
-                        return outputObserver.next(x);
-                    }
-                },
-                // other methods
-            });
-        });
-    };
+  return function (inputObservable) {
+    return new Observable(function subscribe(outputObserver) {
+      return inputObservable.subscribe({
+        next: (x) => {
+          if (predicateFn(x)) {
+            return outputObserver.next(x);
+          }
+        },
+        // other methods
+      });
+    });
+  };
 }
 ```
 
@@ -225,7 +225,7 @@ const source = of(1, 2, 3);
 const example = source.pipe(scan((acc, curr) => acc + curr, 0));
 // log accumulated values
 // output: 1,3,6
-const subscribe = example.subscribe(val => console.log(val));
+const subscribe = example.subscribe((val) => console.log(val));
 ```
 
 ### Solution
@@ -313,21 +313,21 @@ I rarely find myself reaching out for the `requestAnimationFrame` function, but 
 The pattern I've used RAF for is the following.
 
 ```js
-changeTheDom()
+changeTheDom();
 requestAnimationFrame(() => {
-  doSomethingAfterTheDOMIsChanged()
-})
+  doSomethingAfterTheDOMIsChanged();
+});
 ```
 
 It turns out that the **RAF runs before the next repaint** ([MDN reference](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)). This means that, the `doSomethingAfterDOMIsChanged()` **might read stale values as the browser did not fully perform the layout**. To ensure that all the elements are fully in position, **consider adding the `setTimeout` call inside the RAF call**.
 
 ```js
-changeTheDom()
+changeTheDom();
 requestAnimationFrame(() => {
   setTimeout(() => {
-    doSomethingAfterTheDOMIsChanged()
-  }, 0)
-})
+    doSomethingAfterTheDOMIsChanged();
+  }, 0);
+});
 ```
 
 This is a technique [used in one of the articles on `web.dev` regarding time to interaction optimizations](https://web.dev/optimize-inp/?ck_subscriber_id=1352906140#optimize-event-callbacks). It looks weird/silly but it appears to be legit.

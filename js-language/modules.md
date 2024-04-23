@@ -35,7 +35,7 @@ import { message } from "./index.js";
 
 // Wait for module resolution to be over
 setTimeout(() => {
-    console.log(message);
+  console.log(message);
 }, 0);
 
 export const count = 5;
@@ -61,13 +61,11 @@ This synchronous nature of `require` is also why you can have conditional requir
 let module;
 
 if (Math.random() > 0.5) {
-    module = require("foo")
+  module = require("foo");
 } else {
-    module = require("bar")
+  module = require("bar");
 }
 ```
 
 You cannot do that with `import` statement. The JS engine would have to execute the file to get all the imports.
 That would go against the purpose of the ESM modules in the first place.
-
-

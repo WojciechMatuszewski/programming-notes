@@ -89,8 +89,7 @@ A sample test which tests one of the failure modes would look something like thi
 import invokeEvent from "../../events/simple-api-event.json";
 import { createHandler } from "../../functions/simple-api/handler";
 
-const tableName =
-  "testingServerlessRefresher-simpleAPItable78ABB1E1-ORU7YEL1MKO7";
+const tableName = "testingServerlessRefresher-simpleAPItable78ABB1E1-ORU7YEL1MKO7";
 
 describe("returns bad request if", () => {
   test("body does not exist", async () => {
@@ -230,8 +229,7 @@ import { ulid } from "ulid";
 const eb = new EventBridge();
 const busName = "testingServerlessRefresherasyncFlowbusC977BBFB";
 
-const functionName =
-  "testingServerlessRefreshe-asyncFlowreceiver06D8229-WWVZV9IH3RHC";
+const functionName = "testingServerlessRefreshe-asyncFlowreceiver06D8229-WWVZV9IH3RHC";
 
 const testTimeout = 30 * 1000;
 
@@ -265,7 +263,7 @@ test(
       timeout: testTimeout,
     }).toHaveLog(userId);
   },
-  testTimeout
+  testTimeout,
 );
 ```
 
@@ -311,13 +309,9 @@ test(
       region: "eu-central-1",
       queueUrl,
       timeout: testTimeout,
-    }).toHaveMessage(
-      (msg) =>
-        msg.detail.firstName === "Karol" &&
-        msg.detail.lastName === "Matuszewski"
-    );
+    }).toHaveMessage((msg) => msg.detail.firstName === "Karol" && msg.detail.lastName === "Matuszewski");
   },
-  testTimeout
+  testTimeout,
 );
 ```
 
@@ -353,9 +347,7 @@ test(
     const fileToUpload = fs.readFileSync(join(__dirname, "image.png"));
 
     const formData = new FormData();
-    Object.entries(fields).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
+    Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
     formData.append("file", fileToUpload);
 
     const uploadResult = await phin({
@@ -373,7 +365,7 @@ test(
       timeout: testTimeout,
     }).toHaveObject(fields.key);
   },
-  testTimeout
+  testTimeout,
 );
 ```
 
@@ -416,17 +408,11 @@ export class LocalTesting extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    this.transformIncomingDataStep = new aws_stepfunctions.Pass(
-      this,
-      "TransformIncomingDataStep",
-      {
-        parameters: {
-          payload: aws_stepfunctions.JsonPath.stringAt(
-            "States.Format('{} {}', $.firstName, $.lastName)"
-          ),
-        },
-      }
-    );
+    this.transformIncomingDataStep = new aws_stepfunctions.Pass(this, "TransformIncomingDataStep", {
+      parameters: {
+        payload: aws_stepfunctions.JsonPath.stringAt("States.Format('{} {}', $.firstName, $.lastName)"),
+      },
+    });
 
     const machine = new aws_stepfunctions.StateMachine(this, "StateMachine", {
       definition: this.transformIncomingDataStep,
@@ -450,9 +436,7 @@ Starting with the first point. I like to use the `testcontainers` package for Do
 let container: StartedTestContainer | undefined;
 
 beforeAll(async () => {
-  container = await new GenericContainer("amazon/aws-stepfunctions-local")
-    .withExposedPorts(8083)
-    .start();
+  container = await new GenericContainer("amazon/aws-stepfunctions-local").withExposedPorts(8083).start();
 }, 15_000);
 
 afterAll(async () => {
@@ -464,9 +448,7 @@ And here is the test itself.
 
 ```ts
 test("The `TransformIncomingDataStep` works as expected", async () => {
-  const testIdentifier = Buffer.from(
-    `${__filename}_${expect.getState().currentTestName}`
-  )
+  const testIdentifier = Buffer.from(`${__filename}_${expect.getState().currentTestName}`)
     .toString("hex")
     .replace(/\d/g, "");
 
@@ -492,7 +474,7 @@ test("The `TransformIncomingDataStep` works as expected", async () => {
       }),
       name: testIdentifier,
       roleArn: "arn:aws:iam::012345678901:role/DummyRole",
-    })
+    }),
   );
 
   const machineARN = createSFNResult.stateMachineArn;
@@ -505,24 +487,20 @@ test("The `TransformIncomingDataStep` works as expected", async () => {
         lastName: "Matuszewski",
       }),
       name: testIdentifier,
-    })
+    }),
   );
 
   await waitFor(async () => {
     const getExecutionHistoryResult = await sfnClient.send(
       new GetExecutionHistoryCommand({
         executionArn: sendPayloadResult.executionArn,
-      })
+      }),
     );
 
-    const exitedState = getExecutionHistoryResult.events?.find(
-      (event) => event.type == "PassStateExited"
-    );
+    const exitedState = getExecutionHistoryResult.events?.find((event) => event.type == "PassStateExited");
 
     expect(exitedState).toBeDefined();
-    expect(exitedState?.stateExitedEventDetails?.output).toEqual(
-      JSON.stringify({ payload: "Wojtek Matuszewski" })
-    );
+    expect(exitedState?.stateExitedEventDetails?.output).toEqual(JSON.stringify({ payload: "Wojtek Matuszewski" }));
   });
 }, 20_000);
 ```
@@ -686,16 +664,14 @@ test(
 
     await new Promise((resolve) => setTimeout(resolve, 6000));
 
-    const { Attributes } = await sqs
-      .getQueueAttributes({ QueueUrl: dqlUrl, AttributeNames: ["All"] })
-      .promise();
+    const { Attributes } = await sqs.getQueueAttributes({ QueueUrl: dqlUrl, AttributeNames: ["All"] }).promise();
 
     expect(Attributes!.ApproximateNumberOfMessages).toEqual(1);
     expect(Attributes!.ApproximateNumberOfMessagesNotVisible).toEqual(0);
     // Depending on how your test is set up, you might need to remove the message you are making the assertions on.
     // The message will not be automatically removed since we are pooling manually and with help of EventSourceMapping.
   },
-  testTimeout
+  testTimeout,
 );
 ```
 
@@ -750,9 +726,7 @@ test(
   "events are sent do event bridge",
   async () => {
     const itemId = ulid();
-    await docClient
-      .put({ Item: { id: itemId }, TableName: tableName })
-      .promise();
+    await docClient.put({ Item: { id: itemId }, TableName: tableName }).promise();
 
     const searchLog = async () => {
       const result = await logs
@@ -773,10 +747,10 @@ test(
         return expect(events).toContain(itemId);
       },
       testTimeout,
-      2000
+      2000,
     );
   },
-  testTimeout
+  testTimeout,
 );
 ```
 

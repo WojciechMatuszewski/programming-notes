@@ -79,9 +79,7 @@ on Philip Walton's blog
 There soon may be deprecated due to `webpack 5` releasing but did you know that you can use multiple of them? like
 
 ```js
-const Tilt = React.lazy(() =>
-  import(/* webpackChunkName: "tilt", webpackPrefetch: true */ "../tilt")
-);
+const Tilt = React.lazy(() => import(/* webpackChunkName: "tilt", webpackPrefetch: true */ "../tilt"));
 ```
 
 This works !

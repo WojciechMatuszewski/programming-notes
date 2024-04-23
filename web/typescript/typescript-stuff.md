@@ -955,9 +955,7 @@ second argument)
 ```typescript
 type Callable<T> = (...args: any[]) => T;
 
-type MyOwnReturnType<ReturnType, F> = F extends Callable<ReturnType>
-  ? ReturnType
-  : never;
+type MyOwnReturnType<ReturnType, F> = F extends Callable<ReturnType> ? ReturnType : never;
 
 type SomeType = MyOwnReturnType<string, typeof identity>; // string
 ```
@@ -996,9 +994,7 @@ This feature is very useful. Basically you can `pluck` a type from generic using
 
 ```typescript
 // you could also do args: infer U
-type GetFunctionArgumentTypes<F> = F extends (...args: Array<infer U>) => void
-  ? U
-  : never;
+type GetFunctionArgumentTypes<F> = F extends (...args: Array<infer U>) => void ? U : never;
 
 function numberArg(x: number) {}
 
@@ -1013,9 +1009,7 @@ type t2 = GetFunctionArgumentTypes<typeof arrayMixed>; // [1, 'a', {}]
 Nothing is stopping your from using the _infer_ keyword multiple times. Check this out
 
 ```ts
-type AppendArgument<Fn, A> = Fn extends (...args: infer Args) => infer R
-  ? (...args: [...Args, A]) => R
-  : never;
+type AppendArgument<Fn, A> = Fn extends (...args: infer Args) => infer R ? (...args: [...Args, A]) => R : never;
 ```
 
 Here I've used _infer_ to both get the hold of the function arguments, but also the return type of the `Fn` type. While I could use the `ReturnType` generic, using _infer_ is also nice ;)
@@ -1025,11 +1019,7 @@ Here I've used _infer_ to both get the hold of the function arguments, but also 
 Did you know you can **place a constraint on what you infer**? The syntax looks as follows.
 
 ```ts
-type FakeReturnTypeString<F> = F extends ((
-  ...args: any[]
-) => infer R extends string)
-  ? R
-  : never;
+type FakeReturnTypeString<F> = F extends ((...args: any[]) => infer R extends string) ? R : never;
 
 function returnNumber() {
   return 3;
@@ -1041,11 +1031,7 @@ type test = FakeReturnTypeString<typeof returnNumber>; // never
 It is as if you were to say: **infer this type ONLY WHEN it matches my constraint**. Seems pretty useful, **especially if the alternative is to perform a nested ternary check**.
 
 ```ts
-type FakeReturnTypeString<F> = F extends (...args: any[]) => infer R
-  ? R extends string
-    ? R
-    : never
-  : never;
+type FakeReturnTypeString<F> = F extends (...args: any[]) => infer R ? (R extends string ? R : never) : never;
 ```
 
 The version with a constraint on the `infer` seems much cleaner.
@@ -1065,10 +1051,9 @@ function youSayGoodbyeISayHello<
 The **solution is to perform as type cast on the return value**. I hope that, one day, this will not be necessary, but at the time of writing this, it is.
 
 ```ts
-function youSayGoodbyeISayHello<
-  TGreeting extends string,
-  TReturn = TGreeting extends "hello" ? "goodbye" : "hello"
->(greeting: TGreeting) {
+function youSayGoodbyeISayHello<TGreeting extends string, TReturn = TGreeting extends "hello" ? "goodbye" : "hello">(
+  greeting: TGreeting,
+) {
   return (greeting === "goodbye" ? "hello" : "goodbye") as TReturn; // Notice the cast here.
 }
 ```
@@ -1590,9 +1575,7 @@ type Fruits = "apple" | "banana" | "orange";
 Now, you would like to create a type that only contains the `"apple"` or `"banana"`. To do so, you might be tempted to write the type like this.
 
 ```ts
-type AppleOrBanana = Fruit extends "apple" | "banana"
-  ? "apple" | "banana"
-  : never;
+type AppleOrBanana = Fruit extends "apple" | "banana" ? "apple" | "banana" : never;
 ```
 
 Sadly this **will not work as you would expect**. The underlying type is still `never`. This is because **the _distributive_ part of the types is only applied when we are dealing with generics**.
@@ -1600,9 +1583,7 @@ Sadly this **will not work as you would expect**. The underlying type is still `
 In the example above, TypeScript will **compare the WHOLE `Fruits` type to the WHOLE union type you created by hand**. This is not want you want. You want to compare each member of `Fruits` with each member of the union type. To do so, you must use generics.
 
 ```ts
-type AppleOrBanana<TFruit> = TFruit extends "apple" | "banana"
-  ? "apple" | "banana"
-  : never;
+type AppleOrBanana<TFruit> = TFruit extends "apple" | "banana" ? "apple" | "banana" : never;
 ```
 
 This time, TypeScript will compare each member of `TFruit` with each member of the `"apple"| "banana"` union.
@@ -1738,9 +1719,7 @@ Notice that the implementation function returns specific type rather than an uni
 function getRolePrivileges(role: "admin"): AdminPrivileges;
 function getRolePrivileges(role: "user"): UserPrivileges;
 function getRolePrivileges(role: string): AnonymousPrivileges;
-function getRolePrivileges(
-  role: string
-): AnonymousPrivileges | AdminPrivileges | UserPrivileges {
+function getRolePrivileges(role: string): AnonymousPrivileges | AdminPrivileges | UserPrivileges {
   switch (role) {
     case "admin":
       return {
@@ -1767,9 +1746,7 @@ Keep in mind that you can use generic signature in the function overload signatu
 
 ```ts
 function returnWhatIPassInExceptFor1<T extends string>(t: T): T;
-function returnWhatIPassInExceptFor1<T extends number>(
-  t: T
-): T extends 1 ? 2 : T;
+function returnWhatIPassInExceptFor1<T extends number>(t: T): T extends 1 ? 2 : T;
 function returnWhatIPassInExceptFor1(t: unknown): unknown {
   if (t === 1) {
     return 2;
@@ -1813,7 +1790,7 @@ it("Should force you to pass a second argument when you choose an event with a p
     // @ts-expect-error
     {
       y: 1,
-    }
+    },
   );
 
   sendEvent("click", {
@@ -1828,7 +1805,7 @@ it("Should prevent you from passing a second argument when you choose an event w
   sendEvent(
     "focus",
     // @ts-expect-error
-    {}
+    {},
   );
 });
 ```
@@ -1907,9 +1884,7 @@ interface User {
   name: string;
 }
 
-type IsUser<O extends Record<string, unknown>> = O extends { id: string }
-  ? true
-  : false;
+type IsUser<O extends Record<string, unknown>> = O extends { id: string } ? true : false;
 type Result = IsUser<User>; // Type 'User' does not satisfy the constraint 'Record<string, unknown>'. Index signature for type 'string' is missing in type 'User'
 ```
 
@@ -1933,9 +1908,7 @@ type User = {
   name: string;
 };
 
-type IsUser<O extends Record<string, unknown>> = O extends { id: string }
-  ? true
-  : false;
+type IsUser<O extends Record<string, unknown>> = O extends { id: string } ? true : false;
 type Result = IsUser<User>;
 ```
 
@@ -2136,9 +2109,7 @@ Again, very clever stuff
 With `HasKey` we can start our basic implementation.
 
 ```typescript
-declare function get<K extends string>(
-  key: K
-): <Obj extends HasKey<K>>(obj: Obj) => Obj[K];
+declare function get<K extends string>(key: K): <Obj extends HasKey<K>>(obj: Obj) => Obj[K];
 ```
 
 Our function could be used as such
@@ -2170,9 +2141,7 @@ KeyAt<SomeInterface, "wojtek">; // 'ala 123', literal type!
 This allows us to _pluck a given type_ out of object. This makes sure that return our function has return value correctly typed.
 
 ```ts
-declare function get<K extends string>(
-  key: K
-): <Obj extends HasKey<K>>(obj: Obj) => KeyAt<Obj, K>;
+declare function get<K extends string>(key: K): <Obj extends HasKey<K>>(obj: Obj) => KeyAt<Obj, K>;
 ```
 
 Personally i would name this type `TypeAt` but I'm going to roll with this name
@@ -2187,7 +2156,7 @@ Example:
 ```ts
 get(
   matching((friend) => friend.friends > 5),
-  "name"
+  "name",
 )(obj.friends);
 ```
 
@@ -2199,9 +2168,7 @@ Let's type `matching` first:
 ```ts
 interface Traversal<Item> {}
 
-declare function matching<A>(
-  filteringFunction: (a: A) => boolean
-): Traversal<A>;
+declare function matching<A>(filteringFunction: (a: A) => boolean): Traversal<A>;
 ```
 
 We have to change our implementation a bit to introduce `matching`.
@@ -2209,12 +2176,12 @@ We have to change our implementation a bit to introduce `matching`.
 ```ts
 declare function get<Item, K extends string>(
   traversal: Traversal<Item>,
-  key: K
+  key: K,
 ): <Obj extends Array<HasKey<K>>>(obj: Obj) => Array<KeyAt<Obj, K>>;
 
 const popularFriends = get(
   matching((user: User) => user.friends.length > 5),
-  "name"
+  "name",
 )(user.friends);
 ```
 
@@ -2233,17 +2200,18 @@ utility types already).
 
 ```ts
 // power of conditionals and infer baby!
-export type Unpack<F> = F extends Array<infer Item>
-  ? Item
-  : F extends Set<infer Item>
-  ? Item
-  : F extends Map<any, Item>
-  ? Item
-  : F extends { [n: string]: infer Item }
-  ? Item
-  : F extends { [n: number]: infer Item }
-  ? Item
-  : never;
+export type Unpack<F> =
+  F extends Array<infer Item>
+    ? Item
+    : F extends Set<infer Item>
+      ? Item
+      : F extends Map<any, Item>
+        ? Item
+        : F extends { [n: string]: infer Item }
+          ? Item
+          : F extends { [n: number]: infer Item }
+            ? Item
+            : never;
 ```
 
 ## Tuples and Currying
@@ -2294,10 +2262,8 @@ With those simple types we can define our **strict curry** type
 
 ```ts
 type CurryV0<Parameters extends any[], ReturnType> = (
-  arg: Head<Parameters>
-) => HasTail<Parameters> extends true
-  ? CurryV0<Tail<Parameters>, ReturnType>
-  : ReturnType;
+  arg: Head<Parameters>,
+) => HasTail<Parameters> extends true ? CurryV0<Tail<Parameters>, ReturnType> : ReturnType;
 
 declare function curry<P extends any[], R>(f: (...args: P) => R): CurryV0<P, R>;
 
@@ -2392,10 +2358,9 @@ know which parameters has already been supplied. To implement this type we will,
 again, make us of `function types` trick.
 
 ```ts
-type Prepend<TypeToPrepend, Tuple extends any[]> = ((
-  head: TypeToPrepend,
-  ...tail: Tuple
-) => any) extends (...args: infer U) => any
+type Prepend<TypeToPrepend, Tuple extends any[]> = ((head: TypeToPrepend, ...tail: Tuple) => any) extends (
+  ...args: infer U
+) => any
   ? U
   : never;
 
@@ -2421,11 +2386,7 @@ To achieve such functionality we will use **recursive indexed types** (already
 seen before)
 
 ```ts
-type Drop<
-  ElementsToDrop extends Number,
-  TupleToDropFrom extends any[],
-  Iterator extends any[] = []
-> = {
+type Drop<ElementsToDrop extends Number, TupleToDropFrom extends any[], Iterator extends any[] = []> = {
   0: Drop<ElementsToDrop, Tail<TupleToDropFrom>, Prepend<Iterator, any>>;
   1: TupleToDropFrom;
 }[Length<Iterator> extends ElementsToDrop ? 1 : 0];
@@ -2465,11 +2426,7 @@ We can use clever generic type along with `Exclude` to make sure our params are
 the exact shape of given `type / interface`
 
 ```ts
-type ValidateShape<T, Shape> = T extends Shape
-  ? Exclude<keyof T, keyof Shape> extends never
-    ? T
-    : never
-  : never;
+type ValidateShape<T, Shape> = T extends Shape ? (Exclude<keyof T, keyof Shape> extends never ? T : never) : never;
 ```
 
 - check if T is _`Shape`-compatible_ with `extends`
@@ -2648,10 +2605,7 @@ Or played around with `infer` keyword
 
 ```ts
 type GetFunctionArguments<F> = F extends (...args: infer A) => any ? A : never;
-declare function call<R, F extends (...args: any[]) => any>(
-  fn: F,
-  ...args: GetFunctionArguments<F>
-): R;
+declare function call<R, F extends (...args: any[]) => any>(fn: F, ...args: GetFunctionArguments<F>): R;
 ```
 
 But now since there were improvements to _touple types_ you can just specify the parameters as a generic type.
@@ -2925,7 +2879,7 @@ type BaseObj = {
 
 function foo<Obj extends BaseObj = never>(
   // See the section for comparing with `never` type
-  obj: [Obj] extends [never] ? MyObj : NoInfer<Obj>
+  obj: [Obj] extends [never] ? MyObj : NoInfer<Obj>,
 ): [Obj] extends [never] ? MyObj : NoInfer<Obj> {
   return obj;
 }
@@ -2940,9 +2894,7 @@ Sometimes all you work with is a "narrow" type, but you want TS to infer the mos
 For this case, consider using **the `F.Narrow` function from `ts-toolbelt`**.
 
 ```ts
-const makeRouter3 = <TConfig extends Record<string, { search?: string[] }>>(
-  config: TConfig
-) => {
+const makeRouter3 = <TConfig extends Record<string, { search?: string[] }>>(config: TConfig) => {
   return config;
 };
 
@@ -2953,9 +2905,7 @@ t.foo["search"]; // string[]
 With `F.Narrow` the situation changes.
 
 ```ts
-const makeRouter3 = <TConfig extends Record<string, { search?: string[] }>>(
-  config: F.Narrow<TConfig>
-) => {
+const makeRouter3 = <TConfig extends Record<string, { search?: string[] }>>(config: F.Narrow<TConfig>) => {
   return config;
 };
 
@@ -3003,18 +2953,14 @@ const foo2 = "bar"; // foo2 is of type "string"
 This is very handy – it enables you to be strict and explicit with the values you are passing (keep in mind that the `as const` also adds `readonly` to object properties). **What is nice is the ability to use the _const annotations_ in the context of generic parameters**. Starting from TypeScript v5, the following is a valid code.
 
 ```ts
-declare function router<const R extends readonly string[]>(
-  routes: R
-): Record<R[number], unknown>;
+declare function router<const R extends readonly string[]>(routes: R): Record<R[number], unknown>;
 const foo = router(["a", "b"]); // Record<"a" | "b", unknown>
 ```
 
 If I were to create a similar function signature in TypeScript v4.x, the inference would fallback to the `string`.
 
 ```ts
-declare function router<R extends string[]>(
-  routes: R
-): Record<R[number], unknown>;
+declare function router<R extends string[]>(routes: R): Record<R[number], unknown>;
 const foo = router(["a", "b"]); // Record<"string", unknown>
 ```
 
@@ -3187,9 +3133,7 @@ interface PasswordValues {
   confirmPassword: string;
 }
 
-const isValidPassword = (
-  values: PasswordValues
-): values is Valid<PasswordValues> => {
+const isValidPassword = (values: PasswordValues): values is Valid<PasswordValues> => {
   if (values.password !== values.confirmPassword) {
     return false;
   }

@@ -80,20 +80,20 @@
 - The notion of creating multiple scaled values to denote an increase in a property. Like `font-size` or `line-height`.
 
   ```css
-    :root {
-      --ratio: 1.5;
-      --s-5: calc(var(--s-4) / var(--ratio));
-      --s-4: calc(var(--s-3) / var(--ratio));
-      --s-3: calc(var(--s-2) / var(--ratio));
-      --s-2: calc(var(--s-1) / var(--ratio));
-      --s-1: calc(var(--s0) / var(--ratio));
-      --s0: 1rem;
-      --s1: calc(var(--s0) * var(--ratio));
-      --s2: calc(var(--s1) * var(--ratio));
-      --s3: calc(var(--s2) * var(--ratio));
-      --s4: calc(var(--s3) * var(--ratio));
-      --s5: calc(var(--s4) * var(--ratio));
-    }
+  :root {
+    --ratio: 1.5;
+    --s-5: calc(var(--s-4) / var(--ratio));
+    --s-4: calc(var(--s-3) / var(--ratio));
+    --s-3: calc(var(--s-2) / var(--ratio));
+    --s-2: calc(var(--s-1) / var(--ratio));
+    --s-1: calc(var(--s0) / var(--ratio));
+    --s0: 1rem;
+    --s1: calc(var(--s0) * var(--ratio));
+    --s2: calc(var(--s1) * var(--ratio));
+    --s3: calc(var(--s2) * var(--ratio));
+    --s4: calc(var(--s3) * var(--ratio));
+    --s5: calc(var(--s4) * var(--ratio));
+  }
   ```
 
 ### Axioms
@@ -103,21 +103,19 @@
 - **Consider using _global styles_ for axioms first. Then leverage the "exception-based styling" technique**.
 
   ```css
-      <!-- The general rule -->
-      * {
-        max-inline-size: 60ch;
-      }
+  <!-- The general rule -- > * {
+    max-inline-size: 60ch;
+  }
 
-      <!-- The exceptions -->
-      html,
-      body,
-      div,
-      header,
-      nav,
-      main,
-      footer {
-        max-inline-size: none;
-      }
+  <!-- The exceptions -- > html,
+  body,
+  div,
+  header,
+  nav,
+  main,
+  footer {
+    max-inline-size: none;
+  }
   ```
 
 ## Layouts
@@ -133,15 +131,15 @@
   - Using the _owl_ selector (it looks like an OWLs face), ensures that the elements have consistent vertical spacing and that there are no margin "left overs". Some people call them "margin glue".
 
 ```css
-  .stack > * + * {
-    margin-block-end: 1.5rem;
-  }
+.stack > * + * {
+  margin-block-end: 1.5rem;
+}
 
-  /* Or you can use the recursive version. */
+/* Or you can use the recursive version. */
 
-  .stack-recursive * + * {
-    margin-block-end: 1.5rem;
-  }
+.stack-recursive * + * {
+  margin-block-end: 1.5rem;
+}
 ```
 
 - Using the "recursive variant" ensures that you can interleave the _stacks_ with other elements and the spacing will be preserved.
@@ -215,21 +213,21 @@
   - To solve this issue, we had to apply negative margins on the container itself. It was not fun.
 
     ```css
-      .cluster {
-        --space: 1rem;
-      }
+    .cluster {
+      --space: 1rem;
+    }
 
-      .cluster > *{
+    .cluster > * {
       display: flex;
       flex-wrap: wrap;
       /* ↓ multiply by -1 to negate the halved value */
-      margin: calc(var(--space) / 2* -1);
-      }
+      margin: calc(var(--space) / 2 * -1);
+    }
 
-      .cluster > *>* {
-        /*↓ half the value, because of the 'doubling up'*/
-        margin: calc(var(--space) / 2);
-      }
+    .cluster > * > * {
+      /*↓ half the value, because of the 'doubling up'*/
+      margin: calc(var(--space) / 2);
+    }
     ```
 
 ### The Sidebar
@@ -249,7 +247,7 @@
       flex-basis: 0;
       /* The `flex-grow` is denotes a proportion, not an actual value in px or rems */
       flex-grow: 999;
-      min-inline-size: 50%
+      min-inline-size: 50%;
     }
     ```
 
@@ -303,7 +301,7 @@ To solve this, author presents the **so-called _Flexbox Holy Albatross_ techniqu
 .switcher > * {
   flex-grow: 1;
   /* 30rem is an arbitrary number */
-  flex-basis: calc((30rem - 100%) * 999)
+  flex-basis: calc((30rem - 100%) * 999);
 }
 ```
 
@@ -490,12 +488,12 @@ To style all the "rest" elements, use the `~` selector. Like in the case of "mor
   - This means that, the `transform: translate(50%, 50%)` will transform the position of the element in respect to the element dimensions.
 
   ```css
-    .imposter {
-      position: absolute;
-      inset-block-start: 50%;
-      inset-inline-start: 50;
-      transform: translate(-50%, -50%);
-    }
+  .imposter {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50;
+    transform: translate(-50%, -50%);
+  }
   ```
 
   Of course, this is only part of the story, as we also have to worry about the overflow. To ensure no overflow happens, once could set the maximum dimensions for width and height.
@@ -559,7 +557,6 @@ Here are the things that struck me as important / things I learned.
 
   ```css
   .container {
-
   }
 
   .container > * + * {

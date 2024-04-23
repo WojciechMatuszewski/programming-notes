@@ -28,14 +28,14 @@ Thunk is a function that has all that it needs to compute it's task. You just ne
 // Thunk making thing (fetchCurrentUser)
 var th1 = fetchCurrentUser();
 th1(function onUser(user) {
-    // concurrency
-    var th2 = fetchArchivedOrders(user.id);
-    var th3 = fetchCurrentOrders(user.id);
-    th2(function onArchivedOrders(archivedOrders) {
-        th3(function onCurrentOrders(currentOrders) {
-            // both of them has finished
-        });
+  // concurrency
+  var th2 = fetchArchivedOrders(user.id);
+  var th3 = fetchCurrentOrders(user.id);
+  th2(function onArchivedOrders(archivedOrders) {
+    th3(function onCurrentOrders(currentOrders) {
+      // both of them has finished
     });
+  });
 });
 ```
 
@@ -45,15 +45,12 @@ Remember Thunks? Promises are also **time independent representation of future v
 
 ```js
 fetchCurrentUser()
-    .then(function onUser(user) {
-        return Promise.all([
-            fetchArchivedOrders(user.id),
-            fetchCurrentOrders(user.id),
-        ]);
-    })
-    .then(function onOrders([archivedOrders, currentOrders]) {
-        // ...
-    });
+  .then(function onUser(user) {
+    return Promise.all([fetchArchivedOrders(user.id), fetchCurrentOrders(user.id)]);
+  })
+  .then(function onOrders([archivedOrders, currentOrders]) {
+    // ...
+  });
 ```
 
 Promise API is better than callbacks but it also has problems:
@@ -77,10 +74,10 @@ getPromise()
       console.log("inside then");
     },
     // this one fires
-    err => console.log("im here")
+    (err) => console.log("im here"),
   )
   // this one is ignored
-  .catch(err => console.log("err"));
+  .catch((err) => console.log("err"));
 // im here
 ```
 
@@ -95,11 +92,11 @@ Generators are another example of lazy computation. They do not actually run whe
 
 ```js
 function* main() {
-    yield 1;
-    yield 2;
-    yield 3;
-    // you can also return values
-    return 4;
+  yield 1;
+  yield 2;
+  yield 3;
+  // you can also return values
+  return 4;
 }
 var it = main();
 
@@ -125,10 +122,10 @@ for (let v of main(14)) {
 
 ```js
 function* main() {
-    var x = 1 + yield;
-    var y = 2 + yield;
-    var z = 3 + yield;
-    return x + y + z;
+  var x = 1 + yield;
+  var y = 2 + yield;
+  var z = 3 + yield;
+  return x + y + z;
 }
 var it = main();
 
@@ -141,16 +138,16 @@ it.next(20); // {value: 6} BUUUT yield 6 got replaced with 20
 
 ```js
 function* main() {
-    var pr = ajax("...");
-    var v = yield pr;
-    console.log("im here", v);
+  var pr = ajax("...");
+  var v = yield pr;
+  console.log("im here", v);
 }
 
 var it = main();
 var pr = it.next().value;
 
-pr.then(function(v) {
-    it.next(v);
+pr.then(function (v) {
+  it.next(v);
 });
 // logs => im here , PROMISE_RESPONSE
 ```
@@ -161,13 +158,10 @@ A lot of well known libraries implement such pattern (bluebird is a good example
 
 ```js
 runner(function* main() {
-    var user = yield fetchCurrentUser();
+  var user = yield fetchCurrentUser();
 
-    var [archivedOrders, currentOrders] = yield Promise.all([
-        fetchArchivedOrders(user.id),
-        fetchCurrentOrders(user.id),
-    ]);
-    // ...
+  var [archivedOrders, currentOrders] = yield Promise.all([fetchArchivedOrders(user.id), fetchCurrentOrders(user.id)]);
+  // ...
 });
 ```
 
@@ -234,12 +228,12 @@ async function* fetchUrls(urls) {
 ```js
 var it = fetchUrls(favSites);
 async function main(varSites) {
-    while (true) {
-        let res = await it.next();
-        if (res.done) break;
-        let text = res.value;
-        console.log(text);
-    }
+  while (true) {
+    let res = await it.next();
+    if (res.done) break;
+    let text = res.value;
+    console.log(text);
+  }
 }
 ```
 
@@ -249,8 +243,8 @@ This is basically the same as the `while` loop. Just some nice syntactic sugar.
 
 ```js
 async function main(favSites) {
-    for await (let text of fetchUrls(favSites)) {
-        console.log(text);
-    }
+  for await (let text of fetchUrls(favSites)) {
+    console.log(text);
+  }
 }
 ```

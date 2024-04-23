@@ -90,9 +90,9 @@ to be rendered**.
 
 ```ts
 startTransition(() => {
-    setState((count) => count + 1)
-    router.push('post/123')
-})
+  setState((count) => count + 1);
+  router.push("post/123");
+});
 ```
 
 In the code above, since the `router.push` causes a transition, **the `setState` call will be reflected in the UI AFTER
@@ -157,15 +157,15 @@ function PokemonDetail() {
 
 TODO: write about the fact that the callback passed to `startTransition` seem to be invoked multiple times(?).
 
--   Tested on production build as well.
+- Tested on production build as well.
 
 ### The problem with `startTransition`
 
 The `startTransition` API is not flexible.
 
--   If used, the child components automatically have to opt into the `concurrent` behaviors.
--   Must be used where the state is set. The `startTransition` callback has to contain a state update. This will most
-    likely result in prop drilling.
+- If used, the child components automatically have to opt into the `concurrent` behaviors.
+- Must be used where the state is set. The `startTransition` callback has to contain a state update. This will most
+  likely result in prop drilling.
 
 There is one API that solves those issues. Enter the `useDeferredValue`.
 
@@ -195,51 +195,51 @@ while returning the "up-to-date" version for others (see the example below)?
 
 ```jsx
 function App() {
-    const [value, setValue] = React.useState(1)
-    const deferredValue = React.useDeferredValue(value)
+  const [value, setValue] = React.useState(1);
+  const deferredValue = React.useDeferredValue(value);
 
-    const isLoading = deferredValue !== value
-    return (
-        <div>
-            <button
-                onClick={() => {
-                    setValue((v) => v + 1)
-                }}
-            >
-                Next pokemon ({value + 1})
-            </button>
-            <div style={{ opacity: isLoading ? 0.4 : 1 }}>
-                <React.Suspense fallback={<span>Loading...</span>}>
-                    <RenderPokemon id={deferredValue}></RenderPokemon>
-                </React.Suspense>
-            </div>
-        </div>
-    )
+  const isLoading = deferredValue !== value;
+  return (
+    <div>
+      <button
+        onClick={() => {
+          setValue((v) => v + 1);
+        }}
+      >
+        Next pokemon ({value + 1})
+      </button>
+      <div style={{ opacity: isLoading ? 0.4 : 1 }}>
+        <React.Suspense fallback={<span>Loading...</span>}>
+          <RenderPokemon id={deferredValue}></RenderPokemon>
+        </React.Suspense>
+      </div>
+    </div>
+  );
 }
 ```
 
 To understand how `useDeferredValue` works, we must understand one of the following: **React can now mark a render as "
 low priority" and return a "stale" value for that render for a given hook. In this case, the `useDeferredValue` hook**.
 
--   The `setValue` update is a high-priority one.
+- The `setValue` update is a high-priority one.
 
--   The button text updates and the **`useDeferredValue` returns a "stale" value of the initial value (1)**.
+- The button text updates and the **`useDeferredValue` returns a "stale" value of the initial value (1)**.
 
--   React "remembers" that the deferred value will need to transition to `1` in a later, low-priority render.
+- React "remembers" that the deferred value will need to transition to `1` in a later, low-priority render.
 
--   The `opacity` is applied as the `deferredValue` is NOT equal to `value`.
+- The `opacity` is applied as the `deferredValue` is NOT equal to `value`.
 
--   React has nothing better to do, so it works on the deferred update.
+- React has nothing better to do, so it works on the deferred update.
 
-    -   The `value` is set to two (after the first update).
+  - The `value` is set to two (after the first update).
 
-    -   The `useDeferredValue` returns two (just like the `value`) in this render.
+  - The `useDeferredValue` returns two (just like the `value`) in this render.
 
-    -   Since we do not have results for `RenderPokemon` with `id` of 2 yet, **React suspens**. **Usually, this would
-        cause the `fallback` to render, but since we are in the low-priority render, React can keep the previously
-        committed result visible**.
+  - Since we do not have results for `RenderPokemon` with `id` of 2 yet, **React suspens**. **Usually, this would
+    cause the `fallback` to render, but since we are in the low-priority render, React can keep the previously
+    committed result visible**.
 
--   React commits the result.
+- React commits the result.
 
 I think [this GitHub comment](https://github.com/reactwg/react-18/discussions/129#discussioncomment-2440646) is the best
 explanation of this feature one can ever get.
@@ -250,12 +250,12 @@ Most of the `setState` calls are queued. For example
 
 ```jsx
 <button
-    onClick={() => {
-        setName('foo')
-        setNumber(1)
-    }}
+  onClick={() => {
+    setName("foo");
+    setNumber(1);
+  }}
 >
-    Click me
+  Click me
 </button>
 ```
 
@@ -273,12 +273,12 @@ to `setEditing(true/false)` are reflected asynchronously.
 
 ```jsx
 <button
-    onClick={() => {
-        setEditing(true)
-        // You cannot call the `focus` here as the UI has not been updated yet.
-    }}
+  onClick={() => {
+    setEditing(true);
+    // You cannot call the `focus` here as the UI has not been updated yet.
+  }}
 >
-    Edit
+  Edit
 </button>
 ```
 
@@ -287,15 +287,15 @@ to `setEditing(true/false)` are reflected asynchronously.
 
 ```jsx
 <button
-    onClick={() => {
-        flushSync(() => {
-            setEditing(true)
-        })
-        // You CAN call the `focus` here. The UI was updated.
-        inputRef.current.focus()
-    }}
+  onClick={() => {
+    flushSync(() => {
+      setEditing(true);
+    });
+    // You CAN call the `focus` here. The UI was updated.
+    inputRef.current.focus();
+  }}
 >
-    Edit
+  Edit
 </button>
 ```
 
@@ -313,26 +313,26 @@ It seems like the `useSyncExternalStore` is meant to be a drop-in replacement fo
 to make sure tearing never happens. Let us write `useIntervalHook` that utilizes the `useSyncExternalStore`.
 
 ```jsx
-let now = new Date().toISOString()
-const subscribers = new Set()
+let now = new Date().toISOString();
+const subscribers = new Set();
 
 setInterval(() => {
-    now = new Date().toISOString()
-    subscribers.forEach((notify) => notify())
-}, 1000)
+  now = new Date().toISOString();
+  subscribers.forEach((notify) => notify());
+}, 1000);
 
 const onSubscribe = (notify) => {
-    subscribers.add(notify)
-    return () => {
-        subscribers.delete(notify)
-    }
-}
+  subscribers.add(notify);
+  return () => {
+    subscribers.delete(notify);
+  };
+};
 
-const onSnapshot = () => now
+const onSnapshot = () => now;
 
 function App() {
-    const value = useSyncExternalStore(onSubscribe, onSnapshot)
-    return <div>{value}</div>
+  const value = useSyncExternalStore(onSubscribe, onSnapshot);
+  return <div>{value}</div>;
 }
 ```
 
@@ -365,40 +365,40 @@ has two examples which really speak to me.
 Here is one for the scroll position state.
 
 ```jsx
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from "react";
 
 const useOptimizedScroll = (selector = () => null) => {
-    const subscribe = (notify) => {
-        window.addEventListener('scroll', notify)
-        return () => {
-            window.removeEventListener('scroll', notify)
-        }
-    }
+  const subscribe = (notify) => {
+    window.addEventListener("scroll", notify);
+    return () => {
+      window.removeEventListener("scroll", notify);
+    };
+  };
 
-    const getSnapshot = () => {
-        /**
-         * If the selector returns the same value multiple times, the React will NOT update the subscriber.
-         * Only unique values count.
-         */
-        return selector(window.scrollY)
-    }
+  const getSnapshot = () => {
+    /**
+     * If the selector returns the same value multiple times, the React will NOT update the subscriber.
+     * Only unique values count.
+     */
+    return selector(window.scrollY);
+  };
 
-    return useSyncExternalStore(subscribe, getSnapshot)
-}
+  return useSyncExternalStore(subscribe, getSnapshot);
+};
 
 function App() {
-    const scrollPosition = useOptimizedScroll((value) => {
-        return Math.floor(value / 100) * 100
-    })
+  const scrollPosition = useOptimizedScroll((value) => {
+    return Math.floor(value / 100) * 100;
+  });
 
-    return (
-        <div style={{ height: '300vh' }}>
-            <div style={{ position: 'fixed' }}>{scrollPosition}</div>
-        </div>
-    )
+  return (
+    <div style={{ height: "300vh" }}>
+      <div style={{ position: "fixed" }}>{scrollPosition}</div>
+    </div>
+  );
 }
 
-export default App
+export default App;
 ```
 
 The alternative being using `useRef` and `useState`. I would say the `useSyncExternalState` version is much easier to
@@ -410,8 +410,8 @@ Let us say that the following component is server-side rendered. Can you spot th
 
 ```jsx
 function Component(event) {
-    const lastUpdated = getLastUpdated()
-    return <span>{lastUpdated.toLocaleDateString()}</span>
+  const lastUpdated = getLastUpdated();
+  return <span>{lastUpdated.toLocaleDateString()}</span>;
 }
 ```
 
@@ -425,20 +425,20 @@ It turns out, that **the `useSyncExternalStore` is quite useful in this situatio
 
 ```jsx
 function Component(event) {
-    const lastUpdated = getLastUpdated()
-    const date = useSyncExternalStore(
-        () => {},
-        // on the client
-        lastUpdated.toLocaleDateString(),
-        // on the server
-        null,
-    )
+  const lastUpdated = getLastUpdated();
+  const date = useSyncExternalStore(
+    () => {},
+    // on the client
+    lastUpdated.toLocaleDateString(),
+    // on the server
+    null,
+  );
 
-    if (!date) {
-        return null
-    }
+  if (!date) {
+    return null;
+  }
 
-    return <span>{lastUpdated.toLocaleDateString()}</span>
+  return <span>{lastUpdated.toLocaleDateString()}</span>;
 }
 ```
 
@@ -451,8 +451,8 @@ Here is the sad part: the updates you trigger via the `useSyncExternalStore` wil
 **cause React to bail-out out of the concurrent features**. **The only way, at the time of writing this, to hold state
 and make it work with concurrent features is to use `useState` and `useReducer`**.
 
--   [Here is Tanner talking about reactivity and concurrent features](https://twitter.com/tannerlinsley/status/1732474127712481371)
--   [Here is the creator of `zustand` talking about the de-opt behavior of `useSyncExternalStore`](https://blog.axlight.com/posts/why-use-sync-external-store-is-not-used-in-jotai/)
+- [Here is Tanner talking about reactivity and concurrent features](https://twitter.com/tannerlinsley/status/1732474127712481371)
+- [Here is the creator of `zustand` talking about the de-opt behavior of `useSyncExternalStore`](https://blog.axlight.com/posts/why-use-sync-external-store-is-not-used-in-jotai/)
 
 It seems like we cannot have the cake and eat it too. At least not now. I wonder how this discussion/issue will progress
 as larger community is relying more and more on signals/fine-grain reactivity primitives.
@@ -506,14 +506,14 @@ You might also think that one could use the `action` in any kind of function and
 
 ```tsx
 <button
-    type="button"
-    onClick={() => {
-        const formData = new FormData()
-        formData.set('text', 'value')
-        dispatch(formData)
-    }}
+  type="button"
+  onClick={() => {
+    const formData = new FormData();
+    formData.set("text", "value");
+    dispatch(formData);
+  }}
 >
-    Submit
+  Submit
 </button>
 ```
 
@@ -525,14 +525,14 @@ here.
 This one is interesting. I'm not a fan of the API as, at least to me, is a bit magical. Check this out.
 
 ```jsx
-;<form>
-    <Button>Click me</Button>
-</form>
+<form>
+  <Button>Click me</Button>
+</form>;
 
 function Button() {
-    const { pending } = useFormStatus()
+  const { pending } = useFormStatus();
 
-    // stuff
+  // stuff
 }
 ```
 
@@ -566,24 +566,24 @@ the whole sub-tree as _low priority_? This is where we could use the `Offscreen`
 
 ```jsx
 function Component() {
-    const [hidden, setHidden] = useState(true)
+  const [hidden, setHidden] = useState(true);
 
-    return (
-        <div>
-            <button onClick={() => setHidden((_) => !_)}>toggle</button>
-            <Offscreen mode={hidden ? 'hidden' : 'visible'}>
-                <MyInitiallyHiddenUI />
-            </Offscreen>
-        </div>
-    )
+  return (
+    <div>
+      <button onClick={() => setHidden((_) => !_)}>toggle</button>
+      <Offscreen mode={hidden ? "hidden" : "visible"}>
+        <MyInitiallyHiddenUI />
+      </Offscreen>
+    </div>
+  );
 }
 ```
 
--   The tree is **hidden via the CSS**.
+- The tree is **hidden via the CSS**.
 
--   React **renders the tree wrapped by the `Offscreen` component with the lowest priority**.
+- React **renders the tree wrapped by the `Offscreen` component with the lowest priority**.
 
--   Allows you to **"prepare the UI" before revealing it to the user**. It works well with Suspense.
+- Allows you to **"prepare the UI" before revealing it to the user**. It works well with Suspense.
 
 ### An example use case
 
@@ -594,33 +594,33 @@ Brian talks about using the `Offscreen` API.
 
 ```tsx
 function App() {
-    const [visible, setVisible] = useState(false)
-    return (
-        <div>
-            <button onClick={() => setVisible(!visible)}>Toggle</button>
-            <Offscreen mode={visible ? 'visible' : 'hidden'}>
-                <VeryHeavyComponent id="with-offscreen" />
-            </Offscreen>
-            {/* Always rendered first. The render wrapped with Offscreen is marked as low prio. */}{' '}
-            <VeryHeavyComponent id="pure" />
-        </div>
-    )
+  const [visible, setVisible] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setVisible(!visible)}>Toggle</button>
+      <Offscreen mode={visible ? "visible" : "hidden"}>
+        <VeryHeavyComponent id="with-offscreen" />
+      </Offscreen>
+      {/* Always rendered first. The render wrapped with Offscreen is marked as low prio. */}{" "}
+      <VeryHeavyComponent id="pure" />
+    </div>
+  );
 }
 
 function fib(n) {
-    if (n <= 1) return 1
-    return fib(n - 1) + fib(n - 2)
+  if (n <= 1) return 1;
+  return fib(n - 1) + fib(n - 2);
 }
 
 function VeryHeavyComponent({ id }) {
-    useMemo(() => fib(40), [])
-    useEffect(() => {
-        console.log(`heavy mounted ${id}`)
-        return () => {
-            console.log(`heavy unmounted ${id}`)
-        }
-    }, [id])
-    return <div>Heavy!</div>
+  useMemo(() => fib(40), []);
+  useEffect(() => {
+    console.log(`heavy mounted ${id}`);
+    return () => {
+      console.log(`heavy unmounted ${id}`);
+    };
+  }, [id]);
+  return <div>Heavy!</div>;
 }
 ```
 
@@ -654,53 +654,53 @@ Here you **stream non-interactive serialized representation of _virtual DOM_ fro
 \*similar to `getServerSideProps` in Next.js**, but it is **different\*\*. The main difference between _React Server
 Components_ and `getServerSideProps` are.
 
--   With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server
-    Components_.
+- With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server
+  Components_.
 
-    -   **You cannot use any React hooks with _React Server Components_**.
+  - **You cannot use any React hooks with _React Server Components_**.
 
-    -   Using `getServerSideProps` is **to display a non-interactive version of the _client_ component** and then hydrate
-        it for interactivity. There is **no hydration using _React Server Components_**.
+  - Using `getServerSideProps` is **to display a non-interactive version of the _client_ component** and then hydrate
+    it for interactivity. There is **no hydration using _React Server Components_**.
 
-    -   The `getServerSideProps` could be problematic in cases where you have conditionals based on the props you pass down from the server.
-        -   See [this article](https://www.rexforde.com/blog/conditional-render-problem) for an example where this could be problematic.
+  - The `getServerSideProps` could be problematic in cases where you have conditionals based on the props you pass down from the server.
+    - See [this article](https://www.rexforde.com/blog/conditional-render-problem) for an example where this could be problematic.
 
--   With _React Server Components_ you can **fetch as your render**, where the component definition is asynchronous.
+- With _React Server Components_ you can **fetch as your render**, where the component definition is asynchronous.
 
--   The **dependencies you use to render _Server Components_ do not add to your overall bundle**.
+- The **dependencies you use to render _Server Components_ do not add to your overall bundle**.
 
-    -   Since there is **no hydration when using SSR**, there is no need to push that code to the client.
+  - Since there is **no hydration when using SSR**, there is no need to push that code to the client.
 
-        > See [this tweet](https://twitter.com/sebmarkbage/status/1341142110385410049).
+    > See [this tweet](https://twitter.com/sebmarkbage/status/1341142110385410049).
 
-    -   The _React Server Components_ have **automatic bundle splitting**. As in you do not have to use `React.lazy` for
-        code splitting.
+  - The _React Server Components_ have **automatic bundle splitting**. As in you do not have to use `React.lazy` for
+    code splitting.
 
-        -   If the page is not using some of the components, they will not be send to the client.
+    - If the page is not using some of the components, they will not be send to the client.
 
--   The **_Server Components_ allow you to use native Node.js functions as they only run on the backend**.
+- The **_Server Components_ allow you to use native Node.js functions as they only run on the backend**.
 
--   The **_Server Components_ are always "rendered", no matter if they are lazily loaded**.
+- The **_Server Components_ are always "rendered", no matter if they are lazily loaded**.
 
-    -   This is something I learned from [this video](https://www.youtube.com/watch?v=AGAax7WzStc) and also
-        from [the next.js docs](https://beta.nextjs.org/docs/optimizing/lazy-loading#example-importing-server-components).
+  - This is something I learned from [this video](https://www.youtube.com/watch?v=AGAax7WzStc) and also
+    from [the next.js docs](https://beta.nextjs.org/docs/optimizing/lazy-loading#example-importing-server-components).
 
-        -   According to the docs, "If you dynamically import a Server Component, only the client components that are
-            children of the Server Component will be lazy loaded - not the Server Component itself.". This **is very
-            important to keep in mind**.
+    - According to the docs, "If you dynamically import a Server Component, only the client components that are
+      children of the Server Component will be lazy loaded - not the Server Component itself.". This **is very
+      important to keep in mind**.
 
-        -   As your page grows, you might need to stream more and more data. I must be missing something, but this
-            strategy does not sound right to me. What if I have a huge number of components?
+    - As your page grows, you might need to stream more and more data. I must be missing something, but this
+      strategy does not sound right to me. What if I have a huge number of components?
 
-            -   After a bit of googling, I came to a conclusion that it does not matter as you most likely will split
-                everything per page. What I worry about are waterfalls while fetching client components JS.
+      - After a bit of googling, I came to a conclusion that it does not matter as you most likely will split
+        everything per page. What I worry about are waterfalls while fetching client components JS.
 
-                -   This [blog from the remix team](https://remix.run/blog/react-server-components#the-react-teams-demo)
-                    confirms my suspicions. Unless you kickoff all the promises to start fetching and pass them down to
-                    components, you will get into fetch-render-fetch-render cycle that causes waterfalls.
+        - This [blog from the remix team](https://remix.run/blog/react-server-components#the-react-teams-demo)
+          confirms my suspicions. Unless you kickoff all the promises to start fetching and pass them down to
+          components, you will get into fetch-render-fetch-render cycle that causes waterfalls.
 
-    -   Here
-        is [an additional video on the subject of RSCs](https://portal.gitnation.org/contents/simplifying-server-components)
+  - Here
+    is [an additional video on the subject of RSCs](https://portal.gitnation.org/contents/simplifying-server-components)
 
 #### Notes from the "React Server Components with Dan Abramov, Joe Savona, and Kent C. Dodds"
 
@@ -718,69 +718,69 @@ Components_ and `getServerSideProps` are.
 
 1. According to Dan, [RSC automatically de-duplicate requests](https://youtu.be/h7tur48JSaw?t=2257).
 
-    - I'm not sure that is true for _native_ RSC? It is
-      a [feature of Next.js 13](https://beta.nextjs.org/docs/data-fetching/fundamentals#automatic-fetch-request-deduping).
+   - I'm not sure that is true for _native_ RSC? It is
+     a [feature of Next.js 13](https://beta.nextjs.org/docs/data-fetching/fundamentals#automatic-fetch-request-deduping).
 
-    - And [here, Kent talks about overloading the fetch](https://youtu.be/h7tur48JSaw?t=2441). I think that he is
-      referring to the Next.js 13 implementation?
+   - And [here, Kent talks about overloading the fetch](https://youtu.be/h7tur48JSaw?t=2441). I think that he is
+     referring to the Next.js 13 implementation?
 
-        - It [turns out there is a new "fetch" exposed by React](https://youtu.be/h7tur48JSaw?t=2517). **They are
-          talking about `react-fetch` package that leverages the cache API**.
+     - It [turns out there is a new "fetch" exposed by React](https://youtu.be/h7tur48JSaw?t=2517). **They are
+       talking about `react-fetch` package that leverages the cache API**.
 
 ---
 
 1. As it stands now, you cannot have one server component and client component live in the same file.
 
-    - This is not a limitation of the architecture. It is a conscious decision.
+   - This is not a limitation of the architecture. It is a conscious decision.
 
 ---
 
 1. [Here Kent talks about how we should structure the application that uses server components](https://youtu.be/h7tur48JSaw?t=5145).
 
-    - This is a shift in how we usually write React apps, where the `children` prop is used but not to that extend.
+   - This is a shift in how we usually write React apps, where the `children` prop is used but not to that extend.
 
--   Server components as island architecture?
+- Server components as island architecture?
 
 #### Notes from the "Into the Depths with Server Components and Functions"
 
 > You can [find the source here](https://www.youtube.com/watch?v=QS9yAsv1czg).
 
--   Server Components as islands. The root is on the server. This allows for optimization on the data-serialization level.
+- Server Components as islands. The root is on the server. This allows for optimization on the data-serialization level.
 
-    -   The _server_ tree is continuous, while the _client_ tree can be split by the server components. This makes it hard
-        to communicate between different client-components (use client context for that).
+  - The _server_ tree is continuous, while the _client_ tree can be split by the server components. This makes it hard
+    to communicate between different client-components (use client context for that).
 
--   Caching (mostly de-duping) moves from the client to the server. Of course you can cache on the client, but keep in
-    mind that the client components are mixed with server components. Since the server is the root, it makes sense to
-    cache on the server.
+- Caching (mostly de-duping) moves from the client to the server. Of course you can cache on the client, but keep in
+  mind that the client components are mixed with server components. Since the server is the root, it makes sense to
+  cache on the server.
 
--   Nested routing and the ability to deduce which data lives where allows you to skip waterfalls. You can fetch data for
-    components you are about to render in parallel while rendering them.
+- Nested routing and the ability to deduce which data lives where allows you to skip waterfalls. You can fetch data for
+  components you are about to render in parallel while rendering them.
 
-    -   That is not the case in most of the apps today. Currently we "fetch on render" most of the times.
+  - That is not the case in most of the apps today. Currently we "fetch on render" most of the times.
 
 #### Notes from "Server Components are NOT islands" part of the Ryan Carniato stream
 
 > [Source](https://youtu.be/2zhYwg_nBqQ?t=9913).
 
--   The static data appears twice in the downloaded HTML. Once in the script, once in the HTML markup itself.
+- The static data appears twice in the downloaded HTML. Once in the script, once in the HTML markup itself.
 
-    -   Imagine a situation that the static content is _initially hidden with a client toggle_. You **would not want to
-        make a server request when we toggle the content on the client**. That is why **even the "path not taken" is
-        included in the initial markup**.
+  - Imagine a situation that the static content is _initially hidden with a client toggle_. You **would not want to
+    make a server request when we toggle the content on the client**. That is why **even the "path not taken" is
+    included in the initial markup**.
 
-        -   **This is why Server Components render all the "server tree", no matter if it's visible or not**.
+    - **This is why Server Components render all the "server tree", no matter if it's visible or not**.
 
--   `Suspense` allows out-of-order streaming
+- `Suspense` allows out-of-order streaming
 
-    -   When streaming, **you do not know which components are going to be used**. This means you have to serialize all
-        the props for all the components that you steam.
+  - When streaming, **you do not know which components are going to be used**. This means you have to serialize all
+    the props for all the components that you steam.
 
-        -   As a solution, one might **delay streaming some content until JS loads**. This way, you will know which
-            components are used, and serialize the props accordingly.
+    - As a solution, one might **delay streaming some content until JS loads**. This way, you will know which
+      components are used, and serialize the props accordingly.
 
--   The bottom line is that the problem space is very hard to reason about. This most likely means that we are looking at
-    the problem from the wrong angle.
+- The bottom line is that the problem space is very hard to reason about. This most likely means that we are looking at
+  the problem from the wrong angle.
 
 ### React Client Components
 
@@ -800,38 +800,38 @@ great way to ensure your code is scalable and responds to change in requirements
 
 > You can [find the source here](https://www.youtube.com/watch?v=Fctw7WjmxpU).
 
--   The **term server and client** is a bit **misleading**. You do **not need a server to use server components**.
+- The **term server and client** is a bit **misleading**. You do **not need a server to use server components**.
 
-    -   If you do not use the server, the "server" components would be built during the app build.
+  - If you do not use the server, the "server" components would be built during the app build.
 
-        -   In fact, in the video, they started with the client-only architecture.
+    - In fact, in the video, they started with the client-only architecture.
 
--   The **response of an RSC is like a "JSON with holes"**. These are not instructions of any kind. This is streamable
-    JSON .
+- The **response of an RSC is like a "JSON with holes"**. These are not instructions of any kind. This is streamable
+  JSON .
 
--   The data-fetching story gets interesting when you take `Suspense` into the mix. Keep in mind that **`Suspense` now
-    works on the server and with server components!**.
+- The data-fetching story gets interesting when you take `Suspense` into the mix. Keep in mind that **`Suspense` now
+  works on the server and with server components!**.
 
-    -   With `Suspense` you can **achieve out-of-order streaming**. This is nice as some server components might take more
-        time to resolve. You would not want to wait for ALL of them to resolve before showing content.
+  - With `Suspense` you can **achieve out-of-order streaming**. This is nice as some server components might take more
+    time to resolve. You would not want to wait for ALL of them to resolve before showing content.
 
--   You **cannot import server components into client components**.
+- You **cannot import server components into client components**.
 
-    -   This does make sense. If your server component uses a node-specific API, it would explode on the client.
+  - This does make sense. If your server component uses a node-specific API, it would explode on the client.
 
-    -   To **compose, use the `children` prop**.
+  - To **compose, use the `children` prop**.
 
--   Server components allow **for automatic code splitting of client components**.
+- Server components allow **for automatic code splitting of client components**.
 
-    -   **The JSON data of RSC contains the location of the client components file**. If the server component does not
-        include the client components, there is nothing to download.
+  - **The JSON data of RSC contains the location of the client components file**. If the server component does not
+    include the client components, there is nothing to download.
 
--   The **`startTransition` tells the React that it is okay for the screen to be delayed while we wait for the RSC to
-    refresh**.
+- The **`startTransition` tells the React that it is okay for the screen to be delayed while we wait for the RSC to
+  refresh**.
 
-    -   This allows you to skip the `Suspense` loading screens when the part of the tree update.
+  - This allows you to skip the `Suspense` loading screens when the part of the tree update.
 
-        -   Dan says that the `startTransition` allows you to **wait till React has something to show**.
+    - Dan says that the `startTransition` allows you to **wait till React has something to show**.
 
 ### The bottom line
 
@@ -854,17 +854,17 @@ great way to ensure your code is scalable and responds to change in requirements
 
 > [Here is the link to the first entry](https://github.com/reactwg/server-components/discussions/5) in the series.
 
--   The SSR is about sending the HTML as the initial request. The RSC is about sending serialized JSX upon subsequent
-    navigations so that we can navigate without destroying the state of the application.
+- The SSR is about sending the HTML as the initial request. The RSC is about sending serialized JSX upon subsequent
+  navigations so that we can navigate without destroying the state of the application.
 
--   While using RSCs, the navigation **will fetch, by default, only the parts that could have changed**. There is no point
-    in returning the serialized JSX for the "Layout" if you know that it could not have changed.
+- While using RSCs, the navigation **will fetch, by default, only the parts that could have changed**. There is no point
+  in returning the serialized JSX for the "Layout" if you know that it could not have changed.
 
--   The RSC have a special format to them because returning the "raw JSX" is not possible and even if it would be, the "
-    raw JSX" is quite large.
+- The RSC have a special format to them because returning the "raw JSX" is not possible and even if it would be, the "
+  raw JSX" is quite large.
 
-    -   The "raw JSX" contains symbols that correspond to the element type. These get stripped when
-        performing `JSON.stringify`.
+  - The "raw JSX" contains symbols that correspond to the element type. These get stripped when
+    performing `JSON.stringify`.
 
 > Waiting for the part 2 as the part 1 was a fascinating read.
 
@@ -872,57 +872,57 @@ great way to ensure your code is scalable and responds to change in requirements
 
 > Based on [this great blog post](https://demystifying-rsc.vercel.app/).
 
--   The **SSR output of the RSCs is the HTML and the encoded _virtual DOM_**.
+- The **SSR output of the RSCs is the HTML and the encoded _virtual DOM_**.
 
-    -   The _virtual DOM_ is needed for future updates and to ensure we can mix RCCs with RSCs.
+  - The _virtual DOM_ is needed for future updates and to ensure we can mix RCCs with RSCs.
 
-    -   The data is encoded in a "special" new format that allows streaming.
+  - The data is encoded in a "special" new format that allows streaming.
 
--   In **Next.js, RCCs are, by default, pre-rendered on the server**. That is why you see static HTML when you view the
-    page source.
+- In **Next.js, RCCs are, by default, pre-rendered on the server**. That is why you see static HTML when you view the
+  page source.
 
-    -   This is the SSR mechanism that we have been using for a while now.
+  - This is the SSR mechanism that we have been using for a while now.
 
--   **Every time you use `use client`, you tell the bundler to put the component into a separate file**.
+- **Every time you use `use client`, you tell the bundler to put the component into a separate file**.
 
-    -   Then, React can reference the file in the streaming RSC output.
+  - Then, React can reference the file in the streaming RSC output.
 
--   You can **control whether the RCC runs on the server or not via the `next/dynamic` and the `ssr: true/false` option**.
+- You can **control whether the RCC runs on the server or not via the `next/dynamic` and the `ssr: true/false` option**.
 
--   The **RCC can have RSC as `children`, but keep in mind that updating props passed to RCS will NOT cause a re-render**!
+- The **RCC can have RSC as `children`, but keep in mind that updating props passed to RCS will NOT cause a re-render**!
 
--   If you **import a component inside a RCC, the component becomes RCC**.
+- If you **import a component inside a RCC, the component becomes RCC**.
 
-    -   This means that you can skip the `use server` on some occasions, but that might lead to a mistake where you want
-        the component to explicitly be a RSC, but it becomes RCC.
+  - This means that you can skip the `use server` on some occasions, but that might lead to a mistake where you want
+    the component to explicitly be a RSC, but it becomes RCC.
 
-        -   One can **use the `server-only` module** to ensure that developers do not import RSCs into RCCs by accident.
+    - One can **use the `server-only` module** to ensure that developers do not import RSCs into RCCs by accident.
 
--   **Asynchronous RSCs are rendered in parallel if they are on the same nesting level**.
+- **Asynchronous RSCs are rendered in parallel if they are on the same nesting level**.
 
--   The `Suspense` allows streaming. This can speed up the perceived performance of the page because React will render
-    something, be it the fallback, as soon as possible.
+- The `Suspense` allows streaming. This can speed up the perceived performance of the page because React will render
+  something, be it the fallback, as soon as possible.
 
 ## Server actions
 
--   At the time of writing, they are marked as _alpha_ in Next.js
+- At the time of writing, they are marked as _alpha_ in Next.js
 
--   Allow you to create **ad-hoc backend endpoints** which then you can use to **submit form data or use them as RPC calls
-    from the frontend**.
+- Allow you to create **ad-hoc backend endpoints** which then you can use to **submit form data or use them as RPC calls
+  from the frontend**.
 
--   While I like the premise, **the creation of ad-hoc backend endpoints scares me**.
+- While I like the premise, **the creation of ad-hoc backend endpoints scares me**.
 
-    -   People usually **ignore the fact that these could be an entry point to your system when attacked**.
+  - People usually **ignore the fact that these could be an entry point to your system when attacked**.
 
-    -   Reading blog posts and other materials on these, **people fail to think about rate-limiting** on those endpoints.
+  - Reading blog posts and other materials on these, **people fail to think about rate-limiting** on those endpoints.
 
--   There is a **real danger of leaking secrets or other sensitive data** if you are not careful.
+- There is a **real danger of leaking secrets or other sensitive data** if you are not careful.
 
-    -   The framework has to serialize the underlying parameters you pass to the _server action_. If you pass a secret
-        from the frontend, you have leaked it! (of course having the access to secrets on the frontend is a whole another
-        discussion).
+  - The framework has to serialize the underlying parameters you pass to the _server action_. If you pass a secret
+    from the frontend, you have leaked it! (of course having the access to secrets on the frontend is a whole another
+    discussion).
 
--   You can either import a _server action_ into a RCC or define a _server action_ as a function in RCC.
+- You can either import a _server action_ into a RCC or define a _server action_ as a function in RCC.
 
 ```ts
 'use client'
@@ -952,22 +952,22 @@ async function myInlineServerAction(userId: string) {
 
 ## Client Actions
 
--   They have **the same syntax as _server actions_, but they differ in behavior**.
+- They have **the same syntax as _server actions_, but they differ in behavior**.
 
-    -   They **do not create ad-hoc backend endpoints**.
+  - They **do not create ad-hoc backend endpoints**.
 
-    -   They **integrate with _Suspense_ and _Error Boundaries_**.
+  - They **integrate with _Suspense_ and _Error Boundaries_**.
 
--   They are useful for streamlining the form handling and **integrating with the `useFormStatus` hook**.
+- They are useful for streamlining the form handling and **integrating with the `useFormStatus` hook**.
 
 ## `server-only` and `client-only` packages
 
--   These packages allow you to mark a given file to be accessible only on the client or the server.
+- These packages allow you to mark a given file to be accessible only on the client or the server.
 
-    -   This is an additional protective layer against unwanted data transition from the server and the client.
+  - This is an additional protective layer against unwanted data transition from the server and the client.
 
--   **They work on the basis of _conditional `package.json` exports_. I find this mechanism pretty interesting**.
-    -   The **key to make that work is the `--conditions` flag in Node.js**.
+- **They work on the basis of _conditional `package.json` exports_. I find this mechanism pretty interesting**.
+  - The **key to make that work is the `--conditions` flag in Node.js**.
 
 ```json5
 // server-only package.json

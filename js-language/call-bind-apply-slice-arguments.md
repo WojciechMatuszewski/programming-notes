@@ -8,14 +8,14 @@ So what is an `array-like` ?
 
 ```javascript
 function someFunc(arg1, arg2) {
-    console.log(arguments.length);
-    // the result of this console log is actually an object
-    // well you can say : but Wojtek! Array's are objects as well!
-    // to that i say : arguments is an array-like
-    // it does have length and indexed values but it does not have
-    // array methods like .push or .slice or .splice ...etc
+  console.log(arguments.length);
+  // the result of this console log is actually an object
+  // well you can say : but Wojtek! Array's are objects as well!
+  // to that i say : arguments is an array-like
+  // it does have length and indexed values but it does not have
+  // array methods like .push or .slice or .splice ...etc
 
-    arguments.push(3); // ERR!
+  arguments.push(3); // ERR!
 }
 
 someFunc(1, 2);
@@ -53,10 +53,10 @@ But the most important thing, **`slice` does not mutate the original array (at l
 
 ```javascript
 var obj = {
-    name: "Wojtek",
-    say() {
-        console.log(this.name);
-    },
+  name: "Wojtek",
+  say() {
+    console.log(this.name);
+  },
 };
 obj.say(); // 'Wojtek'
 obj.say.call({ name: "Robert" }); // 'Robert'
@@ -68,8 +68,8 @@ So remember how you could just call `.slice()` to basically copy the array ? we 
 
 ```javascript
 function someFunction(arg1, arg2) {
-    var argumentsArray = Array.prototype.slice.call(arguments);
-    // and so now we have array of arguments which actually have Array methods like push etc...
+  var argumentsArray = Array.prototype.slice.call(arguments);
+  // and so now we have array of arguments which actually have Array methods like push etc...
 }
 ```
 
@@ -93,16 +93,16 @@ Very useful when you want to be sure that function will be called with correct c
 
 ```javascript
 var me = {
-    name: "Wojtek",
-    sayName() {
-        console.log(this.name);
-    },
+  name: "Wojtek",
+  sayName() {
+    console.log(this.name);
+  },
 };
 
 me.sayName(); // Wojtek
 
 var someoneElse = {
-    name: "not me",
+  name: "not me",
 };
 
 me.sayName.bind(someoneElse)(); // not me
@@ -112,15 +112,15 @@ With second argument you can pre-pend arguments. Let's look at an example.
 
 ```javascript
 function curry(fn) {
-    return function curried(...args) {
-        // if you cannot use gather remember about Array.prototype.slice.call(arguments)
-        // or Array.from(arguments)
+  return function curried(...args) {
+    // if you cannot use gather remember about Array.prototype.slice.call(arguments)
+    // or Array.from(arguments)
 
-        return args.length >= fn.length
-            ? fn.apply(null, args)
-            : // here we are pre-pending args and when invoked function will take new args as well it will have old args from this call
-                curried.bind(null, ...args);
-    };
+    return args.length >= fn.length
+      ? fn.apply(null, args)
+      : // here we are pre-pending args and when invoked function will take new args as well it will have old args from this call
+        curried.bind(null, ...args);
+  };
 }
 ```
 
@@ -146,18 +146,18 @@ Remember the weird behavior when you wanted to do pipe from compose and tried re
 
 ```javascript
 function composeTwo(f, g) {
-    return function composed(arg) {
-        return f(g(arg));
-    };
+  return function composed(arg) {
+    return f(g(arg));
+  };
 }
 function compose(...fns) {
-    return fns.reduce(composeTwo);
+  return fns.reduce(composeTwo);
 }
 
 function pipe(...fns) {
-    // it would be very bad for us to mutate arguments passed
-    // so we are using the old trick using .slice.call
-    return compose.apply(compose, Array.prototype.slice.call(fns).reverse());
+  // it would be very bad for us to mutate arguments passed
+  // so we are using the old trick using .slice.call
+  return compose.apply(compose, Array.prototype.slice.call(fns).reverse());
 }
 
 // now we have pipe and compose funcions :)

@@ -198,10 +198,7 @@ To add things to the template you would write
 ```ts
 const bucket = new s3.Bucket(this, "MyBucket");
 const cfnBucket = bucket.node.defaultChild as s3.CfnBucket;
-cfnBucket.addOverride(
-  "Properties.MyImaginaryPropertyKey",
-  "MyImaginaryPropertyValue"
-);
+cfnBucket.addOverride("Properties.MyImaginaryPropertyKey", "MyImaginaryPropertyValue");
 ```
 
 And to remove a given property, all you need to do is to override it with `undefined`
@@ -234,8 +231,7 @@ class BucketVersioningChecker implements IAspect {
       // can be a token (IResolvable).
       if (
         !node.versioningConfiguration ||
-        (!Tokenization.isResolvable(node.versioningConfiguration) &&
-          node.versioningConfiguration.status !== "Enabled")
+        (!Tokenization.isResolvable(node.versioningConfiguration) && node.versioningConfiguration.status !== "Enabled")
       ) {
         Annotations.of(node).addError("Bucket versioning is not enabled");
       }

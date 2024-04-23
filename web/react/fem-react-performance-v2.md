@@ -28,8 +28,8 @@
     This is **NOT A REACT THING, THIS IS JAVASCRIPT EXECUTING**.
 
     ```jsx
-    const [state, setState] = useState(slowToComputeValue()) // Will cause performance issues when the component re-renders
-    const [state, setState] = useState(() => slowToComputeValue()) // Only the initial render is slow
+    const [state, setState] = useState(slowToComputeValue()); // Will cause performance issues when the component re-renders
+    const [state, setState] = useState(() => slowToComputeValue()); // Only the initial render is slow
     ```
 
 ## Second exercise – packing list & wordman
@@ -60,22 +60,20 @@
 
   1. First is the fact that, if your provider re-renders often, the value you pass to the `Provider` component might change. If that happens, all the consumers will re-render.
 
-      - The solution here is **to use two `Context` objects, one for the data, one for the `dispatch` or the setters**.
+     - The solution here is **to use two `Context` objects, one for the data, one for the `dispatch` or the setters**.
 
-        - Keep in mind that the **order in which you render the providers matters**. You want to render the "actions" provider first.
-          All parents trigger re-render on their children. You would not want to re-render the "actions" provider when `items` changed.
+       - Keep in mind that the **order in which you render the providers matters**. You want to render the "actions" provider first.
+         All parents trigger re-render on their children. You would not want to re-render the "actions" provider when `items` changed.
 
-          ```jsx
-            <ActionsContext.Provider value = {dispatch}>
-              <ItemsContext.Provider value = {items}>
-                {children}
-              </ItemsContext.Provider>
-            </ActionsContext.Provider>
-          ```
+         ```jsx
+         <ActionsContext.Provider value={dispatch}>
+           <ItemsContext.Provider value={items}>{children}</ItemsContext.Provider>
+         </ActionsContext.Provider>
+         ```
 
   2. The `useContext` API injects "hidden" props into a given component. Those "hidden" props will always bust the memoization.
 
-      - This is not really a problem so there is no solution. It is how the API works. If you make your context granular, you should be good.
+     - This is not really a problem so there is no solution. It is how the API works. If you make your context granular, you should be good.
 
 ## Fourth exercise – hottest-takes
 
@@ -83,30 +81,33 @@
 
   ```jsx
   <ActionsContext.Provider value={actions}>
-    <StateContext.Provider value={{ posts, users }}> // two separate `useReducer` calls
+    <StateContext.Provider value={{ posts, users }}>
+      {" "}
+      // two separate `useReducer` calls
       {children}
     </StateContext.Provider>
   </ActionsContext.Provider>
   ```
 
-    So, if the `posts` change, all the components "subscribed" to the `users` will change as well. The **solution is to make the `value` prop more granular, by adding additional context providers**.
+  So, if the `posts` change, all the components "subscribed" to the `users` will change as well. The **solution is to make the `value` prop more granular, by adding additional context providers**.
 
 - When using **memoization, and your component takes in `children` prop, ensure that the `children` render in a place that does not re-render frequently**. Otherwise you will be busting memoization. Every time the place where you render those `children` re-render, the memoized component will re-render.
 
-    ```jsx
-    const [users, setUsers] = useState([])
-    return (
-      <div>
-        {users.map(user => {
-          return (
-            <User user = {user}>
-              <SomeExpensiveComponent/> // This one will re-render every time the `users` change. If possible, rendering this component elsewhere (either inside User or at the parent level).
-            </User>
-          )
-        })}
-      </div>
-    )
-    ```
+  ```jsx
+  const [users, setUsers] = useState([]);
+  return (
+    <div>
+      {users.map((user) => {
+        return (
+          <User user={user}>
+            <SomeExpensiveComponent /> // This one will re-render every time the `users` change. If possible, rendering
+            this component elsewhere (either inside User or at the parent level).
+          </User>
+        );
+      })}
+    </div>
+  );
+  ```
 
   - This is because the `children` are a complex object data structure.
 

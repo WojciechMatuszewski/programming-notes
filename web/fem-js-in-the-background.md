@@ -1,4 +1,3 @@
-
 # FEM JavaScript in the Background
 
 ## What does "in the background" mean?
@@ -33,7 +32,7 @@
 
   2. The **`Background Sync` API** will let the browser know that we need to update the data in the background.
 
-    2.1 There is also the **`Periodic Background Sync` API** which works like a CRON for background data synchronization.
+     2.1 There is also the **`Periodic Background Sync` API** which works like a CRON for background data synchronization.
 
   3. The **`Background Fetch` API** is for downloading **large pieces of data in the background**.
 
@@ -65,16 +64,16 @@
 
 ```js
 navigator.mediaSession.metadata = new MediaMetadata({
-    title: "To much Funk",
-    artist: "The Funky Bunch",
-    album: "Frontend Masters",
-    artwork: [
-        {
-        src: "/media/thumb.png",
-        type: "image/png",
-        sizes: "800x800"
-        }
-    ]
+  title: "To much Funk",
+  artist: "The Funky Bunch",
+  album: "Frontend Masters",
+  artwork: [
+    {
+      src: "/media/thumb.png",
+      type: "image/png",
+      sizes: "800x800",
+    },
+  ],
 });
 ```
 
@@ -166,7 +165,7 @@ navigator.mediaSession.metadata = new MediaMetadata({
   - This means that **sending a stringified object might not work for your server**. What you have to do is to **send is a Blob**.
 
     ```js
-    const data = {}
+    const data = {};
     const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
     ```
 

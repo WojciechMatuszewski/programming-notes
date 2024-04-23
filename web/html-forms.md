@@ -62,20 +62,20 @@ to upload the same file again. People often forget to do this, and this leads to
 
 ```jsx
 function FormStuff() {
-    return (
-        <form>
-            <input
-                type="file"
-                onChange={(event) => {
-                    const files = event.currentTarget.files
-                    // process the files
+  return (
+    <form>
+      <input
+        type="file"
+        onChange={(event) => {
+          const files = event.currentTarget.files;
+          // process the files
 
-                    // Reset the input
-                    event.currentTarget.value = ''
-                }}
-            />
-        </form>
-    )
+          // Reset the input
+          event.currentTarget.value = "";
+        }}
+      />
+    </form>
+  );
 }
 ```
 
@@ -86,9 +86,9 @@ function FormStuff() {
 While for more robust forms, you might need to reach out for a JS API, in some cases, you might get away with an
 HTML-only validation of inputs. There are many attributes on the native HTML form elements that could aid you.
 
--   The `minLength`
--   The `required`
--   The `pattern`
+- The `minLength`
+- The `required`
+- The `pattern`
 
 Also, let us not forget about the `type` property of the input. The most common are `type="email"` or `type="tel"`.
 
@@ -97,19 +97,19 @@ Also, let us not forget about the `type` property of the input. The most common 
 The input elements have different "states" represented by pseudo-classes. You can use them to style the inputs based on
 their validity.
 
--   The `:invalid` pseudo-class **allows you to target invalid inputs, but the `:invalid` is also applied when the first
-    loads!**.
+- The `:invalid` pseudo-class **allows you to target invalid inputs, but the `:invalid` is also applied when the first
+  loads!**.
 
--   The `:user-invalid` is **very similar to `:invalid` but IS NOT applied when the page first loads**.
+- The `:user-invalid` is **very similar to `:invalid` but IS NOT applied when the page first loads**.
 
-    -   Sadly, the **browser support for `:user-invalid` is lacking**, so we cannot really rely on it.
+  - Sadly, the **browser support for `:user-invalid` is lacking**, so we cannot really rely on it.
 
 The one technique to "fix" the surprising (at least to me) behavior of the `:invalid` pseudo-class is to
 the `:not(:placeholder-shown)` to only set the invalid styles when the input is filled.
 
 ```css
 input:not(:placeholder-shown):invalid {
-    border: 1px solid red;
+  border: 1px solid red;
 }
 ```
 
@@ -118,7 +118,7 @@ inputs `:invalid` state, only when the form was submitted.
 
 ```css
 form.submitted input:invalid {
-    border: 1px solid red;
+  border: 1px solid red;
 }
 ```
 
@@ -131,21 +131,21 @@ can **control the contents of those popovers by using JS and the `Constraint Val
 
 ```js
 function FormStuff() {
-    const inputRef = useRef()
+  const inputRef = useRef();
 
-    useEffect(() => {
-        inputRef.current.addEventListener('input', (element) => {
-            if (element.currentTarget.validity.typeMismatch) {
-                element.currentTarget.setCustomValidity('I am expecting an email address!')
-            }
-        })
-    }, [])
+  useEffect(() => {
+    inputRef.current.addEventListener("input", (element) => {
+      if (element.currentTarget.validity.typeMismatch) {
+        element.currentTarget.setCustomValidity("I am expecting an email address!");
+      }
+    });
+  }, []);
 
-    return (
-        <form>
-            <input ref={inputRef} type="email" required={true} minLength="2" />
-        </form>
-    )
+  return (
+    <form>
+      <input ref={inputRef} type="email" required={true} minLength="2" />
+    </form>
+  );
 }
 ```
 
@@ -196,8 +196,8 @@ Doing so, has a couple of benefits.
 3. Enables you to style the input based on invalid state via CSS only.
 
 ```css
-input[aria-invalid='true'] {
-    border: 2px solid red;
+input[aria-invalid="true"] {
+  border: 2px solid red;
 }
 ```
 
@@ -214,7 +214,7 @@ another method of notifying the user about the error.
 
 ```jsx
 <form>
-    <div role="alert" tabIndex={-1}></div>
+  <div role="alert" tabIndex={-1}></div>
 </form>
 ```
 
@@ -222,12 +222,12 @@ another method of notifying the user about the error.
 
 ```jsx
 <form>
-    <div role="alert" tabIndex={0} aria-labelledby="formErrorHeading">
-        <h2 id="formErrorHeading" className="sr-only">
-            Failed to submit the form
-        </h2>
-        <span>Your error message</span>
-    </div>
+  <div role="alert" tabIndex={0} aria-labelledby="formErrorHeading">
+    <h2 id="formErrorHeading" className="sr-only">
+      Failed to submit the form
+    </h2>
+    <span>Your error message</span>
+  </div>
 </form>
 ```
 
@@ -236,71 +236,71 @@ It is vital to add correct attributes to the container and **ensure you switch t
 Here is the full snippet. Tested on a macOS screen reader, and it reads the errors as I would expect.
 
 ```jsx
-import { useMutation } from '@tanstack/react-query'
-import { useRef } from 'react'
-import { useForm } from 'react-hook-form'
-import './styles.css'
+import { useMutation } from "@tanstack/react-query";
+import { useRef } from "react";
+import { useForm } from "react-hook-form";
+import "./styles.css";
 
 function App() {
-    const { mutate, isError } = useMutation({
-        mutationFn: async () => {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    reject()
-                }, 1000)
-            })
-        },
-        onError: () => {
-            requestAnimationFrame(() => {
-                formErrorRef.current?.focus()
-            })
-        },
-    })
-    const formErrorRef = useRef < HTMLDivElement > null
+  const { mutate, isError } = useMutation({
+    mutationFn: async () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject();
+        }, 1000);
+      });
+    },
+    onError: () => {
+      requestAnimationFrame(() => {
+        formErrorRef.current?.focus();
+      });
+    },
+  });
+  const formErrorRef = useRef < HTMLDivElement > null;
 
-    const { handleSubmit, register, formState } = useForm({
-        defaultValues: {
-            name: '',
-        },
-    })
+  const { handleSubmit, register, formState } = useForm({
+    defaultValues: {
+      name: "",
+    },
+  });
 
-    const nameError = formState.errors.name
+  const nameError = formState.errors.name;
 
-    return (
-        <form
-            onSubmit={handleSubmit((values) => {
-                mutate()
-            })}
-        >
-            <label htmlFor="name">Your name</label>
-            <input
-                type="text"
-                id="name"
-                aria-invalid={nameError ? true : undefined}
-                aria-describedby={nameError ? 'nameError' : undefined}
-                {...register('name', { required: 'This field is required' })}
-            />
-            <br />
-            {nameError ? <span id="nameError">{nameError.message}</span> : null}
-            <br />
-            <button type="submit">Submit</button>
-            <div
-                // You cannot use `visibility: none` here as that will make this container inaccessible
-                ref={formErrorRef}
-                role="alert"
-                tabIndex={isError ? 0 : -1}
-                aria-labelledby="formErrorHeading"
-            >
-                <h2 id="formErrorHeading" className="sr-only">
-                    Failed to submit the form
-                </h2>
-                <span>Error message</span>
-            </div>
-        </form>
-    )
+  return (
+    <form
+      onSubmit={handleSubmit((values) => {
+        mutate();
+      })}
+    >
+      <label htmlFor="name">Your name</label>
+      <input
+        type="text"
+        id="name"
+        aria-invalid={nameError ? true : undefined}
+        aria-describedby={nameError ? "nameError" : undefined}
+        {...register("name", { required: "This field is required" })}
+      />
+      <br />
+      {nameError ? <span id="nameError">{nameError.message}</span> : null}
+      <br />
+      <button type="submit">Submit</button>
+      <div
+        // You cannot use `visibility: none` here as that will make this container inaccessible
+        ref={formErrorRef}
+        role="alert"
+        tabIndex={isError ? 0 : -1}
+        aria-labelledby="formErrorHeading"
+      >
+        <h2 id="formErrorHeading" className="sr-only">
+          Failed to submit the form
+        </h2>
+        <span>Error message</span>
+      </div>
+    </form>
+  );
 }
 
-export default App
+export default App;
 ```
 
 Notice a couple of things.

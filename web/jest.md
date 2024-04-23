@@ -117,7 +117,7 @@ const getTheData = () => {
         throw new pRetry.AbortError(`Failed: ${e.message}`);
       }
     },
-    { retries: 3, forever: false, maxTimeout: 3000 }
+    { retries: 3, forever: false, maxTimeout: 3000 },
   );
 };
 ```
@@ -156,7 +156,7 @@ const getTheData = () => {
         throw new pRetry.AbortError(`Failed: ${e.message}`);
       }
     },
-    { retries: 3, forever: false, maxTimeout: 3000 }
+    { retries: 3, forever: false, maxTimeout: 3000 },
   );
 };
 ```
