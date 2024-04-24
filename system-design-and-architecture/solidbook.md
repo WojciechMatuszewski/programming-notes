@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 333
+Page 354
 
 ## Introduction
 
@@ -872,3 +872,78 @@ To finish up our _"driving a car"_ analogy, consider the following quote:
     1. It incorporates rough sketches of the UI into the _timeline_.
     2. It **allows you to create different _swimlanes_ for subdomains**.
     - This is very vital, as some events might flip-and-fourth between different subdomains making it challenging to place them on one timeline.
+
+## Stories
+
+- **It is your job** to help customers identify, estimate and implement stories.
+
+  - The _story_ describes an unit of functionality **without low-level details**.
+
+- **It is the customers' job** to **write the stories**.
+
+  - You should take a backseat and let the _domain experts_ do the work.
+    - These should be **high-level descriptions of how things ought to work**, completely devoid of technical details.
+
+- The **story should follow the _INVEST_ rule**.
+
+  - **I**ndependent – this allows you to parallelize development.
+  - **N**egotiable – they can change over time.
+  - **V**alue – they must provide value to the customer.
+    - The non-functional stories are valuable as well!
+  - **E**stimable – if the story is too large to estimate, split the story into sever small stories.
+  - **S**hort – related to the above.
+  - **T**estable – the _magic question_ here is _"How will I know when I've done that?"_.
+    - Use _preconditions_ (GIVEN), _actions_ (WHEN), and _post-conditions_ (THEN) to drive tests.
+
+- When writing stories **avoid ambiguous statements** like _quickly_ or _as soon as possible_.
+  - Do your best to **be concrete**, this way, **you might be able to bake in non-functional requirements into the story as well!**
+
+> As a day trader, I want to be notified when the price of a stock on my watch list goes up over 5% within **1 to 10 seconds of it occurring** so that I can decide whether I should make a trade or not.
+
+## Estimates & Story Points
+
+- **It is developer's job to estimate how much the story will take**.
+
+  - The customer can arrange the stories by _value_, but they should not take part in estimation.
+    - Estimating is a technical task. Do not let others dictate how you will work.
+    - **Estimates are NOT commitments, but most people will think of them as commitments**.
+
+- Use _some kind of number_ to estimate how long the story will take.
+
+  - **Those numbers DO NOT represent hours or days**, they are arbitrary **estimation of the effort**.
+    - The higher the effort, the longer the story will take, but again, **we do not precisely know how long that will be**.
+
+- Stories are _malleable_. You can merge, or split them as you wish.
+
+  - As long as it makes estimating easier, anything goes.
+
+- **Use a _"spike"_ if you are dealing with a lot of unknowns**.
+
+  - If you have not used a particular library before.
+  - If you need to introduce a new technology to get stuff done.
+
+- **The _"spike"_ is a POC. Consider it a _throwaway code_** that you learn from.
+
+  - You can always use parts of the code you wrote in the actual implementation!
+
+- While assigning estimates takes some time, **it is a great way to share knowledge amongst the team**.
+
+  - Consider a scenario where two people disagree on the amount of story points for a given task. **Perhaps one developer knows more about the dependencies of the task than the other?**
+    - If that is the case, the team benefits from the knowledge transfer and is able to more accurately estimate the story.
+
+- To **improve your estimates, look at the historical data**.
+  - This will require you to measure how long a given story took.
+    - There are multiple tools that allow you to do this.
+
+## Release Planning
+
+- **You want to release the most valuable functionality or have the most technical risk associated with them first**.
+
+  - This will not only make your life less stressful, but also make the customers happy.
+  - **Always focus on the _essential_**. Be in complexity or features.
+
+- **Not all bugs need fixing right away**, but **the most critical ones ought to be**.
+  - For others, **create a story for a bug** and let the customer decide how critical it is.
+  - In addition to making the application "work as expected", **fixing a bug involves writing a test for that particular issue**.
+    - **Do NOT start fixing a bug without having a failing test**.
+      - The time spent writing the test will yield dividends in the future if you need to refactor that bit of code.
