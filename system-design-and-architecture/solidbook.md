@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 354
+Page 385
 
 ## Introduction
 
@@ -943,7 +943,75 @@ To finish up our _"driving a car"_ analogy, consider the following quote:
   - **Always focus on the _essential_**. Be in complexity or features.
 
 - **Not all bugs need fixing right away**, but **the most critical ones ought to be**.
+
   - For others, **create a story for a bug** and let the customer decide how critical it is.
   - In addition to making the application "work as expected", **fixing a bug involves writing a test for that particular issue**.
     - **Do NOT start fixing a bug without having a failing test**.
       - The time spent writing the test will yield dividends in the future if you need to refactor that bit of code.
+
+- **Build the infrastructure as you go**.
+  - This will make it so you build **only the necessary infrastructure**.
+    - The bigger the infra layer, the bigger the overhead.
+  - Deploying only what you need ties in nicely with the concept of a _walking skeleton_.
+
+## Iteration Planning
+
+- While the _release planning_ is mostly driven by customers, the _iteration planning_ is mostly driven by developers.
+
+  - **Here, we dive deeper into the technical world** of infrastructure and concrete code-related tasks.
+
+- In the places I've worked at so far, this meeting was called _planning_ or _weekly sync_.
+
+  - You most likely already do this in your job as well!
+
+- Consider letting people assign themselves to tasks.
+
+  - This practice is not without issues, as it _might_ create silos of knowledge, but it can also motivate your peers to dive into areas they are not familiar with.
+    - It all depends on the people you work with.
+
+- Breaking down tasks into small pieces allows you to shuffle them around between engineers.
+  - The smaller the unit of work (without going into extremes), the better.
+
+## Understanding a Story
+
+- **Avoid jumping into technical conclusions**.
+
+  - When asking about a story, **ask more questions than you speak**.
+    - Goes without saying, but avoid speaking technical jargon.
+      - This rule applies to _every_ discussion you have. Even with other fellow developers.
+        - By using technical jargon, you _assume_ that the other person also understands that jargon. That is not always the case!
+  - The technical minutia does not matter at this point. **Your job is to uncover the essential technical complexity**.
+    - HOW we solve that complexity is up to us.
+
+- Consider using _pseudo-code_ for documenting what you learned while talking with domain experts.
+
+  - This _pseudo-code_ should be understood by everyone that has SOME technical knowledge, but is not necessarily an engineer.
+    - **This _pseudo-code_ might be verbose** and quite lengthy – that is okay!
+      - It is the _essential complexity_ showing its head. Usually, without writing everything down, you will forget/miss some details.
+
+- **Ask about _what could go wrong_**.
+
+  - This is a great way to discover many edge cases that every application has.
+  - It also allows you to uncover _dependencies_ of a story.
+    - System A usually will integrate with System B. **You story will most likely span both systems, even if only in a small way**.
+
+- [Here is a template](https://cis.bentley.edu/lwaguespack/CS360_Site/Downloads_files/Use%20Case%20Template%20%28Cockburn%29.pdf) for an _use-case_ task.
+  - Notice it contains a lot of sections. **Again, all of this is to uncover _essential complexity_**.
+
+## Acceptance tests
+
+- **Acceptance tests, when passing on production, are THE definition of done**.
+
+  - Do not settle for nothing less. The task is NOT done when the code is "working".
+    - How do you know it is "working"? Did you consult with a _domain expert_?
+      - Even if you did that, how do you know it will keep on working? By manual checks? **Manual checks are a waste of time!**
+
+- In the early days of XP, we had tools that tried to encapsulate the acceptance tests in a DSL. That DSL would translate to a set of "runnable" tests.
+
+  - While it looks nice on paper, it did not work well.
+
+    - Why would a customer had to learn a specific DLS only to describe how the feature should work like?
+
+  - **To solve this "problem", use BDD – TDD but focused on the _behavior_ rather than technical details**.
+    - BDD utilizes the _given_, _when_, and _then_ "sections" **written in a plain english**.
+      - This allows customers / domain experts to encapsulate behavior and it translates nicely into tests!
