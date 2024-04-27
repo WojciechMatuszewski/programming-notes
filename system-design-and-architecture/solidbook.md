@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 385
+Page 412
 
 ## Introduction
 
@@ -1015,3 +1015,60 @@ To finish up our _"driving a car"_ analogy, consider the following quote:
   - **To solve this "problem", use BDD – TDD but focused on the _behavior_ rather than technical details**.
     - BDD utilizes the _given_, _when_, and _then_ "sections" **written in a plain english**.
       - This allows customers / domain experts to encapsulate behavior and it translates nicely into tests!
+
+- In an ideal world, the customers would finish writing acceptance tests in the first days of the iteration and then handoff those to developers.
+  - In reality, be prepared to write them yourselves.
+    - It is not an ideal situation as your knowledge of the problem space might be limited, but it is much better than having no tests at all!
+
+## Programming Paradigms
+
+Programming is complex. It is like talking an arcane language to a computer and getting responses back.
+
+Add to that the fact that programming is _purely virtual_, meaning you can create anything you wish to create, it is only natural that complexity starts to creep in on us.
+
+> Just because the tool lets you do something does not mean you _should_ use it to do that thing.
+
+- **Your job is to LIMIT the number of ways one thing can be done, ideally to a SINGLE way**. This "golden path" allows you to enforce consistency and
+  helps everyone to build a _shared mental model_ of the program.
+
+- It **does not matter what _programming paradigm_ you use**. What matters is that you use it as it was intended to be used.
+  - Do not be dogmatic either. It is expected of you to be able to use different programming paradigms.
+    - **You are not a "some_language programmer". You are a software engineer who solves problems**.
+
+Consider the following quote:
+
+> Testing shows the presence, not the absence, of bugs
+
+We can't be certain that our programs work unless we prove that _mathematically_. Good luck doing that on your React app!
+
+There are multiple _programming paradigms_:
+
+- The **structural programming**.
+
+  - You use _sequences_, _loops_ and _iteration_ to get the job done.
+    - Problem 1: **it will require you to either define a global state or pass state between subroutines**.
+    - Problem 2: **complexity rises as you use more loops, iterations and sequences**. This is called _cyclomatic complexity_.
+
+- The **object-oriented programming**.
+
+  - Some times though of as the most controversial of them all due to many ways one can go about using it.
+  - **The original OO implementations thought of _methods_ on an object as means of handling a message that it understands**.
+
+    - This has huge implications.
+      - First, it showcases that **changing methods is not a good idea**. You most likely can encapsulate both calls into one.
+      - Second, and what shocked me the most, is that it **goes against the popular teachings about OO**, where objects are "bags" we can put stuff into.
+      - Third, **notice that it goes against using inheritance in most cases**.
+        - Using inheritance does not create a "web of objects" but rather hierarchical structures. It **creates a hard code dependency** which we do not want!
+
+  - There are many good things OO brings to the table, but arguably, the most important of them is the **_dependency inversion_** technique.
+
+    - This allows you to **_code against the interface_ rather than implementation**.
+      - You operate in the world of _abstract_ rather than concrete.
+        - This makes your program more flexible, less coupled and more maintainable!
+
+  - Drill this into your mind: **the OO is about creating a _loosely coupled "web" of objects_ that communicate via _methods_**.
+
+- The **functional programming**.
+  - It might not seem like it on the surface, but **functional programming has a lot in common with OO**.
+    - Instead of _dependency inversion_ you use _parameterization_.
+    - Instead of decomposition to smaller objects, you decompose the code into smaller functions.
