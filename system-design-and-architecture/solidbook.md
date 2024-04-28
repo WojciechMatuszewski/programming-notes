@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 441
+Page 455
 
 ## Introduction
 
@@ -1140,3 +1140,43 @@ There are multiple _programming paradigms_:
   - Do your best to stay in "abstract". This allows you to **leverage the _dependency inversion_ to the fullest!**
 
 ## Testing Strategies
+
+- There are various _test "levels"_.
+
+  - The unit tests.
+  - The integration tests.
+  - The end-to-end tests.
+  - And probably more...
+
+  I find that people tend to care too much into which category a given test belongs to. Okay, the test might be an _unit_ test. Now how is that information helping us? **If you follow the domain-driven layered architecture, your tests will naturally fall into each category, and it will not matter which one is it**.
+
+- There are patterns to follow for each "category" of the tests.
+  - For example, the _Page Object Pattern_ suites end-to-end tests well.
+
+### What should we test and how
+
+- Unit test all the domain layer code.
+
+  - These are your helpers, middleware, _Value Objects_ and _Entities_.
+    - As a reminder, a _Value Object_ represents a small, cohesive unit of data like money or street address.
+      - Usually, _Value Objects_ are their own separate type (think type alias).
+    - The _Entity_ is a mutable object with unique identity, like a _person_.
+
+- Unit test all the use cases.
+
+  - You will most likely need to use mocks / stubs here.
+    - Ensure that the mock or stub has been called with the value you expect.
+  - As a reminder, the **_use case_ depends on _repositories_ and other _adapters_**.
+
+- Integration tests for adapters (incoming and outgoing)
+
+  - If there is a network request to be made, use tools like _msw_ or _supertest_ to "catch" the requests and return values as if the _use case_ did.
+
+- Write end-to-end tests.
+  - **Do not mock anything** if possible.
+  - It is **critical** to ensure the end-to-end tests run at the most "production-line" environment as possible.
+
+## The Walking Skeleton
+
+- The _walking skeleton_ is **just enough infrastructure and "code structure" to get you started**.
+  - You build it during _iteration zero_, **before you develop any features**.
