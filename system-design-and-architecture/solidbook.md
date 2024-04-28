@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 412
+Page 441
 
 ## Introduction
 
@@ -1069,6 +1069,74 @@ There are multiple _programming paradigms_:
   - Drill this into your mind: **the OO is about creating a _loosely coupled "web" of objects_ that communicate via _methods_**.
 
 - The **functional programming**.
+
   - It might not seem like it on the surface, but **functional programming has a lot in common with OO**.
+
     - Instead of _dependency inversion_ you use _parameterization_.
     - Instead of decomposition to smaller objects, you decompose the code into smaller functions.
+
+  - **One massive benefit of functional programming is the REDUCTION of state**.
+    - You will, most likely, still have SOME state in your application, but it will be pushed to the very edges.
+      - This makes testing and debugging much easier!
+
+- Khalil touches on the _imperative_ vs. _declarative_ programming.
+
+  - The _imperative_ style focuses on "how to do things". You process the code line-by-line.
+    - **Code is mostly comprised of statements** like variable declarations and loops.
+  - The _declarative_ style focuses on "what to do".
+    - **Code is mostly comprised of expressions** like function calls.
+
+- Be pragmatic when picking which _programming paradigm_ you use. Always consider your peers. Perhaps they are unfamiliar with _functional programming_?
+
+  - **Design principles are paradigm-agnostic**. You can implement every design pattern in any code.
+
+## An Object-Oriented Architecture
+
+- The **"double loop of tests (unit and acceptance) is a cheat-code for development**.
+
+  - Imagine how much time you save when you set up the acceptance tests up front.
+    - When you are done, you are _really done_. The bugs might still be there, but the chance of introducing regressions is rather small.
+
+- Before you do anything, you have to have a _walking skeleton_ in place – the initial object-oriented architecture.
+
+- A _functional requirements_ answer the question of _"what the application should do"_.
+
+  - It should allow users to upload photos.
+  - It should allow users to chat with each other.
+
+- A _non-functional requirements_ answer the question of _"how the application should behave"_.
+
+  - It should have low latency, even when used by thousands of users.
+  - It should be SOC2 compliant.
+
+- Here, Khalil touches on **the _principle of last responsible moment_**.
+
+  - This means **delaying any significant decisions until the last possible moment when we have narrowed down our options**.
+
+    - There is inherit **cost of delay you have to factor**.
+
+  - A good example here is a decision to **deploy a _modular monolith_ rather than starting with microservices**.
+    - You MIGHT need microservices architecture at some point, but you MOST LIKELY do not need it when you start.
+
+- We want to build _testable_, _flexible_ and _maintainable_ software.
+
+  - **In most cases, using a _layered architecture_ will fit the bill**.
+
+- Arguably, the best known _layered architecture_ pattern is the MVC. **MVC is not without its fair share of problems**.
+
+  - We tend to _overload_ the model with all sorts of logic that should not be there – validation, business logic and so on.
+  - We tend to mix "core code" and "infrastructure code".
+    - **This makes it quite hard to test the "core code" (the most valuable in our application)** because it is coupled to the "infrastructure code" – code that is not that valuable.
+
+- If you "upgrade" the MVC to add more layers, you will be able to separate the "core code" and "infrastructure code".
+
+  - Treat the application like an onion with multiple layers.
+    - The _core domain logic_.
+    - The _application features_.
+    - The _adapter logic_.
+    - The _infrastructure details_.
+
+- **Use _interfaces_ to communicate between layers**.
+  - Do your best to stay in "abstract". This allows you to **leverage the _dependency inversion_ to the fullest!**
+
+## Testing Strategies
