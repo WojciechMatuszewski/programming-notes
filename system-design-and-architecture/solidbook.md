@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 455
+Page 483
 
 ## Introduction
 
@@ -1179,4 +1179,60 @@ There are multiple _programming paradigms_:
 ## The Walking Skeleton
 
 - The _walking skeleton_ is **just enough infrastructure and "code structure" to get you started**.
+
   - You build it during _iteration zero_, **before you develop any features**.
+
+- It **allows you to validate that all the architectural pieces you have in place work end-to-end**.
+  - This is very valuable, as you will be building upon those pieces all the time!
+  - In addition, **validating functionality end-to-end early on** helps you uncover any potential issues you overlooked in your initial design.
+    - It is not a question of IF this happens but WHEN this happens.
+
+In this section, Khalil walks us through the process of **creating the _walking skeleton_ by using end-to-end BDD test that DRIVES the implementation**. It is quite fascinating seeing an end-to-end test used in very TDD-like scenario.
+
+- **While you can certainly overdo it, adding a layer of indirection is usually very helpful**.
+  - Consider the _Page Object_ pattern for end-to-end tests. By "hiding" a lot of code behind a method call, you make your tests less brittle!
+
+## Pair Programming
+
+I only skimmed this chapter since I'm well acquainted with the topic.
+
+The most important thing to understand about _pair programming_ is this: **it will save you a lot of time in the long run** as it drastically shortens the feedback loop – you are coding and having your code reviewed at the same time!
+
+## Test-Driven Development Workflow
+
+- **TDD is a tool that enables you to complete your work faster**.
+
+  - By _complete_ I really do mean _complete_. No more "follow up" tickets.
+
+- **The technique Khalil recommends is _Double Loop TDD_**.
+
+  - It comprises of the "inner loop" – the _unit test_, and the "outer loop" – the _acceptance test_.
+  - If both pass, you are done with the feature!
+
+- **TDD requires discipline** to get right.
+
+  - You will be tempted to write more code than necessary. You ought to resist that temptation!
+
+- **TDD is also quite difficult because our code is often not written in a "test-first" mindset**.
+
+  - Ever had to manipulate the `process.env` in your tests? That is a sign of mixed _infrastructure code_ with what you are testing.
+    - Use _dependency inversion_ to combat this issue.
+  - Ever had to setup a huge test harness to run the _system under test_? That is a sign of _single responsibility principle violation_.
+    - Make your code more modular to combat this issue.
+      - Perhaps some things should live in different domain?
+
+- **There are _two_ TDD "schools" of though**.
+
+  - The "Chicago" TDD where you test _inside out_.
+    - Starting from the very core you build your way _outwards_.
+  - The "London" TDD where you test _outside in_.
+    - Starting from the very edge you build your way _inwards_.
+  - Some people tend to be dogmatic about the approach, but **the true masters of TDD mix the approaches as they see fit**.
+    - Once again, just like in life, nothing is purely white or black.
+      - Being dogmatic about something is not helpful as it prevents you from learning more about "the other side".
+
+- The **refactoring part of TDD is where the design happens**.
+  - When you have a passing test, now it is time to refactor, collapse duplication and so on.
+    - If you are disciplined about the process, you would also make any structural and architectural changes in this step.
+
+## Test-Driven Development Basics
