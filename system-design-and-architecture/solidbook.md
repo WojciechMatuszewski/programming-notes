@@ -1236,3 +1236,51 @@ The most important thing to understand about _pair programming_ is this: **it wi
     - If you are disciplined about the process, you would also make any structural and architectural changes in this step.
 
 ## Test-Driven Development Basics
+
+- Keep in mind that TDD is just as much a _design tool_ as it is a technique for writing tests.
+
+- There are various "rules" to follow when utilizing TDD.
+
+  - You are not allowed to write any production code unless you have failing test.
+  - You are not allowed to write any more of unit test than is sufficient to fail.
+  - You are not allowed to write more production code than is sufficient to pass one failing unit test.
+
+- If you follow the rules, you will be in constant _red_, _green_, _refactor_ loop that is very short.
+
+- As we add more tests, we slowly, but surely, shape the design to fit our criteria.
+
+  - **This way you end up with code that does what you need it to and nothing less**.
+    - In an era where creating complex abstractions that does not benefit the product is so simple, this is is a great characteristic to have!
+  - Sometimes, this concept is called _triangulation_.
+
+- **Good names for tests are just as important as having good names for variables in your production code**.
+
+  - If the test fails, you want the _name of the test_ to guide you towards finding what is broken.
+
+  - **Do NOT use technical jargon** in the test names (I would argue you should not use it in production code as well).
+
+  - **Use concrete scenarios for test names**. Vague statements like "can add two numbers" or "can synchronize midi pedals" are not helpful.
+
+    - **By reading the name of the test, you ought to infer the contents of the test**.
+
+- I have to admit, going through a TDD exercise is a very humbling and eye opening experience.
+
+  - It showed me how fast I _race_ towards the solution. Too fast in my opinion.
+
+## Working Backwards using Arrange-Act-Assert
+
+- Just like the concept of _working backwards_, writing the test _backwards_ could unblock you from not knowing how to implement something.
+
+  - This technique is sometimes referred to as _programming by wishful thinking_.
+
+```ts
+// Assert - this is easy, it's pretty much just
+// turning the requirement into declarative code
+expect(game.getCurrentTurn()).toBe("O");
+// Act
+game.chooseMark({ row: 0, column: 0 });
+// Arrange - by default, it'll be X's turn
+let game = new Game();
+```
+
+I have to say, this looks pretty wild to me!
