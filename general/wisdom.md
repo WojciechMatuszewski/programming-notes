@@ -621,3 +621,29 @@ That is why one of the best things you can do is to **start with a failing test,
 The test will guide you towards the solution. In addition, the **test will act as documentation for other programmers**.
 **Unless the production is on fire, always start with a failing test**. This requires discipline. This requires putting a bit of thought
 into what you are doing BEFORE jumping into code.
+
+## Cost vs. Price in software
+
+> Based on [this great article](https://www.germanvelasco.com/blog/refactoring-is-a-habit).
+
+When buying an item, you have to account for its _price_, but also for its _cost_ down the line.
+
+> Good habits have a price. Bad habits have a cost. Either way, you pay.
+
+It turns out **this analogy is also applicable in software**.
+
+You can think of the codebase "health" as human health. If you eat healthy and exercise, you incur a price. A price to buy the gym membership. A price to pay for the healthy food.
+
+Living a healthy life, reduces the risk of _paying the cost_ later – when you are older.
+
+**You can think of refactoring or not refactoring in the codebase on the same basis**.
+
+You can refactor the codebase bit by bit, after every feature. You pay the _price_ of time now.
+
+Alternatively, you could skip refactoring now, and _pay the cost_ of having to maintain a _"big ball of mud"_.
+
+**Either way, you are going to pay**. But which "payment" is better for the product you are working on?
+
+Well, in most, if not all cases, you want your product to provide value for a long time. You want to be able to add new features to cater to different users, right?
+
+If that is the case, I would argue **that paying the _price_ now is much cheaper** than paying the _cost_ later on.
