@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 507
+Page 511
 
 ## Introduction
 
@@ -1284,3 +1284,6 @@ let game = new Game();
 ```
 
 I have to say, this looks pretty wild to me!
+
+- As much as I'm excited about this technique, I doubt I will be using it frequently.
+  - I mean, if I'm unsure how to make an assertion, I should probably go to the drawing board and re-asses the design I'm working with.
