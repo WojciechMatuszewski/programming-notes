@@ -331,6 +331,45 @@ Please note that the `AbortSignal` API is available in Node 16+.
 
 Consult [this article](https://www.nearform.com/blog/using-abortsignal-in-node-js/) for more information.
 
+## `AbortSignal` API continued
+
+> Inspired by [this blog](https://codedrivendevelopment.com/posts/everything-about-abort-signal-timeout)
+
+Okay, so you know how to handle the `Promise.race` with `AbortSignal`. But there is more to the `AbortSignal` API!
+
+### Timing out requests
+
+Two ways to go about it. You either create a `setTimeout` (either in promise or callback form) and call the `.abort` there.
+
+```ts
+const controller = new AbortController();
+
+window.setTimeout(() => controller.abort(), 5_000);
+window.fetch("https://google.com", { signal: controller.signal });
+```
+
+Or, you can skip the `setTimeout` altogether, and use the `AbortController.timeout` API
+
+```ts
+window.fetch("https://google.com", { signal: AbortController.timeout(5_000) });
+```
+
+### Combining signals
+
+Let us imagine that we want to cancel a request if the user clicks a button OR the request takes too long.
+So, we have two signals we have to manage – the "click" signal and the "timeout" signal.
+
+Luckily for us, the `AbortController.any` is there to help us.
+
+```ts
+const clickController = new AbortController();
+const timeoutSignal = AbortController.timeout(5_000);
+
+window.fetch("https://google.com", { signal: AbortController.any([clickController.signal, timeoutSignal]) });
+```
+
+Pretty neat stuff!
+
 ## Error handling and promises - the most important rules
 
 The most important set of rules that you can follow are the following.
