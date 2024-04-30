@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 483
+Page 507
 
 ## Introduction
 
