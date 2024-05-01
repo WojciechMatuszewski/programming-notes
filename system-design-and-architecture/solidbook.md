@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 511
+Page 523
 
 ## Introduction
 
@@ -1287,3 +1287,20 @@ I have to say, this looks pretty wild to me!
 
 - As much as I'm excited about this technique, I doubt I will be using it frequently.
   - I mean, if I'm unsure how to make an assertion, I should probably go to the drawing board and re-asses the design I'm working with.
+
+## Avoiding Impasses with the Transformation Priority Premise
+
+- You can either _transform_ the code (adding new functionality) or _refactor_ the code without changing the underlying functionality.
+
+- During the TDD cycle, we will be using both techniques to make the test pass. The question is which one should we use and to what extend.
+
+  - You can take the _transformation_ really far and make the code complex.
+
+  - Conversely, while refactoring, you are usually starting from a _suboptimal_ point and trying to make the code easier to reason about.
+
+- When **reaching for the _transformation_ always favour the simplest one you can think of**.
+
+- The **_Transformation Priority Premise (TTP)_** defines a list of "known" transformations you can utilize in your code.
+  - While it does not try to encapsulate every possible _transformation_ (that would not be practical), it provides a guidance how to go from one state to another.
+
+## Object-Oriented Design With Tests
