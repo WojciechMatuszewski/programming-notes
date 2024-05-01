@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 523
+Page 542
 
 ## Introduction
 
@@ -1304,3 +1304,31 @@ I have to say, this looks pretty wild to me!
   - While it does not try to encapsulate every possible _transformation_ (that would not be practical), it provides a guidance how to go from one state to another.
 
 ## Object-Oriented Design With Tests
+
+- It is very easy to loose sight of the basics.
+
+  - We learn new tools, frameworks and methodologies, but oftentimes we skip the _basics of programming_.
+
+  - You can **think of OO design (or programming) as the "basic" thing you teach aspiring programmers**.
+
+    - They go into the workforce with some understanding how to do OO, but they never master it. Then, during their career, they do not practice it enough, and then they complain that OO is "bad".
+
+- Khalil argues that TDD in itself will not help us to factor all the _non-functional_ requirements of the code.
+
+  - **TDD is great for _functional requirements_**, but the abstractions you create while following TDD were made ONLY to have the test pass, and not for the humans that will then read and have to understand that code!
+
+- The _Object Design_ includes OOP, but also _Object Oriented Design_ and _Object Oriented Analysis_.
+
+- We have already talked about the tools that might help with _analysis_. Those include _event storming_, _event modeling_, creating use cases and UI Mockups.
+
+- Then, there is the _design_ part. This is where the **_Responsibility-Driven Design_** comes in.
+
+  - Each requirement (functional or non-functional) has responsibility attached to it.
+
+  - The _responsibility_ is the attached to a _role_.
+
+  - Different roles _communicate_ with each other to create _collaborators_.
+
+    - This does seem like a "web of objects", where each object communicates with another via some kind of message, right?
+
+    - Notice that there is no inheritance involved. **We are designing a loosely coupled objects that communicate with each other**. We are NOT concerned with hierarchical relationships.
