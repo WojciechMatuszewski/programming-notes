@@ -1489,3 +1489,51 @@ In addition to `fit-content`, consider using the `max-width` property as well.
 
 There are also the `min-content` and `max-content`. The `fit-content` makes it so that the element will stretch, but
 will never exceed the `max-content` value.
+
+## The Popover API
+
+The [popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) introduced a wave of very useful features.
+
+First is the fact that it allows you to natively created popovers on a webpage **without using JS**.
+
+The following snippet will take you very far.
+
+```html
+<button popovertarget="mypopover">click me</button>
+<div id="mypopover" popover>popover content</div>
+```
+
+At the time of writing, the default is to place the popover at the middle of the viewport.
+
+Then, you can control the look and feel via different states of the `popover` element.
+
+```css
+/* Starting styles */
+[popover] {
+  opacity: 0;
+  transition: all 0.7s allow-discrete;
+}
+
+/* Animate to */
+[popover]:popover-open {
+  opacity: 1;
+}
+
+/* When toggling the button */
+@starting-style {
+  [popover]:popover-open {
+    opacity: 0;
+  }
+}
+```
+
+Since, **by default the popover is NOT anchored to the target**, you will most likely want to combine this with the [CSS Anchor Positioning](https://www.oidaisdes.org/popover-api-accessibility.en/).
+
+```html
+<button popovertarget="mypopover" id="target">click me</button>
+<div id="mypopover" anchor="target" popover>popover content</div>
+```
+
+Notice that I did not have to apply any additional styles to make the functionality work. Of course, If I need to customize the positioning, I can do that!
+
+To learn more, consult the [MDN article](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) about the Popover API.
