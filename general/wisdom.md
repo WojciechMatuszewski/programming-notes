@@ -647,3 +647,23 @@ Alternatively, you could skip refactoring now, and _pay the cost_ of having to m
 Well, in most, if not all cases, you want your product to provide value for a long time. You want to be able to add new features to cater to different users, right?
 
 If that is the case, I would argue **that paying the _price_ now is much cheaper** than paying the _cost_ later on.
+
+## Seek First to Understand
+
+> Based on [this great article](https://dannorth.net/seek-first-to-understand/)
+
+When joining a new project or a company, there are bound to be things you wish were different.
+
+Perhaps the team processes are manual and their build takes what feels like eternity?
+
+Perhaps there are organizational issues within the company structure?
+
+In fact, in most cases, there will be so many things you wish were different, that you will have a hard time deciding where to start.
+
+**If you try to "fix" all the things, you will be spread too thin and achieve mediocre results** – the law of _raspberry jam_: _"The wider you spread it, the thinner it gets"_.
+
+**Instead of trying to fix all the things, focus on understanding SOME issues deeply and zoom in on handful of those**.
+
+The author of the article recommends focusing on three things and sucking up the rest. **Having such discipline is very hard** – engineers are people who like to solve problems!
+
+Do no spread yourself too thin. Focus your energy and effort on a few issues and fix them as best as you can!
