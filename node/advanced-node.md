@@ -62,6 +62,14 @@ Course material from [node university](https://node.university/).
 
 - as an **alternative to CJS wrapper globals** consider using **`import.meta.XX`**
 
+### ESM and CJS compatibility
+
+For the longest time, you could not perform a `require` of an ESM module. To my best knowledge, this was because Node treated all ESM modules as _asynchronous_, even if there was no top-level `await` in any of the imported modules.
+
+With Node 22, that changes. You will be able to `require` an ESM module, unless that module (or any other modules it imports) contain a top-level `await`.
+
+This should help with compatibility issues so many of us faced – ever saw the "dynamic import of the ESM module error"?
+
 ## The `v8` API
 
 One neat trick I discovered with the v8 API is the fact that you can deeply clone an object without using the `JSON.stringify` stuff
