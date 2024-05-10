@@ -782,6 +782,16 @@ Components_ and `getServerSideProps` are.
 - The bottom line is that the problem space is very hard to reason about. This most likely means that we are looking at
   the problem from the wrong angle.
 
+#### Infinite Scroll and React Server Components
+
+I've [tried to make the _infinite scroll_ to work](https://github.com/WojciechMatuszewski/rsc-rcc-playing-around) with Apollo Client and RSCs a while back. Due to the complexity of the solution, I decided to move all the fetching to the client instead.
+
+Recently, after [encountering this repository](https://github.com/gabrielelpidio/next-infinite-scroll-server-actions/blob/main/src/app/page.tsx#L51) I've started to think about this "problem" again.
+
+Notice the author returning a JSX node and passing the node to `setState` call. That is a very interesting approach! The initial fetch happens on the server, but then, the client takes over.
+
+That is somewhat similar to the approach I took while playing around with the functionality initially, but I have not though about populating the state with JSX nodes.
+
 ### React Client Components
 
 These components are **the regular components you have been using so far**. **In the context of Next.js** these are the
