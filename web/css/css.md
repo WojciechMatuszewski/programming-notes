@@ -398,8 +398,7 @@ outline is visible?**. This is the `:focus-visible` pseudo-class in action.
 
 ### `:not`
 
-Well-supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators
-and spaces.
+Well-supported. The gotcha is that the **selector inside parenthesis must be simple**. By simple we mean no combinators and spaces.
 
 ```css
 element: not (img); /*ok*/
@@ -420,6 +419,26 @@ img:not([alt]) {
 
 I find it pretty amazing that we can do so much logic in CSS. Of course I was not aware that using `[]` syntax checks
 for the _presence_ of a given attribute.
+
+#### Elements that are NOT descendants of particular element
+
+When learning about the `:not` selector, I always thought about it in terms of applying the "not" to the "current element" I have selected.
+
+```css
+/* Select `p` tags that do not have `.foo` class */
+p:not(.foo) {
+}
+```
+
+Now, **it turns out, you can also provide more complex selectors to `not`**.
+
+```css
+/* Select all inputs that are NOT the descendants of a form element. */
+input:not(form input) {
+}
+```
+
+Notice that, in this case, the selector in the `not` does not "apply" to the "current element" directly. It is as if the `not` selector allowed you to "reach up" in a DOM tree in a way.
 
 ## Pseudo-elements
 
