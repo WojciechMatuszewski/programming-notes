@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 542
+Page 555
 
 ## Introduction
 
@@ -1332,3 +1332,52 @@ I have to say, this looks pretty wild to me!
     - This does seem like a "web of objects", where each object communicates with another via some kind of message, right?
 
     - Notice that there is no inheritance involved. **We are designing a loosely coupled objects that communicate with each other**. We are NOT concerned with hierarchical relationships.
+
+## Responsibility Driven Design 101
+
+- We are already thinking in terms of _behavior_ rather than _implementation_.
+
+  - The next step is to start thinking about _responsibilities_.
+
+- **See the _behavior_ as a set of responsibilities of a given object**.
+
+- Objects _"come and go"_. **Objects fulfil set of responsibilities enforced by set of interfaces, types or abstract classes**.
+
+- **We are not in the business of creating models that mimic the real-world**. We are in the **business of creating models that get things done**.
+
+  - Do not make the mistake of modeling the real world 1:1. You are writing software, where "regular" law of physics do not apply!
+
+> All models are wrong. Some are useful.
+
+### Responsibilities
+
+- Applications contain a set of non-functional requirements. For the objects to _do the actual work_, one has to break the requirements into _responsibilities_.
+
+- **Having a set of responsibilities is great as it makes explicit about what is required to make the application work**.
+
+### Roles
+
+- So you have the responsibilities. Now, focus on finding the roles by thinking about _use cases_ and the _domain layer_.
+
+  - Notice how much easier it is to come up with a list of _roles_ by looking at the set of _responsibilities_.
+
+### Collaborators
+
+- _Collaborators_ make use of other _roles_ (or _objects_) to achieve a complex task.
+
+  - Think about a "client" asking a contractor to do something. The contractor might elicit the help of other people who specialize in certain things.
+
+- **Finding _collaborators_ is not a small feat**. It could be quite difficult at first.
+
+### Object stereotypes
+
+- You might it helpful to **generalize set of _roles_ a given object can perform into stereotypes**.
+
+  - The Information Holder
+    - These are known as **_value objects_ or _data transfer objects_**. They **hold information and can derive data from that information**.
+  - The Structurer
+    - These **maintain relationship between objects or values**. Think a _hash table_ or a _cache_.
+  - ## The Service Provider
+  - The Coordinator
+  - The Controller
+  - The Interfacer
