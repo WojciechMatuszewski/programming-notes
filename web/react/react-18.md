@@ -171,78 +171,112 @@ There is one API that solves those issues. Enter the `useDeferredValue`.
 
 ## `useDeferredValue`
 
-This API is meant to be used where the semantics of `useTransition` does not make sense. For example, where we do not
-have access to the function that updates the state.
+> [Here is a great blog post](https://www.joshwcomeau.com/react/use-deferred-value/) about this topic.
 
-```ts
-const deferredState = useDeferredValue(expensiveState);
+This API is for **scheduling a low-priority render** for **components that are slow to render**. It will **not help you if the computation of the value you want to deffer is CPU heavy** – React has control over _rendering_, not computing the values that go into components as props.
 
-return <Component state = { deferredState }
-/>;
-```
+### Under the hood
 
-Here, the `deferredState` is a piece of state that might or might not cause a re-render. By wrapping
-the `expensiveState` in the `useDeferredValue`, we tell _React_ to postpone updates to components that take this state
-if needed.
-
-The **`useDeferredValue` will not help you if the computation in React components is very CPU-heavy**. It should be \*
-\*used when the rendering takes a lot of time, not computing values\*\*.
-
-### How the `useDeferredValue` works
-
-The behavior of the `useDeferredValue` can be confusing. How come the hook returns the "stale" value for some renders
-while returning the "up-to-date" version for others (see the example below)?
+So, what happens when you click _"Increment"_ in the following code:
 
 ```jsx
 function App() {
-  const [value, setValue] = React.useState(1);
-  const deferredValue = React.useDeferredValue(value);
+  const [count, setCount] = React.useState(0);
+  const deferredCount = React.useDeferredValue(count);
 
-  const isLoading = deferredValue !== value;
   return (
-    <div>
-      <button
-        onClick={() => {
-          setValue((v) => v + 1);
-        }}
-      >
-        Next pokemon ({value + 1})
-      </button>
-      <div style={{ opacity: isLoading ? 0.4 : 1 }}>
-        <React.Suspense fallback={<span>Loading...</span>}>
-          <RenderPokemon id={deferredValue}></RenderPokemon>
-        </React.Suspense>
-      </div>
-    </div>
+    <>
+      <ImportantStuff count={count} />
+      <SlowStuff count={deferredCount} />
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </>
   );
 }
 ```
 
-To understand how `useDeferredValue` works, we must understand one of the following: **React can now mark a render as "
-low priority" and return a "stale" value for that render for a given hook. In this case, the `useDeferredValue` hook**.
+- React will perform the state update.
 
-- The `setValue` update is a high-priority one.
+- React will **schedule a high-priority render** with **`count` set to 1** and **`deferredCount` set to 0**.
 
-- The button text updates and the **`useDeferredValue` returns a "stale" value of the initial value (1)**.
+  - Notice that the `deferredCount` "lags" behind the "real" value.
 
-- React "remembers" that the deferred value will need to transition to `1` in a later, low-priority render.
+- **After** rendering the UI with `count` set to 1, **React will re-render the UI with `deferredCount` set to 1**.
 
-- The `opacity` is applied as the `deferredValue` is NOT equal to `value`.
+  - Since the high-priority update is already done, **React can interrupt the low-priority render** if necessary.
 
-- React has nothing better to do, so it works on the deferred update.
+  - The ability for React to interrupt the render is crucial to performance improvements.
 
-  - The `value` is set to two (after the first update).
+    - **Always keep in mind that, if the prop change results in a heavy IO computation, there still be lag**.
 
-  - The `useDeferredValue` returns two (just like the `value`) in this render.
+### Use `React.Memo` on "slow" components
 
-  - Since we do not have results for `RenderPokemon` with `id` of 2 yet, **React suspens**. **Usually, this would
-    cause the `fallback` to render, but since we are in the low-priority render, React can keep the previously
-    committed result visible**.
+> Other gotchas are also work keeping in mind! Consult [official React documentation](https://react.dev/reference/react/useDeferredValue#caveats) to learn more.
 
-- React commits the result.
+**The component you pass the `deferredValue` has to be memoized and stable**.
 
-I think [this GitHub comment](https://github.com/reactwg/react-18/discussions/129#discussioncomment-2440646) is the best
-explanation of this feature one can ever get.
+In our case, the `SlowStuff` has to be wrapped with `React.Memo`. **If you do not do that, the "high priority" update will also re-render the `SlowStuff` component making the UI choppy**.
+
+Remember, the **mental model** here is **first, the high-priority fast update, THEN the low-priority slow update**. This is why React will re-render the UI twice!
+
+The `React.Memo` allows the first render to "skip" rendering the `SlowStuff` as it was already rendered during the "initial" render.
+
+### The `isPending` like indicator
+
+The `useTransition` exposes the `isPending` boolean so we can implement our loading states. Can we do the same with `useDeferredValue`? **Yes we can**!
+
+```jsx
+function App() {
+  const [count, setCount] = React.useState(0);
+  const deferredCount = React.useDeferredValue(count);
+
+  const isPending = count !== deferredCount;
+
+  return (
+    <>
+      <ImportantStuff count={count} />
+      <SlowStuff count={deferredCount} />
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </>
+  );
+}
+```
+
+If we are in the middle of the low-priority render, the `deferredCount` will be different than the `count`. At this time we are "loading" or "computing".
+
+### The initial render problem
+
+We have one problem in our code – the first render is choppy!
+
+React renders both the `ImportantStuff` and the `SlowStuff` at the same priority level. Understandable, as there is no "old" UI to fallback to yet.
+
+**This is where the second parameter of the `useDeferredValue` comes in handy**.
+
+```jsx
+function App() {
+  const [count, setCount] = React.useState(0);
+  const deferredCount = React.useDeferredValue(count, null);
+
+  const isPending = count !== deferredCount;
+
+  return (
+    <>
+      <ImportantStuff count={count} />
+      {deferredCount != null ? <SlowStuff count={deferredCount} /> : null}
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </>
+  );
+}
+```
+
+Now, we first render the most important parts of the UI. Then React can take care of the low-priority render and interrupt it if necessary.
+
+### Integration with Suspense
+
+The `useDeferredValue` integrates with `Suspense`.
+
+**When you pass a deferred prop to a component that suspense, React will show the old UI rather than the fallback**.
+
+This is aligned with how the `setTransition` works!
 
 ## `flushSync` (from `react-dom`)
 
