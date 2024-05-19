@@ -26,8 +26,7 @@ That is why you have not observed this behavior yet.
 ## `startTransition` API
 
 The `startTransition` API is meant to be used for **updates that can be deferred**. The most important thing to note
-here is that
-the **callback runs synchronously, but the state update it causes is treated as low priority**.
+here is that the **callback runs synchronously, but the state update it causes is treated as low priority**.
 
 It seems to me like `startTransition` API should most likely be used for expensive, **local** computations that are
 not "important", i.e are not user interactions.
@@ -53,7 +52,7 @@ When you use `startTransition`, the **React will prepare a new tree in the backg
 rendering, the result can be committed into the DOM.
 
 The **`startTransition` API will not help you in the case of CPU-heavy operations**. If the main thread is blocked, then
-it will be blocked, regardless if you wrap the computation with `startTransition` or not.
+it will be blocked, regardless if you wrap the computation with `startTransition` or not. According to [this video](https://www.youtube.com/watch?v=T8TZQ6k4SLE), **React yields every 5ms to pool for the user interactions**. If such occur, it will attempt to interrupt the current work. This means that **it is much better to have many small tasks than to have multiple large tasks**, at least from the `startTransition` API perspective.
 
 ### `startTransition` and the `hydrateRoot` API
 
@@ -153,17 +152,31 @@ function PokemonDetail() {
 }
 ```
 
-### Confusion around `startTransition`
+#### With `async` function
 
-TODO: write about the fact that the callback passed to `startTransition` seem to be invoked multiple times(?).
+In React 19, you can pass an `async` function to the `startTransition`. **React will wait for all committed transitions to settle before submitting the update to the DOM**.
 
-- Tested on production build as well.
+```js
+startTransition(async () => {
+  const data = await getData();
+});
+```
+
+### Error handling
+
+I know about at least two ways to handle errors with `startTransition`.
+
+- Use `useState` hook.
+
+- Use `ErrorBoundary` components.
+  - **When an error occurs within the `useTransition` function, React will propagate the error up**. This is where `ErrorBoundary` comes in handy!
 
 ### The problem with `startTransition`
 
 The `startTransition` API is not flexible.
 
 - If used, the child components automatically have to opt into the `concurrent` behaviors.
+
 - Must be used where the state is set. The `startTransition` callback has to contain a state update. This will most
   likely result in prop drilling.
 
@@ -277,6 +290,30 @@ The `useDeferredValue` integrates with `Suspense`.
 **When you pass a deferred prop to a component that suspense, React will show the old UI rather than the fallback**.
 
 This is aligned with how the `setTransition` works!
+
+## The `use` hook
+
+At the time of writing, there are two main use cases for the `use` hook.
+
+- Trigger a _suspense boundary_ when passing a promise to the `use` hook.
+
+```js
+// Has to be stable in-between re-renders.
+// So, using a cache, or creating it _outside_ of React component
+const stablePromise = ...
+
+function Component() {
+  const result = use(stablePromise);
+}
+```
+
+- **Conditionally** get the value of `React.Context`.
+
+```js
+if (someCondition) {
+  const context = use(FormContext);
+}
+```
 
 ## `flushSync` (from `react-dom`)
 
