@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 555
+Page 563
 
 ## Introduction
 
@@ -1055,15 +1055,21 @@ There are multiple _programming paradigms_:
   - **The original OO implementations thought of _methods_ on an object as means of handling a message that it understands**.
 
     - This has huge implications.
-      - First, it showcases that **changing methods is not a good idea**. You most likely can encapsulate both calls into one.
+
+      - First, it showcases that **chaining methods is not a good idea**. You most likely can encapsulate both calls into one.
+
       - Second, and what shocked me the most, is that it **goes against the popular teachings about OO**, where objects are "bags" we can put stuff into.
+
       - Third, **notice that it goes against using inheritance in most cases**.
+
         - Using inheritance does not create a "web of objects" but rather hierarchical structures. It **creates a hard code dependency** which we do not want!
 
   - There are many good things OO brings to the table, but arguably, the most important of them is the **_dependency inversion_** technique.
 
     - This allows you to **_code against the interface_ rather than implementation**.
+
       - You operate in the world of _abstract_ rather than concrete.
+
         - This makes your program more flexible, less coupled and more maintainable!
 
   - Drill this into your mind: **the OO is about creating a _loosely coupled "web" of objects_ that communicate via _methods_**.
@@ -1371,13 +1377,34 @@ I have to say, this looks pretty wild to me!
 
 ### Object stereotypes
 
-- You might it helpful to **generalize set of _roles_ a given object can perform into stereotypes**.
+You might find it helpful to **generalize set of _roles_ a given object can perform into stereotypes**.
 
-  - The Information Holder
-    - These are known as **_value objects_ or _data transfer objects_**. They **hold information and can derive data from that information**.
-  - The Structurer
-    - These **maintain relationship between objects or values**. Think a _hash table_ or a _cache_.
-  - ## The Service Provider
-  - The Coordinator
-  - The Controller
-  - The Interfacer
+- The Information Holder
+
+  - These are known as **_value objects_ or _data transfer objects_**. They **hold information and can derive data from that information**.
+
+- The Structurer
+
+  - These **maintain relationship between objects or values**. Think a _hash table_ or a _cache_.
+
+- The Service Provider
+
+  - These **contain specialized computations**. Think of a service for parsing JSON data. In addition, the _service providers_ could contain **cross-cutting responsibilities**. Think logging or security-related non-functional requirements.
+
+- The Coordinator
+
+  - These **pass information to other objects so that they can work**. Think _event listeners_ or _routers_.
+
+- The Controller
+
+  - **In this context, the _controller_ is pretty much an _use case_**. Controllers act on the _application-layer_ code. It uses other objects to "achieve" a feature. **It makes object interact**.
+
+- The Interfacer
+
+  - The role of the _interfacer_ is to **make crossing layer boundaries easier**. It sits between APIs (be it internal or external). Think _facades_ or _repositories_.
+
+With these stereotypes in mind, it is much easier to talk about the design of the system. **Set of action stereotypes contributes to the common language** everyone can leverage while communicating. Similar to the concept of the _knowledge of in the world_, it reduces the mental tax when thinking about the system as a whole.
+
+### Contracts
+
+A _contract_ is an agreement made between two parties. **OO is heavily reliant on contracts**. Think about what would happen in a system where one object expects a neighbor to know how to respond to certain kind of message, but it does not – the system would most likely crash!
