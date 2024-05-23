@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 563
+Page 565
 
 ## Introduction
 
@@ -1408,3 +1408,25 @@ With these stereotypes in mind, it is much easier to talk about the design of th
 ### Contracts
 
 A _contract_ is an agreement made between two parties. **OO is heavily reliant on contracts**. Think about what would happen in a system where one object expects a neighbor to know how to respond to certain kind of message, but it does not – the system would most likely crash!
+
+To create a contract, you use _contract technologies_ like _interfaces_ or _abstract classes_ to name a few.
+
+- The API (the responsibilities for doing / knowing). The available methods on the interface make up the API.
+
+- Preconditions & postconditions (behavior). **To communicate preconditions & postconditions, use types**. Returning data of type `T` implies different contract than returning `T | Nothing`.
+
+  - You can also leverage the `Result` type here as it comes in handy when encoding errors.
+
+**Contracts are for your fellow programmers**. They let us know what to expect when calling a given method.
+
+### Concretions
+
+- Concretions are about the _concrete_ **implementations of a contract**.
+
+- Like in the case of _contract technologies_ we also have _concretion technologies_. **These mainly are classes**.
+
+  - You have an _abstract class_ that then you implement with a _concrete class_.
+
+  - An _interface_ might describe a _concrete_ class you define.
+
+- While most developers are familiar with class as an _object factory_
