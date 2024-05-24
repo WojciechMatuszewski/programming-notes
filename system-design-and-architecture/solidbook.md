@@ -2,7 +2,7 @@
 
 > Notes from [this book](https://solidbook.io/).
 
-Page 565
+Paused at page 569. Book not finished
 
 ## Introduction
 
@@ -1429,4 +1429,18 @@ To create a contract, you use _contract technologies_ like _interfaces_ or _abst
 
   - An _interface_ might describe a _concrete_ class you define.
 
-- While most developers are familiar with class as an _object factory_
+### Classes
+
+- Classes are the blueprint for objects. We can _describe_ the functionality with an interface, but if we are in need of something concrete, something we can actually call, we need to dive into the _concrete_. Here is where classes come in.
+
+- Classes have two roles.
+
+  - **Class as an object factory**.
+
+    - This is where you use the `new` keyword to create _instances_ of a class.
+
+  - **Class as an collaborator** or **independent provider**.
+
+    - Think singletons or classes that only serve a purpose of logical grouping.
+
+At this point, book gets really chaotic as it is not finished. I'm going to wait for the full release.
