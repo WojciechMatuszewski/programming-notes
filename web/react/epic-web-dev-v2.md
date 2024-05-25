@@ -124,6 +124,34 @@
 
       - When the **_transition_ is done, it will fall back to the "initial" value, which now should be updated to the "new" value, you provided the hook with**.
 
-TODO: should the `setOptimistic` be only applied within the `startTransition`?
+- The **`useOptimistic` only makes sense in the context of a _transition_**.
 
-Finished "Optimistic UI" -> "Optimistic UI"
+  - If you apply it _outside_ a transition, the **UI will change only for a very split second, and then revert back to the initial value**.
+
+- To enhance the experience, you might want to use `useFormStatus`.
+
+  - It is interesting that **the `form` tag now is an implicit _Context Provider_**.
+
+    - The `useFormStatus` will "read" the nearest form status. **This only works when the form uses `action`**.
+
+    ```tsx
+    function SomeForm() {
+      return (
+        <form action={async () => {}}>
+          <CreateButton />
+        </form>
+      );
+    }
+
+    function CreateButton() {
+      const { pending } = useFormStatus();
+
+      return (
+        <button disabled={pending} type="submit">
+          {pending ? "Creating..." : "Create"}
+        </button>
+      );
+    }
+    ```
+
+Finished "Suspense img"
