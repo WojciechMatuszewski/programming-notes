@@ -6,7 +6,9 @@ Taking notes while watching [this course](https://www.udemy.com/course/design-pa
 
 - The **SOLID principles are not about concrete implementations**.
 
-  - They are more like rules you might want to follow.
+  - They are more like **rules you might want to follow**.
+
+The most important thing – **be pragmatic**. Use these as a _guiding star_ rather than hard, unmovable rules that you can't break.
 
 ### Single Responsibility Principle (SRP)
 
@@ -123,4 +125,18 @@ function giveDiscount(customer: Customer) {
 
     - When you extend something, you are starting "fresh". You do not have to worry about existing implementation.
 
-  Finished 31.
+  - The code is **easier to maintain**. Again, since you do not have to modify existing code, but extend it, making changes is much easier.
+
+  - The **code written to adhere to the OCP is easier to test**. It turns out, modeling your code in that way also makes it easier to test!
+
+- As with everything, the OCP **is not free from drawbacks**.
+
+  - **OCP introduces a layer of indirection**. This **could increase the overall code complexity**.
+
+  - If you are **rigid in following this principle, you might over-engineer your code**.
+
+    - When using OCP, you might fall into the trap of thinking that you _really_ can't modify the existing code. If that is the case, your classes should be designed only once. **That is not true**.
+
+  - **Using OCP might requite a shift in thinking for some developers**. If your peers are not accustomed to writing code in this quite specific way, you should consider educating them.
+
+Finished 32.
