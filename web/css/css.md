@@ -1,5 +1,19 @@
 # CSS
 
+## Centering the element
+
+For the longest time, it was the case that, to center the element you had to change the `display` or `position` property of the element to center it.
+
+- You would use the `position: absolute` with `translate` and `inset` (top/bottom)
+
+- You would use `display: grid` with `place-items: center`.
+
+- You would use `display: flex` with `place-items: center`.
+
+At the time of writing this, **we can now center any block element using `align-items` and `justify-items`**.
+
+This is great **because setting the `display` has implications for how margins collapse and other properties**. As such, while viable way of centering things, it always produces "side-effects" we might not want.
+
 ## The `height: 100%` does not work!
 
 How many times have you written the following snippet of CSS only to realize it is not doing what you expect.
