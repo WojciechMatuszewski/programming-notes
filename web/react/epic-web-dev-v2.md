@@ -154,4 +154,137 @@
     }
     ```
 
-Finished "Suspense img"
+### Suspense img
+
+- As mentioned earlier, the `use` hook and the _Suspense_ component is not only for resolving `fetch` requests.
+
+  - We can use them to resolve any kind of promise – including _preloading_ an image!
+
+```ts
+function preloadImage(src: string) {
+  return new Promise<string>((resolve, reject) => {
+    const img = new Image();
+    img.src = src;
+
+    img.onload = () => resolve(src);
+    img.onerror = reject;
+  });
+}
+
+// Then in the component
+function Img({ src }: { src: string }) {
+  // Remember about the cache!
+  const loadedSrc = use(cache(preloadImage(src)));
+
+  // return
+}
+```
+
+- The biggest advantage of this approach is that you get to decide what happens when the `Img` throws.
+
+```ts
+function ShipImg(props: ComponentProps<"img">) {
+  return <ErrorBoundary fallback = {/*your stuff*/}><Img {...props}/></ErrorBoundary>
+}
+```
+
+- This section on the workshop touches on the important concept of **forcing the `Suspense` component to always show the fallback**.
+
+  - **When using _transitions_, React will only show the `Suspense` fallback upon the first load**. After that, any change triggered inside a _transition_ will result in showing the "old" UI while the new one loads.
+
+    - Sometimes, this is not something we want. In our case, we wanted to _always_ show the `fallback` prop when a new image loads.
+
+    - **You can achieve that by using the `key` prop on the `Suspense` or the parent of the `Suspense` component**.
+
+    ```tsx
+    function ShipImg(props: React.ComponentProps<"img">) {
+      return (
+        // Notice the usage of the `key` prop here.
+        <ErrorBoundary fallback={<img {...props} />} key={props.src}>
+          <Suspense fallback={<img {...props} src={"/img/fallback-ship.png"} />}>
+            <Img {...props} />
+          </Suspense>
+        </ErrorBoundary>
+      );
+    }
+    ```
+
+### Responsive
+
+- The **`useDeferredVale` hook could be used to have certain parts of the application display "old" results while others are up-to-date**.
+
+  - This is **similar to how `useTransition` works**, but **`useDeferredValue` is more granular**.
+
+- The most "famous" example with `useDeferredValue` is search.
+
+  - You want the search bar to have the freshest value – what the user typed in, but the result can lag behind.
+
+    - If you tried to use `useTransition` for this use case, every time user typed a letter, the UI would _suspend_. Not ideal!
+
+- The **critical point to understand** is that the `useDeferredValue` **will cause your component to render twice**.
+
+  - The **first render** is with _deferred value_ as the "old" value.
+
+  - The **second render** is with _deferred value_ as the "current value.
+
+  This has **huge implications**.
+
+  1. React will wait for any _suspended_ components before showing the new UI during the second render.
+
+  2. If you want to use **`useDeferredValue` as optimization technique, the component you pass the _deferred value_ has to be memoized and stable between re-renders**. Why? because React renders the component twice. If it's not memoized, the first render will be slow, defeating the purpose of using `useDeferredValue`.
+
+- React [has great documentation](https://react.dev/reference/react/useDeferredValue) about this hook.
+
+### Optimizations
+
+- Unfortunately, **it is very easy to create network waterfalls with `Suspense`**.
+
+  - I observed that, while a lot of developers understand that they can `Promise.all` or `Promise.allSettled` multiple promises on the backend, the same is not true with frontend developers using React.
+
+  ```tsx
+  function Component() {
+    // These will load sequentially and not in parallel.
+    // We have just created a waterfall!
+    const user = use(getUser());
+    const post = use(getPost());
+
+    return <div></div>;
+  }
+  ```
+
+  To "solve" this issue, we could **kick-off _Promises_ BEFORE using the `use` hook**.
+
+  ```tsx
+  function Component() {
+    // Start fetching the data in parallel.
+    // Cache plays a key role here – we assume we can call those functions and they will always return the same promise.
+    const userPromise = getUser();
+    const postPromise = getPost();
+
+    // Now suspend
+    const user = use(userPromise);
+    const post = use(postPromise);
+
+    return <div></div>;
+  }
+  ```
+
+  Sadly, **it is very hard to track all the data-dependencies of a given group of components – most waterfalls are not that easy to fix**.
+
+  I would recommend **using a framework that has the ability to "see" the network requests your application is making**. This way, it would be the framework responsibility to kick-off those requests for you.
+
+### Summary
+
+Such an excellent workshop. It covered the following.
+
+- The usage of the `Suspense` component and how it interplays with `useTransition`.
+
+- The usage of the `use` hook and how to build your own, simplified version of it.
+
+- How to utilize the `Suspense` while loading images and the "key prop trick" to force a new `Suspense` fallback.
+
+- How we could utilize the `useDeferredValue`. First, means of rendering optimization and second, as means of keeping the UI snappy while fetching results.
+
+- How the `Suspense` and the `use` hook could lead to _network waterfalls_ and what to do about it.
+
+  - Here, if you have multiple, non-dependant promises, remember to trigger them BEFORE using the `use` hook.
