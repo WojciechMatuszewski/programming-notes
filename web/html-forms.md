@@ -2,6 +2,7 @@
 
 When working on any kind of application, you will need to write HTML forms. It is very rare that your application does
 not have any kind of inputs.
+
 Since you will be writing forms (probably a lot of them), it is essential to learn how `form` HTML tag works, and tags
 related to it.
 
@@ -39,6 +40,27 @@ Usually, a **better alternative is the `insert` attribute**. This one is a bit n
 keyboard and other interactions, but in most cases, it is what should be used instead.
 
 Note that the `insert` is _relatively_ new attribute. Please check the browser support before using it.
+
+## The `search` element
+
+The `search` element creates a _search landmark_, so you don't also need to add `role` of search to the form.
+
+```html
+<search>
+  <form>
+    <label>
+      Search
+      <input type="search" name="search" />
+    </label>
+  </form>
+</search>
+```
+
+- The **`search` element is not for displaying search results**.
+
+- You can have multiple `search` elements on the page.
+
+- **Consider using the `output` element to tie the form with the results**.
 
 ## The `type=file` input
 
