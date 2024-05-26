@@ -62,12 +62,23 @@ The `search` element creates a _search landmark_, so you don't also need to add 
 
 - **Consider using the `output` element to tie the form with the results**.
 
+- You still need to annotate the input with `type="search"`.
+
+## The `type=search` input
+
+There are several differences between the `type="search"` and `type="text"` inputs.
+
+1. The **browser might display the "X" icon to clear the search value**.
+
+2. The **browser might suggest previously entered values when typing**.
+
 ## The `type=file` input
 
 ### Styling the native button
 
 If you use the `type=file` input, by default, the browser will render a button for the user to click on to bring up the
 file picker.
+
 This button will have native browser styles, which you most likely would want to change. How to go about changing it?
 
 1. Use the `::file-selector-button` pseudo-element
