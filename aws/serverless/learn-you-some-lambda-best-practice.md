@@ -52,6 +52,19 @@ There is a difference between `exports =` and `module.exports =`. **Always prefe
 
 - just note that **this event is fired when the execution environment is about to be closed**. This **means that your AWS Lambda might have already been invoked a couple of times on the same container**.
 
+### Lambda extensions and the circuit breaker pattern
+
+[This blog post](https://aws.amazon.com/blogs/compute/using-the-circuit-breaker-pattern-with-aws-lambda-extensions-and-amazon-dynamodb) showcases a neat pattern of implementing the _circuit breaker_ with AWS Lambda extensions.
+
+There are multiple approaches to tackle the _circuit breaker_ architecture.
+
+1. Use ESM to turn on/off the "thread" that exists behind the AWS Lambda and some kind of event source.
+2. Check the service availability inside the AWS Lambda function itself.
+3. Use Step Functions to manage the state. Invoke AWS Lambda via SFN.
+   ... And others.
+
+I find this particular solution interesting because it can be re-used across different runtimes (because it leverages an extension) and does not introduce that much complexity to the overall solution.
+
 ## Lambda runtime
 
 - wrapper the AWS provides that runs your handler.
