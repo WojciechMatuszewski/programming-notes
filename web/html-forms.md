@@ -6,6 +6,54 @@ not have any kind of inputs.
 Since you will be writing forms (probably a lot of them), it is essential to learn how `form` HTML tag works, and tags
 related to it.
 
+## When does the form "submit"?
+
+> Based on [this short blog post entry](https://www.stefanjudis.com/today-i-learned/implicit-form-submission-doesnt-work-always)
+
+For the longest time, I though that the form will fire the `submit` event whenever you hit `enter` on one of its inputs. This heuristics appeared to be consistent, because 99% of the forms I wrote **had the "submit" button**.
+
+```html
+<form>
+  <!-- some inputs -->
+  <button type="submit">Submit</button>
+</form>
+```
+
+**It turns out, the "implicit" submit "on enter" does not always happen**. It will happen when the following conditions are met.
+
+1. The `form` has a `submit` button.
+2. The `form` **only has a single `input` element**.
+
+So, I could have a form without the `submit` button, with a single `input` element that would also trigger this "implicit" submit event.
+
+```html
+<form>
+  <!-- Hitting enter while editing this field will "submit" the form -->
+  <input type="text" />
+</form>
+```
+
+But, **the "submit" event will not fire you have multiple inputs WITHOUT the "submit" button**.
+
+```html
+<form>
+  <!-- Hitting enter while editing this field will NOT "submit" the form -->
+  <input type="text" />
+  <input type="text" />
+</form>
+```
+
+If you **wish to preserve the "submit" behavior in this case, use a `hidden` submit button**.
+
+```html
+<form>
+  <!-- Hitting enter while editing this field will NOT "submit" the form -->
+  <input type="text" />
+  <input type="text" />
+  <button type="submit" hidden>Hidden Submit</button>
+</form>
+```
+
 ## Getting all elements of form from `event`
 
 Use `event.target.elements` to get all form elements. **You have to add name prop to the form elements**
