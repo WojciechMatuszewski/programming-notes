@@ -239,6 +239,12 @@ I've also took a stab at writing a custom runtime with Go. [You can check the co
 
 - when cold starts stack up (multiple sync lambda calls)
 
+### Dynamic Provisioned Concurrency
+
+- you can leverage the application auto scaling target tracking with CW alarms to dynamically change the Provisioned Concurrency number.
+
+- learn more [here](https://www.ranthebuilder.cloud/post/optimize-aws-lambda-with-dynamic-provisioned-concurrency)
+
 ### Tips
 
 - use **weighted distribution with alias** to make sure you do not loose provisioned concurrency executions when updating versions
