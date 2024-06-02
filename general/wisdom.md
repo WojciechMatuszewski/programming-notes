@@ -667,3 +667,15 @@ In fact, in most cases, there will be so many things you wish were different, th
 The author of the article recommends focusing on three things and sucking up the rest. **Having such discipline is very hard** – engineers are people who like to solve problems!
 
 Do no spread yourself too thin. Focus your energy and effort on a few issues and fix them as best as you can!
+
+## Communication vs. Reporting Structures
+
+> Based on [this great blog post](https://kevinyien.com/blog/communication-structures.html).
+
+Over time, every company develops a hierarchical reporting structure. It's normal.
+
+**While having a hierarchical reporting structure is expected, the _communication structure_ should be as flat as possible**.
+
+If you, an engineer, believe that an input from an executive team is needed, you should be able to ping ANY executive and get a answer. The culture within the company should make you comfortable to reach out to anyone. **In the end, we are here to solve problems and get the job done**.
+
+Of course, some people might say they do not have capacity to answer or help. That is okay. **What can't happen is the "you are not worth my time" type of answer**. If you notice this happening, the organization has deep problems. Perhaps that is an opportunity for you to change things around?
