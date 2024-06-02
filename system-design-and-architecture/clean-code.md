@@ -75,3 +75,61 @@ You want the **module that contain the high level policy, to use low level polic
 In other worlds, you want **a dependency of a module to "terminate" at a lower-level abstraction**. This abstraction "hides" the concrete implementation for other modules.
 
 The **SOLID principles are about dependency management**. In OO, the _message_ is the dependency.
+
+## Episode 11 Part 1 – Liskov Substitute Principle
+
+- It does not matter what a type is. All it matters are the operations that can be performed on the type.
+
+  - The **_type_ is really just a bag of operations**.
+
+  - The structure of type is _hidden_ behind those operations.
+
+- The idea is to allow the program to use _subtype_ of some class as that class.
+
+  - The code should not be concerned about what is the instance of the concrete data passed to the function.
+
+    - Just like we do not care what the _type is_.
+
+### No need for inheritance
+
+- Notice that the LSP does not rely on inheritance.
+
+  - **As long as a given type has the same set of operations as the parent type, we can use these types interchangeably**.
+
+  - In some languages, this might be achieved through inheritance, but in others, we might employ duck-typing.
+
+### Violation
+
+- When LSP is **violated, it often results in runtime error or "refused request"**.
+
+  - The type does not contain the operation which the "parent" type has.
+
+- It could also mean that the subtype method class does something completely different, like throwing an exception.
+
+- Here, Bob walks us through a classic example of having a `Rectangle` class and trying to create `Square` based-off the _Rectangle_ class.
+
+  - **If you have a function that relies on the `height` no changing after calling `rectangle.setWidth` and you pass a `Square` to it, you created so-called "undefined" behavior in the code**.
+
+    - Your code might crash. Your code might keep working. Only by looking at the code you are able to deduce what is going to happen.
+
+  - To "fix" this issue, you will most likely add an `if` statement to the code which looks at `instance` of the parameter.
+
+    - This **violates the OCP** making your program fragile and tightly coupled.
+
+#### Solution
+
+- To fix the "square as rectangle problem", **consider creating completely different classes for both, and keeping them as separate types**.
+
+  - This is the case of "it appears that this might work, but the reality is different".
+
+    - Remember, in some cases, it is better to "duplicate" code than to try to fix incompatible blocks together (by inheritance or duck typing).
+
+### The "Representative rule"
+
+- You might be tempted to think that, since the rectangle _is a_ square, there ought to be some kind of relationship between those two constructs in code.
+
+  - **But the structures in code are not the "real" thing – they just _represent_ the real things**.
+
+    - The **representatives do not share the same relationships as the things they represent**.
+
+- When writing code **remember that you create a _representation_ of a real word, rather than concrete objects**.
