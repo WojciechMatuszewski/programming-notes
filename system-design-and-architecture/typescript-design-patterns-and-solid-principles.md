@@ -139,4 +139,106 @@ function giveDiscount(customer: Customer) {
 
   - **Using OCP might requite a shift in thinking for some developers**. If your peers are not accustomed to writing code in this quite specific way, you should consider educating them.
 
-Finished 32.
+### Liskov Substitution Principle (LSP)
+
+The _Liskov Substitution Principle_ is all about **having the ability to use the _child class_ in a place where _parent class_ is required**.
+
+```ts
+abstract class PaymentProcessor {
+  processPayment(amount: number): void;
+}
+
+class CreditCardProcessor {
+  constructor() {
+    super();
+  }
+
+  processPayment(amount: number) {
+    // code
+  }
+}
+
+function executePayment(processor: PaymentProcessor) {
+  // code
+}
+```
+
+Notice that I can call the `executePayment` with `CreditCardProcessor`. I could also create different kinds of "processors".
+
+**In the `executePayment` I do not have to check which instance the `processor` is – I should not care about that**. If you have to check the instances, you are not following LSP.
+
+This rule might _appear_ to be similar to the _OCP_, and there are some similarities, but they pertain to different things.
+
+Remember, the _OCP_ is about _extension_, the _LSP_ is about _interchangeability_.
+
+You can follow one rule, but violate another.
+
+#### Following _OCP_ but violating _LSP_
+
+```ts
+interface Person {}
+
+class Boss implements Person {
+  constructor() {}
+
+  doBossStuff() {}
+}
+
+class Peon implements Person {
+  constructor() {}
+
+  doPeonStuff() {}
+}
+
+function doStuff(person: Person) {
+  // I'm checking for the instance.
+  // There is no _interchangeability_ between `Person`, `Boss` and `Peon`
+  if (person instanceof Boss) {
+    person.doBossStuff();
+  }
+
+  if (person instanceof Peon) {
+    person.doPeonStuff();
+  }
+}
+```
+
+In the example above, it would be better to have `doStuff` on the `Person` interface. This way, each _subclass_ of `Person` could implement the same function.
+
+- LSP has **number of benefits**.
+
+  - It greatly increases the flexibility of your code.
+
+    - Since your functions take _interfaces_ or _abstract classes_ as parameters, your functions are more generic and _deeper_.
+
+- LSP is **not free of drawbacks**.
+
+  - You are introducing an indirection to the code. This means the code will be more complex.
+
+  - Applying LSP requires careful design. **You might end up with more code that necessary**.
+
+    - **Be very careful**. You are at risk of over-engineering a solution!
+
+#### Following _LSP_ but violating _OCP_
+
+```
+class Android implements Platform {
+    @Override String name() { return "Android"; }
+    @Override String version() { return "7.1"; }
+}
+class HumanReadablePlatformSerializer implements PlatformSerializer {
+    String toJson(Platform platform) {
+        return "{ "
+                + "\"name\": \"" + platform.name() + "\","
+                + "\"version\": \"" + platform.version() + "\","
+                + "\"most-popular\": " + isMostPopular(platform) + ","
+                + "}"
+    }
+
+    boolean isMostPopular(Platform platform) {
+        return (platform instanceof Android)
+    }
+}
+```
+
+Notice that, if the platform popularity changes, we would need to update the `isMostPopular` method. This violates the _OCP_ rule.
