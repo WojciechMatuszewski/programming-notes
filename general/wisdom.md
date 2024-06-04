@@ -679,3 +679,17 @@ Over time, every company develops a hierarchical reporting structure. It's norma
 If you, an engineer, believe that an input from an executive team is needed, you should be able to ping ANY executive and get a answer. The culture within the company should make you comfortable to reach out to anyone. **In the end, we are here to solve problems and get the job done**.
 
 Of course, some people might say they do not have capacity to answer or help. That is okay. **What can't happen is the "you are not worth my time" type of answer**. If you notice this happening, the organization has deep problems. Perhaps that is an opportunity for you to change things around?
+
+## No Wrong Doors
+
+> Based on [this great blog post](https://lethain.com/no-wrong-doors).
+
+Have you ever found yourself in a situation where you were redirected to another team before finding the right person to help you with something?
+
+This behavior, while typical, is problematic. **It forces people to navigate the organizational design and to find the right people/team for questions they might have**. The problem with here is that **this process takes a lot of time, especially if you are new to the company**.
+
+It would be much more optimal to **have the person you asked initially help you start the discussion with the right people**. If they do that, they **create a three-way conversation, where everyone learns**.
+
+This _"let me help you even though you should aks X"_ approach is called "No Wrong Doors" policy. No matter where you initially end up, the team is willing to provide help even if you are in a "wrong" place.
+
+Ultimately, we work together. We should help each other as much as possible. You never know when you will be in a similar situation!
