@@ -76,6 +76,86 @@ In other worlds, you want **a dependency of a module to "terminate" at a lower-l
 
 The **SOLID principles are about dependency management**. In OO, the _message_ is the dependency.
 
+## Episode 09 – Single Responsibility Principle
+
+- Bob argues that a **responsibility pertains to the "family of functionality" rather than to be a method**.
+
+  - So, if your class only has methods for interacting with a database, it has a _single_ responsibility.
+
+- Think of a _responsibility_ as **a source of change**.
+
+  - These changes will be _requested_ by the **users the _responsibility_ relates to**.
+
+    - **If your class pertains to more than a single _actor_ it has multiple responsibilities**.
+
+> Responsibility is a family of functions that serves one specific _actor_
+
+- We are talking about actors, not users, because users might have different, and multiple, roles within the organization
+
+### Values of Software
+
+- The **primary value** is **malleability of software**.
+
+  - The software is not a static thing. It can change. Take different forms.
+
+    - Notice how this value interplays with the _secondary value_.
+
+- The **secondary value** is **behavior**.
+
+  - The software meets the current requirements of the current user.
+
+    - The needs of the user change!
+
+- The **profitability of software is tied to the primary value**.
+
+  - While the software might not meet all the user demands now, it can change since the _primary value_ is high.
+
+  - The **inverse, where secondary value is high, and the primary is low** is a sign of a software that might fail in the long run.
+
+### Friction
+
+Imagine a scenario where a class contains two _responsibilities_. One related to the database, one related to formatting strings.
+
+It is likely that there are two separate people working on those two different responsibilities. **If they both make changes to the class, they will face merge conflicts and friction**.
+
+We do not want this to happen.
+
+### SRP
+
+- Now that we understand what _responsibility_ is, we can talk about _Single Responsibility Principle_.
+
+> The module should have **only one** reason to change.
+
+This means you should "gather" together things that change together, and separate things that change separately.
+
+- A good example is _logging_.
+
+  - You might interview logging with the code, but that violates the SRP.
+
+  - Instead, **create a separate functions or classes for logging**. Those construct would then take the "base" data you worked on and add the necessary log statements.
+
+- **SRP does not necessarily mean creating a new files for each _responsibility_**.
+
+  - One has to use their judgement here. How _similar_ are the _responsibilities_?
+
+    - If you have code that does X and code that logs what the X does, I would argue those should live within the same file.
+
+    - On the other hand, code that does X and code that does Y should most likely live in separate files.
+
+### Welcome to engineering
+
+- Here, Bob provided us _potential_ solutions for decoupling a class that had three _responsibilities_.
+
+  - **Sadly, none of the proposed solutions was "final"**.
+
+    - All of them **had tradeoffs**.
+
+- This is the world we live in – the world of perpetual tradeoffs. There are no perfect solutions.
+
+Finished 48:29 – case study
+
+## Episode 10
+
 ## Episode 11 Part 1 – Liskov Substitute Principle
 
 - It does not matter what a type is. All it matters are the operations that can be performed on the type.
