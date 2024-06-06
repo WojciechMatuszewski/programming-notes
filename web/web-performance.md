@@ -298,7 +298,7 @@ work on them). Just important to **measure using production build**.
 There are a couple of ways to triggering the "paint" in browsers.
 
 1. Changing anything other than `opacity` or `transform`.
-2. **Changing CSS variables**. For example, changing their values when you hover over an element.
+2. **Animating CSS variables defined with @property**.
 
 > The point number two was new to me. [See this blog post](https://motion.dev/blog/do-you-still-need-framer-motion) for more information.
 
