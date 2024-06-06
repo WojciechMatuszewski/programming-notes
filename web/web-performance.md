@@ -295,14 +295,14 @@ work on them). Just important to **measure using production build**.
 
 ### Painting
 
-Anytime you change something other than opacity or a CSS transform you **are
-going to trigger a paint**
+There are a couple of ways to triggering the "paint" in browsers.
 
-Every layout it's going to cause a paint but not every paint is going to cause
-layout.
+1. Changing anything other than `opacity` or `transform`.
+2. **Changing CSS variables**. For example, changing their values when you hover over an element.
 
-Chrome has a great tool to check if you are painting. Go to rendering tab when
-debugging (turn on paint flashing)
+> The point number two was new to me. [See this blog post](https://motion.dev/blog/do-you-still-need-framer-motion) for more information.
+
+Every layout it's going to cause a paint but not every paint is going to cause layout. Chrome has a great tool to check if you are painting. Go to rendering tab when debugging (turn on paint flashing)>
 
 ### Compositor Thread
 
