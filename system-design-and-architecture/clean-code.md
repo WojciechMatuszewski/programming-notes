@@ -152,7 +152,17 @@ This means you should "gather" together things that change together, and separat
 
 - This is the world we live in – the world of perpetual tradeoffs. There are no perfect solutions.
 
-Finished 48:29 – case study
+### Case Study
+
+- Bob presents a program he build called "MasterMind".
+
+  - He talks about the solution in _waterfall-like_ way. First showing the architecture diagram and so on.
+
+    - **It turns out, this is a lie. He first started with tests, then the design started to emerge**.
+
+    - The "trick" is that we can fake the _waterfall-like_ process AFTER we already have everything working.
+
+- Identifying actors is hard. It takes time. They often emerge when writing tests and thinking about the architecture.
 
 ## Episode 10
 
