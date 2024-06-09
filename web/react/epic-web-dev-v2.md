@@ -65,6 +65,8 @@
 
     - This is how the `cookies()` and similar functions in Next.js work under the hood.
 
+- The **presence of the server does not mean we are server-side rendering**.
+
 ### Client Components
 
 - You **can't import RSC into a RCC**. There are a couple of reasons.
@@ -84,6 +86,39 @@
 - **The `use client` directive is for the bundler**. It tells the bundler that this component is RCC and should have "placeholder" assigned to it in RSC payload.
 
 ### Client Router
+
+- When adding the router, it dawned on me that, **so far, we are NOT doing any SSR**.
+
+  - We first load the script that triggers requests to the `rsc` endpoint. The initial response from the server is a white page.
+
+  - **This goes to show that SSR and RSCs are complementary, but one can be used without the other**.
+
+- The basics of the router are as follows.
+
+  1. To change the URL, we call some kind of `navigate` function.
+  2. This function, apart from changing the URL, **triggers a new `rsc` request**.
+  3. We then `use` that request to get the RSC payload.
+  4. React takes care of updating the UI.
+
+- One thing that I was unsure of when going through the _Pending UI_ section, is why did we bother to include `isPending` in the router context, if we are not using it?
+
+  - To determine if something is "pending" we are using `location` and `nextLocation` (by means of `useDeferredValue`). Of course, that is a completely valid way to go about this, but why bother having `isPending` on the context then?
+
+- The solution to handle race conditions was quite fascinating.
+
+  - We used `Symbol` to determine if the promise that just resolved is the _latest_ promise.
+
+  - Of course, we could have used an object with some kind of unique id inside, but the `Symbol` is more ergonomic as each instance is unique.
+
+    - Do not be fooled by the `Symbol()` first parameter. It is not a key or anything like that. It is the symbol description!
+
+- Apparently, the default behavior for React is to _always_ re-trigger Suspense boundaries when users click the forward/back buttons. I could not find any mentions of it, but I trust Ken on this one.
+
+  - Either way, to **cache navigations, we used a central cache with keys stored in `window.history.state`**.
+
+  - I like how we are leveraging the native web functionalities to achieve our goals!
+
+### Server Actions
 
 ## React Suspense
 
