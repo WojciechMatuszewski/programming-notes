@@ -83,6 +83,8 @@
 
 - **The `use client` directive is for the bundler**. It tells the bundler that this component is RCC and should have "placeholder" assigned to it in RSC payload.
 
+### Client Router
+
 ## React Suspense
 
 ### Data Fetching
