@@ -1,5 +1,88 @@
 # Epic Web Dev V2 notes
 
+## React Server Components
+
+> You can [find the course material here](https://react-server-components.epicweb.dev/).
+
+### Warm Up
+
+- In Node, there is a _module resolution algorithm_ that is used to resolve modules when you import them.
+
+  ```js
+  import foo from 'bar' -> /* will resolve the import by looking into node_modules */
+  ```
+
+  When using ESM in the browser, we can load modules in many different ways.
+
+  1. Using an URL. For example `https://example.com/shape.js`.
+  2. Using relative path syntax. For example `./modules/shapes/square.js`.
+
+  Instead, we can leverage the [`importmap`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) feature. The `importmap` allows us to define what "type" of imports maps to what type of identifier. This introduces consistency in the codebase and creates a central place for us to manage dependencies – akin to `package.json`.
+
+- Back in the old days, when importing scripts to your application, you had to put then at the bottom of the `body` tag.
+
+  - The "bare" `script` identifier will block HTML parsing and execute as soon as the HTML parser encounters it.
+
+  - That is not the case for `script type = "module"`.
+
+    - This one works similar to _deferred_ script – the browser will load it asynchronously, and will execute it AFTER them HTML parsing is complete.
+
+### Server Components
+
+> The idea behind RCS is conceptually simple. Instead of requesting JSON data and handling that off to our components to generate UI, we request the UI itself.
+
+- The RSC format allows for a couple of things.
+
+  1. Mixing payload for interactive components (_client components_) and non-interactive components (_server components_) together.
+
+  2. **Out of order streaming of components**. This is great as it minimizes waiting time for the UI to show up.
+
+- **React has two exports, one for the server and one for the client**.
+
+  - Notice that all the demos are using the same `React` import, no matter where the code is executed. How is that possible?
+
+    - It works by crafting a custom `exports` object configuration in `React` package.json. It allows you to have different entry points for your application based on `--conditions` Node flag.
+
+      ```bash
+      node --conditions=react-server your_file.js
+      ```
+
+- On the server (wherever that is), we create the RSC payload and send it as a stream. Then you consume that stream on the client and pass the result to `createRoot`.
+
+  - **Keep in mind that React will execute all RSCs first**.
+
+    - If the data you fetch in RSCs takes a while to render, and **you do not use `Suspense`** React will not be able to stream all the other components!
+
+      - `Suspense` is crucial in enabling out-of-order streaming.
+
+      - In Next.js, the `loading.js` file acts as a _Suspense boundary_ for a given route.
+
+- **Since we can't access `Context` in RSCs, passing data around can be painful**.
+
+  - While a bit magical, [the `asyncLocalStorage` Node API](https://nodejs.org/api/async_context.html) is helpful in this regard.
+
+    - **It allows you to access any piece of data you initially "seeded it with" during the request anywhere callbacks and functions in latter parts of the callstack**.
+
+    - This is how the `cookies()` and similar functions in Next.js work under the hood.
+
+### Client Components
+
+- You **can't import RSC into a RCC**. There are a couple of reasons.
+
+  1. The RCC can contain secrets and other sensitive data that we use for creating the RCC JSX. We would not want those on the client.
+
+  2. The RCC is not interactive. What if your RCC re-renders? Should we re-fetch the RSC? That would be very inefficient.
+
+  Instead of trying to import RSC into a RCC, **focus on composition – composing RSCs with RCCs via `children` prop**.
+
+- When creating the RSC payload on the server, React will create "placeholders" for RCCs.
+
+  - Then, on the client, React will resolve those "placeholders" to "real" elements.
+
+    - You might need to change how the paths are resolved on the client and on the server to make this work.
+
+- **The `use client` directive is for the bundler**. It tells the bundler that this component is RCC and should have "placeholder" assigned to it in RSC payload.
+
 ## React Suspense
 
 ### Data Fetching
