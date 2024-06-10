@@ -120,6 +120,28 @@
 
 ### Server Actions
 
+- The RSC payload also contains the reference to any _action_ you can pass as a prop to a form.
+
+- **You can have both `handleSubmit` and `action` prop defined on the form**.
+
+  - Keep in mind that `event.preventDefault` is not needed as the `action` will do that for you.
+
+- The flow is pretty wild to me.
+
+  1. You create an action.
+
+  2. The builder/loader will take that action an encode it.
+
+  3. The server will embed that action within the RSC payload.
+
+  4. When action is called, `createFromFetch` will call out special handler which will call a route we have created to handle RSCs.
+
+  5. In the route, you import the module via `import()`, execute the function and return the result.
+
+  6. RSC payload contains the updated UI.
+
+  I have to admit – wrapping my head around these concepts will take some time. Especially since the data sent over the wire is NOT that readable.
+
 ## React Suspense
 
 ### Data Fetching
