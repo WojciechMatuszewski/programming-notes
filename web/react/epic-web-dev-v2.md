@@ -130,17 +130,31 @@
 
   1. You create an action.
 
-  2. The builder/loader will take that action an encode it.
+  2. The bundler/loader will take that action an encode it.
 
   3. The server will embed that action within the RSC payload.
 
   4. When action is called, `createFromFetch` will call out special handler which will call a route we have created to handle RSCs.
+
+     - This handler is called `callServer` and it should return the result of the action.
+
+     - You might think that the return data is the RSC payload, but that is not the case. It is simply the result of running the action.
 
   5. In the route, you import the module via `import()`, execute the function and return the result.
 
   6. RSC payload contains the updated UI.
 
   I have to admit – wrapping my head around these concepts will take some time. Especially since the data sent over the wire is NOT that readable.
+
+- To handle _server actions_ properly, we had to update the whole "root" in the UI. The update to the form UI that called the action is taken care of by the `callServer` function.
+
+  - To update the whole UI (the "root"), are are effectively re-invoking our application upon every action. We then pipe that result alongside the action result.
+
+- After finishing the "History Revalidation" exercise, it dawned on me, that **all we are really doing is calling to a server to get next data, and using React to display that data onto the screen**.
+
+  - The payload might look weird (the RSC payload), but how it looks is an implementation detail.
+
+  - There are few gotchas, like having to wait for stream to finish before doing something, but apart from that, the mental model is `action` -> `request` -> `response` -> `update UI`.
 
 ## React Suspense
 
