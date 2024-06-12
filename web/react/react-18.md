@@ -84,20 +84,75 @@ Sadly, the official React documentation does not mention using `startTransition`
 Remember that with _React_ 18, the state updates are batched together. In previous versions in _React_, this was not
 necessarily always the case. The batching of state updates also applies to the callback of the `startTransition` function.
 
-In addition to batching, **React will hold off applying the updates to our current UI until the new tree is fully ready
-to be rendered**.
+In addition to batching, **React will hold off applying the updates to our current UI until the new tree is fully ready to be rendered**.
 
 ```ts
 startTransition(() => {
   setState((count) => count + 1);
+
   router.push("post/123");
 });
 ```
 
-In the code above, since the `router.push` causes a transition, **the `setState` call will be reflected in the UI AFTER
-the `router.push` transition ends**.
+In the code above, since the `router.push` causes a transition (so, in reality, we have a transition nested inside a transition), **the `setState` call will be reflected in the UI AFTER the `router.push` transition ends**.
 
 This mechanism is a base for [building progress bars in Next.js with app router](https://buildui.com/posts/global-progress-in-nextjs).
+
+#### Resetting RSC errors
+
+> [Here is a great video](https://www.youtube.com/watch?v=idEL0dv2V1A) regarding this subject
+
+When RSC errors, Next.js will attempt to render the `error.js` file.
+
+```jsx
+'use client'
+
+export function default Error({error, reset}) {
+  return <button onClick = {() => {
+    reset() // This might not work as you expect!
+  }}>Reset</button>
+}
+```
+
+**If this component is displayed because of an error in RSC, clicking the "Reset" button will not "refresh" the UI**. This is a bit puzzling at first. The **`reset` function only resets the state of ErrorBoundary. It will not re-fetch the RSC**.
+
+So, your next attempt might look like this.
+
+```jsx
+'use client'
+
+export function default Error({error, reset}) {
+  const router = useRouter()
+
+  return <button onClick = {() => {
+    router.refresh()
+    reset() // This might not work as you expect!
+  }}>Reset</button>
+}
+```
+
+The `router.refresh` should re-fetch the RSC payload, so in theory, the UI should "refresh" right?
+
+Well, that is not the case either. **By calling `refresh` and `reset` together, we are introducing a race condition**. The `refresh` will make a network request for the new payload. Until that is finished, calling `reset` will have no effect.
+
+Since `refresh` does not return a _Promise_ for us to `await`, we have to use _transitions_!
+
+```jsx
+'use client'
+
+export function default Error({error, reset}) {
+  const router = useRouter()
+
+  return <button onClick = {() => {
+    startTransition(() => {
+      router.refresh()
+      reset() // This might not work as you expect!
+    })
+  }}>Reset</button>
+}
+```
+
+**Using `startTransition` tells React to apply the updates after ALL the changes caused by functions run in _transition_ are done**. This means we no longer have to deal with the race condition I mentioned.
 
 ### Behavior in the context of network requests
 
