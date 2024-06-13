@@ -223,3 +223,49 @@ This means you should "gather" together things that change together, and separat
     - The **representatives do not share the same relationships as the things they represent**.
 
 - When writing code **remember that you create a _representation_ of a real word, rather than concrete objects**.
+
+## Episode 11 Part 2 – Liskov Substitution Principle
+
+### How to know if you are violating the principle?
+
+- The _sub-type_ can't do _less_ than the base class.
+
+  - You can't take expected behavior from the _sub-type_.
+
+- When a function on a _sub-type_ conditionally throws an exception when some constraint is not met.
+
+  - Of course, this constraint has to be related to the _base class_.
+
+- You **should be suspicious of the `typeof` conditions**.
+
+  - While such condition is not necessarily a violation of the principle, it very likely could be.
+
+    - Keep in mind the "square and rectangle" problem.
+
+### Inheritance as blessing and a course
+
+- _Inheritance_ is very useful mechanism, **but it also could be a downfall of your system**.
+
+  - If you _inherit_ from the base class, **you drag all the dependencies of the base class to the derived class**.
+
+    - **The more dependencies, the more rigid your system becomes**.
+
+- **_Dynamically-typed_ languages do not suffer from this problem** that much, because they **do not rely on inheritance for _sub-typing_**.
+
+  - Of course, the tradeoff is potentially having runtime errors because you do not have a compiler checking your types.
+
+### TDD and _designing by contract_
+
+- To make _dynamically-typed_ languages safer, people created a concept called _"design by contract"_.
+
+  - This is where each class, method or a function would have a set of _invariants_, conditions and preconditions.
+
+    - Those would get run at a certain time, ensuring that the data flowing through a given class is correct.
+
+- Another, more popular way of making the _dynamically-typed_ languages "more safe" is the practice of TDD.
+
+  - **Nowadays, people prefer TDD**. It is much more accessible, as you do not need a special language for calling the conditions at the right time, and also is more flexible.
+
+### The "modem problem"
+
+TODO: re-watch 26:40
