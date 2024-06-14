@@ -268,4 +268,14 @@ This means you should "gather" together things that change together, and separat
 
 ### The "modem problem"
 
-TODO: re-watch 26:40
+- A very interesting case where a violation of the LSP caused issues.
+
+- The first "hint" of the violation was overriding the parent methods with "dummy" implementation. This set the state for the "refused request" scenario.
+
+- As the requirements changed, developers had to pile more and more code onto the derived class.
+
+- **The _adapter pattern_ was the solution here**.
+
+  - We put the _adapter_ between classes. The adapter does override some of the parent methods, but the dependencies point _away_ from the _adapter_.
+
+    - This is crucial. It acs as a _anti-corruption layer_ between two interfaces that seem incompatible.
