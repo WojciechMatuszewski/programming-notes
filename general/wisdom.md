@@ -693,3 +693,15 @@ It would be much more optimal to **have the person you asked initially help you 
 This _"let me help you even though you should aks X"_ approach is called "No Wrong Doors" policy. No matter where you initially end up, the team is willing to provide help even if you are in a "wrong" place.
 
 Ultimately, we work together. We should help each other as much as possible. You never know when you will be in a similar situation!
+
+## Tradeoffs as picking the "less bothersome drawback"
+
+> [Based on this great blog post](https://buttondown.email/hillelwayne/archive/ive-been-thinking-about-tradeoffs-all-wrong/).
+
+When making decisions, we often consider the positive aspects of each side—"X is faster, Y uses less space."
+
+In software, it is not the positives that drag you down. The negative consequences of your decisions have the most significant impact on what you are working on. The negatives influence how you design things and how you move forward.
+
+So, if you **compare alternatives only by their positive aspects, you are missing the main contributor to your future problems — the negatives**!
+
+Instead of framing the question as "X gives me this benefit and Y gives me this benefit," think of "X is bad at this, and Y is bad at this." This way, you can consider the whole picture. You can employ effort to minimize the "bad thing" that your decision brought.
