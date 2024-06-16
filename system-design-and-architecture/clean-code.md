@@ -164,7 +164,55 @@ This means you should "gather" together things that change together, and separat
 
 - Identifying actors is hard. It takes time. They often emerge when writing tests and thinking about the architecture.
 
-## Episode 10
+## Episode 10 - Open Closed Principle
+
+- How could a module be _both_ open and closed at the same time?
+
+  - **Open** means that it should be very easy to change the behavior of a module.
+
+  - **Closed** means that the source code should not change.
+
+- **You most likely created code working this way already**.
+
+  - To create modules _open for extension_, but _closed for modification_, you **put an interface between the module and the dependencies of that module**.
+
+    - This way, you **invert the dependencies**.
+
+### Implications
+
+- If you do not have to modify existing code, **the existing code can't rot**.
+
+  - You can write it once and "be done with it".
+
+- If you do not have to modify existing code, **you have much lesser chance of introducing bugs**.
+
+  - Of course, the "danger" is always there.
+
+- **The abstractions comes at a cost of complexity**.
+
+  - The more abstractions, the more complex the codebase is.
+
+### In reality
+
+- In reality, **creating a _system_ adhering to this principle is almost impossible**.
+
+  - The larger the system, the more problematic this becomes.
+
+- **You should favour making classes and modules adhere to SRP rather than whole systems**.
+
+### The Lie or the "crystal ball problem"
+
+- The **dirty lie about SRP is that it will only protect you from change if you can predict the future**.
+
+  - I do not know about you, but I'm yet to have the ability to see into the future.
+
+- The **solution is to be nimble and change the system as you go**.
+
+  - While you should not create _big designs upfront_, you ought to think about the big picture a little.
+
+  - Then, having that big picture in mind, put yourself in front of your users and see what features they want.
+
+- **Your goal is to craft a system that adheres to SRP _well enough_**.
 
 ## Episode 11 Part 1 – Liskov Substitute Principle
 
