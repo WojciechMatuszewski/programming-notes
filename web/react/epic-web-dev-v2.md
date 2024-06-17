@@ -444,3 +444,190 @@ Such an excellent workshop. It covered the following.
 - How the `Suspense` and the `use` hook could lead to _network waterfalls_ and what to do about it.
 
   - Here, if you have multiple, non-dependant promises, remember to trigger them BEFORE using the `use` hook.
+
+## React Performance
+
+### Element Optimization
+
+> If you give React the same element you gave it on the last render, it wont bother re-rendering that element
+
+- This has huge implications, especially related to how we pass props around.
+
+  ```jsx
+  function Message({ greeting }) {
+    // some JSX
+  }
+
+  const message = <Message greeting={"Hi"} />;
+
+  function Counter() {
+    // state
+    return <div>{message}</div>;
+  }
+  ```
+
+  Here, no matter how many times we change the state inside the `Counter`, the `message` will not change. The `Message` component will be invoked only once! This works, because the `message` is referentially equal each time `Counter` runs.
+
+  Contrast this with the following approach.
+
+  ```jsx
+  function Message({ greeting }) {
+    // some JSX
+  }
+
+  function Counter() {
+    // state
+    return (
+      <div>
+        <Message greeting={"Hi"} />
+      </div>
+    );
+  }
+  ```
+
+  Here, the `Message` component will be invoked every time the state in the `Counter` changes. This happens because the `<Message/>` will create a new object every time the `Counter` runs.
+
+- Sometimes, the component you want to "embed" as a variable takes props. What should we do in this case?
+
+  - **If that is the case, consider passing that component as props!**
+
+  ```jsx
+  function Message({ color }) {
+    // jsx
+  }
+
+  function Counter({ message }) {
+    // state
+    return <div>{message}</div>;
+  }
+
+  function Main() {
+    const [color, setColor] = useState("black");
+
+    return (
+      <div>
+        <Counter message={<Message color={color} />} />
+      </div>
+    );
+  }
+  ```
+
+  Here, the `Message` will only change if the `color` changes. From the `Counter` perspective, the `message` is the same element when state changes, because the `Main` did not re-render.
+
+- Another technique would be to leverage `React.Context` API.
+
+  - What if we moved the state from the `Counter` into the `Main`? Then, no matter what we do, the `Message` we are passing as a prop, will be re-created whenever `Main` is re-rendered. The answer is to leverage `React.Context`.
+
+  ```jsx
+  const ColorContext = CreateContext(null);
+
+  function Message() {
+    const color = use(ColorContext);
+  }
+
+  const message = <Message />;
+
+  function Counter({ state, message }) {
+    return <div>{message}</div>;
+  }
+
+  function Main() {
+    const [color, setColor] = useState("black");
+    const [state, setState] = useState(1);
+
+    return (
+      <ColorContext.Provider value={color}>
+        <div>
+          <Counter message={message} />
+        </div>
+      </ColorContext.Provider>
+    );
+  }
+  ```
+
+  Now, we made the `message` a constant variable again! The `Message` will only change when the value of the context changes.
+
+- Of course, we can't forget about the `memo` and `useMemo`.
+
+  - You are more likely to see components wrapped with `memo` than `useMemo`.
+
+    - **It is important to remember that you can wrap components with `useMemo` as well!**
+
+      ```jsx
+      function Counter({ color }) {
+        const footer = useMemo(() => <Footer color={color} />, [color]);
+        // jsx
+      }
+      ```
+
+      Depending on what you want to do, the above approach might be better, in terms of "visibility" than using `memo`.
+
+      The problem with `memo` is that you have to see the component definition to understand that it is memoized (or name it appropriately.)
+
+      The `useMemo` approach moves the memoization _closer_ to where we actually render the component.
+
+### Optimize Context
+
+- The most important thing to understand about `React.Context` value is that **all components consuming the context will re-render if the value changes**.
+
+  - If your context value is not a primitive, this will happen every time the provider re-renders.
+
+  - The solution here is to **wrap the value of the context with `useMemo`**.
+
+    ```jsx
+    const SomeContext = createContext(null);
+
+    function SomeProvider({ name, color }) {
+      const value = useMemo(() => ({ name, color }), [name, color]);
+      return (
+        <SomeContext.Provider value={value}>
+          <div>Some elements</div>
+        </SomeContext.Provider>
+      );
+    }
+    ```
+
+- Let us not forget about what we learned in the first chapter. **You can combine the `Provider` approach with "element optimization" via the `children` prop**.
+
+  ```jsx
+  const SomeContext = createContext(null);
+
+  function SomeProvider({ children }) {
+    const [color, setColor] = useState("black");
+    const [name, setName] = useState("initial");
+
+    const value = useMemo(() => ({ name, color, setColor, setName }), [color, setColor, name, setName]);
+    return <SomeContext.Provider value={value}>{children}</SomeContext.Provider>;
+  }
+  ```
+
+  This way, **no matter what changes inside the `SomeProvider`, the `children` is still the same as in the previous render**. This means that React will skip re-rendering the `children`.
+
+- Going even further, **you might consider splitting the _setters_ and the _value_ into separate contexts**.
+
+  - In some cases, we have components that only use the _setters_. Why would they need to change if the _value_ changes?
+
+  - The **drawback here is that you will need to create multiple _providers_**.
+
+  ```jsx
+  const SomeContextValue = createContext(null);
+  const SomeContextDispatch = createContext(null);
+
+  function SomeProvider({ children }) {
+    const [name, setName] = useState("hi");
+    const [color, setColor] = useState("black");
+
+    const value = useMemo(() => ({ name, color }), [name, color]);
+    const dispatch = useMemo(() => ({ setName, setColor }), []);
+
+    return (
+      <SomeContextValue.Provider value={value}>
+        <SomeContextDispatch.Provider value={dispatch}>{children}</SomeContextDispatch.Provider>
+      </SomeContextValue.Provider>
+    );
+  }
+  ```
+
+  Now, if you `use` the `SomeContextDispatch`, your component will NOT re-render when `value` changes!
+
+### Concurrent Rendering
