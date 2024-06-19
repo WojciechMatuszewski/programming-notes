@@ -1523,6 +1523,85 @@ In addition to `fit-content`, consider using the `max-width` property as well.
 There are also the `min-content` and `max-content`. The `fit-content` makes it so that the element will stretch, but
 will never exceed the `max-content` value.
 
+## Animating display via `transition-behavior`
+
+Since the `display` is a "discrete" _animation type_, by default, it will not work with any transitions. This is how it worked for pretty much forever, and required you to use JavaScript to create "show/appear" animations when toggling display.
+
+**That is no longer the case if you use the `transition-behavior: allow-discrete`**.
+
+```css
+dialog {
+  display: none;
+  opacity: 0;
+
+  transition-duration: 1s;
+  transition-property: opacity, display;
+
+  /* The key to making this whole thing work \/ */
+  transition-behavior: allow-discrete;
+}
+
+dialog[open] {
+  display: block;
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+```
+
+The `@starting-style`, in this example, as I understand it, is the value you want to animate from when the `display` changes.
+
+**One gotcha to keep in mind is that you can't nest within the _pseudo-classes_**. So you if wish to animate the `backdrop`, you need to move the `@starting-style` outside of the selector.
+
+```css
+dialog {
+  display: none;
+  opacity: 0;
+
+  transition-duration: 1s;
+  transition-property: opacity, display;
+
+  /* The key to making this whole thing work \/ */
+  transition-behavior: allow-discrete;
+}
+
+dialog[open] {
+  display: block;
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+dialog::backdrop {
+  display: none;
+  background: black;
+  opacity: 0
+
+  transition-duration: 1s;
+  transition-property: opacity, display;
+
+  /* The key to making this whole thing work \/ */
+  transition-behavior: allow-discrete;
+}
+
+dialog[open]::backdrop {
+  display: block;
+  opacity: 0.5;
+}
+
+@starting-style {
+  dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+```
+
+**Notice that the definition inside the `@starting-style` can be different for different "directions"**.
+
 ## The Popover API
 
 The [popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) introduced a wave of very useful features.
