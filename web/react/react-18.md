@@ -776,9 +776,7 @@ _Server_. [This blog post explains this topic further](https://bobaekang.com/blo
 
 ---
 
-Here you **stream non-interactive serialized representation of _virtual DOM_ from the server to the client**. This is \*
-\*similar to `getServerSideProps` in Next.js**, but it is **different\*\*. The main difference between _React Server
-Components_ and `getServerSideProps` are.
+Here you **stream non-interactive serialized representation of _virtual DOM_ from the server to the client**. This is **similar to `getServerSideProps` in Next.js**, but it is **different**. The main difference between _React Server Components_ and `getServerSideProps` are.
 
 - With `getServerSideProps` you could create components that were interactive. That is not possible with _React Server
   Components_.
@@ -825,8 +823,7 @@ Components_ and `getServerSideProps` are.
           confirms my suspicions. Unless you kickoff all the promises to start fetching and pass them down to
           components, you will get into fetch-render-fetch-render cycle that causes waterfalls.
 
-  - Here
-    is [an additional video on the subject of RSCs](https://portal.gitnation.org/contents/simplifying-server-components)
+  - Here is [an additional video on the subject of RSCs](https://portal.gitnation.org/contents/simplifying-server-components)
 
 #### Notes from the "React Server Components with Dan Abramov, Joe Savona, and Kent C. Dodds"
 
@@ -917,6 +914,16 @@ Recently, after [encountering this repository](https://github.com/gabrielelpidio
 Notice the author returning a JSX node and passing the node to `setState` call. That is a very interesting approach! The initial fetch happens on the server, but then, the client takes over.
 
 That is somewhat similar to the approach I took while playing around with the functionality initially, but I have not though about populating the state with JSX nodes.
+
+### React "universal components"
+
+If you use the `use server` pragma, the component is an RSC. If you use the `use client` pragma, the component is RCC.
+
+What if you do not use any pragma at all? **Then, we call these components _universal_**.
+
+They are _universal_ since they can be, in theory, rendered as a RSC or as a RCC.
+
+In practice, since you do not have to explicitly annotate the components (since they follow the "context" in which the parent was defined), they might not be so universal after all.
 
 ### React Client Components
 
