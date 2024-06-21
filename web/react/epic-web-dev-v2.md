@@ -631,3 +631,98 @@ Such an excellent workshop. It covered the following.
   Now, if you `use` the `SomeContextDispatch`, your component will NOT re-render when `value` changes!
 
 ### Concurrent Rendering
+
+The premise behind the _concurrent rendering_ is the following: instead of rendering everything all at once, React can break up the work into smaller chunks.
+
+There are a couple of implications of this statement:
+
+1. The work that takes a long time must be flexible enough to allow splitting into multiple parts. **If you are not able to split the computation into multiple parts, _concurrent rendering_ won't help you**.
+
+2. React needs to know which operations are considered _high priority_. Luckily for us, we do not have to specify which things are high priority – React will prioritize user interactions.
+
+There is one hook that we could utilize to make the UI _appear_ more fluid – the `useDeferredValue`. This hook is not the silver bullet to performance issues. **The `useDeferredValue` will only make your UI _appear_ faster, it does not improve the "real" performance in any way**.
+
+When using `useDeferredValue`, React will render two times. This might be counterintuitive, but it makes sense.
+
+- On the first render, React will "capture" the JSX of the component you passed the `deferredValue` to. So far, both values are in sync.
+
+- Upon change, React will render the UI with a new value, but **it will re-use the JSX for the component you passed the `deferredValue` to**.
+
+  - **This means you must memoize the component you passed the `useDeferredValue` to, otherwise the second render will be as slow as the first one**.
+
+- Next, **in the background**, React will try to re-render the UI with the `deferredValue` the same as the "fresh" value.
+
+  - This render should be interruptible, but as I mentioned: **if your work can't be split into multiple chunks, the UI will freeze here**.
+
+```tsx
+function Component() {
+  const query = useQuery();
+  const deferredQuery = useDeferredValue(query);
+
+  // First render – values in sync
+  // Second render – query changes, values out of sync.
+  //   React re-uses JSX for `SlowMemoizedComponent`. The UI appears to be fast.
+  //   Background render starts.
+  // Third render – background render finished. All values in sync.
+
+  return (
+    <div>
+      <FastComponent query={query} />
+      <SlowMemoizedComponent query={deferredQuery} />
+    </div>
+  );
+}
+```
+
+### Code Splitting
+
+The best thing you can do in terms of performance is to _do less stuff_. This also goes for the amount of code you ship to the browser.
+
+One of the mechanism for delaying JavaScript code execution the browser has to do, is to load components only when they are needed. React has a built-in mechanism for that – `lazy` function which interplays with `Suspense`.
+
+```tsx
+const LazyGlobe = lazy(() => import("./globe.tsx"));
+
+// Somewhere in the code
+<Suspense>
+  <LazyGlobe/>
+<Suspense>
+```
+
+---
+
+In addition, you can **preload** the `LazyGlobe` when user performs some action, like hovering over a link.
+
+```tsx
+const loadGlobe = () => import("./globe.tsx");
+const LazyGlobe = lazy(loadGlobe);
+
+// Somewhere in the code
+<a href="#" onMouseEnter={loadGlobe}>
+  SomeLink
+</a>;
+```
+
+Note that you can call the `loadGlobe` as many times as you want. It will be loaded only once.
+
+---
+
+After adding the `Suspense` and providing the `fallback` prop, you will notice that React, by default, _always_ triggers the _Suspense fallback_, no matter if the module is "ready to go". React will display the `fallback` _for some time_, to avoid flash of "loading" state.
+
+While showing the `fallback` prop while rendering for the first time makes sense, we can do better if the app is already in a "settled" state. We can leverage `useTransition` to display the "old UI" while the module is loading.
+
+```tsx
+const LazyGlobe = lazy(() => import("./globe.tsx"));
+
+// Somewhere in the code
+const [showGlobe, setShowGlobe] = useState(false);
+// Use the `isPending` for loading state.
+const [isPending, startTransition] = useTransition()
+
+<Suspense>
+  <button onClick = {() => startTransition(() => setShowGlobe(true))}>Click me</button>
+  {showGlobe ? <LazyGlobe/> : null}
+<Suspense>
+```
+
+Apart from this use-case, the _transitions_ are also very useful for data-fetching and changing routes.
