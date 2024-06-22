@@ -872,3 +872,11 @@ One thing that caught my attention in this section of the workshop was how we **
 ```
 
 Without this first `li`, the UI would behave in a weird way – the scrollbar on the element would appear "stuck" in the same place, but we would still have the ability to scroll down.
+
+---
+
+**When working with windowing, consider the fact that the native _search_ functionality of the browser will not work as expected**. This functionality searches across what is inside the DOM. Since you are rendering only a handful of items at a given time, it might happen that the item the user is searching for is not yet rendered.
+
+The solution for this would be to build a custom search box, and prompt the users to use this box instead of the browser native _search_ functionality. Keep in mind that you can focus the search box when user tries to hit `cmd+f` or `ctrl+f`.
+
+Of course, this might be surprising for users. It all depends on your product and your user-base.
