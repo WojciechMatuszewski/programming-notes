@@ -726,3 +726,149 @@ const [isPending, startTransition] = useTransition()
 ```
 
 Apart from this use-case, the _transitions_ are also very useful for data-fetching and changing routes.
+
+### Expensive Calculations
+
+Any calculation you do within the "component function", will, by default, be repeated upon every render. In most cases, this is not problematic at all, because most of the computations you do are really fast.
+
+But, there might be cases, where making such computation over and over again, makes the application feel slow. In such cases, we ought to ensure this computation only runs when it needs to run.
+
+---
+
+You can use the `useMemo` hook to avoid running expensive computations. **Make sure to measure the _before_ and _after_ when using `useMemo`** – every time you introduce an "optimization", you also introduce complexity.
+
+For example, consider this, objectively, unjustified usage of `useMemo`.
+
+```tsx
+const someCallback = useMemo(() => {
+  return () => {
+    console.log("works");
+  };
+}, []);
+
+<button onClick={someCallback}>Click</button>;
+```
+
+You only increased the "visual noise" of the component. There is no benefit in using `useMemo` this way.
+
+Now, consider the following code.
+
+```tsx
+const result = useMemo(() => expensiveCalculation(inputValue), [inputValue]);
+```
+
+Assuming the `expensiveCalculation` is expensive (names can be misleading!), this usage of `useMemo` makes much more sense.
+
+---
+
+Another way to improve _perceived_ performance is to use WebWorkers. This way, the main thread rendering logic does not have to compete with calculations we have to make.
+
+Working with the "raw" WebWorkers API is not that fun. That is why [you should consider using a library, like `comlink`](https://www.npmjs.com/package/comlink).
+
+There are a few steps to make `comlink` working with your code.
+
+First, you create a file where you isolate the functionality you want to "embed" into the worker.
+
+```ts
+// expensive-calc-in-worker.ts
+
+function expensiveCalculation(inputValue) {
+  // code
+}
+
+const exposed = { expensiveCalculation };
+
+Comlink.expose(exposed);
+```
+
+Then, in another file, you initialize the worker with the contents of this file. `comlink` will handle the communication between the worker and the main thread for you!
+
+```ts
+const moduleUrl = new URL("./expensive-calc-in-worker.ts", import.meta.url);
+const worker = new Worker(moduleUrl, { type: "module" });
+
+const exposedViaComlink = Comlink.wrap(worker).
+
+export async function expensiveCalculation(inputValue) {
+  return exposedViaComlink.expensiceCalculation(inputValue)
+}
+```
+
+After you have all this set up, **consider using the `use` hook in your React code**. The `expensiveCalculation` became a promise (because the communication between the worker and the main thread is asynchronous).
+
+```tsx
+const calculationPromise = useMemo(() => expensiveCalculation(inputValue), [inputValue]);
+
+const calculation = use(calculationPromise);
+```
+
+You could leverage the `cache` API here as well!
+
+### Optimize Rendering
+
+Kent emphasizes that **using `memo` all over the place is not the silver bullet and might eventually lead to _worse_ performance compared to not using it at all!** The reason, of course, is the increasing amount of computation React has to do to compare the props. Those operations are not free!
+
+---
+
+When using `memo`, it is very important to keep track of all the props your component takes. **If one propr is "unstable" (is not referentially the same across re-renders), the whole memoization will be in vain**.
+
+```tsx
+const [state, setState] = useState(null);
+
+const someCallback = (value) => {
+  const newValue = setState(newValue); //
+};
+
+<MemoizedComponent onClick={someCallback} />;
+```
+
+In the example above, even though the `MemoizedComponent` is wrapped with `memo`, the memoization will not work. That is because the `someCallback` is different across re-renders. A solution here would be to wrap the `someCallback` with `useCallback` to ensure it is stable.
+
+```tsx
+const [state, setState] = useState(null);
+
+const someCallback = useCallback((value) => {
+  const newValue = setState(newValue); //
+}, []);
+
+<MemoizedComponent onClick={someCallback} />;
+```
+
+Since we have no way of annotating that the prop ought to be memoized (perhaps we could use [TypeScript type branding](https://effect.website/docs/guides/style/branded-types)), it is very easy to make those mistakes.
+
+---
+
+The `memo` function takes a second argument. This argument allows you to customize when React considers the props "new" or "changed". If you wish, you can hardcode that function to return `false` which means "the props did not change", though that would most likely break your application.
+
+But, **instead of writing an elaborate comparator function, consider passing primitives to your components as props**. It is very tempting to pass the whole `user` if you only need the `id` of the user. If you pass only the `user.id`, the string, assuming the `user` object does not change its values, will be same across re-renders!
+
+```tsx
+<SomeComponent user = {user}/> // Instead of this.
+
+<SomeComponent userId = {user.id}/> // Consider this.
+```
+
+---
+
+### Windowing
+
+React, and your browser, can render a lot of items at the same time, but in some cases, the amount of items is so huge, that the browser and React struggles – think of lists with thousands of items.
+
+Luckily, we have common sense at our side. Do we really need to render all those items _at the same time_? I would argue that is not the case.
+
+If we do not have to render all those items at the same time, we can "cheat" a bit and render a "window" of those items. The "window" would consist of only a handful of items, which we will be replacing as user scrolls.
+
+---
+
+One thing that caught my attention in this section of the workshop was how we **faked the appearance that we are displaying lots of items, but in reality we are displaying only a subset of them at a given time**.
+
+```tsx
+<ul>
+  <li style={{ height: virtualizer.totalHeight() }} />
+  {virtualizer.getItems().map((item) => {
+    return; // stuff
+  })}
+</ul>
+```
+
+Without this first `li`, the UI would behave in a weird way – the scrollbar on the element would appear "stuck" in the same place, but we would still have the ability to scroll down.
