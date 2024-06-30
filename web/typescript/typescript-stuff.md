@@ -1433,6 +1433,14 @@ function someFn(arg: number | string) {
 }
 ```
 
+### Note about TypeScript 5.5 release
+
+[In v5.5 TypeScript is able to infer a type predicate](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/#inferred-type-predicates) **making the user-defined type guards a bit redundant**.
+
+In addition, and I think this is much more significant, **TypeScript is now able to infer the output type better when you use the `.filter` function**.
+
+So nice!
+
 ### `instanceof` Type Guard
 
 #### In vanilla JS
