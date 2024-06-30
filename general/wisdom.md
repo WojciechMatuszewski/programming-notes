@@ -705,3 +705,33 @@ In software, it is not the positives that drag you down. The negative consequenc
 So, if you **compare alternatives only by their positive aspects, you are missing the main contributor to your future problems — the negatives**!
 
 Instead of framing the question as "X gives me this benefit and Y gives me this benefit," think of "X is bad at this, and Y is bad at this." This way, you can consider the whole picture. You can employ effort to minimize the "bad thing" that your decision brought.
+
+## Context > Deadlines
+
+> [Based on this great blog post](https://newsletter.canopy.is/p/the-4-keys-to-creating-team-accountability)
+
+Have you ever been in a situation where you were told that "X has to be done in Y time"? – I would argue most of us has.
+
+I'm not bashing against deadlines, as they are an important to leadership and product.
+
+- The leadership team is subject to the board expectations. The leadership people and people in the board do not like uncertainty. One way to reduce uncertainty is to have deadlines.
+
+- The product team needs to know when a feature will be ready to plan for it's release. Perhaps they have an email campaign planned? Or maybe even a TV ad?
+
+**The deadline becomes problematic when people responsible for the actual work lack the context WHY we have the deadline in the first place**.
+
+- Without context, the deadline creates a sense of _false urgency_.
+
+- Without context, the deadline is an abstract concept.
+
+**Providing context alongside the deadline makes you question the actual deadline**.
+
+- Before providing context, you are, most likely, going to question the deadline – "do we really need to implement X by Y? What are the implications of missing the deadline?". This could result in dropping the deadline altogether. A net win!
+
+- Providing the context means making the deadline a tangible thing.
+
+  - Perhaps we have TV ads lined up for X date?
+
+  - Perhaps this very big customer of us has something planned for X date and needs Y to accomplish that? If we do not we will loose a lot of revenue.
+
+**The more meaning the deadline has, the more motivated your team will be**. Of course, this not applies to everyone, and that is fine.
