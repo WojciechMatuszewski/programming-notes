@@ -24,9 +24,25 @@
 
 - There are various options for setting cookies.
 
-  - The `httpOnly` disables getting a cookie from JavaScript.
+  - The `httpOnly` disables getting cookies from JavaScript.
 
     - It **still goes over the write as plan text unless you encrypt it**.
+
+  - The `Secure` ensures the cookies are sent over HTTPs only.
+
+  - The `SameSite` restricts how cookies are sent across cross-domains.
+
+### More on the `SameSite` attribute
+
+- The `SameSite=None` means **always send the cookie**.
+
+- The `SameSite=Lax` means **allow cookies to be send with top-level navigation and if the request method is safe**.
+
+  - Nowadays, this is the default.
+
+- The `SameSite=Strict` means **only include the cookie if the request is sent from the same site that set the cookie**.
+
+  - This means that **if you copy & paste the link to the website you are already authenticated to, the cookie will not be send!**
 
 ### Signing cookies
 
@@ -68,7 +84,13 @@
 
 - Cross-Site Scripting (XSS): think malicious script injected via input field or an URL.
 
-- Cross-Site Request Forgery (CSRF): think executing requests as a given user. That user is unaware that this is happening.
+- Cross-Site Request Forgery (CSRF): think executing requests as a given user, perhaps by making the user clicking on the image.
+
+  - **You can greatly reduce the chance of being vulnerable to this attack by sticking to HTTP semantics**.
+
+    - Usually, this attack is executed because the service allows state changes on GET requests.
+
+  - Another layer of protection against these attacks is the **usage of CSRF tokens**.
 
 - **If you have pages that spit out stack traces, you are giving a lot of information to the attackers**.
 
@@ -80,6 +102,34 @@
 
     - If someone discovers "day 0" express vulnerability, the attacker can do a lot of harm since they _know_ you are using the `express` library.
 
-Finished part 2 21:13
+## Data Validation
 
-https://frontendmasters.com/workshops/web-security-v2/
+- Data validation is very important.
+
+- **No matter what you do, you ought to validate the data before it goes into your database**.
+
+  - **Do NOT rely on frontend validation**.
+
+    - For example, when using forms, someone might edit the input names.
+
+- Consider working on a basis of _allowlist_ rather than _denylist_.
+
+  - The problem with _denylist_ is that you might miss something.
+
+  - With _allowlist_ you have to concisely allow certain operations. It is much less likely that someone will slip through the cracks.
+
+## CSRF tokens
+
+- This is a special token the server will check for alongside the data user is submitting via various forms.
+
+  - If the token is invalid, or absent from the payload, the server will reject the request.
+
+- This protects you from the CSRF attack because **you embed that token only on the _forms_ you control**.
+
+  - The attacker might still be able to craft the malicious request, but, unless they can literally look at the HTML you send back to the user when they are on a "valid" site, they will not be able to get that token.
+
+- **Putting CSRF token in a cookie is fine as long as you look for the token in the request payload, and NOT the cookie itself**.
+
+  - This pattern is called **"double submit cookie"**.
+
+Finished Part 4 -28:11
