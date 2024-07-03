@@ -207,3 +207,5 @@
   - You can also use `frameancestors` on the CSP policy.
 
   - Write JS if the webpage is embedded.
+
+Finished Part 6 -22:14

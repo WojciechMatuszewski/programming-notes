@@ -10,7 +10,7 @@ related to it.
 
 > Based on [this short blog post entry](https://www.stefanjudis.com/today-i-learned/implicit-form-submission-doesnt-work-always)
 
-For the longest time, I though that the form will fire the `submit` event whenever you hit `enter` on one of its inputs. This heuristics appeared to be consistent, because 99% of the forms I wrote **had the "submit" button**.
+For the longest time, I thought that the form will fire the `submit` event whenever you hit `enter` on one of its inputs. This heuristics appeared to be consistent, because 99% of the forms I wrote **had the "submit" button**.
 
 ```html
 <form>
@@ -87,7 +87,7 @@ I oftentimes see developers use the `pointer-events: none` in hopes of disabling
 Usually, a **better alternative is the `insert` attribute**. This one is a bit nuclear, as it will prevent any clicks,
 keyboard and other interactions, but in most cases, it is what should be used instead.
 
-Note that the `insert` is _relatively_ new attribute. Please check the browser support before using it.
+Note that the `insert` is _a relatively_ new attribute. Please check the browser support before using it.
 
 ## The `search` element
 
@@ -283,7 +283,7 @@ input[aria-invalid="true"] {
 ```
 
 We are using the `aria-invalid` here instead of `:invalid` because we are not using the native HTML form validation.
-Instead I've opted to use the `react-hook-form` library.
+Instead, I've opted to use the `react-hook-form` library.
 
 #### Global form errors
 
@@ -404,3 +404,17 @@ WORK**.
 
 Of course, this is not a silver bullet. There are a lot of things to consider when using this attribute. If the form is
 below the fold, the page might unexpectedly scroll, leaving the user confused.
+
+## Helpful input attributes
+
+> Based on [this great blog post](https://garrettdimon.com/journal/posts/fine-tuning-text-inputs)
+
+I love when forms specify the necessary attributes for the browser and my password manager to be as helpful as possible.
+You too, can create such experiences – you _just_ need to provide the right attributes to the inputs in the form!
+
+- Use the `autocomplete` attribute to provide hints to the browser regarding a given field.
+  - **Pay attention to the `name` of the field. The value you put there matters in the context of `autocomplete` attribute**.
+  - [Read more about the `autocomplete` attribute here](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete)
+    - The concept of _sections_ is especially interesting to me.
+- The `spellcheck` attribute might be helpful for `textarea` tags.
+- The `autocapitalize` might be helpful for "first name" and "last name" inputs.
