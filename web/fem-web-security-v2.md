@@ -208,4 +208,40 @@
 
   - Write JS if the webpage is embedded.
 
-Finished Part 6 -22:14
+## JSON Web Tokens
+
+- With JWTs there is no concept of sessions.
+
+- The data within the JWT contains `claims`.
+
+  - The `claims` hold information about a given subject, like a user or device.
+
+- JWTs are encrypted with a secret value. Only the people holding that secret value can decode it.
+
+- The **main benefit of JWTs** is that they **do not require sessions**.
+
+  - **If you use sessions, use use cookies. If you use cookies, you have to worry about origins**.
+
+    - With JWT, that is no longer the case. This is huge if you operate within different domains – think microservices.
+
+- **They are not that flexible as sessions**.
+
+  - You have less control over them. If you issue a JWT, it will be valid until it is expired.
+
+### Where to store JWTs
+
+- Local Storage: **not a good idea**.
+
+  - **JWTs in local storage are susceptible to XSS**.
+
+    - Keep in mind that ANY code can read the contents of local storage.
+
+- Session Storage: **not a good idea**.
+
+  - Similar to local storage – everyone can access it.
+
+- Cookies: **usually the best option**.
+
+  - Gives you a lot of protection since cookies can be marked as `httpOnly`.
+
+  - **There is a size limit to a cookie. If you JWT is "too big", it might not fit inside the cookie**.
