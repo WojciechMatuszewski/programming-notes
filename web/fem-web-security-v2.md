@@ -245,3 +245,33 @@
   - Gives you a lot of protection since cookies can be marked as `httpOnly`.
 
   - **There is a size limit to a cookie. If you JWT is "too big", it might not fit inside the cookie**.
+
+## Wrapping up
+
+A great refresher on some of the things related to the security on the Web.
+
+1. Understanding how cookies work is crucial.
+
+- The many ways one can configure a cookie.
+
+- The implication the website domain has on how cookies behave.
+
+2. Nowadays, a lot of security-related concerns are taken care of by frameworks we use. **That does not mean you should not think about security**.
+
+3. Understanding CORS is crucial as well!
+
+- CORS is not your enemy. It is there to help you.
+
+- Make sure to understand the "CORS headers" and the values you can specify for them.
+
+- Using '\*' is rarely a good idea.
+
+4. In the course, we talked about _sessions_ and _jwts_ as main ways for implementing _authorization_ and _authentication_.
+
+- The _sessions_ are stateful. You have to keep some record in the database about them.
+
+  - This is both a pro, because have a lot of control over them, and a con, because you have to store them in DB.
+
+- The _jwts_ are stateless.
+
+  - This is both a pro, because you do not have to hold them in the DB, but also is risky, if implemented improperly, because you do not control them – one JWT is issued, it is valid until it is expired!
