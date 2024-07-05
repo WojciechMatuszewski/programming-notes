@@ -275,3 +275,9 @@ A great refresher on some of the things related to the security on the Web.
 - The _jwts_ are stateless.
 
   - This is both a pro, because you do not have to hold them in the DB, but also is risky, if implemented improperly, because you do not control them – one JWT is issued, it is valid until it is expired!
+
+5. CSP is a powerful mechanism to add another layer of security to your application.
+
+- Any good backend framework already provides sensible defaults for CSP policy.
+
+  - Use it!
