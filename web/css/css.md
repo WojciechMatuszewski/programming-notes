@@ -587,6 +587,7 @@ The other day, you wanted to create a container that spans 50% of the viewport w
 ```
 
 Without a second thought, you push the code to production – we are done right? **Sadly, you just nullified the benefit of _logical properties_ by using `50vw`**.
+
 The **`vw` unit is not "responsive" to the changes in writing direction**. You ought to use a _logical properties_ equivalent of `vw` (and `vh` for that matter).
 
 Enter the `vi` and `vb` units.
@@ -611,8 +612,23 @@ them are driven by the mobile use-case where they are dynamic due to browser add
 are **too many to list here, but the most interesting unit for me is the _dynamic_ one**. This one scales based on the
 state of the address bar (if it is hidden or not).
 
-You
-can [learn more about the different kinds of viewport units here](https://www.terluinwebdesign.nl/en/css/incoming-20-new-css-viewport-units-svh-lvh-dvh-svw-lvw-dvw/).
+You can [learn more about the different kinds of viewport units here](https://www.terluinwebdesign.nl/en/css/incoming-20-new-css-viewport-units-svh-lvh-dvh-svw-lvw-dvw/).
+
+## The `ch` unit
+
+> Based on [this great blog post](https://clagnut.com/blog/2432/).
+
+1. **The `ch` unit does not correspond to the "count" of _characters_ in a given line**.
+
+2. The **`ch` unit represents the width of the `0` character within the selected font OR 0.5 rem is no `0` is present**.
+
+The implications of those points are quite large.
+
+- Unless the you have font consisting of only `0`, the `width: 66ch` will not equal to 66 characters.
+
+- The resulting width of `width: 66ch` declaration is **purely font-dependant**.
+
+It is not "set if and forget it" kind of deal. You **might consider using rems instead**.
 
 ## CSS Variables
 
