@@ -179,3 +179,19 @@ import fs from "node:fs/promises";
 
 const fileURL = new URL("./file.txt", import.meta.url); // join(__dirname, "file.txt");
 ```
+
+## Wrapping up
+
+The most exciting features for me are
+
+- The ability to provide `cause` in the `Error` constructor.
+
+- The `.at` function.
+
+- The new functions to manipulate arrays without mutating the original array – `.toReversed`, `toSorted` and `toSpliced`.
+
+- The new collections – `Map` and `Set`. I feel like I'm not using them enough and I default to an array when I would benefit from using either `Map` or `Set`.
+
+- I finally understood what "tail" means in "PTC". Thank you Max!
+
+  - As a reminder, the "proper" in "PTC" refers to the tail which is a function invocation rather than some operation.
