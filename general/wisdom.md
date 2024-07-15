@@ -735,3 +735,47 @@ I'm not bashing against deadlines, as they are an important to leadership and pr
   - Perhaps this very big customer of us has something planned for X date and needs Y to accomplish that? If we do not we will loose a lot of revenue.
 
 **The more meaning the deadline has, the more motivated your team will be**. Of course, this not applies to everyone, and that is fine.
+
+## Managing Ourselves, Managing Each Other
+
+> [Based on this beautiful talk](https://portal.gitnation.org/contents/managing-ourselves-managing-each-other-2152)
+
+### Relationships are 50/50
+
+You bring your half, and the other party brings their own half.
+
+- **You can only control your half**.
+
+- **You can't control other peoples feelings, emotions and, in most cases, what they thing**!
+
+Rachel argues that it is much healthier to take a step back and stop constantly being in the "me mode". I find this advice profound and very helpful.
+
+### Little Dog and a Big Dog
+
+In each conversation and interaction you have, there is a power dynamic at play. Some people might be considered "little dogs" and some "big dogs".
+
+**Whatever the situation is, make sure you understand which "dog" you are**.
+
+- If you are a "little dog", advocate for yourself and make sure you are heard.
+
+- If you are a "big dog", give a chance to speak the "little dogs".
+
+### Oversharing of ourselves
+
+**You can't know how other people will judge you for what you share**. As such, consider thinking if what you are about to share will help you.
+
+- Sharing things about ourselves is a great way to build trust and relationships. It invites others to share and be vulnerable.
+
+- Sharing too much, or sharing things that are too personal, might backfire.
+
+### Own and handle your own emotions
+
+- Listen to changes in your mood. Be proactive. If you notice something is off, explore it!
+
+- Learn to identify how you are feeling. If you do not know what you feel, you can't "work on it".
+
+- **Have a plan for situations where you are feeling overwhelmed**.
+
+  - Sadly, feeling overwhelmed will most likely happen from time to time. If you are in this state, you should back off, until you worked on your emotions.
+
+  - **Rescheduling meetings is totally fine**. It is much better to talk later than to talk while you are pulled right and left by internal turmoil.
