@@ -880,3 +880,25 @@ Without this first `li`, the UI would behave in a weird way – the scrollbar on
 The solution for this would be to build a custom search box, and prompt the users to use this box instead of the browser native _search_ functionality. Keep in mind that you can focus the search box when user tries to hit `cmd+f` or `ctrl+f`.
 
 Of course, this might be surprising for users. It all depends on your product and your user-base.
+
+## Advanced React APIs
+
+### State Optimization
+
+- React will not trigger a re-render of your component if the state value is already set to the value you are setting it.
+
+  - This works really well for primitive types.
+
+  - This _might_ work with objects and other "complex" types, but **remember that the equality check is a subject to the referential equality here**.
+
+- You might find the _callback form_ of `useState` very handy here.
+
+  - The parameter that gets passed to the callback is the previous state. No matter how complex it is, if you return it, React will NOT trigger a re-render!
+
+  ```jsx
+  setState((prevState) => {
+    return prevState; // I'm equal to the current state.
+  });
+  ```
+
+### Custom hooks

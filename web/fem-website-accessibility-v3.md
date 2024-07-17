@@ -185,7 +185,7 @@ Taking notes based [on this course](https://frontendmasters.com/workshops/access
 
 - They are used to **make the screen reader read out things that happen on elements that the user is not currently focused on**.
 
-  - A very good example are toasts messages when there is an auto-save feature.
+  - A very good example are toasts messages with the auto-save feature.
 
     - In that case, the users focus is most likely on some kind of input field. It would be neat to make the user aware that their changes were saved then they finished typing. This is where the concept of _live regions_ comes in!
 
