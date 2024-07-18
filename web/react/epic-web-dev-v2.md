@@ -902,3 +902,139 @@ Of course, this might be surprising for users. It all depends on your product an
   ```
 
 ### Custom hooks
+
+Custom hooks are a great way to encapsulate functionality and "give it a name".
+
+Usually, for "giving a name" to the code, we use functions. In React, if we want to use other "foundational" hooks like `useEffect` and `useState`, we can't use regular functions – only hooks can "consume" other hooks.
+
+```tsx
+function useCounter() {
+  const [] = useState();
+  // Other stuff
+}
+```
+
+**When returning functions from hooks, make sure to wrap them with either `useMemo` or `useCallback`**.
+
+If you do not, if the caller of the hook wants to use that function within the `useEffect`, they will have a bad time – each time component re-renders, their hook will be invoked. In some cases that is desirable, in others, and I would argue in most cases, that is not desirable.
+
+```tsx
+function useCounter() {
+  const [state, setState] = useState();
+  // Other stuff
+
+  // Stable function!
+  return useCallback(() => {
+    setState();
+  }, []);
+}
+```
+
+### Context Hook
+
+The `Context` API is React is pretty great. It allows us to "share" values between different components in the tree without having to pass props around. The solution is not without tradeoffs – the more layers of indirection, the harder it is to reason about the code.
+
+When using `Context` API, there are things to be mindful of:
+
+1. The `Context` API is not for frequently changing values. This relates to performance and how "consuming" context influences re-rendering of the application.
+
+2. Consider using `SOME_TYPE | null` as the type for your context. This way, you will not have to provide a default value that might be complex.
+
+3. Consider taking the `defaultValue` as a prop on the _provider_ level. This will help you in tests.
+
+```tsx
+const SomeContext = createContext<SomeType | null>(null);
+
+function Provider({ children, defaultValue }) {
+  const ctxValue = defaultValue ?? deriveValue();
+
+  return <SomeContext.Provider value={ctxValue}>{children}</SomeContext.Provider>;
+}
+
+function useSomeContext() {
+  const ctxValue = use(SomeContext);
+  if (!ctxValue) {
+    // This check makes it easier for TypeScript to infer the proper return type.
+    throw new Error("boom");
+  }
+
+  return ctxValue;
+}
+```
+
+### Layout Computation
+
+The `useEffect` will run _after_ the browser painted to the screen. This is quite nice, since the code you defined in `useEffect` won't block stuff from appearing on the screen. But that also means, that, any DOM manipulations you make in `useEffect` _could_ create a little bit of flicker – the browser has already painted and displayed the DOM to the user!
+
+This is where `useLayoutEffect` comes in. It will run _before_ browser painted to the screen, but _after_ the DOM was updated. This is an ideal time to perform those DOM manipulations!
+
+**Be mindful of the usage of `useLayoutEffect` as it runs synchronously and could trigger reflows which can negatively impact the performance of your application**.
+
+### Imperative Handles
+
+This one is about `useImperativeHandle` hook. I rarely reach out for this hook, but when I do, **it is mostly when I'm mimicking a certain HTML element in React**.
+
+For example, I would reach for this hook when implementing `collapsible` component which then uses the `details` and `summary` tags. The consumer of such component would, most likely, want to have a way to have an _imperative_ way to open/close it.
+
+**You do not have to wrap your components with `useRef` to pass refs**. Refs can be regular props, but you have to name the prop differently than just `ref`. In some cases, getting the right types for `refs` is quite hard in TypeScript. Passing it as a regular prop makes our life so much easier!
+
+### Focus Management
+
+No matter what technology you use, proper focus management is tricky to achieve. In React, it is no different.
+
+The main "issue" is that **React batches state updates and runs them asynchronously**. This is great for performance, but makes focus management harder.
+
+```ts
+onClick(() => {
+  setEditing(true);
+
+  inputRef.current.select(); // This will not work!
+});
+```
+
+In the above snippet, we will most likely call the `.select` BEFORE the DOM got the chance to update. Again, this is because the `setEditing` will run asynchronously. To "force" state to be synchronous, we can use the `flushSync` call.
+
+```ts
+onClick(() => {
+  flushSync(() => {
+    setEditing(true);
+  });
+
+  inputRef.current.select(); // Will work!
+});
+```
+
+Now, we know that the DOM was updated after the `setEditing` call!
+
+**Using `flushSync` has performance implications and should be used sparingly**.
+
+### Sync External State
+
+While in most cases, for _synchronization_ we use `useEffect`, it might be more advantageous to use `useSyncExternalStore`, especially when we want the "state" of that external dependency to influence React rendering lifecycle (to be _reactive_).
+
+```tsx
+const mediaQuery = "(max-width: 600px)";
+
+const getSnapshot = () => {
+  return window.matchMedia(mediaQuery).matches;
+};
+
+const subscribe = (callback: VoidFunction) => {
+  const mql = window.matchMedia(mediaQuery);
+
+  const listener = () => {
+    callback();
+  };
+
+  mql.addEventListener("change", listener);
+
+  return () => mql.removeEventListener("change", listener);
+};
+
+function NarrowScreenNotifier() {
+  const isNarrow = useSyncExternalStore(subscribe, getSnapshot);
+  return isNarrow ? "You are on a narrow screen" : "You are on a wide screen";
+}
+```
+
+For a very long time, I've used `useEffect` and `useState` to achieve the same functionality. The problem with `useEffect` is that it does not support SSR that well. The **`useSyncExternalStore` will trigger the nearest `Suspense` boundary if you do not provide the server-side snapshot to the hook**. This is quite nice!
