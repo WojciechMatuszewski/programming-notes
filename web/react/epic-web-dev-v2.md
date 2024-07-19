@@ -1038,3 +1038,40 @@ function NarrowScreenNotifier() {
 ```
 
 For a very long time, I've used `useEffect` and `useState` to achieve the same functionality. The problem with `useEffect` is that it does not support SSR that well. The **`useSyncExternalStore` will trigger the nearest `Suspense` boundary if you do not provide the server-side snapshot to the hook**. This is quite nice!
+
+---
+
+During the second exercise, Kent instructed us to create a function which then returns a hook. I very rarely do this, so it felt really strange.
+
+```tsx
+function makeMediaQueryStore() {
+  // data
+
+  return function useMediaQuery() {
+    return useSyncExternalStore();
+    // data
+  };
+}
+```
+
+---
+
+Making sure `useSyncExternalStore` is working with SSR is quite easy. You can either provide the _server-side snapshot_ OR rely on `Suspense`.
+
+I love the integration with `Suspense` here. Prior to `useSyncExternalStore`, I remember using the `typeof window` checks and `useEffect` with `isMounted` state to get the same behavior I now get with `Suspense`!
+
+Interestingly, if you do SSR, and you rely on `Suspense` for `useSyncExternalStore`, React will still log an error that the _server-side snapshot_ is missing. You can use the `onRecoverableError` in [`hydrateRoot`](https://react.dev/reference/react-dom/client/hydrateRoot) to silence this error.
+
+### Wrapping up
+
+Very nice refresher!
+
+- `useSyncExternalStore` is very useful.
+
+- Returning the same state will not trigger re-rendering.
+
+- Use `useLayoutEffect` with caution.
+
+- `flushSync` is your friend, but be mindful of the tradeoffs.
+
+- `useImperativeHandle` could really simplify your code, but only when used in the right circumstances.
