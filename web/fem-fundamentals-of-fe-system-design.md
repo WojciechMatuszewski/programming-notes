@@ -42,4 +42,44 @@
 
     - The more elements in the _graphic layer_ the more GPU memory-hungry your website is.
 
-Finished part 1, part 2 next
+## DOM API
+
+- The `document` is equivalent to the `html` tag.
+
+  ```js
+  window.document === document;
+  ```
+
+- Many of the APIs you could use, like the `getElementById` are powered by browser-created hash maps.
+
+  - The browser creates many structures when reading the HTML. These structures are then used to power many of the APIs available to you.
+
+  - The `getElementById` is much faster than more "loose" methods like `getElementByClassName` or `querySelector`.
+
+  - **Browser caches your queries, so performing the same query multiple times will only be costly for the first time**.
+
+    - Of course, it **depends wether the DOM was changed in-between the queries**.
+
+- Interestingly, **some APIs return so-called _live collection_ of elements, and others return "just" a _collection_ of elements**.
+
+  - The _live collection_ changes as the DOM changes.
+
+- No matter which way of inserting elements to the DOM you choose, all of them are not that great for performance.
+
+  - The **"worst offenders" are `innerHTML` and `insertAdjacentHTML`**.
+
+  - Consider using `[createDocumentFragment](https://developer.mozilla.org/en-US/docs/Web/API/Document/createDocumentFragment)` to perform all your operations in memory before inserting elements into the DOM.
+
+    - **The `DocumentFragment` does not support the `innerHTML`**.
+
+      - Consider using the `[template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template)` element if you need `innerHTML`.
+
+- **You can have multiple selectors in the `querySelectorAll` function**.
+
+  ```js
+  document.querySelectorAll("first, second, third");
+  ```
+
+  That is nice to know!
+
+Finished Part 2 -41:13
