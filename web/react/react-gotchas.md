@@ -20,7 +20,8 @@ This component is wrapped in an `ErrorBoundary`
 ```
 
 You would expect all errors be cough by that `ErrorBoundary` right? Well it's sadly not the case.
-There is a list of things that `ErrorBoundary` will not catch
+
+There is a list of things that `ErrorBoundary` will not catch:
 
 - errors originating from event handlers
 - asynchronous errors
@@ -32,7 +33,7 @@ So if you were to write the `Component` like this
 ```jsx
 function Component() {
   React.useEffect(() => {
-    fetch("flanky-response")
+    fetch("flaky-response")
       .then(handleResponse)
       .catch(() => throw new Error("boom!"));
   }, []);
@@ -45,14 +46,26 @@ What you can do is to use `setState`s second parameter, the setter.
 
 ```jsx
 const [_, setError] = React.useState();
+
 React.useEffect(() => {
-  fetch("flanky-response")
+  fetch("flaky-response")
     .then(handleResponse)
     .catch(() => setError(() => throw new Error("boom!")));
 }, []);
 ```
 
-I'm not completely sure why it works. Maybe something with queuing? No idea. It seems like I will have to ask Dan himself one day.
+I'm unsure why this works. Notice that I'm not using the "state" (so the error) I'm setting – the mere fact of using `setError` appears to forward the error to the `ErrorBoundary`.
+
+The `[react-error-boundary](https://github.com/bvaughn/react-error-boundary/blob/master/src/useErrorBoundary.ts)` utilizes the same technique BUT they use the state to throw an error.
+
+```tsx
+const [error, setError] = useState();
+if (error) {
+  throw error;
+}
+```
+
+This makes much more sense to me.
 
 ## You can break the rule of hooks safely (maybe)
 
