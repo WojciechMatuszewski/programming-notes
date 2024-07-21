@@ -137,8 +137,81 @@
 ## Virtualization
 
 - Implementation of the virtualization is quite hard.
+
   - The basic premise is that you _swap_ elements and re-use the elements that are no longer in the viewport to show the new data.
-  - In addition, you **have to move the observers as well!**.
+
+  - In addition, you **have to move the observers as well**!
+
     - Since the elements are `position: absolute` the observers won't be "pushed" down when you update transforms.
 
-Finished part 3, part 4 next
+- During the implementation, we used `.at` quite heavily. Neat to see this API used more and more.
+
+## Application State Design
+
+- **Depending on how large your data is**, you might want to look into **_data normalization_**.
+
+  - This **usually means flattening your data structures to an object**.
+
+    - This allows you to look things up in a O(1) time.
+
+    - Of course, **it all depends on the access patterns you have**.
+
+- There are many APIs for storing data in the browser.
+
+  - The `localStorage`. Has Synchronous API. Not ideal for large amounts of data.
+
+  - The `sessionStorage`. Only persists during the session.
+
+  - The `Indexed DB`. Quite complex, but supports almost everything.
+
+## Network Connectivity
+
+- Two core network protocols to be aware of:
+
+  - The **`UDP` protocol which is _lossy_**.
+
+    - It does not need the "I got the data confirmation".
+
+    - Used for streaming and anywhere where potential data loss is acceptable.
+
+  - The **`TCP` protocol which is _lossless_**.
+
+    - It involves so-called _handshake_. This process takes some time.
+
+    - Ensures the server received data.
+
+- There are many ways to receive data over time.
+
+  - You have the **_long pooling_** which is very easy to implement, but battery & latency inefficient.
+
+  - You have the **_server sent events_** which are much more efficient than _long pooling_, but they do not supporting sending data to the server.
+
+  - You have the **_websockets_** which are quite complex in the implementation, but are very good from efficiency and functionality perspective.
+
+## Performance Optimization
+
+- Optimizations does not necessarily only happen in the browser.
+
+  - **For example, upgrading your server to use HTTP 2 or 3 could be a huge win**.
+
+    - This is related to the amount of open connections each protocol supports.
+
+- **Make sure you are compiling to somewhat latest ES version**.
+
+  - Of course, it all depends on the environment your users use, but in most cases, ES2020 target (or above) should be okay.
+
+- You can pre-fetch assets via `rel="prefetch"` directive on a given link.
+
+  - There is also `rel="prefetch"` directive.
+
+- As for images, it boils down to using the latest format you can in a given situation.
+
+  - The newer image formats are usually much smaller while providing the same visual fidelity.
+
+  - **Consider compressing your SVGs**. If you use a bundler, the bundler is probably already doing that for you.
+
+## Summary
+
+A great workshop that also included a system-design mock interview at the end. I wish we did a bit more coding, but then this workshop would be quite long.
+
+It was eye-opening to see how much complexity goes into creating a virtual scrolling library. In addition, we have used so many DOM APIs thought the workshop which was a great refresher.
