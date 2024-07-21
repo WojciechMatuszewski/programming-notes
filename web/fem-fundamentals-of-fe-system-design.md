@@ -82,4 +82,63 @@
 
   That is nice to know!
 
-Finished Part 2 -41:13
+## Observer API
+
+- There are **three different kinds of observers**.
+
+  - The **_intersection_ observer**.
+
+    - This one tells you when a given element enters a viewport.
+
+    - **It is much more performant than any kind of vanilla code you might write that does similar thing**.
+
+      - In addition, it can track multiple items at once!
+
+  - The **_mutation_ observer**.
+
+    - This one tells you about the changes to the DOM structure.
+
+      - You can granularly pick what you want to track: `childList`, `attributes` and others.
+
+  - The **_resize_ observer**.
+
+    - This one tells you about changes to the viewport size.
+
+    - There are other ways to _react_ to viewport changes.
+
+      - Via CSS Media Query.
+
+      - Via CSS Container Query.
+
+      - Via "resize" event. This one is particularly inefficient.
+
+      The **_resize observer_ is quite nice since it gives you a callback in JavaScript you can use**. The bottom line here is to avoid using the "resize" event and consider other APIs.
+
+- **While going through the _mutation_ observer API exercise, we used a couple of interesting web APIs**.
+
+  - The `contenteditable` property on the section displaying the title.
+
+  - To put the cursor _after_ the newly created heading, I've used the `range` and `selection` APIs
+
+    ```js
+    const heading = getHeading(target);
+    target.replaceWith(heading);
+
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    range.setStartAfter(heading);
+    range.collapse();
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+    ```
+
+## Virtualization
+
+- Implementation of the virtualization is quite hard.
+  - The basic premise is that you _swap_ elements and re-use the elements that are no longer in the viewport to show the new data.
+  - In addition, you **have to move the observers as well!**.
+    - Since the elements are `position: absolute` the observers won't be "pushed" down when you update transforms.
+
+Finished part 3, part 4 next

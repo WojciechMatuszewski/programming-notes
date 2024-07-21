@@ -1064,7 +1064,7 @@ Interestingly, if you do SSR, and you rely on `Suspense` for `useSyncExternalSto
 
 ### Wrapping up
 
-Very nice refresher!
+A very nice refresher!
 
 - `useSyncExternalStore` is very useful.
 
