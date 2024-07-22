@@ -23,3 +23,58 @@
   - The numbers in the vector represent how similar each word is to another word. For example, the vector for _"I took my cat for a walk_" would be similar in terms of numbers to the _"I took my dog for a walk"_.
 
   - The **embeddings are then feed into some kind of _similarity search_ engine** which LLM use to retrieve the final answer.
+
+## Prompt Engineering
+
+> 1. [Prompt engineering guide](https://github.com/brexhq/prompt-engineering?tab=readme-ov-file#what-is-a-prompt)
+> 2. [Prompt engineering guide](https://www.promptingguide.ai/)
+
+- The "prompts" are the starting points for the LLM. They are inputs that trigger the model to generate text.
+
+  - The "better" the prompt, the better the LLM response will be.
+
+### Hidden prompts
+
+The **_hidden prompt_ is the input you give to the LLM before providing the user input**. This could be used to set the "scene" for the conversation, or provide some examples (see the section below), if you know what the user is going to ask about.
+
+In addition, you depending on the use-case, you might want to ask the bot to think step-by-step. That technique proved to produce more reliable answers.
+
+### Providing examples in prompts
+
+- It is often helpful to provide some examples in your prompt. This helps LLM to generate a good response.
+
+  ```txt
+  Create three slogs for a business with unique features.
+
+  Business: Bookstore with cats
+  Slogans: "Pull-fect Pages", "Books and Whiskers", "Novels and Nuzzles"
+
+  // More examples
+
+  Business: Coffee shop with live music
+  Slogans:
+  ```
+
+  Examples help to "ground" the LLM into reality and steer the algorithm into the right direction.
+
+### X-shot Prompting
+
+The `_X_` here refers to **the amount of examples you provided to the LLM before asking the question**. While not strictly necessary, consider keeping the format of the "question" and the "response" in the example the same.
+
+Depending on the complexity of the task, you might need to provide one example or a few examples. **Providing even a large number of examples does not guarantee the correct LLM response**.
+
+### ReAct model
+
+The **`ReAct model` is a framework you can ask the LLM to follow to simulate the process human might go through when researching for information**.
+
+There are a couple of **"stages" the LLM goes through in a loop to come up to an answer**:
+
+- The `question`.
+
+- The `thought`.
+
+- The `action`.
+
+- The `observation`.
+
+The `action` step leverages _tools_ to retrieve information. **Keep in mind that the efficiency of the LLM here is heavily dependant on the quality of the available _tools_**.
