@@ -1426,7 +1426,9 @@ Split it in two and assign to each side? If you switch from naming lines to nami
 
 #### Empty grid cells
 
-You can define "gaps" in the grid areas via `...`.
+You can define "gaps" in the grid areas by _dots_.
+
+You can either have one or multiple dots assigned as an "empty" cell. In the example below, I'm using three dots, but nothing stops me from using one or two or four dots or any other number of dots to denote empty space.
 
 ```css
 .element {
