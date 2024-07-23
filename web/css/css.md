@@ -1367,6 +1367,19 @@ Below is an example of naming the lines and then using them.
 
 One important detail here is to understand that the `content` area lives between the first and the third column. I'm naming the lines here, not the areas!
 
+#### "Overloading" line names
+
+You can have multiple names assigned to a given "line".
+
+```css
+.layout {
+  display: grid;
+  grid-template-columns: [aside-start] 200px [aside-end main-start] 1fr [main-end];
+}
+```
+
+Notice the `[aside-end main-start]`. We effectively assigned two names for a single line.
+
 ### Naming the areas
 
 Here, we are going to use `grid-template-areas`. I find this approach a bit easier to understand.
