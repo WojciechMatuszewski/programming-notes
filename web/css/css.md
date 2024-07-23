@@ -632,8 +632,7 @@ It is not "set if and forget it" kind of deal. You **might consider using rems i
 
 ## CSS Variables
 
-CSS Variables allow you to declare different values, which you can use later in your CSS definitions. **Keep in mind
-that you can scope the visibility of variables, like in any other programming language**.
+CSS Variables allow you to declare different values, which you can use later in your CSS definitions. **Keep in mind that you can scope the visibility of variables, like in any other programming language**.
 
 To declare a _global variable_, use the `:root` scope.
 
@@ -681,8 +680,10 @@ It is possible to **declare a fallback for a given variable**. Think using`??` s
 
 ### CSS Properties and type-safety
 
-Experimental, at the time of writing this, syntax that allows you to **explicitly state the type and the inheritance
-semantics of a given property**. It is pretty magical. Check this out.
+> [Here is the MDN documentation regarding this topic](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Types)
+
+Experimental, at the time of writing this, syntax that allows you to **explicitly state the type and the inheritance semantics of a given property**.
+It is pretty magical. Check this out.
 
 ```css
 @property --my-color {
@@ -696,14 +697,16 @@ button {
 }
 ```
 
-Notice the **`syntax` property**. This example says that the `--my-color` variable can only contain values valid for
-_color-related_ properties. If that is not the case, **and you have used JavaScript to register the property**, the
-browser will throw an error.
+Notice the **`syntax` property**. This example says that the `--my-color` variable can only contain values valid for _color-related_ properties.
+If that is not the case, **and you have used JavaScript to register the property**, the browser will throw an error.
 
-In my opinion, the most compelling use-case for these is that **you can animate values of the properties in pure CSS!**.
-That is not the case with "regular" CSS properties.
+In my opinion, the most compelling use-case for these is that **you can animate values of the properties in pure CSS!** – that is not the case with "regular" CSS properties.
 
-> [Here is the MDN documentation regarding this topic](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Types)
+#### Improved debugging experience
+
+If you ever found yourself debugging CSS variables, you know how hard it can get. **The nice thing about `@property`-defined variables is that you get much more information in browser devtools**.
+
+Let us say you provided a wrong _type_ to the variable via JS. If you open the devtools console, you will see a warning near the property value with an explanation on WHY you see this warning in the first place.
 
 ### Computed CSS variables gotcha
 
