@@ -1361,15 +1361,11 @@ Below is an example of naming the lines and then using them.
 </html>
 ```
 
-**Notice that I did not specify the `-start` and `-end` within the `grid-area` definition
-**. [According to the MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Grid_layout_using_named_grid_lines)
-this is a built-in feature. I was not aware of this!
+**Notice that I did not specify the `-start` and `-end` within the `grid-area` definition**. [According to the MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Grid_layout_using_named_grid_lines) this is a built-in feature. I was not aware of this!
 
-> While you can choose any name, if you append -start and -end to the lines around an area, as I have in the example
-> above, grid will create you a named area of the main name used.
+> While you can choose any name, if you append -start and -end to the lines around an area, as I have in the example above, grid will create you a named area of the main name used.
 
-One important detail here is to understand that the `content` area lives between the first and the third column. I'm
-naming the lines here, not the areas!
+One important detail here is to understand that the `content` area lives between the first and the third column. I'm naming the lines here, not the areas!
 
 ### Naming the areas
 
@@ -1411,9 +1407,23 @@ Here, we are going to use `grid-template-areas`. I find this approach a bit easi
 </html>
 ```
 
-**Note that the value of `sider content sider` would not be valid**. If you were to write `grid-area: sider` where would
-the browser put the element? Split it in two and assign to each side? If you switch from naming lines to naming areas,
-you might try to write such definition and wonder why it does not work.
+**Note that the value of `sider content sider` would not be valid**. If you were to write `grid-area: sider` where would the browser put the element?
+
+Split it in two and assign to each side? If you switch from naming lines to naming areas, you might try to write such definition and wonder why it does not work.
+
+#### Empty grid cells
+
+You can define "gaps" in the grid areas via `...`.
+
+```css
+.element {
+  grid-template-areas:
+    "aside main"
+    "... footer";
+}
+```
+
+Pretty interesting. It only adds to the power of this feature.
 
 ## The usefulness of `user-select`
 
