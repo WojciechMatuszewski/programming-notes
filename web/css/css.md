@@ -682,6 +682,8 @@ It is possible to **declare a fallback for a given variable**. Think using`??` s
 
 > [Here is the MDN documentation regarding this topic](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Types)
 
+> [Here is a great blog post](https://moderncss.dev/providing-type-definitions-for-css-with-at-property) about this topic.
+
 Experimental, at the time of writing this, syntax that allows you to **explicitly state the type and the inheritance semantics of a given property**.
 It is pretty magical. Check this out.
 
@@ -707,6 +709,24 @@ In my opinion, the most compelling use-case for these is that **you can animate 
 If you ever found yourself debugging CSS variables, you know how hard it can get. **The nice thing about `@property`-defined variables is that you get much more information in browser devtools**.
 
 Let us say you provided a wrong _type_ to the variable via JS. If you open the devtools console, you will see a warning near the property value with an explanation on WHY you see this warning in the first place.
+
+#### "Literal values" syntax
+
+Apart from using predefined values like `<color>` or `<length>` **you can actually provide literal values**!
+
+```css
+@property --my-color {
+  syntax: "blue | cyan";
+  inherits: false;
+  initial-value: black;
+}
+
+.section {
+  --my-color: cyan;
+}
+```
+
+You can even go further and provide "mixed" values for the `syntax` property. The `<color> | <length>` will also work!
 
 ### Computed CSS variables gotcha
 
