@@ -409,7 +409,7 @@ to `setEditing(true/false)` are reflected asynchronously.
 ```
 
 **The `flushSync` API allows us to achieve just that**. If we wrap the `setEditing` in the `flushSync`, we tell React to
-**update the UI synchronously**.
+**update the UI BUT NOT THE STATE synchronously**.
 
 ```jsx
 <button
@@ -430,8 +430,7 @@ synchronous, **React will not perform transitions**. In most cases that is a big
 the state update only affects a small portion of the tree**. In our case, we only are flipping between an `input` and
 a `button` HTML tags so the _deoptimization_ introduced by `flushSync` is not a big deal.
 
-Check
-out [this great tweet explaining the API based on the example I alluded to above](https://twitter.com/ryanflorence/status/1722358755499913582).
+Check out [this great tweet explaining the API based on the example I alluded to above](https://twitter.com/ryanflorence/status/1722358755499913582).
 
 ## `useSyncExternalStore`
 
