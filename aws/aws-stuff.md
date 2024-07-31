@@ -2938,13 +2938,15 @@ There are a few approaches when it comes to scaling with dynamoDB
 
 - **attribute** which tells DynamoDB **when given item should be considered as `expired`**.
 
-- DynamoDB will **delete expired items**
+- DynamoDB will **delete expired items**.
 
-- this **value has to be EPOCH time**
+- this **value has to be EPOCH time**.
 
-- the **TTL will also fire your lambda stream trigger**
+- the **TTL will also fire your lambda stream trigger**.
 
 - if you have **DDB streams enabled**, the event that is pushed to your lambda **has additional `userIdentity`** data. You should **use this data** to **tell that it was the Dynamo service** who **deleted the item, not you** or your code
+
+- DynamoDB will **not consume any WCU when deleting items**.
 
 #### Partitions
 
