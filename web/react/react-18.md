@@ -930,13 +930,14 @@ These components are **the regular components you have been using so far**. **In
 components **that get executed on the server (either statically built or via SSR) and hydrated**. This means that **when
 using RCCs you pay the cost of shipping JS to the client**.
 
-**You cannot import RSC into RCC** because **RSC never "re-renders"**. Imagine a scenario where you would be able to
-render RSC in client components. What should happen if the state in the client component updates and you are passing
-this prop into the RSC? **The RSC would not update, and your app would look like it is broken!** That is why you can
-only import RSC in other RSC.
+**You cannot import RSC into RCC** because **RSC never "re-renders"**. Imagine a scenario where you would be able to render RSC in client components
+What should happen if the state in the client component updates and you are passing this prop into the RSC? **The RSC would not update, and your app would look like it is broken!** That is why you can only import RSC in other RSC.
 
-This "limitation" promotes composability. If you cannot import components, you have to compose them. Composability is a
-great way to ensure your code is scalable and responds to change in requirements well.
+This "limitation" promotes composability. If you cannot import components, you have to compose them. Composability is a great way to ensure your code is scalable and responds to change in requirements well.
+
+I also like to think about this restriction in terms of **_owner_ and _parent_ components**. The **RCC can be _parent_ of the RSC but not the _owner_ of RSC**.
+
+> You can read more about the _parent_ and _owner_ relationship [here](https://reacttraining.com/blog/react-owner-components).
 
 #### Notes from the "Dan Abramov explores React Server Components with us!"
 
