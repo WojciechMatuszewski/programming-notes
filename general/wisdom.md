@@ -779,3 +779,41 @@ In each conversation and interaction you have, there is a power dynamic at play.
   - Sadly, feeling overwhelmed will most likely happen from time to time. If you are in this state, you should back off, until you worked on your emotions.
 
   - **Rescheduling meetings is totally fine**. It is much better to talk later than to talk while you are pulled right and left by internal turmoil.
+
+## Technical debt vs. Messy code
+
+> Based on [this talk](https://www.youtube.com/watch?v=u6s8S63OOIE).
+
+I love the diagram [shown here](https://youtu.be/u6s8S63OOIE?t=1375). The code we write lies at the spectrum. There could be a "messy" code and code that we can refactor, but count as debt.
+
+According to the diagram, **messy code is code that is reckless or inadvertent**. On the other hand, the **technical debt could be deliberate and prudent**.
+
+The **messy code stems from irresponsibility and incompetence**. The **technical debt stems from _doing your job well_**. You delivered, you learned, and now it is time to change the code to match what you learned about.
+
+**It is the _cruft_ a.k.a _mess_ that you want to avoid at all cost**. **Incurring technical debt is a natural part of the development lifecycle**.
+
+### The Trap
+
+- Precedent for Speed over Quality
+
+- Expectation of Increased Velocity
+
+In the end, **cruft slows you down, and you have to write more and more code to keep up**.
+
+### Failing strategies
+
+- **Cleaning Iteration** will not help you. You will fallback to your old habits.
+
+  - In addition, **you just put a lot of pressure on the product to "catch up"** with the feature demands.
+
+    - This pressure will inadvertently cause to to write messy code to release new features.
+
+### Winning strategies
+
+- **Constantly clean the code**. Every time you have a chance, refactor some parts of it. Make it just a tiny bit better.
+
+- **NEVER** ask to do your job correctly.
+
+  - Stop with the "can I take some time do write tests / refactor code" bullshit.
+
+    - **It is literally your job to do it**.
