@@ -614,20 +614,20 @@ Literally 200 IQ move.
 
 ## `useFormState`
 
+> For more information, check [this great blog post](https://www.epicreact.dev/react-forms).
+
 The `useFormState` is a handy hook that exposes the `actions` submit value as well as the function to call submit the
 form.
 
-```ts
-const [submitValue, action] = useFormState(serverOrClientAction, initialValue)
+```tsx
+const [submitValue, action] = useFormState(serverOrClientAction, initialValue, permaLink)
 
-< form
-action = { action } > </form>
+<form action = { action }></form>
 ```
 
 **Note that the `action` could be used in either _client action_ or _server action_ context**.
 
-You might also think that one could use the `action` in any kind of function and not only in the context of forms. \*
-\*That is the case – you can invoke it manually as long as you have `formData` object handy\*\*
+You might also think that one could use the `action` in any kind of function and not only in the context of forms. **That is the case – you can invoke it manually as long as you have `formData` object handy**
 
 ```tsx
 <button
@@ -642,8 +642,13 @@ You might also think that one could use the `action` in any kind of function and
 </button>
 ```
 
-Whether you should do that is another matter entirely. I think it would be better to have a form with a submit button
-here.
+Whether you should do that is another matter entirely. I think it would be better to have a form with a submit button here.
+
+### The `permalink` prop
+
+The `useFormState` accepts three arguments. The last one is an _optional_ "permalink". The **`permalink` prop is for progressive enhancement**.
+
+If the form is submitted BEFORE React has a chance to load, the regular browser behavior will take over and submit the form with the full-page refresh functionality.
 
 ## `useFormStatus`
 
