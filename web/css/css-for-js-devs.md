@@ -224,7 +224,11 @@ For the the font-related properties, the most common are `font-weight`, `font-si
 
   - This allows you to provide a margins and other properties to the element, but still have it flow _inline_.
 
-  - Keep in mind that **`inline-block` elements do not wrap**. **The ability to wrap without any additional CSS is unique to `inline` elements**.
+  - Keep in mind that **`inline-block` elements do not wrap (apart from the text within the element)**. **The ability to wrap without any additional CSS is unique to `inline` elements**.
+
+    - Try creating an `inline` and `inline-block` box with text. Add a border to that box and see how it wraps. The `inline` box will wrap "around" different sections of the text. [You can learn more about this behavior here](https://youtu.be/kj7WGnUDaI4?t=1001).
+
+      - **This wrapping behavior explains why setting `height` on `inline` elements do not work**. If the element is wrapped across multiple lines, what would the `height` apply to?
 
 #### Width Algorithms
 

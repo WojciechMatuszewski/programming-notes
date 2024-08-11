@@ -592,15 +592,14 @@ The following is the example usage of the `useId` hook.
 
 ```jsx
 function Checkbox() {
-    const id = useId();
-    return (
-        <>
-            <label htmlFor={id}>Do you like React?</label>
-            <input type="checkbox" name="react" id={id} />
-        </>
-    );
-)
-    ;
+  const id = useId();
+  return (
+    <>
+      <label htmlFor={id}>Do you like React?</label>
+      <input type="checkbox" name="react" id={id} />
+    </>
+  );
+}
 ```
 
 ### How do they maintain the "stability"
