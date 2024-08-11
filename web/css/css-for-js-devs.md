@@ -347,11 +347,13 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 ### Stacking Contexts
 
+> [More information here](https://youtu.be/kj7WGnUDaI4?t=1991).
+
 - There are many factors which influence how elements stack on top of each other. Most notable are the **layout mode and the DOM order** and the **`z-index`** value.
 
   - As a rule of thumb, the **_positioned_ elements will always render on top of non-positioned ones**.
 
-- The famous **`z-index` property only works with _positioned_ elements and grid/flex children**.
+- The famous **`z-index` property only works with _positioned_ elements and grid/flex children**. This means that, **the default _flow_ layout does not work with `z-index`**.
 
   - The **value of the `z-index` is compared relative to all the elements in a given stacking context**. A very important nuance to understand as this is the reason you sometimes find yourself bumping the `z-index` to a very high value to no avail.
 
