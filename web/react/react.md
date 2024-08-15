@@ -180,7 +180,7 @@ function Counter({ step }) {
 }
 ```
 
-Here, the `reducer` is defined outside of the `Counter`. The functionality **appears to behave the same way as before BUT it is NOT**. Every time the `step` changes we will clear the interval (rightfully so). That has an implication that we will start counting from 0 up to the specified time to run the interval callback.
+Here, the `reducer` is defined outside the `Counter`. The functionality **appears to behave the same way as before BUT it is NOT**. Every time the `step` changes we will clear the interval (rightfully so). That has an implication that we will start counting from 0 up to the specified time to run the interval callback.
 
 This is not the case when you use the "trick" Dan describes. There, when the step changes, we will never clear the interval, so there wont be this "delay" in counting the number.
 
@@ -191,6 +191,31 @@ The **code inside the `useLayoutEffect` and any state changes caused by running 
 Imagine a scenario where you update some state inside the `useLayoutEffect`. This means that the code that "reacts" to that state change will also run synchronously before the browser gets a chance to paint the screen. **If the state change causes an expensive computation, you will delay paying the screen making the app feel unresponsive**.
 
 Of course, the same issue can happen if the calculations inside the `useLayoutEffect` are expensive.
+
+### Dealing with useEffect complexity
+
+The usage of `useEffect` can introduce a LOT of complexity. The hook is well-known for its ability to produce infinite loops. It is also the source of confusion for many developers, especially developers who are just starting out.
+
+But `useEffect` is, sometimes, a **necessary piece of API to get our job done**. **The `useEffect` is for running SOME _side effects_ your code has**.
+**The `useEffect` is not meant to be the _default_ tool for running ALL _side effects_** – in some cases, it is much better to have _side effects_ placed inside _event handlers_.
+
+```tsx
+const [value, setNewValue] = useState("");
+
+function onUpdateValue(newValue: string) {
+  setNewValue(newValue);
+  localStorage.setItem("value", newValue); // <- Side effect in the event handler!
+}
+
+<button onClick={onUpdateValue}>Click me</button>;
+```
+
+#### Living on a good terms with `useEffect`
+
+1. Use `useEffect` for _synchronizing_ your component with an external system.
+2. Push as many _side effects_ into event handlers as reasonably possible.
+3. Consider using `useSyncExternalStore` more often.
+4. **Question your decision to use `useEffect`**. The mere act of stopping and taking a step back could produce better code.
 
 ### Lesser known hooks
 
