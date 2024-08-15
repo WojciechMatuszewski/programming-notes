@@ -697,7 +697,7 @@ Remember that the export operation might take a while, even for tables with bare
 
 ### Import from S3
 
-This feature **could be very useful for _seeding_ temporal environments, especially the _per-branch_ stacks**.
+This feature **could be very useful for _seeding_ ephemeral environments, especially the _per-branch_ stacks**.
 
 [You can read more about how it works here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/S3DataImport.HowItWorks.html).
 
