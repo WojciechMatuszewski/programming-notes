@@ -695,11 +695,21 @@ You can also export your data in DynamoDB to S3 and use BI-specific tools on the
 
 Remember that the export operation might take a while, even for tables with barely any data. One of my colleagues, Graham, raised [the question about the wait time on Twitter](https://twitter.com/Grundlefleck/status/1511359776478879752).
 
+### Import from S3
+
+This feature **could be very useful for _seeding_ temporal environments, especially the _per-branch_ stacks**.
+
+[You can read more about how it works here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/S3DataImport.HowItWorks.html).
+
+[Here is a technical CDK walkthrough](https://blog.serverlessadvocate.com/auto-populate-dynamodb-table-with-data-06856d8ff5e9) of this feature.
+
+Keep in mind that this feature is not free. You **will still pay for the operations DynamoDB has to make to import the data**.
+
 ### DynamoDB streams to Firehose to S3
 
 Ah, the "classic" data pipeline. Firehose is an excellent tool for putting stuff into S3. As long as your data is on S3, you can use Athena for BI things.
 
-You can find a blogpost regarding this architecture [here](https://aws.amazon.com/blogs/database/how-to-perform-advanced-analytics-and-build-visualizations-of-your-amazon-dynamodb-data-by-using-amazon-athena/).
+You can find a blog post regarding this architecture [here](https://aws.amazon.com/blogs/database/how-to-perform-advanced-analytics-and-build-visualizations-of-your-amazon-dynamodb-data-by-using-amazon-athena/).
 
 ## Cost considerations
 

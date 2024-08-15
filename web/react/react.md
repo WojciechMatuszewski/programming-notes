@@ -197,6 +197,7 @@ Of course, the same issue can happen if the calculations inside the `useLayoutEf
 The usage of `useEffect` can introduce a LOT of complexity. The hook is well-known for its ability to produce infinite loops. It is also the source of confusion for many developers, especially developers who are just starting out.
 
 But `useEffect` is, sometimes, a **necessary piece of API to get our job done**. **The `useEffect` is for running SOME _side effects_ your code has**.
+
 **The `useEffect` is not meant to be the _default_ tool for running ALL _side effects_** – in some cases, it is much better to have _side effects_ placed inside _event handlers_.
 
 ```tsx
