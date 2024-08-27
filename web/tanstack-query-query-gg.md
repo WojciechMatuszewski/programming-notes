@@ -36,4 +36,92 @@
 
     **The `status === "success" tells you that the data is in the cache!**.
 
-Finished 14
+- The React Query **implements _stale-while-revalidate_ model**.
+
+  - This means that in some cases, you might present stale data to the user.
+
+    - Remember, **in MOST circumstances, stale data is better than no data**.
+
+  - The **`staleTime` setting DOES NOT remove the data from the cache**. It only tells the library when it should consider _refetching_ the data!
+
+    - To **control when the data is removed from the cache, use the `gcTime` property**.
+
+- The `refetchInterval` accepts a function. This is very useful if you wish to stop pooling after certain condition is met.
+
+- There are at least _two_ ways you could tackle _dependant queries_.
+
+  Consider the following code.
+
+  ```ts
+  function fetchBook(bookId: string) {
+    // code
+  }
+
+  function fetchAuthor(authorId: string) {
+    // code
+  }
+  ```
+
+  We first have to fetch the book, then we can fetch the author.
+
+  ```ts
+  const {} = useQuery({
+    key: [],
+    queryFn: () => {
+      const book = await fetchBook("someId");
+      const author = await fetchAuthor(book.authorId);
+    },
+  });
+  ```
+
+  We have consolidated the fetches into a single `useQuery` call.
+
+  - You do not have to worry about multiple _loading_ and _error_ states.
+
+  - **This approach disables the data re-use for `book` and `author` fetches**. If another component only needs to fetch the book, it will NOT use the cache as the data for the book is NOT in the cache.
+
+  In most cases, it is better to split the fetches into _dependant queries_.
+
+  ```ts
+  const { data: book } = useQuery({
+    key: [],
+    queryFn: () => {
+      const book = await fetchBook("someId");
+      return book;
+    },
+  });
+
+  const {} = useQuery({
+    key: [],
+    queryFn: () => {
+      const author = await fetchAuthor(book.authorId);
+    },
+    enabled: book != null,
+  });
+  ```
+
+  Now, each query is independent from the cache perspective.
+
+  **The same applies to running multiple queries in parallel**.
+
+  - You could use `Promise.all` in a single query, but that approach suffers from inflexibility at the cache level.
+
+  - You could use `useQueries` which will run the queries in parallel, and also cache the results of the queries separately!
+
+- There is a **difference between `initialData` and `placeholderData`**.
+
+  - The `initialData` is treated as data returned from the `queryFn` function. This means that **React Query will NOT refetch the data until the `staleTime` is up**.
+
+  - The `placeholderData` is treated as "incomplete" data and, no matter what the data is, React Query will trigger `queryFn` to replace this data.
+
+- I find it very interesting that, in the course, they implemented the pagination with `useQuery` and not `useInfiniteQuery`.
+
+  - **Using `useInfiniteQuery` has implications related to how the data is stored in the cache**.
+
+    - For the `useInfiniteQuery`, we get **single cache entry we append the results to**.
+
+    - For pagination with `useQuery`, we get **multiple, independent, cache entries**.
+
+TODO: behavior related to refetching pages of `useInfiniteQuery`
+
+Finished 27
