@@ -78,3 +78,11 @@ There are a couple of **"stages" the LLM goes through in a loop to come up to an
 - The `observation`.
 
 The `action` step leverages _tools_ to retrieve information. **Keep in mind that the efficiency of the LLM here is heavily dependant on the quality of the available _tools_**.
+
+## AI Agents
+
+- Agents _create a chain of thought_ and **interact with tools, and the LLM, on our behalf**.
+
+  - This makes the Agent a bit of a black box making observability a bit of a pain.
+
+  - This also means that **the context window might get pretty large** – you do not control what kind of questions, and in what format, the agent sends to the LLM.

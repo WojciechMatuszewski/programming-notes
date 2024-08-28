@@ -14,7 +14,7 @@
 
   When using ESM in the browser, we can load modules in many different ways.
 
-  1. Using an URL. For example `https://example.com/shape.js`.
+  1. Using a URL. For example `https://example.com/shape.js`.
   2. Using relative path syntax. For example `./modules/shapes/square.js`.
 
   Instead, we can leverage the [`importmap`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) feature. The `importmap` allows us to define what "type" of imports maps to what type of identifier. This introduces consistency in the codebase and creates a central place for us to manage dependencies – akin to `package.json`.
