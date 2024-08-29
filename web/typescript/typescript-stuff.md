@@ -2517,6 +2517,50 @@ const value = someObj.prop1 && someObj.prop1.prop2
 
 Syntax with `?` is much cleaner, especially with nested objects and properties. You no longer have to worry about checks with `&&`. `?` operator takes care that for you.
 
+## The `Prettify` helper
+
+> Based on [this blog post](https://www.totaltypescript.com/concepts/the-prettify-helper).
+
+How many times have you hovered over a type only to discover that the information about the _structure_ of the type is of no use to you? It might be that the tooltip contained too much information, or perhaps the tooltip only repeated the type name. Both cases are not very helpful.
+
+You can observe this behavior on the following contrived example.
+
+```ts
+type Something = { a: 1 } & { b: 2 } & { c: 3 };
+```
+
+If you hover over `Something`, the tooltip will display the following.
+
+```ts
+type Something = {
+  a: 1;
+} & {
+  b: 2;
+} & {
+  c: 3;
+};
+```
+
+Since the type is rather simple, it is not a big deal, but imagine having to deal with generics and other more complex structures. **Ideally TS would display the "resolved" type rather in the tooltip**.
+
+You can "help" TS with that by using `Prettify` type.
+
+```ts
+type Prettify<T> = { [Key in keyof T]: T[Key] } & {};
+```
+
+Hovering over `type SomethingP = Prettify<Something>` will yield the following.
+
+```ts
+type SomethingP = {
+  a: 1;
+  b: 2;
+  c: 3;
+};
+```
+
+Now we are talking! We got rid of those intersection operations and we are looking at the _resolved_ type now!
+
 ## `const` assertion
 
 There are _literal_ and _primitive_ types in typescript. You know, there is a difference between these 2 types:
