@@ -414,6 +414,7 @@ This can be used for styling purposes
 
 ```js
 const CardHeading = styled.div``;
+
 class Card {
   static Heading = ({ children }) => <CardHeading>{children}</CardHeading>;
   render() {
@@ -426,6 +427,7 @@ Also using context API
 
 ```js
 const CounterContext = React.createContext();
+
 class Counter {
   state = {
     count: 0;
@@ -448,6 +450,63 @@ class Counter {
 
 This works basically the same as the class variant but you update classes to
 functional components and use hooks. Of course you cannot use static properties.
+
+#### The problem with `.` notation
+
+> Based on [this blog post](https://ivicabatinic.from.hr/posts/multipart-namespace-components-addressing-rsc-and-dot-notation-issues).
+
+When using the _Compound Components_ pattern, you might be tempted to use the `.` notation for "sub-components" of a larger component.
+
+```tsx
+import { Card } from "card";
+
+function MyOwnCard() {
+  return (
+    <Card>
+      <Card.Title>some title</Card.Title>
+      <Card.Body> some body</Card.Body>
+    </Card>
+  );
+}
+```
+
+Notice the usage of `.` as means of accessing the "sub-components" of the `Card` component.
+
+**While I love the API of this approach, it poses huge problems with _tree shaking_ and RSCs**. To learn more, see the article I linked to at the beginning of this section.
+
+The main problem lies in the fact that the `.Body` and `.Title` are **properties of the `Card` function**. This **makes it really hard for the bundler to _tree shake_ them as they are not separate imports**.
+
+Nowadays, libraries shy away from this approach **in favour of using separate components for the "sub-components" of a given component**.
+
+```tsx
+import * as Card from "card";
+
+function MyOwnCard() {
+  return (
+    <Card>
+      <Card.Title>some title</Card.Title>
+      <Card.Body> some body</Card.Body>
+    </Card>
+  );
+}
+
+// OR
+
+import { Card, CardBody, CardTitle } from "card";
+
+function MyOwnCard() {
+  return (
+    <Card>
+      <CardTitle>some title</CardTitle>
+      <CardBody> some body</CardBody>
+    </Card>
+  );
+}
+```
+
+**Notice the import statements**. In the first case, we are importing the `Card` as a _namespace_ rather than a single component. In the other, we are importing separate components.
+
+It does not matter which route you take. In either case, you will be much better of than using the `.` notation as far as bundlers and _three shaking_ is concerned.
 
 ##### The `useProvider` hook
 
