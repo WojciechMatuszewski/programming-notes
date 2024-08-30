@@ -121,3 +121,32 @@ There are spectrums of hydration. One can mix them accordingly. For example, you
 - In an ideal world, we would be able to use _Context_ API and RSCs at the same time. If that would be the case, we could hoist the data fetching to the top, and not have to deal with prop-drilling.
 
   - Ryan thinks about solving this problem with signals. **Signal will only block when read**, so you can "mark" the resource as fetching, but then continue down the tree. Only stop rendering and fetch when the signal is read in the JSX.
+
+## CloseWatcher API
+
+> [Based on this great blog post](https://logaretm.com/blog/fix-your-annoying-popups-with-the-closewatcher-api/)
+
+Have you ever found yourself having to implement "close the thing on ESC" logic? You most likely did. Have you ever tested that logic on mobile and via screen readers? **You most likely did not**. And, sadly, it most likely does not work there.
+
+Here is where the `CloseWatcher` API comes to aid – this API exposes an _universal_ way to "listen" to _close request_ and react accordingly.
+
+No need to have a special logic for `ESC` key for inputs. No need to have special logic for handling multiple modals and closing them sequentially when multiple of them are opened.
+
+```ts
+const watcher = new CloseWatcher();
+
+function onOpenClick() {
+  watcher.onclose = () => {
+    // code to close the thing
+    watcher.destroy();
+  };
+}
+
+function onClose() {
+  watcher.requestClose();
+}
+```
+
+Notice that we are **creating the _watcher_ instance every time we open something**. This gives us the ability to handle "stacking" – closing only the "latest" thing that was opened. In addition, **you do not have to setup any key-specific listeners yourself**. All is handled by the `CloseWatcher` API.
+
+You can [read more about the API on MDN](https://developer.mozilla.org/en-US/docs/Web/API/CloseWatcher). At the time of writing, this API is experimental, but given how useful it is, I bet it will not be experimental for long.
