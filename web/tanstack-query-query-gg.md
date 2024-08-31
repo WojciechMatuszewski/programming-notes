@@ -114,14 +114,68 @@
 
   - The `placeholderData` is treated as "incomplete" data and, no matter what the data is, React Query will trigger `queryFn` to replace this data.
 
-- I find it very interesting that, in the course, they implemented the pagination with `useQuery` and not `useInfiniteQuery`.
+- The course **showcased two ways of doing pagination** – via the `useQuery` and via the `useInfiniteQuery`. There is a difference between those two.
 
-  - **Using `useInfiniteQuery` has implications related to how the data is stored in the cache**.
+  - First, **there is a difference with how data is stored in the cache**.
 
-    - For the `useInfiniteQuery`, we get **single cache entry we append the results to**.
+    - For the `useInfiniteQuery` the new data is appended to existing cache entry.
 
-    - For pagination with `useQuery`, we get **multiple, independent, cache entries**.
+    - For the `useQuery` the new data is a **separate cache entry**.
 
-TODO: behavior related to refetching pages of `useInfiniteQuery`
+  - The **`useQuery` hook really shines for UIs with explicit "next page" / "previous page" buttons**.
 
-Finished 27
+    - Here, **using the `previousData` parameter is critical**. Otherwise, every time the user hits one of those buttons, the whole UI will "vanish" and display the loading state.
+
+      ```ts
+      const [currentPage, setCurrentPage] = useState(0);
+
+      const { data, isLoading, isError, isPlaceholderData } = useQuery({
+        queryKey: ["posts", { currentPage }],
+        queryFn: () => fetchPosts({ page: currentPage }),
+
+        placeholderData: (prevData) => {
+          return prevData;
+        },
+      });
+      ```
+
+      Use the `isPlaceholderData` to display loading state when transitioning from one page to another. Use the `isLoading` to display the "initial" loading state.
+
+      **This technique gets even more powerful if you introduce prefetching into the mix**.
+
+      ```ts
+      const getPostsOptions = ({ currentPage }: { currentPage: number }) => ({
+        queryKey: ["posts", { currentPage }],
+        queryFn: () => fetchPosts({ page: currentPage }),
+        placeholderData: (prevData) => {
+          return prevData;
+        },
+      });
+
+      // In a component
+
+      const [currentPage, setCurrentPage] = useState(0);
+
+      const { data, isLoading, isError } = useQuery(getPostsOptions({ currentPage }));
+
+      const queryClient = useQueryClient();
+      useEffect(() => {
+        void queryClient.prefetchQuery(getPostsOptions({ currentPage: currentPage + 1 }));
+      }, [currentPage, queryClient]);
+      ```
+
+      Now paginating through the list will feel near instantaneous.
+
+  - The **`useInfiniteQuery` hook really shines for UIs with infinite lists that we append to** when user scrolls or clicks a button.
+
+    - It is important to understand that, **`useInfiniteQuery` will refetch data for all the page entries**.
+
+      - If you have a lot of pages in the cache, that might be a lot of requests. **You can control this behavior via `maxPages` parameter**.
+
+  - **I've seen people trying to use `useInfiniteQuery` in place of `useQuery` for pagination and that does not end up well**.
+
+    - Be mindful about the difference here.
+
+TODO: Talk about mutations, the `currentTarget` "missing" and the fact that one can specify two callbacks for `onSuccess`.
+
+Finished 29
