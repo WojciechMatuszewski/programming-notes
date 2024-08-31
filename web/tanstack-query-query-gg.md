@@ -176,6 +176,98 @@
 
     - Be mindful about the difference here.
 
-TODO: Talk about mutations, the `currentTarget` "missing" and the fact that one can specify two callbacks for `onSuccess`.
+- The video about `useMutation` **showcased a very useful pattern on how to use `onSuccess` callback**.
 
-Finished 29
+  - You are probably aware that the `useMutation` hook takes the `onSuccess` prop, like so
+
+    ```ts
+    const {} = useMutation({
+      onSuccess: () => {},
+    });
+    ```
+
+    But, **did you know that the `mutate` also takes the `onSuccess` prop?**
+
+    ```ts
+    const { mutate } = useMutation({
+      onSuccess: () => {},
+    });
+
+    mutate(undefined, {
+      onSuccess: () => {},
+    });
+    ```
+
+    This might not sound like a bit deal, but **consider the case of having to reset the form when mutation succeeds**. Without that `onSuccess` property on `mutate` it would be quite hard.
+
+    ```tsx
+    function UseMutationLearnings() {
+      const { mutate } = useMutation({
+        mutationFn: async ({ name }: { name: string }) => {
+          await new Promise((resolve) => setTimeout(resolve, 1_000));
+        },
+        onSuccess() {
+          // I do not have access to the form element here, so resetting the form in this callback is quite hard.
+          // Yes, I could create a `useRef` but if I do not have to, why bother?
+          alert("success!");
+        },
+      });
+
+      return (
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const name = new FormData(event.currentTarget).get("name") as string;
+
+            mutate(
+              { name },
+              {
+                onSuccess() {
+                  // Look how easy it is to reset the form!
+                  form.reset();
+                },
+              },
+            );
+          }}
+        >
+          <fieldset>
+            <input type="text" name="name" id="name" />
+            <button type="submit">Submit me</button>
+          </fieldset>
+        </form>
+      );
+    }
+    ```
+
+    Also, **notice the assignment of `const form = event.currentTarget`**. Without this `form` variable, the `event.currentTarget` would be `null` inside the `onSuccess`.
+
+    That is **because the `event.currentTarget` is only available to you when event is being handled**. If you introduce "another tick" of the event loop (either by a timeout, or a promise), that variable will flip back to `null`.
+
+- You can approach **updating the cache after mutation in two ways**.
+
+  - First, is to manually update the cache. **Manually updating the cache works well for queries without many parameters**.
+
+    - The more variables within the query key, the harder it will be for you to update that cache entry – you have to have all those variables available to you when making the update.
+
+  - Second, is to **revalidate queries**. **Revalidating queries works well for cache entries with "complex" cache keys**.
+
+    - The best part is, that you **can leverage _fuzzy cache key matching_** to invalidate a couple of queries at a time.
+
+    - Note that **revalidation works for queries that are active**, meaning they have an "observer" attached to them.
+
+      - In most (if not all?) cases, "having an observer" means having some component that uses the query visible on the screen.
+
+## Summary
+
+This course is a great resource on `@tanstack/react-query` library. It will teach out pretty much everything you need to know to be productive with that library. While I'm used to using it, I also learned a thing or two.
+
+- Pagination with `useQuery` vs `useInfiniteQuery` and the usage of `placeholderData` vs. `initialData`.
+
+  - `placeholderData` -> the `useQuery` _will refetch_ and treat this data as a placeholder.
+
+  - `initialData` -> the `useQuery` _will NOT refetch_ and treat this data as coming from the cache.
+
+- The `mutate` taking the `onSuccess` parameter and how it helps with resetting the form.
+
+- The `refetchInterval` takes in a function. This is great as it allows you to stop refetching when a given condition is met.
