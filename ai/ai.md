@@ -8,6 +8,16 @@
 
     - You can think about _linear regression_ as plotting the dataset on x,y axis, then trying to fit a line, so that the line "touches" the most amount of points. Then, you look at the line and guess the next number based on that.
 
+## Vectors
+
+When working with AI and AI-related tools, you will hear the word "vector" quite often.
+
+**The term _vector_ most likely refers to the data structure the model uses to _understand_ the content**.
+
+Some time ago, bunch of smart people came with an idea to **represent content (words, images) with numbers**. Think of vectors as **collection of floating point numbers**. The **more elements a given collection has, the bigger its _dimensionality_**.
+
+Nowadays, **most of AI model providers have their _embedding_ endpoint**. This endpoint is used to create vectors for a given piece of content. Then, **you can compare two or more vectors together** to denote if they are _semantically close_ to each other – remember, at it's very basis, AI is guessing the next word based on what came prior.
+
 ## RAG
 
 - **R**etrieval **A**ugmented **G**eneration means **adding additional set of data into the LLM "knowledge base"**. [Here is a great video about this topic](https://www.youtube.com/watch?v=T-D1OfcDW1M).
