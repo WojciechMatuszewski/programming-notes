@@ -413,8 +413,36 @@ I love when forms specify the necessary attributes for the browser and my passwo
 You too, can create such experiences – you _just_ need to provide the right attributes to the inputs in the form!
 
 - Use the `autocomplete` attribute to provide hints to the browser regarding a given field.
+
   - **Pay attention to the `name` of the field. The value you put there matters in the context of `autocomplete` attribute**.
+
   - [Read more about the `autocomplete` attribute here](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete)
+
     - The concept of _sections_ is especially interesting to me.
+
 - The `spellcheck` attribute might be helpful for `textarea` tags.
+
 - The `autocapitalize` might be helpful for "first name" and "last name" inputs.
+
+## The accessible custom checkbox
+
+> [Based on this great talk](https://www.youtube.com/watch?v=ob_M_qXeDVE&list=PLdMmkhK3RIbWMNgDNTfahg7ICBYxNhWZB&index=30)
+
+We still have a limited ability to style checkboxes. In most cases, you will be asked a custom checkbox styles that are quite impossible to replicate with the native `input type = "checkbox"`.
+
+How we can implement a custom checkbox with accessibility in mind?
+
+1. Set the proper `width` and `height` sizes for the input. The sizes should pretty much match what you are replacing it with.
+
+2. Hide it, but make sure user can still click it. **This means using `opacity: 0` rather than `sr-only` class**.
+
+```css
+input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  block-size: 1rem;
+  inline-size: 1rem;
+}
+```
+
+**You can use this technique for any other element that you wish to replace with an image, like `svg`**.
