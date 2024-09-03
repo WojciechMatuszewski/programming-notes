@@ -48,4 +48,14 @@ Learning from [this course](https://frontendmasters.com/workshops/fullstack-vani
 
   This approach works very well "validation libraries" like `zod` – you can validate the `data` object and infer types based on the result of validation.
 
-Finished Part 2 1:10:15
+- Similar situation to the above while implementing the "Clear" button on the form.
+
+  - Instead of using the native `<button type = "clear">` Erick chose to use `type="button"` and call `.reset()` on the form HTML node.
+
+    - **While I might be missing some context as to why we did not implement the "Clear" button using the native HTML, this shows that even the most experienced developers are sometimes lacking the knowledge in the basics**.
+
+- Eric created a `launch.json` file with a debugger definition before even starting to write the first test.
+
+  - Very interesting practice. I probably should use the debugging capabilities of VsCode more often.
+
+Finished Part 2 -18:58
