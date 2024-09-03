@@ -400,6 +400,64 @@ The `:has` selector is very powerful when combined with inputs. Check out this e
 Quite powerful if you ask me. And you are not limited to checkboxes. Keep in mind that other input types also have "
 internal state" (the `text` has the value, the `file` has the file name).
 
+### `:nth-child`
+
+When learning about this pseudo-class you most likely encountered definitions like the following.
+
+```css
+:nth-child(2) /* second child */
+:nth-child(2n) /* all even children */
+:nth-child(6n + 1) /* start with n=0 and increment it */
+```
+
+In most cases, the number syntax inside the brackets is sufficient to get things done.
+
+**But, did you know you can apply "filters" inside the brackets of the `:nth-child` selector?**
+
+Let us consider the following selector.
+
+```css
+:nth-child(2 of .some-special-class);
+```
+
+This will select the **second child with `.some-special-class`**. The kicker is that **the child does not necessarily have to be the second child of the parent**. This is in stark difference with the "regular" `:nth-child` selector.
+
+```css
+:nth-child(-n + 3 of li.important); /*First three list items that have the `.important` class*/
+
+li.important: nth-child(-n + 3); /*If they are the first three children AND match the selector `li.important`*/
+```
+
+Consider the following, perhaps invalid, HTML structure.
+
+```html
+<ul>
+  <li>First</li>
+  <span>some span</span>
+  <li>Second</li>
+  <li>Third</li>
+  <span>some span</span>
+  <li>Fourth</li>
+  <li>Fifth</li>
+</ul>
+```
+
+And the following CSS.
+
+```css
+li:nth-child(-n + 3) {
+  border: 1px solid red;
+}
+
+ul :nth-child(-n + 3 of li) {
+  border: 1px solid red;
+}
+```
+
+The `li:nth-child(-n + 3)` will put a border on the "First" and "Second" `li`. **The "Third" `li` will not have the right styles applied**. The `li:nth-child(-n + 3)` means **style the `li` if its the first, second or third position within the parent**. Since we have a `span` in-between the first, and the second `li`, the third `li` counts as a fourth element, therefore the style is not applied.
+
+The `ul :nth-child(-n + 3 of li)` will **apply the border to the "First", "Second" and "Third" `li` elements**. It no longer looks at the position of the elements, but rather the number of occurrences within the parent the selector matches.
+
 ### `:focus-visible`
 
 The `:focus-visible` uses browser UA heuristics to determine when to display the focus outline. **This is not the case
