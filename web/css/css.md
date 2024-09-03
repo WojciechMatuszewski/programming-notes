@@ -402,6 +402,8 @@ internal state" (the `text` has the value, the `file` has the file name).
 
 ### `:nth-child`
 
+> Based on [this great blog post](https://developer.chrome.com/docs/css-ui/css-nth-child-of-s)
+
 When learning about this pseudo-class you most likely encountered definitions like the following.
 
 ```css
