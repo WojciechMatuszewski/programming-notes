@@ -817,3 +817,65 @@ In the end, **cruft slows you down, and you have to write more and more code to 
   - Stop with the "can I take some time do write tests / refactor code" bullshit.
 
     - **It is literally your job to do it**.
+
+## The Best Programmer I Know
+
+> Based on [this talk](https://www.youtube.com/watch?v=tgaKAF_eiOg)
+
+### Gets the job done.
+
+- **Drop the ego and start working on THE thing**.
+
+- Integrate – try, fail, learn, repeat.
+
+- **Code as means of getting things done**.
+
+  - You **should not have any emotional attachment to the code**, but write it to the best of your abilities.
+
+  - **Study the domain** and understand what kind of product you create.
+
+- **Solve for now (and the actual problem you are solving)** but **understand your time horizon**.
+
+  - If you are writing programming languages, mistakes might be very costly.
+
+  - If you are creating a product, the time horizon might be the next release.
+
+### Chooses the right tool.
+
+- **For the product and NOT the team!** People can learn.
+
+  > I love this approach. This stops people from identifying with particular programming languages.
+
+- **Do the simplest thing, not the easiest thing**.
+
+  - Easy is the "closest to your mind".
+
+  - The "right" solution, usually, requires some thought.
+
+- **Tools can change. Make changing the tools easy**.
+
+  - Minimize blast radius of the change.
+
+  - **Be kind to the future your or other programmers**.
+
+    - Make the code easy to decompose.
+
+    - Make the code easy to restructure.
+
+    - Make the code easy to rewrite.
+
+- **Consider using multiple languages to change your mental models**.
+
+### Cares about the team.
+
+- **Find joy in helping others learn**. Share what you know.
+
+- Make sure the team understands that it is okay to "only" work the usual work hours.
+
+  - You should make it an example to stop working when it is time to stop working.
+
+- **Assume that everyone is doing their best work**.
+
+  - It is your job to make sure the "soil" upon which you "plant" people is fertile for the people to grow!
+
+- **No one will remember that you worked late when you are old and dying**.
