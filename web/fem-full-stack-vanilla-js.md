@@ -56,6 +56,30 @@ Learning from [this course](https://frontendmasters.com/workshops/fullstack-vani
 
 - Eric created a `launch.json` file with a debugger definition before even starting to write the first test.
 
-  - Very interesting practice. I probably should use the debugging capabilities of VsCode more often.
+  - Very interesting practice. I should probably get more accustomed using _launch configurations_ in VSCode.
 
-Finished Part 2 -18:58
+- **TIL that node has the `--watch` flag**. It seem to be working pretty great.
+
+  - I bet `nodemon` has some interesting features, but for the most basic apps, you might not need it anymore.
+
+- We had to add mocks for many DOM APIs manually. Erick mentioned that, we could have also used the `JSDOM` library.
+
+  - While I agree that `JSDOM` is a valid choice here, **I would argue that using `Playwright` or any tool that runs our code in a real browser would be even better**.
+
+    - The _component testing_ exists in `Cypress` and in `Playwright` and the DX is pretty good!
+
+- The error you get when trying to compare _objects_, but I think this will be true for any non-primitive type, is misleading.
+
+  - It tells you that _"Values have same structure but are not reference-equal"_. The message is true, but it should point you to another method on `assert` for non-primitive types.
+
+    - **Use `assert.deepStrictEqual` when comparing non-primitive types**.
+
+- Our "web" tests are pretty brittle. They test the implementation details of the methods, and the mocking set up we have is pretty involved.
+
+- **Node test runner has mocking capabilities**. It seems like it is on pair with Jest?
+
+  - I really like the fact that the `it` or `test` function callback gets the `context` object with `mock` method.
+
+    - You do not have to clear any mocks since they are _local_ to the test!
+
+Finished Part 4 -28:53
