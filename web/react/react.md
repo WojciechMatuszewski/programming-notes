@@ -1089,13 +1089,13 @@ The `inert` attribute is pretty awesome, but at the time of writing this, **it p
 Since this is a new attribute, **React does not "recognize it yet"**. You can set it, and it will work as expected, but **as soon as React officially supports it, your JSX might break depending how you set it**.
 
 ```jsx
-// Will break when updating to React 19
+// Will break when updating to React 19.
 <div inert=""></div>
 
-// Will break when updating to React 19
+// Does not work at all.
 <div inert></div>
 
-// MIGHT break, and TypeScript does not like it
+// MIGHT break, and TypeScript does not like it.
 <div inert = "true">
 ```
 
