@@ -1066,4 +1066,65 @@ Resources:
 
 #### Opting out
 
-There is a way to mark a state update as _non batchable_ if you will. For this you will need to use the `flushSync` abstraction and wrap the call that updates the state with it.
+You can opt out batching when calling `setState` by wrapping the `setState` call with `flushSync`.
+
+```js
+const [state, setState] = useState()
+
+const syncUpdate = () => {
+  flushSync(() => {
+    setState(...)
+  })
+}
+```
+
+**This is very useful for manually controlling focus and the [_View Transitions API_](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API)**.
+
+## Inert attribute in React 18
+
+> Based on [this great article](https://www.mayank.co/notes/inert-in-react)
+
+The `inert` attribute is pretty awesome, but at the time of writing this, **it poses a bit of a challenge to use in React**.
+
+Since this is a new attribute, **React does not "recognize it yet"**. You can set it, and it will work as expected, but **as soon as React officially supports it, your JSX might break depending how you set it**.
+
+```jsx
+// Will break when updating to React 19
+<div inert=""></div>
+
+// Will break when updating to React 19
+<div inert></div>
+
+// MIGHT break, and TypeScript does not like it
+<div inert = "true">
+```
+
+So, how do you "properly" set the `inert` attribute on the element? **Use the _callback ref_ pattern!**
+
+```jsx
+<div
+  ref={(element) => {
+    if (!element) {
+      return;
+    }
+    element.inert = true;
+  }}
+></div>
+```
+
+**You might want to make the callback you pass to the `ref` prop stable** since [React will call this function every time it changes](https://react.dev/reference/react-dom/components/common#ref-callback).
+
+```jsx
+function applyInert(ref) {
+  if (!ref) {
+    return;
+  }
+
+  ref.inert = true;
+}
+
+// Using `useCallback` is also fine, but why bother if it's not necessary?
+<div ref={applyInert}></div>;
+```
+
+Keep in mind that you can **compose the callback ref functions**. [There are packages that can help with that](https://www.npmjs.com/package/@radix-ui/react-compose-refs/v/1.1.0-rc.7).
