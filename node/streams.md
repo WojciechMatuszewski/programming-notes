@@ -168,3 +168,68 @@ for await (const chunk of stream) {
 ```
 
 Pretty neat!
+
+## Web Streams vs. Node streams
+
+For the longest time, in JavaScript, streams only existed in Node.js. **With the introduction of the `fetch` API, browsers started to implement so-called _web streams_**. As you can imagine, this lead to having two, similar in functionality, but different in terms of API, ways of handling streams.
+
+**At the time of writing, one can use `Readable.toWeb` or `Readable.fromWeb` in Node.js**. This is quite nice, as it makes for unified experience across the web and the terminal.
+
+While I only dipped my toe in the world of streams, I can already see a couple of differences.
+
+1. I'm unsure if it is possible to stop / pause a web stream, but that might not be necessary.
+
+Here is how you would read a file line-by-line via _web streams_ in Node.js
+
+```js
+async function* webStreamsFileGenerator() {
+  const filePath = fileURLToPath(import.meta.resolve("./file.txt"));
+  const fileStream = Readable.toWeb(Readable.from(createInterface(createReadStream(filePath))));
+
+  for await (const chunk of fileStream) {
+    yield chunk;
+  }
+}
+```
+
+**Notice that we do not have to add any separate code to read chunks of the `fileStream`**. the `fileStream` does not have the `pause` method.
+
+Now, consider the code that does the same thing, but uses Node.js streams.
+
+```js
+function getChunkFromStream(stream) {
+  return new Promise((resolve, reject) => {
+    stream.once("data", (chunk) => {
+      stream.pause();
+      resolve(chunk);
+    });
+
+    stream.once("end", () => {
+      resolve(null);
+    });
+
+    stream.once("error", (error) => {
+      reject(error);
+    });
+  }).finally(() => {
+    stream.resume();
+  });
+}
+
+async function* nodeStreamsFileGenerator() {
+  const filePath = fileURLToPath(import.meta.resolve("./file.txt"));
+  const fileStream = Readable.from(createInterface(createReadStream(filePath)));
+
+  let chunk;
+  while ((chunk = await getChunkFromStream(fileStream))) {
+    yield chunk;
+  }
+}
+
+const generator = await nodeStreamsFileGenerator();
+for await (const chunk of generator) {
+  console.log(chunk);
+}
+```
+
+**Notice that I had to `pause` the stream in order to create a generator**. Without the `pause` method on the stream, creating that generator would be quite hard. **Node.js streams seem to expose more functions on the stream itself**.
