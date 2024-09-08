@@ -82,4 +82,28 @@ Learning from [this course](https://frontendmasters.com/workshops/fullstack-vani
 
     - You do not have to clear any mocks since they are _local_ to the test!
 
-Finished Part 4 -28:53
+- **TIL that you can make a JavaScript file an executable**.
+
+  - Add the `#!/usr/bin/env node` to the top of the file.
+
+  - Add the `bin` entry to the `package.json`.
+
+  - Run `npm link`.
+
+    Now, you can run the app as if it was installed on your machine. Interesting!
+
+- To build the graphical CLI, Erick decided to use `blessed` and `blessed-contrib` packages.
+
+  - It appears that these packages are no longer maintained.
+
+---
+
+- **TIL that you can parse "incomplete" URLs via `parse` exposed from `node:url`**.
+
+  - It seems like the `request.url` returns "partial" urls, like `/users`.
+
+    - The `new URL` would not be a good fit here, as you would have to "fake" the base path – `new URL(request.url, 'http://something.com')`
+
+    - The `parse(url)` returns the `URL` object which many properties set to `null`.
+
+Finished Part 8 -42:33
