@@ -106,4 +106,58 @@ Learning from [this course](https://frontendmasters.com/workshops/fullstack-vani
 
     - The `parse(url)` returns the `URL` object which many properties set to `null`.
 
-Finished Part 8 -42:33
+- VSCode has a nice "REST Client" extension that parses the `.http` files. You [can read more about it here](https://kenslearningcurve.com/tutorials/test-an-api-by-using-http-files-in-vscode/).
+
+  - **The `.http` files and this extension allow you to prepare a set of requests that you can fire manually**.
+
+    - This will most likely not replace Postman or Insomnia clients, but I bet it will get you far.
+
+- **Creating Node.js HTTP server is not that easy as it might appear**.
+
+  - The main gotcha is that the **_callback_ of the `createServer` does not handle `async` functions**.
+
+    - This means that, at some place of your code, you will need to have a `.catch` handler.
+
+- I'm so used to having the `__dirname` available to me, but that global is not available in ESM.
+
+  - Luckily, switching from CJS to ESM here is not that hard.
+
+    1. Get the "url" of the file you want to access -> `import.meta.resolve("RELATIVE_PATH")`
+
+    2. Transform the "url" to a path -> `fileURLToPath(...)`
+
+- While I'm septical about adding more and more layers of abstractions, I believe the pattern we went for while implementing the API makes sense.
+
+  - We have the _repository_ which is responsible for I/O operations.
+
+  - We have the _service_ which leverages the _repository_.
+
+  - We have _handlers_ which use the _service_ to fulfil the request.
+
+  Having said that, I'm unsure about the `userFactory` we have created. To me, that is an unnecessary layer of abstraction.
+
+- **If you return a call to the `async` function from another function, it might be worth marking that outer function as `async` and awaiting the inner function result**.
+
+  ```js
+  async function doSomeWork() {}
+
+  async function callMe() {
+    return await doSomeWork();
+  }
+  ```
+
+  This is **not strictly necessary**, but it could save you from bugs when refactoring. By making the `callMe` and `async` function, and `await`ing the result, I'm lessening the chance of an error if I were to refactor inside the `callMe` function.
+
+- During the workshop, Erick used the `once` function to read the `data` from the `request`.
+
+  ```js
+  import { once } from "node:events";
+
+  const data = await once(request, "data");
+  ```
+
+  **This will only work when there is a single chunk of data to consume**.
+
+  TODO: Write about the need to have `data` event callback present for the `end` to fire.
+
+Finished part 9 -45:39
