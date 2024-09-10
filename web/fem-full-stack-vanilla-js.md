@@ -156,8 +156,6 @@ Learning from [this course](https://frontendmasters.com/workshops/fullstack-vani
   const data = await once(request, "data");
   ```
 
-  **This will only work when there is a single chunk of data to consume**.
-
-  TODO: Write about the need to have `data` event callback present for the `end` to fire.
+  **This will only work when there is a single chunk of data to consume**. If you expect the `request` to fire multiple `data` events, this approach will not work as you will only receive the first part of the data.
 
 Finished part 9 -45:39

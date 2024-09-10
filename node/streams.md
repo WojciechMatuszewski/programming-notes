@@ -169,6 +169,20 @@ for await (const chunk of stream) {
 
 Pretty neat!
 
+## Consuming streams via `.on` callbacks
+
+**For the `end` event to fire, you have to bind the `data` event callback**. [This is mentioned in Node.js documentation](https://nodejs.org/api/stream.html#event-end).
+
+```js
+const readable = new Readable({});
+
+readable.on("data", () => {});
+
+readable.on("end", () => {}); // will not fire unless you registered the `data` event callback.
+```
+
+So, if you see your stream "hanging" and seemingly not working, check if you have the `data` callback registered.
+
 ## Web Streams vs. Node streams
 
 For the longest time, in JavaScript, streams only existed in Node.js. **With the introduction of the `fetch` API, browsers started to implement so-called _web streams_**. As you can imagine, this lead to having two, similar in functionality, but different in terms of API, ways of handling streams.
