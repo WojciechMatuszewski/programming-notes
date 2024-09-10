@@ -158,4 +158,6 @@ Learning from [this course](https://frontendmasters.com/workshops/fullstack-vani
 
   **This will only work when there is a single chunk of data to consume**. If you expect the `request` to fire multiple `data` events, this approach will not work as you will only receive the first part of the data.
 
-Finished part 9 -45:39
+- Related to the above, I've noticed that **for the 'end' event to fire, you have to have the 'data' event callback registered**.
+
+Finished Part 9 -22:50
