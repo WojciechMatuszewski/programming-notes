@@ -588,7 +588,7 @@ Self explanatory. You can style placeholders 🤷‍
 Lets say you want to use CSS grid where possible and for older browsers some
 simple, other, layout.
 
-How would we go about detecting if we can use grid ?
+How would we go about detecting if we can use grid?
 
 Well, it turns out there is are so called **CSS Feature Queries**.
 
@@ -600,7 +600,12 @@ These can be use to detect if a CSS feature is available on given browser.
 }
 ```
 
-Pretty cool stuff!.
+You can also check if the browser supports given selectors
+
+```css
+@supports selector(p:has(a)) {
+}
+```
 
 ## Logical properties
 
