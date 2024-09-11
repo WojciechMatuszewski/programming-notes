@@ -161,3 +161,5 @@ Learning from [this course](https://frontendmasters.com/workshops/fullstack-vani
 - Related to the above, I've noticed that **for the 'end' event to fire, you have to have the 'data' event callback registered**.
 
 Finished Part 9 -22:50
+
+I just checked, and it appears that the workshop was removed?
