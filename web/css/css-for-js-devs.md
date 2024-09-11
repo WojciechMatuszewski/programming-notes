@@ -1988,6 +1988,8 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   }
   ```
 
+  **But it matches the `focus` state and not the `focus-visible` state**. There is a difference between these two states.
+
 #### Focus Outlines
 
 - The focus outline **works differently for interactive and non-interactive elements**.

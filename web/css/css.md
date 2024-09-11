@@ -462,13 +462,11 @@ The `ul :nth-child(-n + 3 of li)` will **apply the border to the "First", "Secon
 
 ### `:focus-visible`
 
-The `:focus-visible` uses browser UA heuristics to determine when to display the focus outline. **This is not the case
-with the "regular" `:focus` pseudo-class** which is "dumb" in that regard. You **might have needed this to disable the
-focus outline on link clicks**.
+The `:focus-visible` uses browser UA heuristics to determine when to display the focus outline. **This is not the case with the "regular" `:focus` pseudo-class** which is "dumb" in that regard. You **might have needed this to disable the focus outline on link clicks**.
 
 In fact, most (if not all) of the browsers, migrated from `:focus` to `:focus-visible` in their UA styles.
-Did you notice that, if you click a link, the focus outline is not there? **But if you use the keyboard, the focus
-outline is visible?**. This is the `:focus-visible` pseudo-class in action.
+
+Did you notice that, if you click a link, the focus outline is not there? **But if you use the keyboard, the focus outline is visible?**. This is the `:focus-visible` pseudo-class in action.
 
 ### `:not`
 
