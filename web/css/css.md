@@ -304,9 +304,7 @@ specificity of 0, whereas the `:is` adheres to the regular specificity rules of 
 
 ### The `:has`
 
-The `:has` selector enables you to **style the parent based on it's the children**. This is a groundbreaking change in
-how we think about CSS. Since always, the CSS rules had to obey the _cascading_ semantics – you could not "go back" to
-the parent.
+The `:has` selector enables you to **style the parent based on it's the children**. This is a groundbreaking change in how we think about CSS. Since always, the CSS rules had to obey the _cascading_ semantics – you could not "go back" to the parent.
 
 The following is an example of the `:has` selector where we specify the number of columns based on the list items.
 
@@ -322,12 +320,26 @@ ul:has(li:nth-child(11)) {
 
 ---
 
-In addition, **you can use the `:has` as the so-called _anywhere_ selector**. The **name stems from the usage of `:has`
-on the `body` tag**.
+In addition, **you can use the `:has` as the so-called _anywhere_ selector**. The **name stems from the usage of `:has` on the `body` tag**.
 
 ```css
 body:has(input.blur-answer:checked) .answer {
   filter: blur(5px);
+}
+```
+
+```css
+/* Given certain element with a focus inside the card, style the card */
+.card:has(:where([data-action="delete"], [data-action="open"]):focus-visible) {
+  border-top: 10px solid #f7bccb;
+  box-shadow: 0 0 0 2px #f7bccb;
+  transform: scale(1.02);
+}
+
+/* If there is a card with a focus within, style all other cards */
+body:has(.card:focus-within) .card:not(:focus-within) {
+  filter: grayscale();
+  background-color: #f6f7f6;
 }
 ```
 
@@ -342,8 +354,7 @@ ul li:has(+ .select-before) {
 }
 ```
 
-This will **element that occurs BEFORE the `.select-before`**. Let that sink in... we are styling backwards! This
-technique is quite useful for styling labels if the input value is invalid.
+This will **element that occurs BEFORE the `.select-before`**. Let that sink in... we are styling backwards! This technique is quite useful for styling labels if the input value is invalid.
 
 ```css
 label:has(+ input:user-invalid) {
@@ -363,8 +374,7 @@ You can even produce layouts that have **different styles based on the amount of
 
 How cool is that??
 
-Side note: instead of `:invalid` you most likely want to use the
-new `:user-invalid`. [Read more about it on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid).
+> Side note: instead of `:invalid` you most likely want to use the new `:user-invalid`. [Read more about it on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid).
 
 ---
 
