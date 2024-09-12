@@ -45,15 +45,13 @@ The answer is simple:
 
 > Use reduce
 
-But the **why it works** requires deeper understanding of `Promise` API.
+But **why it works** requires deeper understanding of `Promise` API.
 
 ### Flattening and Fake Promises
 
-While reading `Async and Performance` by my boi Kyle, I learned a lot about
-`Promise` API.
+While reading `Async and Performance` by my boi Kyle, I learned a lot about `Promise` API.
 
-One thing that stuck with me is that `Promise` API has a native flattening
-behavior.
+One thing that stuck with me is that `Promise` API has a native flattening behavior.
 
 Check this out:
 
@@ -73,13 +71,10 @@ Promise.resolve(42)
   .then(console.log);
 ```
 
-We all know that we can chain `.then` and also that stuff returned from `.then`
-is automatically treated like a `Promise`. But I never returned another promise
-from within `.then`. Normally what would result in something like
-`Promise(Promise(..))`.
+We all know that we can chain `.then` and also that stuff returned from `.then` is automatically treated like a `Promise`.
+But I never returned another promise from within `.then`. Normally what would result in something like `Promise(Promise(..))`.
 
-Well, as I said before, `Promise` API natively flattens nested Promises. We can
-event test this theory using _fake promise_.
+Well, as I said before, `Promise` API natively flattens nested Promises. We can even test this theory using _fake promise_.
 
 ```js
 function fakePromise() {
@@ -95,18 +90,15 @@ Promise.resolve(42).then(fakePromise);
 // logs: 'IM CALLED'
 ```
 
-It turns out **any object that has `then` method** inside it will be treated as
-a `Promise` (at least is expect to behave like one).
+It turns out **any object that has `then` method** inside it will be treated as a `Promise` (at least is expect to behave like one).
 
-No matter the nesting, `Promise` API will drill to the last `.then` and wait for
-that to resolve.
+No matter the nesting, `Promise` API will drill to the last `.then` and wait for that to resolve.
 
-Pretty neat stuff huh?
+Pretty neat stuff, huh?
 
 ### Reducing
 
-So armed with the knowledge that `Promise` API flattens natively, the _how it
-works_ when reducing promises should be pretty easy for us to understand.
+So armed with the knowledge that `Promise` API flattens natively, _how it works_ when reducing promises should be pretty easy for us to understand.
 
 ```js
 [p1, p2, p3].reduce((acc, nextPromise) => {
@@ -114,8 +106,7 @@ works_ when reducing promises should be pretty easy for us to understand.
 }, Promise.resolve());
 ```
 
-Here, just like before we are returning a `Promise` from within a `Promise`.
-Flattening kicks in and we wait for the deepest `.then` resolution (being
+Here, just like before we are returning a `Promise` from within a `Promise`. Flattening kicks in, and we wait for the deepest `.then` resolution (being
 called) and proceed with another one.
 
 ## The "gravity" of `await` statement
@@ -132,7 +123,7 @@ async function doSomeWork() {
 }
 ```
 
-The `after` will never appear in the console until the `work` resolves. Usually it does, but there might be times where it does not. As an example, consider a system that invokes the `work` function, and then is prompted to be shut down by the user via the `INTERRUPT` signal. If that happens, we have a leak!
+The `after` will never appear in the console until the `work` resolves. Usually it does, but there might be times when it does not. As an example, consider a system that invokes the `work` function, and then is prompted to be shut down by the user via the `INTERRUPT` signal. If that happens, we have a leak!
 
 ### The `signal` to the rescue?
 
