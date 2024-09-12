@@ -141,7 +141,7 @@ ol > li {
 
 #### `+` selector
 
-_Adjacent sibling_. Pretty self explanatory.
+_An adjacent sibling_. Pretty self-explanatory.
 
 ```css
 /*
@@ -159,6 +159,7 @@ _General sibling selector_. Matches all later siblings but not nested!
 /*
     matches item2, item3
 */
+
 li.some_class ~ li {
 }
 ```
@@ -589,18 +590,18 @@ p::before {
 
 ### `::placeholder`
 
-Self explanatory. You can style placeholders 🤷‍
+Self-explanatory. You can style placeholders 🤷‍
 
 ## Progressive enhancement
 
-Lets say you want to use CSS grid where possible and for older browsers some
+Let's say you want to use CSS grid where possible and for older browsers some
 simple, other, layout.
 
 How would we go about detecting if we can use grid?
 
-Well, it turns out there is are so called **CSS Feature Queries**.
+Well, it turns out there is are so-called **CSS Feature Queries**.
 
-These can be use to detect if a CSS feature is available on given browser.
+These can be used to detect if a CSS feature is available on given browser.
 
 ```css
 @supports (display: grid) {
