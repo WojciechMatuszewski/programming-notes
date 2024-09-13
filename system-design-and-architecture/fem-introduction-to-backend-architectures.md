@@ -90,4 +90,68 @@ Error handling plays a crucial role here. Sadly, this part of engineering is oft
 
       - To "sell an idea" (some kind of design or a change you want to introduce), you have to convince others that this is a good idea!
 
-Finished "When to use backend architecture designs"
+## When to Use Backend Architectures
+
+- Drafting architecture is a good idea when you are just starting on a project.
+
+- When you are faced with complex problems. Drafting the architecture would enable to break the problem into multiple parts.
+
+- To reduce the communication overhead between people and teams.
+
+  - **Instead of repeating yourself over and over again, you can link to a doc containing most of the information**.
+
+- **When preparing any technical document (or any other document for that matter), always think about _who you are writing for_, _what_ and _why_**.
+
+  - You **need to have a reason for it**. Do not introduce complexity for the sake of it.
+
+- Consider user feedback – sometimes, the complaints you get are the result of the architecture, not UX.
+
+## How to Implement Backend Architectures
+
+- Three stages
+
+  - Research
+
+  - Implement
+
+  - Iterate / maintenance
+
+- **Aggressively scope the architecture/research**.
+
+- Play around. See how the approach feels.
+
+  - **Make sure to set requirements BEFORE you do that to avoid scope creep**.
+
+- Leave a "breadcrumb" trail of your work.
+
+  - It is important to have a historical record on _why_ you did X and used Y.
+
+- **Team expertise also comes into play here**.
+
+  - It might be much harder to "sell" to the team if you want to use language/approach that the team is not knowledgeable in.
+
+    - **Having said that, remember that the change is sometimes necessary and people will resist it**.
+
+      - If you have a good reason for changing the status quo, you should be able to proceed.
+
+- **Share your work early and often**.
+
+  - The more feedback you get, the better the outcome will be.
+
+  - At this stage, it is time to drop your ego and think about doing what is best for the product and not your career.
+
+### Best practices
+
+- Involve every stakeholders from the beginning.
+
+  - It is never too late to reach out to people to ask for opinion.
+
+- Use modular approach.
+
+  - **Be honest with yourself**. Your first pass might overcomplicate things and that is okay.
+
+- Consider how secure your design is.
+
+  - **Involve people from the security team into the design process**.
+
+<!-- Finished Common Backend Architectures -->
