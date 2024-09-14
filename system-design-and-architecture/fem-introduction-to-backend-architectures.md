@@ -154,4 +154,54 @@ Error handling plays a crucial role here. Sadly, this part of engineering is oft
 
   - **Involve people from the security team into the design process**.
 
-<!-- Finished Common Backend Architectures -->
+## Common Backend Architectures
+
+The silver lining here is that each architecture is viable given it fits the requirements and the team is comfortable running with that architecture.
+
+### Monolith
+
+- Everything is a single unit.
+
+  - That is a huge advantage, as you spent less time switching between different layers and repos.
+
+  - But, it is also a huge disadvantage when you reach certain scale. **The bigger the monolith, the harder it is to scale**.
+
+- Very common since that is usually how you start.
+
+- Monolith is easy to deploy.
+
+- Monolith tend to be consistent. Usually, all the requests are flowing through the same code path.
+
+- Monolith is **limited in scalability**. You can't scale services separately.
+
+- **To deploy, you have to deploy _everything_**. Not a good thing.
+
+- Security concerns might be hard to get right due to surface area and potential blast radius.
+
+#### Use Cases
+
+- Small applications and startups.
+
+  - If the application is very successful, you might need to change the architecture later on.
+
+  - **Nothing stops you from developing a _modular_ monolith** where components are deployed together, but they are not necessarily coupled together.
+
+- Applications where high performance is critical.
+
+  - **Distributed architectures are usually slower due to network overhead**.
+
+### Distributed / service-oriented
+
+- The blast radius of the change is smaller because you update one small component of a larger, loosely connected system.
+
+- It is much easier to scale this architecture.
+
+- It could be easier to add a new piece of functionality to an already existing net of services.
+
+- **Microservices allow for the team to take much smaller surface area**.
+
+  - This means less overhead and more focus on getting the microservice working just right.
+
+- **The fact that you can deploy the systems separately is huge**.
+
+  - Each team can decide when to deploy. There should be no need to coordinate deployments!
