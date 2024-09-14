@@ -42,10 +42,9 @@ At this exact moment, you should stop and evaluate your thoughts/decisions caref
 company to rewrite a given piece of code?** Be very specific here. If you do not have a clear answer to this question,
 stop now!
 
-See, there is a certain kind of wisdom in the "old code". Since the code age is relatively high, **it is most likely
-battle-tested and is edge-case free**. These edge cases are the most problematic – you will most likely miss them! By \*
-\*rewriting the code, you will increase the maintainability\*\*. The code will be different, the bugs will be different,
-and worst of all, it will not be as battle-tested as the old, well-aged code.
+See, there is a certain kind of wisdom in the "old code". Since the code age is relatively high, **it is most likely battle-tested and is edge-case free**.
+
+These edge cases are the most problematic – you will most likely miss them! By **rewriting the code, you will increase the maintainability**. The code will be different, the bugs will be different, and worst of all, it will not be as battle-tested as the old, well-aged code.
 
 Of course, sometimes the situation is so bad that there is no other way than to rewrite the code. The so-called "big
 ball of mud" can suck the life out of developers and make projects grind to a complete stop. In such cases, I would also
@@ -879,3 +878,38 @@ In the end, **cruft slows you down, and you have to write more and more code to 
   - It is your job to make sure the "soil" upon which you "plant" people is fertile for the people to grow!
 
 - **No one will remember that you worked late when you are old and dying**.
+
+## Psychological safety and pairing
+
+> Based on [this great article](https://brittonbroderick.com/2024/08/18/building-aggressively-helpful-teams/).
+
+Let us say you wish to pair with one of your colleagues on a certain task. You instinctively ask the following question:
+
+> Hey, do you want to pair on this?
+
+For you, this question is completely harmless. You certainly do not mean that your colleague is incompetent or does not have
+enough skill to carry the task to completion. It _just_ means that you want to pair with them on this particular task.
+
+Now, consider how your colleague might react. **Their reaction might be widely different from yours depending on your team culture**.
+
+If your team fosters the culture of psychological safety, your colleague will most likely think the following:
+
+> Wojciech wants to pair on this. Sweet! I bet we can create something great together.
+
+If your team is "fresh" or is missing the element of psychological safety in the team culture, your colleague might think the following:
+
+> Wojciech wants to pair on this. That is bad. He thinks I'm incapable of finishing this task :C
+
+**Since how _safe_ each person feels within the team is subjective, reactions of people on this question might vary greatly**.
+You most likely want your team to interpret the _"hey, do you want to pair on this?"_ question in a positive light. How to make that happen?
+
+The author of the article mentions **publicly stating what question are you asking yourself before asking someone for a pairing session**:
+
+> Is this one so simple that it would be actively harmful for me to work with them on this one?
+
+**Stating this publicly makes it clear that you do not mean anything bad about other people when asking to pair**.  
+This question gives you freedom to reject the ask, but it also enables you to accept it without feeling like you are _lesser_ engineer.
+
+So, cultivate psychological safety within your team. Be the person who asks for pairing sessions.
+Not necessarily because you feel like you can't do it (if you do, that is even a better reason to ask for them), but because
+**pairing is a great way of sharing knowledge and reviewing code as it being written** – that is the _ultimate productivity hack_.
