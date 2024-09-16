@@ -1311,8 +1311,7 @@ In the code above, the `width` of the container will have an effective width of 
 
 ## `display: contents` blows my mind
 
-The `display: contents` will make it so that the **element will not generate any box, as such the children will be
-treated as if it did not exist in terms of layout**.
+The `display: contents` will make it so that the **element will not generate any box, as such the children will be treated as if it did not exist in terms of layout**.
 
 ```html
 <div style="display: flex">
@@ -1329,14 +1328,14 @@ treated as if it did not exist in terms of layout**.
 
 - The **padding, width and all box-related properties are ignored**.
 
+Think of the `display: contents` **as a "ungrouping" mechanism**.
+
 ### But what about `subgrid`?
 
 While using the `display: contents` might be useful in some other situations, the first time I've learned about this
-property, my mind immediately started comparing how the `display: contents`
-works [with the `subgrid` property](https://web.dev/css-subgrid).
+property, my mind immediately started comparing how the `display: contents` works [with the `subgrid` property](https://web.dev/css-subgrid).
 
-**The main difference is that, with `subgrid` you preserve the dimensions of the parent**. This means that you have more
-control over the parents dimensions.
+**The main difference is that, with `subgrid` you preserve the dimensions of the parent**. This means that you have more control over the parents dimensions.
 
 The `display: contents` makes the box "invisible" to the HTML, so the children will be at the mercy of the grandparent dimensions.
 Also, using the `display: contents` to make `subgrid` work is a workaround. While the layout might work, the intent behind the code is kind of lost.
