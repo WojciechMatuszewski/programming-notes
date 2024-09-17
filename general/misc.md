@@ -96,3 +96,15 @@ import expensiveWorkerized from "workerize-loader!./expensive";
 ```
 
 **BOOM!**. Thats all. Granted now methods exposed by `expensiveWorkerized` are _async_ but that should not be a problem.
+
+## Concurrent vs. Parallel
+
+There **is a difference between _concurrent_ and _parallel_ execution**.
+
+- Think about **_concurrency_ as interleaving tasks with each other. Task MIGHT execute at the same time**.
+
+  - A good example here would be **multitasking on a single-core machine**. Here, two threads are _making progress_ but the CPU switches between them.
+
+- Think about **_parallelism_ as multiple tasks executing AT THE SAME TIME**.
+
+  - A good example here would be **multitasking on a multiple-core machine**. Here, two threads are _independent_ of each other. They make progress AT THE SAME TIME.
