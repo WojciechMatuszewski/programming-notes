@@ -105,6 +105,8 @@ There **is a difference between _concurrent_ and _parallel_ execution**.
 
   - A good example here would be **multitasking on a single-core machine**. Here, two threads are _making progress_ but the CPU switches between them.
 
+  - The **tasks need to be _interruptible_ to allow concurrency**.
+
 - Think about **_parallelism_ as multiple tasks executing AT THE SAME TIME**.
 
   - A good example here would be **multitasking on a multiple-core machine**. Here, two threads are _independent_ of each other. They make progress AT THE SAME TIME.
