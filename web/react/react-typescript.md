@@ -247,6 +247,25 @@ the _immutable_ semantics will no longer apply. You will be able to freely mutat
 
 Overall, I think we should be as precise as possible while writing code, thus IMO, using _non-union_ types where you will not be mutating the `ref` is a good idea.
 
+## Event handlers types
+
+> [Based on this article](https://weser.io/blog/clean-react-with-typescript).
+
+There is the `MouseEvent` and `React.MouseEvent`. What gives?
+
+- The `MouseEvent` refers to the _native_ JS event.
+
+- The `React.MouseEvent` refers to _Synthetic Event_ used in React.
+
+### Synthetic Events?
+
+> [You can read more about events in React here](https://react.dev/reference/react-dom/components/common#react-event-object).
+
+React uses its own "events" **to fix some browser inconsistencies**. Overall, the goal is to make your life easier.
+
+The documentation mentions that **some events might not map directly to the browser _native_ event counterpart**.
+To me, this is both interesting, and mildly concerning, but if this was a problem, it would probably be changed by now.
+
 ## Event handlers and mistakes
 
 Let's say you pass a `fetchMore` function as a prop. Since `fetchMore` has complex parameter signature, and you do not really care about parameters (**but you would not want anyone to pass any parameters to it)**, you annotate it as `VoidFunction`.
@@ -322,8 +341,8 @@ function Component({ fetchMore }: ComponentProps) {
 }
 ```
 
-Nice, now we can skip the `arg` parameter if we choose to invoke the prop directly (not using _point-free_ style, like inside the `Component`)
-and we achieved our result, the are certain that no parameter will be passed to the function.
+Nice, now we can skip the `arg` parameter if we choose to invoke the prop directly (not using _point-free_ style, like inside the `Component`) and we achieved our result, the are certain that no parameter will be passed to the function.
+
 If someone were to try to pass anything, he would be greeted with TypeScript error :).
 
 To avoid TypeScript errors in our particular situation, the prop would have to be used as follows
