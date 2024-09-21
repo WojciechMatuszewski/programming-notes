@@ -205,3 +205,47 @@ The silver lining here is that each architecture is viable given it fits the req
 - **The fact that you can deploy the systems separately is huge**.
 
   - Each team can decide when to deploy. There should be no need to coordinate deployments!
+
+### Serverless
+
+- Significantly depend on third-party services.
+
+  - Any kind of platform. Could be _FaaS_ (functions as a service), _BaaS_ (backend as a service) or both.
+
+- All the management is done by the cloud provider. You "only" have to provide the code.
+
+  - In reality, you also have to define the architecture in some kind of file.
+
+- Serverless is quite hard to develop locally.
+
+  - You probably should create a dev environment and use that. Luckily for you, the resources you need do not cost anything when they are created, so you can create as many of them as you want (within the limits of the cloud provider).
+
+    - In larger teams, you should invest in having _per-dev_ developer environment.
+
+- The architecture **will scale automatically, but that also exposes you to DDOS attack that could hurt your wallet**.
+
+- At some point **the cost of this architecture might be very high, all depends on your scale**.
+
+## Evolution of Backend System Architecture
+
+- Start with the Monolith.
+
+  - Simple, consistent and efficient.
+
+  - You are at small scale.
+
+- Split to services **only when you need to**. You are growing!
+
+  - Idenepdentn Development.
+
+  - Fault Isolation.
+
+- Save money, **to a certain point**, with Serverless. Not all services have to move to Serverless.
+
+- Remember you can go backwards. This is not a one-way road.
+
+## Wrapping up
+
+A good overview of the landscape of backend architectures. The material does not go deep, but it goes wide.
+
+This workshop would be very useful for junior engineers, or anyone who wants to learn more about the _general_ concepts of backend engineering.
