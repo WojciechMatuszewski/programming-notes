@@ -87,3 +87,7 @@ In this section, we touched on OpenAI API and built a basic app – a great over
 - There are frameworks to work with LLMs. One of the most known is _LangChain_.
 
 ## Wrapping up
+
+An overview of everything AI related. Content is rather shallow, but that is what the overviews are for.
+
+If you are interested in learning more (like I am), I would encourage you to research more on a given topic while while it's being discussed in the course.
