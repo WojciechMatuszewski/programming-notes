@@ -97,15 +97,15 @@ While you can do this, **you might want to think twice before allowing the user 
 - Keep in mind that **the validation error messages vary from browser to browser**.
 - Keep in mind that the **iOS keyboard does not include the comma by default**. This might result in a cumbersome experience for users on mobile.
 
-## Huge amounts of DOM nodes and the `content-visibility`
+## The magic of `content-visibility`
 
 > Based on [this](https://web.dev/dom-size-and-interactivity/?ck_subscriber_id=1352906140) and [this](https://web.dev/content-visibility/) blog post.
 
 At some point you might encounter a website where the number of the DOM nodes is huge. This might be a blog, this might be some other interactive site. But the problem is the same – the amount of the DOM nodes causes the browser to freeze when rendering the initial content.
 
-**If you are dealing with a list consider virtualizing the content**. But what if that is not possible? What if the content is structured in a way that makes it impossible to collect into a list? Luckily, the browser vendors come with some help. \*\*Enter the `content-visibility` property.
+**If you are dealing with a list consider virtualizing the content**. But what if that is not possible? What if the content is structured in a way that makes it impossible to collect into a list? Luckily, the browser vendors come with some help. **Enter the `content-visibility` property**.
 
-The **`content-visibility` is a NATIVE way to tell the browser to defer rendering some parts of the webpage to when the content enters the viewport**. It is like a native virtualization, but of course it does not handle all the cases that super well (but it is a built-in API that requires 0 KiB of JS to implement).
+The **`content-visibility` is a NATIVE way to tell the browser to defer rendering some parts of the webpage to when the content enters the viewport**. It is like a native virtualization. Of course it does not handle all the cases that super well (but it is a built-in API that requires 0 KiB of JS to implement).
 
 You have three values to choose from.
 
@@ -113,12 +113,74 @@ You have three values to choose from.
 - The `visible`.
 - The `hidden`
 
-Of course, me being me, I always lean towards the simplest, the most "out-of-the-box" solution possible, so the `auto` property is very appealing to me. The browser will do most of the work for me, and I do not have to manage the state myself.
-
-To be clear: **this is not a silver bullet**. With **the `auto` property, the scrollbar might jump around while the browser shows/hides the content**.
-Some articles recommend using the `IntersectionObserver` API to handle the state manually, which is what you most likely will end up doing.
+Me being me, I always lean towards the simplest, the most "out-of-the-box" solution possible, so the `auto` property is very appealing. The browser will do most of the work for me, and I do not have to manage the state myself.
 
 Overall, this is a great API to be familiar with. If you are using a framework, and not using `Fragments`, it is quite easy to case the DOM to be quite big causing rendering issues.
+
+### Troubles with the element height
+
+To make the `content-visibility` magic possible, the browser will have to know how _big_ the element is. This does not have to be a precise number. You are in luck, if the element already has defined height. But if you are rendering content, it is not feasible to know how long the element is. If that is the case, consider using `contain-intrinsic-size`.
+
+```css
+content-visibility: auto;
+/* approximate guess \/ */
+contain-intrinsic-size: 1000px;
+```
+
+**If you do not specify the `intrinsic-size` your scrollbar will jump around as the browser is rendering and removing elements from the page**.
+
+But do not fret! Browser is here to help you.
+
+You can also specify the `content-intrinsic-size: auto SOME_PX` which works in the following way
+
+1. When page renders, the browser will use the `SOME_PX` value.
+2. When user scrolls to the element, the browser will remember the elements _actual_ size.
+3. When user scrolls up/down, the browser will use its "memory" and not the value you provided for the element height.
+
+### Toggling content
+
+You most likely had to toggle some UI from "visible" to "hidden" state multiple times in your career. When doing so, you might have noticed, that the component we "toggle" losses state.
+
+```tsx
+function ComponentWithState() {
+  const [number, setNumber] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked the button {number} times </p>
+      <button
+        type="button"
+        onClick={() => {
+          setNumber((prev) => prev + 1);
+        }}
+      >
+        Click me
+      </button>
+    </div>
+  );
+}
+
+// In some other component
+visible ? <ComponentWithState /> : null;
+```
+
+If you toggle the component this way, every time it starts being visible, the `number` will be zero.
+
+**This example is quite trivial, but think about examples where rendering the component takes a lot of work**. In such examples, there might be visible "lag" when you toggle the component to be visible again.
+
+#### What about `display: none`?
+
+When working with React (I'm unsure about other frameworks) you might notice that using `display: none` seem to be working just like the `content-visibility: hidden`. **This is a feature of the framework, not the web**.
+
+Keep in mind that React uses VDOM for keeping the state. As such you won't see this "destruction of state" while using React.
+
+### A11Y benefit over virtualization
+
+> Learn more [here](https://web.dev/articles/content-visibility#a_note_on_accessibility).
+
+After adding virtualization to your website, you might notice, that the "search" browser functionality does not work that well. In fact, it pretty much does not work at all. When virtualizing a list, we render only _a subset_ of nodes at a given time. What if the user wants to find a note that is not rendered? Though luck.
+
+**The `content-visibility` works a bit differently** – while the node is not rendered, it is still present in the DOM (memory), so **it is searchable**.
 
 ## DOM and Shadow DOM
 
