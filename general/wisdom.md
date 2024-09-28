@@ -907,9 +907,13 @@ The author of the article mentions **publicly stating what question are you aski
 
 > Is this one so simple that it would be actively harmful for me to work with them on this one?
 
-**Stating this publicly makes it clear that you do not mean anything bad about other people when asking to pair**.  
+**Stating this publicly makes it clear that you do not mean anything bad about other people when asking to pair**.
 This question gives you freedom to reject the ask, but it also enables you to accept it without feeling like you are _lesser_ engineer.
 
 So, cultivate psychological safety within your team. Be the person who asks for pairing sessions.
 Not necessarily because you feel like you can't do it (if you do, that is even a better reason to ask for them), but because
 **pairing is a great way of sharing knowledge and reviewing code as it being written** – that is the _ultimate productivity hack_.
+
+## Why do we _sprint_?
+
+TODO
