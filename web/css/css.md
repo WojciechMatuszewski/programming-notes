@@ -1108,7 +1108,7 @@ know that **custom properties also are subject of inheritance**.
 
 Now we are talking are we not? **This could be used for theming specific sections of a given page**!
 
-## Animating the height property
+## Animating the height `auto` property (or any other size-related property)
 
 Since the beginning of CSS (?), we have been unable to animate the height of the element from "auto" to 0 (or
 vice-versa). That lead us to use various "hacks" to create toggles. With time, these "hacks" became the go-to solutions
@@ -1124,8 +1124,7 @@ This allows you to create an effect of smooth animation. Do not get fooled by th
 here – to **correctly animate the height using FLIP, you will most likely need to apply reverse transforms**. You are
 better off using a library that will perform the math for you.
 
-To learn more about the FLIP technique, checkout [_Method
-4_ in this blog post](https://carlanderson.xyz/how-to-animate-on-height-auto)
+To learn more about the FLIP technique, checkout [_Method4_ in this blog post](https://carlanderson.xyz/how-to-animate-on-height-auto)
 
 ### Using the `max-height` property
 
@@ -1191,6 +1190,58 @@ button.addEventListener("click", function onButtonClick() {
 This technique is used in [this free course](https://www.epicweb.dev/tutorials/fluid-hover-cards-with-tailwind-css).
 
 Looking at the performance snapshot from Chrome, animating height this way will cause **layout and style recalculation** but **it seems to be much cheaper than reflow**.
+
+### Using the `calc-size`
+
+> Based on [this article](https://developer.chrome.com/docs/css-ui/animate-to-height-auto/)
+
+**The API of the `calc-size` is mind-blowing**.
+
+Relatively new addition to the CSS, it allows you to animate from `0` to `max-height` or any other other "auto" property. **Please note that this is not the same as animating from `display: none` to `display: block`** – for that we have **`@starting-style`**.
+
+```css
+.animate {
+  width: 30px;
+  overflow: clip;
+  display: block;
+  white-space: nowrap;
+  transition: width 0.3s ease;
+
+  &:hover {
+    width: calc-size(max-content, size);
+  }
+}
+```
+
+When you hover over the element, it will animate from `30px` to `max-content`. No `grid` or FLIP needed.
+
+**When the `calc-size` really shines, is the ability to perform operations on the `size` keyword**. Check this out.
+
+```css
+.animate {
+  width: 30px;
+  overflow: clip;
+  display: block;
+  white-space: nowrap;
+  transition: width 0.3s ease;
+
+  &:hover {
+    width: calc-size(max-content, size / 2);
+  }
+}
+```
+
+When you hover over the element, it will animate from `30px` to **half of the `max-content`**. How amazing is that?
+
+**Combine this with [`round` CSS function](https://developer.mozilla.org/en-US/docs/Web/CSS/round) and the sky is the limit**.
+
+```css
+p {
+  width: calc-size(max-content, round(up, size, 50px));
+}
+```
+
+The `p` all have the `width` of `max-content` but rounded to the nearest multiply of `50`. **Again, how amazing is that?**
 
 ## CSS-in-JS
 

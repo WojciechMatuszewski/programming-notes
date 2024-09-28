@@ -185,13 +185,15 @@ So, if you see your stream "hanging" and seemingly not working, check if you hav
 
 ## Web Streams vs. Node streams
 
+> More info [here](https://www.platformatichq.com/node-principles#understanding-native-node.js-apis-vs.-web-standard-apis)
+
 For the longest time, in JavaScript, streams only existed in Node.js. **With the introduction of the `fetch` API, browsers started to implement so-called _web streams_**. As you can imagine, this lead to having two, similar in functionality, but different in terms of API, ways of handling streams.
 
 **At the time of writing, one can use `Readable.toWeb` or `Readable.fromWeb` in Node.js**. This is quite nice, as it makes for unified experience across the web and the terminal.
 
 While I only dipped my toe in the world of streams, I can already see a couple of differences.
 
-1. I'm unsure if it is possible to stop / pause a web stream, but that might not be necessary.
+1. Pausing _Web Streams_ does not seem to be possible.
 
 Here is how you would read a file line-by-line via _web streams_ in Node.js
 
