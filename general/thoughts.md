@@ -1,4 +1,4 @@
-# Programming wisdom
+# Thoughts
 
 ## Write code that is easy to delete, not easy to extend
 
@@ -910,10 +910,26 @@ The author of the article mentions **publicly stating what question are you aski
 **Stating this publicly makes it clear that you do not mean anything bad about other people when asking to pair**.
 This question gives you freedom to reject the ask, but it also enables you to accept it without feeling like you are _lesser_ engineer.
 
-So, cultivate psychological safety within your team. Be the person who asks for pairing sessions.
-Not necessarily because you feel like you can't do it (if you do, that is even a better reason to ask for them), but because
-**pairing is a great way of sharing knowledge and reviewing code as it being written** – that is the _ultimate productivity hack_.
+So, cultivate psychological safety within your team. Be the person who asks for pairing sessions. Not necessarily because you feel like you can't do it (if you do, that is even a better reason to ask for them), but because **pairing is a great way of sharing knowledge and reviewing code as it being written** – that is the _ultimate productivity hack_.
 
 ## Why do we _sprint_?
 
-TODO
+Words have a lot of power. They can influence your mood and what you think about it. Such power should be "wielded" with great care.
+
+Think about your work. You most likely work within a team that practices some sort of agile development methodology. In most cases, teams have _sprints_ that encapsulate some units of work.
+
+Have you ever thought about why they are called _sprints_?
+
+For me, sprinting implies going fast. All aligns with the agile working methodology — you go fast and iteratively improve the product.
+
+But if you go too fast, without stopping and converging on the technical work that you have done, you will inevitably break things. Again, there is nothing wrong with that. Mistakes happen, and we can learn from them.
+
+The danger isn't fixing the mistakes. Are we not sprinting? If so, should we not try to apply "quick fixes" and then move on (and feel this dopamine rush that we did something, right??)? If you take the word "sprint" literally, that could be your mindset. It is a very dangerous mindset to have.
+
+But what if we changed the wording? What if we called the units of time during which the team plans to deliver X units of work _iterations_?
+
+There is nothing to _sprint_ to. There are no "quick fixes" unless they are warranted (if that is the case, let us call those "patches" as, in reality, we only "patched the hole in a sinking ship").
+
+It all depends on the engineers on the team. We're only people, and people are susceptible to all kinds of outside influences and behaviors. However, words can steer our thinking toward more sustainable development. Words repeated again and again can anchor us in a certain mindset — in this case, a mindset of strategic rather than tactical thinking.
+
+Stop sprinting. Start iterating.
