@@ -88,4 +88,44 @@
 
   - People want to be heard and understood. That is an **universal thing**.
 
-// Start "Building Authentic Connections"
+## Building Authentic Connections
+
+- **Active listening** is all about making the other person feel heard and understood.
+
+  - Asking questions to dig-deeper into what the other person is saying.
+
+    > Something is bothering me
+    > Why does that bother you?
+
+  - Labeling emotions.
+
+    > They would not listen me at all!
+    > Did that feel really frustrating?
+
+  - **When talking about emotions, ALWAYS give the other person a way out**.
+
+    - This might mean asking for concent.
+
+    - This might mean "following" the other person if they switch the topic.
+
+- In the end, it is not necessarily about having more friends, but seeing the other person in more "human" way.
+
+## Test Driven Development
+
+- Quality code:
+
+  - Meets the user needs.
+
+  - Easy to read.
+
+  - Easy to change.
+
+  - Working code.
+
+In this section, we started to write tests for a legacy codebase. [You can find the codebase here](https://github.com/emilybache/GildedRose-Refactoring-Kata).
+
+- Instead of using `jest`, I decided to stick with the node built-in test runner.
+
+  - I see it pretty much feature complete. It even has mocking!
+
+Finished "Special items tests" -5:22
