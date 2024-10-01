@@ -128,4 +128,58 @@ In this section, we started to write tests for a legacy codebase. [You can find 
 
   - I see it pretty much feature complete. It even has mocking!
 
-Finished "Special items tests" -5:22
+  - The API is a bit different than the one exposed by `jest`, but I like how there are no global functions like `except`.
+
+- **Before adding new features, consider refactoring existing code to "prepare" it for changes you are going to make**.
+
+  - This preparation step often involves adding tests!
+
+- A _seam_ is a technique of changing the behavior of the code without altering the original code.
+
+  - This could mean using DI, but also wrapping _everything_ with an `else` block and writing the new code above it.
+
+    - If you go the `else` route, consider refactoring the code when you are done.
+
+- In the workshop, Francesca decided to comment-out the existing code and write it from scratch.
+
+  - We had tests to cover us, but I deem this practice quite dangerous. The problem is that we _do not know_ what _we do not know_.
+
+    - Writing tests for existing code will only go so far. We are only humans and we might miss something.
+
+- In the workshop, Francesca decided to _collapse_ the "default" implementation with the implementation for "conjured" items.
+
+  - I do not think that is a good idea. **We are so good at recognizing patterns that it often leads us to _collapse_ things that should not have been _collapsed_**.
+
+    - Resist the temptation to refactor duplication until you are certain, and I really mean certain, that there is no difference between use-cases.
+
+### Working with Existing Code
+
+- Consider using debugger to understand what the test is doing.
+
+- **Do not alter the code unless you understand what the code is doing**.
+
+  - This is often called **Chesterton's Fence** rule.
+
+## Wrapping up
+
+An interesting combination of soft skills and testing. We spent more time talking and thinking about the soft skills, and I believe that is a good thing.
+
+Some key points for more:
+
+- Asking questions is never a bad thing. There are no dumb questions. Nobody cares, and you should not be afraid to ask questions.
+
+- Pairing is a huge productivity booster. It is not for everyone, but usually people do not mind.
+
+- **Estimating is one of the hardest thing you will do as an engineer**.
+
+  - "Shooting an arrow" through the whole workflow end-to-end helps to uncover any unknowns.
+
+  - **If you have multiple tasks assigned to you, check for dependencies first**.
+
+    - You can start working on X, and in the meantime, solve the issue of missing dependency (for example missing designs) for task Y.
+
+- **It is up to you to advocate for yourself**.
+
+- **It is up to you to build a strong network of friends and people who might give you opportunities**.
+
+- **Everyone wants to be heard and understood**. You can facilitate conversations that enable that.
