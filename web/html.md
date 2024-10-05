@@ -302,15 +302,41 @@ Some time ago, browsers started to introduce the `dialog` element! This is a hug
 Another neat thing about this element is that **you do not have to use `z-index` to position it on top of the content**. The contents of the `dialog` are displayed in a special layer called **_top layer_**. No more `z-index` wars!
 
 ```html
-<dialog>
+<dialog id="myDialog">
   <form method="dialog">
     <p>Some text</p>
     <button type="submit">Close</button>
   </form>
 </dialog>
+<button onclick="myDialog.showModal()">Open</button>
 ```
 
 You will need some JavaScript to show the dialog/modal and most likely get the return value when it closes, but apart from that, the implementation requires no JavaScript at all!
+
+### Different flavours of the `dialog` element
+
+To show the dialog, you can use the `showModal` or `show` APIs. What is the difference?
+
+- The `showModal` **traps the focus** and **displays the backdrop**. It behaves as a regular "modal" you are used to.
+
+  - Good for modals.
+
+- The `show` does not trap the focus and there is no backdrop.
+
+  - Good for notifications and other popups. You could also implement tooltips via this API.
+
+## The `popover` attribute
+
+> This API is similar to the `dialog` element. You can [read about the differences here](https://developer.chrome.com/blog/introducing-popover-api#the_difference_between_a_popover_and_a_dialog).
+
+Another great addition to the web. Just like the `dialog` element, it will display in the _top layer_.
+
+```html
+<button popovertarget="popover">Toggle the popover</button>
+<div id="popover" popover>Content</div>
+```
+
+**The `popover` attribute has a feature of "soft dismiss"** which means _clicking outside_ will close the popover.
 
 ## The `radio` element is much more powerful than you think
 
