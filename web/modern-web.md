@@ -1,5 +1,21 @@
 # The modern web
 
+## Server side rendering & time
+
+> Related to [this great blog post](https://next-intl-docs.vercel.app/blog/date-formatting-nextjs)
+
+As soon as you decide to SSR your page, you have created a problem – the server is most likely in different timezone than the user who is requesting the page. If you do not address this difference, the time you display on the website might be incorrect or users might experience a "flicker" of UI related to displaying time.
+
+What can we do about it? **The most pragmatic solution seem to be keeping the timezone as UTC and and formatting the dates accordingly on client-side**.
+
+1. Make sure that your server, and the initial HTML payload _always_ returns dates in UTC timezone, using the same format.
+
+2. (Optional) On the client, take that date, and re-format it accordingly to the client current timezone.
+
+The step number two is optional, as you might choose to always display the time in UTC timezone. It is up to you!
+
+**To avoid hydration mismatches when performing step two, make sure you run this logic _after_ hydration is finished**. Consider adding a placeholder element when the UI is hydrating.
+
 ## Hydration
 
 > Taking notes based on [this video](https://www.youtube.com/watch?v=iR5T2HefqKk).
