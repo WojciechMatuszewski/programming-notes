@@ -529,6 +529,69 @@ export default App;
 The alternative being using `useRef` and `useState`. I would say the `useSyncExternalState` version is much easier to
 reason about (especially since the pub-sub model is so widely used).
 
+##### `useLocalStorage` hook
+
+> Base on [this great blog post](https://www.nico.fyi/blog/ssr-friendly-local-storage-react-custom-hook)
+
+The `useSyncExternalStore` is a perfect fit for `useLocalStorage` hook.
+
+```tsx
+function useLocalStorage({ key }: { key: string }) {
+  const storageEventTarget = useMemo(() => {
+    return new EventTarget();
+  }, []);
+
+  const value = useSyncExternalStore(
+    (onStoreChange) => {
+      const controller = new AbortController();
+
+      window.addEventListener(
+        // Only fires when change is made in another tab or window
+        "storage",
+        () => {
+          onStoreChange();
+        },
+        { signal: controller.signal },
+      );
+
+      storageEventTarget.addEventListener(
+        // This fires when we make a change through this hook.
+        "storage",
+        () => {
+          onStoreChange();
+        },
+        { signal: controller.signal },
+      );
+
+      return () => {
+        controller.abort();
+      };
+    },
+    () => {
+      return localStorage.getItem(key);
+    },
+    () => {
+      return null;
+    },
+  );
+
+  const setValue = useCallback(
+    (value: string) => {
+      localStorage.setItem(key, value);
+
+      storageEventTarget.dispatchEvent(new Event("storage"));
+    },
+    [key, storageEventTarget],
+  );
+
+  return [value, setValue] as const;
+}
+```
+
+**The `storage` event on the window will only fire if change was made by another window or tab**. Calling `setItem` in the same window that is listening to the event will not trigger this event. When testing, I also observed that **the `storage` event fires when you change the value directly through the web console**.
+
+So, to cover all possible cases, we also create the `EventTarget` we can send events to. Depending on the use-case, you could even make this `EventTarget` a global variable.
+
 #### Preventing hydration mismatches
 
 Let us say that the following component is server-side rendered. Can you spot the issue?
