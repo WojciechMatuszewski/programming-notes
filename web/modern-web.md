@@ -16,6 +16,44 @@ The step number two is optional, as you might choose to always display the time 
 
 **To avoid hydration mismatches when performing step two, make sure you run this logic _after_ hydration is finished**. Consider adding a placeholder element when the UI is hydrating.
 
+### Example
+
+Consider the following
+
+```tsx
+"use client";
+
+function ClientComponent() {
+  const date = new Date().toISOString();
+  return <span>{date}</span>;
+}
+```
+
+If we were to SSR this component, the initial HTML output would contain the _server_ formatted time, and the HTML after hydration would contain the _client_ formatted time. This is so-called **_hydration mismatch_**.
+
+If displaying the date based on the location of the client is not important, consider passing the date as prop!
+
+```tsx
+function ServerComponent() {
+  const date = new Date().toISOString();
+  return <ClientComponent date={date} />;
+}
+
+// --- //
+
+("use client");
+
+function ClientComponent({ date }: { date: string }) {
+  return <span>{date}</span>;
+}
+```
+
+Now, the date is consistent with the server time.
+
+What happens if you have multiple such components? **If you initialize the date in multiple _server components_, there might be a slight misalignment in time in client components, as different _server components_ might take longer/shorter to render**.
+
+To prevent this from occurring, use some-kind of per-request cache!
+
 ## Hydration
 
 > Taking notes based on [this video](https://www.youtube.com/watch?v=iR5T2HefqKk).
