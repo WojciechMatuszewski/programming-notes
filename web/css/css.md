@@ -1438,6 +1438,36 @@ The **children can use the rows from the parent, and the columns from the grandp
     </section>
     ```
 
+### Combining with `has` selector
+
+> Based on [this great blog post](https://frontendmasters.com/blog/selecting-previous-siblings)
+
+The _lobotomized owl_ selector allows you to select N _next_ siblings to a given elements
+
+```css
+.card {
+  /* Select the second sibling to the "current" card. */
+  & + * + * {
+  }
+}
+```
+
+But what if you want to select N _previous_ elements? **You can do this with `has` selector**!
+
+```css
+.card {
+  /* Select the second sibling to the "current" card */
+  & + * + * {
+  }
+
+  /* Select the second "previous" element to the current card */
+  :has(* + * + &) {
+  }
+}
+```
+
+**Notice the usage of `&` in the `:has` selector above**. The "last" element has to point to that "current" card, so it has to be `&`.
+
 ## The `color-mix` function
 
 - There are multiple **color models or formats or spaces** (I've seen different wording used in different articles) now
