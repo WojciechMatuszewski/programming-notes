@@ -592,6 +592,8 @@ function useLocalStorage({ key }: { key: string }) {
 
 So, to cover all possible cases, we also create the `EventTarget` we can send events to. Depending on the use-case, you could even make this `EventTarget` a global variable.
 
+**Notice the usage of `AbortController`**. I wager, the most well-known use-case for it is to cancel `fetch` calls, but **you can use it to cancel multiple listeners via single `.abort` call**.
+
 #### Preventing hydration mismatches
 
 Let us say that the following component is server-side rendered. Can you spot the issue?
