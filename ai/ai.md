@@ -96,3 +96,29 @@ The `action` step leverages _tools_ to retrieve information. **Keep in mind that
   - This makes the Agent a bit of a black box making observability a bit of a pain.
 
   - This also means that **the context window might get pretty large** – you do not control what kind of questions, and in what format, the agent sends to the LLM.
+
+## Evals
+
+- **Evals are a way to "grade" the output of the LLM**.
+
+---
+
+> Notes from [_"Deep dive": Generative AI Evaluation Frameworks_](https://www.youtube.com/watch?v=bLHQEG4V8-E)
+
+- "Evals" as a series of input/expected output pairs. We do not check the _exact_ match, but rather if the output _contains_ a given string.
+
+- Involving non-engineers into the process is quite important.
+
+  - You can have the PM to write those pairs, engineer to provide results, and then PM to "grade" them.
+
+- **You can use an LLM to "grade" the output of the another LLM**.
+
+---
+
+> Notes from [_"Evaluation for Large Language Models and Generative AI – A Deep Dive"_](https://www.youtube.com/watch?v=iQl03pQlYWY).
+
+- **Exact matching** is cheap, but has a lot of problems.
+
+  - The main reason is non-determinism. **Even the slight change in the prompt could cause the LLM to have different answer**.
+
+Finished https://youtu.be/iQl03pQlYWY?t=1486
