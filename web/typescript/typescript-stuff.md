@@ -164,11 +164,21 @@ In the section below, we will be using the `declare` keyword. Before diving into
 
 The **`declare` keyword tells TypeScript that a variable/function/module exists and might be used inside the code**. Think of it as declaring global variables with the benefit of autocompletion. Of course that is not the sole purpose of this keyword. Read more below!
 
+### A note on `.d.ts` or _declaration_ files
+
+> You can [learn more about _declaration_ files here](https://www.totaltypescript.com/books/total-typescript-essentials/modules-scripts-and-declaration-files#declaration-files).
+
+You should **consider avoiding using `.d.ts` files in your codebase**.
+
+If you are using `skipLibCheck: true`, which you most likely do, you **will not get errors from those files, no matter if they live in `node_modules` or in your source code**. This can be very problematic and lead to confusion and a lot of unnecessary debugging.
+
+**The `.ts` files can do _almost_ everything the `.d.ts` file can**. The one **exception** is **overriding types of another module**, which is very rarely needed.
+
 ### Augmenting NodeJs `process.env`
 
 Lets say you are building a NodeJs app and you want to have strongly typed `process.env` object.
 
-All you have to do is to create some `.d.ts` file (could be `.ts` file but I would go for `d.ts` for clarity) and use the fact that **namespaces are merged just like interfaces**.
+All you have to do is to create some `.ts` file and use the fact that **namespaces are merged just like interfaces**.
 
 ```ts
 declare global {
@@ -188,6 +198,7 @@ Some libraries add things into the `window` object. For example, the `Cypress` l
 In most cases, these should be ignored, but in some, like debugging, they are very handy.
 
 If you want to access them without ignoring TypeScript errors, you need to type them – augment the `window` property.
+
 Here is how to do it.
 
 ```ts
@@ -335,7 +346,6 @@ Here is what I mean
 
 ```ts
 // file foo.ts
-
 declare global {
   interface MyGlobalInterface {
     // PROPERTIES THAT ONLY THIS FILE USES
