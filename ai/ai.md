@@ -115,10 +115,46 @@ The `action` step leverages _tools_ to retrieve information. **Keep in mind that
 
 ---
 
-> Notes from [_"Evaluation for Large Language Models and Generative AI – A Deep Dive"_](https://www.youtube.com/watch?v=iQl03pQlYWY).
+> Notes from [_"Evaluation for Large Language Models and Generative AI - A Deep Dive"_](https://www.youtube.com/watch?v=iQl03pQlYWY).
+
+> [Another resource from the same source](https://github.com/guidance-ai/guidance/blob/main/notebooks/testing_lms.ipynb).
 
 - **Exact matching** is cheap, but has a lot of problems.
 
   - The main reason is non-determinism. **Even the slight change in the prompt could cause the LLM to have different answer**.
 
-Finished https://youtu.be/iQl03pQlYWY?t=1486
+  - The operations GPU make are also non-deterministic in nature. This means, that even if you set the _`temperature`_ to `0`, the choice between "top token" might be different.
+
+- **Similarity approach** _could_ look at **how much generated text** is in the **reference text**.
+
+  - One such method is called "BLEU" which stands for "Bilingual Evaluation Understudy".
+
+  - This method **is not that great when you want to consider the meaning or sentence structure**.
+
+    - There _might_ be a lot of overlap, but does the sentence make sense?
+
+- **Functional correctness** is where you **check for properties of the output**. The checking is done either manually or via LLM.
+
+  - Given "make the output concise", is it concise?
+
+  - Given "make it sound polite", is it polite?
+
+- **Model based approach** is where you craft a prompt to another LLM to grade the output.
+
+  - LLMs are really good at detecting sentiment or judging whether the answer is X.
+
+  - **There are special models trained to be the "judge"** for such testing.
+
+    - You should consider **using different model for evaluation and testing since models tend to favour their own answer**. I do not fully understand how is that even a thing, but apparently it is.
+
+- In a word where AI is often used for RAG, **evaluating the accuracy of RAG is critical**.
+
+  - Split RAG into two parts - the _retrieval_ and the _augmentation_.
+
+    - For _retrieval_, see if, for a given query, the "retriever" returned the most relevant documents.
+
+      - This is deterministic, as the vector values does not change, unless you re-calculate them with a different model.
+
+      - In this case, **exact matching seem to be a good approach**.
+
+    - For **_augmentation_, consider using model-based approach**.
