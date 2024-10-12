@@ -49,9 +49,24 @@
 #### Scaling
 
 - The AWS Lambda scaling quota is **per function** (it used to be _per-region_).
+
   - It can scale **1k instances every 10 seconds**.
 
-##### Compute saving plans
+##### One function per request, or is it?
+
+By default, AWS Lambda will spin up a new function for each request. This keeps the mental-model simple, and provides transaction-level isolation, but **it is not very efficient (even with horizontal scaling)**. The main problem is that **when you are waiting for I/O, you are paying for idle time**.
+
+**This is where the notion of `in-function` concurrency comes in**, where your function can take another request while the I/O task is pending.
+
+[Vercel implemented this solution](https://vercel.com/blog/serverless-servers-node-js-with-in-function-concurrency). There are also [open-source](https://github.com/pwrdrvr/lambda-dispatch) alternatives.
+
+It works by having **an ochrestration layer in-between the request and the AWS Lambda function**. Lambda (most likely an extension) opens up TPC connection to the orchestration layer and listens for events. The orchestration layer is aware when AWS Lambda is idling. If that is the case, it will push new event to that lambda.
+
+Very interesting concepts, but **if not implemented carefully, could have security-related ramifications**.
+
+You have to consider **the IAM permissions of a given AWS Lambda function**. It would be **unwise to push events destined to AWS Lambda A to AWS Lambda B since those two functions might have different IAM permissions**.
+
+#### Compute saving plans
 
 - in similar fashion to EC2 and containers, **you can sign up for a saving plan for AWS Lambda usage**.
 
