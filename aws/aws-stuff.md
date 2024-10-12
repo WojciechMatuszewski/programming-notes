@@ -54,6 +54,8 @@
 
 ##### One function per request, or is it?
 
+> [Great post by Yan Cui on this topic](https://www.linkedin.com/posts/theburningmonk_vercel-has-done-something-interesting-they-activity-7248255106742153216-HS9j/).
+
 By default, AWS Lambda will spin up a new function for each request. This keeps the mental-model simple, and provides transaction-level isolation, but **it is not very efficient (even with horizontal scaling)**. The main problem is that **when you are waiting for I/O, you are paying for idle time**.
 
 **This is where the notion of `in-function` concurrency comes in**, where your function can take another request while the I/O task is pending.
