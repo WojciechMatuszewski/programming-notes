@@ -241,6 +241,12 @@ box.addEventListener("pointerup", (event) => {
 
 [MDN has a very good documentation regarding this event](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture). Check out the demo – start dragging, then move your pointer down. Notice that you can still drag the element, despite having the pointer outside of its bounds!
 
+---
+
+Another way of thinking about it would be the following: **util this pointer cycle is complete, only trigger pointer events from this element**. [Here is a blog post talking about this use-case](https://www.joshuawootonn.com/react-drag-to-select#preventing-pointer-events-during-drag-with-setpointercapture).
+
+In essence, **we are making the pointer events "stick" to this element until we tell the browser otherwise**.
+
 ## One click can fire multiple events
 
 Imagine a scenario where you have a button which does something when the user clicks on it.

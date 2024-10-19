@@ -1,6 +1,24 @@
 # About tests
 
-TODO: <https://mtlynch.io/good-developers-bad-tests/>
+## Writing good tests
+
+> Based on [this blog post](https://mtlynch.io/good-developers-bad-tests/).
+
+- Test code should minimize the number of layers of abstraction.
+
+  - Keep the readers in your test function. **DO NOT make me scroll up and down to understand the logic**.
+
+    - This means moving _all_ the data test needs into the test function.
+
+    - You might also want to consider moving _all_ the "setup" code there as well.
+
+      - **If this is painful, your test is doing too much!**
+
+- **Favour simplicity over DRY**. Redundancy is okay.
+
+  - If there are too many redundant parts, your code has structural issues.
+
+    - Ask yourself: "why is my system so hard to test?"
 
 ## Inverse assertion
 
