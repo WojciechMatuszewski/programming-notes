@@ -1132,4 +1132,34 @@ A very nice refresher!
 
 ### DOM Side-Effects
 
-Finished 028
+- There are _refs_ and _refs callbacks_.
+
+  - **In newer versions of React, you can return a _cleanup_ function from the _ref callback_**.
+
+    - The `ref` _cleanup function_ will run **every time the component re-renders**.
+
+- You do not have to (and I strongly believe you should not) put the refs inside the dependency arrays.
+
+### Unique IDs
+
+- The `useId` is very handy – it **creates an ID that is guaranteed to stay consistent across the server-client boundary**.
+
+  - **This is because it leverages the "path" of the component in the "component tree"**.
+
+  - This also means that **for the `useId` to work properly, your component tree needs to be the same on the server and on the client**.
+
+### Tic Tac Toe
+
+- The `.with` function is very useful for inserting data at some position in an array.
+
+  ```js
+  const arr = [1, 2, 3];
+  const newArr = arr.with(1, 3);
+  // [1,3,3]
+  ```
+
+### Wrapping up
+
+A great way to refresh some of the basics of handling state. The workshop is definitely tailored more to people who are just starting out, but nevertheless, I found it valuable.
+
+I'm glad that Kent decided to include `useId` in the material. I find this hook very useful!
