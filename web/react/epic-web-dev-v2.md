@@ -1110,10 +1110,26 @@ A very nice refresher!
 
   - Having said that, there is nothing wrong with using multiple `useState` calls.
 
-## Side-Effects
+### Side-Effects
 
 - You can clean up event listeners via the `AbortController.signal`. Quite useful when you attach multiple listeners in a single `useEffect`.
 
 - **Make sure you pass the same parameters to `removeEventListener` as you did to `addEventListener`**. If you do not, the listener _might_ (it depends) not be removed.
 
   - [You can read more about it here](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener#matching_event_listeners_for_removal).
+
+### Lifting State
+
+- Lifting state up is often necessary when both components needs the same state.
+
+- **But you should also refactor the other way around** – if you longer need to share state, **you should _colocate state_** within the component that needs that state.
+
+- Whenever you manipulate where the state is defined, consider what happens when the component unmounts.
+
+  - If you collocated the state, the state will be reset.
+
+  - If you lifted the state up, the state will most likely persist.
+
+### DOM Side-Effects
+
+Finished 028
