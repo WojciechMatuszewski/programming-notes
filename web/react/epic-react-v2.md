@@ -1,4 +1,4 @@
-# Epic Web Dev V2 notes
+# Epic React v2
 
 ## React Server Components
 
