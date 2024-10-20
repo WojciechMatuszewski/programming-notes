@@ -1075,3 +1075,45 @@ A very nice refresher!
 - `flushSync` is your friend, but be mindful of the tradeoffs.
 
 - `useImperativeHandle` could really simplify your code, but only when used in the right circumstances.
+
+## React Hooks
+
+### Managing UI State
+
+- In the `event.currentTarget`, the `currentTarget` refers to the DOM node **to which the event listener is attached to**.
+
+  - The `.target` would be the element that triggered the event.
+
+  - **In some cases, the `currentTarget` = `target`, but they can be different**. The event might have bubbled "up" from the child to the parent.
+
+  - **The `currentTarget` is only available in the event handler "cycle"**. If you try to access it after performing some async work, it will be null!
+
+    ```js
+    onChange={event => {
+      const eventTarget = event.currentTarget
+      // event.currentTarget is accessible here.
+
+      setTimeout(() => {
+        // Prints the DOM node and `null`.
+        // We have "captured" the `eventTarget` in a variable so it is accessible.
+        // If you access it directly, it will be null.
+        console.log('target', eventTarget, event.currentTarget)
+      }, 500)
+
+      // event.currentTarget is accessible here.
+    }}
+    ```
+
+- **Deriving state will drastically simplify your code**.
+
+  - Do not fall into the trap of using `useState` everywhere. If you can, derive it!
+
+  - Having said that, there is nothing wrong with using multiple `useState` calls.
+
+## Side-Effects
+
+- You can clean up event listeners via the `AbortController.signal`. Quite useful when you attach multiple listeners in a single `useEffect`.
+
+- **Make sure you pass the same parameters to `removeEventListener` as you did to `addEventListener`**. If you do not, the listener _might_ (it depends) not be removed.
+
+  - [You can read more about it here](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener#matching_event_listeners_for_removal).
