@@ -1163,3 +1163,46 @@ A very nice refresher!
 A great way to refresh some of the basics of handling state. The workshop is definitely tailored more to people who are just starting out, but nevertheless, I found it valuable.
 
 I'm glad that Kent decided to include `useId` in the material. I find this hook very useful!
+
+## React Advanced Patterns
+
+### Composition
+
+- In this exercise we refactored a bunch of components to take `React.ReactNode` props instead of objects or strings.
+
+  - We named those components **_layout components_**.
+
+- I wonder how this technique relates to "slots". IMHO we created bunch of "slots" in this exercise already.
+
+### Latest Ref
+
+- Very useful pattern when you **want to ensure the function you are calling is the "latest" version of that function**.
+
+  - This means that it has captured all the latest variables and functions in its closure.
+
+  - **Super useful in scenarios where you pass functions as callbacks** and **when you take a function as parameter for custom hooks**.
+
+    ```js
+    function useTimeout(callback) {
+      useEffect(() => {
+        setTimeout(() => {
+          callback(); // The `setTimeout` created a closure with the INITIAL value of the `callback`.
+        }, 300);
+      }, []);
+    }
+    ```
+
+    ```js
+    function useTimeout(callback) {
+      const latestCallback = useRef(callback);
+      useEffect(() => {
+        latestCallback.current = callback;
+      });
+
+      useEffect(() => {
+        setTimeout(() => {
+          callback.current(); // Now we are calling the _latest_ version of the callback!
+        }, 300);
+      }, []);
+    }
+    ```

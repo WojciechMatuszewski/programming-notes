@@ -62,7 +62,7 @@ By default, AWS Lambda will spin up a new function for each request. This keeps 
 
 [Vercel implemented this solution](https://vercel.com/blog/serverless-servers-node-js-with-in-function-concurrency). There are also [open-source](https://github.com/pwrdrvr/lambda-dispatch) alternatives.
 
-It works by having **an ochrestration layer in-between the request and the AWS Lambda function**. Lambda (most likely an extension) opens up TPC connection to the orchestration layer and listens for events. The orchestration layer is aware when AWS Lambda is idling. If that is the case, it will push new event to that lambda.
+It works by having **an orchestration layer in-between the request and the AWS Lambda function**. Lambda (most likely an extension) opens up TPC connection to the orchestration layer and listens for events. The orchestration layer is aware when AWS Lambda is idling. If that is the case, it will push new event to that lambda.
 
 Very interesting concepts, but **if not implemented carefully, could have security-related ramifications**.
 

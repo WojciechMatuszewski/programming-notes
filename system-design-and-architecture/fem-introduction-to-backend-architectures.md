@@ -236,7 +236,7 @@ The silver lining here is that each architecture is viable given it fits the req
 
 - Split to services **only when you need to**. You are growing!
 
-  - Idenepdentn Development.
+  - Independent Development.
 
   - Fault Isolation.
 
