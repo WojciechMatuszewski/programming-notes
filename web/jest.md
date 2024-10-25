@@ -477,6 +477,7 @@ class MyReporter extends DefaultReporter {
 I've listed the hooks I've tried.
 
 You might be wondering about the `*` I've put within the `onTestResult` and `onTestCaseResult`.
+
 During my investigation I've noticed that **the logs will NOT be available to you unless jest processes two or more test files during a test run**.
 I'm not sure if this a bug or a desired behavior of the framework. Either way, this behavior is another reason why I decided to ditch the idea of a custom reporter for my use-case.
 
@@ -524,6 +525,7 @@ test("will not delete item if it does not exist in DB", async () => {
 ```
 
 I'm not doing anything crazy here. I'm mocking the two functions we should be mocking and using `requireActual` so that I'm able to import the _actual_ implementation of `deleteIfExistsInDB`.
+
 Now, we should be able to write the test and be on our way right? **Nope, the `lookupItemInDB` and `deleteItemInDB` will not be mocked!**. The reason being how mocking works in Jest.
 
 ### How mocking works in Jest
@@ -580,5 +582,101 @@ bag.deleteItemInDB = jest.fn().mockImplementationOnce(/**/);
 /* more code */
 ```
 
-If this feels weird to you, I completely get it, **it is weird**. I favour the first method of dealing with such situations as it's much more straightforward.
-Ultimately the decision is yours.
+If this feels weird to you, I completely get it, **it is weird**. I favour the first method of dealing with such situations as it's much more straightforward. Ultimately the decision is yours.
+
+## Different way to clear mocks
+
+> Based on [this article](https://www.epicweb.dev/the-difference-between-clearing-resetting-and-restoring-mocks).
+
+There are at least three ways to "clear" the mock in Jest.
+
+- `mock.mockClear()`
+
+- `mock.mockReset()`
+
+- `mock.mockRestore()`
+
+I have to admit, that I usually pick one of those, try it, if it does not do what I want to, I pick a different one. Cycle repeats until I achieve my goal. That is not an optimal way of doing things...
+
+So what is the difference?
+
+### The `mockClear` is all about clearing "call state" of the mock
+
+**Mocks are stateful**. They record the amount of times they were called and with what arguments.
+
+The **`mockClear` will RESET THE STATE OF THE MOCK** while preserving any mock implementations and so on.
+
+This is useful in scenarios where you want to "start anew" with the state, especially in the middle of the test.
+
+```js
+await button.click();
+
+await expect(mock).toHaveBeenCalledTimes(1);
+
+mock.mockClear();
+
+await otherButton.click();
+
+await expect(mock).not.toHaveBeenCalled();
+```
+
+### The `mockReset` is all about clearing ALL internal state of the mock
+
+Mocks can also provide implementations. This allows you to ensure the functions return the data you want.
+
+```js
+mock.mockImplementation(() => {
+  // Some implementation
+});
+
+// You can also do
+mock.mockReturnValue(/*Some value*/);
+```
+
+Usually, you define the mock implementation in each test case, because each test case tests something different.
+
+**And, to reset ALL the internal state of the mock, including the implementation, you would use `mockReset`**. Adding this call to **`beforeEach` is a great way to ensure we have a "pristine" mock to work with in each test**.
+
+```js
+const mock = {};
+
+beforeEach(() => {
+  mock.mockReset();
+});
+
+test("first test", () => {
+  mock.mockImplementation(() => {});
+});
+
+test("second test", () => {
+  mock.mockImplementation(() => {});
+});
+```
+
+Note that you **do not have to re-mock the function**. The mock itself persists. Only the internal state (all of it) is reset.
+
+### The `mockRestore` is all about de-mocking the function WITH A CAVEAT
+
+To understand the `mockRestore`, we have to understand how `jest.mock` works.
+
+- The `jest.mock` calls will be hoisted to the very top of the file it is defined in.
+
+- The `jest.mock` tells Jest to "replace" any imports to the specified module with a mock.
+
+- The **module is only mocked for the file that calls the `jest.mock`**. This ensures the `jest.mock` call does not _leak_ outside of a given test.
+
+The `mock.mockRestore` **will restore the module to its original implementation, but ONLY if that mock was created via `spyOn` function**.
+
+```js
+const consoleSpy = jest.spyOn(console, "log");
+
+console.log(1);
+
+expect(console.spy).toHaveBeenCalledTimes(1);
+
+consoleSpy.mockRestore();
+
+expect(console.log).toHaveBeenCalledTimes(0); // ERROR! Not a mock function
+```
+
+**The `mock.mockRestore` does not work for modules mocked with `jest.mock`**. ChatGPT tells me this is because the `jest.mock` does not hold onto the original implementation of the module. Sounds plausible, but I'm unsure if I trust this information.
