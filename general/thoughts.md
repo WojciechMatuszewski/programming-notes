@@ -524,6 +524,7 @@ _convergence_ phase after the _divergence_ phase.
 
 As software engineers, we are hired to solve problems. In most cases, people who pay for our work do not care _how_ we
 solve those problems.
+
 But if we are not careful, our peers might suffer from our recklessness and tactical thinking. **This happens when you
 solve the problems without building good abstractions**.
 
@@ -531,22 +532,47 @@ The art of building good abstractions is hard to master. It is because **abstrac
 quite dangerous.
 
 - Those _illusions_ will make you assume incorrect facts about the system.
+
 - Those _illusions_ will make you design for X when, in reality, you should design for Y.
 
 Let us consider RPC. RPC often is though as "local calls" with zero network latency. **That is not the case**!
-Now, consider a fellow software engineer who builds a system with this assumption. The RPC gives him the _illusion_ of "
-safety", but the reality is different.
 
-So, how do we design good abstractions that are NOT "illusions"?.
+Now, consider a fellow software engineer who builds a system with this assumption. The RPC gives him the _illusion_ of "safety", but the reality is different.
+
+So, how do we design good abstractions that are NOT "illusions"?
 
 - **Do not abstract too much**. Abstract what is necessary, but allow for flexibility.
+
 - This is VERY hard to get right.
+
 - **Do not name things by the pieces it is made out**.
+
 - This makes the abstraction useless. It "leaks implementation" details.
+
 - A good example is the "gas pedal" in cars. For petrol-powered vehicles, it kind of makes sense. But what about
   the electric vehicles?
+
 - **Create a new vocabulary for the abstraction**.
+
 - This shifts the "level" at which you communicate through the interface. The vocabulary should be rather generic.
+
+## Asymmetry of abstraction costs
+
+> [Based on this great blog post](https://fhur.me/posts/2024/thats-not-an-abstraction).
+
+Have you ever considered the cost of an abstraction?
+
+Good abstractions are _almost_ free, they do not contribute to the mental overhead that much. On the other hand, bad abstractions, are very costly, and will slow everyone on the team down.
+
+But given an abstraction, is the cost of abstraction uniformly distributed? **That does not appear to be the case**.
+
+When _you_ author an abstraction, you also posses the knowledge of the inner workings of it. This "shields you" from the _leaky abstraction problem_ tax – since you wrote it, you understand its inner workings.
+
+Now consider a fellow engineer you work with. They did not author that abstraction, so they do not know how it works internally. **For them, if the abstraction is poor, they will have to peel back the abstraction layer and spent time understanding the code**.
+
+This is **why it is not YOU who should be judging the usefulness of the abstraction, but rather the people who did not create it**.
+
+Next time you add an abstraction layer to your codebase, ask for feedback. Do not declare an abstraction "good" unless you get positive signal from other engineers. If not, you might as well delete your code and start anew (nothing wrong with that).
 
 ## Vanity metrics
 
