@@ -23,9 +23,7 @@ doing stuff so that we can fire off some kind of computation.
 There is an API for that: `requestIdleCallback`, but sadly is not all green when
 it comes to browsers.
 
-That said, you can actually do very interesting stuff with this API, described
-on Philip Walton's blog
-[Link to article](https://philipwalton.com/articles/idle-until-urgent/)
+That said, you can actually do very interesting stuff with this API, described on Philip Walton's blog. [Link to article](https://philipwalton.com/articles/idle-until-urgent/)
 
 ## Magic Webpack Comments
 
