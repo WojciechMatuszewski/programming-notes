@@ -1248,3 +1248,74 @@ Consider an alternative API:
 Here, we are on the other side of the "composability" spectrum. This API is also viable – it introduces different tradeoffs but enforces consistency.
 
 ### Slots
+
+This pattern was very new to me. Kent mentioned that, so far, he seen it only used in [`react-aria`](https://react-spectrum.adobe.com/react-aria/Menu.html#text-slots).
+
+This pattern **attempts to enable re-use of different "pieces" a given compound component might consist of**.
+
+Consider the `Toggle` compound component. The JSX might look like as follows.
+
+```jsx
+<Toggle>
+  <ToggleSwitch/>
+  <ToggleOnText>I'm switched on!</ToggleOnText>
+  <ToggleOffText>I'm switched off!<ToggleOffText>
+</Toggle>
+```
+
+Given the amount of components in design systems, we would have to create the same "Text" component for all relevant components.
+
+I do not see anything inherently bad with such "duplication", but if the number of similar "Text" components is large, you might want to consider the following API.
+
+```jsx
+function Toggle({ children }) {
+  const [on, setOn] = useState(false);
+
+  const slots = {
+    onText: { hidden: !on },
+    offText: { hidden: on },
+    switch: { on, onClick: setOn((on) => !on) },
+  };
+
+  return <SlotContext value={slots}>{children}</SlotContext>;
+}
+```
+
+The `SlotContext` is nothing but a bit of logic to merge props you define in `slots` constant and the ones that are passed to the element.
+
+```jsx
+function useSlotProps(props: Record<string, unknown>) {
+  const propsFromSlot = use(SlotContext);
+  return {...propsFromSlot, ...props}
+}
+```
+
+Then, your JSX might look like this:
+
+```jsx
+<Toggle>
+  <Switch/>
+  <Text slot = "onText">I'm switched on!</Text>
+  <Text slot = "offText">I'm switched off!<Text>
+</Toggle>
+```
+
+And here is the `Text` component.
+
+```jsx
+function Text(props: SpanProps & {slot?: string}) {
+  const props = useSlotProps(props)
+
+  return <span {...props}/>
+}
+```
+
+**As long as the "root" component defines `SlotContext`, we can re-use "slot compatible" components within _any_ context**.
+
+But this **pattern is not free**.
+
+- Another layer of indirection.
+
+- **There is no good way to have type-safety on the `slot` prop**. Since the element, in theory, can be used as a child of any element that defines the `SlotContext`, there is no good way to constrain the `slot` prop.
+
+  - Kent mentioned that `react-aria` performs a runtime check to ensure you did not make any typos while passing value to the `slot` prop.
