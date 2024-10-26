@@ -1206,3 +1206,45 @@ I'm glad that Kent decided to include `useId` in the material. I find this hook 
       }, []);
     }
     ```
+
+### Compound components
+
+This pattern is about having a set of components that compose together to form an interactive UI.
+
+```jsx
+<Toggle>
+  <ToggleOn>The button is on</Toggle>
+  <ToggleOff>The button is off</Toggle>
+</Toggle>
+```
+
+Usually, we have a "root" component, in this case the `Toggle` that holds the state, and shares that state via context with other, child components.
+
+The **_compound components_ pattern excel at composition**.
+
+```jsx
+<Toggle>
+  <ToggleOn>The button is on</Toggle>
+  <hr/>
+<div>
+  <ToggleOff>The button is off</Toggle>
+</div>
+</Toggle>
+```
+
+Consider an alternative API:
+
+```jsx
+<Select
+  options = {
+    [
+      name: "foo",
+      value: "bar"
+    ]
+  }
+/>
+```
+
+Here, we are on the other side of the "composability" spectrum. This API is also viable – it introduces different tradeoffs but enforces consistency.
+
+### Slots

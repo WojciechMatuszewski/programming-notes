@@ -378,3 +378,14 @@ Okay, so how does this relate to a gallery?
 You can put whatever inside those labels. Think images, or something else. Hide the radio buttons with CSS and you have a carousel!
 
 Pretty neat stuff
+
+## Labelable elements
+
+You most likely use `for` and `id` pairs to associate the `label` tag with an `input` tag.
+
+**But did you know you can associate the `label` with other elements, not just the `input` tag?**.
+In fact, you can do this for all _labelable_ elements. [Link to the spec](https://html.spec.whatwg.org/multipage/forms.html#category-label).
+
+> button input (if the type attribute is not in the Hidden state) meter output progress select textarea form-associated custom elements
+
+Very interesting!
