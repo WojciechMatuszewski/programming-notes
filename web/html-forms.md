@@ -446,3 +446,37 @@ input[type="checkbox"] {
 ```
 
 **You can use this technique for any other element that you wish to replace with an image, like `svg`**.
+
+## The `.submit` vs `.requestSubmit` method
+
+> Based on [this blog post](https://www.stefanjudis.com/today-i-learned/requestsubmit-offers-a-way-to-validate-a-form-before-submitting-it/)
+
+Have you ever had to submit the form via JavaScript manually? I bet you do.
+
+And I bet you tried to use the `.submit` method, like so:
+
+```js
+const form = document.querySelector("form");
+
+form.addEventListener("submit", () => {
+  // some code
+});
+
+form.submit();
+```
+
+The problem is that, **when using the `.submit` method, the `submit` event is never fired**. The form is submitted "as is". The browser **will not run any validation checks on the form inputs**.
+
+To _submit the form as if the user did it_, you **should consider using the `.requestSubmit` method instead**.
+
+```js
+const form = document.querySelector("form");
+
+form.addEventListener("submit", () => {
+  // some code
+});
+
+form.requestSubmit();
+```
+
+Now, the browser will check the validity of the form inputs before firing the `submit` event.

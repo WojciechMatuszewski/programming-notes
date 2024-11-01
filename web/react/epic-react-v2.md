@@ -1312,10 +1312,12 @@ function Text(props: SpanProps & {slot?: string}) {
 
 **As long as the "root" component defines `SlotContext`, we can re-use "slot compatible" components within _any_ context**.
 
-But this **pattern is not free**.
+But this **pattern is not free**:
 
 - Another layer of indirection.
 
 - **There is no good way to have type-safety on the `slot` prop**. Since the element, in theory, can be used as a child of any element that defines the `SlotContext`, there is no good way to constrain the `slot` prop.
 
   - Kent mentioned that `react-aria` performs a runtime check to ensure you did not make any typos while passing value to the `slot` prop.
+
+After [reading this documentation page](https://react-spectrum.adobe.com/react-aria/advanced.html) I _think_ I understand the motivation behind this pattern. If you want extreme levels of reusability and flexibility, which _some_ component libraries might require, it seem like the _slots_ pattern is a way to go.
