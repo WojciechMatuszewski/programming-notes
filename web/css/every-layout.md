@@ -403,6 +403,34 @@ You can **reverse the count – make the query apply when there are equal or few
 
 To style all the "rest" elements, use the `~` selector. Like in the case of "more than or equal to" query.
 
+##### Using `:has`
+
+> I find [this generator](https://css-tip.com/quantity-queries/) quite handy for writing CSS like this.
+
+I find this version easier to understand.
+
+Let us say you want for styles to apply only when the parent has `X` children. To achieve that, you would write the following:
+
+```css
+.boxes:has(.box:last-child:nth-child(X)) .box {
+}
+```
+
+This reads: select all `.box` classes inside the `.boxes` when the `.boxes` has a _last child_ which is also _the `X` child_.
+
+**Think of this as an "exact match"**.
+
+For **at most match**, you would do we following.
+
+```css
+.boxes:has(.box:last-child:nth-child(-n + X)) .box {
+}
+```
+
+This reads: select all `.box` classes inside the `.boxes` when the `.boxes` has a _last child_ which is also amongst first `X` positions.
+
+**Keep in mind that we start from `n = 0` and stop when `nth-child` reaches 0**.
+
 ### The Cover
 
 - There are many ways to _vertically_ center the content in the CSS.
