@@ -1321,3 +1321,57 @@ But this **pattern is not free**:
   - Kent mentioned that `react-aria` performs a runtime check to ensure you did not make any typos while passing value to the `slot` prop.
 
 After [reading this documentation page](https://react-spectrum.adobe.com/react-aria/advanced.html) I _think_ I understand the motivation behind this pattern. If you want extreme levels of reusability and flexibility, which _some_ component libraries might require, it seem like the _slots_ pattern is a way to go.
+
+### Prop Collections and Getters
+
+The main idea is to provide users with necessary props for a component to work. This is usually done via hook that returns either a _prop getter_ or _prop collections_.
+
+#### Props Collections
+
+You can think of them as "peanut butter props". You _spread_ them over a component.
+
+```jsx
+const { togglerProps } = useToggler();
+
+return <Toggle {...togglerProps} />;
+```
+
+**While this looks nice, it is not really ergonomic**. Consider the case where you want a custom `onClick` logic to run _alongside_ the `onClick` provided by the `togglerProps`.
+
+```jsx
+const { togglerProps } = useToggler();
+
+return (
+  <Toggle
+    {...togglerProps}
+    onClick={(...args) => {
+      togglerProps.onClick(...args);
+      // My custom logic
+    }}
+  />
+);
+```
+
+**This "reveals" what kind of props the `togglerProps` contains leaking the internal implementation details**.
+
+#### Prop Getters
+
+**Similar to _prop collections_, but more flexible pattern**.
+
+```jsx
+const { getTogglerProps } = useToggler();
+
+return (
+  <Toggle
+    {...getTogglerProps({
+      onClick: () => {
+        // my custom code
+      },
+    })}
+  />
+);
+```
+
+The `getTogglerProps` will take in all the additional props you provided and merge it with its own internal props.
+
+This is the pattern Kent recommends we consider using.
