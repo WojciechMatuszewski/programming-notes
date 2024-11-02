@@ -1451,3 +1451,43 @@ const {} = useToggler({
 ```
 
 I find this version more robust.
+
+### Control Props
+
+**You can think of this pattern as implementing your own `onChange` and `value` props**. Of course, the name of those props is heavily dependant on your use-case.
+
+This pattern is **_State Reducer_ on steroids, as it gives the user full flexibility**. The downside is that the user has to manage some state themselves.
+
+**It turns out, doing this requires a lot of work**. First, you have to determine whether the state in your hook is controlled or uncontrolled.
+
+```jsx
+function useToggle({ on: controlledOn, initialOn, onChange }) {
+  const [state, dispatch] = useReducer(reducer, { on: initialOn });
+  const isControlled = controlledOn != null;
+}
+```
+
+Next, you will need to implement the `onChange`-like function. You want to call the `onChange` only when it is provided.
+
+```jsx
+function useToggle({ on: controlledOn, initialOn, onChange }) {
+	const dispatchWithOnChange = (action: ToggleAction) => {
+		if (onIsControlled) {
+			const suggestedChanges = reducer({ ...state, on }, action)
+			return onChange?.(suggestedChanges, action)
+		}
+
+		dispatch(action)
+	}
+}
+```
+
+**The complexity grows with the number of "control props"**
+
+## Wrapping up
+
+It is interesting to see that some patterns did not change that much throughout the years.
+
+I first learned about _Prop Collections_, _State Reducer_ and _Control Props_ back in 2019 or so. To me, this means that those patterns are really valuable and robust!
+
+The _Slots_ pattern was very interesting. To me, this pattern steps into over-engineering territory, but I can also see its usefulness in very large organizations.
