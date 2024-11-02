@@ -1403,3 +1403,51 @@ const reset = () => {
 
 The `useRef` allows us to capture the _true_ `initialValue` and ignore any updates to it.
 Now, no matter if the `initialValue` is updated or not, we will always reset to that value.
+
+### State Reducer
+
+This one is **about using the _inversion of control_ to enable users of your APIs to implement custom behavior**.
+
+Imagine where you want something "special" to happen when state has certain value. One way to do this, would be to add some kind of prop to the API.
+
+```jsx
+const {} = useToggler({ disabledAfterClicks: 4 });
+```
+
+The problem is that these kind of properties are very shallow. They have a tendency to multiply and pollute the interface.
+
+Take a look at this alternative API.
+
+```jsx
+import { togglerReducer } from "./toggle";
+
+const {} = useToggler({
+  reducer(state, action) {
+    if (action.type == "toggle" && clickedTooManyTimes) {
+      return { ...state, on: state.on };
+    }
+
+    return togglerReducer(state, action);
+  },
+});
+```
+
+This way, the **user has complete control over their custom use-case, but also gets to preserve the default behavior**.
+
+Now, in the workshop, Kent decided to _export_ the `togglerReducer`. I'm not a fan. To be, it exposes too much internal details of the hook.
+
+**As an alternative to exporting the `togglerReducer`, you can pass it as a prop to the `reducer` function!**
+
+```jsx
+const {} = useToggler({
+  reducer(defaultReducer, state, action) {
+    if (action.type == "toggle" && clickedTooManyTimes) {
+      return { ...state, on: state.on };
+    }
+
+    return defaultReducer(state, action);
+  },
+});
+```
+
+I find this version more robust.
