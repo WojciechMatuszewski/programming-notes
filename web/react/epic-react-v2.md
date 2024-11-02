@@ -1375,3 +1375,31 @@ return (
 The `getTogglerProps` will take in all the additional props you provided and merge it with its own internal props.
 
 This is the pattern Kent recommends we consider using.
+
+### State Initializer
+
+This pattern is _mostly_ about how to properly handle resetting the state to its original, _initial_ value.
+
+```jsx
+const [state, setState] = useState(initialState);
+const reset = () => {
+  setState(initialState);
+};
+```
+
+While the code above might look correct to you, **what if the `initialState` changes during the lifecycle of the component?**.
+If it does, the `reset` will not reset to `initialState`, but the _updated_ `initialState`. This might, or might not be the behavior you want.
+
+I would argue that, if prop is called `initialX`, then it should reset to value which it was rendered with, not the updated `initialX`.
+
+```jsx
+const { current: initialState } = useRef(initialValue);
+const [state, setState] = useState(initialState);
+
+const reset = () => {
+  setState(initialState);
+};
+```
+
+The `useRef` allows us to capture the _true_ `initialValue` and ignore any updates to it.
+Now, no matter if the `initialValue` is updated or not, we will always reset to that value.
