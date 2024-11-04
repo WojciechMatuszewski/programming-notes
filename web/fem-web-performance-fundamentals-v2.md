@@ -179,3 +179,5 @@
   - Even if you can't change the image format, you can run your image through some kind of optimizer.
 
   - **Use the `picture` with `source` tags with `srcset` attributes**.
+
+Finished https://frontendmasters.com/courses/web-perf-v2/caching/
