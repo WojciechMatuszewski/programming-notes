@@ -180,4 +180,42 @@
 
   - **Use the `picture` with `source` tags with `srcset` attributes**.
 
-Finished https://frontendmasters.com/courses/web-perf-v2/caching/
+- **Leveraging browser cache** for JS / CSS files is a huge win.
+
+  - If you use a CDN to serve those files, the CDN most likely does all the work for you.
+
+## Improving CLS & INP
+
+- **Lazy loading images might cause your CLS score to go down**.
+
+  - As images load, they might push the content around causing layout shifts.
+
+    - **The solution** here is to set correct `height` and `wight` for the images.
+
+    - Alternatively, you can use `position: "absolute"` so that the content that loads does not "interact" with the layout.
+
+- To **optimize INP** you want to yield to main thread as soon as possible.
+
+  - You do not want to block the main thread.
+
+    - Using `setTimeout`.
+
+    - Using `requestAnimationFrame`.
+
+    - Using the [Scheduler API](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler).
+
+## Wrapping up
+
+- **Core Web Vitals are contributing to the SEO ranking score**.
+
+- Web performance matters, especially when you want to sell something.
+
+- **You have to be as fast as your users want you to be**.
+
+  - It all boils down to looking at _real_ data.
+
+- **There are a lot of metrics related to web performance**.
+
+- Doing _less stuff_ is usually the way to go.
+
+  - The less stuff you load, execute and so on, the faster your webpage will load.
