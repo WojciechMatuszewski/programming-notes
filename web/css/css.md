@@ -1867,3 +1867,63 @@ Since, **by default the popover is NOT anchored to the target**, you will most l
 Notice that I did not have to apply any additional styles to make the functionality work. Of course, If I need to customize the positioning, I can do that!
 
 To learn more, consult the [MDN article](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) about the Popover API.
+
+## The `display: stretch`
+
+By default, _block positioned_ elements, will _stretch_ the whole available space.
+
+```html
+<div class="container">
+  <!-- The box will take up all the horizontal space of the `container` -->
+  <div class="box"></div>
+</div>
+```
+
+That is not the case for `inline` elements like `button` tag. **For `inline` elements, the default width is `fit-content`**.
+
+What if you want to make the button span `100%` of the container width? You most likely would do the following:
+
+```css
+.button {
+  display: block;
+  inline-size: 100%;
+}
+```
+
+Okay, so far so good. Now what if you add margins?
+
+```css
+.button {
+  display: block;
+  inline-size: 100%;
+  margin-inline: 20px;
+}
+```
+
+As soon as you do that, you will **notice that the button overflows the `.container`**. The size of the `margin-inline` is not subtracted from the `inline-size` of `100%`.
+
+**One solution** would be to use `calc`.
+
+```css
+.button {
+  --inline-margin: 20px;
+  margin-inline: var(--inline-margin);
+  inline-size: calc(100% - 2 * var(--inline-margin));
+  display: block;
+}
+```
+
+**But you could also use the `inline-size: stretch` property**.
+
+```css
+.button {
+  inline-size: -webkit-fill-available;
+  inline-size: -moz-available;
+  inline-size: stretch;
+  margin-inline: 20px;
+}
+```
+
+At the time of writing this, the `stretch` requires vendor prefixes – something your CSS processor does for you.
+
+Interestingly, the `display: stretch` is yet to be documented on MDN.
