@@ -982,6 +982,8 @@ syntax is much more verbose.
 
 ## Cascade layers
 
+> [Learn more here](https://youtu.be/D79TND9w_AY?list=PLuZ_sYdawLiWenx-X315dfZNOaliVnSTY&t=539).
+
 Have you ever had problems with CSS selectors' specificity? In the end, most of us gave up and added the `!important` to
 the rule (or if it is evil, declare the property as a transition which will override the `!important`). You are not
 alone, and the web community has your back! – enter _cascade layers_.
@@ -1004,8 +1006,7 @@ alone, and the web community has your back! – enter _cascade layers_.
 }
 ```
 
-Another nice thing about cascade layers is that they are **declared only once** and **if declared again, they merge the
-inside content**.
+Another nice thing about cascade layers is that they are **declared only once** and **if declared again, they merge the inside content**.
 
 ```css
 @layer declared_second, declared_first;
@@ -1028,6 +1029,12 @@ inside content**.
     color: blue;
   }
 }
+```
+
+You **can import styles directly _into_ a layer**.
+
+```css
+@import "theme.css" layer(utilities);
 ```
 
 ## Inheritance and "proximity"

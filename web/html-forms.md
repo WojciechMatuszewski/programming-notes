@@ -112,6 +112,34 @@ The `search` element creates a _search landmark_, so you don't also need to add 
 
 - You still need to annotate the input with `type="search"`.
 
+### Semantic search with pre-defined queries
+
+Combine the `search` with `datalist` and you have created a very good search experience.
+
+You can [play around with the code here](https://codesandbox.io/p/sandbox/mwwww4).
+
+```html
+<div>
+  <search>
+    <form>
+      <fieldset>
+        <legend>Search for user</legend>
+        <!-- Notice the `list` attribute here -->
+        <input type="search" name="search" list="predefined-queries" />
+        <button type="submit">Search</button>
+      </fieldset>
+    </form>
+  </search>
+  <!--  Predefined queries -->
+  <datalist id="predefined-queries">
+    <option value="Ben"></option>
+    <option value="Tom"></option>
+    <option value="Amanda"></option>
+    <option value="Thomas"></option>
+  </datalist>
+</div>
+```
+
 ## The `type=search` input
 
 There are several differences between the `type="search"` and `type="text"` inputs.

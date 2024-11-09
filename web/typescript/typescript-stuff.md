@@ -2889,7 +2889,9 @@ foo<{ code: "MY_CUSTOM_CODE" }>({ code: "MY_CUSTOM_CODE" }); // Ok
 foo<{ code: "MY_CUSTOM_CODE" }>({ code: "SOMETHING_ELSE" }); // Error as it should be
 ```
 
-As you can see, with our naive implementation of `foo` function, one use-case was not met. The `foo({ code: "SOMETHING_ELSE" });` snippet is not producing TS errors because of _type parameter_ inference. TS compiler sees that you provide a `string`, thus the `code` type will be inferred as string.
+As you can see, with our naive implementation of `foo` function, one use-case was not met.
+
+The `foo({ code: "SOMETHING_ELSE" });` snippet is not producing TS errors because of _type parameter_ inference. TS compiler sees that you provide a `string`, thus the `code` type will be inferred as string.
 
 In other worlds, **the TS compiler will always expand the generic parameter to the widest possible type available**.
 
