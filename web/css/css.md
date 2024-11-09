@@ -1301,6 +1301,8 @@ or _SaSS modules_**.
 
 ## CSS Container Queries
 
+> More information [in this great blog post](https://www.joshwcomeau.com/css/container-queries-introduction)
+
 Remember setting the _media queries_ for the whole width of the page only to style some container that lived inside
 another container and it's width did not necessarily depended on the width of the viewport? You got the job done, but it
 was not something you enjoyed.
@@ -1328,6 +1330,36 @@ are composable, they might "appear" in different contexts. Ideally, they should 
 ```
 
 The syntax is very familiar. One addition is that you have to "name" your container to use the `@container` query.
+
+### Relationship with _CSS containment_
+
+What is this `inline-size` that every code snippet has? Why do we even need to specify it?
+
+Think about the case **where using container query changes the height of the element**.
+
+```css
+.foo {
+  @container (max-width: 2rem) {
+    font-size: 30rem;
+  }
+}
+```
+
+We have just created an infinite loop. When you shrink `.foo` you will bump its `font-size`. This will make `foo` bigger, removing the bigger `font-size`. This makes the `.foo` smaller, adding the bigger `font-size`...
+
+The **`inline-size` or `size`** is part of [CSS containment](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment) spec. It **instructs the element to skip retrieving information about its size (or inline-size) from the children it renders**.
+
+This prevents the infinite loop from happening!
+
+#### Why `inline-size`?
+
+Armed with the knowledge about _CSS containment_ and this _infinite loop_ problem, let us consider the `inline-size` value of `container` property.
+
+**If you change the container width, it is very probable that the container will change its height**. Adding/removing children also will, most likely, affect the height.
+
+If that is the case, using `container: inline-size` makes sense. **We want the container to have the width dictated by its parent (or CSS), but react to `height` changes based on the children**.
+
+Notice that there is no infinite loop to be had here. Height information comes from the children. Width information comes from the parent (or CSS).
 
 ### Pitfalls
 
