@@ -2901,7 +2901,7 @@ So, **always declare the generics as close to where they are assigned** and **ke
 
 ### Lazy type evaluation - prevent type parameter inference
 
-In this situation, what we want is for **TypeScript to defer the inference of the `Obj` until we provide it explicitly**. This is not possible without tricks as **the default behavior of TypeScript is to always infer the type parameter from it's first occurrence**.
+In this situation, what we want is for **TypeScript to defer the inference of the `Obj` until we provide it explicitly**. This is possible with the `NoInfer` keyword!
 
 The best example would be a `compare` function.
 
@@ -2912,25 +2912,19 @@ compare(1, "123"); // "123" is not assignable to type number
 compare("123", 1); // 1 is not assignable to type string
 ```
 
-Notice that the type parameter `A` got inferred from it's first occurrence. We can **change this behavior by leveraging lazy evaluation of the type parameters**. This is possible **with conditional types, as when TypeScript sees `?`, it will defer the inference until after the T is resolved**.
+Notice that the type parameter `A` got inferred from it's first occurrence.
 
 ```ts
-type NoInfer<T> = [T][T extends any ? 0 : never];
+declare function getFromArray<const T>(values: T[], value: T): T;
 
-declare function compare<A>(a: NoInfer<A>, b: A): boolean;
-
-compare(1, "123"); // 1 is not assignable to type string
-compare("123", 1); // "123" is not assignable to type number
+getFromArray(["foo", "bar"], "bazz"); // foo | bar | baz
 ```
 
-Now it's the second parameter that is used for the inference. How this method could help us solve our problem?
+Notice that the `bazz` was "added" to the `T[]`.
 
----
-
-Let us use the `NoInfer` type and apply it to our problem. All of this is inspired by [this StackOverflow answer](https://stackoverflow.com/a/56688073).
+Let us use the `NoInfer` type and apply it to our problem.
 
 ```ts
-type NoInfer<T> = [T][T extends any ? 0 : never];
 type MyObj = {
   code: "MY_CODE";
 };
