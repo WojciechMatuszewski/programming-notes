@@ -103,4 +103,58 @@
 
   After, the same query, would make the LLM to ask about the location.
 
-Start part 4 next -> https://frontendmasters.com/workshops/build-ai-agent/
+## Function Calling
+
+- When ChatGPT returns with a "tools" array, you **have to** return a message containing the `toolId` and the output.
+
+  - The output could be an error message or anything that the tool returned.
+
+- **Scott mentions is is better to have a couple of tools with well-defined interfaces rather than a few of them that can do a lot**.
+
+  - The specificity helps the AI to pick which tool to call.
+
+- Remember that **you can "fake" a tool call**. The AI does not care _who_ put the `role: "assistant"` or `role="tool"` data in the context.
+
+  - Consider a scenario where running a tool requires user permission. You can "swap" the tool AI trying to use with your own "approval" tool.
+
+    - This is much easier than having the AI to decide that it should call the approval tool before running X tool. AI are non-deterministic!
+
+## Agent Loops
+
+- After we get the tool response, we have to call the SDK again. This way, the user gets a nicely formatted response from the AI (`role="assistant"`), rather than the bare bones response from the tool.
+
+  - To achieve that, you usually run a loop until you are done calling all the tools.
+
+- As with any loop, you have to ensure you are catching and handling errors.
+
+- Another consideration might be _user interruption_.
+
+  - Picture a situation where user disconnected or said "never mind" when agent runs the loop.
+
+    - This one might be tricky to do since you have to stop a "live" system!
+
+## Real Tools
+
+We have been using hardcoded data for our tools. In this section we augment our setup with tool functions that make network calls.
+
+## Optimize
+
+In this section, Scott explained the **importance of a good system prompt and clear descriptions for tool functions**.
+
+- Remember that the system prompt can include "live" data.
+
+  - **Consider using XML/HTML format inside the system prompt**. You can easily indicate different sections in your system prompt that way.
+
+## Wrapping up
+
+A great workshop to brush up on the basics.
+
+I appreciate that we did not use the `openai.beta.chat.completions.runTools` and called it a day.
+
+- Context is the king.
+
+- A good system prompt will take you far.
+
+- It is very easy to spend a LOT of money of SDK calls.
+
+  - Pay attention to the amount of tokens you are putting in and getting out!
