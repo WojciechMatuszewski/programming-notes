@@ -138,4 +138,32 @@
 
   - This is especially problematic for chat-like apps, where the recollection of previous conversation and the ability to refer to it might be what makes or breaks the product.
 
-Finished part 5 -43:12
+- Scott mentioned the following ways one can manage memory in the context of AI apps
+
+  - **Basic message window slicing**: You take all existing messages and only forward X of them to AI. This makes AI to have great short-term memory, but no long-term memory.
+
+  - **Basic Summarization**: You produce a summary of the last X messages. Instead of providing AI with those messages, you instead provide it with the summary.
+
+  - **Hierarchical Summarization**: Instead of a single summary of X last messages, you maintain multiple summaries. For example global, recent and immediate summaries.
+
+  - **Topic-Based Segmentation**: You make summaries based on certain topics of the conversation.
+
+  - **Importance-Based retention**: You only retain messages that contain _important_ information and summarize the rest.
+
+  There are more techniques, but they all boil down to making a summary of what was said to this point.
+
+## Beyond
+
+Scott mentions is pretty much more of the same.
+
+- Better RAG.
+
+- Better memory management.
+
+- Better evals.
+
+- Generating UI based on user prompts.
+
+- Using LLMs to orchestrate other LLMs.
+
+## Wrapping up
