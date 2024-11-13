@@ -167,3 +167,13 @@ Scott mentions is pretty much more of the same.
 - Using LLMs to orchestrate other LLMs.
 
 ## Wrapping up
+
+Such a great workshop. It teaches you _just enough_ to start exploring this space on your own.
+
+- _Evals_ are quite interesting way of testing the AI output.
+
+- Managing memory is an art. It is hard to get this right.
+
+  - Given how crucial this is to making a good AI-powered experience, I bet this problem will be solved in a near future.
+
+- _Human in the Loop_ pattern is quite fascinating.
