@@ -1056,3 +1056,60 @@ const onChange = useMemo(() => {
   return debounce((value) => callbackFromPropsRef.current(value), 200);
 }, []);
 ```
+
+## Storing information from previous renders
+
+[Based on this section from React docs](https://react.dev/reference/react/useState#storing-information-from-previous-renders)
+
+Have you ever written `usePrevious` hook? Or had to get the _current_ and the _previous_ value to calculate something?
+
+I dare to say that you most likely did, hopefully after exhausting all other possible solutions like _deriving_ state, or handling state in callbacks.
+
+How did you write the hook? Using `useEffect`?
+
+```ts
+function usePrevious(state) {
+  const prevState = useRef();
+
+  useEffect(() => {
+    prevState.current = state;
+  });
+
+  return prevState.current;
+}
+```
+
+This **will get you the value from the _previous_ rendering cycle**.
+
+It works because of when the `useEffect` is invoked in relation to React rendering your components AND the fact that changes to `useRef` does not cause the components to re-render.
+
+1. State changes
+2. Hook is triggered.
+3. Hook returns the `prevState.current`
+4. Rendering is finished.
+5. The `useEffect` inside the hook triggers.
+6. The `prevState.current` changes.
+
+The component gets the "old" value ONLY because the change to `prevState.current` did not trigger the re-render.
+
+As an alternative here, you can use _state_ instead of refs.
+
+```ts
+function useTrend(count) {
+  const [prevState, setPrevState] = useState(count);
+  const [prevCount, setPrevCount] = useState(count);
+  const [trend, setTrend] = useTrend(count);
+  if (prevCount != count) {
+    setPrevCount(count);
+    setTrend(prevCount > count ? "decreasing" : "increasing");
+  }
+
+  return trend;
+}
+```
+
+Notice that we are calling `useState` _inside_ the render function. Usually this is a bad idea, but here, we are putting those calls behind `if` condition.
+
+**React will NOT re-render the children of your component when you do this**. According to the docs, **if you update state _during_ render, React will immediately re-render your component skipping the children for that render**.
+
+This is pretty nice, as using `useEffect` here would cause the children to re-render twice.
