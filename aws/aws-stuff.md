@@ -540,8 +540,7 @@ You have to consider **the IAM permissions of a given AWS Lambda function**. It 
 
 - **Synchronous** invocation – you are responsible for handling errors.
 
-- **Asynchronous** invocation – uses SQS under the hood. Will **retry FUNCTION errors twice**. You can (and probably should) set up a DLQ.
-  **When throttled, will retry up to 6 hours**. After the 6 hours pass, your event is either dropped or moved into the DLQ. Remember that you can **use Lambda destinations with async invokes**.
+- **Asynchronous** invocation ([read more here](https://theburningmonk.com/2024/11/here-is-one-of-the-most-misunderstood-aspects-of-aws-lambda/?utm_campaign=evergreen-posts&utm_content=read-on-my-blog&utm_source=newsletter)) – uses SQS under the hood. Will **retry FUNCTION errors twice**. You can (and probably should) set up a DLQ. Note that **this invocation will never be throttled, even if you set the _reserved concurrency_ to 0**. This happens because **you are putting your request into internal AWS Lambda queue, rather than invoking your function**. Now, **it is the internal AWS Lambda poller that will fail after retrying for 6 hours**.
 
   - Recently, AWS added a way to monitor failures and the congestion on the internal SQS responsible for handling the async invokes. [You can read more about it here](https://aws.amazon.com/blogs/compute/introducing-new-asynchronous-invocation-metrics-for-aws-lambda/). It does seem to me like they are exposing more and more internal implementation details to end customers. Interesting move.
 
