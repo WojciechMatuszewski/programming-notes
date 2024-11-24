@@ -132,7 +132,7 @@
 
   - You are now much more knowledgeable in certain subject.
 
-### Prompting
+## Prompting
 
 - **Prompting is like writing code but in natural language**.
 
@@ -142,4 +142,82 @@
 
   - _Few-shot_ prompting where you provide valid data in your query to "ground" the model.
 
-Start Part 8
+- LLMs you interact with have a _system prompt_ that mostly comprises of guardrails.
+
+  - In the workshop, we looked at the original GitHub Copilot prompt.
+
+- **Promoting is an iterative process**. You should iterate on the prompt to get the best result.
+
+  - The better the prompt, the shorter the output, the less it costs and the faster you get the answer.
+
+### Prompt components
+
+- Role, goal and the output format.
+
+### Challenges
+
+- Communication. The better you can explain what you want, the better the result will be.
+
+- Unless you are using fine-tuned models, like the OpenAI one where you can provide the response schema, you can't really assume the result will be in the format you asked it to be.
+
+### Mental model
+
+- Prompt engineering is about **making implicit assumptions _explicit_**.
+
+  - It is hard for us, because we implicitly understand so many things.
+
+    - LLM does not have this level of understanding!
+
+### Optimizations
+
+#### Pre-generation
+
+- **Frame your question in a given situation**.
+
+  > Engage in student-teacher dialog...
+
+  > The masterful French translator flawlessly translates the phrase into English:
+
+  > Give an educated guess of three experts most capable of solving this question:
+
+- **Few-shot prompting**. You can provide a couple of examples before asking the question.
+
+- Nudge the LLM to ask clarifying questions.
+
+  - This is very powerful, as it narrows down the "scope" of the answer.
+
+- **Examples of chain of thought** are also very powerful.
+
+  - Even mere _let us go step by step_ can change the output of the model in a significant way!
+
+- Giving the LLM access to tools.
+
+- The **ReAct framework**, where the model makes observations and acts on those observations.
+
+#### Post-generation
+
+- Ask the model to self-criticize the answer.
+
+## Wrapping up
+
+- I loved the first part, where we slowly built our own, little, LLM.
+
+  - We did not code anything, but we built a solid mental model.
+
+    - The "multiplication matrix" as a single layer of weights.
+
+    - Applying the gradient descent on our matrix and seeing how it improved our scores.
+
+    - Using sigmoid function to "squash" our results into percentages.
+
+- The second part was more about using LLMs.
+
+  - We talked about how LLM _reasons_ about the input.
+
+  - We spent considerable amount of time on looking how various prompts influence the output.
+
+    - There is surprisingly a lot you can do to make the LLM output more useful.
+
+      - The most important techniques are: _few-shots prompting_, using _ReAct_ model and _chain of thought_.
+
+      - The most surprising to me was the technique where we **asked the LLM to criticize its own answer**.
