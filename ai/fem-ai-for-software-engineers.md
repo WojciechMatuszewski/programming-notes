@@ -58,4 +58,88 @@
 
     - **This technique is called _gradient descent_**.
 
-Finished -34:29 part 4
+- After applying the _gradient descent_, we have noticed that our output stopped being binary (1 or -1).
+
+  - This is where **we applied the sigmoid function** to **"squash" the numbers to percentages**.
+
+    - Now, we will never get 0% for "definitely not a smile", and we will never get 100% for "most certainly a smile", but the values will be close to 0% and 100% respectively.
+
+### Combining neural networks
+
+- If you have one neural network, for example for detecting smiles, you can use that network to generate another which would generate images that contain a smile.
+
+  - You build something basic that generates the image, and then feed that input to the existing neural network. You keep adjusting the weights in the new neural network until you are satisfied with the results.
+
+## LLMs and Embeddings
+
+### Representing the data (focused on text)
+
+- Text is thought of as a series of _tokens_.
+
+  - The **_token_ is the smallest unit of semantic meaning**. It **could be the whole word, but it also could be a sub-word**.
+
+- **Embeddings express the model's understating of the input**.
+
+  - If looked at in isolation, those are opaque.
+
+    - We can visualize how LLM understands the input if we take lots of embeddings into the account.
+
+### Self-attention
+
+- When we talk, **we understand that words could have different meaning depending on what other words "surround" that given word**.
+
+  - **This "understanding" is called _attention_**. That is to say, the LLM understands the correlation of a given word to another word in a sentence.
+
+  - The **term _self-attention_ refers to the ability for the LLM to _embed_ the relevance to a given word of every other word in a sentence**.
+
+    For example, when saying "I have no interest in", the relevant words for "interest" are "no" and "in".
+
+    For example, when saying "The rising interest rate", the relevant words for "interest" are "rising" and "rate".
+
+    For example, when saying "The dog chewed the bone because it was hungry", the relevant words for "it" are "dog", "chewed", and "hungry".
+
+### Pre-training
+
+- This is a process of building an _understanding of the dataset_ – the ability to predict its pre-training data.
+
+  - In the context of words, that would be guessing which word should come next, and checking with the pre-training data.
+
+    - **The model adjust itself depending on the result**.
+
+- The outcome of this training is a **_foundational_ model**.
+
+  - The _foundational_ model can **generate documents** that **resemble its pre-training data**.
+
+- This is not yet the chat-like LLMs that you are used to.
+
+- Think of pre-training like getting basic education. You know the basics of maths, biology and other subjects, but you lack the _specialization_.
+
+### LLM Knowledge
+
+- We do not have a good way of discovering what the model "knows".
+
+  - We are programming our models to generate next word in the sentence, so it is understandable that we do not know what it will generate.
+
+    - **This would explain why models "hallucinate"**.
+
+### Guiding the model (fine-tuning)
+
+- This process often involves showing the model lots of examples of how to respond to different queries.
+
+  - You can make the model talk like a pirate or act like a chatbot assistant.
+
+- Think of fine-tuning as graduating from colleague with a degree in certain subject.
+
+  - You are now much more knowledgeable in certain subject.
+
+### Prompting
+
+- **Prompting is like writing code but in natural language**.
+
+  - You _guide_ the model to provide you with the best answer.
+
+- There are many ways to increase the likelihood of getting a good and valid answer.
+
+  - _Few-shot_ prompting where you provide valid data in your query to "ground" the model.
+
+Start Part 8
