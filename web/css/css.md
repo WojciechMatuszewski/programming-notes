@@ -1086,9 +1086,9 @@ How could we make these styles work? **We can achieve the desired end-result via
 </div>
 ```
 
-Notice that we do not target any specific tag. **If two or more ancestor elements have set values, the child element
-will always use the value from its closest parent**. While this might not be super helpful for the `color`, you should
-know that **custom properties also are subject of inheritance**.
+Notice that we do not target any specific tag. **If two or more ancestor elements have set values, the child element will always use the value from its closest parent**.
+
+While this might not be super helpful for the `color`, you should know that **custom properties also are subject of inheritance**.
 
 ```html
 <style>
@@ -1114,6 +1114,32 @@ know that **custom properties also are subject of inheritance**.
 ```
 
 Now we are talking are we not? **This could be used for theming specific sections of a given page**!
+
+## The usefulness of `overflow: clip`
+
+> Based on [this great blog post](https://ishadeed.com/article/overflow-clip/)
+
+**The main issue with `overflow:hidden` is that if you specify it for one axis, the other axis becomes `overflow:auto`**.
+
+```css
+.foo {
+  overflow-y: hidden;
+  /* The X axis is now implicitly "auto" */
+}
+```
+
+This means that **the other axis will most likely show a scrollbar and actually clip both axis**.
+
+The **benefit of `overflow: clip` is the ability to specify which axis we want to clip without affecting the other axis**.
+
+In addition, **you can control the "boundary" of the clipped area**.
+
+```css
+.foo {
+  overflow-x: clip;
+  overflow-clip-margin: 40px;
+}
+```
 
 ## Animating the height `auto` property (or any other size-related property)
 
