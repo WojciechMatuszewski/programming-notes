@@ -158,3 +158,11 @@ The `action` step leverages _tools_ to retrieve information. **Keep in mind that
       - In this case, **exact matching seem to be a good approach**.
 
     - For **_augmentation_, consider using model-based approach**.
+
+## AI Gateways
+
+- Similar to an _API Gateway_ but specialized for AI.
+
+- In some cases, allows you to pick which model you want to make request to.
+
+**Basically an _API Gateway_ but for AI**. The metrics are tailored for AI no matter what provider you are using.
