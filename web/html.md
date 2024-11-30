@@ -389,3 +389,20 @@ In fact, you can do this for all _labelable_ elements. [Link to the spec](https:
 > button input (if the type attribute is not in the Hidden state) meter output progress select textarea form-associated custom elements
 
 Very interesting!
+
+## The element(s) with `id` is globally accessible
+
+If you specify the `id` attribute on the element, you can access that element by referring to the id. No need for `querySelector`.
+
+```html
+<div id="foo">
+  text
+  <div></div>
+</div>
+<script>
+  // Logs the element
+  console.log(foo);
+</script>
+```
+
+**This will also work when you have multiple elements with the same `id`**. If that is the case, **the global variable will hold a `HTMLCollection` array**.
