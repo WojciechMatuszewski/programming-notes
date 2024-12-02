@@ -88,3 +88,41 @@
 - I **really like the DX of `vitest`**. Those functions to mock globals are great.
 
   - Having said that, I fear that their convince promotes bad practices that, instead of passing those as parameters, you use them globally throughout the application.
+
+## Network
+
+- The native `Response` type has a `json` method!
+
+  - [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/Response).
+
+- MSW is such a good tool for mocking network. You can even mock _network errors_!
+
+- TIL that **throwing inside the `catch` block will propagate that error to "outside" of the promise or the next `catch` block**.
+
+  ```ts
+  fetch("foo").catch((error) => {
+    throw new Error("my custom error", { cause: error });
+  });
+  ```
+
+  This means that **you can skip wrapping the "whole thing" with `try/catch`**. This is great as it reduces the levels of nesting of the code.
+
+- I do not have anything to back this up, but it _feels_ to me like `vitest` is handling mocking timers in async context better.
+
+## Modules
+
+- **Mocking modules should be used as last resort**.
+
+  - By **mocking a module, you effectively throw away its implementation**. This is dangerous as **you might end up having to re-write parts of that logic** which might **cause you to test your mock in the process**.
+
+- **Dependency injection is your friend here**.
+
+  - Before mocking, see if we can use DI to test the implementation.
+
+- Mocking is done via `vi.mock` and `vi.hoisted` ([documentation](https://vitest.dev/api/vi.html#vi-mock)).
+
+## Wrapping up
+
+Great introduction to `vitest`. I would benefit from similar workshop for `jest` when I was starting to use that library.
+
+While we did not go _deep_ into each topic, the material should be sufficient for everyone to get started and be productive.
