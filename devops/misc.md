@@ -38,3 +38,25 @@ To handle the HTTPS request, the server would have to decrypt the data, handle i
 The **term _TLS Termination_ refers to a point where the data is decrypted and forwarded to the destination**. **This is mostly implemented via _load balancers_, _api gateways_ or _CDNs_**.
 
 When the destination responds, the "TLS Terminator" will re-encrypt the data.
+
+## Different types of Proxies
+
+Keep in mind that the definition change depending on from which _side_ of the request you are looking at.
+
+From the origins perspective, the proxy would be a reverse proxy and so on.
+
+### The _forward proxy_ (or _proxy_)
+
+The **_forward proxy_ sits between you AND the destination**.
+
+A good **metaphor is having an assistant call a restaurant and arrange diner for you**. You have "the assistant in front of you" and the restaurant is the "destination".
+
+From technical perspective, **a good example of a proxy would be any CDN or some tool that filters network traffic**.
+
+### The _reverse proxy_
+
+The **_reverse proxy_ sits between the incoming traffic and the server**.
+
+A good **metaphor is visiting a restaurant and asking for table. The waiter will assign you a seat. From the restaurants perspective, the waiter is a _reverse proxy_**.
+
+From technical perspective, **a good example of a _reverse proxy_ would be a load balancer**.
