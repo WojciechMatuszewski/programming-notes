@@ -99,3 +99,47 @@ Guess, what. There is an `Intl` class for that. The `Intl.Collator`. [It is pret
 ```
 
 The best part is that **this class enables you to really take control over locales, and all the other various options**. I have to say, I'm impressed how configurable this class is. Kudos for the spec creators.
+
+## Symbols
+
+> Based on [this blog post](https://www.trevorlasn.com/blog/symbols-in-javascript).
+
+The `Symbol` primitive allows you to create unique value that will not clash with other values.
+
+It is **a common pattern to use the `Symbol` primitive for object keys – think metadata**.
+
+```js
+const uniqueKey = Symbol("foo");
+const user = {
+  [uniqueKey]: 123,
+  name: "Alex",
+};
+```
+
+**The benefit of using the `Symbol` as a key** is that they **will not show up in `.keys`, `.entries` and other similar functions**.
+
+```js
+Object.keys(user); // ["name"]
+Object.entires(user); // [["name", "Alex"]]
+for (let key in person) {
+  console.log(key); // "name"
+}
+```
+
+You have to use the **`getOwnPropertySymbols`** to get the symbols from the object.
+
+### The `Symbol.for` API
+
+You can use the **`Symbol.for` API to create shared unique values**.
+
+```js
+const uniqueSymbol = Symbol("unique");
+const uniqueSymbol2 = Symbol("unique");
+
+uniqueSymbol == uniqueSymbol2; // false
+
+const sharedUniqueSymbol = Symbol.for("unique");
+const sharedUniqueSymbol2 = Symbol.for("unique");
+
+sharedUniqueSymbol == sharedUniqueSymbol2; // true
+```
