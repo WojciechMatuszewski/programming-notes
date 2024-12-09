@@ -28,3 +28,13 @@ This allows you to **monitor how the new deployment behaves without impacting us
 This deployment type **quite complex and could be costly, but is definitely worth it for critical systems**. If your new deployment explodes, there is no need to rollback – no users are using it!
 
 **Having said that, it is a great way to load test your new deployment**. You can't do that with canary deployments as it would require you to shift _all_ traffic to the new version, rendering the canary deployment an "all at once" deployment.
+
+## TLS Termination
+
+When making a request to a server, you most likely use HTTPs protocol. This ensures the data you sent is encrypted and secure.
+
+To handle the HTTPs request, the server would have to decrypt the data, handle it, encrypt it back and send it to you – **this is a lot of work for a single server to do**.
+
+The **term _TLS Termination_ refers to a point where the data is decrypted and forwarded to the destination**. **This is mostly implemented via _load balancers_, _api gateways_ or _CNDs_**.
+
+When the destination responds, the "TLS Terminator" will re-encrypt the data.
