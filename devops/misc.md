@@ -31,10 +31,10 @@ This deployment type **quite complex and could be costly, but is definitely wort
 
 ## TLS Termination
 
-When making a request to a server, you most likely use HTTPs protocol. This ensures the data you sent is encrypted and secure.
+When making a request to a server, you most likely use HTTPS protocol. This ensures the data you sent is encrypted and secure.
 
-To handle the HTTPs request, the server would have to decrypt the data, handle it, encrypt it back and send it to you – **this is a lot of work for a single server to do**.
+To handle the HTTPS request, the server would have to decrypt the data, handle it, encrypt it back and send it to you – **this is a lot of work for a single server to do**.
 
-The **term _TLS Termination_ refers to a point where the data is decrypted and forwarded to the destination**. **This is mostly implemented via _load balancers_, _api gateways_ or _CNDs_**.
+The **term _TLS Termination_ refers to a point where the data is decrypted and forwarded to the destination**. **This is mostly implemented via _load balancers_, _api gateways_ or _CDNs_**.
 
 When the destination responds, the "TLS Terminator" will re-encrypt the data.
