@@ -8742,4 +8742,16 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
 
 - ["Accelerate GraphQL API app development & collaboration w/AWS AppSync"](https://www.youtube.com/watch?v=LyzNM9KIJSU) -> Worth.
 
-  - Good overview of the AppSync JS (Pipeline)Resolvers
+  - Good overview of the AppSync JS (Pipeline) Resolvers
+
+## re:Invent 2024 watched videos
+
+- ["Real-time event patterns with WebSockets and AWS AppSync (FWM302)"](https://www.youtube.com/watch?v=mc27pPLDFAw) -> Worth. A good overview of the new AppSync standalone WebSockets feature.
+
+  - While I have not had the pleasure to play around with the service yet, [some say that the service lacks a bit in the feature department](https://www.readysetcloud.io/blog/allen.helton/appsync-events/)
+
+  - I'm **really glad**, they integrated the _AppSync Events API_ with the _EventBridge Pipes_.
+
+  - Pricing charges include connections and data-transfer. This might be problematic for high-traffic scenarios.
+
+  - Their roadmap is quite good. After implementing the "presence detection" myself, I'm glad that they are thinking of implementing that internally.
