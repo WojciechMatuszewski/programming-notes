@@ -815,6 +815,56 @@ function doWork(obj: Obj) {
 
 I personally do not use this feature that often but, nevertheless I think its nice to have.
 
+## Omit<T> and unions
+
+Let us say you have three types that relate to a "music product".
+
+```ts
+type Album = {
+  id: string; // same per type
+  title: string; // same per type
+  genre: string; // different
+};
+
+type CollectorEdition = {
+  id: string; // same per type
+  title: string; // same per type
+  limitedEditionFeatures: string[]; // different
+};
+
+type DigitalRelease = {
+  id: string; // same per type
+  title: string; // same per type
+  digitalFormat: string; // different
+};
+```
+
+Notice that all the three types share `id` and `title` properties.
+
+Now, what would happen if I used `Omit` on the union of those types?
+
+```ts
+type MusicProduct = Album | CollectorEdition | DigitalRelease;
+
+type MusicProductWithoutId = Omit<MusicProduct, "id">; // Shows {title: string}
+```
+
+The end-result is, at least to me, quite confusing – the `id` property is gone, but we "lost" all the non-shared properties.
+
+**This is because the `Omit` and `Pick` are not _distributive_**. Instead of operating on each member of the union, they "combine" the union into a single type.
+
+To fix this, we have to create a helper type.
+
+```ts
+type DistributiveOmit<T, K extends string> = T extends any ? Omit<T, K> : never;
+
+type MusicProductWithoutId = DistributiveOmit<MusicProduct, "id">; // Omit<Album, "id"> | Omit<CollectorEdition, "id"> ...
+```
+
+The generic `DistributiveOmit` ensures we apply the `Omit` to _each_ member of the union.
+
+Notice the `K extends string`. We can't use `K extends keyof T`, since the `T` will be "collapsed" type of all the union members, so we will be only able to omit the _shared_ types. You can scope it further if you wish!
+
 ## Pick and Exclude
 
 ### Pick<T,K>
