@@ -959,3 +959,18 @@ There is nothing to _sprint_ to. There are no "quick fixes" unless they are warr
 It all depends on the engineers on the team. We're only people, and people are susceptible to all kinds of outside influences and behaviors. However, words can steer our thinking toward more sustainable development. Words repeated again and again can anchor us in a certain mindset — in this case, a mindset of strategic rather than tactical thinking.
 
 Stop sprinting. Start iterating.
+
+## The _Build Trap_
+
+Based on [this great article](https://uxdesign.cc/stop-solving-product-problems-start-solving-customer-problems-6c9cf3e28db3).
+
+> The _build trap_ is when organizations focus more on shipping and developing features rather than on the actual value those things produce.
+
+I love this! It speaks to the value of _going backwards FROM the user to the requirements_ rather in reverse.
+
+For example, you might _think_ that the users need 1/4" drill, but in reality, they need a 1/4" hole to
+
+- Hand a painting
+- Decorate their home
+
+If you focus on the 1/4" drill, you will miss the point. You might even build something that is useless to your users.
