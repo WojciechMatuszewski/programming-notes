@@ -8755,3 +8755,11 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
   - Pricing charges include connections and data-transfer. This might be problematic for high-traffic scenarios.
 
   - Their roadmap is quite good. After implementing the "presence detection" myself, I'm glad that they are thinking of implementing that internally.
+
+- ["Unlock the power of generative AI with AWS Serverless (SVS319)"](https://www.youtube.com/watch?v=y0jImhzqR1U) -> Worth.
+
+  - Very interesting pattern of invoking the model based on the SQS event, rather than request-response with API Gateway. [Link](https://youtu.be/y0jImhzqR1U?list=PL2yQDdvlhXf_Ezjnq7A7LfHBgCYSqzrZS&t=624).
+
+  - Using AWS Lambda Functions as _tools_ is pretty neat!
+
+    - They suggest implementing the "tool loop" within AWS Step Functions. Make sense, given the awesome error-handling capabilities of Step Functions.
