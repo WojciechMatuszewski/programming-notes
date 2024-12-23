@@ -284,6 +284,22 @@
 
   - If you apply it _outside_ a transition, the **UI will change only for a very split second, and then revert back to the initial value**.
 
+  - It seems to me that, **the transition caused by the change from "optimistic" -> "server" state will NOT trigger the suspense boundary, but instead will be executed in a transition**.
+
+    - In the exercise, we created a new ship. When the optimistic state switched from `optimisticShip` to `null` (because the server action finished), the code attempted to fetch the new ship. The parents `Suspense` component did not trigger when fetching the newly created ship.
+
+  - It is **critical to understand that, if the "initial value you passed to `useOptimistic` changes, the hook will return that value**. This is quite different to how `useState` works, as there, the initial value is "considered only once", and changes only when you re-mount the component.
+
+    - This **is how the roll-back mechanism is implemented**. If an error occurs, the initial value you passed to the hook will be different than the one you set optimistically. This means that the underlying value returned by the hook will change as well!
+
+      ```ts
+      useOptimistic("foo", () => {}); // returns foo
+      // update happened to "bar"
+      useOptimistic("foo", () => {}); // returns bar
+      // error happened
+      useOptimistic("foo", () => {}); // return foo
+      ```
+
 - To enhance the experience, you might want to use `useFormStatus`.
 
   - It is interesting that **the `form` tag now is an implicit _Context Provider_**.
