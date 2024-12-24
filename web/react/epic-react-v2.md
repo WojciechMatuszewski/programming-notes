@@ -304,7 +304,7 @@
 
   - It is interesting that **the `form` tag now is an implicit _Context Provider_**.
 
-    - The `useFormStatus` will "read" the nearest form status. **This only works when the form uses `action`**.
+    - The `useFormStatus` will "read" the nearest form status. **This only works when the form uses the `action` prop**.
 
     ```tsx
     function SomeForm() {
@@ -326,6 +326,24 @@
     }
     ```
 
+- The `useOptimistic` can **also be used to communicate intermediary steps while transition is pending**.
+
+  ```ts
+  const [message, setMessage] = useOptimistic()
+
+  action = {async () => {
+    setMessage("first")
+
+    // some async work
+
+    setMessage("second")
+
+    // some async work
+
+    setMessage("finished")
+  }}
+  ```
+
 ### Suspense img
 
 - As mentioned earlier, the `use` hook and the _Suspense_ component is not only for resolving `fetch` requests.
@@ -335,7 +353,7 @@
 ```ts
 function preloadImage(src: string) {
   return new Promise<string>((resolve, reject) => {
-    const img = new Image();
+    const img = new Image(); // Notice the `new Image()` here. I've always defaulted to creating an `img` tag via `document.createElement`.
     img.src = src;
 
     img.onload = () => resolve(src);
@@ -360,6 +378,10 @@ function ShipImg(props: ComponentProps<"img">) {
 }
 ```
 
+- **Note of the default browser behavior** – browser will display the old image until the new one loads.
+
+  - **I could not find a direct documentation reference regarding this behavior**.
+
 - This section on the workshop touches on the important concept of **forcing the `Suspense` component to always show the fallback**.
 
   - **When using _transitions_, React will only show the `Suspense` fallback upon the first load**. After that, any change triggered inside a _transition_ will result in showing the "old" UI while the new one loads.
@@ -380,6 +402,10 @@ function ShipImg(props: ComponentProps<"img">) {
       );
     }
     ```
+
+  - The **`key` prop is used to "move" a `Suspense` components OUT OF the parent transition**.
+
+    - You can put the `key` on the `Suspense` itself OR the parent nodes in the tree. What matters is that the _instance_ of the component changes when we start the transition.
 
 ### Responsive
 
