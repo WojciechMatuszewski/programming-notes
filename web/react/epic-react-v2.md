@@ -417,7 +417,7 @@ function ShipImg(props: ComponentProps<"img">) {
 
   - You want the search bar to have the freshest value – what the user typed in, but the result can lag behind.
 
-    - If you tried to use `useTransition` for this use case, every time user typed a letter, the UI would _suspend_. Not ideal!
+    - If you tried to use `useTransition` for this use case, every time user typed a letter, the UI would _suspend_. This would cause the `search` value to show the "pending" value, rather than the "current" value.
 
 - The **critical point to understand** is that the `useDeferredValue` **will cause your component to render twice**.
 
