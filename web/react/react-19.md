@@ -157,3 +157,15 @@ export default function Page2() {
 ```
 
 This is quite nice. Prior to that change, you had to manually reset the form via `.reset` called on the ref to the form node. Not that great DX.
+
+## `cache`
+
+> [Based on this great video](https://www.youtube.com/watch?v=MxjCLqdk4G4).
+
+I first **thought that I could use the `cache` function to memoize promises for `Suspense` on the client-side**. It turns out that the **`cache` function is NOT a good candidate for this use case**.
+
+The reason is that the **`cache` function memoizes values only for the duration of the request**. So, usage of this function should be scoped to _server components_. You **can use the `cache` in _client components_ ([reference](https://youtu.be/uttgAAZUdYk?t=3023)), but the function is a noop in that environment**.
+
+I like to think about the `cache` as **_data loader_ WITHOUT the batching**.
+
+[According to this video](https://youtu.be/uttgAAZUdYk?t=1674), the `cache` is internally implemented via `AsyncLocalStorage`.
