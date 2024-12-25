@@ -32,4 +32,14 @@
 
   - **The transformers architecture unlocked the ability to "see" which token is the next probable one**.
 
-TODO: https://www.youtube.com/watch?v=eMlx5fFNoYc&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=7
+- "The first step in a transformer is to associate each token with a high-dimensional vector – what we call its embedding"
+
+  - If you map the vector into 3d space, the **direction of the vector correlates to its meaning**.
+
+    - So, the bigger the embedding, the more "semantics" the vector can have.
+
+  - Take a _generic_ embedding for a word "tower".
+
+    - **The aim of the _transformer_ is to "enrich" this embedding to represent its meaning in a sentence**.
+
+      - So, if I were to say "miniature tower", the "tower" embedding would be different than if I were to say "large tower".
