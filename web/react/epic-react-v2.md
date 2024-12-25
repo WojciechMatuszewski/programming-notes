@@ -471,6 +471,10 @@ function ShipImg(props: ComponentProps<"img">) {
 
   I would recommend **using a framework that has the ability to "see" the network requests your application is making**. This way, it would be the framework responsibility to kick-off those requests for you.
 
+- We can optimize a lot of things on the frontend, but **do not forget that we can also optimize the backend as well**.
+
+  - In the workshop, as the last exercise, we used the `cache-control` header with `max-age` directive for the request responding to "search ships" query. This approach does not allow us to invalidate the data, and it is pretty basic, but given the low effort required to implement it, I deem it as a huge win.
+
 ### Summary
 
 Such an excellent workshop. It covered the following.
