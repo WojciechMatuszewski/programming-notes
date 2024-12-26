@@ -43,3 +43,47 @@
     - **The aim of the _transformer_ is to "enrich" this embedding to represent its meaning in a sentence**.
 
       - So, if I were to say "miniature tower", the "tower" embedding would be different than if I were to say "large tower".
+
+- When we talk about _training an LLM_, we usually think of two steps:
+
+  - The _pre-training_ phase. **In this phase, we create those weights and connections between layer _components_**.
+
+    - At the end of this phase, you **have a _base model_**.
+
+  - The _fine-tuning_ phase.
+
+    - At this stage, you **feed the model more curated data**, so it learns how to "answer questions correctly".
+
+- In one of the videos, the instructor showcased the example of the so-called **_reversal curse_**.
+
+  - LLMs are not able to make connection between `B` and `A` if they know that `A` = `B`.
+
+    - For example, LLM did not know the answer to the question "Who Mary Lee Pfeiffer is", but they know the answer to the question "Who is the Tom Cruise mom?".
+
+- **It is fascinating to me that we have a whole field of work called _mechanistic interpretability_ that aims to _understand_ what is actually going on inside the LLMs layers**
+
+  - We can _see_ the calculations happening, but we do not understand them. We do not fully understand what they mean.
+
+  - The _mechanistic interpretability_ aims to map out the _features_ of the LLM and how they activate for a given token.
+
+    - **A _feature_ is a collection of _components_ (neurons) that activate in a given layer when presented with a given token**. Some neurons might fire "more" and more might fire "less".
+
+- The course talked about the _scaling laws_ of the LLMs.
+
+  - **The more parameters the model has, the lesser the "test loss" is**.
+
+    - Think of the "test loss" as "how well the LLM can interpret and answer questions about new data".
+
+  - **The more training data you have, the better the LLM is**.
+
+    - The AI-companies are syphoning more and more data, even creating _synthetic_ training data.
+
+  - **The more calculations model does during training, the better it gets**. This is often called _training compute_.
+
+    - This is quite problematic. Using more compute requires more energy, thus requiring more money.
+
+  - The question now is whether the _scaling laws_ will hold up. That is whether increasing compute, parameters and dataset size will produce better and better models without diminishing returns.
+
+## Summary
+
+A great course on the basics of LLMs. As an additional watching material, I would recommend everyone to go through the [3brown1blue playlist related to neural networks](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi).
