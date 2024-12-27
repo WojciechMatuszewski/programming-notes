@@ -8763,3 +8763,21 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
   - Using AWS Lambda Functions as _tools_ is pretty neat!
 
     - They suggest implementing the "tool loop" within AWS Step Functions. Make sense, given the awesome error-handling capabilities of Step Functions.
+
+- ["Gain expert-level knowledge about Powertools for AWS Lambda (OPN402)"](https://www.youtube.com/watch?v=kxJTq8FTkDA) -> Meh.
+
+  - A very basic overview of the Powertools, but if you know the library exists, you won't hear anything else than you can learn from the documentation.
+
+  - I liked that they explained how the _idempotency_ logic works. It it critical to understand that using this module _might_ slow your function down, since it has to make requests to some kind of storage.
+
+- ["Building advanced workflows with AWS Step Functions (API402)"](https://www.youtube.com/watch?v=gdGgBKJiM2E) -> Very Worth.
+
+  - TIL that the _express_ version of AWS Step functions could now be invoked asynchronously. [You can find the documentation here](https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html#concepts-express-synchronous).
+
+    - One thing that initially throws me off, is the **inability to easly check if the step function finished execution**. The documentation mentions quering CloudWatch logs, which, to me, is far from ideal.
+
+  - Interesting pattern of _nesting_ AWS Step Function in another AWS Step Function. This could allow you to offload some transitions to _express_ workflows, but keep the "outer" workflow as _standard_.
+
+    - Keep in mind that the **_standard_ flavour of AWS Step Functions guarnatee only-once execution**. This is usually what you need.
+
+  - **I love the new "Assign" block in `Pass` step**.
