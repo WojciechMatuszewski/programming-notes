@@ -245,7 +245,7 @@ approach **leads to the big ball of mud**.
 
 ## Premature pessimisation
 
-We often talk about the concept of _premature opitmization_ –there is no point in optimizing the code unless you need to
+We often talk about the concept of _premature optimization_ –there is no point in optimizing the code unless you need to
 optimize it. This sounds good until your site loads after 30 seconds or a call to a database take a minute to finish.
 
 If that happened to your codebase, you witnessed the [**premature pessimisation
@@ -266,14 +266,14 @@ Focus on the interfaces and the data structures. You will not regret it.
 
 > Consider watching [this video](https://www.youtube.com/watch?v=VLfjooAKOqg).
 
-How many times did you judge a person based on yours, maybe inaccurate, judgment? If your teammate is underperforming,
+How many times did you judge a person based on yours, maybe inaccurate, judgment? If your teammate is under-performing,
 you might think he is lazy, stupid, or unmotivated (I'm guilty of this). How often have you said the same to yourself
 while looking at your performance?
 
 In such situations, consider looking at what is happening through the lens of empathy. **Replace your judgments with
 curiosity**. If you do that, you will likely arrive at a different explanation of a situation.
 
-So, next time you or someone you work with is underperforming, instead of judging, ask, "Hey, what is going on? How can
+So, next time you or someone you work with is under-performing, instead of judging, ask, "Hey, what is going on? How can
 I help".
 
 ## Hyperbolic discounting or how we want the quick rewards
@@ -407,7 +407,7 @@ best work. That also means delivering things as fast as possible while keeping a
 factor, but it only creates a **fake sense of urgency**.
 
 Now, some deadlines are so-called _"hard deadlines"_. Think of running ads on TV or something similar. In that case,
-**the most reasonable way to estimate would be to provide stakeholders with percentages for a given timeframe**.
+**the most reasonable way to estimate would be to provide stakeholders with percentages for a given timescale**.
 
 "The probability we will get this done by Friday is about 30%. The probability we will get this done by next Tuesday is
 about 50%", and so on.
@@ -974,3 +974,76 @@ For example, you might _think_ that the users need 1/4" drill, but in reality, t
 - Decorate their home
 
 If you focus on the 1/4" drill, you will miss the point. You might even build something that is useless to your users.
+
+## The slippery slope of positional arguments
+
+> Based on [this great blog post](https://fhur.me/posts/2024/why-you-should-not-default-to-positional-parameters)
+
+Let us consider the following function:
+
+```ts
+activateEntity(1, true, true, false);
+```
+
+Ask yourself, what does this function do?
+
+You might answer with: "it activates the entity, right?"
+
+That would be, assuming the function does what the name implies, correct.
+But are you able to infer anything else than that? What does the `true, true, false` mean? What about that single number passed as first argument?
+
+If you have trouble answering this question, other might as well. **If the interface of the function poses questions, it means that the interface is leaky or unclear**.
+In this particular case, you would need to go to the file the function is declared in, and look at the name of the parameters (do not get me started at "my IDE prepends the names of the parameters as ghost text near arguments" stuff).
+
+How could we refactor this code to be easier to understand? Not in "how this function works" sense, but rather "what can I do with this function" sense?
+Well, we can use an object as an argument. **Using an object as an argument makes the function self-documenting**.
+
+```ts
+activateEntity({
+  id: 1,
+  confirmEmail: true,
+  isAdmin: true,
+});
+```
+
+One might argue that passing boolean flags to the function is not a good practice, and I would agree, but let us leave that for another day.
+
+**Notice how it is much easier to infer WHAT the function does, and HOW it might be useful in different situations**. Adding new parameters is also much easier.
+We improved readability and extendability of this function in one refactoring, and all it took was to change how many arguments the function takes.
+
+**Positional arguments** are "dangerous" because they **have a momentum of its own**.
+You have to change a function, so you pile more and more positional arguments, making the code less readable.
+
+**It always starts simple, but then reality steps in, and you end up with unreadable mess of a function with ten positional arguments**.
+
+## What does _Single Responsibility Principle_ mean to you?
+
+> [Based on this great blog post](https://minds.md/zakirullin/cognitive#srp).
+
+At the start of my career, I've learned that the _Single Responsibility Principle_ tells us to keep our functions small and make sure they are doing only a _single_ thing.
+
+As my career progressed, I came to doubt this definition more and more. I observed, that the more I follow this definition, the more functions I have in my code. That in and of itself is not bad, **but the more functions you have, the bigger _cognitive load_ of the code is**.
+
+**_Cognitive load_ is very problematic, as it slows _everyone_ down**. You can keep only a handful of "connections" between functions in your head. It just so happens that, the more functions you have, the more such "connections" you have. Moreover, the more functions you have, the more you will need to "jump" between them to understand those "connections".
+
+While completely subjective, I now think that **_SRP_ tells you how many "themes" a function should have**. A "theme" is a set of functionalities that pertain to the same thing.
+
+Basically, **you want to encapsulate as much code into a given function as possible (_information hiding_) whilst keeping the code pertaining to a single use-case**.
+
+For example, function called `createUser` might talk to the data-layer and perform validation, but it most likely should not log anything – that should be responsibility of another layer (perhaps the "parent" function?).
+
+## Confusion around _authentication_ or _authorization_ and alternatives
+
+> [Based on this great blog post](https://ntietz.com/blog/lets-say-instead-of-auth/).
+
+- The _authentication_ attempts to answer the question: "Who are you?"
+
+- The _authorization_ attempts to anser the question: "What can you do?"
+
+While you might know what those two terms mean, and understand someone when they talk about _authn_ and _authz_, you should not assume everyone in the room is.
+
+**In reality, most people, including yours truly, have trouble distinguishing between those terms, especially in their "shorter" version**. Even worse, **people have a tendency to "collapse" both of those words into one** – "auth". This not only adds to the confusion, but also **makes engineers combine both _authentication_ and _authorization_ in a single module** which, usually, creates a mess.
+
+So, **instead of _authentication_ consider talking about _login_, and, instead of _authorization_, consider talking about _permissions_**.
+
+The _login_ and _permissions_ are much more commonly used. There is a very high chance, that _everyone_ will understand what you are talking about – but do not assume so!
