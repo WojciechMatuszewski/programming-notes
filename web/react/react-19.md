@@ -6,6 +6,30 @@ The `useActionState` (previously `useFormState`) allows you to track the _state_
 
 A lot of examples you are going to see will most likely use this hook in a context of _form submission_, but know that you can call the action returned from this hook however you wish – it does not have to be a form!
 
+### Batching of the `dispatch` function
+
+> Based on [this video](https://youtu.be/p_wnN5VR9Ok?t=1928)
+
+This is the coolest thing ever!
+
+So, consider a scenario where someone submits the form twice. Without the `useActionState`, you would have to handle requests that possibly arrive out-of-order on your own. **That is not the case with `useActionState`**.
+
+**When transition is active, the `dispatch` function will queue any additional calls to this function and execute them IN ORDER they occurred** – how awesome is that?
+
+```tsx
+const [state, dispatch, isPending] = useActionState(async (previous: unknown, payload: FormData) => {
+  const result = await saveAttendee(payload);
+  console.log("result", result);
+  return result;
+}, undefined);
+
+async function action(formData: FormData) {
+  dispatch(formData);
+}
+```
+
+If I pass the `action` prop to the `action={}` on the `form`, I do not have to worry about multiple submissions. All of them will be queued, and I can also use the `previous` to decide what to do!
+
 ### Resetting the form
 
 > Based on [this blog post](https://www.nico.fyi/blog/reset-state-from-react-useactionstate)
