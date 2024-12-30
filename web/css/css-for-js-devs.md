@@ -331,6 +331,17 @@ There is a lot of thing you can do with only margin, padding and some colors.
     }
     ```
 
+    As an alternative, you **can use `inset` property to set the `right`/`left`/`bottom`/`top` properties at the same time**
+
+    ```css
+    .box {
+      inset: 0;
+      margin: auto;
+      width: 100px;
+      height: 100px;
+    }
+    ```
+
   - Keep in mind that, for this trick to work, **the element has to have a well-defined size**.
 
 ### Containing blocks
@@ -416,6 +427,20 @@ There is a lot of thing you can do with only margin, padding and some colors.
 
 > Check out [this talk for more information](https://youtu.be/Xt1Cw4qM3Ec?t=1696).
 
+#### Portals
+
+In the world of components, it might happen that you want to render a "global" modal within a given component that lives somewhere deep down in the component tree.
+
+You might already see how this could be problematic – depending how you app is structured, you might have trouble "surfacing" this modal above all of other elements!
+
+To simplify and solve this issue, many web frameworks have a notion of a _portal_. _Portal_ will "move" the elements you render in one place in your app into another place in your app.
+
+In the context of modals, this is very helpful – we can move our modal _outside_ of the `body` (or any other "root" element) and render it there. This way, we **are most likely** relying on the DOM order when it comes to elements stacking on top of each other.
+
+**But, even if you use _portals_, you still might have issues with elements overlying on top of other elements when they should not**. Again, it all depends on the _stacking context_ within that "root" element that you "teleported" the element from.
+
+To ensure the "root" element does not leak any other elements outside of its "boundaries", **make sure that the "root" element has its own stacking context!** You can achieve that by using `isolation: isolate` on the "root" element, or any other CSS property that creates a _stacking context_.
+
 ### Fixed positioning
 
 - The `position: fixed` declaration makes the element **behave as if `absolute` but it will also follow you when you scroll**.
@@ -441,6 +466,22 @@ There is a lot of thing you can do with only margin, padding and some colors.
 - Keep the concept of _containing blocks_ in mind. If you grasp that concept, you will know, for example, why a given element peeks outside of its parent, even though the parent has `overflow: hidden` declaration! (it is because the parent is NOT using positioned layout).
 
 - The **`fixed` positioned** elements will **always escape overflow**. This is because the `fixed` positioned elements are contained by the "initial containing block" and not by the parent with some kind of CSS property.
+
+#### Scroll Containers
+
+- **The `hidden` / `auto` / `scroll` value for `overflow` creates a _scroll container_**.
+
+  - The `overflow: hidden` is a scroll container for which browser will NOT render scroll bars.
+
+  - **Even if the elements are "clipped" via `overflow:hidden`, you can still focus on them, and if you focus on the element that is "clipped", the parent element will _scroll_ to that element**. This means that **the `overflow:hidden` has guardrails to prevent hiding the content completely**.
+
+- **If you do NOT want to create a scroll container, you should consider the `clip` value**.
+
+  - The main difference is that **if the content is clipped, the outer element will NOT scroll to that element if its focused**.
+
+  - You **also get more granular control over the "clipping direction" via `overflow-x` and `overflow-y` properties**.
+
+    - In addition, you can specify the [`overflow-clip-margin`](https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-clip-margin), which tells the browser how much pixels of the element to draw outside of the parent before its clipped.
 
 ### Sticky Positioning
 
