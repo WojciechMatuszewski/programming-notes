@@ -2029,7 +2029,22 @@ The `place-content: center` is a shorthand for `justify-content: center` and `al
   }
   ```
 
-  **But it matches the `focus` state and not the `focus-visible` state**. There is a difference between these two states.
+  **But it matches the `focus` state and not the `focus-visible` state**. This means that **the outline will be visible when someone clicks the element in addition to focusing it via the keyboard**. This might not be what you want.
+
+  **The `focus-within` is also very "global"**. It will apply whenever ANY element has focus within the parent. **The alternative is to use the `:has` selector**.
+
+  ```css
+  <!-- We can get pretty granular with `has` -- > .parent:has(button:focus-visible) {
+    background: red;
+  }
+
+  <!-- We can also be very "global",
+  like `focus-within` -- > .parent:has(*:focus-visible) {
+    background: red;
+  }
+  ```
+
+  Notice that I can _choose_ which "focus" to _check for_. I could use the `:focus` or `:focus-within` states! That is not possible with `focus-within` which looks for `:focus` state!
 
 #### Focus Outlines
 
