@@ -23,15 +23,30 @@ p {
 It just so happens that the most popular _media feature_ overlaps with a quite popular css _property_ (the `max-width` or `min-width`). You **cannot** use css properties with `@media` syntax.
 
 ```css
+/* valid */
 @media (max-width: 300px) {
 }
 
-/* valid */
+/* invalid */
 @media (font-size: 32px) {
 }
-
-/* invalid */
 ```
+
+As for size-based queries themselves, you can also write the following:
+
+```css
+@media (width <= 1250px) {
+}
+
+@media (width >= 900px) {
+}
+
+/* Pretty neat, right? */
+@media (30em <= width <= 50em) {
+}
+```
+
+Notice that I did not have to specify the `max-` or `min-` prefixes!
 
 ### Selectors
 
@@ -1069,13 +1084,67 @@ To ensure the "root" element does not leak any other elements outside of its "bo
 
 - With fluid approach **you cannot apply styles conditionally** which might be a deal breaker in some circumstances.
 
-  - Think a situation where you have to amend the `border-radius` property on mobile devices.
+  - Think a situation where you have to amend the `border-radius` property on mobile devices. **Using media / container queries would be the preferred approach here**. Remember that you can't really "react" to changes in layout using the _fluid_ approach.
 
 - The responsive approach only reacts to viewport changes, the **fluid approach reacts to the container changes**.
 
   - This drawback will become less relevant once [container queries are live](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries).
 
 - In the end it boils down to what is suitable for each situation. Keep in mind that it is better to be more verbose than to be clever.
+
+### Container Queries
+
+Unlike the `@media` queries, the `@container` queries can be a bit confusing in terms of how they work. **If you apply the `@media` mental-model to `@container` queries, you might spend a lot of time frustrated that things do not seem to work**.
+
+To understand the main difference between the `@media` and `@container` query, consider _what_ each query "measures" or what each query "reacts to".
+
+- The `@media` query reacts to the _viewport_ width or height.
+
+- The `@container` query reacts to a given _node_ width or height.
+
+**This, seemingly "unimportant" difference requires you to use different mental model when using `@container` queries**.
+
+#### The "impossible problem"
+
+Let us say that we want to apply different styles based on the elements width. **Since applying those styles MIGHT change the elements width, we could cause an infinite loop of changes**.
+
+1. Element reaches width of X.
+2. Apply new styles.
+3. Element reaches width of X.
+4. Apply new styles.
+5. And so on.
+
+[You can find an in-depth example depicting this problem here](https://www.joshwcomeau.com/css/container-queries-introduction/).
+
+#### Solving the "impossible problem"
+
+The solution to this problem is the [containment API](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment). The `container-type` tells the browser **which dimension should be ignored while calculating the element size based on the content of the element**.
+
+So, looking back to our example, if we were to set `container-type: inline-size` on that element, there would be no way to fall into an infinite loop.
+
+**The golden rule is this: you can't change what you measure**. So, if you set the container to be `inline-size`, you can't change the height of the element. This is because the browser measures element _height_ (or _block size_) but ignores the width.
+
+#### Targeting specific container
+
+When it comes to `@media` query, you can react only to the _viewport_ dimensions. **The `@container` query allows you to _react_ to a given container dimensions**. That container MIGHT be the parent of your element, but does not have to be!
+
+```css
+.foo {
+  container-name: outer;
+  container-type: inline-size;
+}
+```
+
+Now, every child of `.foo`, **no matter how deep inside the DOM tree it resides**, can use the following:
+
+```css
+.some-child {
+  @container outer (min-width: 100px) {
+  }
+}
+```
+
+Is not that cool?!
 
 ### Workshop
 
