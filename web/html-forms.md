@@ -508,3 +508,13 @@ form.requestSubmit();
 ```
 
 Now, the browser will check the validity of the form inputs before firing the `submit` event.
+
+## The _Post / Redirect / GET_ pattern and native form submissions
+
+Have you ever heard about the _PRG_ pattern and what it solves? I have not, and this is mainly because I did not have to deal with multi-page apps that did not leverage any frameworks.
+
+What is the problem exactly? Consider submitting a form on a page. The server will respond with HTML. If you then refresh the page, **the browser will repeat the LAST request that generated the page**. So, if the last request was a POST request submitting a form, the browser will issue that request.
+
+This could be problematic right? We would not want this to happen! **And this is the "issue" the _PRG_ pattern attempts to solve**.
+
+Instead of responding with HTML to that POST request, you redirect the user to a given page that they are currently at. This ensures the LAST request that generated the page was a GET request, so the danger for the browser to repeat that POST request upon page refresh is zero!
