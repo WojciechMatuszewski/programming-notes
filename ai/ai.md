@@ -166,3 +166,13 @@ The `action` step leverages _tools_ to retrieve information. **Keep in mind that
 - In some cases, allows you to pick which model you want to make request to.
 
 **Basically an _API Gateway_ but for AI**. The metrics are tailored for AI no matter what provider you are using.
+
+## Model Context Protocol
+
+> You can [read more about it here](https://www.anthropic.com/news/model-context-protocol).
+
+From what I understand, Anthropic wants to standardize how LLMs communicate with external "things" via tools.
+
+The idea is to create a _server_ and a _client_. The _server_ exposes the functionality. The _client_ connects to the server and uses that functionality.
+
+The _client_ is a desktop LLM application. The _client_ has to know where the _server_ lives in the system to be able to use it. [You can read more about the architecture here](https://modelcontextprotocol.io/introduction).
