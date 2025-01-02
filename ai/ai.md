@@ -176,3 +176,9 @@ From what I understand, Anthropic wants to standardize how LLMs communicate with
 The idea is to create a _server_ and a _client_. The _server_ exposes the functionality. The _client_ connects to the server and uses that functionality.
 
 The _client_ is a desktop LLM application. The _client_ has to know where the _server_ lives in the system to be able to use it. [You can read more about the architecture here](https://modelcontextprotocol.io/introduction).
+
+## Modality & Multimodal LLMs
+
+The _multimodal_ refers to the various ways YOU can interpret and interact with the world. Think _hearing_, _seeing_, _feeling_.
+
+As for the LLMs, this would refer to the ability to **reason based on various input types, like images, text or voice**. At the time of writing this, most LLMs are multimodal. They can interpret images, text and voice and produce coherent outputs.
