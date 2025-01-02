@@ -8,6 +8,20 @@
 
     - You can think about _linear regression_ as plotting the dataset on x,y axis, then trying to fit a line, so that the line "touches" the most amount of points. Then, you look at the line and guess the next number based on that.
 
+### Hidden layers
+
+The term "hidden layers" refers to the neural layers in-between the input and the output layer.
+
+### Back propagation
+
+> [Learn more here](https://youtu.be/Ilg3gGewQ5U?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&t=369).
+
+During training, at first, the output layer might produce very inaccurate results. This is expected!
+
+To "help" the layers to produce desired output, we **propagate the adjustments to the weights of the layers going from right to left**. We can propagate those recursively focusing on neurons that influence the results the most.
+
+But **you can't focus on a single output in the dataset**. If you were to do that, the output would _always_ point to that single result. **You have to calculate the adjustments for ALL outputs and then average them together and THEN apply the adjustments**.
+
 ## Vectors
 
 When working with AI and AI-related tools, you will hear the word "vector" quite often.
