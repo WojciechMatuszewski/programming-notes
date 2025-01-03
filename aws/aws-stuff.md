@@ -8781,3 +8781,19 @@ that. **R53 with private DNS records**, **CF with OAI and Geo-restrictions** and
     - Keep in mind that the **_standard_ flavour of AWS Step Functions guarnatee only-once execution**. This is usually what you need.
 
   - **I love the new "Assign" block in `Pass` step**.
+
+- ["Integration patterns for distributed systems (API306)"](https://www.youtube.com/watch?v=W_4n27sRluY) -> Very Worth. It goes throught some of the most critical microservice architectures.
+
+  - _Point to point_ pattern with queues (SQS).
+
+    - There is one subscriber for a given queue. This could be problematic if we want to send the same message to multiple subscribers.
+
+  - _Publish/subscribe pattern_ with topics (SNS).
+
+    - Publisher is decoupled from the subscribers. Topic can handle multiple subscribers without any problems.
+
+  - _Topic queue chaining_ with SNS and SQS. This one allows you to buffer load on the consumer side, but fan-out on the publisher side.
+
+  - The presentation stresses the need for _idempotent_ consumers.
+
+    > Message order is _frequently_ requested – from time to time even with good reason.
