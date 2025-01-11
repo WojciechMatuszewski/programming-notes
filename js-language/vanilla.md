@@ -143,3 +143,36 @@ const sharedUniqueSymbol2 = Symbol.for("unique");
 
 sharedUniqueSymbol == sharedUniqueSymbol2; // true
 ```
+
+## `Object.groupBy`
+
+> [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy)
+
+Think of this an alternative to the `reduce` function **in certain cases**.
+
+```js
+const numbers = [1, 2, 3, 4];
+
+const groupedReduce = numbers.reduce(
+  (grouping, number) => {
+    if (number % 2 == 0) {
+      grouping.even.push(number);
+      return grouping;
+    }
+
+    grouping.odd.push(number);
+    return grouping;
+  },
+  { even: [], odd: [] },
+);
+
+const groupedNew = Object.groupBy(numbers, (number) => {
+  if (number % 2 === 0) {
+    return "event";
+  }
+
+  return "odd";
+});
+```
+
+Pretty neat!
