@@ -422,16 +422,20 @@ Notice a couple of things.
 
 ## Focusing the inputs
 
+> [You can read more about `autofocus` here](https://htmhell.dev/adventcalendar/2024/2/)
+
 There is the `autofocus` property one might use. This should help you with establishing the focus on a given input when
-it is inserted into HTML. **This means that adding this attribute dynamically to an already rendered element WILL NOT
-WORK**.
+it is inserted into HTML.
+
+**This means that adding this attribute dynamically to an already rendered element WILL NOT WORK**.
 
 ```html
 <input name="some name" autofocus />
 ```
 
-Of course, this is not a silver bullet. There are a lot of things to consider when using this attribute. If the form is
-below the fold, the page might unexpectedly scroll, leaving the user confused.
+Of course, this is not a silver bullet. There are a lot of things to consider when using this attribute. If the form is below the fold, the page might unexpectedly scroll, leaving the user confused.
+
+**Consider using the `autofocus` attribute for single-purpose pages with forms**. For example, a "login page" consisting only of inputs and the submit button.
 
 ## Helpful input attributes
 
