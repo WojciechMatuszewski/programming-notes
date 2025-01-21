@@ -204,3 +204,41 @@ function onClose() {
 Notice that we are **creating the _watcher_ instance every time we open something**. This gives us the ability to handle "stacking" – closing only the "latest" thing that was opened. In addition, **you do not have to setup any key-specific listeners yourself**. All is handled by the `CloseWatcher` API.
 
 You can [read more about the API on MDN](https://developer.mozilla.org/en-US/docs/Web/API/CloseWatcher). At the time of writing, this API is experimental, but given how useful it is, I bet it will not be experimental for long.
+
+## View Transition API
+
+The _View Transition API_ allows you to _transition_ between the _old_ and the _new_ content of the webpage.
+
+**The best part of this API is that you have control over HOW the content transitions**. It could be a subtle fade animation, or something more fancy.
+
+You can go really deep with configuration for this API, but you can also get started with a couple of lines of code.
+
+### SPA View Transitions
+
+By default, the browser will cross-fade the elements. All you have to do is to use the `startViewTransition` API in JS.
+
+> Read more about [SPA View Transitions here](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#the_default_transition_cross-fade).
+
+```js
+function performAction() {
+  startViewTransition(() => {
+    updateDOM();
+  });
+}
+```
+
+### MPA View Transitions
+
+At the time of writing, the support for those is not that good, but nevertheless, it is worth exploring this option.
+
+> Read more about [MPA View Transitions here](https://developer.chrome.com/docs/web-platform/view-transitions/cross-document).
+
+To opt-in, each page has to have the following CSS:
+
+```css
+@view-transition {
+  navigation: auto;
+}
+```
+
+While I have zero experience with this API, it seems like the effort involved to make MPA _View Transitions_ to work is a bit greater than the SPA.
