@@ -1047,3 +1047,28 @@ While you might know what those two terms mean, and understand someone when they
 So, **instead of _authentication_ consider talking about _login_, and, instead of _authorization_, consider talking about _permissions_**.
 
 The _login_ and _permissions_ are much more commonly used. There is a very high chance, that _everyone_ will understand what you are talking about – but do not assume so!
+
+## Build the abstraction first?
+
+> Based on [this blog post](https://swizec.com/blog/build-the-abstraction-first/)
+
+I'm very much a proponent of the "wait for abstraction to materialize before building it" mindset, but I think Swizec is onto something here.
+
+**You can begin hiding functionality behind an interface (abstraction) early, to avoid making a mess in the code**.
+
+I've noticed that, as soon as you [introduce one broken window](https://blog.codinghorror.com/the-broken-window-theory/) which, to some might be duplication, other engineers might be encouraged to contribute to the mess (this is especially true when you make that one "small fix").
+
+So, depending on the situation, you might want to start **scaffolding the abstraction** early on in the process. Introduce the "ideal interface" now, so you can hide functionality behind it.
+
+Now that I think about it, the term _"scaffolding the abstraction"_ sounds much better than _"build the abstraction"_, especially early on.
+
+```js
+// Instead of this
+if (user.email.endsWith("foo@com")) {
+}
+
+// You can do this
+function canDoAThing(user) {
+  return user.email.endsWith("foo@com");
+}
+```
