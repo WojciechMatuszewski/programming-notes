@@ -68,6 +68,8 @@ Here is where the `inert` attribute comes in. **When set on the parent, it makes
 
 Where is this useful? Especially modals. If you render the modal outside of the "main" of your page, you can then set the `main` to be `inert` when the modal displays. You **get the focus trap for free**.
 
+> Note that, when using the `dialog` element, you DO NOT have to use the `inert` on the backdrop. It's already implemented by the browser!
+
 Another use case are **tooltips, where you do not want the browser to ever focus on the tooltip itself**. This is much better than adding `tabIndex` of `-1` as using the `tabIndex` directly interferes with the browser way of handling focus (it might change the order of the focus).
 
 ## The `valueAsNumber` property on the input element
@@ -278,6 +280,12 @@ You can use `summary` and `detail` HTML tags.
 ```
 
 Sadly at the time of writing this, there is **no built-in way of animating the collapse state**.
+
+### Searching within the `details` tag
+
+Imagine wanting so search something on the page. That content could be "hidden" inside the `details` tag.
+
+But do not fret! **It turns out the browser already handles this problem** and will "open" the `details` tag if it has a matching search term.
 
 ## Native Combobox
 
