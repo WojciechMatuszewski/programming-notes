@@ -1979,6 +1979,8 @@ Notice that I did not have to apply any additional styles to make the functional
 
 To learn more, consult the [MDN article](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) about the Popover API.
 
+To learn more about positioning the elements anchored to another element, read [this blog post](https://developer.chrome.com/docs/css-ui/anchor-positioning-api#use_anchor_with_top-layer_elements_like_popover_and_dialog).
+
 ## The `display: stretch`
 
 By default, _block positioned_ elements, will _stretch_ the whole available space.

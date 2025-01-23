@@ -287,6 +287,33 @@ Imagine wanting so search something on the page. That content could be "hidden" 
 
 But do not fret! **It turns out the browser already handles this problem** and will "open" the `details` tag if it has a matching search term.
 
+### Keeping only one open
+
+You can use the `name` attribute to "group" the `detail` elements. A group will have only one `detail` element open!
+
+```html
+<details name="a">
+  <summary>First item</summary>
+  <p>I'm content</p>
+</details>
+<details name="a">
+  <summary>Second item</summary>
+  <p>I'm content</p>
+</details>
+```
+
+If I open the first `detail` element, and then the second, the first one will close.
+
+### Animating the open/closed states
+
+Similar to how you can animate the `dialog` enter/exit states, you can animate the `details` elements.
+
+In the past, I've used the _View Transitions_ API to trigger a subtle fade when the `detail` element opens, but we can have much more control over the animation via CSS.
+
+[Read more about animating it here](https://nerdy.dev/6-css-snippets-every-front-end-developer-should-know-in-2025).
+
+**Mind the `interpolate-size: allow-keywords**. As I understand it, this property allows you to animate from "hidden" to "auto".
+
 ## Native Combobox
 
 Again, the same with as with `Accordion`. There is a native way of doing this by using `input` and `datalist`.
@@ -304,6 +331,8 @@ Again, the same with as with `Accordion`. There is a native way of doing this by
 The main benefit of this approach is also it's main drawback. Since it is a native implementation, it is not that flexible. **You will have a hard time styling it**. I could not find a way to style it even a tiny bit. **The demos I've encountered seem to work on CodePen but does not work when I run them locally via plain `index.html` and my browser**.
 
 ## Native Dialog
+
+> You can learn how to animate the enter/exit states [here](https://nerdy.dev/6-css-snippets-every-front-end-developer-should-know-in-2025#transition-a-dialog).
 
 Some time ago, browsers started to introduce the `dialog` element! This is a huge win as modals/dialogs are notoriously hard to get right (mainly the aspect of focus management and accessibility).
 
