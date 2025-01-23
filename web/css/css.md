@@ -774,6 +774,7 @@ button {
 ```
 
 Notice the **`syntax` property**. This example says that the `--my-color` variable can only contain values valid for _color-related_ properties.
+
 If that is not the case, **and you have used JavaScript to register the property**, the browser will throw an error.
 
 In my opinion, the most compelling use-case for these is that **you can animate values of the properties in pure CSS!** – that is not the case with "regular" CSS properties.
@@ -802,6 +803,42 @@ Apart from using predefined values like `<color>` or `<length>` **you can actual
 
 You can even go further and provide "mixed" values for the `syntax` property. The `<color> | <length>` will also work!
 
+#### Note about the `inherits` property
+
+**The `inherits` property is required**. If you fail to include it in the definition, the whole `@property` block will be invalid.
+
+To illustrate how it works, consider the following example:
+
+```css
+@property --brand {
+  syntax: "<color>";
+  /* Notice the "false" value here! */
+  inherits: false;
+  initial-value: blue;
+}
+
+.button {
+  --brand: red;
+  background-color: var(--brand);
+  color: white;
+
+  span {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--brand);
+  }
+}
+```
+
+What would be the border color of the `span` inside the `button` class?
+
+**If you set the `inherits` to `false`, the color would be `blue`** (initial value of the `--brand` variable). This is because the change of the `--brand` variable in `.button` class will NOT propagate to the `span` tag.
+
+**If you set the `inherits` to `true`, the color would be `red`**. This is because the change of the `--brand` variable WILL propagate to the `span`.
+
+Take a moment to appreciate how much control this gives you. At the time of writing this, I can't think of another API that would allow me to control inheritance in such a way.
+
 ### Computed CSS variables gotcha
 
 Let us say you have the following CSS.
@@ -819,10 +856,9 @@ h1 {
 }
 ```
 
-Would you expect the `font-size` to now be `4rem`? It certainly would make sense would not it? **The problem is that
-this will not be the case**.
-The **calculation happens as soon as the browser processes the definition**. This means that the **computed values, in
-this case, in the `:root` are immutable and only inheritable**. This behavior is not specific to `:root`.
+Would you expect the `font-size` to now be `4rem`? It certainly would make sense would not it? **That will NOT be the case**.
+
+The **calculation happens as soon as the browser processes the definition**. This means that the **computed values, in this case, in the `:root` are immutable and only inheritable**. This behavior is not specific to `:root`.
 
 > [You can read more about this particular gotcha here](https://moderncss.dev/how-custom-property-values-are-computed/?ck_subscriber_id=1352906140#inheritable-values-become-immutable).
 
