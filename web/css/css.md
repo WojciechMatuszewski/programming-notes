@@ -1844,6 +1844,8 @@ will never exceed the `max-content` value.
 
 ## Animating display via `transition-behavior`
 
+> Read more on [MDN here](https://developer.mozilla.org/en-US/docs/Web/CSS/transition-behavior).
+
 Since the `display` is a "discrete" _animation type_, by default, it will not work with any transitions. This is how it worked for pretty much forever, and required you to use JavaScript to create "show/appear" animations when toggling display.
 
 **That is no longer the case if you use the `transition-behavior: allow-discrete`**.
@@ -1920,6 +1922,14 @@ dialog[open]::backdrop {
 ```
 
 **Notice that the definition inside the `@starting-style` can be different for different "directions"**.
+
+### Note about `display` property
+
+It is worth noting _how_ the browser "animates" the `display` property.
+
+- **When animating from `display: none` to `display: block` (or any other value)**, browser will flip the element to `block` at the very start of the animation, so it is visible. **This is why you usually want to animate `opacity` alongside the `display` property**. Otherwise the element will "pop in" out of nowhere!
+
+- **When animating from `display: block` to `none`**, browser will **flip the element to `none` at the END of the animation**. Again, this is to ensure the element is visible thought the animation.
 
 ## The Popover API
 
