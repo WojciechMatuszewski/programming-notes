@@ -1000,6 +1000,14 @@ An example for s3-prefix (folder)
 
 - keep in mind that **create a permission to disallow changing the permission boundary**.
 
+#### Permission Sets
+
+- This is a **feature of IAM Identity Center**.
+
+  - The IAM Identity Center is for managing multiple accounts.
+
+- Think having a "template" policy that is then attached to a role that accounts can use when using SSO.
+
 #### Groups
 
 - **CANNOT BE NESTED**. Though the **nesting is not necessary a good idea**. The **explicit deny** can sometimes **
