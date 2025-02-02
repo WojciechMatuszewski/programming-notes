@@ -2235,6 +2235,30 @@ much access to the underlying object the bucket owner has.
 
 - you **pay for published events**. Keep in mind that **publishing happens AFTER any rule is matched**
 
+#### Object Metadata
+
+> Learn more [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html).
+
+- An object has two kinds of metadata – the "system controller" and the "user controlled".
+
+  - The _system controlled_ **can only be modified by S3**. It's the default metadata S3 provides.
+
+  - The _user controlled_ is **piece of metadata YOU can specify**. **You can't edit it after uploading the object**.
+
+    - The solution here is to make a [in-place copy of the object](https://docs.aws.amazon.com/AmazonS3/latest/userguide/add-object-metadata.html).
+
+- Use case: I've extracted S3 object metadata and used it when ingesting documents to the Bedrock knowledge base so then I can filter that knowledge base to only take into the account SOME documents when responding to a user query.
+
+##### Querying metadata / metadata tables
+
+> You can [read the announcement here](https://aws.amazon.com/about-aws/whats-new/2025/01/amazon-s3-metadata-generally-available/).
+
+- As I understand it, this feature allows you to **query both the _system controlled_ AND the _user controlled_ metadata**.
+
+  - S3 creates a special table holding that data.
+
+- All of this is integrated with Athena and other BI tools.
+
 ### AWS DataSync
 
 - service for **copying stuff from one place to another**
