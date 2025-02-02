@@ -176,3 +176,33 @@ const groupedNew = Object.groupBy(numbers, (number) => {
 ```
 
 Pretty neat!
+
+## Import attributes
+
+> Based on [this blog post](https://2ality.com/2025/01/import-attributes.html).
+
+When using frameworks, like Next.js, you can import CSS files right into your JSX / TSX files like so:
+
+```tsx
+import styles from "style.css";
+```
+
+This is possible because the frameworks bundler. It is the bundler that transforms those imports.
+
+Would it not be awesome to have the ability to import JSON/CSS and other files directly into JS files _without_ any bundlers or additional tools that interfere with out code?
+
+While not supported in every browser, this is [possible with the _import attributes_ feature](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import/with).
+
+```js
+import styles from "style.css" with { type: "css" };
+```
+
+You can also import JSON files!
+
+```js
+import styles from "data.json" with { type: "json" };
+```
+
+**This will only work if the server serving those files sends the correct `Content-Type` header**.
+
+According to the MDN, under the hood, the browser makes a network request to fetch those files. **I wonder if this will affect webpage performance in any way**.
