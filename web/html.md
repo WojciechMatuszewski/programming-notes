@@ -443,3 +443,31 @@ If you specify the `id` attribute on the element, you can access that element by
 ```
 
 **This will also work when you have multiple elements with the same `id`**. If that is the case, **the global variable will hold a `HTMLCollection` array**.
+
+## The `section` tag
+
+> Based on [this](https://www.stefanjudis.com/today-i-learned/section-accessible-name/) and [this](https://www.smashingmagazine.com/2020/01/html5-article-section/) blog post
+
+- The `section` tag was invented for browsers to implement _HTML5 outlining_.
+
+  - This feature would allow you to use `h1`s everywhere, and depending on how "deep" they are in `section` elements, they would become the "right" levels of headings like `h2` and `h3`.
+
+    - **At the moment of writing this, no browser implements this spec**.
+
+- There are no free lunches – you **have to make sure that you have proper hierarchy of headings on your website**.
+
+  - Frameworks can help with that. I've seen component libraries implement generic "heading" component that renders the correct tag based on the parents of the tag.
+
+- **To "label" the `section` tag, consider using `aria-label` or `aria-labelledby`**.
+
+  - Nesting a heading tag inside a section does NOT associate the text of that heading with the "label" of the section.
+
+    - **In fact, the "default" role of the `section` element is "generic". The `section` tag gains the "region" role only when you use `aria-label` or `aria-labelledby` attribute on the section**.
+
+To sum up:
+
+1. If you want the `section` tag to have a _landmark role_, use the `aria-label` or `aria-labelledby` attributes on the section. Be mindful that there might be translation issues when using `aria-label`.
+
+2. No browser implements the _HTML outlining_ spec, so you have to be mindful of the headings hierarchy on your webpage.
+
+3. The `article` tag is a great way to group things together. Those things should "stand on their own".
