@@ -471,3 +471,11 @@ To sum up:
 2. No browser implements the _HTML outlining_ spec, so you have to be mindful of the headings hierarchy on your webpage.
 
 3. The `article` tag is a great way to group things together. Those things should "stand on their own".
+
+## The `table` tag
+
+To build an accessible table, you do not have to employ lots of effort. The [example from MDN will do](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table).
+
+**Notice the `caption` element**. I was recently building a table and failed to include the `caption` element in the markup. If I did, I bet writing tests for the table would be easier (because I could use semantic selectors).
+
+Also, keep in mind that the **`caption` element only makes sense in the context of a table**.
