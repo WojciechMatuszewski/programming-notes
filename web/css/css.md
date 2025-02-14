@@ -300,12 +300,15 @@ article h6 {
 }
 ```
 
-The only difference between the `:is` and `:where` selectors is the specificity. The **`:where` selector has a
-specificity of 0, whereas the `:is` adheres to the regular specificity rules of selectors**.
+The only difference between the `:is` and `:where` selectors is the specificity.
+
+The **`:where` selector has a specificity of 0, whereas the `:is` takes the specificity of the most specific argument**.
 
 ### The `:has`
 
-The `:has` selector enables you to **style the parent based on it's the children**. This is a groundbreaking change in how we think about CSS. Since always, the CSS rules had to obey the _cascading_ semantics – you could not "go back" to the parent.
+The `:has` selector enables you to **style the parent based on it's the children**.
+
+This is a groundbreaking change in how we think about CSS. Since always, the CSS rules had to obey the _cascading_ semantics – you could not "go back" to the parent.
 
 The following is an example of the `:has` selector where we specify the number of columns based on the list items.
 
