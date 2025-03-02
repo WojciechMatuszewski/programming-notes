@@ -48,4 +48,43 @@
 
       - You can also use `Suspense` without the `use cache` to signal to Next.js that the page is _dynamic_ and should NOT be cached.
 
-Finished part 6 -7:42
+  - One can't also forget about the `cache` function `React` exports.
+
+    - **The `use cache` is for caching across requests**.
+
+      - It allows you to cache JSX or non-serializable data. But that data WILL not be part of the cache key.
+
+    - **The `cache` function is per-request cache**. You might think of this as memoization of results for a function that gets wiped as soon as request finishes.
+
+      - By "request" I mean the request for a given page.
+
+    - **If you want to check if the cache is working properly, especially the `cache` function, consider building your application**.
+
+      - When running in dev-mode, React might invoke your function multiple times.
+
+  In the course, we cached the `getIssues` function.
+
+  ```tsx
+  async function getIssues() {
+    "use cache";
+    cacheTag("issues");
+  }
+  ```
+
+  If you want to revalidate the cache, you would have to call `revalidateTag` in _server action_.
+
+- Getting granular with `Suspense` has its benefits.
+
+  - Push the suspense boundary as close to the data it fetches. This way, the rest of the JSX could be rendered statically, and you stream only the part that needs to wait for a network response.
+
+- The auto-generated endpoints for _server actions_ are quite awkward to work with if the request fails.
+
+  - Usually, you would expect the endpoint to return 4xx or 5xx with a proper error message. Instead, **the docs point you to return error information as the result of the _server action_**.
+
+- The API routes are pretty awesome. They work with "regular" `Request` and `Response` objects.
+
+  - You can use `NextRequest` and `NextResponse` objects to simplify your code a bit.
+
+- **You can use _edge runtime_ for your "page" or "layout" components**. [Here are the docs](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#runtime).
+
+  - Due to limited memory and CPU limitations, setting `runtime = "edge"` for a given page might not work that well.
