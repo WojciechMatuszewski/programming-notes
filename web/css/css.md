@@ -536,6 +536,64 @@ input:not(form input) {
 
 Notice that, in this case, the selector in the `not` does not "apply" to the "current element" directly. It is as if the `not` selector allowed you to "reach up" in a DOM tree in a way.
 
+#### Combining `:not` with `:has`
+
+Consider the following
+
+```css
+/* First selector */
+.card:not(:has(img)) {
+}
+
+/* Second selector */
+.card:has(:not(img)) {
+}
+```
+
+The selectors are clearly different, but what would be the outcome of each selector? The same? or different?
+
+**When debugging CSS selectors, consider unraveling them from "inside out"**. If we apply this methodology here, we get:
+
+1. For the first selector, we are trying to select a `.card` that contains an image and "inverse" the check.
+
+2. For the second selector, we are selecting any element that is not an image and checking if the `.card` contains that element.
+
+See how they differ?
+
+1. The first selector selects all `.card`s that DO NOT have an image.
+
+```html
+<!-- Would not match. There is an img element inside the card. -->
+<div class = "card">
+  <span>foo<span>
+  <img/>
+</div>
+
+
+<!-- Would match. There is NOT img element inside the card. -->
+<div class = "card">
+  <span>foo<span>
+</div>
+```
+
+2. The second selector selects all `.card`s that have elements DIFFERENT than an image.
+
+```html
+<!-- Would match. There is a span element. That element is NOT an image. -->
+<div class = "card">
+  <span>foo<span>
+  <img/>
+</div>
+
+
+<!-- Would match. There is a span element. That element is NOT an image. -->
+<div class = "card">
+  <span>foo<span>
+</div>
+```
+
+**Be mindful when combining pseudo-classes**. Changing their order will impact how your selector result.
+
 ## Pseudo-elements
 
 ### `::first-letter`
