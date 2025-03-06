@@ -538,6 +538,8 @@ Notice that, in this case, the selector in the `not` does not "apply" to the "cu
 
 #### Combining `:not` with `:has`
 
+> Based on this [this blog post](https://www.matuzo.at/blog/2022/100daysof-day50/).
+
 Consider the following
 
 ```css
