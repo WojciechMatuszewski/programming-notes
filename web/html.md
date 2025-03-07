@@ -219,7 +219,7 @@ Notice that **the `datetime` does not have to have the same format as the date y
 
 ## The `dl` tag
 
-From what I could gather, the _description lists_ are for grouping `key:value` pairs of content. Think categories and items that belong to a given category.
+From what I could gather, the _description lists_ are for grouping `key:value` pairs of content. Think categories and items that belong to a given category or FAQ sections.
 
 To style the _description lists_, the `grid` type of layout should most likely be the "go-to" as it nicely works with the `key:value` pair model of the elements within the _description list_.
 
