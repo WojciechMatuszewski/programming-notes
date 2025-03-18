@@ -83,6 +83,12 @@ export function getRelativeTimeString(
 
 Yes, it requires some work, and ideally we would have a single `Intl.X` method to handle all of this for us. But let us not forget that the alternative is adding a library which is not always the best choice.
 
+## Formatting time durations
+
+Check [this API out](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat). **You can produce "relative time" strings for a given duration!**
+
+I'm so pleased this is now built-in into the browser. Granted, this feature is _very_ new, so it might take some time before you can use it in any application, but nevertheless, it is a win for us!
+
 ## Comparing strings
 
 There are multiple ways to compare string in JavaScript.
