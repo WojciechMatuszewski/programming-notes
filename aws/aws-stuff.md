@@ -554,6 +554,20 @@ You have to consider **the IAM permissions of a given AWS Lambda function**. It 
 
   - This process is much faster than the aforementioned steps improving the cold start performance in the process.
 
+### AWS AppSync
+
+- Initially started as a framework for deploying web applications that integrate with other various AWS services like DynamoDB. At the time of writing, it is much more than that!
+
+- Think of this as managed GraphQL / API + tools to host websites on AWS.
+
+#### AppSync Events
+
+- Two flavours: HTTP and WebSockets.
+
+  - Before adding support for WebSockets, you had to use either API Gateway, IOT Core or GraphQL Subscriptions for real-time data on your website.
+
+    - You [can read more about this functionality here](https://aws.amazon.com/blogs/mobile/building-real-time-apps-with-aws-appsync-events-websocket-publishing/).
+
 ### Step Functions
 
 - **state machines as a service**
