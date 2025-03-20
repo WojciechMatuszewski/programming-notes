@@ -191,8 +191,17 @@ The idea is to create a _server_ and a _client_. The _server_ exposes the functi
 
 The _client_ is a desktop LLM application. The _client_ has to know where the _server_ lives in the system to be able to use it. [You can read more about the architecture here](https://modelcontextprotocol.io/introduction).
 
-## Modality & Multimodal LLMs
+## Modality & Multi-modal LLMs
 
-The _multimodal_ refers to the various ways YOU can interpret and interact with the world. Think _hearing_, _seeing_, _feeling_.
+The _multi-modal_ refers to the various ways YOU can interpret and interact with the world. Think _hearing_, _seeing_, _feeling_.
 
-As for the LLMs, this would refer to the ability to **reason based on various input types, like images, text or voice**. At the time of writing this, most LLMs are multimodal. They can interpret images, text and voice and produce coherent outputs.
+As for the LLMs, this would refer to the ability to **reason based on various input types, like images, text or voice**. At the time of writing this, most LLMs are multi-modal. They can interpret images, text and voice and produce coherent outputs.
+
+## MCP server
+
+I like to think about the MCP server as a way for LLM to _discover_ and _call_ tools in a standardized way.
+
+- **MCP is a protocol** that defines the endpoints the server should have.
+- **MCP is also set of SDKs** released by Anthropic.
+
+Imagine every company hosting their own MCP server. All you need to do is to "plug in" to their implementation. That would be wild, would it? Well, it seems like we are on a path to be able to do that.

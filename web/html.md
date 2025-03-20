@@ -2,11 +2,14 @@
 
 ## The `fieldset` and the `input` and `form` element
 
+> You can read more about this [here](https://tetralogical.com/blog/2025/01/31/foundations-fieldset-and-legend/).
+
 Have you ever tried to disable multiple form inputs at one? It could get repetitive and difficult, especially if those inputs live in a different components. It turns out, there is a way to **disable ALL form inputs and buttons** with `fieldset` and the `disabled` attribute.
 
 ```html
 <form>
   <fieldset disabled>
+    <legend>The name for the fieldset</legend>
     <label htmlFor="name">Name</label>
     <input type="text" id="name" name="name" />
     <button type="submit">Submit</button>
@@ -14,7 +17,17 @@ Have you ever tried to disable multiple form inputs at one? It could get repetit
 </form>
 ```
 
-Pretty neat, right?
+### The importance of the `legend` element
+
+Without the `legend` (or some other accessible name), the `fieldset` won't properly read to screen readers. The `fieldset` creates a group, but that group won't be named without the `legend` element.
+
+I usually use `sr-only` (or similar) class to "hide" the `legend` element, but still make the `fieldset` accessible to screen-readers.
+
+```html
+<fieldset>
+  <legend className="sr-only">Contact form</legend>
+</fieldset>
+```
 
 ## The `form` id attribute and the submit button
 
