@@ -1000,6 +1000,16 @@ An example for s3-prefix (folder)
 
 - keep in mind that **create a permission to disallow changing the permission boundary**.
 
+#### Resource Control Policies
+
+- **Works on the _organization-wide level_**.
+
+  - Similar to SCPs, but for resources.
+
+  - **They do NOT grant permissions**. They are used to scoping what is the maximum possible set of permissions of a given resource across the organization.
+
+  - Unlike SCPs, they focus on _resource-level_ permissions. SCPs focus on _principal-level_ permissions.
+
 #### Permission Sets
 
 - This is a **feature of IAM Identity Center**.
@@ -1789,6 +1799,14 @@ An example for s3-prefix (folder)
     - Within the Intelligent-Tiering there are **storages classes that resample the ones storage classes EXCEPT for no access charges**.
 
 - **tiers** apply to **object**, **not a bucket!**
+
+#### Hosting assets
+
+- It used to be the case that, to create a static website with HTTPs address, you had to create CF distribution.
+
+  - **While it uses CF under the hood, the AWS Amplify Hosting makes this deployment much easier**. It is integrated with S3 (at least the console).
+
+    - You can [read more about it here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/website-hosting-amplify.html).
 
 #### Performance
 
@@ -3249,8 +3267,7 @@ There are a few approaches when it comes to scaling with dynamoDB
   to go to your bucket directly they will get 403. To achieve such functionality you add **CloudFront as your OAI
   identity**
 
-- **OAI can be applied** to **S3, CloudFront, bucket policies**. **OAI origin cannot be a website address of s3 bucket (
-  static website hosting)**.
+- **OAI can be applied** to **S3, CloudFront, bucket policies**. **OAI origin cannot be a website address of s3 bucket (static website hosting)**.
 
 #### Signed URLS & Signed Cookies
 
