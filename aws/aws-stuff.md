@@ -556,9 +556,9 @@ You have to consider **the IAM permissions of a given AWS Lambda function**. It 
 
 ### AWS AppSync
 
-- Initially started as a framework for deploying web applications that integrate with other various AWS services like DynamoDB. At the time of writing, it is much more than that!
+- Initially started as "managed GraphQL" solution, but then became so much more!
 
-- Think of this as managed GraphQL / API + tools to host websites on AWS.
+- Somewhat tied with Amplify, which is a framework for deploying web applications on AWS.
 
 #### AppSync Events
 
