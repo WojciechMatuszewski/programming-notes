@@ -31,7 +31,21 @@ console.log(__filename);
 ```
 
 The most interesting thing for me here is that we are leveraging a property pulled from the `import` object.
+
 This is something I would not expect to work as I'm very much used to thinking about `import` as a keyword not an object.
+
+#### Node 20.11.0 update
+
+The `__dirname` and `__filename` is back!
+
+```js
+import.meta.dirname;
+import.meta.filename;
+```
+
+You no longer have to use the `fileURLToPath` function.
+
+[Read more about this change here](https://www.sonarsource.com/blog/dirname-node-js-es-modules/).
 
 ### Top-level await
 
