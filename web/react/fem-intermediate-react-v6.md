@@ -50,5 +50,48 @@ Learning from [this course](https://intermediate-react-v6.holt.courses/).
 
 ## Transitions
 
-https://intermediate-react-v6.holt.courses/lessons/transitions/what-are-transitions
-Start Part 6
+- The purpose of _transitions_ is to enable React to do something "big" behind the scenes, while also allowing for the user input.
+
+  - **This only works if the work that happens in the background is interruptible. If you lock the main thread, nothing going to save you**.
+
+- React added support for _async transitions_ which is nice, but they come with a [one potential edge case](https://react.dev/reference/react/useTransition#react-doesnt-treat-my-state-update-after-await-as-a-transition).
+
+  ```js
+  startTransition(async () => {
+    await someAsyncFunction();
+
+    // This update is NOT going to be treated as transition.
+    setPage("/about");
+  });
+
+  startTransition(async () => {
+    await someAsyncFunction();
+
+    // Correct way of doing it.
+    startTransition(() => {
+      setPage("/about");
+    });
+  });
+  ```
+
+  Why would we need to nest the `startTransition` calls? I'm **unsure**, but it might have to do with slicing updates into interruptible chunks. React might need to interrupt the work _after_ the async call happened, but BEFORE the `setPage` run.
+
+## Optimistic UI
+
+- The optimistic UI is now built-in into React!
+
+  - Use the `useOptimistic` hook.
+
+  - **The updates you make to the optimistic value MUST happen within a transition or action**.
+
+    - Remember that form actions implicitly mark the code as transitions!
+
+- The nice thing about the `useOptimistic` is that it will re-synchronize with the "initial" value AFTER the transition is finished.
+
+  - This means you you get rollback functionality for free. If you do not update the "main" value in the transition, the UI will rollback to the initial value before the transition happened.
+
+## Deferred Values
+
+https://intermediate-react-v6.holt.courses/lessons/deferred-values/what-are-deferred-values
+
+Part 7
