@@ -92,6 +92,20 @@ Learning from [this course](https://intermediate-react-v6.holt.courses/).
 
 ## Deferred Values
 
-https://intermediate-react-v6.holt.courses/lessons/deferred-values/what-are-deferred-values
+- The `useDeferredValue` is a tool to slice work into high and low priority tasks. **It will NOT make your code faster**.
 
-Part 7
+- The mechanics of this hook are quite fascinating.
+
+  - First, React Re-renders with _deferred value_ lagging behind the "new" value. At the same time, React renders the UI with the new value in the background as low-priority render.
+
+    - **This means you most likely want to memoize the component that uses the deferred value**.
+
+      - [See the "Pitfall" in this section of React docs](https://react.dev/reference/react/useDeferredValue#deferring-re-rendering-for-a-part-of-the-ui).
+
+  - Then, React will re-render the UI with both values in sync.
+
+    - This step is interruptible.
+
+## Summary
+
+A good introduction to intermediate React concepts. The workshop did not go deep into any of the concepts, but if you are unfamiliar with the new things shipped in React 18 and 19, I would recommend it!
