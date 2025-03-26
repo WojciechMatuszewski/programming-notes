@@ -36,8 +36,40 @@ This lesson gives a birds eye view of the core architecture of GPT-2.
 
 This lesson explains how _byte-pair encoding_ or _tokenization_ works in GPT-2.
 
-The key takeaways for me are:
+Key takeaways:
 
-- The tokenization is a separate step from the "main" pipeline. You have to have a model specially trained to tokenize the input. This increases the complexity of the overall solution.
+- The tokenization is a separate step from the "main" pipeline. The algorithm used to produce the tokens require a pre-computed vocabulary that is created during the training process.
 
 - The tokenization algorithm used in GPT-2 is very english-centric. It might have some issues with other languages, like Japanese language.
+
+- **You can tokenize images or anything else that you can assign a number to**.
+
+  - Nowadays, we have models that work with audio, images and text at the same time.
+
+    - These are called _multimodal LLMs_.
+
+## Lesson 3
+
+> [Video link](https://www.youtube.com/watch?v=v6yD5SOxOXI)
+
+This video build on the knowledge from the second video. It talks about _embeddings_.
+
+- We were able to _tokenize_ the input, but the tokens themselves does not mean anything.
+
+  - That is a problem. **Context is very important for an LLM**. How we can "embed" context of a given word into numbers?
+
+Enter _embeddings_: high-dimensional vectors of numbers that **represent features of a given token**.
+
+- The "features" of a word allow us to derive its meaning in a given context.
+
+- **You can perform operations on those vectors and get another vector**.
+
+  - This is quite useful. The prime example is: `king - man + woman = queen`. This does not make sense on its own, but when viewed through the lens of embeddings, it all checks out!
+
+- You can deduce how "similar" two given vectors are using math. The most common way to do this is using _cosine similarity_.
+
+  - Since we are operating in n-dimensional space, measuring distance between two points could be problematic. Using _cosine similarity_ allows us to measure an _angle_ "between" different points.
+
+- How are embeddings values created? **Embeddings are created by another LLM specifically trained to perform this task**.
+
+- Similarly to tokens, **you can create embeddings for images and audio**.
