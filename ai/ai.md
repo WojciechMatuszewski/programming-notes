@@ -2,11 +2,13 @@
 
 ## Basics
 
-- Todays AI models are based on _neural network algorithms_.
+> See [this video](https://www.youtube.com/watch?v=zjkBMFhNj_g).
 
-  - The simplest algorithm you could use is called _linear regression_. This is where you try to guess a value based on another value.
+- You can think of LLMs as two files: huge file with all the _parameters_ of the model, and a bit of code to interpret the parameters.
 
-    - You can think about _linear regression_ as plotting the dataset on x,y axis, then trying to fit a line, so that the line "touches" the most amount of points. Then, you look at the line and guess the next number based on that.
+  - The "magic" is embedded within those parameters. **Getting that huge parameters file is very expensive**.
+
+    - You have to "compress" a very large chunk of "internet" into numbers. The bigger the chunk of the internet, the "smarter" the model feels, because it saw more patterns.
 
 ### Hidden layers
 
@@ -21,6 +23,14 @@ During training, at first, the output layer might produce very inaccurate result
 To "help" the layers to produce desired output, we **propagate the adjustments to the weights of the layers going from right to left**. We can propagate those recursively focusing on neurons that influence the results the most.
 
 But **you can't focus on a single output in the dataset**. If you were to do that, the output would _always_ point to that single result. **You have to calculate the adjustments for ALL outputs and then average them together and THEN apply the adjustments**.
+
+### Fine-tuning
+
+When you are done training the model, the model can only generate next word in a given sentence. It does not know how to "answer" user queries in a way that you are used to when using chat-based AI applications.
+
+**This is where the process of fine-tuning comes in**. You can **train the model on the additional dataset. This dataset includes Q&A style inputs**. Usually, companies hire a bunch of people to ask the model something and expect an answer in return.
+
+Finished: https://youtu.be/zjkBMFhNj_g?t=1266
 
 ## Vectors
 
