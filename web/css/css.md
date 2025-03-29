@@ -1385,6 +1385,45 @@ p {
 
 The `p` all have the `width` of `max-content` but rounded to the nearest multiply of `50`. **Again, how amazing is that?**
 
+### Using `interpolate-size`
+
+> [Read more about this property here](https://developer.mozilla.org/en-US/docs/Web/CSS/interpolate-size)
+
+This property allows you **to enable native animations between length/percentage values and _intrinsic sizes_ such as `auto` or `fit-content`**. At the time of writing, this property is not YET widely supported, but it is only a matter of time when it will be.
+
+You _might_ consider adding `interpolate-size: allow-keywords;` to your CSS reset, but be mindful of users who prefer the "reduced motion" experience.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #box {
+        /* From "auto" size */
+        interpolate-size: allow-keywords;
+        background: red;
+
+        transition:
+          block-size 1s,
+          inline-size 1s;
+
+        &:hover {
+          /* To a well-defined size */
+          block-size: 80px;
+          inline-size: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="box">box</div>
+  </body>
+</html>
+```
+
 ## CSS-in-JS
 
 CSS-in-JS became de-facto day of styling our apps. Let us explore how it works on the high level and learn about it's
