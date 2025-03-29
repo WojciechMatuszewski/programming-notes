@@ -10,10 +10,6 @@
 
     - You have to "compress" a very large chunk of "internet" into numbers. The bigger the chunk of the internet, the "smarter" the model feels, because it saw more patterns.
 
-### Hidden layers
-
-The term "hidden layers" refers to the neural layers in-between the input and the output layer.
-
 ### Back propagation
 
 > [Learn more here](https://youtu.be/Ilg3gGewQ5U?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&t=369).
@@ -24,13 +20,23 @@ To "help" the layers to produce desired output, we **propagate the adjustments t
 
 But **you can't focus on a single output in the dataset**. If you were to do that, the output would _always_ point to that single result. **You have to calculate the adjustments for ALL outputs and then average them together and THEN apply the adjustments**.
 
+### Hidden layers
+
+The term "hidden layers" refers to the neural layers in-between the input and the output layer.
+
 ### Fine-tuning
 
 When you are done training the model, the model can only generate next word in a given sentence. It does not know how to "answer" user queries in a way that you are used to when using chat-based AI applications.
 
 **This is where the process of fine-tuning comes in**. You can **train the model on the additional dataset. This dataset includes Q&A style inputs**. Usually, companies hire a bunch of people to ask the model something and expect an answer in return.
 
-Finished: https://youtu.be/zjkBMFhNj_g?t=1266
+#### RLHF
+
+The RLHF means _reinforcement learning from human feedback_.
+
+Image the LLM is tasked with writing a haiku. Your job is to "label" the haiku that you deem most "preferable". Then, the LLM learns from that data to produce even better haikus.
+
+**As you can imagine, if there are humans involved, there is also some bias attached to the answers**. The more diverse "labellers" you hire, the less likely the bias impact will be, but still, it will _always_ be there.
 
 ## Vectors
 
