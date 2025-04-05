@@ -7406,8 +7406,11 @@ Consider giving it a read!
 
 - you can **set scope authorization on APIGW level**. You can have authorizer check those on per endpoint basis
 
-- these **will not be retrieved when you use amplify js library**. You need to use the _cognito endpoint_ (probably
-  hosted UI). If you really need to get them programatically, you can try the _cognito-js_ library.
+- these **will not be retrieved when you use amplify js library**. You need to use the _cognito endpoint_ (probably hosted UI). If you really need to get them programatically, you can try the _cognito-js_ library.
+
+- The name "resource server" makes sense if you think about what role they play in Cognito.
+
+  - You _declare_ what resources exist, and what _scopes_ are available for that given resource.
 
 #### Identity Pools
 
