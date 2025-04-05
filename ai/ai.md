@@ -221,3 +221,13 @@ I like to think about the MCP server as a way for LLM to _discover_ and _call_ t
 - **MCP is also set of SDKs** released by Anthropic.
 
 Imagine every company hosting their own MCP server. All you need to do is to "plug in" to their implementation. That would be wild, would it? Well, it seems like we are on a path to be able to do that.
+
+### The SSE transport
+
+> [You can read more about SSE and MCPs here](https://pai.dev/why-serverless-mcps-are-especially-hard-6796a09613fe).
+
+When the specification first came out, it called for using SSE (Server-Sent Events) between the server and client.
+
+The main problem with SSE, especially for serverless, is that **SSE is stateful**. This creates an interesting problem for serverless environments – there, we can't reliably maintain long-lived open connections since containers are frozen then booted up again.
+
+If it requires a long-lived connection, it is quite pricey to operate. Just like websockets, there is an overhead associated with keeping multiple clients connected. To address this issue, spec authors are looking to add _streamable HTTP_ as a transport option.
