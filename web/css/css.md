@@ -1681,6 +1681,14 @@ But what if you want to select N _previous_ elements? **You can do this with `ha
 
 **Notice the usage of `&` in the `:has` selector above**. The "last" element has to point to that "current" card, so it has to be `&`.
 
+## Customize the `select` tag with CSS
+
+For the longest time, the `select` element was not very useful apart from implementing very basic UIs. The main problem was that you could not style it that well. If you wanted a good-looking UI for the `select` element, you had to lean on 3rd-party packages, or implement custom `select` behavior yourself.
+
+I'm happy to say that this is no longer the case! Just recently, Chrome released [a way for us to style the native `select` element](https://developer.chrome.com/blog/a-customizable-select).
+
+**Be mindful of what behavior you _lose_ when you opt into `appearance: base-select;`**. I wish we did not lose the built-in mobile operating-system "select" component.
+
 ## The `color-mix` function
 
 - There are multiple **color models or formats or spaces** (I've seen different wording used in different articles) now
