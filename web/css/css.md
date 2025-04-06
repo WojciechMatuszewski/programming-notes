@@ -777,6 +777,51 @@ The implications of those points are quite large.
 
 It is not "set if and forget it" kind of deal. You **might consider using rems instead**.
 
+## Relative color syntax
+
+Gone are the days where you had to spend X amount of time manually deriving colors from a "brand" color or similar. Now, we have a built-in way to do this: enter [_CSS relative colors_](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_colors/Relative_colors)
+
+```css
+:root {
+  --brand: red;
+  --brand-light: hsl(from var(--brand) h s calc(l + 30));
+}
+```
+
+Notice how powerful this is!
+
+1. I can mix and match colors defined via different "color functions".
+
+2. I can use `calc` inside those functions.
+
+### The `hsl` color space
+
+The `rgb` or `hex` representations of a color does not tell us much. [This blog post explains the problem quite well](https://css-tricks.com/almanac/functions/h/hsl/#aa-why-hsl).
+
+Consider the following colors:
+
+```css
+rgb(237, 70, 44)
+
+rgb(255, 120, 100)
+
+rgb(200, 50, 30)
+```
+
+The numbers there are not really that meaningful right? I mean, you might have an intuition for them, but I certainly do not know what color they represent.
+
+Now, consider HSL:
+
+```css
+hsl(8, 84%, 55%)
+hsl(8, 84%, 70%)
+hsl(8, 84%, 40%)
+```
+
+If you remember what HSL stands for – `h` for _hue_, `s` for _saturation_, and `l` for _lightness_ – you might be able to guess that all of these represent some "reddish" colors.
+
+I personally find the HSL representation of colors much more logical to use.
+
 ## CSS Variables
 
 CSS Variables allow you to declare different values, which you can use later in your CSS definitions. **Keep in mind that you can scope the visibility of variables, like in any other programming language**.
