@@ -779,6 +779,8 @@ It is not "set if and forget it" kind of deal. You **might consider using rems i
 
 ## Relative color syntax
 
+> [Read this excellent blog post to learn more](https://ishadeed.com/article/css-relative-colors/).
+
 Gone are the days where you had to spend X amount of time manually deriving colors from a "brand" color or similar. Now, we have a built-in way to do this: enter [_CSS relative colors_](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_colors/Relative_colors)
 
 ```css
@@ -2205,3 +2207,85 @@ As soon as you do that, you will **notice that the button overflows the `.contai
 At the time of writing this, the `stretch` requires vendor prefixes – something your CSS processor does for you.
 
 Interestingly, the `display: stretch` is yet to be documented on MDN.
+
+## The `@scope` and _proximity_ of classes
+
+> [Based on this blog post](https://frontendmasters.com/blog/one-thing-scope-can-do-is-reduce-concerns-about-source-order/)
+
+Consider the following HTML. What would be the color of the `#box` element?
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .wrapper-2 #box {
+        background: red;
+      }
+
+      .wrapper-1 #box {
+        background: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper-1">
+      <div class="wrapper-2">
+        <div id="box">Box</div>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+The `wrapper-2` class should override the `wrapper-1` class, right? **That is not the case**.
+
+**Remember: by default, if the selectors have the same specificity, it's the order in which they are defined that determines which overrides which**.
+
+That is quite suboptimal. If we do not do anything about it, it forces us to keep track of the order in which we define our selectors. You know that this is not happening, especially when working within a team.
+
+So, what can we do about it? **We can use the `@scope` property to switch from "order of definition" to "proximity" heuristic**.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      @scope (.wrapper-2) {
+        #box {
+          background: red;
+        }
+      }
+
+      @scope (.wrapper-1) {
+        #box {
+          background: blue;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper-1">
+      <div class="wrapper-2">
+        <div id="box">Box</div>
+      </div>
+    </div>
+  </body>
+</html>
+```
+
+Now, the box would have red background color.
+
+### The `@scope` vs. `@layer`
+
+- **Use `@layer` for organizing cascade rather than "scoping" styles to a specific selector**.
+
+- **Use `@scope` for creating scoped styles that do not leak "outside" of their boundaries**.
+
+Be _very_ careful while defining a `@layer` inside a `@layer`. You might be tempted to do this, because adding `@layer` affects specificity, but using `@scope` is better suited for this job.
