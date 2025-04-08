@@ -1072,3 +1072,19 @@ function canDoAThing(user) {
   return user.email.endsWith("foo@com");
 }
 ```
+
+## Worse is Better
+
+I was recently watching [this video](https://www.youtube.com/watch?v=lHZtq5IheBI) that talked about the concept "worse is better". I find the concept quite interesting, and something I unknowingly came to know throughout my career, but I could not put a name to it.
+
+The term "worse is better" is an observation that doing the so-called "right thing" is not always feasible, and that doing "just enough" to satisfy the requirements is _better_, though technically it is inferior to the "right thing".
+
+Consider _correctness_. In some cases, the cost of making the code "correct" is quite high. It might mean handling ALL the weird edge cases. It might mean developing very robust reconnect logic when a client disconnects from the server. You get the gist.
+
+In reality, this does not matter, as long as the _observable_ aspect of the software works, and the internal implementation is simple. **The simplicity of the code is more important than _correctness_**.
+
+The ["Characteristics" table in this Wikipedia article](https://en.wikipedia.org/wiki/Worse_is_better) explains this well. There is a tension between "The MIT approach" and the "New Jersey style" approach to coding.
+
+A good example of the "worse is better" approach are some UNIX functions. Consider the ["UNIX-HATERS Handbook"](https://en.wikipedia.org/wiki/The_UNIX-HATERS_Handbook). It talks about all the weird quirks of UNIX. Yet, UNIX is a huge success!
+
+I find this concept congruent to the "good enough" mentality when writing software. You want to make the thing work, and leave the code _just readable enough_ for the other person to comprehend it. You definitely do not want to make it unmaintainable, but at some point, the cost of "polishing it" is too high.
