@@ -231,3 +231,13 @@ When the specification first came out, it called for using SSE (Server-Sent Even
 The main problem with SSE, especially for serverless, is that **SSE is stateful**. This creates an interesting problem for serverless environments – there, we can't reliably maintain long-lived open connections since containers are frozen then booted up again.
 
 If it requires a long-lived connection, it is quite pricey to operate. Just like websockets, there is an overhead associated with keeping multiple clients connected. To address this issue, spec authors are looking to add _streamable HTTP_ as a transport option.
+
+## Prompt caching
+
+In most cases, products have a very robust _system prompt_ that outlines the goals and provides examples. All of this is to ensure the answer to the user query is the best it could possibly be.
+
+Since the _system prompt_ must be sent with every request, if you do not do anything about it, the longer the conversation, the slower the response from the LLM will be – there is more data to process!
+
+Enter _prompt caching_. I find the name misleading, as I initially thought that the solution caches the _whole_ prompt, but that is not the case.
+
+**According to my research, only the "static" part of the prompt is cached**. Think preamble or examples in the system prompt. The "dynamic" part of the prompt is never cached. [OpenAI mentions](https://platform.openai.com/docs/guides/prompt-caching) that they can even cache tool definitions (NOT USE)!
