@@ -34,4 +34,10 @@ Holy smokes, I cannot emphasize enough how useful some of the APIs within the `I
 
 - The `Intl.Segmenter` APIs.
 
+- The `Intl.Collator` APIs.
+
+  - You would use this to sort large arrays of strings. The `"foo".localCompare` is quite slow.
+
+    - [See this blog post for more details](https://claritydev.net/blog/faster-string-sorting-intl-collator)
+
 Of course, this list is highly subjective. It all depends on the requirements that you have. The most important part is to know these APIs exists – you do not have to memorize them!
