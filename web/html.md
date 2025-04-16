@@ -492,3 +492,20 @@ To build an accessible table, you do not have to employ lots of effort. The [exa
 **Notice the `caption` element**. I was recently building a table and failed to include the `caption` element in the markup. If I did, I bet writing tests for the table would be easier (because I could use semantic selectors).
 
 Also, keep in mind that the **`caption` element only makes sense in the context of a table**.
+
+## The `hr` tag
+
+I was recently reading about the support for the `hr` element in the `select` tag. [You can read more about it here](https://developer.chrome.com/blog/hr-in-select).
+
+```html
+<select name="majors" id="major-select">
+  <option value="">Select a major</option>
+  <!-- This is pretty new. Might not work in your browser. Proceed with caution of production. -->
+  <hr />
+  <option value="arth">Art History</option>
+</select>
+```
+
+That got me thinking: [if `hr` has semantic meaning within a `section` tag](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr), and we should not use it to separate "random" tags, how does it work in the `select` tag?
+
+I could not find any definitive answer. For now, I will stick to visually styling a `div` tag as a horizontal line and use `hr` inside a `section` with multiple paragraphs if necessary.
