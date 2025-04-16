@@ -2289,3 +2289,23 @@ Now, the box would have red background color.
 - **Use `@scope` for creating scoped styles that do not leak "outside" of their boundaries**.
 
 Be _very_ careful while defining a `@layer` inside a `@layer`. You might be tempted to do this, because adding `@layer` affects specificity, but using `@scope` is better suited for this job.
+
+## `text-wrap: balance` and `text-wrap: pretty`
+
+Have you ever had to deal with "orphaned" words in a paragraph? Or perhaps a heading that had that one word in a new line?
+
+Now, in 2025, we have **new `text-wrap` properties we can use to avoid such issues**.
+
+I [think MDN explains it best](https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap):
+
+- Use `text-wrap: balance` for headings and text that is not overly long.
+
+  - Uses an "expensive" algorithm (in comparison to `pretty`) to calculate the layout.
+
+  - Has an effect only on a couple of lines of text.
+
+- Use `text-wrap: pretty` for paragraphs.
+
+  - Uses a less compute-intensive algorithm (in comparison to `balance`) to calculate the layout of words.
+
+  - Can be used for long paragraphs.
