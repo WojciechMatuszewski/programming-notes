@@ -189,6 +189,18 @@ The `action` step leverages _tools_ to retrieve information. **Keep in mind that
 
     - For **_augmentation_, consider using model-based approach**.
 
+---
+
+> Notes from [this blog post](https://hamel.dev/blog/posts/field-guide/)
+
+- **Consider having a binary yes/no grade for evaluations**.
+
+  - The "scale" approach (1 through 5) introduces bias and uncertainty – what would be the difference between 3/5 and 4/5?
+
+- If you want to use _LLM as a judge_ approach, **consider making periodic "alignment" runs that involve humans**.
+
+  - Keep in mind that the scores the LLM gives could drift from what you would consider acceptable. That is why, from time to time, involving humans is imperative to the whole process.
+
 ## AI Gateways
 
 - Similar to an _API Gateway_ but specialized for AI.
