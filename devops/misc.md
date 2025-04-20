@@ -60,3 +60,19 @@ The **_reverse proxy_ sits between the incoming traffic and the server**.
 A good **metaphor is visiting a restaurant and asking for table. The waiter will assign you a seat. From the restaurants perspective, the waiter is a _reverse proxy_**.
 
 From technical perspective, **a good example of a _reverse proxy_ would be a load balancer**.
+
+## The `.env` files
+
+I was watching [this video](https://www.youtube.com/watch?v=j2JRBZaMDSg) where the author makes a compelling case _against_ `.env` files.
+
+- If your `.env` files are not checked into the repository, you might have lots of trouble running the app as it existed at some point in the past.
+
+  - Why would that be useful? Well, if you want to fix an issue, you most likely want to go back to how the app was functioning previously and see what the difference is between the working version and the current one.
+
+- [There is also this follow-up video](https://www.youtube.com/watch?v=5lb3T3R_z2k) where the author talks about the security implications of `.env` files on a server.
+
+  - There have been numerous cases where companies _hosted_ their `.env` files as static files accessible by anyone. In fact, in my work, I see requests to various `.env` files happen all the time! People are actively trying to "probe" for those files in hopes of stealing application secrets.
+
+The author makes a case for using vendor-specific services to host secrets, like _AWS Secrets Manager_. I agree with this approach, but I also think that this solution is not for everyone.
+
+Keep in mind that, depending on the infrastructure, reading secrets might add latency to your application, especially in serverless environments, even when caching those secrets in-memory. In addition, one has to be mindful of the complexity such a solution brings. You usually will need to add some kind of library, or write custom code, to fetch those secrets.
