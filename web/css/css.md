@@ -2144,9 +2144,9 @@ Since, **by default the popover is NOT anchored to the target**, you will most l
 
 Notice that I did not have to apply any additional styles to make the functionality work. Of course, If I need to customize the positioning, I can do that!
 
-To learn more, consult the [MDN article](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) about the Popover API.
+- To learn more, consult the [MDN article](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) about the Popover API.
 
-To learn more about positioning the elements anchored to another element, read [this blog post](https://developer.chrome.com/docs/css-ui/anchor-positioning-api#use_anchor_with_top-layer_elements_like_popover_and_dialog).
+- To learn more about positioning the elements anchored to another element, read [this blog post](https://developer.chrome.com/docs/css-ui/anchor-positioning-api#use_anchor_with_top-layer_elements_like_popover_and_dialog).
 
 ## The `display: stretch`
 
@@ -2309,3 +2309,66 @@ I [think MDN explains it best](https://developer.mozilla.org/en-US/docs/Web/CSS/
   - Uses a less compute-intensive algorithm (in comparison to `balance`) to calculate the layout of words.
 
   - Can be used for long paragraphs.
+
+## `text-box-trim` property
+
+Have you ever noticed that text has a bit of "vertical padding", even without any `padding` properties applied to it?
+
+The `text-box-trim` property _will_ [allow you to control which of the over and under edges of the text content to trim from a text element's block container](https://developer.mozilla.org/en-US/docs/Web/CSS/text-box-trim).
+
+You most likely want to pair it with `text-box-edge` property – [see MDN for details](https://developer.mozilla.org/en-US/docs/Web/CSS/text-box-edge).
+
+So, if you want to **make the text have as little vertical height as possible, use the following snippet**.
+
+```css
+p {
+  text-box-edge: cap alphabetic;
+  text-box-trim: trim-both;
+}
+```
+
+## Custom attributes
+
+You can select things based on their attributes in CSS, like so (we have covered this in "attribute selectors" section):
+
+```css
+img[alt="some-text"] {
+  /* stuff */
+}
+```
+
+But, there is also the [`attr` function](https://developer.mozilla.org/en-US/docs/Web/CSS/attr) which is about to get extended to support _any attribute_ on a DOM node!
+
+```html
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(attr(data-columns type(<number>)), 1fr);
+  }
+</style>
+
+<div class="grid" data-columns="3">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+```
+
+**There is something to be said about using CSS variables to achieve the same thing**:
+
+```html
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 1fr);
+  }
+</style>
+
+<div class="grid" style="--columns: 3">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+```
+
+The CSS variables approach might seem easier, but consider that you are mixing _styling_ with _configuration_ (at least it seems as that is the case for me).
