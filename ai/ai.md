@@ -253,3 +253,117 @@ Since the _system prompt_ must be sent with every request, if you do not do anyt
 Enter _prompt caching_. I find the name misleading, as I initially thought that the solution caches the _whole_ prompt, but that is not the case.
 
 **According to my research, only the "static" part of the prompt is cached**. Think preamble or examples in the system prompt. The "dynamic" part of the prompt is never cached. [OpenAI mentions](https://platform.openai.com/docs/guides/prompt-caching) that they can even cache tool definitions (NOT USE)!
+
+## Notes from [Deep Dive into LLMs like ChatGPT video](https://www.youtube.com/watch?v=7xTGNNLPyMI)
+
+### Pre-training: download and preprocess the internet
+
+> See [this example](https://huggingface.co/spaces/HuggingFaceFW/blogpost-fineweb-v1)
+
+- Gather as much high-quality and diverse documents from the internet as possible.
+
+  - The better the documents, the more "knowledge" we can extract from them.
+
+### Tokenization
+
+- Compress the raw text gathered from the internet into _tokens_.
+
+  - Tokens DO NOT necessarily represent a single word. One word might contain two or more tokens.
+
+- Think of this as assigning IDs to groups of symbols (groups of letters).
+
+  - Those IDs make up a _vocabulary_ of the LLM.
+
+  - The **IDs are arbitrary for each token**.
+
+### Training the Neural Network
+
+- Pick a sequence of tokens (arbitrary and variable length) from the vocabulary and attempt to predict what token comes next.
+
+  - This sequence of tokens that we picked is called _context_. **This is an input to the neural network**.
+
+- Neural network's job is to _predict_ what token comes next. Each token in our vocabulary has assigned a probability.
+
+  - When you start, those probabilities are random.
+
+  - Since you _know_ what token should come next, you have a way to "tune" the neural network by updating those probabilities given the answer.
+
+    - **You "nudge" the probabilities, rather than increasing the probability of the correct token to be 100%**. This is done by applying some math on those probabilities.
+
+- The process of training the neural network is adjusting those probabilities (weights) so that the output is consistent with what we expect.
+
+  - As you can imagine, given the size of the input and how many variations of inputs there might be, this is a very compute-expensive process.
+
+- As you train the neural network, you **should be paying attention to something called "loss"**. It's derived from the output vs. what is the "correct" answer in the text.
+
+  - As you update the parameters, the "loss" should decrease.
+
+#### Neural Network Internals
+
+- Lots of steps that perform various mathematical operations on the inputs. [See the visualization here](https://bbycroft.net/llm).
+
+#### Inference
+
+- Happens **after training**.
+
+  - Process of "flipping a coin" for the next token. **This is what chat-based models like ChatGPT do**.
+
+- This is where _fine-tuning_ comes in – the model you are using has "reasonable defaults", but you want to tweak it to your needs.
+
+#### GPU gold rush
+
+- GPUs are very good at performing parallel operations.
+
+  - When you train neural networks, you perform various mathematical operations that are highly parallelizable.
+
+#### Base models
+
+- When you are done training, you get a _base model_.
+
+  - **A _base model_ is an "internet token autocomplete"**. It is not yet that useful in itself.
+
+    - It CAN predict the next token in the sentence, but it lacks "direction".
+
+      - For example, if you were to "ask" the base model: "What is 2+2" it will go on a random ramble and most likely not give you any answers.
+
+- Since the base models are autocompleting and picking the next word based on probabilities, **you can't trust the output**.
+
+  - It was trained on internet data, so anything goes. While true information most likely appears more frequently, so the probability for such information is higher, the model might pick other tokens!
+
+    - This is what we call **hallucinations**.
+
+### Post-Training: get answers to questions
+
+- This stage is much shorter than the _pre-training_ stage, usually taking less than a day compared to months of _pre-training_.
+
+#### Training on conversations
+
+- First, you generate a vast amount of questions (still very much smaller than the original dataset used to train the _base model_).
+
+- Next, you have people answer them as they would want the LLM to answer them.
+
+  - It is sad that people receive very low compensation for this work. All in the name of pursuit of profit. OpenAI makes billions, people can't make a living...
+
+- Next, you train the model on those questions and answers **using the same method as in the _pre-training_ phase**.
+
+##### Representing conversations as tokens
+
+- So far, the data we input to the model did not follow a strict "convention". It was free-flowing text from the internet. How do we represent the "meaning" of the q&a format using tokens?
+
+  - There is no standardized way to do this. **Each LLM provider seems to have their own format**.
+
+  - It boils down to **"wrapping" different parts of the q&a with special tokens that the LLM has never seen**. This allows us to customize the "meaning" of those tokens!
+
+#### Post-training inference
+
+- The base model will "autocomplete" the next token based on "internet data". The _post-training_ model will "autocomplete" the next token based on the "conversational data" (of course, it has access to the vocabulary from the _pre-training_ phase).
+
+  - Remember: **_inference_ is an act of predicting the next token in a sequence**.
+
+- Think about it: when you ask a ChatGPT a question, it does not magically come up with an answer on its own.
+
+  - It mimics how a human would answer, because that is the data the model was trained on. **This is why the answer feels so human-like**.
+
+  - **If the question (or variation of it) is not in the dataset**, the LLM will derive the answer from its pre-training data. Still, the answer would feel human-like given all the conversations the model "saw".
+
+Finished: https://youtu.be/7xTGNNLPyMI?t=4833
