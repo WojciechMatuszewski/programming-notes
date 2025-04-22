@@ -366,4 +366,80 @@ Enter _prompt caching_. I find the name misleading, as I initially thought that 
 
   - **If the question (or variation of it) is not in the dataset**, the LLM will derive the answer from its pre-training data. Still, the answer would feel human-like given all the conversations the model "saw".
 
-Finished: https://youtu.be/7xTGNNLPyMI?t=4833
+### LLM physiology
+
+- You can **think of the _parameters_ as "vague recollection"**.
+
+  - Answers based on the neural network parameters (and the data they contain) have a much higher risk of hallucinations.
+
+- You can **think of the _context window_ as "working memory"**.
+
+  - Answers based on the _context_ have a much better chance to be of high quality. The LLM does not have to rely on "recollection".
+
+- **Models can't "see" like you do**.
+
+  - For example, if you were to ask the model to count how many characters are in a given world, the model will most likely give you an incorrect answer.
+
+    - This is because **models "see" tokens, NOT characters**, and each token could consist of multiple characters.
+
+#### Hallucinations
+
+- The _post-training_ data contains answers to questions that are written in a "confident" tone.
+
+- What happens if the question asks for something that does not exist, like a randomly generated person name?
+
+  - The LLM will answer with the most probable next tokens **in the same, very confident way – because of the data it was trained on**.
+
+    - This is why LLMs sound so confident, even when they make up answers.
+
+##### Dealing with hallucinations
+
+- **One way** to deal with hallucinations is to **add "I do not know" answers to questions the LLM is unsure of to the _post-training_ dataset**.
+
+  - How do you know what the LLM is unsure of? You test its "knowledge boundary".
+
+    - Generate a set of questions and answers based on some context, and then probe the LLM multiple times for answers and check whether the answers are correct.
+
+- **Another way** is to "nudge" the LLM to use tools, mainly the web search tool.
+
+  - Similarly to the "solution" above, we add the conversations that leverage "search tool special token" in the question. This allows the LLM to "learn" when to use a given tool and when to lean on the context.
+
+    - Keep in mind that **the result of the _web search tool_ are "dumped" into the context**. You do not see this.
+
+#### Knowledge of "self"
+
+- The knowledge of "self" is "programmed in", just like the "personality" of the LLM.
+
+  - The Q&A dataset contains questions like "Who built you?" and so on. This allows the LLM to "learn" the answers to those questions.
+
+- If you were to ask a _base model_ such a question, it would "hallucinate" the most probable tokens.
+
+  - Since OpenAI is quite famous, and can occur quite frequently in the _pre-training_ dataset, the answer might be that the model was built by OpenAI, even thought it was not.
+
+#### Models need tokens to "think"
+
+Remember: all the model does, is to pick the next token from a list of tokens given their probabilities.
+
+- Let us say you are a human labeller and was given a task to "judge" the answer of LLM to a math question. How do you decide the "best" answer?
+
+  - Focus on how "evenly" the LLM "spreads" the reasoning. How much computation, or reasoning is allocated for each token.
+
+  ```text
+  A1: The answer is 3. This is because...
+
+  A2: The total cost of the oranges is 4. 13-4=9, the cost of the 3 apples is 9. 9/3=3, so each...
+  ```
+
+- Consider the `A1`. **All the computation is "crammed" into a single token of `3`**.
+
+- Now consider the `A2`. **Notice how "evenly" the LLM spreads the computation**.
+
+  - The answer **creates intermediate computations that the LLM can reference since they are in the LLMs _context window_**.
+
+    - **This matters. The `A1` trains the LLM to guess. The `A2` trains the LLM to "think"**. The **`A2` applies step-by-step reasoning which is very effective way to "probe" the LLM to give you correct answer**.
+
+- Even better, **ask the model to use _tools_ like "code"**.
+
+  - This way, the model does not have to perform arithmetics in their working memory (context).
+
+Finished: https://youtu.be/7xTGNNLPyMI?t=7649
