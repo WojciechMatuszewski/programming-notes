@@ -442,4 +442,30 @@ Remember: all the model does, is to pick the next token from a list of tokens gi
 
   - This way, the model does not have to perform arithmetics in their working memory (context).
 
-Finished: https://youtu.be/7xTGNNLPyMI?t=7649
+### SFT (supervised fine-tuning) model - reinforcement learning
+
+**Why do we do this step?** We do it **because we do not know what solution (combination of tokens) works best of the LLM**. LLM has to "discover" that on their own.
+
+- Given a prompt, run the LLM to generate the solution. If the solution is correct, "encourage" the model to favour that way of thinking.
+
+  - The solution comes from the model itself. It DOES NOT come from human labellers.
+
+- This process helps the _model_ to discover what way of thinking works for a given problem.
+
+  - We can't know that. We _do not know_ what happens inside the model. We are only aware of the various mathematical operations.
+
+    - Side note: there is a whole field of science to "peek under the cover" and attempt to understand what is going on inside the model. See ["Mechanistic Interpretability" for more details](https://www.transformer-circuits.pub/2022/mech-interp-essay).
+
+- **The so-called "thinking" is an emergent property of this stage of training**.
+
+  - As the R1 paper showed, LLMs will consume more tokens per answer as the training progresses. This is because the model develops the "wait, let me check the solution step-by-step" intuition.
+
+    - This "step-by-step" thinking greatly increases the correctness of the answer.
+
+- **Using RF allows the model to discover "novel" ways to approach the problem**.
+
+  - A great example of this would be AlphaGO with the famous "move 37".
+
+    - While not _new_, it was a very interesting, and almost creative way to proceed with the game.
+
+Finished: https://youtu.be/7xTGNNLPyMI?t=10108
