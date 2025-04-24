@@ -468,4 +468,42 @@ Remember: all the model does, is to pick the next token from a list of tokens gi
 
     - While not _new_, it was a very interesting, and almost creative way to proceed with the game.
 
-Finished: https://youtu.be/7xTGNNLPyMI?t=10108
+### RLHF - Reinforcement Learning from Human Feedback
+
+- So far, we've been looking at the _concrete_. You give an LLM a task, like adding two numbers, and assert that the answer contains what you would expect.
+
+  - But how would you judge things that are "un-verifiable", like telling a good joke? **Here is where _RLHF_ comes in**.
+
+- The "naive" approach would be to have a human look at _every_ output of the LLM and judge that. This is a "naive" approach because it does not scale well.
+
+  - Instead, we will use another LLM that was trained on human-preference data for that particular "thing" that we are trying to get scores on.
+
+    - Given X scores from humans, that LLM will "learn" the preference, and then judge the model we are training.
+
+    - **This way of RLHF could be considered _lossy_, because the judge is an approximation to a human**.
+
+- **You should limit the number of iterations in this process**.
+
+  - It turns out, the "reward model" that we talked about is pretty good at "gaming" the model.
+
+    - Researchers noticed that, after thousands of iteration cycles, the reward model started to give very high scores to things that do not make sense.
+
+### Summary
+
+Such a great video! I'm so thankful that it exists.
+
+Remember:
+
+1. Three stages of training
+
+- _pre-training_ where we process as much text from the internet as possible and build the vocabulary.
+- _post-training_ where we "mold" the LLM to be an assistant with q&a data with the help of human labellers.
+- _SFT_ and _RLHF_ where we further improve the model.
+
+2. Models are nothing BUT token generators.
+
+3. Models can solve very hard problems and miserably fail at things that seem obvious to us. We do not know exactly why.
+
+4. **Models need tokens to "think"**. You want the answer to "spread" the computation across tokens. Single world answers from the model might have a higher chance of being incorrect.
+
+5. **Never assume the model is correct**. Use the output as first draft or inspiration.
