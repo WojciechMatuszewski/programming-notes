@@ -44,4 +44,18 @@
 
   - Having said that, I agree with some points John makes AS LONG AS his points pertain to comments that explain _why_ things work.
 
-Finished https://github.com/johnousterhout/aposd-vs-clean-code?tab=readme-ov-file#johns-rewrite-of-primegenerator
+- When John presented their rewrite with comments, UB found a couple of "bugs" within the comments.
+
+  - **My problem with comments is that I can't write tests against them**. I **can't catch "bugs" in the comments the same way I could catch bugs in code**.
+
+- John, instead of TDD, advertises an approach UB calls "bundling" - instead of working in very small units, programmers should focus on tactical thinking and write larger chunks of code before writing tests for it.
+
+  - I second this approach, but I believe it is more nuanced that "always TDD" vs. "always bundling".
+
+    - In some cases, TDD is very useful, for example when implementing an algorithm.
+
+    - In some cases, "bundling" might be more useful, for example when implementing a feature.
+
+  - John argues that the "bundling" approach promotes tactical thinking more. It allows us to think about the design more, since you can actually write _most_ of the code that you want to write before refactoring it.
+
+Start summary -> https://github.com/johnousterhout/aposd-vs-clean-code?tab=readme-ov-file#tdd-summary
