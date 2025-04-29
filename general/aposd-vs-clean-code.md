@@ -58,4 +58,20 @@
 
   - John argues that the "bundling" approach promotes tactical thinking more. It allows us to think about the design more, since you can actually write _most_ of the code that you want to write before refactoring it.
 
-Start summary -> https://github.com/johnousterhout/aposd-vs-clean-code?tab=readme-ov-file#tdd-summary
+- Something John said made me think: "By refusing to write comments, you are hiding important information that you have and that others need".
+
+  - I mostly agree. Perhaps my stance on comments sits in between those two. I will add code comments on things that I deem "complex" or "out of ordinary".
+
+    - Remember: **the complexity is in the eye of the reader**. It does not matter what I think. If someone finds the code confusing, I must change it to make it more obvious.
+
+## Summary
+
+It was fascinating read! I love the format. I like how they choose to _write_ their thoughts rather than argue on some kind of podcast.
+This allows everyone to digest what other said and respond with thoughtful manner.
+
+Reflecting back, I see that my stance on engineering and the topics discussed often sits in-between what John and UB think.
+
+Take comments for example. I'm more reserved that John, but I do not think comments are inherently waste of time.
+When it comes to splitting code into smaller functions, I will do that, but there is a balance to be had. I read Johns book multiple times, and I love the idea of "deep interfaces".
+
+I'm very grateful to had the opportunity to read this document!
