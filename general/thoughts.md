@@ -1088,3 +1088,63 @@ The ["Characteristics" table in this Wikipedia article](https://en.wikipedia.org
 A good example of the "worse is better" approach are some UNIX functions. Consider the ["UNIX-HATERS Handbook"](https://en.wikipedia.org/wiki/The_UNIX-HATERS_Handbook). It talks about all the weird quirks of UNIX. Yet, UNIX is a huge success!
 
 I find this concept congruent to the "good enough" mentality when writing software. You want to make the thing work, and leave the code _just readable enough_ for the other person to comprehend it. You definitely do not want to make it unmaintainable, but at some point, the cost of "polishing it" is too high.
+
+## Should you fix that bug?
+
+> Based on [this article](https://stratechgist.com/p/fix-it-flag-it-or-forget-it-a-practical).
+
+### Effort & Cost
+
+Each change to the code will require _some_ amount of effort. Since effort, in most cases, equals time, the effort also equals money.
+
+- External dependencies. Is anyone blocked by this bug? Perhaps another team is having a hard time?
+
+  - **Remember that bugs can have downstream effects, and I'm not talking about users here**. Perhaps the issue makes it hard for another team to reach its revenue goals?
+
+- Engineering estimate. **Remember that some engineers will be more suited to fix a bug than others**. Person A might have more context in that area of the code than person B.
+
+- Blast radius. Major changes are risky. Minor changes, even if complex, have smaller potential for failure since they operate on the smaller surface of code.
+
+  - The smaller the "code surface", the easier it is to catch any issues in code reviews!
+
+  - If you see a pull request with 60+ files changed, you are much less likely to even want to review it compared to only a single file change.
+
+### Strategic Alignment
+
+Use your judgment here, but it **would be wise to ensure everyone is aligned on how severe the issue is**. You should be thinking about **how this bug influences team/company goals**.
+
+- Make sure to surface any issues others might not be aware of.
+
+- Get help from your manager/stakeholders to better understand what will happen if we _do not_ fix the issue.
+
+- **Some bugs will help you to "sell" other initiatives, like prioritizing technical debt in parts of the codebase**.
+
+  - You can justify migrations and migrating to better tools this way!
+
+### Future Implications
+
+Maybe the issue is not that important now, but does it have a chance to become _very_ important later on? Working closely with your peers can help here.
+
+Suppose you learn the sales team is talking with a big customer. They are interested in feature X. You know that feature X has a bug. Perhaps it would be worth prioritizing that bug higher?
+
+Also consider the fact that **some low-priority bugs _can_ become blockers in the future**. Perhaps you have a memory leak, but there are not many users, so there is nothing to worry about _now_. What about the future?
+
+### "Forget it" bugs
+
+Sometimes, the best decision is to do nothing. Yes, it might feel "weird", but treat this decision as **strategic non-action** rather than neglect.
+
+> Side note: I find it fascinating that, at the beginning of my career, it would be _very_ hard to accept this outcome, but now I see it as completely valid decision team can make.
+
+From my experience, such decision should be reserved for tickets where:
+
+- Impact is negligible. Fixing it would not improve your service that much.
+
+- The ratio of risk to reward is low.
+
+- The bug pertains to part of the system that is deprecated.
+
+### "Snacking" trap
+
+One of the traps you might fall into is so-called "snacking" on bugs. This means fixing low-priority bugs to "feel good" about yourself rather than actually working on something impactful.
+
+I can't blame anyone for doing this. We all want to feel good about our work. Fixing small issues definitely gives you that, but only for a short period of time. Think of this as snacking on random food rather than eating nutritious lunch.
