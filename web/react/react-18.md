@@ -36,16 +36,14 @@ const [startTransition, isPending] = useTransition();
 
 return (
     <button
-        onClick = {()
-=>
-startTransition(() => {
-    // states updates here
-})
-}
->
-</button>
-)
-;
+        onClick={() => {
+            startTransition(() => {
+                // states updates here
+            });
+        }}
+    >
+    </button>
+);
 ```
 
 When you use `startTransition`, the **React will prepare a new tree in the background**. Once that tree is finished
@@ -1007,6 +1005,34 @@ This "limitation" promotes composability. If you cannot import components, you h
 I also like to think about this restriction in terms of **_owner_ and _parent_ components**. The **RCC can be _parent_ of the RSC but not the _owner_ of RSC**.
 
 > You can read more about the _parent_ and _owner_ relationship [here](https://reacttraining.com/blog/react-owner-components).
+
+#### What does 'use client' do
+
+> Taking notes while reading [this blog post](https://overreacted.io/what-does-use-client-do/).
+
+- **Think of the `use client` and `use server` pragmas as opening a "door" to another "side" of the same program spanning two environments**.
+
+  - You have the "backend" side of the program, and the "frontend" side of the program. Still, it is _the same program_.
+
+  - The **`use client` and `use server` pragmas are _NOT_ about "marking" code as being on the _client_ and on the _server_**.
+
+    - They are about opening "doors" to a different environment.
+
+- When you use `use server`, you mark all the exports in a file as "callable" from the frontend.
+
+- When you use `use client`, you mark all the exports in a file as "renderable" from the backend.
+
+All of this is powered by abstractions on the module level. The `use server` will create necessary HTTP endpoints. The `use client` will produce the necessary references.
+
+When calling a _server function_ from the frontend environment, you implicitly make an HTTP call, but you preserve all the nice things about "just calling a function":
+
+1. You can "find references" to it.
+
+2. The input arguments are typed (if you use TypeScript).
+
+The same can be said about "rendering" a _client component_ on the backend environment.
+
+Again, notice the quotes. Bundler does A LOT of things behind the scenes to make it appear as you are "rendering" a component or "calling" a function.
 
 #### Notes from the "Dan Abramov explores React Server Components with us!"
 
