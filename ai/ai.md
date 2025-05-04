@@ -244,6 +244,12 @@ The main problem with SSE, especially for serverless, is that **SSE is stateful*
 
 If it requires a long-lived connection, it is quite pricey to operate. Just like websockets, there is an overhead associated with keeping multiple clients connected. To address this issue, spec authors are looking to add _streamable HTTP_ as a transport option.
 
+### The Streamable HTTP transport
+
+The _SSE transport_ is deprecated in favour of the _Streamable HTTP_ transport! [You can read more about this transport here](https://modelcontextprotocol.io/specification/draft/basic/transports#streamable-http).
+
+This is a huge win for serverless environments. This transport _could_ be made stateless, but it [can also support stateful connections](https://modelcontextprotocol.io/specification/draft/basic/transports#session-management).
+
 ## Prompt caching
 
 In most cases, products have a very robust _system prompt_ that outlines the goals and provides examples. All of this is to ensure the answer to the user query is the best it could possibly be.
