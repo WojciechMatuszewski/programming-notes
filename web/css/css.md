@@ -1012,12 +1012,11 @@ allow us to apply conditions in CSS.
 
 #### The "space toggle"
 
-> Based on
-> resources [from this GH repo](https://github.com/propjockey/css-sweeper?tab=readme-ov-file#basics-of-space-toggle).
+> Based on resources [from this GH repo](https://github.com/propjockey/css-sweeper?tab=readme-ov-file#basics-of-space-toggle).
+
 > Also, check [this article out](https://www.bram.us/2023/09/16/solved-by-css-scroll-driven-animations-detect-if-an-element-can-scroll-or-not).
 
-This works, because **an empty space is a valid CSS custom-property value**. If **the space value essentially acts
-as `true` value in other programming languages**.
+This works, because **an empty space is a valid CSS custom-property value**. If **the space value essentially acts as `true` value in other programming languages**.
 
 ```css
 .box {
@@ -1033,8 +1032,7 @@ as `true` value in other programming languages**.
 }
 ```
 
-Okay, so if empty space acts as a "true", how do we represent the `false` value? To **represent the `false` use
-the `initial` keyword**.
+Okay, so if empty space acts as a "true", how do we represent the `false` value? To **represent the `false` use the `initial` keyword**.
 
 ```css
 .box {
@@ -2372,3 +2370,81 @@ But, there is also the [`attr` function](https://developer.mozilla.org/en-US/doc
 ```
 
 The CSS variables approach might seem easier, but consider that you are mixing _styling_ with _configuration_ (at least it seems as that is the case for me).
+
+## Checking if the element is scrollable via CSS
+
+> Taken from [this video](https://www.epicweb.dev/talks/less-cruft-more-power-leverage-the-power-of-the-web-platform)
+
+With the `animation-timeline: scroll(self)` we can apply a `@keyframes` animation to the element _only_ when it is scrollable!
+
+Since you can change CSS variables within the `@keyframes` animation, you can change the element when it has a scrollbar.
+
+### Using _space toggles_
+
+> [You can read more about the scape toggle technique here](https://github.com/propjockey/css-sweeper#basics-of-space-toggle)
+
+```css
+@keyframes detect-scroll {
+  from,
+  to {
+    /* So-called space-toggle */
+    --can-scroll: ;
+  }
+}
+
+.box {
+  /* Set the initial value. Critical to get this working! */
+  --can-scroll: initial;
+
+  animation: detect-scroll;
+  animation-timeline: scroll(self);
+
+  --some-var-when-can-scroll: var(--can-scroll) <SOME_VALUE>;
+  --some-var-when-cant-scroll: <SOME_VALUE>;
+
+  /* And now you can apply CSS styles based on those values */
+  border: 2px solid var(--some-var-when-can-scroll, var(--some-var-when-cant-scroll));
+}
+```
+
+**The main drawback** of this approach is the complexity the _space toggle_ brings. To me, it is a bit of a hacky solution that relies on the fact that ` ` value will be skipped by the browser when analyzing the property.
+
+```css
+--some-var-when-can-scroll: var(--can-scroll) <SOME_VALUE>;
+```
+
+If the `--can-scroll` holds an "empty value", the `--some-var-when-can-scroll` will evaluate to `<SOME_VALUE>`. Given that the `--some-var-when-can-scroll` holds a valid value, the `border` will use that value for the color. If not, it will use the fallback.
+
+It used to be that **you would use this approach to achieve greater browser compatibility**, but nowadays, the _style queries_ browser support is just as good.
+
+### Using _style queries_
+
+> [Based on this blog post](https://www.bram.us/2023/09/16/solved-by-css-scroll-driven-animations-detect-if-an-element-can-scroll-or-not/)
+
+```css
+@keyframes detect-scroll {
+  from,
+  to {
+    --can-scroll: 1;
+  }
+}
+
+.box {
+  --can-scroll: 0;
+
+  border: 2px solid gray;
+
+  overflow-y: auto;
+
+  animation: detect-scroll;
+  animation-timeline: scroll(self);
+}
+
+@container style(--can-scroll: 1) {
+  span {
+    border: 2px solid red;
+  }
+}
+```
+
+Here, it is much apparent what is going on!
