@@ -2467,3 +2467,37 @@ It used to be that **you would use this approach to achieve greater browser comp
 ```
 
 Here, it is much apparent what is going on!
+
+## `unset` vs. `revert` vs. `initial`
+
+> [More information here](https://youtu.be/bssZTv3BgkE?t=632).
+
+Sometimes you want to "reset" all the styles of an element to the ones from the UA. How would you do that?
+
+When searching for solutions to this problem, I found three values: `unset`, `revert`, and `initial`. What is the difference between these three? And which one should you use?
+
+- The `initial` property will **revert the styles to the _CSS specification defaults_ rather than UA styles**.
+
+  - So, `initial` most likely does not do what you thought it does. I always thought of _initial_ as being the UA styles, but that is not the case!
+
+- The `revert` works differently for _inherited properties_ and _non-inherited properties_.
+
+  - For _inherited properties_, like `color`, it behaves like `inherit` for that property.
+
+  - For _non-inherited properties_, like `display`, **it will style the property according to the UA**.
+
+- The `unset` also works differently for _inherited properties_ and _non-inherited properties_.
+
+  - For _inherited properties_, like `color`, it behaves like `inherit` for that property.
+
+  - For _non-inherited properties_, like `display`, it **behaves like `initial` for that property**.
+
+### Please revert all the style changes I made to this element
+
+If you want to revert **all** the style changes, you can use `revert` to apply back the UA styles for all _non-inheritable_ properties.
+
+```css
+.foo {
+  all: revert;
+}
+```
