@@ -16,6 +16,8 @@ This is great **because setting the `display` has implications for how margins c
 
 ## The `height: 100%` does not work!
 
+> [More information here](https://www.joshwcomeau.com/css/height-enigma/).
+
 How many times have you written the following snippet of CSS only to realize it is not doing what you expect.
 
 ```css
@@ -42,16 +44,13 @@ Especially, in the case where you want to style some kind of "main" container
 </html>
 ```
 
-In retrospective, in almost all cases I can think of, it was the `height` that did not do what I was expecting it would
-do, and not the `width`. Why is that? **It has to do how browsers calculate the `height` and `width`**.
+In retrospective, in almost all cases I can think of, it was the `height` that did not do what I was expecting it would do, and not the `width`. Why is that? **It has to do how browsers calculate the `height` and `width`**.
 
 > [Check out this great video for a full explanation](https://youtu.be/Xt1Cw4qM3Ec?t=736)
 
-- To calculate the `width` browsers look at the parent of a given element. This is recursive. The last parent is
-  the `html` element that has the default width of the document.
+- To **calculate the `width` browsers look at the parent of a given element**. This is recursive. The last parent is the `html` element that has the default width of the document.
 
-- To calculate the `height` browsers look at the **children of a given element**. This "looking at the children" can
-  create recursive conditions that render the `height: 100%` useless.
+- To **calculate the `height` browsers look at the children of a given element**. This "looking at the children" can create recursive conditions that render the `height: 100%` useless.
 
 If we apply this logic to our example, we can see why the `height: 100%` is not working.
 
@@ -60,7 +59,7 @@ If we apply this logic to our example, we can see why the `height: 100%` is not 
 3. The `main` answers that it wants to be `height: 100%` of its parent.
 4. And so on...
 
-To break this recursive chain, one has to specify the height on the `html` and the `body`.
+To break this recursive chain, one has to specify the height on the `html` and the `body` – in other worlds, **the parent heigh can't depend on the height of the children**.
 
 ```html
 <html>
@@ -68,6 +67,7 @@ To break this recursive chain, one has to specify the height on the `html` and t
     <style>
       html,
       body {
+        /* Explicit height. No longer dependant on the height of the children */
         height: 100%;
       }
 
@@ -83,8 +83,27 @@ To break this recursive chain, one has to specify the height on the `html` and t
 </html>
 ```
 
-Now, the `body` can ask the `html` about the `height` and answer the question from `main`. Remember that the `html` has
-the height of a document (implied height of the screen).
+Now, the `body` can ask the `html` about the `height` and answer the question from `main`. Remember that the `html` has the height of a document (implied height of the screen).
+
+### About percentage values for height
+
+Usually, for the `height: <NUMBER>%` to work, the parent's height has to use a concrete value, like `300px` or `10rem`. Think about it: without a "concrete" number, how would the browser be able to calculate a percentage of that number?
+
+If that is the case, how come the `height: 100%` on the `main` works, if the `body` and `html` both have a `height: 100%` applied to them?
+
+[See this section](https://www.joshwcomeau.com/css/height-enigma/#percentages-all-the-way-down-3). It boils down to the fact that **the `html` tag has an "implied concrete height" that is equal to the viewport!**
+
+So, you might often see the following CSS in older projects:
+
+```css
+html,
+body,
+#root {
+  height: 100%;
+}
+```
+
+Nowadays, this is not necessary given that we have the `vh` and `svh` units available to us.
 
 ## Spacing
 
