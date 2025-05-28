@@ -6455,6 +6455,18 @@ What is very important to understand is that **LONG polling CAN END MUCH EARLIER
 
 > The length of time, in seconds, for which a ReceiveMessage action waits for a message to arrive
 
+- **If you "integrated" AWS Lambda with SQS**, the **AWS Lambda service will poll the SQS EVEN if its empty**.
+
+  - Of course, that makes sense, given how ESM work, but **consider how this impacts billing**.
+
+    - If you have a function "just sitting there" connected to an empty SQS queue, you **will be billed for those "empty" API calls to SQS**.
+
+      - See [this blog post](https://medium.com/@mr-beem/the-hidden-cost-of-idle-sqs-queues-how-i-hit-1-million-api-calls-without-sending-a-single-message-1c7c5a16dbaf) for more details.
+
+  - Two "solutions" to this problem:
+    1. Use SNS instead of SQS. SNS is push-based. Keep in mind that SNS does not persist messages.
+    2. Disable ESM when not in use. Not ideal.
+
 ##### Peeking
 
 - there is no built-in mechanism to _peek_ messages in the queue
