@@ -3472,6 +3472,16 @@ This way, CF will fetch the data from the **R53 latency-based resolved host**. T
 
   - **mind the authorizer caching strategy**. The `REQUEST` based authorizer requires you to pick which request parameters you want to choose as your cache key. There is nothing to choose from in the case of the `TOKEN` type authorizer as onl the token could be used as the cache key.
 
+##### Caching Authorizer responses
+
+- Be **very careful** when turning on caching.
+
+  - You might think that turning on caching for authorizes responses is a quick win, but if you do not configure the "identity sources" correctly (which are used to compute the cache key), you **will introduce a security-vulnerability** into your application.
+
+  - See [this blog post](https://authress.io/knowledge-base/articles/2025/05/25/api-gateway-authorizers-vulnerable-by-design) for more details.
+
+    - It boils down to the fact that you run a risk of **re-using permissions for resource X, while user attempts to access resource Y**.
+
 #### IAM Authentication and Authorization
 
 - for **internal service-to-service** communication, AWS recommends using **AWS Sigv4 means of authentication**
