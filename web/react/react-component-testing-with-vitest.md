@@ -1,4 +1,4 @@
-# React Component testing with Vitest
+# React Component Testing with Vitest
 
 Learnings based on [this course](https://github.com/epicweb-dev/react-component-testing-with-vitest)
 
@@ -10,7 +10,7 @@ Learnings based on [this course](https://github.com/epicweb-dev/react-component-
 
     - The main issue is _incompatibility_. JSDOM will never be a "real" DOM for Node.js. It is a library maintained by the open-source community. Many things behave differently than in a "real" DOM.
 
-      - A good example is the `.text` method on the `File` instance. It exists in Node.js, it exists in DOM, but it's nowhere to be found in JSDOM. **You could write correct JavaScript code, but your test might still fail** due to this difference.
+      - A good example is the `.text` method on the `File` instance. It exists in Node.js and DOM, but it's nowhere to be found in JSDOM. **You could write correct JavaScript code, but your test might still fail** due to this difference.
 
 - Instead of using JSDOM and other layers related to it, we **want to run our tests in a real browser – just like your users would run your application**.
 
@@ -48,10 +48,22 @@ Learnings based on [this course](https://github.com/epicweb-dev/react-component-
 
     - **In such situations, consider using [inverse assertions](https://www.epicweb.dev/inverse-assertions)**.
 
-- Earlier, I wrote about Playwright Component Tests vs. Vite Browser Mode.
+- Earlier, I wrote about Playwright Component Tests versus Vite Browser Mode.
 
-  - **I see one clear advantage of using Vite Browser Mode for component tests: the fact that you can create new components in the test files**.
+  - **I see one clear advantage of using Vite Browser Mode for component tests: the ability to create new components in the test files**.
 
-    - If you use Playwright, you can't do that. Usually, this is not necessary "feature" to have, but it comes _very_ handy when creating wrapper elements for each render.
+    - If you use Playwright, you cannot do that. Usually, this is not a necessary "feature" to have, but it comes in _very_ handy when creating wrapper elements for each render.
 
-Start 30: debugging tests
+- I really need to get better at using the debugger. It is very powerful, but I am clueless about how to use it.
+
+  - In the course, we have set up a VSCode _launch configuration_ that allows us to put breakpoints and observe the paused state of the test in the browser.
+
+    - Looking back, I could have really used this functionality several times in the past months.
+
+## Wrapping up
+
+I enjoyed this workshop quite a bit. It was quick and to the point. We did not dive _that deep_ into the weeds, but the material provides you with just enough information to get started and be productive.
+
+The debugging section was a wake-up call for me. I have almost zero experience using the debugger, and that has to change.
+
+While the concept of _launch configuration_ is not new to me, I feel like I'm not using them effectively (or at all) in my day-to-day work.
