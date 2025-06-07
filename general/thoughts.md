@@ -1148,3 +1148,37 @@ From my experience, such decision should be reserved for tickets where:
 One of the traps you might fall into is so-called "snacking" on bugs. This means fixing low-priority bugs to "feel good" about yourself rather than actually working on something impactful.
 
 I can't blame anyone for doing this. We all want to feel good about our work. Fixing small issues definitely gives you that, but only for a short period of time. Think of this as snacking on random food rather than eating nutritious lunch.
+
+## The "why" questions and alternatives
+
+> Based on [this blog post](https://mandymusings.com/posts/more-signal-from-coding-interviews)
+
+Consider the following scenario: a colleague that you have worked with for two years already comes up to you and says "hey, why did you decide to implement this feature that way?"
+
+Given that you are working together, and that, I hope, you have built some trust over the years, you take the question as a genuine curiosity-based question and answer accordingly.
+
+The takeaway is: **in this scenario, the "why" question does not feel like an attack or a challenge**.
+
+---
+
+Now consider the following scenario: during an interview, the interviewer asks you the same question "hey, why did you decide to implement this feature that way?"
+
+You are in a high-stress scenario. You _might_ take this question as a challenge or an attack. "Did I make a mistake?", "What do they know that I do not?"
+
+The takeaway is: **in this scenario, the "why" question _might_ induce a fight-or-flight response**.
+
+---
+
+We do tend to think about it, but as powerful as the **"why" question is, depending on the scenario, it might cause more harm than good**. As such, **I recommend moving away from "why" and using different words to express the same intent**.
+
+- Talk me through the thought process that's leading you to ...
+
+- Can you walk me through an example of how ...
+
+- Hel me see how you arrived at ...
+
+All of those are just as powerful as the "why", but they do not carry all the cultural baggage the "why" has.
+
+---
+
+Having said all of this, I also acknowledge that the "power" of the "why" question is often what you need. One example where I believe "why" question shines is the ["Five whys" technique](https://en.wikipedia.org/wiki/Five_whys).
