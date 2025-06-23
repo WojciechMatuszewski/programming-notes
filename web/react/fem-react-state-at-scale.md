@@ -141,4 +141,41 @@ We do limit the number of re-renders here, which is nice, but we introduce a lot
 
 It seems like the `useSyncExternalStore` is very good hook when you do not require the "previous state" for your computation. If you do, you will need to leverage refs which adds a bit of complexity.
 
-Start Part 2 https://frontendmasters.com/workshops/react-state-at-scale/
+### Many different types of diagrams
+
+You can map various relationships within your applications using _diagrams_. As a visual learner, I approve of this method!
+
+You do not have to go super deep or robust here. A simple diagram will often suffice.
+
+**The main point behind making diagrams for you application state or entities is to surface any complexity that might be "hidden" behind the code**.
+I like to think about it in terms of **making implicit explicit**.
+
+### Combining and Optimizing State
+
+- When it comes to state changes, _events_ are the source of truth.
+
+  - Think about it - you mostly update the state when user performs some action.
+
+- Deriving and updating the state via _pure functions_.
+
+- Consider _thinking in state machines_.
+
+  - Completely agree here. How many times have you seen the UI jump from "no results" to "here are the results" when clicking on a search bar?
+
+    - This is an example of code debt that stems from lack of proper state handling.
+
+---
+
+The most impactful refactors you can do it so _derive_ boolean flags rather than have them embedded in state.
+
+```tsx
+const [status, setStatus] = useState("idle");
+
+const isSubmitting = status === "submitting";
+```
+
+**Boolean flags are problematic because they can lead to "impossible states"**. Think `isError: true` and `isSuccess: true`.
+
+On top of that, booleans have a tendency to "multiply". It is very continent to add _yet another boolean flag_ to state of function signature.
+
+Finished Part 2 -12:52
