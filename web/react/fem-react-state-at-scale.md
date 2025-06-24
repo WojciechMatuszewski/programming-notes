@@ -178,4 +178,36 @@ const isSubmitting = status === "submitting";
 
 On top of that, booleans have a tendency to "multiply". It is very continent to add _yet another boolean flag_ to state of function signature.
 
-Finished Part 2 -12:52
+### Forms and `useActionState`
+
+You can get rid of a LOT of state by using the `useActionState` to handle form submissions.
+
+Firstly, you most likely do not need a state value for each of the form fields. The `action` prop will pass you the `formData` which you can transform to values.
+
+Secondly, you do not need to define explicit loading states. One of the things the `useActionState` returns is the `isPending` boolean. You can use that value to implement the "loading UI".
+
+### `useReducer`
+
+The `useReducer` hook is quite awesome for _collapsing_ the state into a single object.
+
+Why would you want to do that? The main benefit is that you have **more control over state transitions**. You can define actions and only allow the state to transition to another state given a certain action.
+
+One pattern David showcases in the workshop is putting the state and dispatch function in the context and using those to make state changes instead of drilling "setXX" functions through many layers of components.
+
+```tsx
+<Provider value={{ state, dispatch }}>{children}</Provider>
+```
+
+**This is nice pattern, but we can make it better!**
+
+The problem with this pattern is that the component consuming the context only to use the `dispatch` function will also re-render when the `state` changes.
+
+Instead of providing the `state` and `dispatch` to a single context, we can split the contexts. This way, when I need only the `dispatch` function, I can skip reading `state` which means that, if the `state` changes, the component consuming the "dispatch context" won't re-render.
+
+```tsx
+<DispatchProvider value={{ dispatch }}>
+  <StateProvider value={{ state }}>{children}</StateProvider>
+</DispatchProvider>
+```
+
+Finished part 4 -24:31
