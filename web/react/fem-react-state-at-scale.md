@@ -210,4 +210,83 @@ Instead of providing the `state` and `dispatch` to a single context, we can spli
 </DispatchProvider>
 ```
 
-Finished part 4 -24:31
+### External State Management Libraries
+
+The main motivation for using a library instead of leveraging the built-in hooks is the ability to benefit from the robustness and ease of use of those libraries when your state becomes complex.
+
+All those libraries use the built-in hooks under the hood, but they abstract _a lot_ of complexity and handle edge cases.
+
+**Using a library also eliminates all the conflicts or inconsistencies that rolling your own abstractions might create** – if you are working with other people, it is inevitable for others to create their own abstractions that differ from yours.
+
+- The "central store" approach.
+
+  - A centralized place where all the state lives.
+
+  - You change the state by creating _events_ that then cause the store to change.
+
+  - **Consider using a store approach when you have complex state and complex requirements**.
+
+    - In such cases, having a single place where everything "stems from" is usually a very good thing.
+
+- The "atomic" approach.
+
+  - Pieces of data that can change from anywhere.
+
+  - Atoms are reactive!
+
+  - **Consider this approach for simpler state where you do not care about what or how this value changes**.
+
+### Data Normalization
+
+What does it even mean to _normalize_ data (or state)?
+
+**In this context, _normalization_ usually means "flattening" the state so you can perform O(1) lookups to get a given piece of data**.
+
+Why is this important?
+
+- It makes updating the state much easier, since you do not have to "drill down" into parent to update the child.
+
+- It makes reading the state faster, because you do not have to "drill down" into parent to read the child.
+
+Overall, _data normalization_ makes your life easier.
+
+```tsx
+const data = {
+  reservations: {
+    id: "...",
+    flights: [
+      {
+        id: "...",
+        passengers: [
+          {
+            id: "..",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+const normalizedData = {
+  reservations: {
+    "...": {
+      id: "...",
+      passengers: {
+        "...": {
+          id: "..."
+        }
+      }
+      flights: {
+        "...": {
+          id: "...",
+          passengers: ["..."],
+        },
+      },
+    },
+  },
+};
+```
+
+Notice how much easier it would be to update a given passenger or flight.
+
+Finished part 5 -30:29
