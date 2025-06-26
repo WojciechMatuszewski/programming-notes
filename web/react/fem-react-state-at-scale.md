@@ -289,4 +289,51 @@ const normalizedData = {
 
 Notice how much easier it would be to update a given passenger or flight.
 
-Finished part 5 -30:29
+**One caveat to keep in mind is the ordering of items**. I think you should NOT rely on the order of the items in the array, but instead sort them when you need to,
+but when you flatten the data structure to an object, you might loose the ordering "properties" of the array.
+
+### Using events as the source of changes of state
+
+By using events (the simplest form is most likely using `useReducer` with actions), enables you to implement the "undo"/"redo" functionality.
+
+1. Keep track of events that happened.
+
+```tsx
+{
+  state: State,
+  events: Array<Event>
+}
+```
+
+2. Given the `undo`, replay the events on the initial state
+
+```tsx
+if (action.type === "UNDO") {
+  let state = initialState;
+  const eventsToReply = state.events.toSpliced(-1, 1);
+
+  for (const event of eventsToReply) {
+    state = reducer(state, event);
+  }
+
+  return { ...state, events: eventsToReply };
+}
+```
+
+### Reducing the amount of `useEffect`s in a given component
+
+The `useEffect` is quite useful abstraction, but it also makes your code more confusing.
+
+- It is very hard to track what exactly caused the `useEffect` to run if you have multiple items listed in the _dependency array_.
+
+- Developers have a tendency to ignore eslint warnings and skip certain items from the _dependency array_ to "make things work".
+
+Two best approaches to deal with this problem I've seen are:
+
+1. **Remove the `useEffect` call and run the logic in the event handler**.
+   In some cases, we only have `useEffect` because we want to run some code when something changes. Things usually change on user input, and users interact with our page by clicking and typing.
+
+2. **Collapse the `useEffect` into `useReducer`**.
+   This allows you to get rid of "dependant" `useEffect` calls!
+
+Finished Part 6 -47:47
