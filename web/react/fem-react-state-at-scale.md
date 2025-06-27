@@ -336,4 +336,24 @@ Two best approaches to deal with this problem I've seen are:
 2. **Collapse the `useEffect` into `useReducer`**.
    This allows you to get rid of "dependant" `useEffect` calls!
 
-Finished Part 6 -47:47
+### URL as state store
+
+While you most likely do not want to put _every_ state in your application into URL, having some state in the URL, for things that users might want to "share" is considered to be a very good practice.
+
+In the workshop, David uses the [`nuqs` library](https://www.npmjs.com/package/nuqs) that makes synchronizing the URL with the state of the application a breeze.
+
+### Using `useSyncExternalStore` hook
+
+The `useSyncExternalStore` hook is quite handy for "incorporating" an _external stores_ into React reactivity model. **The "external store" might be a `navigator` API, or some properties on the window that you can listen to**.
+
+Using `useSyncExternalStore` has it's drawbacks as well! The main drawback is that you **opt out of the concurrent rendering for that piece of state**.
+
+This means that the `startTransition` has no effect when used in the context of state managed by `useSyncExternalStore`
+
+## Summary
+
+More breath than depth, but we covered a LOT.
+
+I like how much emphasis was put onto _deleting `useEffect` hooks from the code_. Our codebases would be in much better state if everyone followed this rule with just a tiny bit more discipline.
+
+I've also learned about a new library for managing URL state – `nuqs`. In the past, I've done the syncing manually, and it mostly worked, but it was a pain when it did not.
