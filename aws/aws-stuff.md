@@ -659,6 +659,18 @@ You have to consider **the IAM permissions of a given AWS Lambda function**. It 
 
     - Interestingly, this feature utilizes EventBridge Connections which also is used by EventBridge Destinations.
 
+### AWS Verified Permissions
+
+- **Think IAM-like but for business/application logic instead of AWS resources**.
+
+- It is a service that allows you to write permissions based on the data in your application.
+
+  - The "CEDAR" language the policies are written in can handle complex relationships between resources and users.
+
+  - You could use this to implement fine-grained permissions in your application.
+
+- Keep in mind that this is an external service, so you will be making an API call to get the "result" of the evaluation. This means that your application latency might increase.
+
 ### IAM
 
 - **IAM** is universal, **is global**, does not apply to regions
