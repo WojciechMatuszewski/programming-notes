@@ -64,6 +64,24 @@ Nowadays, **most of AI model providers have their _embedding_ endpoint**. This e
 
   - The **embeddings are then feed into some kind of _similarity search_ engine** which LLM use to retrieve the final answer.
 
+---
+
+> [Notes based on this youtube video](https://www.youtube.com/watch?v=Evlk9J-B_uc)
+
+When people first started throwing the term "RAG" around, they were talking about **the most naive implementation of the _sematic search_ functionality**.
+
+The problem with this approach is that it **leads to compressing the context of the documents so much, that you loose A LOT of information**, but the model _assumes_ that the retrieved information is useful.
+
+The solution is not to avoid RAG, but rather to use more sophisticated ways of retrieving data. There are many "improvements" one could make to the "naive" single-vector cosine similarity retrieval:
+
+- Using another LLM to "re-rank" how similar retrieved documents are to the context.
+
+- Adding metadata for each retrieved chunk of data.
+
+- Using techniques like ColBERT or RAPTOR
+
+- Multi-shot retrieval.
+
 ## Prompt Engineering
 
 > 1. [Prompt engineering guide](https://github.com/brexhq/prompt-engineering?tab=readme-ov-file#what-is-a-prompt)
