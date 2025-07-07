@@ -212,3 +212,21 @@ import styles from "data.json" with { type: "json" };
 **This will only work if the server serving those files sends the correct `Content-Type` header**.
 
 According to the MDN, under the hood, the browser makes a network request to fetch those files. **I wonder if this will affect webpage performance in any way**.
+
+## New Iterator Methods
+
+> Based on [this blog post](https://2ality.com/2025/06/ecmascript-2025.html#iterator-helper-methods)
+
+There are new set of methods for working with _iterators_, like `drop`, `take` and others.
+
+**The biggest difference between array methods is that iterators DOES NOT create intermediate arrays**. This is huge win for large datasets.
+
+```js
+const foo = [1, 2, 3, 4];
+
+foo.values().take(1);
+
+foo.values().map(/*stuff*/);
+```
+
+Please note that **iterators can work over ANY ITERABLE data structure, not only arrays**. This means **async generators as well!**
