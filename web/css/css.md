@@ -2501,3 +2501,38 @@ If you want to revert **all** the style changes, you can use `revert` to apply b
   all: revert;
 }
 ```
+
+## The `margin-trim` property
+
+> Based on [this blog post](https://webkit.org/blog/16854/margin-trim/)
+
+The `margin-trim` property is there to help you remove unwanted space between elements.
+
+IMO, components should not set their own margins – instead those should be controlled by the _container_ or their _parent_. But, we all know that CSS can be quite messy, and sometimes we have to use other approaches like negative margins OR the `margin-trim` property!
+
+Let us say you have paragraphs inside an article.
+
+```css
+article {
+  padding: 2lh;
+
+  p {
+    margin-block: 1lh;
+  }
+}
+```
+
+The margin of the first and the last paragraph will be added to the padding of the article creating too much space. We can "fix" that issue by using `margin-trim` property.
+
+```css
+article {
+  padding: 2lh;
+  margin-trim: block;
+
+  p {
+    margin-block: 1lh;
+  }
+}
+```
+
+Now everything should look nice and tidy!
