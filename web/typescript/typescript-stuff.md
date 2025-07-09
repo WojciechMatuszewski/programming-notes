@@ -442,6 +442,44 @@ So what does the _ambient context_ mean here?
 
 In the example above, the implementation of the `global` does not live within the file I'm editing. The types will be erased at runtime. Thus the _declaration_ I'm working with exists within an _ambient context_.
 
+### I cannot override overloads
+
+Let us say you are working with a library that defines a `LogFn` interface with a couple of overloads:
+
+```ts
+interface LogFn {
+  <T extends object>(obj: T, msg?: string, ...args: any[]): void;
+  (obj: unknown, msg?: string, ...args: any[]): void;
+  (msg: string, ...args: any[]): void;
+}
+```
+
+How could you go about removing some of them? Perhaps you want to restrict the function to only take one single parameter?
+
+**Sadly, I could not find any solution to this problem**. The problem is that _declaration merging_ seem to be "adding" on top of existing overloads, rather than overwriting them.
+
+```ts
+import "pino";
+
+declare module "pino" {
+  namespace pino {
+    interface LogFn {
+      /**
+       * No use! Other overloads will take over.
+       */
+      (message: never, ...args: never[]): void;
+      <T extends string>(message: T, arg: T extends string ? never : any): string;
+    }
+
+    interface BaseLogger {
+      info: pino.LogFn;
+    }
+  }
+}
+```
+
+Here, I'm trying to make sure one can't pass arguments to a function like so: `logger.info("foo", {})`. I can't make this work because, even though I'm restricting such calls in the custom namespace implementation, other overloads allow for such signature.
+
 ## "Loose" autocomplete
 
 > Check out [this tip](https://www.totaltypescript.com/tips/create-autocomplete-helper-which-allows-for-arbitrary-values).
