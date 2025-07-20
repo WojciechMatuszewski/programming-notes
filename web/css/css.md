@@ -2536,3 +2536,25 @@ article {
 ```
 
 Now everything should look nice and tidy!
+
+## Layout testing
+
+> Based on [this article](https://piccalil.li/blog/a-revisit-of-the-every-layout-sidebar-with-has-and-selector-performance/) and the "Layout testing" section.
+
+I doubt I will ever use this, but this "technique" peaked my interest.
+
+```css
+:root {
+  --error-outline: 0.25rem solid red;
+}
+
+:has(> .sidebar) > :only-child,
+:has(> .sidebar) > :nth-child(3) {
+  outline: var(--error-outline);
+  --error: "Sidebar layouts must include exactly two child elements.";
+}
+```
+
+If the element containing a `.sidebar` has only one, or three (or more) children, that child element would get a red outline. The `--error` is only there to show you a descriptive "error message" in devtools.
+
+Very interesting, is it not?
