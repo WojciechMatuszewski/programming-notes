@@ -3167,6 +3167,47 @@ foo<"foo">();
 
 Which then creates a really weird situation for the default `arg` value.
 
+### Generics in functions vs. "bare" objects
+
+Consider the following type:
+
+```ts
+type Settings<TSchema extends z.ZodTypeAny = any> = {
+  parameters: TSchema;
+  execute(parameters: z.infer<TSchema>): void;
+};
+```
+
+Let use this type in two contexts, one as a type for function parameters, one as a type for a variable declaration.
+
+```ts
+declare function makeSettings<TSchema extends z.ZodTypeAny = any>(settings: Settings<TSchema>): void;
+
+makeSettings({
+  parameters: z.object({
+    foo: z.string(),
+  }),
+  execute(parameters) {
+    // parameters are typed correctly
+  },
+});
+
+const settings = {
+  parameters: z.object({
+    foo: z.string(),
+  }),
+  execute(parameters) {
+    // parameters have type of `any`
+  },
+} satisfies Settings;
+```
+
+The **difference with "function way" is that TypeScript is able to infer the type of the zod schema for parameters and "pass" that type into `execute` function**. That is not the case for the "object way".
+
+The problem with explicit type annotation (either using `:` or `satisfies`) is that the `Settings`, unless specified, will always use the `any` type for the `TSchema` generic parameter.
+
+When using a function syntax, the function can infer _from_ the input and use that type throughout either parameters or the function "body".
+
 ## Type branding (AKA _opaque types_)
 
 Imagine you have a function that converts EURO to USD. Here is how one might write the type declaration for this function.
