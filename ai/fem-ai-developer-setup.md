@@ -24,4 +24,18 @@
 
   - Think of rules as _instructions_ for the LLM that is applicable to the codebase you are working on. There are also global rules that apply to every project.
 
-Start part 4
+- There are a lot of options for _background agents_ – agents that will pull your repo and work on it in the _background_.
+
+  - You have to turn off privacy settings and allow the bot to pull your repo. That means giving a lot of permissions to a 3rd party. I'm not a fan.
+
+- Claude Code has a notion of _subagents_.
+
+  - **A _subagent_ context window is separate of the "main" agent**.
+
+  - Running multiple _subagents_ in parallel allows you to work on things faster.
+
+    - Think having a "junior-engineer" _subagent_ whose role is to ask questions and then having a "architect" _subagent_ whose role is to answer the questions and amend the design if necessary.
+
+- With AI generated code, having a very strict eslint rules is even more important than ever.
+
+  - LLMs can ignore the rules you specified in any "configuration" files like `CLAUDE.md`.
