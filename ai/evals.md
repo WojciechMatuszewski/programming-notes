@@ -51,3 +51,7 @@ You have a hypothesis brought up by evaluating your system. Now it is time to "d
 ### Synthetic data
 
 You can ask the LLM to generate synthetic data you can run evals on. You **can also ask the LLM to generate data which then could be used to generate data to run the evals on.** This is a bit meta, but it works! especially when you have evals already in place.
+
+## Creating a LLM-as-a-Judge That Drives Business Results
+
+> Based on [this blog post](https://hamel.dev/blog/posts/llm-judge/index.html)
