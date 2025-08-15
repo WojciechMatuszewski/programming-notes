@@ -1,8 +1,10 @@
 {
+  "type": "module",
   "scripts": {
     "format": "prettier -w ."
   },
   "devDependencies": {
+    "@types/node": "24.2.1",
     "prettier": "3.2.5"
   }
 }

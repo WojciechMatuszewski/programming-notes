@@ -1,18 +1,39 @@
-lockfileVersion: '6.0'
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-devDependencies:
-  prettier:
-    specifier: 3.2.5
-    version: 3.2.5
+importers:
+
+  .:
+    devDependencies:
+      '@types/node':
+        specifier: 24.2.1
+        version: 24.2.1
+      prettier:
+        specifier: 3.2.5
+        version: 3.2.5
 
 packages:
 
-  /prettier@3.2.5:
+  '@types/node@24.2.1':
+    resolution: {integrity: sha512-DRh5K+ka5eJic8CjH7td8QpYEV6Zo10gfRkjHCO3weqZHWDtAaSTFtl4+VMqOJ4N5jcuhZ9/l+yy8rVgw7BQeQ==}
+
+  prettier@3.2.5:
     resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
+
+  undici-types@7.10.0:
+    resolution: {integrity: sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag==}
+
+snapshots:
+
+  '@types/node@24.2.1':
+    dependencies:
+      undici-types: 7.10.0
+
+  prettier@3.2.5: {}
+
+  undici-types@7.10.0: {}

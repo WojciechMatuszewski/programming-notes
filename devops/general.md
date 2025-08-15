@@ -212,3 +212,84 @@ So, how can we optimize the _tail latency_?
 - **The erasure coding** technique where you send X amount of requests, and assemble response from Y (X > Y).
 
   - I'm unsure if one can use this calling a single endpoint, but it is great technique when API supports partial responses.
+
+## Request hedging
+
+Let me elaborate on the _request hedging_ I mentioned above.
+
+The idea is pretty brilliant: send two requests, the second with a slight delay, whichever comes first wins, discard the other one.
+
+While this makes you send multiple requests, it will **greatly improve tail latency of the service, like p99**.
+
+Why? Consider how unlikely it is for _two_ requests to experience the p99 latency case. I would sign up for a lottery if I observed that.
+
+There are multiple ways to do this. You could use the `Promise.race` function.
+
+```ts
+const result = await Promise.race([
+  request().catch(() => {}),
+  setTimeout(100)
+    .then(request)
+    .catch(() => {}),
+]);
+
+console.log(result);
+```
+
+**Ideally, you would cancel the other request when the first one finishes**. You can use the `AbortController` for that!
+
+Also, keep in mind the need to handle errors. You probably want to fail only when two of those requests fail.
+
+```ts
+import { setTimeout } from "timers/promises";
+
+async function request({ signal }) {
+  return await fetch("https://google.com", { signal });
+}
+
+const controller = new AbortController();
+
+const result = await Promise.race([
+  request({ signal: controller.signal })
+    .then((result) => {
+      controller.abort();
+      return result;
+    })
+    .catch((error) => {
+      /**
+       * Check if it's abort error.
+       */
+      console.log("non delay error", error);
+    }),
+  setTimeout(100)
+    .then(() => {
+      return request({ signal: controller.signal });
+    })
+    .then((result) => {
+      controller.abort();
+      return result;
+    })
+    .catch((error) => {
+      /**
+       * Check if it's abort error.
+       */
+      console.log("delay error", error);
+    }),
+]);
+
+console.log(result);
+```
+
+Consider the alternative, which would be:
+
+1. Making the first HTTP call.
+2. If that call fails, making the second HTTP call.
+3. Returning the result.
+
+That's a lot of time spend waiting, and incurring latency cost if the request fails.
+
+### Where would I use this?
+
+- Multi-region active/active read endpoints. You can call the nearest region first, and then call the other.
+
+- Reading from primary/backup sources. Same principle as above.
