@@ -2,6 +2,8 @@
 
 ## MCP Fundamentals
 
+> Based on [this](https://github.com/epicweb-dev/mcp-fundamentals) workshop.
+
 - When you create a stdin-based server, **consider how logging affects the client-server communication**.
 
   - If you log to stdin, your logs will "interfere" with the messages send between the server and the client. **This can lead to issues**.
@@ -41,3 +43,35 @@
   - TIL that you can return _multiple_ things when configuring a prompt. A good example would be to return a set of related resources, either via `resource_link` or via `resource`.
 
   - You can even provide completions for prompt parameters!
+
+## Advanced MCP Features
+
+> Based on [this](https://github.com/epicweb-dev/advanced-mcp-features) workshop.
+
+- You can **annotate tools and resources**.
+
+  - **For tools**, this is very **useful for the client application UI where they can present the user with different UI depending on those annotations**. I find the name `openWorldHint` particularly interesting!
+
+    - [Full list of tool annotations here](https://modelcontextprotocol.io/specification/2025-06-18/schema#toolannotations).
+
+- I'm unsure if this capability is there in ai-sdk, but for MCP, you **can specify the `outputSchema` for a tool**.
+
+  - This allows the _server_ (in our case the TypeScript SDK) to validate the `structuredContent` against the `outputSchema`.
+
+  - For backwards compatibility, you ought to also return the result as `text`.
+
+- **Elicitation** is where **the server asks for either additional details or the confirmation from the client mid-tool-execution**.
+
+  - This is **not the same** as **asking the user to confirm a tool invocation**.
+
+    - Imagine **invoking a tool with `destructive: true` hint**. You would probably want a confirmation before running this tool, and you might use _elicitation_ for any follow-ups, like cleaning up related resources.
+
+  - So, it is almost like we have **two HITL patterns, one for tool-follow-ups (the elicitation) and one for tool invocations**.
+
+    - The example we implemented in the workshop lives in, what I would call, a "gray zone".
+
+      - We are deleting a resource and requesting input from the client before we do that. BUT the client should already asked the user to run it BEFORE it invoked it. So we are forcing the user to confirm stuff twice.
+
+  - Interestingly, **you do not have to list _elicitation_ in the _capabilities_ section of your server**.
+
+    - I guess it's because _elicitation_ is more of a _client capability_ rather than _server capability_?
