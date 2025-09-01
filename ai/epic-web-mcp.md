@@ -75,3 +75,21 @@
   - Interestingly, **you do not have to list _elicitation_ in the _capabilities_ section of your server**.
 
     - I guess it's because _elicitation_ is more of a _client capability_ rather than _server capability_?
+
+- **The idea of _sampling_ is quite interesting as well**.
+
+  - Basically, as an MCP server, you can _ask_ the client to forward a prompt to the LLM for you.
+
+    - This is great, as it makes the _client_ fully in control when it comes to interactions with the LLM.
+
+  - In the course, after we created a journal entry, we send the _sampling_ request to the client for the LLM to generate tags for that entry.
+
+- When implementing the "tool callback", you can **send notifications back to the client if the tool takes a long time to run**.
+
+  - Great for long-running tasks. In addition, you the "tool callback" function is passed a `AbortSignal` which you can use for cancellation!
+
+- The MCP spec denotes a robust mechanisms for notifying the client about changes.
+
+  - In the workshop, we looked at the `listChanged` on `prompts` and _resource templates_.
+
+  - You can even implement subscriptions!
