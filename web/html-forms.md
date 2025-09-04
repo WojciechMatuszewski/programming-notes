@@ -6,6 +6,47 @@ not have any kind of inputs.
 Since you will be writing forms (probably a lot of them), it is essential to learn how `form` HTML tag works, and tags
 related to it.
 
+## Properly labelling the form
+
+Consider the following code
+
+```html
+<form>
+  <fieldset>
+    <label>
+      <span>Some label</span>
+      <input type="text" name="text" />
+    </label>
+  </fieldset>
+</form>
+```
+
+There are a couple of issues
+
+1. The `form` will not have an accessible name. See [this link](https://www.stefanjudis.com/today-i-learned/forms-require-an-accessible-name/?utm_source=stefanjudis&utm_medium=email&utm_campaign=web-weekly-167-css-anchor-positioning-and-modern) to learn more.
+
+2. The `group` which `fieldset` creates will not have an accessible name.
+
+How we can fix those issues?
+
+```html
+<form aria-labelledby="legend-id">
+  <fieldset>
+    <legend id="legend-id">Your form</legend>
+    <label>
+      <span>Some label</span>
+      <input type="text" name="text" />
+    </label>
+  </fieldset>
+</form>
+```
+
+1. To fix the `form`s accessible name, we are explicitly adding `aria-labelled` by to it. This way, the `form` will render as `form` landmark. See [this guide](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/form.html) to learn more.
+
+2. To fix the `group`s accessible name, we render a `legend` inside the `fieldset`.
+
+**This is how forms should look like**.
+
 ## When does the form "submit"?
 
 > Based on [this short blog post entry](https://www.stefanjudis.com/today-i-learned/implicit-form-submission-doesnt-work-always)
@@ -522,3 +563,74 @@ What is the problem exactly? Consider submitting a form on a page. The server wi
 This could be problematic right? We would not want this to happen! **And this is the "issue" the _PRG_ pattern attempts to solve**.
 
 Instead of responding with HTML to that POST request, you redirect the user to a given page that they are currently at. This ensures the LAST request that generated the page was a GET request, so the danger for the browser to repeat that POST request upon page refresh is zero!
+
+## The `fieldset` and the `input` and `form` element
+
+> You can read more about this [here](https://tetralogical.com/blog/2025/01/31/foundations-fieldset-and-legend/).
+
+Have you ever tried to disable multiple form inputs at one? It could get repetitive and difficult, especially if those inputs live in a different components. It turns out, there is a way to **disable ALL form inputs and buttons** with `fieldset` and the `disabled` attribute.
+
+```html
+<form>
+  <fieldset disabled>
+    <legend>The name for the fieldset</legend>
+    <label htmlFor="name">Name</label>
+    <input type="text" id="name" name="name" />
+    <button type="submit">Submit</button>
+  </fieldset>
+</form>
+```
+
+### The importance of the `legend` element
+
+Without the `legend` (or some other accessible name), the `fieldset` won't properly read to screen readers. The `fieldset` creates a group, but that group won't be named without the `legend` element.
+
+I usually use `sr-only` (or similar) class to "hide" the `legend` element, but still make the `fieldset` accessible to screen-readers.
+
+```html
+<fieldset>
+  <legend className="sr-only">Contact form</legend>
+</fieldset>
+```
+
+## The `form` id attribute and the submit button
+
+In some situations, the submit button of a `form` element lives in a completely different place than the form itself – think confirming the form submission with a modal or a dropdown.
+
+```html
+<form>
+  <label>
+    Name
+    <input type="text" name="name" />
+  </label>
+</form>
+
+<!-- Somewhere else in the HTML -->
+<modal>
+  Are you sure you want to submit the form?
+  <button type="button">Cancel</button>
+  <button type="submit">Yes</button>
+</modal>
+```
+
+In such cases, especially while using JSX, you might be **tempted to use `ref` on the form and fire the submit event manually – do NOT do that!**. There is a better way, a way which does not introduce that much overhead.
+
+**To associate the `form` with a button, use the `form` attribute on the button**. Give the `form` an id, then use that id as the value for the `form` attribute. Here is an example.
+
+```html
+<form id="form-with-confirmation">
+  <label>
+    Name
+    <input type="text" name="name" />
+  </label>
+</form>
+
+<!-- Somewhere else in the HTML -->
+<modal>
+  Are you sure you want to submit the form?
+  <button type="button">Cancel</button>
+  <button type="submit" form="form-with-confirmation">Yes</button>
+</modal>
+```
+
+By using the platform, you drastically reduce the overhead of your code. Sometimes it is worth looking into MDN first, before writing complex JS/React code.
