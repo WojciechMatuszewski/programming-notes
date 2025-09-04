@@ -438,3 +438,22 @@ I was recently reading about the support for the `hr` element in the `select` ta
 That got me thinking: [if `hr` has semantic meaning within a `section` tag](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hr), and we should not use it to separate "random" tags, how does it work in the `select` tag?
 
 I could not find any definitive answer. For now, I will stick to visually styling a `div` tag as a horizontal line and use `hr` inside a `section` with multiple paragraphs if necessary.
+
+## The Invoker Commands API
+
+> Based on [this MDN article](https://developer.mozilla.org/en-US/docs/Web/API/Invoker_Commands_API?utm_source=stefanjudis&utm_medium=email&utm_campaign=web-weekly-167-css-anchor-positioning-and-modern)
+
+I find this API fascinating. It adds more capabilities to the HTML and, in some cases, allows developers to skip writing JS to implement a given feature.
+
+Consider the following HTML:
+
+```html
+<button commandfor="mypopover" command="toggle-popover">Toggle the popover</button>
+
+<div id="mypopover" popover>
+  <button commandfor="mypopover" command="hide-popover">Close</button>
+  Popover content
+</div>
+```
+
+Notice that I can open and close the popover by the "power" of markup only. Is it not amazing? At the time of writing, the API is still work in progress. Firefox and Safari are yet to support it.
