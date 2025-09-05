@@ -256,3 +256,51 @@ function Component() {
 ```
 
 This solution is pretty great. Yes, we have to have additional piece of state, but that state is only a single primitive value. And there is a risk of that state getting out of sync with the "data" state, but that would also be the risk with any other solution.
+
+## Local and Server state
+
+> Based on [this blog post](https://tkdodo.eu/blog/deriving-client-state-from-server-state).
+
+Sometimes, I find myself wanting to _sync_ the local state with the server state.
+
+```tsx
+const { data: users } = useQuery({});
+
+const [selectedUserId, setSelectedUserId] = useState(null);
+```
+
+Let's go through a couple of challenges we might have here and how to solve them
+
+### Initialize state from server
+
+How do I initialize the `selectedUserId` to be the first user?
+
+```tsx
+const { data: users, isLoading } = useQuery({});
+
+const [selectedUserId, setSelectedUserId] = useState(null);
+
+useEffect(() => {
+  if (!isLoading) {
+    setSelectedUserId(users[0]);
+  }
+}, [isLoading]);
+```
+
+**Whenever you see a `useEffect` that has `setState` call inside it, your alarm bells should go off**. In some cases, it is necessary, but in most cases, it is not.
+
+```tsx
+const { data: users, isLoading } = useQuery({});
+
+const [selectedUserId, setSelectedUserId] = useState(null);
+const selectedFromState = users.find((user) => user.id === selectedUserId);
+const defaultUserId = users[0]?.id;
+
+const selected = selectedFromState ?? defaultUserId;
+
+return [selected, setSelectedUserId];
+```
+
+Notice that I _derived_ the initial state from the server state! No need for the `useEffect`.
+
+The most important, to me, piece of advice to remember: **the local state does not necessarily have to be in-sync with the server state – the _derived state_ must be!**
