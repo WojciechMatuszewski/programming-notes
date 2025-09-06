@@ -93,3 +93,17 @@
   - In the workshop, we looked at the `listChanged` on `prompts` and _resource templates_.
 
   - You can even implement subscriptions!
+
+## MCP Auth
+
+> Based on [this](https://github.com/epicweb-dev/mcp-auth) workshop.
+
+- The `agents` package we use in the workshop does not add CORS headers to "discovery" endpoints like `/.well-known-xx`. We had to add them manually.
+
+- TIL that **the `Response` class has static `.json` method you can use**.
+
+  - Pretty neat! No need to `JSON.stringify` your data anymore.
+
+---
+
+Finished Metadata Discovery 02. We need to wait for more content to be available.
