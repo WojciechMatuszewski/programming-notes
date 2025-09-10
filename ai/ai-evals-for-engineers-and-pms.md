@@ -48,3 +48,5 @@
 - **Define what is "good" and "bad" outcome**.
 
   - This is quite domain specific, but it will be very helpful for the LLM.
+
+TODO: https://github.com/ai-evals-course/recipe-chatbot HW1
