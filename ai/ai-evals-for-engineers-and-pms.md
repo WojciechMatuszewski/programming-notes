@@ -49,4 +49,31 @@
 
   - This is quite domain specific, but it will be very helpful for the LLM.
 
-TODO: https://github.com/ai-evals-course/recipe-chatbot HW1
+### Wrapping up
+
+- A good system prompt consists of multiple parts.
+
+  - You have to specify the _persona_ of the LLM.
+  - You have to provide clear directions and rules for the LLM to follow.
+  - You must ground the LLM with examples.
+  - Consider adding instructions on how the output ought to be formatted.
+
+- **Evals are very important** and without them, you will be playing a game of whack-a-mole.
+
+  - You will gain **deep understanding about how the LLM is performing** by **looking at the data**.
+
+- LLMs do not "think" like humans. It's hard for us to "shift" our mindset given how similar to humans they can answer the queries.
+
+## Lesson 2
+
+- When attempting to improve LLMs output, you can follow the cycle of: _Analyze_ -> _Measure_ -> _Improve_ -> _Analyze_...
+
+- The term **theoretical saturation** means that you reached a certain threshold and you see that looking at new traces do not reveal any new error types.
+
+  - That's good! This means you have a diverse dataset to work with, and run evals on.
+
+- **Generating synthetic data** is quite tricky. **Do NOT** blindly ask the LLM to generate you sample user queries.
+
+  - It will be favouring queries that might "adhere" to the system prompt.
+
+Finished 11:23 Part 2
