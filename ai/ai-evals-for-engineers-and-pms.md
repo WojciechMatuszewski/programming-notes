@@ -2,7 +2,7 @@
 
 > Taking notes [from this course](https://maven.com/parlance-labs/evals)
 
-## Lesson 1
+## Lesson 1 – Fundamentals & Lifecycle LLM Application Evaluation
 
 - **Evals are measurement of LLM pipeline quality**.
 
@@ -64,7 +64,7 @@
 
 - LLMs do not "think" like humans. It's hard for us to "shift" our mindset given how similar to humans they can answer the queries.
 
-## Lesson 2
+## Lesson 2 – Systematic Error Analysis
 
 - When attempting to improve LLMs output, you can follow the cycle of: _Analyze_ -> _Measure_ -> _Improve_ -> _Analyze_...
 
@@ -76,4 +76,38 @@
 
   - It will be favouring queries that might "adhere" to the system prompt.
 
-Finished 11:23 Part 2
+- **To generate good synthetic data**:
+
+  - First, **focus on dimensions** of a query. **This is product-specific**.
+
+    - For example, the _persona_ of the user, or perhaps the _scenario_ or particular _feature_ of the bot.
+
+    - Gather all the dimensions into tuples to create combinations.
+
+      - For example: ["Confident cook", "Short on time", "Breakfast for two"]. We have _persona_, _scenario_ and _feature_ for a bot that deals with cooking.
+
+  - **Ask the LLM to filter tuples that are unrealistic** and review the results.
+
+  - Use the tuples to generate the traces! Notice how realistic they are.
+
+- **Open Coding** means reading each trace and writing brief notes about what went good and want went bad.
+
+  - **If you do this enough times**, you will **notice some patterns start to emerge**.
+
+  - Given a long trace, **focus on first failure you noticed**.
+
+    - A failure in one place could lead to a cascade of failures later on in the conversation. Those "later" failures are just noise!
+
+- **One thing that struck me during the Open Coding demo** was **how fast** they went through each trace.
+
+  - They really did not try to understand _everything_. They zeroed-in on the conversation between the bot and the user and tried to find any "errors" in the behavior.
+
+    - You can't spend that much time on this exercise, given how many traces you have to go through.
+
+- After you have annotated your traces, **perform axial coding**.
+
+  - This means **collapsing the annotations into different "failure mode" category**.
+
+    - You may consider using LLMs for this to give you _something_ to work with.
+
+TODO: HW
