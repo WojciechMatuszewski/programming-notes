@@ -86,7 +86,7 @@
 
       - For example: ["Confident cook", "Short on time", "Breakfast for two"]. We have _persona_, _scenario_ and _feature_ for a bot that deals with cooking.
 
-  - **Ask the LLM to filter tuples that are unrealistic** and review the results.
+  - **Ask the LLM to filter tuples that are unrealistic** and review the results. **DO NOT SKIP THIS**, this is critical.
 
   - Use the tuples to generate the traces! Notice how realistic they are.
 
@@ -110,4 +110,25 @@
 
     - You may consider using LLMs for this to give you _something_ to work with.
 
-TODO: HW
+### Wrapping up
+
+- You can generate a high-quality synthetic data by following the three step process:
+
+  1. Generate "dimension tuples" for your product. For example, for the recipe bot, we focused on _time_, _recipe type_, _allergens_ and _time constraint_.
+  2. **Filter combinations that do not make any sense**.
+  3. Ask the LLM to generate user queries based on those dimensions.
+
+- Open coding and axial coding are very valuable.
+
+  - _Open coding_ is just writing comments about stuff.
+  - _Axial coding_ is adding labels and creating initial _taxonomy_.
+
+- After you've done those to the **point of saturation**, you can start creating dashboards and metrics based on your findings.
+
+  - At this point, you should have actionable insights into your product and how to improve it.o
+
+- You can do all of this manually, or via code or via tools, like Braintrust.
+
+  - I've done this manually and using Braintrust. Braintrust is quite nice!
+
+TODO: Open/Axial coding in Braintrust. Create failure mode taxonomy and graphs.
