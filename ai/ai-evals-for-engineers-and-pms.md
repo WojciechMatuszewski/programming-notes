@@ -166,3 +166,11 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 - With more people involved in the process, there will be more time spent arguing about axial codes and failure modes.
 
   - **There must be one person that has the right to make a decision to push the process forward**. There is no point in discussing one trace for 20 minutes.
+
+    - If you notice people arguing, that means there is misalignment in failure/pass rubrics.
+
+- **Look at the whole trace instead of a single span**.
+
+- Focus on the first failure you see.
+
+  - If you need to generate more data, focus on that single span that lead to failure. Can you "isolate" it, just like you would when trying to reproduce a "regular" bug in software?
