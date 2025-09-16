@@ -131,4 +131,38 @@
 
   - I've done this manually and using Braintrust. Braintrust is quite nice!
 
-TODO: Open/Axial coding in Braintrust. Create failure mode taxonomy and graphs.
+## Lesson 3 – More Error Analysis & Collaborative Evaluation
+
+- A **trace** is a full record of everything that happens in a response to a single user query.
+
+  - Including messages, tool calls, and data retrievals.
+
+- Why annotate at the _trace_ level? Because the trace allows you to "zoom out" and look at the bigger picture.
+
+  - **Focus on first failure you see**. It is often the case that the first failure causes a cascade of other failures. There is no point in looking at other failures, as they might be different depending on the first failure.
+
+- Using **axial codes** allows you to quickly see _how many_ problems you have in a given "bucket".
+
+  - This allows you to prioritize. **Without axial codes, it would be hard to know which issues to tackle first**.
+
+- For multi-turn queries, the **key** here is to _isolate_ failures.
+
+  - You **will need to read through the conversation until you notice the first failure**. Then, you can "pluck" that failure mode from the conversation and generate more synthetic data that mimics the query that caused the failure.
+
+- **It is vital to have some criteria on which you evaluate a trace**.
+
+  - For example, you want your bot to be _helpful_. What does that mean? **You must avoid ambagious** when doing error analysis.
+
+    - You also should **elaborate on "FAIL" criteria**. When should we consider the response "bad"?
+
+### Wrapping up
+
+This lesson was focused on how to conduct a _collaborative_ error analysis.
+
+- Make sure you have a team of experts.
+
+- **Do not allow ambiguity to creep into the process**. This is true no matter if you do error analysis yourself of with a team.
+
+- With more people involved in the process, there will be more time spent arguing about axial codes and failure modes.
+
+  - **There must be one person that has the right to make a decision to push the process forward**. There is no point in discussing one trace for 20 minutes.
