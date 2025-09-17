@@ -174,3 +174,43 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 - Focus on the first failure you see.
 
   - If you need to generate more data, focus on that single span that lead to failure. Can you "isolate" it, just like you would when trying to reproduce a "regular" bug in software?
+
+## Lesson 4 – Automated Evaluators
+
+- Before we attempt to create an automated evaluator, we **have to know what is the difference between _specification_ and _generalization_ failure mode in our application**.
+
+  - The **_specification_ failure is where the prompt or instructions were unclear or incomplete**. For example, the bot did not not provide amenity photo because the prompt did not ask it to.
+
+    - **These should be fixed by you, manually**. Fix the prompt first!
+
+  - The **_generalization_ failure is where LLM fails to apply clear instructions correctly across various diverse inputs**. For example, the LLM hallucinates a tool call, OR fails to include a constraint from the user query when calling a tool.
+
+    - **These are prime candidates for automated evaluators**.
+
+- There are two main "types" of automated evaluators.
+
+  - The **code-based evals** which are cheap, deterministic and interpretable.
+
+    - You run the LLM, get it's output and assert on the output. For example, checking if a certain word exists in the output.
+
+  - The **LLM-as-Judge evals** which are much more expensive, and subjective.
+
+    - Those are best used for things that are _subjective_, like "is the tone appropriate?" or "is the summary faithful?".
+
+      - **Lot's of challenges associated with them**. They can be bias, inconsistent and cost you a lot of $$.
+
+- **Writing prompt for LLM-as-a-Judge evaluator is quite hard**.
+
+  - You have to have clear task & evaluation criteria. **Focus on one specific failure mode here**
+
+  - You have to have **precise** pass/fail definitions.
+
+  - You have to provide a few examples. **Make sure that you do not run the eval on those examples afterwards**.
+
+    - Of course the evaluator will perform great if you run it against the examples.
+
+  - You have to have clear guidelines for the output. Usually, it's a field called "reasoning" and "answer" with "Pass" or "Fail" options.
+
+- After you have the prompt, **you must iterate on the prompt until you are aligned with the judge responses**.
+
+Finished lesson 4 45:00
