@@ -213,4 +213,10 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 
 - After you have the prompt, **you must iterate on the prompt until you are aligned with the judge responses**.
 
-Finished lesson 4 45:00
+  - You have to **align on both TPR (_true positive rate_) and TNR (_true negative rate_)**.
+
+    - Usually, people skip the TNR alignment (how often the model also agrees that the trace contains failure) and this leads to many issues.
+
+  - Do this on the _dev set_ (approximate 20% of the traces).
+
+TODO: HW3
