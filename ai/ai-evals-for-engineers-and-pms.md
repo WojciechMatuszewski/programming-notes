@@ -220,3 +220,4 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
   - Do this on the _dev set_ (approximate 20% of the traces).
 
 TODO: HW3
+TODO: Tune scorers
