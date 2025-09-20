@@ -219,5 +219,28 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 
   - Do this on the _dev set_ (approximate 20% of the traces).
 
-TODO: HW3
-TODO: Tune scorers
+### Homework / Wrapping up
+
+- Tuning the scorer was quite fun, but **you can make a lot of mistakes in the process**.
+
+  - Now I understand why they pushed quite hard for having **different datasets**. If you include examples from your "test" dataset into the prompt, you will skew results.
+
+    - **Different datasets must encompass enough PASS/FAIL scenarios**.
+
+- You can use "tune scorer" functionality in Braintrust and it works pretty well!
+
+- When **generating traces** you want to **use the LLM pipeline your production is using**.
+
+  - If you have a separate prompt for answering user queries, and generating traces, there will be a mismatch between the outputs.
+
+- To **label your data, you _might_ want to use another LLM**.
+
+  - While this will save you time, it also have a cost. **If you do not check those labels, you are at mercy of the LLMs accuracy**. Not a fun place to be.
+
+    - Ideally, you would label the data yourself.
+
+> The main purpose of evals is to allow you to improve your product. If TPR (no false negatives) or TNR (no false positives) is perfect, you **should be suspicious**.
+
+- When using LLM-based evaluators **on production, you do not have labels to compare against**.
+
+  - Instead, **you rely on the judge output and correct for the TPR and TNR metrics**.
