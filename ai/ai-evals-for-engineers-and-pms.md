@@ -217,6 +217,11 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 
     - Usually, people skip the TNR alignment (how often the model also agrees that the trace contains failure) and this leads to many issues.
 
+    - In our case:
+
+      - TPR -> how many % of times the label and the LLM agree that the recipe violates dietary restriction.
+      - TNR -> how many % of times the label and the LLM disagree that the recipe violates dietary restriction.
+
   - Do this on the _dev set_ (approximate 20% of the traces).
 
 ### Homework / Wrapping up
@@ -244,3 +249,7 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 - When using LLM-based evaluators **on production, you do not have labels to compare against**.
 
   - Instead, **you rely on the judge output and correct for the TPR and TNR metrics**.
+
+- **Given TPR and TNR, focus on what failure modes are more "expensive"**.
+
+  - In our case, focusing on TPR misalignment (there is a restriction, the label says "fail", but the LLM says "pass") makes more sense, as we would not want to present someone a recipe with nuts while they mentioned they are allergic to nuts.
