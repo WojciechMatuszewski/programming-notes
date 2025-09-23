@@ -205,7 +205,7 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 
   - You have to have **precise** pass/fail definitions.
 
-  - You have to provide a few examples. **Make sure that you do not run the eval on those examples afterwards**.
+  - You have to provide a few examples. **Use the examples from the `train` set only**. **Make sure that you do not run the eval on those examples afterwards**.
 
     - Of course the evaluator will perform great if you run it against the examples.
 
@@ -253,3 +253,29 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 - **Given TPR and TNR, focus on what failure modes are more "expensive"**.
 
   - In our case, focusing on TPR misalignment (there is a restriction, the label says "fail", but the LLM says "pass") makes more sense, as we would not want to present someone a recipe with nuts while they mentioned they are allergic to nuts.
+
+## Lesson 5 – More about Automated Evaluators
+
+In this lesson we focused on _evaluating simple RAG_ pipeline.
+
+- The RAG pipeline used the BM25 search algorithm.
+
+- We measured metrics like:
+
+  - "Recall" – fraction where target recipe is in top k results. **In other words, did the correct recipe appear in top K results**.
+
+    - So, `Recall@1` or `Recall@5`.
+
+    - You can **use this metric do decide how many results to fetch while adding context to the LLM**.
+
+      - You would most likely pass those to the re-ranker first.
+
+  - "MRR" – related to "Recall". **It measures WHERE in the top k results the recipe appeared**.
+
+  A good analogy is: _Recall_ answers "Is there a book on the first shelf I check?" and the _MRR_ answers "If it's there, is it the first, second ... book?"
+
+- To **improve MRR and Recall@K** consider **query rewriting**.
+
+  - There are various strategies you can use here. **In the course, since we used the keyword-retrieval search, the "keyword" query rewriter improved the accuracy quite a lot**.
+
+TODO: Read slides.
