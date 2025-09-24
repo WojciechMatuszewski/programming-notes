@@ -2,6 +2,8 @@
 
 > Taking notes [from this course](https://maven.com/parlance-labs/evals)
 
+> [Supplementary notes](https://vishalbakshi.github.io/blog/#category=AI%20Evals)
+
 ## Lesson 1 – Fundamentals & Lifecycle LLM Application Evaluation
 
 - **Evals are measurement of LLM pipeline quality**.
@@ -205,10 +207,6 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
 
   - You have to have **precise** pass/fail definitions.
 
-  - You have to provide a few examples. **Use the examples from the `train` set only**. **Make sure that you do not run the eval on those examples afterwards**.
-
-    - Of course the evaluator will perform great if you run it against the examples.
-
   - You have to have clear guidelines for the output. Usually, it's a field called "reasoning" and "answer" with "Pass" or "Fail" options.
 
 - After you have the prompt, **you must iterate on the prompt until you are aligned with the judge responses**.
@@ -222,7 +220,27 @@ This lesson was focused on how to conduct a _collaborative_ error analysis.
       - TPR -> how many % of times the label and the LLM agree that the recipe violates dietary restriction.
       - TNR -> how many % of times the label and the LLM disagree that the recipe violates dietary restriction.
 
-  - Do this on the _dev set_ (approximate 20% of the traces).
+### Automated Evaluator iteration loop
+
+- Split the labelled traces into different sets:
+
+  - 10-20% for the "train" set.
+
+  - 20-40% for the "dev" set.
+
+  - Rest for the "test" set. **NEVER** look at the "test" set.
+
+- Evaluate the judge on the "dev" set. **You should consider including a few examples from the "train" set into the prompt**.
+
+  - Calculate the TPR (true positive rate) and TNR (true negative rate) on the "dev" set.
+
+    - Iterate on the "dev" set until those are above 85% or so.
+
+- **You are not done yet!**. You have to account for judge bias. To do that, run the judge on the "test" set.
+
+  - **We purposefully avoided looking at the "test" set to simulate the case where judge has to rate unseen data**.
+
+- It goes without saying that **you should NOT test the evaluator on the "train" set or include examples from the "dev" or "test" sets into the prompt**
 
 ### Homework / Wrapping up
 
@@ -277,5 +295,3 @@ In this lesson we focused on _evaluating simple RAG_ pipeline.
 - To **improve MRR and Recall@K** consider **query rewriting**.
 
   - There are various strategies you can use here. **In the course, since we used the keyword-retrieval search, the "keyword" query rewriter improved the accuracy quite a lot**.
-
-TODO: Read slides.
