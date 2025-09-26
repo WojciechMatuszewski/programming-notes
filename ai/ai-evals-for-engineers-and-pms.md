@@ -295,3 +295,47 @@ In this lesson we focused on _evaluating simple RAG_ pipeline.
 - To **improve MRR and Recall@K** consider **query rewriting**.
 
   - There are various strategies you can use here. **In the course, since we used the keyword-retrieval search, the "keyword" query rewriter improved the accuracy quite a lot**.
+
+## Lesson 5 – Rag & Complex Architectures
+
+- RAG is really a technique to augment the LLM context with "outside knowledge" to better answers.
+
+- **The retriever, or what you do before "settling" on the additional context, is critical**.
+
+- Usually, you split your dataset into chunks. You retrieve on those chunks rather than on the document as a whole.
+
+- In HW4 (and lesson 5) we already learned how to prepare Evals for RAG retrievals.
+
+  - First, get all the chunks.
+
+  - Then, ask the LLM to generate a salient fact(s) about that chunk.
+
+    - **It goes without saying that you ought to _look_ at the generated output**.
+
+  - Then, ask the LLM to generate a question(s) based on the chunk and the salient fact.
+
+    - **Make sure to filter those questions!** Some of them might not be realistic at all.
+
+  With that data in place, you are able to evaluate your retrieval algorithm!
+
+- Keep in mind the metrics we learned about.
+
+  - Recall@K tells you what % of times the relevant chunk was found in the K retrieved documents.
+
+  - MMR tells you how high up in the ranking is the first relevant chunk. The better the MMR, the better "precision" of the LLM is for key facts.
+
+- **For long documents** consider parallelizing the work across multiple chunks.
+
+  - Retrieve multiple chunks, let the LLM attempt to extract the fact you are searching for from each chunk, and then let another LLM combine the outputs.
+
+### Common Pitfalls
+
+- Focusing on RAG when you have not validated that the RAG is the source of the issues you see.
+
+  - **Look at the data!**
+
+- Blindly striving for perfect recall.
+
+  - The higher the recall, the more context you have to push into the LLM. You can achieve Recall@1 of 100%, but at what cost?
+
+- Skipping error analysis and hoping that changes to underlying tools will solve your issues.
