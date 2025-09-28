@@ -2,6 +2,14 @@
 
 Things I have learned about coding with AI. This might be outdated when you read it—the field moves so fast!
 
+## Claude Code VSCode extension and LSP
+
+One thing that bothered me while using Claude Code was the fact that the tool was not aware of the LSP errors, like type errors in TypeScript codebase.
+
+Apparently using the VSCode extension helps here. **If you run the Claude Code in integrated terminal with Claude Code extension installed Claude Code will be aware of LSP issues**.
+
+See [this video](https://youtu.be/42AzKZRNhsk?t=3255) for more information.
+
 ## Research, Plan, Implement
 
 As context windows get larger and larger, you might have heard that "context optimization" does not really matter.
