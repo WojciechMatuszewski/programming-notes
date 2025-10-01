@@ -296,7 +296,7 @@ In this lesson we focused on _evaluating simple RAG_ pipeline.
 
   - There are various strategies you can use here. **In the course, since we used the keyword-retrieval search, the "keyword" query rewriter improved the accuracy quite a lot**.
 
-## Lesson 5 – Rag & Complex Architectures
+## Lesson 6 – Rag & Complex Architectures
 
 - RAG is really a technique to augment the LLM context with "outside knowledge" to better answers.
 
@@ -339,3 +339,39 @@ In this lesson we focused on _evaluating simple RAG_ pipeline.
   - The higher the recall, the more context you have to push into the LLM. You can achieve Recall@1 of 100%, but at what cost?
 
 - Skipping error analysis and hoping that changes to underlying tools will solve your issues.
+
+## Lesson 7 – Efficient Continuous Human Review Systems
+
+At the start, the instructors discussed some reflections from the previous lesson.
+
+At one point, they discussed how vague prompts influence LLM output and how high users' expectations are.
+
+**Hamel mentioned that adding UX elements to the process might help here**. So, instead of scheduling an appointment for a user via prompts, consider displaying a "calendar widget" to **avoid ambiguity**.
+
+I really like this idea!
+
+- In the beginning, there was "spreadsheet hell."
+
+  - Tools like Braintrust or similar platforms did not exist yet, so annotation of traces had to be done using other available tools.
+
+- **The advent of vendors like Braintrust does not mean that custom UIs for trace annotation are useless**.
+
+  - It all boils down to your preferences.
+
+- The next part of the lesson was about _designing_ the UI for trace labeling.
+
+- One neat thing they discussed was _how_ to sample traces.
+
+  - You can start with random sampling.
+
+  - You can sample based on the uncertainty of your LLM judge.
+
+  - You can sample based on failures, like user explicit ratings or errors in the tools.
+
+  - You can also sample traces with keywords the traces you graded as "fail" contain.
+
+- It is **essential** to remember that failure modes and criteria for success change.
+
+  - Those vectors MUST be editable to "keep up" with the pace of product.
+
+- **Open-coding** (so free-flowing notes) is great since it does not constraint you to a set of known failure modes. Let the LLM come up with a axial code based on what you wrote!
