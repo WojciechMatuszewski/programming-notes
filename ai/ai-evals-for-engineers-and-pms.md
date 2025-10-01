@@ -375,3 +375,17 @@ I really like this idea!
   - Those vectors MUST be editable to "keep up" with the pace of product.
 
 - **Open-coding** (so free-flowing notes) is great since it does not constraint you to a set of known failure modes. Let the LLM come up with a axial code based on what you wrote!
+
+## Lesson 8 – Const Optimizations and Recap
+
+Parts of this lesson focused on the recap of what we learned so far
+
+- Look at your data.
+
+- _LLM-in-the-loop_ not _Human-in-the-loop_. It is **critical that you are doing most of the error analysis**.
+
+- Building "code evaluations" rather than relying on the LLM-driven ones is a good practice.
+
+  - **The "code evaluations" are much easier to maintain and align** than the LLM-based ones.
+
+47:33
