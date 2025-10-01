@@ -634,3 +634,15 @@ In such cases, especially while using JSX, you might be **tempted to use `ref` o
 ```
 
 By using the platform, you drastically reduce the overhead of your code. Sometimes it is worth looking into MDN first, before writing complex JS/React code.
+
+## The "auto-grow" input and textarea
+
+> Based on the contents of [this blog post](https://olliewilliams.xyz/blog/html-renaissance/)
+
+How many times have you had to implement a `textarea` tag that grows with the content?
+
+How many times have you reached for a library like `react-textarea-autosize`?
+
+**There is no need to add _yet another library_ do your dependencies for this**.
+
+Use `field-sizing` CSS property with `content` value. See [this MDN article](https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing).
