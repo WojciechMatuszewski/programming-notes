@@ -388,4 +388,30 @@ Parts of this lesson focused on the recap of what we learned so far
 
   - **The "code evaluations" are much easier to maintain and align** than the LLM-based ones.
 
-47:33
+- The instructors vibe-coded a custom UI to annotate traces.
+
+  - One of the instructors contributed to a paper on how to go about creating such UIs.
+
+### Accuracy Optimization
+
+- Prompt refinement.
+
+- Perhaps introduce step-by-step reasoning to your prompts (as examples).
+
+- Decompose LLM calls with chain smaller calls. **This will increase your latency**.
+
+  - For example, you might split your LLM call into "extract user intent", "call a tool" and "summarize result".
+
+There are lot's more examples provided in the slides.
+
+### Cost Reduction
+
+- The instructors recommend first _focusing on accuracy_ and having a good practice established around error analysis before jumping in this section.
+
+  - I partly agree, but I also think there are things we can do at the very start of writing our application that _just_ make sense, and that would greatly decrease the costs of running it.
+
+    - One example would be to use cheaper models for easier tasks.
+
+- Use caching! Most, if not all, providers allow you to fine-tune which tokens are cached.
+
+  - **The effective use of caching might require you to restructure your prompt**. Since caching works by _prefix matching_, you would want to put all your static data at first, then the dynamic data.
