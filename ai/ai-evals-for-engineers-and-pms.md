@@ -415,3 +415,43 @@ There are lot's more examples provided in the slides.
 - Use caching! Most, if not all, providers allow you to fine-tune which tokens are cached.
 
   - **The effective use of caching might require you to restructure your prompt**. Since caching works by _prefix matching_, you would want to put all your static data at first, then the dynamic data.
+
+## Wrapping up
+
+This is a very, and I really mean it, comprehensive course. If you put some effort in, and _do_ the homework, it will teach you a lot.
+
+After taking this course, I'm much more confident in introducing _evaluations_ into products I maintain.
+
+### Recap
+
+- Running AI systems in production is challenging. You have to consider the _three gulfs_
+
+  - The _gulf of comprehension_: Can you understand your data and how the model actually behaves _in production_?
+
+  - The _gulf of specification_: Can we translate, usually quite ambiguous, user prompts into precise specific instructions for the LLM to follow?
+
+  - The _gulf of generalization_: The model is working pretty well on our examples. Can we scale it to work for _general_, organic, data? **This is where evals come in**.
+
+- There are **multiple pitfalls** you might fall into:
+
+  - You can be tempted to _outsource_ the trace annotation and the _error analysis_ process. **You should be looking at the data and it's because YOU know what is the best for your product**.
+
+  - You could be tempted to create LLM judges very early on hoping to have a magical automatic way of improving your product.
+
+    - That approach will not work that well. **Creating a good LLM judge requires lots of examples and fine-tuning**. You can't get the examples without doing _error analysis_ properly.
+
+  - You can start testing your judges on the data you used to craft the prompt the judge on. If you do, your judge will be _very good_ for the situations you are testing it against, but might falter when judging other data.
+
+  - You can start improving your system prematurely. **Be done with _error analysis_ before improving your system. This allows you to look at the big picture**.
+
+- The process of _error analysis_ begins when you look at your data.
+
+  - First, start with **_open coding_ which means writing what is good and bad with the trace**.
+
+  - Then, proceed with **_axial coding_ which means defining taxonomy of failure modes**. This will help you to **narrow your focus for improvements to a single area**.
+
+- **Programmatic evaluators are very useful**. Start with those! Creating a good LLM judge takes a lot of effort. Perhaps you can cover some parts of the functionality with something that requires less work?
+
+- **Use LLM judges for subjective and nuanced criteria**. For example, checking if the response adheres to the product messaging of your brand.
+
+- **Building a _labelling_ and _error analysis_ interfaces MIGHT be worth your time**. Most products, like Braintrust have such capability. **Build when you outgrown those products**.
