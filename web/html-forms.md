@@ -639,6 +639,8 @@ By using the platform, you drastically reduce the overhead of your code. Sometim
 
 > Based on the contents of [this blog post](https://olliewilliams.xyz/blog/html-renaissance/)
 
+> Read more about it [here](https://frontendmasters.com/blog/what-you-need-to-know-about-modern-css-2025-edition/#field-sizing)
+
 How many times have you had to implement a `textarea` tag that grows with the content?
 
 How many times have you reached for a library like `react-textarea-autosize`?
