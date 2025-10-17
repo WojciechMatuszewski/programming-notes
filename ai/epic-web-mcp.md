@@ -94,6 +94,18 @@
 
   - You can even implement subscriptions!
 
+## MCP UI
+
+- There is a library we use in the workshop called [`@mcp-ui`](https://github.com/idosal/mcp-ui/tree/main)
+
+  - As I understand it, it is not an official library, but rather something created by the community.
+
+  - Looking at the source code, it exposes wrappers to format the content returned by MCP tools in a specific way, and to also render them on the client.
+
+  - To have the client render the tool responses correctly, Kent uses [Goose](https://block.github.io/goose/docs/quickstart) client. Works pretty well!
+
+start 76
+
 ## MCP Auth
 
 > Based on [this](https://github.com/epicweb-dev/mcp-auth) workshop.
