@@ -104,7 +104,25 @@
 
   - To have the client render the tool responses correctly, Kent uses [Goose](https://block.github.io/goose/docs/quickstart) client. Works pretty well!
 
-start 76
+    - We later switched no [`nanobot`](https://github.com/nanobot-ai/nanobot) since it supports the `mcp-ui` better.
+
+- I spent some time trying to understand how the `remoteDom` option for the `mcp-ui` works.
+
+  - It seems like we are rendering things within an `iframe` for security reasons.
+
+  - It seems like we are creating custom elements, that we hope are styled correctly in the host application.
+
+  - [The `mcp-ui` library injects various scripts for us to use](https://github.com/idosal/mcp-ui/blob/848cb8aae91b5239144d1e33d0b15a2de3601b3f/sdks/typescript/client/src/remote-dom/iframe-bundle.ts).
+
+- Next technique we looked into, was rendering whole applications into an iframe (via external URL).
+
+- Another thing was adding more elements that _interact_ with the host application.
+
+  - All the communication was done via `postMessage` from the `iframe` (rendered application) to the host application (`nanobot`).
+
+    - It is up to the host application to respond and perform actions given the messages sent from the embedded application.
+
+Start 95 prompts
 
 ## MCP Auth
 
