@@ -648,3 +648,21 @@ How many times have you reached for a library like `react-textarea-autosize`?
 **There is no need to add _yet another library_ do your dependencies for this**.
 
 Use `field-sizing` CSS property with `content` value. See [this MDN article](https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing).
+
+## The `output` HTML tag
+
+> Based on [this article](https://denodell.com/blog/html-best-kept-secret-output-tag).
+
+> [More examples of usage](https://rud.is/drop/output.html).
+
+If, based on input(s) values, you want to announce something to the user, look no further but to the `output` tag.
+
+I really like the "Password strength" example.
+
+```html
+<label for="password">Password</label>
+<input type="password" id="password" name="password" />
+<output for="password"> Password strength: ${calculated strength} </output>
+```
+
+Yes, you could use `role="status"` to an element instead, but I believe we ought to use semantic HTML tags!
