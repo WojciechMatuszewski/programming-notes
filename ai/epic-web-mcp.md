@@ -122,7 +122,13 @@
 
     - It is up to the host application to respond and perform actions given the messages sent from the embedded application.
 
-Start 95 prompts
+- It's really up to the host application implementation.
+
+  - The embedded application (ui) is only sending `window.postMessage` events and updates its UI based on the result of that call.
+
+- All being said, I think **exposing UIs with MCP servers will be huge in the future**.
+
+  - But, since returning structured content in tools is only one part of the equation, I wonder how community will handle the most challenging part – hooking it all up in the host application.
 
 ## MCP Auth
 
