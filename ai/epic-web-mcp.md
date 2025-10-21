@@ -134,12 +134,10 @@
 
 > Based on [this](https://github.com/epicweb-dev/mcp-auth) workshop.
 
-- The `agents` package we use in the workshop does not add CORS headers to "discovery" endpoints like `/.well-known-xx`. We had to add them manually.
+- There is a **resource server, which is most likely the MCP server**, and there is also an **authorization server, which handles the OAuth flow**.
 
-- TIL that **the `Response` class has static `.json` method you can use**.
+  - Remember, _authorization_ is about whether someone has access to a resource. _Authentication_ is checking if the user is really who they claim to be.
 
-  - Pretty neat! No need to `JSON.stringify` your data anymore.
+- MCP clients should only be aware of the _resource servers_.
 
----
-
-Finished Metadata Discovery 02. We need to wait for more content to be available.
+  - To initialize the _authorization flow_, the client has to reach out to the _resource server_ to learn where the _authorization server_ is.
