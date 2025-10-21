@@ -53,13 +53,23 @@ The `action` step leverages _tools_ to retrieve information. **Keep in mind that
 
 ## Prompt caching
 
-In most cases, products have a very robust _system prompt_ that outlines the goals and provides examples. All of this is to ensure the answer to the user query is the best it could possibly be.
+> This section is [**based on the Anthropic documentation**](https://docs.claude.com/en/docs/build-with-claude/prompt-caching). It's the provider I'm most familiar with.
 
-Since the _system prompt_ must be sent with every request, if you do not do anything about it, the longer the conversation, the slower the response from the LLM will be – there is more data to process!
+Key things to understand:
 
-Enter _prompt caching_. I find the name misleading, as I initially thought that the solution caches the _whole_ prompt, but that is not the case.
+1. The order in which you define the `messages`, `tools`, and `system` properties in the request `body` does not matter.
 
-**According to my research, only the "static" part of the prompt is cached**. Think preamble or examples in the system prompt. The "dynamic" part of the prompt is never cached. [OpenAI mentions](https://platform.openai.com/docs/guides/prompt-caching) that they can even cache tool definitions (NOT USE)!
+2. The `cache_control` property is called a "cache breakpoint."
+
+3. Caching is not free. **Pricing varies based on the model you are using.**
+
+It took me a while to understand how the `cache_control` checkpoint system works.
+
+The "I got it" moment came when I learned that **Anthropic "glues" the `tools`, `system`, and `messages` together and then looks for the furthest valid `cache_control` checkpoint** to determine caching heuristics.
+
+For example, suppose you add a `cache_control` checkpoint at the level of the system prompt. On the first relevant request, this would populate the cache with the contents of `tools` and `system`. If the `system` changes, the cache is invalidated.
+
+**Since you can define multiple `cache_control` checkpoints**, suppose you now also add one to the last `tool`. Now, if the `system` changes, Anthropic is able to _reuse_ the cache for `tools`.
 
 ## Context Placement
 
