@@ -141,3 +141,11 @@
 - MCP clients should only be aware of the _resource servers_.
 
   - To initialize the _authorization flow_, the client has to reach out to the _resource server_ to learn where the _authorization server_ is.
+
+- Some MCP clients assume the MCP server is both the _resource_ and _authorization_ server.
+
+- TIL about the `WWW-Authenticate` header.
+
+  - You would return `401` with this header to the client to indicate it needs to use the _authorization_ server to get the necessary tokens.
+
+    - You can include various things in that header value. You would do this to make it easier for clients to understand what they should do next when they receive `401` status code from your service.
