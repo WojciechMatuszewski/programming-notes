@@ -287,10 +287,27 @@ Another neat thing about this element is that **you do not have to use `z-index`
     <button type="submit">Close</button>
   </form>
 </dialog>
+
 <button onclick="myDialog.showModal()">Open</button>
 ```
 
 You will need some JavaScript to show the dialog/modal and most likely get the return value when it closes, but apart from that, the implementation requires no JavaScript at all!
+
+### Closing the `dialog` without form tag
+
+> Based on [this blog post](https://nerdy.dev/closedby-any)
+
+Instead of having an explicit `form` with a `button` inside the dialog to close it, consider using the `closedBy="any"`
+
+```html
+<dialog closedBy="any">
+  <p>Hi there</p>
+</dialog>
+```
+
+Tapping or clicking outside the dialog will close it.
+
+**I still believe that having an explicit "close" button is the way to go**, since it might not be obvious to users how to close it otherwise.
 
 ### Different flavours of the `dialog` element
 
