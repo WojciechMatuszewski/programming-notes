@@ -26,10 +26,22 @@ This lesson was a very brief and quite shallow introduction to the course conten
 
     - Just like you would reduce scope of a feature, you should reduce the scope of the plan.
 
-- I wish there was an easy way to _stop_ Claude after it completes a TODO.
+- I wish there were an easy way to _stop_ Claude after it completes a TODO.
 
   - Claude Code has the `TodoWrite` built-in tool, but I could not configure a hook to stop Claude when it uses it. I believe the `auto-accept edits` mode does not allow for it?
 
   - **Manual `todo.md` files are where it's at**. The `TodoWrite` tool is a bit buggy, and it's quite "hidden" from you. I like to have a view into each todo in my editor.
 
 - **Using AI tools is not only about writing code**. One use-case that I really like is asking the LLM to list things that we ought to consider refactoring and order them by priority.
+
+- **You can ask the LLM to ask you questions based on the plan to refine it**.
+
+  - Remember, the plan is quite important. The more refined it is, the better.
+
+## Working Incrementally with AI Todos and Git
+
+- Forcing the LLM to provide you with "user test" at the end of the implementation step is a good way to ensure you are aligned with what the LLM wants to implement.
+
+  - If the "user test" is off, it means that, despite correct TODOs, the LLM's understanding of the work might be different than yours.
+
+  - You can also ask the LLM to come up with different testing plans at this stage. Perhaps listing what test cases it will write and so on.
