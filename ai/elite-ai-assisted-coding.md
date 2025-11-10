@@ -45,3 +45,5 @@ This lesson was a very brief and quite shallow introduction to the course conten
   - If the "user test" is off, it means that, despite correct TODOs, the LLM's understanding of the work might be different than yours.
 
   - You can also ask the LLM to come up with different testing plans at this stage. Perhaps listing what test cases it will write and so on.
+
+## Interactive Coding, Control & Spec-Driven Development
