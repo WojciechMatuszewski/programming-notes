@@ -46,4 +46,36 @@ This lesson was a very brief and quite shallow introduction to the course conten
 
   - You can also ask the LLM to come up with different testing plans at this stage. Perhaps listing what test cases it will write and so on.
 
-## Interactive Coding, Control & Spec-Driven Development
+## Optional Part 2 Homework – Live Practice Session
+
+This lecture focused on working with MCP servers.
+
+1. Adding MCP servers.
+2. Using MCP servers.
+3. Developing MCP servers.
+
+A good introduction if you are unfamiliar with those.
+
+## Defining Good Code for LLM Context
+
+You will most likely want to include some instructions about code quality in the `CLAUDE.md` or `AGENTS.md` files.
+
+If you are on a team that already defines these in some form of shared documentation, you are in luck. You can probably paste that document into the relevant agent file and call it a day.
+
+Otherwise, **consider creating a draft document and asking the LLM what it would improve about that document, or what questions it needs answered**. This way, the LLM becomes a co-creator of the document.
+
+In this lecture, Issac presents a document containing a set of questions related to _abstractions_, _code duplication_, and so on. Answering those questions yourself, and asking the LLM if it needs clarification, is a good way to create a "code quality" document for the LLM.
+
+Things Issac mentioned that I agree with:
+
+1. Duplication is most likely okay. **Consider allowing the agent to duplicate the code, and then refactor it yourself**. This way, you are in charge of writing the most important pieces of code—abstractions that will be used across the codebase.
+
+2. Aim for "deep" functions that hide a lot of functionality. Again, you can refactor them later yourself.
+
+3. **Make sure the agent does not try to add defensive error handling**. Error handling is _very critical_ in any production application. It is best that _you_ write the logic for it so you understand how errors propagate.
+
+4. No mocks or placeholders. I've noticed this myself as well. Agents often create mocks for mocks and placeholders everywhere in test code. That's not good. This practice breeds brittle tests.
+
+There are more things to think about. This is not an exhaustive list.
+
+## Using an Agent to Identify Tech Debt
