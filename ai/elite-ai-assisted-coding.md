@@ -85,3 +85,9 @@ In this session, Issac showcased asking the LLM to find opportunities for refact
 This way, you have an overview of things you _might_ want to tackle. **I find this technique particularly effective for checking if there are any quick wins that, when addressed, would improve code quality**.
 
 The LLM helps you translate the "knowledge in your head" into a document that you can share with others.
+
+## Wrapping up
+
+This course was okay at the begging, but started to become a bit too shallow for me at the end.
+
+If you are starting your AI journey, take this course. If you have been working with AI for a while, consider watching first couple of practical lessons, especially the ones about creating a good `plan.md` file.
