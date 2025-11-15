@@ -79,3 +79,9 @@ Things Issac mentioned that I agree with:
 There are more things to think about. This is not an exhaustive list.
 
 ## Using an Agent to Identify Tech Debt
+
+In this session, Issac showcased asking the LLM to find opportunities for refactoring and to rank them based on (subjective) priority. You are most likely familiar with the tech debt in your codebase, so the LLM's output should not surprise you.
+
+This way, you have an overview of things you _might_ want to tackle. **I find this technique particularly effective for checking if there are any quick wins that, when addressed, would improve code quality**.
+
+The LLM helps you translate the "knowledge in your head" into a document that you can share with others.
