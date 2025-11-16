@@ -475,6 +475,23 @@ Consider the following HTML:
 
 Notice that I can open and close the popover by the "power" of markup only. Is it not amazing? At the time of writing, the API is still work in progress. Firefox and Safari are yet to support it.
 
+### Adding popovers on hover
+
+> Based on [this section in the blog post](https://modernwebweekly.substack.com/i/177501059/better-tooltips-with-the-interestfor-attribute)
+
+The `commandfor` attribute is great when you want to display something upon a user _clicking_ a button, but what about the _hover_ interaction?
+
+**You can use `interestfor` to trigger a popover on hover.**
+
+```html
+<button interestfor="popover">Hover over me</button>
+<div id="popover" popover="hint">Popover</div>
+```
+
+That's it. It could not get easier than this!
+
+There are more styling options available for this feature. You can control the delay and so on. See [this link](https://modernwebweekly.substack.com/i/177501059/mouse-and-keyboard-delays) to learn more.
+
 ## Quotes and intl
 
 > Based on [this article](https://www.stefanjudis.com/today-i-learned/how-to-use-language-dependent-quotes-in-css/)
