@@ -1202,3 +1202,17 @@ If you skip building _that_ one thing:
 3. You have time to improve our codebase and address tech debt.
 
 Competition is not sleeping, but **the middle-way** where you build _some_ features and skip building others, is usually the best.
+
+## On DevAI
+
+> Based on [this article](https://www.ivankusalic.com/realistic-DevAI/)
+
+One thing that struck me while reading the piece was the first sentence in the "The Bottom Line" section:
+
+> AI makes engineers dramatically more productive at generating code—but code is a liability, not an asset. The productivity gains in raw code output are real. So is the faster path to unmaintainable systems.
+
+This is **so** true. It masterfully encapsulates many lessons and experiences you will have as an engineer.
+
+The more experience I gain, the more I see it’s less about the code. It's more about _the people_ and _the product_.
+
+I really hope coding programs will now shift more from "learning how to write code" to "learning how to talk to and convince other people about your ideas."
