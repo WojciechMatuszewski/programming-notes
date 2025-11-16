@@ -474,3 +474,31 @@ Consider the following HTML:
 ```
 
 Notice that I can open and close the popover by the "power" of markup only. Is it not amazing? At the time of writing, the API is still work in progress. Firefox and Safari are yet to support it.
+
+## Quotes and intl
+
+> Based on [this article](https://www.stefanjudis.com/today-i-learned/how-to-use-language-dependent-quotes-in-css/)
+
+First, I learned that different languages can have different-looking quotation marks. It makes sense for Asian languages, but it's interesting that French quotation marks are also different from English ones.
+
+Either way, **you have two options**:
+
+1. Use the `q` element if you want to add _inline quotes_.
+
+```html
+<p>They say they <q>were colorful and smiling</q></p>
+```
+
+2. Use `content: open-quote` and `content: close-quote`.
+
+```css
+blockquote::before {
+  content: open-quote;
+}
+
+blockquote::after {
+  content: close-quote;
+}
+```
+
+The **`blockquote` element does not render quotation marks**. It's only there [to _indicate_ that the containing text is a quotation](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/blockquote).
