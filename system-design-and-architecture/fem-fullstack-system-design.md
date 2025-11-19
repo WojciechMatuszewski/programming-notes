@@ -46,4 +46,16 @@
 
 ## Chapter 3 – understanding the problem
 
-Day 1 part 2 41:17
+- Functional requirements: what are we trying to solve? _What is the core functionality?_
+
+  - **To fully understand the requirements, try to repeat what you've heard to the other person**. This makes sure you are both aligned on what we are building _for_.
+
+- Non-functional requirements: how the system should perform?
+
+  - **Use non-functional requirements to probe for engineering challenges**.
+
+- **Designing _around_ a _core entity_ will make your architecture more robust**.
+
+  - Focus on what matters. For example, for a banking application, you most likely want to design around a _transaction_.
+
+Finished Day 1 Part 3 53:29
