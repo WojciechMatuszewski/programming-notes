@@ -58,4 +58,34 @@
 
   - Focus on what matters. For example, for a banking application, you most likely want to design around a _transaction_.
 
-Finished Day 1 Part 3 53:29
+- In most cases, applications perform basic CRUD operations. Designing around that functionality can help you avoid thinking about things that does not matter.
+
+### CAP Theorem
+
+- CAP Theorem is about how choosing to prioritize one aspect of the system, like _consistency_ influences the other, like _availability_ or _partition tolerance_.
+
+  - _Availability_: Every request receives a response (success or error).
+
+  - _Consistency_: Every read receives the most recent write or error.
+
+  - _Partition Tolerance_: The system continues to operate even if messages are delayed or lost (think network issues).
+
+  **Note**: In any distributed system, **network partitions will happen** as the transport layer is not 100% error-proof. So, in reality, you are choosing between CP and AP systems.
+
+### System Quality
+
+- There are **many** things you have to consider when designing a system:
+
+  - Observability
+
+  - Security
+
+  - Scalability
+
+  - Adaptability. Think making a one-way door decision that makes the system less malleable.
+
+  - Performance
+
+  Prioritizing one will influence the other. **It's trade-offs all the way down**.
+
+### Non-Functional requirements
