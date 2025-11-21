@@ -89,3 +89,61 @@
   Prioritizing one will influence the other. **It's trade-offs all the way down**.
 
 ### Non-Functional requirements
+
+- Just as with _functional requirements_, to create a list of _non-functional requirements_, you **must ask questions** about the system you are building.
+
+  - For _non-functional requirements_, focus more on questions about "implementation details" rather than functionality.
+
+  > How many MAUs?
+
+  > How many transactions per second?
+
+  > What is the desired P95 latency?
+
+  > Are there any certifications, such as HIPAA, GDPR, or SOC2, that we need to consider?
+
+  > How long do we need to store backups?
+
+- Once you have a set of questions, you can start formulating _non-functional requirements_.
+
+  > The system should support 1,000,000 MAUs.
+
+  > The system should support 100 transactions per second.
+
+  > The target P95 latency is 100ms.
+
+## Chapter 4 – high-level design
+
+- Jem talked about **starting with the entities and branching out from there**.
+
+  - We used a similar strategy when discussing _functional_ and _non-functional_ requirements, focusing on identifying the "core" entity of the application.
+
+  - I agree with this approach. You should narrow your focus as much as possible, especially in high-stress situations like job interviews.
+
+- We briefly touched on various methods of communication between the "server" and the "client":
+
+  - gRPC for service-to-service communication.
+
+  - Server-Sent Events for real-time updates that do not need bi-directionality.
+
+  - WebSockets for real-time updates that need bi-directionality.
+
+  - GraphQL for stitching multiple data sources together and exposing them as one cohesive API.
+
+  - REST for anything else. A safe default.
+
+  **Those are only suggestions.** In the real world, it all depends on various factors.
+
+- Next, we touched on _vertical_ vs. _horizontal_ scaling.
+
+  - You scale _vertically_ when you add more resources to a single machine. This is quite "easy" because you do not have to change your code in any way to take advantage of it.
+
+    - Of course, the drawback is that you have a single point of failure, and you will eventually hit a limit on how high you can scale.
+
+  - You scale _horizontally_ when you add more machines. This is more involved, as you will most likely have to add some kind of load balancing between those machines. This change _might_ require you to modify the code of your applications.
+
+    - This solution allows you to scale almost infinitely, but it comes with other drawbacks, such as introducing potential eventual consistency, and so on.
+
+  By default, people will scale _vertically_ since it's easier to do. When they hit the limit, they will start scaling _horizontally_.
+
+Start Day 2 Part 1
