@@ -394,3 +394,9 @@ If you agree that you will need to save X gigabytes of data per month, you might
   - Message Queues, for example, SQS.
 
   - Workers, for example, Lambda functions.
+
+## Wrapping up
+
+**Talking about requirements and assumptions upfront and discussing them will help you come up with great designs**.
+
+Do not "hide" what you are thinking about. Be vocal about your assumptions. Discuss the scale of the system and _what problem it solves_.
