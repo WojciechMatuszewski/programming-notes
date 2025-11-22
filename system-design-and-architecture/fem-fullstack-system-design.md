@@ -339,10 +339,58 @@
 
 ### Estimations
 
-The main point in estimating RPS or storage requirements is to **validate your architecture**.
+The main point of estimating RPS or storage requirements is to **validate your architecture**.
 
-If you can agree, that you will need to save X amount of GBs a month in terms of data, you might choose one database or another.
+If you agree that you will need to save X gigabytes of data per month, you might choose one database over another.
 
-**Probe for scale required, not exact numbers**.
+**Probe for the required scale, not exact numbers**.
 
-Start Day 2 Part 3 31:46
+### Security
+
+- You may often hear people use the term "TLS/HTTPS termination."
+
+  - This means decrypting the data that was sent to another service (or server). **This is costly**.
+
+  - There are multiple ways you can "terminate" the encryption:
+
+    - At the Load Balancer level
+
+      - This is the most common approach. Nearly every load balancer can handle this for you out of the box.
+
+    - At the Application Layer level
+
+      - This gives you a lot of control, but you must add code to decrypt the data.
+
+- Authentication vs. Authorization
+
+  - **_Authentication_ verifies identity**.
+
+  - **_Authorization_ determines what permissions you have**.
+
+  From my experience, it is very easy to introduce confusion when talking about these concepts.
+
+  **I believe using _login_ (identity) and _permissions_ (access) for authentication and authorization is much clearer.**
+
+- Authentication can be either _stateful_ or _stateless_.
+
+  - _Stateful_ authentication usually means using _sticky sessions_ and holding authentication data in memory on a given server.
+
+    - You save on latency, but you encounter many issues if you want to scale horizontally.
+
+  - _Stateless_ authentication usually means using some kind of token that can be validated by all servers.
+
+    - You introduce some latency (token decoding), but this approach allows you to scale horizontally with ease.
+
+## Chapter 6 – Asynchronous Workflows
+
+- Using asynchronous workflows, when appropriate, can increase your system's availability.
+
+  - The client no longer has to wait for a long "task" to finish. The server sends an "I acknowledge your request" response and can then propagate status updates to the client when necessary.
+
+- Some common components:
+
+  - Message Brokers, for example, EventBridge or Firehose.
+
+  - Message Queues, for example, SQS.
+
+  - Workers, for example, Lambda functions.
