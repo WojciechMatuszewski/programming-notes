@@ -666,3 +666,28 @@ I really like the "Password strength" example.
 ```
 
 Yes, you could use `role="status"` to an element instead, but I believe we ought to use semantic HTML tags!
+
+## Simplest possible OTP form
+
+> Based on [this article](https://cloudfour.com/thinks/simple-one-time-passcode-inputs/)
+
+Before you reach for _yet another_ dependency to implement the OTP input, stop and consider using plain HTML.
+
+```html
+<form>
+  <fieldset>
+    <legend>Code</legend>
+    <input type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\d{4}" required />
+  </fieldset>
+</form>
+```
+
+1. We are using `type="text"` because the value of the input is not really a "number". `0004` would still be valid.
+
+2. The `inputmode="numeric"` enables virtual numeric keyboard on touch devices, like mobile phones.
+
+3. The `autocomplete="one-time-code"` is a hint for password managers and browsers.
+
+4. The `maxlength` and `pattern` deal with validation. **You should also validate on the backend as well!**.
+
+Yes, it is not this fancy input with multiple "sub-inputs", but do you really need it to be?
