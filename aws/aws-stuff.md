@@ -6556,11 +6556,25 @@ What is very important to understand is that **LONG polling CAN END MUCH EARLIER
 
   - aws **introduced an SDK API to perform the redrive**. You should favour that instead. See [this link](https://aws.amazon.com/blogs/aws/a-new-set-of-apis-for-amazon-sqs-dead-letter-queue-redrive).
 
+##### Noisy neighbour problem and fair queues
+
+Let us say you have an SQS queue that you share across multiple tenants in your SaaS application. What happens if one tenant (`messageGroupId`) starts to produce much more messages than the other tenants?
+
+By default, that single tenant will "dominate" the throughput, and cause other messages to have **increased _dwell time_** (the time a message spends in the queue). This is problematic.
+
+You **might employ SQS FIFO to help with this**. With SQS FIFO, messages are consumed in the order they arrived. **But this greatly decreased throughput and might increase latency**.
+
+**Another solution might be to use SQS Fair Queues** ([you can read more about them here](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fair-queues.html)).
+
+As I understand it, when you use `messageGroupId`, "fairness" is applied automatically. SQS will append the "problematic" tenant's messages to the tail of the queue, which means messages from other tenants will be processed first.
+
 ##### Integration with AWS Lambda
 
 - ~AWS Lambda service deploys a fleet of _pollers_ that read from your queue. The **initial pollers concurrency is 5 and then increases by 60 based on the number of messages in the queue**~
 
   - This is no longer true. Now the **scaling is much more flexible at 300 concurrent executions in 1**. [See the blog post here](https://aws.amazon.com/blogs/compute/introducing-faster-polling-scale-up-for-aws-lambda-functions-configured-with-amazon-sqs/).
+
+  - They've also added [_provisioned mode_ for SQS ESM](https://aws.amazon.com/blogs/aws/aws-lambda-enhances-sqs-processing-with-new-provisioned-mode-3x-faster-scaling-16x-higher-capacity/). As I understand it, you now have A LOT of control when it comes to configuring how many pollers are always active an so on. **This _provisioned mode_ costs more than the regular mode**.
 
 - The AWS Lambda service (in reality, the ESM) **uses long polling for the integration**. This makes sense as it would be ineficient to use anything else but long polling. See [this documentation section](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-scaling).
 
