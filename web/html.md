@@ -313,11 +313,11 @@ Tapping or clicking outside the dialog will close it.
 
 To show the dialog, you can use the `showModal` or `show` APIs. What is the difference?
 
-- The `showModal` **traps the focus** and **displays the backdrop**. It behaves as a regular "modal" you are used to.
+- The `showModal` **traps the focus** and **displays the backdrop**. It behaves as a regular "modal" you are used to. **Renders in the _top layer_**.
 
   - Good for modals.
 
-- The `show` does not trap the focus and there is no backdrop.
+- The `show` does not trap the focus and there is no backdrop. **Renders _inline_, and not in the _top layer_**.
 
   - Good for notifications and other popups. You could also implement tooltips via this API.
 
@@ -333,6 +333,22 @@ Another great addition to the web. Just like the `dialog` element, it will displ
 ```
 
 **The `popover` attribute has a feature of "soft dismiss"** which means _clicking outside_ will close the popover.
+
+**The `popover` attribute and the `showPopover` will render the element in the _top layer_**.
+
+### The `popover` `dialog`
+
+What if you want to create a `dialog` that renders in the _top layer_ but does NOT make the other elements on the page `inert`?
+
+For that, consider using the `popover` attribute on the dialog.
+
+```html
+<dialog popover="manual"><span>hi there</span></dialog>
+```
+
+1. The `dialog` renders in the _top layer_ meaning you do not have to worry about `z-index`.
+
+2. The rest of the page is "clickable".
 
 ## The `radio` element is much more powerful than you think
 
