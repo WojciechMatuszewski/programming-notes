@@ -1113,3 +1113,23 @@ Notice that we are calling `useState` _inside_ the render function. Usually this
 **React will NOT re-render the children of your component when you do this**. According to the docs, **if you update state _during_ render, React will immediately re-render your component skipping the children for that render**.
 
 This is pretty nice, as using `useEffect` here would cause the children to re-render twice.
+
+## The "action props"
+
+[During one of the talks](https://youtu.be/p9OcztRyDl0?t=30182) presented at React Conf 2025, the speaker introduced a new pattern—the so-called "action props."
+
+It's nothing more than a _convention_ to signal to the consumer of the component that the callback will be called within `startTransition`.
+
+```jsx
+<Button onSubmitAction={/* your code here */}>hi there</Button>
+
+function Button({ onSubmitAction, children }) {
+  return (
+    <button onClick={() => { startTransition(onSubmitAction); }}>
+      {children}
+    </button>
+  );
+}
+```
+
+All of this is to _push_ the complexity of "async React" into the design-system layer. You should not be concerned with such low-level details when working on _product code_.
