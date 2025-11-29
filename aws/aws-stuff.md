@@ -92,13 +92,26 @@ You have to consider **the IAM permissions of a given AWS Lambda function**. It 
 
     - On the side note, keep in mind that the 6 MB output limit is not really 6 MB of data. There is some encoding going on after your payload "leaves" the handler. See [this article series for more information](https://zaccharles.medium.com/deep-dive-lambdas-response-payload-size-limit-8aedba9530ed).
 
-#### APIGW integration types
-
 - There is the **`HTTP_PROXY` integration type** where APIGW **will forward the whole request to your AWS Lambda function**. You **do not get to specify the request/response mapping templates**.
 
 - There is the **`AWS_PROXY` integration type** where APIGW **will apply a default, non-configurable mapping template to the request**. You **do not get to specify the request/response mapping templates**.
 
 - There is the **`AWS` integration** where APIGW **will NOT transform anything for you**. You **must configure both the request and response mapping templates**.
+
+#### Ensuring tenant-based environment isolation
+
+> [Based on this announcement blog post](https://aws.amazon.com/blogs/aws/streamlined-multi-tenant-application-development-with-tenant-isolation-mode-in-aws-lambda/)
+
+Just before Re:Invent 2025, AWS announced the ability to pass the `tenantId` when invoking the AWS Lambda function. This is quite nice, as it ensures that each tenant gets its own fresh execution environment.
+
+**But this is not without drawbacks**:
+
+- Consider that **you will need much higher concurrency limits to handle the same amount of traffic** since you can't re-use execution environments.
+- If you allow passing the `tenantId` from the caller (perhaps via the payload), you are introducing a security issue.
+
+**Using APIGW Authorizer seems to be a good way to provide the `tenantId`**. Perhaps you can use one of the JWT scopes?
+
+This feature sounds good on paper, and most likely is, _for the people who really need it_. Unless you have a _very_ strict isolation requirements, you most likely do not need it.
 
 #### Alias
 
