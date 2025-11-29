@@ -2014,15 +2014,15 @@ Nothing stops you from writing the following code:
 <p>not red</p>
 ```
 
-What's within the `@scope` applies to all _children_ of the `div` because the `style` is situated inside the `div`.
+What’s within the `@scope` applies to all _children_ of the `div` because the `style` tag is placed inside the `div`.
 
-You can imagine this being quite useful in React or other frameworks. This kind of work similar to _CSS Modules_ but without having to deal with `.css` files.
+You can imagine this being quite useful in React or other frameworks. This works similarly to _CSS Modules_, but without having to deal with `.css` files.
 
-**The blog post mentions a couple of points _against_ this approach**:
+**The blog post mentions a couple of points _against_ this approach:**
 
-1. This, technically, is invalid HTML.
-2. The performance of this approach might not be as good as putting `style` inside the `head` tag.
-3. Using `link rel="stylesheet"` is better from the security standpoint.
+1. Technically, this is invalid HTML.
+2. The performance of this approach might not be as good as putting the `style` tag inside the `head`.
+3. Using `<link rel="stylesheet">` is better from a security standpoint.
 
 ## `text-wrap: balance` and `text-wrap: pretty`
 

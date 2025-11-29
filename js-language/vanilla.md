@@ -230,3 +230,52 @@ foo.values().map(/*stuff*/);
 ```
 
 Please note that **iterators can work over ANY ITERABLE data structure, not only arrays**. This means **async generators as well!**
+
+## Handling URLs
+
+### The `URL` constructor
+
+So many times I've seen engineers struggle to "compose" an URL with query parameters. They tend to concatenate multiple strings together using elaborate conditionals making the code quite hard to read.
+
+If you find yourself in similar situation, **consider using the `URL` constructor**. It is _very_ useful.
+
+```js
+const u = new URL("/foo/bar/baz", "https://google.com");
+
+if (someCondition) {
+  u.searchParams.append("bar", "baz");
+}
+```
+
+You can even append parts to the `pathname` _after_ you already created the URL. **Sadly, I think you can do that only in Node.js and not in the browser**.
+
+```js
+import path from "node:path";
+
+const u = new URL("foo/bar/", "http://google.com");
+
+u.pathname = path.posix.join(u.pathname, "/bazz");
+```
+
+### Do not forget about `URLSearchParams` constructor
+
+Only concerned with search params?
+
+```js
+const params = new URLSearchParams([["foo", "bar"]]);
+params.append("baz", "123");
+```
+
+### Matching against the URLs
+
+> [Based on this blog post](https://jschof.dev/posts/2025/11/build-your-own-router/?utm_source=stefanjudis&utm_medium=email&utm_campaign=web-weekly-176-scope-scope-and-enterkeyhint)
+
+Use the `URLPattern` constructor to create a "matcher" you can use to "test" against various URLs.
+
+```js
+const pattern = new URLPattern({ search: "foo=bar*" });
+
+console.log(pattern.test("http://google.com?foo=bar&bar=baz")); // true
+```
+
+You can match against other `URL` properties like `protocol` or `pathname`.
