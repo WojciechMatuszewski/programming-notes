@@ -903,6 +903,32 @@ The generic `DistributiveOmit` ensures we apply the `Omit` to _each_ member of t
 
 Notice the `K extends string`. We can't use `K extends keyof T`, since the `T` will be "collapsed" type of all the union members, so we will be only able to omit the _shared_ types. You can scope it further if you wish!
 
+## The `extends` and unions
+
+> Based on [this blog post](https://www.stefanjudis.com/today-i-learned/iterate-typescript-union-type/)
+
+The `extends` keyword allows you to _iterate_ over the elements in the union.
+
+```ts
+type Colors = "Black" | "White" | "Orange";
+
+type Suffix<C, S extends string> = C extends string ? `${S}: ${C}` : C;
+
+// type test = "suffix: Black" | "suffix: White" | "suffix: Orange"
+type test = Suffix<Colors, "suffix">;
+```
+
+The example is a bit contrived, as you can achieve the same by doing this:
+
+```ts
+type Colors = "Black" | "White" | "Orange";
+type test = `suffix: ${Colors}`;
+```
+
+But if you want to apply the suffix conditionally, you would need to use `extends`.
+
+Either way, **the `extends` allows you to _iterate_ over the union to transform it**. This is **similar to _Mapped Types_**.
+
 ## Pick and Exclude
 
 ### Pick<T,K>
