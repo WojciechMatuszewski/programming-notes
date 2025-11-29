@@ -1994,6 +1994,36 @@ Now, the box would have red background color.
 
 Be _very_ careful while defining a `@layer` inside a `@layer`. You might be tempted to do this, because adding `@layer` affects specificity, but using `@scope` is better suited for this job.
 
+### Using `@scope` in "components"
+
+> [Based on this blog post](https://olliewilliams.xyz/blog/style-in-body/)
+
+Nothing stops you from writing the following code:
+
+```html
+<div>
+  <style>
+    @scope {
+      p {
+        color: red;
+      }
+    }
+  </style>
+  <p>this is red</p>
+</div>
+<p>not red</p>
+```
+
+What's within the `@scope` applies to all _children_ of the `div` because the `style` is situated inside the `div`.
+
+You can imagine this being quite useful in React or other frameworks. This kind of work similar to _CSS Modules_ but without having to deal with `.css` files.
+
+**The blog post mentions a couple of points _against_ this approach**:
+
+1. This, technically, is invalid HTML.
+2. The performance of this approach might not be as good as putting `style` inside the `head` tag.
+3. Using `link rel="stylesheet"` is better from the security standpoint.
+
 ## `text-wrap: balance` and `text-wrap: pretty`
 
 Have you ever had to deal with "orphaned" words in a paragraph? Or perhaps a heading that had that one word in a new line?
