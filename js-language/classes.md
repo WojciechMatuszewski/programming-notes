@@ -1,6 +1,18 @@
 # Javascript classes
 
-##### ES6 class example
+## Impact on bundle size
+
+There are quite a few compelling arguments _against_ using JS classes since they might bloat your bundle size.
+
+[Consider this blog post](https://guilhermesimoes.github.io/blog/classes-considered-harmful-when-authoring-a-js-lib) that mentions the fact that:
+
+1. Classes are not tree-shakeable. This appears to be true. See [this GitHub issue](https://github.com/evanw/esbuild/issues/175).
+
+2. Using classes forces you to use a lot of _keywords_ like `this`, `class`, `constructor`, `return` and so on. You can't "inline" those keywords.
+
+Those arguments _might_ or _might NOT_ matter to you. It all depends. Remember that you can always ask the LLM to rewrite the class-based code for you (but before you do, please make sure you have tests!).
+
+## ES6 class example
 
 ```javascript
 class Workshop {
@@ -76,7 +88,7 @@ setTimeout(deepJS.ask, 100, "Still losing this");
 
 ## Prototypes
 
-##### A "constructor call" makes an object linked to its own prototype (there is no copy relationship)
+### A "constructor call" makes an object linked to its own prototype (there is no copy relationship)
 
 Under the class syntax-sugar
 
@@ -119,7 +131,7 @@ deepJS.ask("...");
 // uppercase console .log
 ```
 
-##### Object.create [first 2 steps of new algorithm]
+### Object.create [first 2 steps of new algorithm]
 
 - create brand new object (empty)
 - link that object to another object
@@ -155,7 +167,7 @@ So the call site looks like this
 
 ## OLOO: Objects Linked to Other Objects
 
-##### Delegated objects
+### Delegated objects
 
 ```javascript
 var Workshop = {
