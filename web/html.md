@@ -43,7 +43,9 @@ While you can do this, **you might want to think twice before allowing the user 
 
 ## The magic of `content-visibility`
 
-> Based on [this](https://web.dev/dom-size-and-interactivity/?ck_subscriber_id=1352906140) and [this](https://web.dev/content-visibility/) blog post.
+> Based on [this](https://web.dev/dom-size-and-interactivity/) and [this](https://web.dev/content-visibility/) blog post.
+
+> [Check out MDN docs on this topic](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility#browser_compatibility).
 
 At some point you might encounter a website where the number of the DOM nodes is huge. This might be a blog, this might be some other interactive site. But the problem is the same – the amount of the DOM nodes causes the browser to freeze when rendering the initial content.
 
@@ -61,9 +63,57 @@ Me being me, I always lean towards the simplest, the most "out-of-the-box" solut
 
 Overall, this is a great API to be familiar with. If you are using a framework, and not using `Fragments`, it is quite easy to case the DOM to be quite big causing rendering issues.
 
+Here is an example of the `content-visibility` in action.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      section {
+        content-visibility: auto;
+        /* This will cause the scrollbar to "jump" when you scroll down further enough */
+        /* It's because the 1000px is not really the accurage guess of the size of the `section` */
+        contain-intrinsic-size: 1000px;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+    const body = document.querySelector("body");
+
+    Array.from({ length: 5 }).map((_, index) => {
+      const ul = document.createElement("ul");
+      const section = document.createElement("section");
+      const fragment = new DocumentFragment();
+
+      const lis = Array.from({ length: 100 }).forEach((_, index) => {
+        const li = document.createElement("li");
+        li.innerText = `${index}`;
+        li.style.height = "100px";
+        li.style.width = "100px";
+        li.style.margin = "20px";
+        li.style.background = "blue";
+
+        fragment.append(li);
+      });
+
+      ul.append(fragment);
+      section.append(ul);
+      body.append(section);
+    });
+  </script>
+</html>
+```
+
 ### Troubles with the element height
 
-To make the `content-visibility` magic possible, the browser will have to know how _big_ the element is. This does not have to be a precise number. You are in luck, if the element already has defined height. But if you are rendering content, it is not feasible to know how long the element is. If that is the case, consider using `contain-intrinsic-size`.
+To make the `content-visibility` magic possible, the browser will have to know how _big_ the element is. This does not have to be a precise number.
+
+You are in luck, if the element already has defined height. But if you are rendering content, it is not feasible to know how long the element is. If that is the case, consider using `contain-intrinsic-size`.
 
 ```css
 content-visibility: auto;
