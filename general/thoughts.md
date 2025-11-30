@@ -1216,3 +1216,13 @@ This is **so** true. It masterfully encapsulates many lessons and experiences yo
 The more experience I gain, the more I see it’s less about the code. It's more about _the people_ and _the product_.
 
 I really hope coding programs will now shift more from "learning how to write code" to "learning how to talk to and convince other people about your ideas."
+
+## Action produces information
+
+- Stuck thinking about how to do X? _Start working on X_.
+
+- Stuck on a design for a given system? _Start working on the system_.
+
+**Action produces information**. The information you will get is _very_ valuable. It's "real", it's up-to-date and it's free of assumptions.
+
+Planning? Sure. Action? by default.
