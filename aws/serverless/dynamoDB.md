@@ -20,7 +20,7 @@ Random stuff about DynamoDB
 
 - there is an underlying cost for activating it.
 
-## Storage layer
+## Storage Layer
 
 - there are two options when it comes to storage layer (where your data resides). The `DynamoDB Standard` and the `DynamoDB Standard-IA`
 
@@ -30,7 +30,7 @@ Random stuff about DynamoDB
 
 - the **`DynamoDB Standard-IA` has lower storage costs**
 
-## Data types
+## Data Types
 
 ### Scalar Types
 
@@ -73,7 +73,7 @@ Example with List:
 ["John", 1234, "Apples"];
 ```
 
-## Capacity and performance
+## Capacity and Performance
 
 You can use either _provisioned capacity_ or _on demand_ mode to control how many operations your table can handle.
 
@@ -91,13 +91,13 @@ The **`on-demand` mode does not scale that well for small workloads**. The [aws 
 
 Like everything in software world, there are tradeoffs. Usually you should be good with on-demand, **but for super spiky workloads (for which I often see this mode advertised)**, you might be better off with **auto scaling with provisioned capacity**.
 
-### Provisioned capacity
+### Provisioned Capacity
 
 Can you forecast the amount of read and write operations your application makes?
 
 If so, you might want to look into _provisioned capacity_ mode for cost optimization reasons. Before you do so, is the engineering time to make those calculations (and make sure that they are up to date) worth the effort?
 
-### Adaptive capacity
+### Adaptive Capacity
 
 You might have been thought to avoid hot partitions while designing your access patterns. This makes complete sense – the more throughput one partition gets, the less the other would get, right?
 
@@ -109,7 +109,7 @@ The mode itself is very well described in [this AWS blog piece](https://aws.amaz
 
 You might be wondering if there is any delay between the throttling happening and the _adaptive capacity_ kicking in. **It used to be the case that we would have to wait a bit for the _adaptive capacity_ to kick in, but it is no longer the case**. [Here is the announcement blog entry](https://aws.amazon.com/about-aws/whats-new/2019/05/amazon-dynamodb-adaptive-capacity-is-now-instant/) that talks about _adaptive capacity_ being instant.
 
-### Auto scaling
+### Auto Scaling
 
 While the _adaptive capacity_ concern was to ensure enough throughput is allocated for a given partition, the **role of the _auto scaling_ is to ensure your table has enough WCU/RCU to handle the load**.
 
@@ -132,7 +132,7 @@ The _auto scaling_ feature **uses _AWS CloudWatch Alarms_ under the hood** to sc
 - Composite Primary Key - Partition Key + Sort or Range Key
 - Partition or Hash Key decides the target partition
 
-#### Indexes basics
+#### Indexes Basics
 
 1. If the table has only partition key (**also called hash key**) then that key has to be unique.
 2. If the table has partition key and sort key (**also called range key**) **their combination must be unique**
@@ -157,7 +157,7 @@ Partition key is responsible for putting things in the same buckets and secondar
 
   - But the **LSIs are synchronous and SHARE throughput with the base table**. In the end **you will also pay for the writes to LSI as well as the writes to the base table**.
 
-#### Global Secondary Indexes
+#### Global Secondary Indexes (GSI)
 
 These do not have to be tied with partition key, but can, you can have GSI HASH and Partition key. **GSI is like creating a separate table with items that only contain that GSI**. Global secondary indexes are **stored on their own partitions** (separate from the table).
 
@@ -167,7 +167,37 @@ The **GSI entry (pk + sk, or pk) does not have to be unique**. This is different
 
 Another thing to note is that **the set of data-types you can create the GSI from is limited**. For example, you **cannot create a GSI on a boolean value**. Before you plan your data model, ensure that the data-type is compatible with the GSI/index scheme.
 
-##### GSI asynchronicity
+##### Multi-key GSIs
+
+> [Based on this announcement](https://aws.amazon.com/blogs/database/multi-key-support-for-global-secondary-index-in-amazon-dynamodb/)
+
+Prior to support for multi-key GSIs, you had to manually compose them. For example, a GSI that allows you to sort by _country_, _state_, and _city_.
+
+```
+{country}#{state}#{city}
+```
+
+What if you wanted to update the `city`?
+
+1. Update the `city`.
+2. Update the composite key.
+
+With this new functionality, you:
+
+1. Do not have to create a specific column that holds the composite key.
+2. Do not have to update the composite key when you update a value that the key contains.
+
+DynamoDB is responsible for handling this internally!
+
+**Additionally, this functionality is also _very_ handy when introducing new GSIs to the table.**
+
+> [See this Linkedin post](https://www.linkedin.com/posts/jeremydaly_multi-key-support-for-global-secondary-index-activity-7397473723940818944-3MJm/).
+
+Previously, you had to _backfill_ all the rows with the new key value. What if you had a LOT of data? It would take a considerable amount of time and WCUs to accomplish that.
+
+Now, you do not have to do that! DynamoDB will take care of it internally.
+
+##### GSI Asynchronicity
 
 The GSI replication is asynchronous. The leader node acknowledges the write and then sends the write to a stream to be picked up by other nodes (that stream is most likely a kinesis data stream). **That is why you cannot use `consistentRead: true` while using GSI**.
 
@@ -187,7 +217,7 @@ Imagine having 10 GSIs and writing an item that touches only half of them. You w
 
 **Note that GSIs have their own RCU/WCU limits that are separate from the base table**.
 
-###### Implications of GSI throttling
+###### Implications of GSI Throttling
 
 [Here is a great article](https://medium.com/shelf-io-engineering/five-ways-to-deal-with-aws-dynamodb-gsi-throttling-1a489803a981) on this subject. There is also [this Twitter thread](https://twitter.com/ksshams/status/1651196703004053505?s=20).
 
@@ -199,13 +229,13 @@ The main takeaways I have after reading it are:
 
 - There are various techniques that could help here. The most notable for me are splitting the table or sharding the GSI.
 
-##### Considerations for not creating GSIs
+##### Considerations for Not Creating GSIs
 
 You might decide to skip on creating a GSI and instead choose to use `Scan` API to perform ad-hoc querying. I would say this is a good pattern if you are certain that the cost of having those GSIs, and their influence on RCU / WCU consumption, would incur a non-trivial increase to your overall cost.
 
 A blog post on this topic <https://roger20federer.medium.com/dynamodb-when-to-not-use-query-and-use-scan-61e4ab90c1df>
 
-##### Provisioning capacity for an index
+##### Provisioning Capacity for an Index
 
 If you have your table set to **provisioned capacity mode** you will be able to set capacity for a given GSI. This might come in handy in cases where you want to optimize costs or are very well informed about the access patterns.
 
@@ -234,7 +264,7 @@ Carefully picking HASH key is very important with this approach.
 
 - whats more important is that **attributes can be sort keys for GSI**
 
-### Time-related attributes
+### Time-Related Attributes
 
 - You **most likely want to add some kind of time-related metadata to each item**.
 
@@ -318,7 +348,7 @@ It is a best practice to run aggregation outside of the DynamoDB computation. In
 
 As an **alternative** you **could use DynamoDB streams**. Remember that _Dynamodb streams_ are timely ordered. To avoid throttling you can setup _batch window_ to have your function wait X seconds before being invoked. This should invoke your function whenever _batch window_ expires or the batch is _6 MB_ in size.
 
-### Selective write sharding
+### Selective Write Sharding
 
 _Write sharding_ is great at _expanding the key space_, but it does come with a drawback. How in the world are you suppose to know in which sharded partition given item resides?
 If you did not put any though into how the shard number is computed, this could be a problem. Imagine a table of customers and mobile phone providers.
@@ -383,7 +413,7 @@ You can retry the transaction, to be super safe you could pass the `ClientReques
 If you design your tables correctly, you should not be having much issues with the way DDB handles concurrent transactions.
 Usually you can just retry the request, ensuring that you have valid _Condition Expressions_ in place.
 
-#### Transactions and other operations
+#### Transactions and Other Operations
 
 Imagine yourself performing a transaction that involves changing items A and B. At the same time, you kick-off a `GetItem` request for the item A and B. It turns out that the read operations may return different results, all is based on timing.
 
@@ -408,7 +438,7 @@ All of these operations are, of course, not free. **For every operation that is 
 
 I find this very fascinating as I never once though about WCU/RCU and the throttling with the _on-demand_ pricing mode. I guess I have not yet built an application that scaled to traffic that would be high enough to have to worry about it.
 
-#### Transaction conflicts
+#### Transaction Conflicts
 
 The bigger your transactions are, the more likely you will run into transaction conflicts. This is where there are multiple operations competing for the same "resource" within the _DynamoDB_ table.
 
@@ -416,7 +446,7 @@ Imagine `PutItem` that operates on the item with `pk` of `1` and, at the same ti
 
 Note that _DynamoDB_ uses the notion of _optimistic concurrency control_ (OCC). This means that there might be multiple in-flight transactions at any given time. There is no possibility of deadlocks as discussed earlier, before deadlock can occur, you will get the transaction conflict error.
 
-#### Transactions on high contention items
+#### Transactions on High Contention Items
 
 The _DynamoDB_ transact API is great for items frequently read in parallel. If they are, you might face many "transaction conflict" errors.
 
@@ -426,7 +456,7 @@ What happens in the case of errors in the stream reader? Well, you would need to
 
 This is related to the _DynamoDB saga pattern_ that I write about in the next section.
 
-#### Transactions spanning multiple services
+#### Transactions Spanning Multiple Services
 
 Imagine a scenario where the user checks out their cart. To carry out that operation successfully, we might need to perform multiple operations in a transaction-like manner:
 
@@ -444,13 +474,13 @@ The other service subscribes to the stream updates, then writes to the origin. T
 
 To prevent the situation where two requests change the same piece of data (the double-booking problem), it is vital to implement some kind of locking strategy for a given piece of data. There are two locking strategies I'm aware of.
 
-### Optimistic locking
+### Optimistic Locking
 
 It's where you set a _version_ attribute on an item. A given operation can only update this item if the _version_ attribute matches the one specified in the request. You **would use the `ConditionExpression` here** and ensure that the _version_ attribute is the same as it was when you fetched the item.
 
 The strategy is called _optimistic_ because it **allows for multiple non-clashing writes**. As long as the version is the same, the operation will go through.
 
-### Pessimistic locking
+### Pessimistic Locking
 
 Here, you are dealing with some sort of lock. If a given operation acquires a clock for an item, any other operation cannot change that item. **A good example would be the `TransactWrite` operation**. Here, if any other operation tries to write to that item, that operation will fail.
 
@@ -464,7 +494,7 @@ When you have the same `PK`, items with that `PK` will be on the same partition.
 
 To make sure your reads are always targeting the `leader` node (where data is placed first) - you have to manually tell dynamo, on operation basis, to perform a `consistent read / write`.
 
-### Strongly consistent reads are NOT the silver bullet
+### Strongly Consistent Reads Are NOT the Silver Bullet
 
 After reading about the semantics of _strongly consistent reads_ you might be tempted to use them by default. I would argue that this is not the right way to go about the DynamoDB API usage.
 
@@ -474,7 +504,7 @@ Apart from the possible in-transit mutations, there is one situation where **usi
 
 So **when should you use SC reads?** In [this Twitter thread](https://twitter.com/ksshams/status/1620138322495680512), Khwaja talks about **monotonic reads**, which in this context mean **reads that never "travel back in time" – the data they read is as stale as the latest put in a given thread**. A good example would be a counter – you will never go from 33 to 32, you will always "read forward".
 
-### Global Tables consistency
+### Global Tables Consistency
 
 As good as the _Global Tables_ feature of _DynamoDB_ might seem, We should only use it for "append-only" use-cases. In the end, the tables are regional, and the "global" part is the **asynchronous** replication between those tables. The **collisions are resolved in _last-writer-wins_ manner**.
 
@@ -486,7 +516,7 @@ For a in-depth explanation of how _DynamoDB Global Tables_ handle consistency, c
 
 ## Sorting
 
-### Lexical sorting
+### Lexical Sorting
 
 There are some rules on how _string_ type is sorted, the order is basically a dictionary order with
 
@@ -512,7 +542,7 @@ Regular _UUID_ will not do - it's not sortable. What you need is something that 
 
 So you have all the necessary information about sorting related things to use this attribute. Remember, _DynamoDB_, by default, always scans forward, that means in ascending manner.
 
-### Pre-pending arbitrary symbols
+### Pre-Pending Arbitrary Symbols
 
 - sometimes you want to get the enmity and all the other entities that relates to the entity, think GitHub repo and issues for this repo
 
@@ -531,7 +561,7 @@ When using DDB you have 2 choices when it comes to what kind of DSL you are goin
 If I were you, I would always lean towards the native DSL. The native DSL guards you from doing silly things like scanning your whole table.
 It's much easier to write `SELECT * FROM ...` than to write `db.Scan(...)`. The latter version forces you to consciously use the `scan` API.
 
-### Conditions support and `batchWrite` API
+### Conditions Support and `batchWrite` API
 
 Single DDB `UpdateItem` and `PutItem` and `DeleteItem` operations fully support the conditions.
 The conditions are often used to, for example, create a new item if it does not yet exist.
@@ -554,7 +584,7 @@ The _with limitations_ part is very important. According to my initial research,
  })
 ```
 
-### The tweet
+### The Tweet
 
 This section was inspired by [this tweet](https://twitter.com/jeremy_daly/status/1281628318895415299).
 According to the Rick Houlihan answer the operation Jeremy tried to perform should be possible with `PartiQL`.
@@ -563,7 +593,7 @@ I believe though, that it impossible to perform that action by using the `batchE
 
 As an alternative, the transaction API might be used, but it does not return the new data that you might have just updated.
 
-### The Update / Insert dilemma
+### The Update / Insert Dilemma
 
 With the "regular" DynamoDB, one does not need to pick between an "update" and "insert" behavior. There is one operation that allows you to perform those operations - the `PutItem` API.
 
@@ -572,7 +602,7 @@ How would we know which one to choose? We most likely would need to perform a `S
 
 All of this could be done with one statement in DDB by using `SET attribute = if_not_exists(attribute, :value)` update expressions.
 
-### WORM models with PartiQL
+### WORM Models with PartiQL
 
 [Inspiration – this Twitter thread](https://twitter.com/NoSQLKnowHow/status/1458139547527647239).
 
@@ -678,13 +708,13 @@ If you find this solution lacking, I would suggest looking into the [S3 Object L
 
 You might think that DynamoDB, a NoSQL database, might be unusable for any analytics use-cases. While there is SOME truth to that, it is not all doom and gloom.
 
-### Utilizing periodic `Scan` operations
+### Utilizing Periodic `Scan` Operations
 
 Depending on the size of your data, performing the `Scan` operation on your table might be a completely valid strategy. It all depends on the frequency and the size of your data.
 
 If you need to perform the `Scan` operation infrequently and the size of your data is relatively small, I would say that you should go for it. In most cases, you pay more for GSI replication than performing the `Scan` operation once in a while.
 
-#### `Scan` operation within an index (sparse indexes)
+#### `Scan` Operation Within an Index (Sparse Indexes)
 
 **Keep in mind that you can use the `Scan` operation on a GSI or LSI**. This means that that you will fetch only the items that have a given index.
 This is **great use-case for migrations**, as you get a partial benefit of the `Query` API (you cannot use the `KeyConditionExpression`), but you do not scan the entire table.
@@ -705,15 +735,15 @@ This feature **could be very useful for _seeding_ ephemeral environments, especi
 
 Keep in mind that this feature is not free. You **will still pay for the operations DynamoDB has to make to import the data**.
 
-### DynamoDB streams to Firehose to S3
+### DynamoDB Streams to Firehose to S3
 
 Ah, the "classic" data pipeline. Firehose is an excellent tool for putting stuff into S3. As long as your data is on S3, you can use Athena for BI things.
 
 You can find a blog post regarding this architecture [here](https://aws.amazon.com/blogs/database/how-to-perform-advanced-analytics-and-build-visualizations-of-your-amazon-dynamodb-data-by-using-amazon-athena/).
 
-## Cost considerations
+## Cost Considerations
 
-### Measure before you optimize
+### Measure Before You Optimize
 
 _DynamoDB_ is great. It allows you to pull the WCU/RCU information right from the operation you have just performed. There is an option within the SDK to get the `ReturnConsumedCapacity`. You can then send that information somewhere, maybe to your analytics pipeline,
 where you would chart the cost of each operation.
@@ -730,7 +760,7 @@ Usually, the data we store is rarely accessed after some period of time. In that
 
 Remember that you can switch between the two at will (at least that's what I've read in the docs. As of writing this, I have yet to test the functionality myself).
 
-### Avoid keeping big blobs of data along small, frequently accessed ones in the same item
+### Avoid Keeping Big Blobs of Data Along Small, Frequently Accessed Ones in the Same Item
 
 Imagine a scenario where you have a table that keeps users profiles. The APP that your DDB is for allows the users to upload their photo. For historical reasons, the photos were stored as base64 encoded strings within the DDB, on the user profile item. Since the base64 string can grow up to 400kb, we have a problem.
 
@@ -747,19 +777,19 @@ There are **two ways of dealing with such situations**:
 
 Both of them perform the same optimization - having the user profile item "weight" less, thus making each operation on that item cheaper.
 
-### Keep the attribute names short
+### Keep the Attribute Names Short
 
 Unlike the data you put into the attribute, **you cannot compress the attribute names**. While at small scales it does not matter that much, on larger scale it adds up.
 
 For example, instead of `fullname` consider an attribute called `fn`. Such optimizations might feel weird at first, but, as I mentioned before, they really add up at scale.
 
-#### Splitting items and global tables
+#### Splitting Items and Global Tables
 
 Be aware of the eventual consistency when using the "split-item" pattern and global tables. Since you have to issue multiple writes to update an item associated with a single identity, there might be a point in time when some parts of the item are in inconsistent state (The `name` item is up to date, but the `surname` item write is still in-flight).
 
 I've written about this topic [on the Stedi blog](https://www.stedi.com/blog/how-to-ensure-cross-region-data-integrity-with-amazon-dynamodb-global-tables).
 
-### Use TTL feature to purge unused data
+### Use TTL Feature to Purge Unused Data
 
 DDB exposes a feature where, given an attribute marked as "TTL" (the name of the attribute does not matter, you have to say which attribute is the "TTL attribute") items will be deleted when the TTL expires.
 
@@ -768,7 +798,7 @@ that the sweeper that runs the deletion is spun up on spare capacity of DDB (sou
 
 Please note that **TTL in the context of global tables will incur a cost of the write in the secondary region**. While the TTL itself is free of charge in the primary, the propagation of the write to the secondary costs $$. [See this part of the video for more information](https://youtu.be/21BXeSRuL2w?t=2659).
 
-### Using filtering instead of a GSI
+### Using Filtering Instead of a GSI
 
 Depending on how your GSI is set up, you might be paying too much.
 
@@ -788,17 +818,17 @@ Do not get me wrong, the _On Demand_ mode has it's place and time and you defini
 
 But maybe, during the lifecycle of your application, you started noticing patterns. And I'm not talking about having increased traffic during christmas or similar. I'm talking a day-to-day traffic patterns. If that's the case, you might want to look into _Provisioned Capacity_ most likely coupled with _Auto Scaling_.
 
-#### Ramping up to avoid throttling
+#### Ramping Up to Avoid Throttling
 
 The _Auto Scaling_ takes time to catch up, it's not perfect. When you have some scripts that perform a lot of operations, add logic so that the writes are spread and increase gradually.
 
-#### Update the _Provisioned Capacity_ settings before a big spike
+#### Update the _Provisioned Capacity_ Settings Before a Big Spike
 
 Usually done before big events that are very profitable for your business. In such critical moments, it's better to burn a bit more on a database, than to crash because of the load. **After switching to _Provisioned Capacity_ you can switch back to the _On Demand_ billing mode**. [Source](https://youtu.be/KbNH_VIbqJU?t=1845).
 
 All of this is called _pre-warming_ the database.
 
-## Data integrity
+## Data Integrity
 
 As they often say, the data is the new gold. I support this statement as, in most cases, data drives any product forward (be it a customer, order, or any other data entity).
 
@@ -808,11 +838,11 @@ When writing to DynamoDB, you have to explicitly tell the service what the data 
 
 I would say that the solution here would be to validate the data you will write against a JSONSchema. That should give you enough confidence.
 
-### Required fields
+### Required Fields
 
 Very similar to the previous point. Depending on the operation, you can use a JSONSchema (for create operations) or the DynamoDB conditions syntax (for update operations).
 
-### Use data-access layer
+### Use Data-Access Layer
 
 You have to consider many things while working with data and databases. Would not it be nice to centralize all that logic into one module? Definitely.
 
@@ -824,7 +854,7 @@ This approach will save you time and money in debugging time.
 
 - <https://serverlessfirst.com/data-integrity-considerations-writing-to-dynamodb>
 
-## Common Single-Table design modeling mistakes
+## Common Single-Table Design Modeling Mistakes
 
 > Based on [this talk](https://www.youtube.com/watch?v=XMEkNZby95M)
 
