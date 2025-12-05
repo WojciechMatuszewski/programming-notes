@@ -343,6 +343,14 @@ Another neat thing about this element is that **you do not have to use `z-index`
 
 You will need some JavaScript to show the dialog/modal and most likely get the return value when it closes, but apart from that, the implementation requires no JavaScript at all!
 
+### Note about "background scroll"
+
+**Even if you open the "modal" version of the `dialog`, the document body is still scrollable**.
+
+I have to admit, this surprised me greatly. I'm unsure why they do not remove the scroll from the document body automatically.
+
+Luckily, there [is a way to prevent scrolling without relying on JavaScript](https://www.bram.us/2025/11/25/use-overscroll-behavior-contain-to-prevent-a-page-from-scrolling-while-a-dialog-is-open/)
+
 ### Closing the `dialog` without form tag
 
 > Based on [this blog post](https://nerdy.dev/closedby-any)
