@@ -109,3 +109,56 @@ test("does not display notification when saving a post", async () => {
 The `waitFor` will re-evaluate the state of the UI every so often. If it fails, it means that we could not find the notification in a given time-frame. **Exactly what we want**.
 
 Note that you can always change the settings of `waitFor` (or any other similar API you might be using).
+
+## `expect(await ...)` or `await expect(..).resolves`
+
+> [Based on this great blog post](https://www.epicweb.dev/prefer-the-resolves-chaining)
+
+Have you ever written an assertion similar to the following:
+
+```js
+test("works", async () => {
+  expect(await foo()).resolves.toEqual("foo");
+});
+```
+
+Have you noticed what the test output is when the assertion fails?
+
+```txt
+Error: boom
+ ❯ foo example.test.js:6:9
+      4| async function foo() {
+      5|   await setTimeout(200);
+      6|   throw new Error("boom");
+       |         ^
+      7| }
+      8|
+ ❯ example.test.js:10:10
+```
+
+Notice that the log does not point to the _place_ where we made the assertion, but rather to the place where the error originates – this might or might not be what you want.
+
+Now let's use the `.resolves` syntax and compare the output when our assertion fails.
+
+```txt
+AssertionError: promise rejected "Error: boom" instead of resolving
+ ❯ example.test.js:10:22
+      8|
+      9| test("works", async () => {
+     10|   await expect(foo()).resolves.toEqual("foo");
+       |                      ^
+     11| });
+     12|
+
+Caused by: Error: boom
+ ❯ foo example.test.js:6:9
+ ❯ example.test.js:10:3
+```
+
+Better (at least to me), right?
+
+**The main purpose of tests is to ensure the code works as expected. If it does not, the test should fail, and that failure should tell us as much as possible about the _reason_ the test failed**.
+
+I would argue that the first output does not meet the criteria I outlined above. It does tell us _where_, but very _indirectly_.
+
+In my opinion, it is much easier to debug a failing test with the `.rejects` syntax in place because the output is more _direct_.
