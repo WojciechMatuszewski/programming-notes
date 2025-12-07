@@ -115,6 +115,8 @@ This feature sounds good on paper, and most likely is, _for the people who reall
 
 #### AWS Lambda Managed Instances
 
+> [Read more here](https://aws.amazon.com/blogs/aws/introducing-aws-lambda-managed-instances-serverless-simplicity-with-ec2-flexibility/)
+
 Let's recap how AWS Lambda execution environments work:
 
 1. Managed by AWS.
@@ -132,6 +134,16 @@ Let's recap how AWS Lambda execution environments work:
 2. Your code _never_ runs on the same machine as other people's code.
 
 3. A single EC2 machine can handle multiple concurrent requests, so the chance for a "cold start" to occur is much lower. This also means that **your code has to be thread-safe**.
+
+#### AWS Lambda Durable Functions
+
+> [Read more about it here](https://aws.amazon.com/blogs/aws/build-multi-step-applications-and-ai-workflows-with-aws-lambda-durable-functions/)
+
+As I understand it, this is AWS trying to replicate the functionality of existing "durable functions" products.
+
+In a function, you can declare a series of "steps" that act as _checkpoints_. Each checkpoint has a state associated with it, so the runtime knows whether to retry it or not.
+
+To me, it seems like a simplified _AWS Step Functions_ offering that, while less capable, keeps you in the AWS Lambda "zone" rather than requiring you to use a different service.
 
 #### Alias
 
