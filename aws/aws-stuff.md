@@ -113,6 +113,26 @@ Just before Re:Invent 2025, AWS announced the ability to pass the `tenantId` whe
 
 This feature sounds good on paper, and most likely is, _for the people who really need it_. Unless you have a _very_ strict isolation requirements, you most likely do not need it.
 
+#### AWS Lambda Managed Instances
+
+Let's recap how AWS Lambda execution environments work:
+
+1. Managed by AWS.
+
+2. Your code can run on the same EC2 instance as other people's code.
+
+3. Your code runs in an isolated VM.
+
+4. Requests _might_ or _might not_ reuse existing execution environments. This results in so-called "cold starts".
+
+**AWS Lambda Managed Instances allow you to "host" AWS Lambda functions on EC2 instances created in your account**.
+
+1. They're your EC2 instances, but managed by AWS.
+
+2. Your code _never_ runs on the same machine as other people's code.
+
+3. A single EC2 machine can handle multiple concurrent requests, so the chance for a "cold start" to occur is much lower. This also means that **your code has to be thread-safe**.
+
 #### Alias
 
 - alias can point to a **single version** or **two lambda versions**.
