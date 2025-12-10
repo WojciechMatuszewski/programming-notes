@@ -105,4 +105,38 @@
 
   - _Experiment_ which invokes the _executor_ and, given then output of the _scorer_ gives you nice visual charts.
 
-Finished Day 1 Part 4 -13:17
+## 04 The Agent Loop
+
+- This section was all about actually _writing_ the Agent loop.
+
+- Technically, you get the loop for free when using the `ai` SDK, but it is still worth having some understanding how it works.
+
+  - Nowadays, the real value is actually _making a good use_ of the loop to provide value.
+
+## 05 Multi-turn Evals
+
+- In the previous lessons, we focused on a single input-output scenario. Now, it's time to focus on the conversation as a whole.
+
+- **Since the "output" is an array of messages, which is completely non-deterministic, we have to use either another human or LLM to judge the output**.
+
+  - Writing a good LLM judge is _hard_. You most likely want to involve a _subject matter expert_ (SME) in the process.
+
+- Scott touches on some important topics:
+
+  - Constraining the output of the LLM judge. Free-form answers are introducing too much ambiguity in the process.
+
+    - Consider forcing the LLM to output the _reason_ for the score. I've noticed that the LLMs score is more accurate that way (plus you have some information on the score).
+
+  - Using a "stronger" model than the one you are using for running the evals.
+
+  - You will most likely need to mock tool results to "complete" the conversation.
+
+- **What I do not like** is the **reliance on 1-10 scoring system**.
+
+  - I strongly believe it should be either pass (1) or fail (0). What's the difference between 7 and 8?
+
+- You should instrument the LLM judge calls just like you instrument your "main" LLM agent call.
+
+  - It's really helpful to see the calls of the judge as well!
+
+Start Day 2 Part 3
