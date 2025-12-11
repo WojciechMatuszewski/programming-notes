@@ -139,4 +139,42 @@
 
   - It's really helpful to see the calls of the judge as well!
 
-Start Day 2 Part 3
+## 06 File System Tools
+
+- Tools are _similar_ to regular functions, but **errors and what you return to the agent is VERY important**.
+
+  - In regular applications, you might display "Oops, something went wrong" to the user and call it a day. That _should not_ be the case for tools.
+
+    - What you return should help the agent to fulfil the request. This also applies to any errors!
+
+- The more granular the tools are, the more steps the agent has to take. **The more steps agents has to take, the bigger probability of an error**.
+
+  - There is a **delicate balance between providing too many or too few tools**.
+
+## 07 Web Search Context Management
+
+- There are at least two ways you could solve this:
+
+  1. Use the `webSearch` tool provided by providers like Gemini or OpenAI.
+
+  2. Use a third-party service, like `exa`, for searching the web.
+
+  Both of these will work as _tools_. The former provides you with less flexibility but is easier to work with. The latter gives you a lot of flexibility, but you have to integrate with a specific provider.
+
+- In this section, Scott puts a lot of emphasis on _context management_, and how having lots of tokens in the context negatively influences LLM "performance".
+
+  - The "search web" results might push a LOT of tokens into the context.
+
+- Some **strategies for managing context "overflow"**:
+
+  - _Compact_ the conversation (extract salient facts), but this is not a silver bullet. Any compaction (usually implemented by asking another LLM to summarize the conversation) is lossy.
+
+  - Keep a _sliding window_ of messages. There is no need to compact anything, but the LLM won't "remember" what the user said in earlier messages. Is that acceptable?
+
+  - Leverage _subagents_. Each _subagent_ has its own context window. The _subagents_ return to the main agent with their findings. Here, we are performing _compaction_, but at the level of the _subagent_. This might produce better results than a regular _compaction_.
+
+  - Use `RAG` instead of putting lots of data into the LLM context. This is a very broad and deep topic. Make sure you need it before going down this route.
+
+  - Start a fresh conversation when the context is about to be filled. This might be the easiest to implement, but it could create a jarring UX.
+
+Start Day 2 Part 4 -34:47
