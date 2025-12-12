@@ -153,28 +153,53 @@
 
 ## 07 Web Search Context Management
 
-- There are at least two ways you could solve this:
+- There are at least two ways you can solve this:
 
-  1. Use the `webSearch` tool provided by providers like Gemini or OpenAI.
+  1. Use the `webSearch` tool provided by services like Gemini or OpenAI.
+  2. Use a third-party service, like `exa`, to search the web.
 
-  2. Use a third-party service, like `exa`, for searching the web.
+  Both of these approaches work as _tools_. The former provides you with less flexibility but is easier to work with, while the latter gives you a lot of flexibility but requires integration with a specific provider.
 
-  Both of these will work as _tools_. The former provides you with less flexibility but is easier to work with. The latter gives you a lot of flexibility, but you have to integrate with a specific provider.
+- In this section, Scott places a lot of emphasis on _context management_ and how having too many tokens in context negatively affects LLM performance.
 
-- In this section, Scott puts a lot of emphasis on _context management_, and how having lots of tokens in the context negatively influences LLM "performance".
+  - The "search web" results can add a LOT of tokens to the context.
 
-  - The "search web" results might push a LOT of tokens into the context.
-
-- Some **strategies for managing context "overflow"**:
+- Here are some **strategies for managing context "overflow"**:
 
   - _Compact_ the conversation (extract salient facts), but this is not a silver bullet. Any compaction (usually implemented by asking another LLM to summarize the conversation) is lossy.
 
-  - Keep a _sliding window_ of messages. There is no need to compact anything, but the LLM won't "remember" what the user said in earlier messages. Is that acceptable?
+  - Keep a _sliding window_ of messages. There is no need to compact anything, but the LLM will not "remember" what the user said in earlier messages. Is that acceptable?
 
-  - Leverage _subagents_. Each _subagent_ has its own context window. The _subagents_ return to the main agent with their findings. Here, we are performing _compaction_, but at the level of the _subagent_. This might produce better results than a regular _compaction_.
+  - Leverage _subagents_. Each _subagent_ has its own context window. The _subagents_ report back to the main agent with their findings. Here, you are performing _compaction_, but at the subagent level. This might produce better results than regular _compaction_.
 
-  - Use `RAG` instead of putting lots of data into the LLM context. This is a very broad and deep topic. Make sure you need it before going down this route.
+  - Use `RAG` instead of placing lots of data into the LLM context. This is a very broad and deep topic. Make sure you need it before going down this route.
 
-  - Start a fresh conversation when the context is about to be filled. This might be the easiest to implement, but it could create a jarring UX.
+  - Start a fresh conversation when the context is about to be filled. This might be the easiest to implement, but it could create a jarring user experience.
 
-Start Day 2 Part 4 -34:47
+- Regarding compaction, Scott mentioned a technique where, while processing the user prompt, you have another LLM extract any salient facts from the prompt.
+
+  - This is helpful because you are only looking at one message, which results in a faster and more accurate response.
+
+  - Then, you can add the extracted facts to a list to be used for compaction later on.
+
+- **You need to use another model (API call) to calculate the accurate number of tokens you have consumed so far**.
+
+  - There are libraries like [`tiktoken`](https://github.com/openai/tiktoken) that will give you an _estimate_.
+
+  - Anthropic has an API endpoint you can call. [Here are the docs](https://platform.claude.com/docs/en/build-with-claude/token-counting).
+
+  All of this makes me wonder how Cursor does it. For ClaudeCode, they have the endpoint they can use, but Cursor has to accommodate various models...
+
+## 08 Shell Tool
+
+- In this section, we talked about the _dangers_ of giving the LLM the capabilities to execute stuff in the shell, but also how to make those operations "secure".
+
+  - The solution most people lean towards is running those commands in a _sandbox_.
+
+    - You can use _runtime native_ solutions like the permission systems of Node.js (I believe that one is not released yet) and Deno (available).
+
+    - You can use [Cloudflare Sandbox SDK](https://developers.cloudflare.com/sandbox/) or other vendors.
+
+    - You can use _system native_ solutions like `sandbox-exec` MacOS utility. **This is the solution Cursor uses at the moment**.
+
+Start Day 2 Part 6
