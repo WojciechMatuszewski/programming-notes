@@ -202,4 +202,10 @@
 
     - You can use _system native_ solutions like `sandbox-exec` MacOS utility. **This is the solution Cursor uses at the moment**.
 
+- At the end of the section, Scott **talked about the importance of having "wide" (higher-level) tools that make agents life easier**.
+
+  - As example, they mentioned Notion MCP server which is quite granular and introduces foreign concepts to the agent – the "blocks".
+
+    - Scott argues that it would be much better for Notion MCP to use "files" nomenclatures and to combine some of the tools together. I second Scott's opinion.
+
 Start Day 2 Part 6
