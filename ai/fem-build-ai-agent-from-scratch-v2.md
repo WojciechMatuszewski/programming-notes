@@ -208,4 +208,42 @@
 
     - Scott argues that it would be much better for Notion MCP to use "files" nomenclatures and to combine some of the tools together. I second Scott's opinion.
 
-Start Day 2 Part 6
+## 09 HTTL (Human in the Loop)
+
+- Before taking the course, I associated HITL with having some kind of approval flow during model inference. Scott expands on this:
+
+  - Humans might be involved in the _training and fine-tuning_ process, mainly during **reinforcement learning from human feedback (RLHF)**.
+
+  - Model providers use _human evaluators_ to asses model outputs for quality, accuracy and safety (and other dimensions).
+
+  - Humans might also be involved when model encounters specific situations, like a human that wants harm themselves.
+
+  - **The HITL we usually talk about is for runtime approvals**. This is the use-case I first heard about when I first learned about this topic.
+
+- Scott mentioned that **writing an "approval tool" might be a waste of time**.
+
+  - You know _much better_ when to ask for approval or not. Offloading that to the LLM might be dangerous and produce undesired UX because LLMs are non-deterministic!
+
+  - **Instead, consider allowing the LLM to ask for help**. You are giving the LLM a "way out" if the LLM is unsure.
+
+    - A good example of this is when Claude Code asks you for clarifications and presents a list of questions and answers to you.
+
+## Wrapping up
+
+The course did not go that deep into AI Engineering, but I found it sufficient to refresh my existing knowledge.
+
+- The _agent loop_ is table-stakes now. It is worth to implement it yourself to understand how it works, but consider using a framework for that.
+
+- There are multiple ways to handle "context overflow", but each has it's drawbacks.
+
+  - A "so far" compaction is lossy, so you might lead details.
+
+  - A per-message compaction (salient fact extraction) is a good alternative for "so far" compaction, but it introduces a lot of latency.
+
+  - Starting a new thread might create a jarring UX, but it's easy to implement.
+
+  - Using _subagents_ is a twist on "so far" compaction. It is still lossy, but might work better than the "vanilla so far" compaction.
+
+- HITL does not necessary mean "runtime approvals", but also input from humans during RLHF or labelling.
+
+- Evaluations are still the "thing" to learn.
