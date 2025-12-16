@@ -29,6 +29,6 @@
 
   - In the course, the run the application via script but _inside_ Claude Code. This enabled Claude Code to read the application logs.
 
-    - As an alternative, we could write application logs to a file. I believe [`pm2`](https://www.npmjs.com/package/pm2) might be a good tool to do that.
+    - As an alternative, we could write application logs to a file. I believe [`pm2`](https://pm2.keymetrics.io/docs/usage/log-management/) might be a good tool to do that.
 
 Finished lesson 2 19:16
