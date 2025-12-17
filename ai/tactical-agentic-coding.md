@@ -31,4 +31,24 @@
 
     - As an alternative, we could write application logs to a file. I believe [`pm2`](https://pm2.keymetrics.io/docs/usage/log-management/) might be a good tool to do that.
 
-Finished lesson 2 19:16
+- For the longest time, we have been thinking about _other human developers_ when creating code. **Now we also have to think about _agents_**.
+
+  - Luckily for us, what "works" for other people, also works for _agents_, and is common sense: consistency, clear organization and clear names are the keys to working with _agents_ within any codebase.
+
+  - **You want the _agent_ to have the ability to correct itself. This means that they need to have an ability to run and write tests**.
+
+    - Be mindful HOW the _agent_ write tests. I've seen agents edit existing tests only to make sure they pass, even if they should not.
+
+- Indy talks about _agentic coding KPIs_
+
+  - The size of the output.
+
+  - The amount of attempts you made to get the output.
+
+  - How many times you can sustain your output (the streak).
+
+  - How much time you have to "babysit" the agent (the presence).
+
+- The **hardest part for us to do is to STOP coding**, but you have to do this to fully leverage your tools capabilities.
+
+Start Lesson 3
