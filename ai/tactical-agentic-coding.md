@@ -19,7 +19,7 @@
 
 > It's not about what you can do. It's about what you teach your agents to do.
 
-- In the course, we used a very simple prompt to force Claude Code to list all tools it has access to. It never occurred to me to do that...
+- In the course, we used a very simple prompt to force Claude Code to list all tools it has access to. It had never occurred to me to do that...
 
   - Such a great information to have!
 
@@ -27,7 +27,7 @@
 
   - Are you logging the errors of your applications to stdout? If not, the Agent has no way of knowing what the issue might be (unless you copy & paste the issue manually, but that's quite painful to do).
 
-  - In the course, the run the application via script but _inside_ Claude Code. This enabled Claude Code to read the application logs.
+  - In the course, they run the application via script but _inside_ Claude Code. This enables Claude Code to read the application logs.
 
     - As an alternative, we could write application logs to a file. I believe [`pm2`](https://pm2.keymetrics.io/docs/usage/log-management/) might be a good tool to do that.
 
@@ -37,7 +37,7 @@
 
   - **You want the _agent_ to have the ability to correct itself. This means that they need to have an ability to run and write tests**.
 
-    - Be mindful HOW the _agent_ write tests. I've seen agents edit existing tests only to make sure they pass, even if they should not.
+    - Be mindful of HOW the _agent_ writes tests. I've seen agents edit existing tests only to make sure they pass, even if they should not.
 
 - Indy talks about _agentic coding KPIs_
 
@@ -51,4 +51,31 @@
 
 - The **hardest part for us to do is to STOP coding**, but you have to do this to fully leverage your tools capabilities.
 
-Start Lesson 3
+## Lesson 3
+
+- We looked at _templates_ which in our case, are `.md` files inside the `commands` directory that are quite generic, but embed `$ARGUMENTS` parameter.
+
+  - **For example, consider a `chore` command that describes which actions to take to _create a plan_ for resolving a "chore"**.
+
+    - This is quite powerful as you **created a prompt based on a prompt**.
+
+- There are so-called **Information Dense Keywords** you can use to _steer_ the model.
+
+  - For example, using "think hard" will trigger more reasoning effort while using Claude models. [This blog post](https://www.anthropic.com/engineering/claude-code-best-practices) touches on this topic.
+
+- We should either use `/clear` or start new terminal sessions quite often. Why?
+
+  - You want to get used to working with multiple agents.
+
+  - **You want to ensure the plan you have is self-contained and does not require any context from the "plan creation" phase**. This way, you ensure the plan the LLM produced is of high quality. If it's not, the LLM will make mistakes, but that's good because it's a signal for you that the _template_ might need adjustments.
+
+- You can take templates pretty far. Consider **spinning up multiple agents programmatically**.
+
+  ```bash
+  claude -p "/feature \"Create a new query history side panel in the app. This shows all completed queries. Store in the database. order by newest first. Use a new llm call to generate names for each query we'll display in the side panel. When we click we refocus the main panel on the query. Add a 'show panel' button next to 'upload data'\"" \
+  --output-format stream-json \
+  --dangerously-skip-permissions \
+  --model opus \
+  --verbose \
+  > feature_plan_raw_agent_logs.jsonl
+  ```
