@@ -79,3 +79,65 @@
   --verbose \
   > feature_plan_raw_agent_logs.jsonl
   ```
+
+## Lesson 4 – afk agents
+
+- The lesson started with Andy showing us how they integrate GitHub issues with remote agents.
+
+  1. You create an issue.
+
+  2. This triggers a webhook.
+
+  3. You have a program listening for events for that webhook.
+
+  4. An agent picks up the event, reads the GitHub issue and attempts to write the code necessary to close the issue. The agent uses _templates_ which we discussed in the previous lessons.
+
+  To me, this is a workflow of the future. **Notice that we do not interact with the agent at all**. Everything is done automatically.
+
+- **Instead of fixing code issues, fix the "system" (templates, prompts and so on) that lead to having the issue in the first place**.
+
+  - Consider the leverage you get by doing this. You might feel good about fixing an issue, but what about fixing the root cause of the issue? Even better!
+
+## Lesson 5 – test the loop
+
+- Andy reminds us that the true value we deliver is the value we deliver to users, not the code that we write. Always good to have this in mind.
+
+- **Agents can help you test your codebase. This enables the agent to close the implementation loop greatly increasing the value of their output**.
+
+  - Ask yourself: how do _you_ test the changes you make. Then **encode the answer into a workflow that an agent could use**.
+
+    - It might take some time for you to figure this out, especially in brown-field codebases, but when you do, it will save you _enormous_ amounts of time.
+
+- Tests become more and more important as your usage of agents progresses.
+
+  - How else the agent could know if the work they done is valid? They must have _some_ way of validating the work.
+
+- **It seems like neither the Playwright MCP server OR the Chrome Dev Tools MCP server support network mocking**.
+
+  - I wanted to test the whether the debounce functionality is working on FE. Usually, to test it reliably, you delay the backend network request via `page.route`. **This API does not work when using Playwright MCP server**.
+
+    - I believe the Chrome Dev Tools do not support this functionality at all.
+
+## Lesson 6 – documentation via agents
+
+- **One agent, one prompt, one focus**. You let the agents _focus_ on a single task. The agent can take advantage of the whole 200k+ context window.
+
+- Let the agent write documentation when it finished the work.
+
+  - **This allows other agents to use the documentation it produced when implementing other features**.
+
+  - In addition to documentation, Andy also has a file that tells the agent to _read_ the relevant documentation files if the agent is working in a given place of the codebase.
+
+  ```md
+      ## Conditional Docs Entry Format
+
+  After creating the documentation, add this entry to `.claude/commands/conditional_docs.md`:
+
+  - app_docs/<your_documentation_file>.md
+    - Conditions:
+      - When working with <feature area>
+      - When implementing <related functionality>
+      - When troubleshooting <specific issues>
+  ```
+
+Start lesson 7
