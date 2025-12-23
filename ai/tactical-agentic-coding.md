@@ -140,4 +140,34 @@
       - When troubleshooting <specific issues>
   ```
 
-Start lesson 7
+## Lesson 7
+
+- Andy argues, that at some point, you can completely "outsource yourself". **Z**ero **T**ouch **E**ngineering.
+
+  - In the video, they spun up five workflows to implement various features and fix bugs. The more tasks in parallel, the bigger the bottleneck of human review.
+
+    - My take is: It's definitely a future, but I doubt we can trust agents with coming up with sound architectural decisions just yet.
+
+This lesson was mostly of showcase of the system capabilities. Nothing that practical here.
+
+## Lesson 8
+
+- This lesson was mostly a showcase of what the _adw_ (agentic developer workflow) system is capable of.
+
+  - **It is worth investing in building your own system to greatly increase your leverage**. The future is you _managing_ the agents, and not writing code.
+
+- A good question to ask yourself is: **are you working on the _agentic layer_ or the _application layer_?**
+
+  - You want to be working on the _agentic layer_ as much as possible. **That is where the most ROI comes from nowadays**.
+
+## Lesson 9 – Context Management
+
+- The more tokens in the agent's context, the less "focused" it is.
+
+  - It's getting better and better, but models still have issues with large context windows.
+
+- Consider how many MCP servers do you really need. **Most MCP servers consume huge amounts of tokens, but you rarely use them**.
+
+  - You can use `--mcp-config` and `--strict-mcp-config` flags to really have some control over what you load.
+
+Finished Lesson 9 11:54
