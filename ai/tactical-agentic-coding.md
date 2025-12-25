@@ -162,6 +162,8 @@ This lesson was mostly of showcase of the system capabilities. Nothing that prac
 
 ## Lesson 9 – Context Management
 
+> This lesson was full of great information. Might be worth re-watching it after some time has passed.
+
 - The more tokens in the agent's context, the less "focused" it is.
 
   - It's getting better and better, but models still have issues with large context windows.
@@ -170,4 +172,24 @@ This lesson was mostly of showcase of the system capabilities. Nothing that prac
 
   - You can use `--mcp-config` and `--strict-mcp-config` flags to really have some control over what you load.
 
-Finished Lesson 9 11:54
+- The `CLAUDE.md` (or equivalent file) can get very large.
+
+  - `CLAUDE.md` is _great_ because it is automatically included in the context, and it is _terrible_ because it is automatically included in the context.
+
+  - Dan argues that we ought to have a specific "prime" command that would instruct agent to gather necessary context based on what we are doing.
+
+    - A major advantage of this approach is the level of granularity: you can get pretty granular.
+
+    - A major disadvantage of this approach is that you must remember to actually run this "prime" command.
+
+- Consider how many tokens are consumed when Claude Code performs some kind of "discovery" workflow. In such workflow, Claude Code will most likely scrape some websites, which **can have huge outputs**.
+
+  - It might be better to use dedicated agent to do that. Let CC spawn the agent with the query, and let the dedicated agent produce a concise summary. Doing it this way, will NOT pollute the "main" context.
+
+- The `compact` command is a _band aid_ to a problem that you should never have in the first place.
+
+  - If the context is overflowing, you are not managing your agents correctly.
+
+## Lesson 10
+
+(Start)
