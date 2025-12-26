@@ -1226,3 +1226,31 @@ I really hope coding programs will now shift more from "learning how to write co
 **Action produces information**. The information you will get is _very_ valuable. It's "real", it's up-to-date and it's free of assumptions.
 
 Planning? Sure. Action? by default.
+
+## Outcomes over outputs
+
+> Based on [this talk](https://www.youtube.com/watch?v=FUM0CtJh090).
+
+Ask yourself this: "What do you do?" and reflect on the answer.
+
+- Do you _write code_?
+
+- Do you _create frontend_ or _backend_?
+
+- Do you _solve problems_?
+
+None of those are inherently wrong. We can think about ourselves in very different ways, and still be of value.
+
+But, if you laser on _what_ value really is, then you might come to a conclusion that **_value_ is in the outcomes, NOT the outputs**.
+
+This realization means that:
+
+- **Feeling productive, does not necessarily mean you are productive**. You might be creating a lot of _outputs_, but does it really matter?
+
+- **Features are assets, and the implementation is a liability**. Part of being a very good engineer is understanding this, and _designing_ your system to minimize the liabilities.
+
+- **Quality is a spectrum and very context-dependent**. In some cases, you can have a buggy software that produces a TON of value. In some cases, you can't afford to have any bugs.
+
+- **Your main task is to solve problems that drive outcomes**.
+
+Think for a second about what you are doing. You might be so entrenched in day-to-day work, that you fail to "peek" outside of the organizational boundary. Study the "lay of the land". Where are you heading exactly?
