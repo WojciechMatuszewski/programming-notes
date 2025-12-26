@@ -192,4 +192,22 @@ This lesson was mostly of showcase of the system capabilities. Nothing that prac
 
 ## Lesson 10
 
-(Start)
+> This lesson is about _prompt engineering_ as it relates to agentic workflows. The leading "technique" is to have a set of "template" prompts (see earlier lessons) that you can use in various contexts.
+
+- A good prompt uses _information dense keywords_ through, but **also for headings and sections**.
+
+  - For example, you might use words like `Instructions` or `Workflow` in markdown headings.
+
+- Creating "workflows" by instructing Claude Code to chain _slash commands_ is nice, but **note that sub-agents can't spawn other sub-agents**.
+
+  - I'm quite frustrated that this is the case. One of my prompts ask the agent to call another agent to review it's output. When I spawn that agent as sub-agent, the workflow won't work as expected.
+
+  - Even if you instruct the sub-agent to "yield" to the main agent, if the main agent spawns the sub-agent, the sub-agent will have a fresh context, and that is not what we want.
+
+- Do not be afraid to instruct Claude to fire multiple agents for its behalf.
+
+  - You DO NOT have to have specialized agents created for this. You can ask Claude do spawn multiple ad-hoc agents that are given instructions by the main agent itself.
+
+---
+
+Such a great course. It opened my mind for what's possible.
