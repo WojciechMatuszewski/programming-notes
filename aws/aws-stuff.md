@@ -145,6 +145,32 @@ In a function, you can declare a series of "steps" that act as _checkpoints_. Ea
 
 To me, it seems like a simplified _AWS Step Functions_ offering that, while less capable, keeps you in the AWS Lambda "zone" rather than requiring you to use a different service.
 
+---
+
+[One thing that struck me in this video](https://www.youtube.com/watch?v=giNnpHauWT0) that elaborates on this functionality, is that **when using _Durable Lambda Functions_ Lambda to Lambda synchronous requests are no longer considered an anti-pattern**.
+
+Let us consider _why_ we deemed calling another AWS Lambda within AWS Lambda an anti-pattern:
+
+1. You pay for waiting for the other function to respond back.
+
+2. You create _invisible_ coupling between one function and another.
+
+3. You have to ensure you handle errors in your code as opposed to leaning on AWS Primitives.
+
+Now, you can use the `context.invoke` which will:
+
+1. Create a checkpoint before invocation.
+
+1. Invoke the AWS Lambda function.
+
+1. Wait for the result.
+
+1. Resume your function.
+
+As I understand it, you do not pay for the waiting period. Also, the error handling is taken care of by checkpoint mechanism.
+
+Having said that, when you do this, you still introduce this "hidden" coupling that I'm not a fan of.
+
 #### Alias
 
 - alias can point to a **single version** or **two lambda versions**.
