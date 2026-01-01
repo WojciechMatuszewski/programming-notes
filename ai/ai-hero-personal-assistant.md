@@ -178,3 +178,23 @@ Learnings from [this course](https://www.aihero.dev/cohorts/build-your-own-ai-pe
     Also, I'm unsure about the example we used in the course to test this. The query was: "Give me 10 email bodies". This resulted in two LLM calls: first to filter the emails, then to fetch data for those 10 emails. Wouldn't we only need one tool call (the `filterEmails`) if we did not truncate their bodies?
 
     Ok, as I explore this implementation further, I'm starting to understand its significance. **We can instruct the LLM to skip fetching the whole email if the metadata already contains information it needs to answer the user query**. In addition, the LLM can fetch the full content of only _some_ emails returned by our search tools. All of this will save us some tokens in the long run.
+
+- When doing the "memory system" exercises, we looked at two approaches: (1) always call the LLM in the `onFinish` callback to _force_ the LLM to think if it needs to manage memories, (2) expose the memory management as a tool for the main agent.
+
+  Consider the pros and cons of both approaches.
+
+  For the first approach (the manual, forced call), we get a lot of determinism and we **ensure that the system prompt of the main agent has no influence over the memory management concern**. We are also increasing the system latency and costs since you will _always_ call the LLM.
+
+  For the second approach, we lose the determinism, and we have to "pollute" the main agent system prompt with heuristics of managing memories, but we make the system cost less and have less latency.
+
+  **This is a very typical situation where you have to consider whether to give the LLM more control or not**. Some would argue that LLMs will get better and better, so betting on giving the LLM more control is the way to go. I tentatively subscribe to that view.
+
+- Any memory system will grow as the user interacts with the LLM more. **To make the memories useful at any size, we can deploy similar RAG approach that we did before**.
+
+  1. When creating and updating memories, make sure to generate embeddings for that memory.
+
+  2. Upon receiving a message from the user, **use an LLM to semantically search through the memories**. You can use the same technique we did before: generate keywords and the query, use both bm25 and semantic search and combine results.
+
+  3. Push only the most relevant memories to the "main" LLM context.
+
+  This solution is quite nice, but it's not ideal. You have more "knobs" to turn in your system (like the topK value for memories), which means it is more complex to maintain.
