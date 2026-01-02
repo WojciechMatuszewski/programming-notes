@@ -167,34 +167,78 @@ Learnings from [this course](https://www.aihero.dev/cohorts/build-your-own-ai-pe
 
 - In the course, we've changed our filter and search emails tools to return a _truncated_ email body and we've added another "retrieve" tool to get the full email.
 
-  - I'm a bit split on this implementation. On the one hand, it kind of makes sense to me. Emails can be long, and we do not want to push all that text into the context if it's not relevant.
+  - I'm a bit conflicted about this implementation. On one hand, it makes sense to me—emails can be long, and we don't want to include all that text in the context if it's not relevant.
 
-    On the other hand, wouldn't that cause a lot more `getEmail` tool calls, which _could_ bloat the context even more?
+    On the other hand, wouldn't this cause many more `getEmail` tool calls, which could bloat the context even more?
 
-    Matt called this **metadata-first retrieval pattern**, but all that I could find on the internet regarding this is where they append LLM-generated metadata to chunks before embedding them. Perhaps we will do that in future lessons?
+    Matt called this the **metadata-first retrieval pattern**, but all I could find online regarding this involves appending LLM-generated metadata to chunks before embedding them. Perhaps we'll do that in future lessons?
 
-    I remember learning about the _progressive disclosure_ pattern as [described in this blog post](https://www.anthropic.com/engineering/code-execution-with-mcp). This _feels_ similar, but it's quite different. Why?
+    I remember learning about the _progressive disclosure_ pattern as [described in this blog post](https://www.anthropic.com/engineering/code-execution-with-mcp). This feels similar, but it's actually quite different. Why is that?
 
-    Also, I'm unsure about the example we used in the course to test this. The query was: "Give me 10 email bodies". This resulted in two LLM calls: first to filter the emails, then to fetch data for those 10 emails. Wouldn't we only need one tool call (the `filterEmails`) if we did not truncate their bodies?
+    Also, I'm unsure about the example we used in the course to test this. The query was: "Give me 10 email bodies." This resulted in two LLM calls: first to filter the emails, then to fetch data for those 10 emails. Wouldn't we only need one tool call (the `filterEmails`) if we didn't truncate their bodies?
 
-    Ok, as I explore this implementation further, I'm starting to understand its significance. **We can instruct the LLM to skip fetching the whole email if the metadata already contains information it needs to answer the user query**. In addition, the LLM can fetch the full content of only _some_ emails returned by our search tools. All of this will save us some tokens in the long run.
+    As I explore this implementation further, I'm starting to understand its significance. **We can instruct the LLM to skip fetching the whole email if the metadata already contains the information it needs to answer the user query.** In addition, the LLM can fetch the full content of only _some_ emails returned by our search tools. All of this will save us tokens in the long run.
 
-- When doing the "memory system" exercises, we looked at two approaches: (1) always call the LLM in the `onFinish` callback to _force_ the LLM to think if it needs to manage memories, (2) expose the memory management as a tool for the main agent.
+- When doing the "memory system" exercises, we looked at two approaches: (1) always call the LLM in the `onFinish` callback to _force_ the LLM to consider whether it needs to manage memories, and (2) expose the memory management as a tool for the main agent.
 
   Consider the pros and cons of both approaches.
 
-  For the first approach (the manual, forced call), we get a lot of determinism and we **ensure that the system prompt of the main agent has no influence over the memory management concern**. We are also increasing the system latency and costs since you will _always_ call the LLM.
+  For the first approach (the manual, forced call), we get a lot of determinism, and we **ensure that the system prompt of the main agent has no influence over the memory management concern**. However, we also increase system latency and costs, since you will _always_ call the LLM.
 
-  For the second approach, we lose the determinism, and we have to "pollute" the main agent system prompt with heuristics of managing memories, but we make the system cost less and have less latency.
+  For the second approach, we lose determinism and have to "pollute" the main agent system prompt with heuristics for managing memories, but we make the system cost less and reduce latency.
 
-  **This is a very typical situation where you have to consider whether to give the LLM more control or not**. Some would argue that LLMs will get better and better, so betting on giving the LLM more control is the way to go. I tentatively subscribe to that view.
+  **This is a typical situation where you have to consider whether to give the LLM more control or not**. Some would argue that LLMs will get better and better, so betting on giving the LLM more control is the way to go. I tentatively subscribe to that view.
 
-- Any memory system will grow as the user interacts with the LLM more. **To make the memories useful at any size, we can deploy similar RAG approach that we did before**.
+- Any memory system will grow as the user interacts more with the LLM. **To make the memories useful at any size, we can deploy a similar RAG approach as before**.
 
-  1. When creating and updating memories, make sure to generate embeddings for that memory.
+  1. When creating and updating memories, make sure to generate embeddings for each memory.
 
-  2. Upon receiving a message from the user, **use an LLM to semantically search through the memories**. You can use the same technique we did before: generate keywords and the query, use both bm25 and semantic search and combine results.
+  2. Upon receiving a message from the user, **use an LLM to semantically search through the memories**. You can use the same technique we did before: generate keywords and the query, use both bm25 and semantic search, and combine the results.
 
   3. Push only the most relevant memories to the "main" LLM context.
 
   This solution is quite nice, but it's not ideal. You have more "knobs" to turn in your system (like the topK value for memories), which means it is more complex to maintain.
+
+- When adding memories to the _project_, we decided to convert the _entire_ message history to text in order to semantically search against all memories.
+
+  - I'm unsure about this approach. The larger the conversation, the more noise there is in that "conversation text" embedding.
+
+- TIL about various `ChatTransport` options you can specify when using the `useChat` hook. [You can read the documentation here](https://ai-sdk.dev/docs/ai-sdk-ui/transport).
+
+  - We overwrote the `DefaultChatTransport` to **send only one message to the backend**. Why? We are already persisting all the messages, so there is no need to send everything again.
+
+  - All this work nicely aligned with our task of only providing the LLM with N recent messages and using semantic search (static, not LLM-driven) to extract relevant older messages.
+
+    ```ts
+    const messages = validatedMessagesResult.data;
+
+    const recentMessages = messages.slice(-MESSAGE_HISTORY_LENGTH);
+
+    const olderMessages = messages.slice(0, messages.length - recentMessages.length);
+
+    const allRelevantOlderMessages = await searchMessages({
+      recentMessages,
+      olderMessages,
+    });
+
+    const relevantOlderMessages = allRelevantOlderMessages.slice(0, OLD_MESSAGES_TO_USE);
+    ```
+
+    The `searchMessages` function creates a single blob of text out of `recentMessages` and, via cosine similarity, checks if there are any other messages that might be relevant.
+
+    Again, I'm unsure how I feel about this approach. On one hand, it's quite easy to do. On the other, that one blob of text from the `recentMessages` might be quite large—it contains a lot of "noise".
+
+    I've asked Claude about possible alternatives, and they either include (1) using the LLM to rewrite the query (which we currently create by extracting text from `recentMessages`), or (2) creating embeddings for each of the `recentMessages`.
+
+- In addition to feeding the LLM `recentMessages` and the `memories`, we also implemented adding the _most relevant_ chats.
+
+  Our implementation was quite _naive_, because alongside LLM-generated metadata for the chat—things like `tags` or `whatToAvoid`—we also provided all the messages. This implementation could bloat our context window quite a lot.
+
+  Having said that, if you optimize this, perhaps by chunking or being more selective, you can achieve pretty neat results. Consider what we have in place:
+
+  1. The **working memory**, which is the **current conversation (the most recent and relevant older messages)**.
+  2. The **episodic memory**, which is historical experience and its takeaways—**this is our _most relevant chats_ and the `whatToAvoid` or `whatWentWell` properties**.
+  3. The **semantic memory**, which is the **memory system and the RAG implementation for the emails**.
+  4. The **"rules" and "skills" for interaction**, which are tools and the system prompt.
+
+  All of this implements the so-called **_cognitive architecture for language agents_** [which you can read more about here](https://github.com/ALucek/agentic-memory?tab=readme-ov-file).
