@@ -242,3 +242,86 @@ Learnings from [this course](https://www.aihero.dev/cohorts/build-your-own-ai-pe
   4. The **"rules" and "skills" for interaction**, which are tools and the system prompt.
 
   All of this implements the so-called **_cognitive architecture for language agents_** [which you can read more about here](https://github.com/ALucek/agentic-memory?tab=readme-ov-file).
+
+- **Apart from ensuring your system is working as expected, evaluations are a very good way to run A/B tests for various models**.
+
+  - If you have a robust suite of evaluations, you can easily run them against different models to compare results.
+
+    - **Models get better and cheaper with time. You might not need to use the most powerful model for your use-case**.
+
+- Seeing the results of evaluations for different models, especially when comparing smaller vs. larger models, is quite fascinating.
+
+  - For example, when asking for weather information `gemini-2.5-flash-lite` assumed the units, but the `gemini-2.5-pro`, instead of calling a tool, asked what units it should use.
+
+- **When writing evals, we tend to fixate on the _happy path_, but adding "adversarial inputs" into your test harness is just as valuable**.
+
+  - The real world is messy. We can't expect the users to provide the LLM with coherent prompts all the time. **You must make sure that your system gracefully handles inputs that do not make sense**.
+
+    - Again, this is quite powerful when using multiple models. You can see which model is good at handling the sad and happy paths.
+
+- From my empirical experience, I've noticed that the **system prompt carries much more "weight" than any description you can attach at the tool level**.
+
+- When working on evaluations for memory extraction, we first implemented the LLM-as-a-Judge, and then replaced it with cosine similarity-based matcher.
+
+  - Both approaches has their tradeoffs. For the LLM-as-a-Judge, you get precision, but that can backfire. In addition, you have to _align_ your judge with human labels.
+
+  The the cosine similarity approach is easier to work with, but is definitely less precise. For example, "Working at Google" and "Working at Facebook" might produce quite high scores, but they are very different in terms of facts.
+
+- The way you structure your code has implications on how _easy_ it will be for you to write evaluations.
+
+  - You most likely **want to isolate the `streamText` and `generateObject` calls in separate functions, so you can export them later on**.
+
+    You might also want to **consider using [the `Agent` abstraction](https://ai-sdk.dev/docs/agents/overview) to encapsulate your agents**.
+
+- Implementing HITL (human in the loop) was easier than I though.
+
+  - The `ai` package exposes all the necessary abstractions to do that, and in the `v6` it will be even easier!
+
+- TIL that `@ai-sdk/mcp` package exists. It allows you to programmatically adds tools from other MCP servers to your agent.
+
+  - This is quite powerful, as it **allows you to "pre-process" the tools before you add them to `tools` property to your agent**.
+
+    Let us say you have an MCP server which you really want to use, but you only need one tool it exposes. Nothing stops you from removing all the other tool definitions that `@ai-sdk/mcp` returned, and passing only that single one to the `tools` property of your agent.
+
+    ```ts
+    import { experimental_createMCPClient } from "@ai-sdk/mcp";
+    import type { ToolSet } from "ai";
+
+    export const getMCPTools = async (): Promise<ToolSet> => {
+      const client = await experimental_createMCPClient({
+        transport: {
+          type: "http",
+          url: process.env.MCP_URL!,
+        },
+      });
+
+      // Check out the parameters of the `tools` method.
+      // You can pass ZOD schema here for type-safety.
+      const tools = await client.tools();
+
+      console.log(Object.keys(tools));
+
+      // You can do that for other tools.
+      if ("add_tools" in tools) {
+        delete tools.add_tools;
+      }
+
+      if ("edit_tools" in tools) {
+        delete tools.edit_tools;
+      }
+
+      console.log(Object.keys(tools));
+
+      return tools as ToolSet;
+    };
+    ```
+
+- TIL that you can **send arbitrary data in the `parts` array, as long as you provide mapping for that data on the backend**.
+
+  - The `convertToModelMessages` allows you to map parts, which makes all of this much easier.
+
+  - We leveraged "custom" `parts` to implement HITL for external MCP tools. You can propagate which tools user has enabled on the frontend, and then wrap their calls with HITL code on the backend. Pretty powerful!
+
+## Wrapping up
+
+This course was great! I really liked the split between the _project_ and _skills_.
