@@ -10,6 +10,14 @@
 
 - This **might make the `dotenv` package obsolete**.
 
+### The `loadEnvFile` function
+
+There is also the `loadEnvFile` function (stable in Node.js 24) that you can use. **This replaces the `dotenv()` function from the `dotenv` package**.
+
+According to [this blog post](https://www.stefanjudis.com/today-i-learned/load-env-files-in-node-js-scripts/) the function can throw an error if the specified file is not there – something to be mindful of.
+
+I'm very glad that those additions are _finally_ stable and in Node 🎉.
+
 ## The `node:` import prefix
 
 When reading code, you might come across import statements that look like:
