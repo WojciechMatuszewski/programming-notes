@@ -217,6 +217,8 @@ According to the MDN, under the hood, the browser makes a network request to fet
 
 > Based on [this blog post](https://2ality.com/2025/06/ecmascript-2025.html#iterator-helper-methods)
 
+> [Another resource](https://allthingssmitty.com/2026/01/12/stop-turning-everything-into-arrays-and-do-less-work-instead/)
+
 There are new set of methods for working with _iterators_, like `drop`, `take` and others.
 
 **The biggest difference between array methods is that iterators DOES NOT create intermediate arrays**. This is huge win for large datasets.

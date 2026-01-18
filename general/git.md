@@ -1,4 +1,16 @@
-# Everything you will need to know about git
+# Git
+
+## Misc
+
+### The `git log -S`
+
+> Based on [this blog post](https://www.stefanjudis.com/today-i-learned/how-to-search-for-strings-in-git-commit-additions-or-deletions/)
+
+Use the `git log -S '<search query>'` to find _when_ a given piece of text was added.
+
+Super useful! I oftentimes find myself digging through a given file history to understand _when_ we really added a given piece of code.
+
+## FEM Everything you will need to know about Git
 
 > Going through [this workshop](https://frontendmasters.com/workshops/git/).
 

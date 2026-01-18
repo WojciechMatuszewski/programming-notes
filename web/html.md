@@ -566,6 +566,39 @@ That's it. It could not get easier than this!
 
 There are more styling options available for this feature. You can control the delay and so on. See [this link](https://modernwebweekly.substack.com/i/177501059/mouse-and-keyboard-delays) to learn more.
 
+### Combining with anchor positioning
+
+When you add _anchor positioning_, you basically have a full implementation of a popover **without** adding any new libraries.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #popover-anchor {
+        anchor-name: --popover-trigger;
+      }
+
+      #popover {
+        position: fixed;
+        position-anchor: --popover-trigger;
+        position-area: end center;
+      }
+    </style>
+  </head>
+  <body>
+    <a href = "#" id = "popover-anchor" interestfor="popover">Hover over me</a>
+    <p id = "popover" popover>I'm a popover</p>
+  </body>
+  <script></script>
+</html>
+```
+
+How great is that?!
+
 ## Quotes and intl
 
 > Based on [this article](https://www.stefanjudis.com/today-i-learned/how-to-use-language-dependent-quotes-in-css/)
