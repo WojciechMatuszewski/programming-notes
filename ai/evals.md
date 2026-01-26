@@ -1,5 +1,22 @@
 # Notes about AI Evals
 
+## Binary scores
+
+> Based on [this blog post entry](https://hamel.dev/blog/posts/evals-faq/#q-why-do-you-recommend-binary-passfail-evaluations-instead-of-1-5-ratings-likert-scales)
+
+When writing evaluations, you might be tempted to use 1-5 (or any other) scale for grading the output.
+
+**Do not do this**.
+
+1. Using a scale creates ambiguity. What's the difference between 3 and 2?
+2. Using a scale does NOT force you into making a decision. Making decisions is what pushes you forward. 
+3. Using a scale can _expand the evals scope_ which is NOT a good thing. 
+
+**Instead, create _focused_ binary-based evaluators**. Focus on the failure modes – the things you know the LLM fails at.
+
+For example, instead of "overall quality" scorer, decompose it to things that matter to _your product_. Those might be "politeness" or "agency".
+
+
 ## Your AI Product Needs Evals
 
 > Notes from [this blog post](https://hamel.dev/blog/posts/evals/)
