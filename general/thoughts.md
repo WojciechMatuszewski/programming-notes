@@ -1270,3 +1270,21 @@ If we apply the same rule to consuming content, **it does not matter how many vi
 Perhaps you listened to 10 podcasts today. Perhaps all of them were relevant to your current life situation (job, health, etc.). But the question remains: did you _really_ listen?
 
 The author argues that it might be worth considering consuming content at 1x speed again. I'm personally a bit hesitant, but doesn't that prove the author's point?
+
+## The invisible work that dissolves
+
+> Based on [this blog post](https://hvpandya.com/invisible-work)
+
+In any project, how much of "getting things done" is actually doing something "visible" (think coding)?
+
+The more people the project involves, the smaller that ratio might be.
+
+There is a layer that is usually forgotten: the "invisible work." Some might call it "glue work."
+
+Organizing meetings, writing documents, talking with stakeholders, and chasing alignment across teams—this type of work is needed for any large project to succeed.
+
+But when the dust has settled, do we celebrate this work? The document becomes "just a doc." The meetings become just past events in your Google Calendar—we tend to celebrate the visible or things we can easily describe, not the work that happened "behind the scenes."
+
+This might be a problem for you if you enjoy this type of work. Depending on the organization, **recognition follows the narrative**. The issue is that, in most cases, the narrative is focused on what's "out there" (on the screen), and not on what was actually done.
+
+Keep that in mind when you are working. How can you make sure that your contributions are recognized?
