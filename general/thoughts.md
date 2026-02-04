@@ -1254,3 +1254,19 @@ This realization means that:
 - **Your main task is to solve problems that drive outcomes**.
 
 Think for a second about what you are doing. You might be so entrenched in day-to-day work, that you fail to "peek" outside of the organizational boundary. Study the "lay of the land". Where are you heading exactly?
+
+## Life happens at 1x speed
+
+> Based on [this blog post](https://terriblesoftware.org/2026/01/08/life-happens-at-1x-speed/)
+
+This one hit me hard. I'm currently watching/listening at 2.8x speed. Yes, I can comprehend what people are saying, but do I _really_ listen?
+
+It seems like I've fallen into a trap where I associate the amount of content I consume with productivity, which isn't the case.
+
+It reminds me of software. **In software engineering, your output does not matter—what matters are the _outcomes_ that come from your work**.
+
+If we apply the same rule to consuming content, **it does not matter how many videos or podcasts you consume if you are not "growing" from that content**.
+
+Perhaps you listened to 10 podcasts today. Perhaps all of them were relevant to your current life situation (job, health, etc.). But the question remains: did you _really_ listen?
+
+The author argues that it might be worth considering consuming content at 1x speed again. I'm personally a bit hesitant, but doesn't that prove the author's point?
