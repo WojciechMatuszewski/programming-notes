@@ -98,6 +98,12 @@ You have to consider **the IAM permissions of a given AWS Lambda function**. It 
 
 - There is the **`AWS` integration** where APIGW **will NOT transform anything for you**. You **must configure both the request and response mapping templates**.
 
+#### The `INIT` phase
+
+- It _used_ to be that the `INIT` phase was free. [Sadly this is no longer the case](https://aws.amazon.com/blogs/compute/aws-lambda-standardizes-billing-for-init-phase/).
+
+- `INIT` encompasses three things: the _extensions_, the _runtime_ and your function code INIT. Anything that you initialize outside of the handler function counts towards the `INIT` phase.
+
 #### Ensuring tenant-based environment isolation
 
 > [Based on this announcement blog post](https://aws.amazon.com/blogs/aws/streamlined-multi-tenant-application-development-with-tenant-isolation-mode-in-aws-lambda/)
@@ -227,7 +233,7 @@ Having said that, when you do this, you still introduce this "hidden" coupling t
 
   - your init code will run as if it was invoked with the CPU equivalent to the amount of memory allocated ot the AWS Lambda.
 
-  - this is **completely different from the init phase of the "regular" AWS Lambda functions**, [where you get one full CPU for free](https://youtu.be/NZVNAEK6shc?t=2184) regardless of the memory settings of your AWS Lambda.
+  - this is **completely different from the init phase of the "regular" AWS Lambda functions**.
 
 #### On-demand (unreserved) concurrency and proactive initialization
 
@@ -510,7 +516,9 @@ Having said that, when you do this, you still introduce this "hidden" coupling t
 - The **cold start != _init duration_**.
 
   - I always thought that was the case.
+
   - The _init duration_ log does not include **loading code from s3 which takes a lot of time for large AWS Lambda Functions (even if you do not use any of the code)**.
+
   - **Apply _lazy-loading_ to make the cold start faster**.
 
 - Do not run the "defaults".
@@ -557,7 +565,7 @@ Having said that, when you do this, you still introduce this "hidden" coupling t
 
 - you can **reference container images residing in a different AWS account**
 
-- **you pay for the INIT time** – this is not the case for zip-packaged functions.
+- **you pay for the INIT time**.
 
 ##### Storage copy issue
 
