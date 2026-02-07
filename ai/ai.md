@@ -466,3 +466,11 @@ Remember:
 4. **Models need tokens to "think"**. You want the answer to "spread" the computation across tokens. Single world answers from the model might have a higher chance of being incorrect.
 
 5. **Never assume the model is correct**. Use the output as first draft or inspiration.
+
+## NER models and data sanitization
+
+NER stands for **N**amed **E**ntity **R**ecognition.
+
+Those are purse-built models to sanitize the input data and ensure you do not leak any PII into your system. Think a filter that runs before you log something.
+
+Given the following text: "John Smith from Acme Corp called on 555-1234", the filter might output "[PERSON] from [ORGANIZATION] called on [PHONE]"
