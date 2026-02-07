@@ -122,8 +122,22 @@ The `.waitForTaskToken` is designed to be generic. You have to notify the StepFu
 
 To signal to the service that the task is done, you will need to call `SendTaskSuccess` or `SendTaskFailure` that the StepFunctions API exposes.
 
-## Creating loops to check for status
+## Creating loops to check for status (_might_ be an anti-pattern)
+
+> I wrote this section before I realize we can replace all the looping with events. Read on to learn how!
 
 Sometimes, you might need to halt the machine execution until a given resource changes status. It might happen that you cannot integrate that resource with the `waitForTaskToken` logic and have to implement the pooling logic manually.
 
 In such scenarios, you need to create a loop in the state machine definition. You can read more about such a machine [here](https://docs.aws.amazon.com/step-functions/latest/dg/tutorial-create-iterate-pattern-section.html#create-iterate-pattern-step-3).
+
+### Replacing looping with events
+
+Whenever you consider introducing a "check loop" in your Step Functions, make sure you have exhausted all other options first.
+
+**You can use a combination of DynamoDB, AWS Lambda, and EventBridge** to handle this as well. [This blog post explains how](https://theburningmonk.com/2026/02/the-anti-polling-pattern-for-step-functions/).
+
+Essentially, you write the `TaskToken` into DynamoDB. Then you can start a job, perhaps triggered via DynamoDB Streams. When the job finishes, you send an event to EventBridge, which invokes an AWS Lambda function. That AWS Lambda function then looks up the token and resumes the Step Function via `SendTaskSuccess`.
+
+**While you might consider this approach "proper," it is quite complex.** The reason to avoid the "check loop" in Step Functions is cost. **While the monetary cost of a "check loop" is X, you also have to consider the cognitive cost of doing things the "proper" way.**
+
+Usually, this is not a problem. The comparison is skewed towards the "right" way since you write it once and then forget about it. BUT, when something breaks, how well are you able to diagnose the issue?
