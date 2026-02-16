@@ -233,6 +233,20 @@ Keep it simple.
 When attaching event listeners to DOM nodes, you get access to the event in its "synthetic" form. The "synthetic" event is wrapped by React cross-browser compatible form.
 
 While working with React events, many people get confused. The `event` variable contains reference to the `target` and `currentTarget` elements.
-The difference between those two is related to _event bubling_.
+The difference between those two is related to _event bubbling_.
 
 The `currentTarget` is the element that the **event "bubbled" onto**. The `target` is the **original element the event was fired-off from**.
+
+## The "stale" stylesheets when using `Activity` component
+
+> Based on [this blog post](https://shud.in/thoughts/build-bulletproof-react-components#make-it-activity-proof).
+
+When you "hide" components using the `Activity` component, **React won't clean-up any style tags that this component injected when it was rendered**.
+
+This means that, even if the component is "hidden" by `Activity`, the styles it injected are still "active".
+
+You can **tell browser to ignore any style tag by using `media` property with `not all` value**. This is a media query that always evaluates to _false_ – meaning the CSS will be ignored, but stay in the DOM.
+
+This is very handy to avoid having to re-apply the `style` tag every time the `Activity` visibility changes.
+
+Related to [this article as well](https://sgued.fr/blog/disable-css/). **Using `not all` is also a good way to disable 3rd party stylesheets**.
