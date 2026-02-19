@@ -4,3 +4,7 @@
 node_modules
 temp
 playground
+
+# Wojciech's personal Claude Code configuration
+.claude/nudge_config.json5
+.claude/settings.local.json
