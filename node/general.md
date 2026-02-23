@@ -141,7 +141,9 @@ async function conditional({ someCondition }) {
 }
 
 async function main() {
-  await using bar = await conditional({ someCondition: true });
+  // No need to call `using` here.
+  // The `await using cleanup` already does all the cleanup inside the `conditional` function
+  await conditional({ someCondition: true });
 }
 
 await main();

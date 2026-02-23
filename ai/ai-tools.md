@@ -13,3 +13,5 @@
 - With [`GitMCP`](https://gitmcp.io/) you can turn any GitHub repository into an MCP server.
 
   - This is useful if the library you are using is not indexed by `context7` or similar MCPs.
+
+- [worktrunk.dev](https://worktrunk.dev/) for managing Git wotkrees with custom hooks and Claude Code integration
