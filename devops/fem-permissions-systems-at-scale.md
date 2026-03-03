@@ -38,6 +38,30 @@ Have you ever seen an issue where users can _edit_ but can't save? That's a sign
 
 **Kyle argues that missing permission checks are WORSE than anything else**. I agree. IMO it is better for users to not be able to do something, which you can fix pretty fast, rather than everyone having the ability to do something that only a handful of users should be able to do.
 
+## The first attempted fix
+
+The first thing we did was to actually write those permissions checks inline. Think of manually checking `user.role` and then conditionally rendering based on that.
+
+We _might_ have "fixed" some of the permission issues this way, but there is still a LOT of work we had to do. More importantly, the core issue remains: the checks are scattered throughout the codebase.
+
+## Centralized permissions system
+
+To help with duplication, we've created functions like `createDocumentService` or `updateDocumentService`. All of this to **reduce duplication**.
+
+Now all of our checks of permissions happen only in those functions. DAL and other layers are not concerned with the permissions at all.
+
+I'm still not a fan of this approach since we _have to remember_ to call the right function. Since the function names (can change, but then to what?) are quite similar, it might be the case that we will call the wrong function (without the `Service` suffix), and create a bug.
+
+## Introducing Role-Based Access Control (RBAC)
+
+RBAC seems to be a gold standard in the industry. Look at AWS IAM – it's all based on roles and permissions!
+
+Introducing RBAC requires us to shift our mental-model. Instead of manually checking for permissions, now it's the _roles_ that contain them!
+
+```
+User -> Role -> Permissions
+```
+
 ---
 
 ## Random Next.js learnings
@@ -46,4 +70,4 @@ The project we are working on throughout the workshop is using Next.js. Here are
 
 1. The `(<directory_name>)` folders in the `app` directory are will NOT create a new route path. These are so-called _route groups_ that you can use to have multiple `layout.tsx` files per routes without creating additional paths.
 
-Finished part 1 -8:19. Start fixing the issues
+Start part 3
