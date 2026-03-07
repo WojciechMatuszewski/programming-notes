@@ -12,7 +12,7 @@ Ahh, the never-ending source of confusion!
 
 - **Authorization answers "what can you do"**. Imagine _having a certain permission-level_ to enter a specific floor in a building.
 
-So, when I log-in to a website, I'm going through the process of _authentication_. At the end of the process, I usually get some kind of token back. This token is then send alongside any requests to other services to perform _authorization_ on a given resource.
+So, when I log-in to a website, I'm going through the process of _authentication_. At the end of the process, I usually get some kind of token back. This token is then sent alongside any requests to other services to perform _authorization_ on a given resource.
 
 From my experience, **one of the biggest issues is when engineers try to implement both _authentication_ and _authorization_ together**. This results in messy code and very hard to reason about logic that is hard to talk about.
 
@@ -22,7 +22,7 @@ Another issue I've seen is **engineers using _authorization_ and _authentication
 
 ## The Initial Data Model
 
-We started with three entities in the database. On the users, we have the "role" attribute which is an enum. I'm always weary of enums. I wonder how will this scale. What if I want to attach multiple permissions to a single user?
+We started with three entities in the database. On the users, we have the "role" attribute which is an enum. I'm always wary of enums. I wonder how this will scale. What if I want to attach multiple permissions to a single user?
 
 Similar to the `status` and `isLocked` on the document entity. Should those be two separate fields? If we allow multiple values in `status` we could have a document with `["draft", "locked"]` status which I think is much better for extensibility.
 
@@ -54,20 +54,38 @@ I'm still not a fan of this approach since we _have to remember_ to call the rig
 
 ## Introducing Role-Based Access Control (RBAC)
 
-RBAC seems to be a gold standard in the industry. Look at AWS IAM – it's all based on roles and permissions!
-
 Introducing RBAC requires us to shift our mental-model. Instead of manually checking for permissions, now it's the _roles_ that contain them!
 
 ```
 User -> Role -> Permissions
 ```
 
----
+The main benefits of using RBAC are:
+
+- Centralization. You can have all the logic in a single place.
+- Future-proofing. User can have _multiple_ roles and roles can have _multiple_ permissions. You can add / remove them as you see fit.
+- Code is easier to read. You can do a "simple" `.includes` on the list of permissions and see if a given entity has access.
+
+The drawbacks include:
+
+- Additional complexity. You most likely need to add additional schema in your database to handle the Permissions (and Roles).
+
+- Depending on how you structure your code, complex permission relationships might be hard to encode.
+
+  Consider the `project:read` permission. We quickly expanded to `project:read:all` and `project:own-department`.
+
+  If the permissions logic is even more complex, are you okay with extending the types like that? What about conditionals?
+
+In the workshop, we **quickly hit limits of the "native" implementation of RBAC**. As soon as our permissions started to depend on other things, not only on the "role" of the user, the system quickly fell apart.
+
+**If you notice your permission system quickly expanding the "permissions enum", it might be a sign that RBAC is not the way to go**. This is mostly due to permissions also depending on "surrounding context" rather than strictly on the "role" property on a user.
+
+## Introducing Attribute-Based Access Control (ABAC)
 
 ## Random Next.js learnings
 
 The project we are working on throughout the workshop is using Next.js. Here are some things that stood out to me.
 
-1. The `(<directory_name>)` folders in the `app` directory are will NOT create a new route path. These are so-called _route groups_ that you can use to have multiple `layout.tsx` files per routes without creating additional paths.
+1. The `(<directory_name>)` folders in the `app` directory will NOT create a new route path. These are so-called _route groups_ that you can use to have multiple `layout.tsx` files per routes without creating additional paths.
 
-Start part 3
+Start part 4
