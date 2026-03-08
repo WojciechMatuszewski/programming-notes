@@ -82,10 +82,118 @@ In the workshop, we **quickly hit limits of the "native" implementation of RBAC*
 
 ## Introducing Attribute-Based Access Control (ABAC)
 
+This section started to look more and more similar to AWS handling permissions.
+
+```
+RBAC: User -> Role -> Permission
+ABAC: (Subject + Resource + Action + Environment) -> Policy -> Decision
+```
+
+Notice that this **solves the issue we had with RBAC where we were not really able to check for "surrounding context" in a single permission call**. We can now create "templates" that we can "overlay" on top of users data to derive the `true/false` values.
+
+While the implementation is a bit more complex that RBAC, it allows us to extend it without having to make additional "helper" functions to check for permissions.
+
+```ts
+type Resources = {
+  project: {
+    action: "create" | "read" | "update" | "delete";
+    condition: Pick<Project, "department">;
+  };
+  document: {
+    action: "create" | "read" | "update" | "delete";
+    condition: Pick<Document, "projectId" | "creatorId" | "status" | "isLocked">;
+  };
+};
+
+type Permission<Res extends keyof Resources> = {
+  action: Resources[Res]["action"];
+  condition?: Partial<Resources[Res]["condition"]>;
+};
+
+type PermissionStore = {
+  [Res in keyof Resources]: Permission<Res>[];
+};
+
+class PermissionBuilder {
+  #permissions: PermissionStore = {
+    document: [],
+    project: [],
+  };
+
+  allow<Res extends keyof Resources>(
+    resource: Res,
+    action: Permission<Res>["action"],
+    condition?: Permission<Res>["condition"],
+  ) {
+    this.#permissions[resource].push({ action, condition });
+    return this;
+  }
+
+  build() {
+    const permissions = this.#permissions;
+
+    return {
+      can<Res extends keyof Resources>(
+        resource: Res,
+        action: Resources[Res]["action"],
+        data?: Resources[Res]["condition"],
+      ) {
+        return permissions[resource].some((perm) => {
+          if (perm.action !== action) return false;
+
+          const validData =
+            perm.condition == null ||
+            data == null || // unsure about this check here. IMO that's a bug
+            Object.entries(perm.condition).every(([key, value]) => {
+              return data[key as keyof typeof perm.condition] === value;
+            });
+
+          return validData;
+        });
+      },
+    };
+  }
+}
+```
+
+This allows us to check if we have a matching pair of `action` and `condition` for a given _resource_, like `document` or a `project`.
+
+If you look at the `Resources` type, it is quite similar to how AWS does IAM policy statements + conditions block.
+
+## Looking at individual resource fields
+
+Currently, our permissions grant "general" `read`, `update` etc.. actions that pertain to _all_ fields of the _resource_. How do we scope it down to only allow, for example, reading the document `title` field? – we can extend our `allow` function to take additional parameter!
+
+In the workshop, we did not check for the valid `action` given the fields. Nothing stops us from creating a `create` permission for document `title` field. On the one hand, that makes sense, on the other, I'm unsure.
+
+## Permission libraries
+
+Instead of writing the code yourself, you can rely on libraries that manage ABAC for you.
+
+1. **In-code libraries**. This is what we've been working on. You write the policies in your language of choice. A popular choice for JavaScript/TypeScript is [CASL](https://casl.js.org/v6/en/). The main drawback here is that you _can't_ really share those policies across teams working in different languages.
+
+2. **DSL's for writing policies**. You have a completely separate language for writing policies that **you can share and centralize**. A good example is the [Cedar](https://www.cedarpolicy.com/en) language that AWS uses under the hood.
+
+## The spectrum
+
+1. Our first attempt was a big ball of mess. We did not have centralized place for permissions and it was _very easy_ to introduce an issue.
+
+2. Centralizing permissions helped a bit. We still had to write a lot of code and handle each case separately, but it was definitely an improvement.
+
+3. Introducing RBAC looked promising, but we quickly hit roadblocks when dealing with "related" data and how it influences permissions (for example, certain users can only edit documents from their own department).
+
+4. ABAC was the "solution" to all of our problems, BUT it introduced code complexity (albeit neatly tucked away in a single module).
+
+5. Then we reached out for a library that "compressed" that complexity even further.
+
+**Note**: While we were mostly working in-code, we also had to **amend our database queries**. So in a sense, you have to make sure you have permissions present in two layers: the application and database layer.
+
+In an ideal world, you would have only a single layer that would sit between your application and the database that performed all the checks. But then how do you make sure you are not leaking permissions information metadata _into_ your database?
+
 ## Random Next.js learnings
 
 The project we are working on throughout the workshop is using Next.js. Here are some things that stood out to me.
 
 1. The `(<directory_name>)` folders in the `app` directory will NOT create a new route path. These are so-called _route groups_ that you can use to have multiple `layout.tsx` files per routes without creating additional paths.
 
-Start part 4
+2. The `cache` function is _per-request_. It's interesting to see that you do not have to pass any `requestId` to it or anything to work.
