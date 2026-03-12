@@ -1288,3 +1288,23 @@ But when the dust has settled, do we celebrate this work? The document becomes "
 This might be a problem for you if you enjoy this type of work. Depending on the organization, **recognition follows the narrative**. The issue is that, in most cases, the narrative is focused on what's "out there" (on the screen), and not on what was actually done.
 
 Keep that in mind when you are working. How can you make sure that your contributions are recognized?
+
+## Nobody Gets Promoted For Simplicity
+
+> [Based on this blog post](https://terriblesoftware.org/2026/03/03/nobody-gets-promoted-for-simplicity/).
+
+While I have not been working on software for that long yet, there is one thing that struck me from the very beginning: **creating simple things that meet all requirements is _hard_**.
+
+Code is infinitely malleable. You can achieve the same end result with multiple different implementations. Usually, we deem the _simpler_ implementation to be "better", but we often, due to how hard it is to actually create such a solution, we end up with a quite complex one.
+
+Now consider the corporate culture and the "politics" within any organization. People like "shiny" new things. How to make things more "shiny"? Well, if something is more "robust" and complex, it definitely meets this criteria.
+
+Engineers producing the "shiny" things often get promoted first. You see lot's of emojis under their "status update for <ultimate over-engineered solution>". Such posts "sell". They are visible.
+
+Contrast this with someone who spends most of the time it would take to implement a more "robust" solution thinking how to actually make it simpler. In the end, there is not much to talk about, because they implemented the bare minimum, that, hopefully, scales and can be evolved into more sophisticated system when needed.
+
+Of course, this engineer _should_ attempt to "sell" their solution as well. Instead of writing "Did X", they could write "Considered A,B,C. Given the current state of the codebase and the product, decided that B is the simplest solution that meets our goals. Implemented B in <timeframe> with zero incidents".
+
+That's a better version, right?
+
+**Remember: the problem is not complexity itself, because some problems require complex solutions, it's the unearned complexity which we create for no apparent reason**.
