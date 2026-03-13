@@ -122,6 +122,8 @@ We do not want this to happen.
 
 ### SRP
 
+> Check out [this blog post](https://christiecosky.com/posts/2026/03/srp-protects-working-memory/) for a really good take on SRP.
+
 - Now that we understand what _responsibility_ is, we can talk about _Single Responsibility Principle_.
 
 > The module should have **only one** reason to change.
