@@ -1308,3 +1308,25 @@ Of course, this engineer _should_ attempt to "sell" their solution as well. Inst
 That's a better version, right?
 
 **Remember: the problem is not complexity itself, because some problems require complex solutions, it's the unearned complexity which we create for no apparent reason**.
+
+## Comprehension Debt caused by AI usage
+
+> Based on [this blog post](https://addyosmani.com/blog/comprehension-debt/)
+
+We can now write code very quickly. I'm not going to debate the _quality_ of that code, as I believe it still has a ways to go, even with very strict code review discipline (I sometimes find myself having to correct the LLM multiple times, despite having _layers_ of "quality gates").
+
+What we should discuss is the fact that once this code lands in production, you (and your colleagues) are far less likely to remember what the code does in the future.
+
+**This is the so-called _comprehension debt_ – the gap between the amount of code that exists in the codebase and how much of it is genuinely understood by engineers.**
+
+I learn best by typing. I have to repeat things over and over again to finally learn them (that's why I'm writing this now – to help myself remember this important concept!). I bet there are more people like me. So what happens if you weren't the one who wrote the code?
+
+Well, you have a problem. You didn't write the code. You reviewed it, of course, but for some reason, I feel less agency when reviewing LLM-generated code. Perhaps I instinctively value it less, since it doesn't carry the same "effort" as it would if it were written by a person.
+
+And you might have a big problem on your hands. It's a sneaky one, because **the _comprehension debt_ does not rear its head until something is really broken**. Your team might be shipping features without slowing down, everyone is happy, and the codebase is well maintained. But one day, eventually, something will break. Something will fail and cause an outage. Who will have enough context to really understand what is going on?
+
+If your answer is, "Well, the LLM, of course!", I will need to push back. Do you _really_ think your LLM has all the tools that would allow it to accurately debug the issue? And even if it DOES have all those tools, does it know that you had to do X because of product Y in 2010? (Pick any other date; it's just an example.)
+
+**The name of the game is not just writing good code – there is always a need for that. Now, you also have to make sure you actually, deeply, understand it**. Verification (not only tests, but perhaps even manual verification) is critical.
+
+I suppose using well-established software patterns could help here as well. If you are familiar with those, you can instruct the LLM to implement the _adapter_ here and _strategy_ there. Perhaps leaning more on mental models, instead of sheer "understanding," is the answer here?
