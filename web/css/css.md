@@ -2317,3 +2317,49 @@ The following code will display the `popover` at the bottom of the viewport (cen
   </body>
 </html>
 ```
+
+## Scroll-state queries
+
+> Read more on MDN [here](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Conditional_rules/Container_scroll-state_queries)
+
+This is one awesome addition to CSS. **With `scroll-state queries` you can detect if the element is scrollable, or if the user already scrolled to the top/bottom**.
+
+You used to have to use JS for this (most likely an intersection observer). Now it's not needed!
+
+For example, to check if the element is already scrolled to the bottom
+
+```css
+.wrapper {
+  width: 200px;
+  height: 500px;
+
+  border: 1px solid red;
+
+  position: relative;
+  overflow: auto;
+
+  container-type: scroll-state;
+  container-name: scroll-container;
+
+  > .back-to-top {
+    position: sticky;
+    display: block;
+
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    z-index: 1;
+
+    width: 20px;
+    height: 20px;
+
+    background: black;
+
+    /* There is no more content to scroll */
+    @container scroll-container not scroll-state(scrollable: block-end) {
+      background: red;
+    }
+  }
+}
+```
+
+If you inverse the condition, you can create so-called "scroll shadows" that indicate that there is more content below.
