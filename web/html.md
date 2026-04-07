@@ -76,7 +76,7 @@ Here is an example of the `content-visibility` in action.
       section {
         content-visibility: auto;
         /* This will cause the scrollbar to "jump" when you scroll down further enough */
-        /* It's because the 1000px is not really the accurage guess of the size of the `section` */
+        /* It's because the 1000px is not really the accurate guess of the size of the `section` */
         contain-intrinsic-size: 1000px;
       }
     </style>
@@ -191,6 +191,47 @@ After adding virtualization to your website, you might notice, that the "search"
 - Apart from the regular selectors, you get access to the `:host` and `:host-context` pseudo-classes.
 
   - These only exist in the context of the Shadow DOM.
+
+## The `contain` property
+
+> [Read the documentation here](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain)
+
+Let’s say you want the size of a given element to be computed by its parent, and not by its children.
+
+For example, imagine a "fifty-fifty" layout where one column contains some text, and the other is scrollable with more text.
+
+How do you make the other, scrollable, column the same size as the first column without setting an explicit height on the first column?
+
+Usually, that would be nearly impossible to do—by default, the size of the element is determined by its children!
+
+**Enter `contain: size`. It tells the browser to ignore the element’s children when sizing the element.**
+
+```css
+.fifty-fifty {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-auto-rows: 1fr;
+}
+
+.scroll-container {
+  overflow-y: auto;
+  /* This ensures the `.scroll-container` has the same height as the first column in the layout */
+  contain: size;
+}
+```
+
+```html
+<article class="fifty-fifty">
+  <section>
+    <!-- some content -->
+  </section>
+  <section class="scroll-container">
+    <!-- some longer content -->
+  </section>
+</article>
+```
+
+Try doing that without `contain: size`. Good luck!
 
 ## The `time` and `dateTime`
 
@@ -590,8 +631,8 @@ When you add _anchor positioning_, you basically have a full implementation of a
     </style>
   </head>
   <body>
-    <a href = "#" id = "popover-anchor" interestfor="popover">Hover over me</a>
-    <p id = "popover" popover>I'm a popover</p>
+    <a href="#" id="popover-anchor" interestfor="popover">Hover over me</a>
+    <p id="popover" popover>I'm a popover</p>
   </body>
   <script></script>
 </html>
