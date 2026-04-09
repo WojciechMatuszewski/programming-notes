@@ -474,3 +474,21 @@ NER stands for **N**amed **E**ntity **R**ecognition.
 Those are purse-built models to sanitize the input data and ensure you do not leak any PII into your system. Think a filter that runs before you log something.
 
 Given the following text: "John Smith from Acme Corp called on 555-1234", the filter might output "[PERSON] from [ORGANIZATION] called on [PHONE]"
+
+## Harness Engineering
+
+I think [this article](https://martinfowler.com/articles/harness-engineering.html) explains the term well.
+
+We have the _model_ and everything around that model: the tools, the glue code, and the guardrails. Everything else is the _harness_.
+
+In some cases, you might have multiple layers of the _harness_. In the case of Claude Code, there is the _harness_ that Anthropic built, and the _harness_ that you created (via hooks or skills).
+
+Ultimately, the role of the _harness_ is to make the model more capable. If your _harness_ is of good quality, you might expect outputs of relatively good quality. Of course, it's not a silver bullet—_behavioral_ correctness is much harder to enforce than _semantic_ correctness.
+
+Interestingly, [this article](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) mentions that:
+
+1. Coding agents like Claude Code are post-trained with "models and harnesses in the loop." This means that the model is trained to _use_ the harness it has access to.
+
+2. [Switching the harness (or improving upon it)](https://x.com/Vtrivedy10/status/2023805578561060992?s=20&ref=blog.langchain.com) can drastically increase the benchmark score for a coding agent.
+
+Since there are only a handful of companies that really matter in the "AI model market," harness engineering gives everyone a lot of leverage!
