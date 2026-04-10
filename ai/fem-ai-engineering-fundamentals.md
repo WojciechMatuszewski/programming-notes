@@ -18,7 +18,7 @@ A couple of things related to Agents on Cloudflare:
 
 1. Integrated with _Durable Objects_, so the state is handled for you.
 
-2. Supports WebSocket and SEE. We opted to use WebSockets instead of SSE. Reasons for doing that might include:
+2. Supports WebSocket and SSE. We opted to use WebSockets instead of SSE. Reasons for doing that might include:
 
    - The CDN proxy might disconnect HTTP connections after X seconds. That does not apply to WebSockets.
 
