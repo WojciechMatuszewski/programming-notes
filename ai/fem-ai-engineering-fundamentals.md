@@ -40,7 +40,6 @@ A couple of things related to Agents on Cloudflare:
 
   - Also, consider people you are working with. If you build something really complex, what are the chances they will onboard quickly to the project at the start? **IMO the complexity should raise gradually**.
 
-TODO: Feelings about Cloudflare. Start part 3
 TODO: different techniques Scott mentioned (prompt engineering guide website)
 
 ## The Chat Experience

@@ -88,9 +88,45 @@ Usually, the option number two is better. We are trading some accuracy, but gain
 
 ## Chain of Thought (COT)
 
-Nowadays, most of the LLMs are so-called "reasoning models". People who made them, baked the COT technique into them, to ensure the output is as good as possible. COT is nothing but asking the LLM to "think step-by-step".
+> [Read more about it here](https://www.promptingguide.ai/techniques/cot)
 
-Nowadays, if you are using the "reasoning" or "thinking" model, adding "think step-by-step" into your prompts might not be necessary. However, if you are using "regular" model, using COT will most likely make the output of the LLM more robust and accurate.
+### The technique
+
+From what I understand, this boils down to making the LLM "think step by step". Of course, you can use a _few-shot_ approach here as well, where you provide the model with examples of intermediate steps to any other problem.
+
+Instead of spitting out the answer, the model is encouraged to create a chain of intermediate steps (thoughts) that _chain_ together to a given answer.
+
+### Table stakes
+
+Nowadays, we have so-called "reasoning models" available to us. Those models use this technique internally.
+
+If you are using a "standard" model, you still might want to encourage the model to think "step by step".
+
+## Tree of Thoughts (ToT)
+
+> [Read more about it here](https://www.promptingguide.ai/techniques/tot.en)
+
+From what I understand, this technique:
+
+1. Asks the model to produce multiple "thoughts" in a given reasoning step.
+
+2. Asks the model to critique the thoughts it generated.
+
+3. Promotes only the "best" thought that it generated.
+
+4. Backtracks to the "least bad" thought when none of the thoughts the model generated passed the "critique phase".
+
+You can think of this as a tree. The input is the "root" node, and the sampled thoughts are the leaves.
+
+Then, each leaf is put under scrutiny. You move forward with the least bad option, asking the model to generate another set of thoughts (again, leaves) given the first one.
+
+Since this is a tree, you can go back and "visit" the thoughts the model produced so far.
+
+### COT vs ToT
+
+Looking at both techniques, COT follows a "single path" for the solution. Think of it as using only a single branch in a tree structure to come up with the answer.
+
+ToT is more sophisticated. We consider multiple paths and evaluate at each "level" of the tree.
 
 ## Delimiters / XML Tags
 
