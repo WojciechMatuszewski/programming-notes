@@ -40,8 +40,14 @@ A couple of things related to Agents on Cloudflare:
 
   - Also, consider people you are working with. If you build something really complex, what are the chances they will onboard quickly to the project at the start? **IMO the complexity should raise gradually**.
 
-TODO: different techniques Scott mentioned (prompt engineering guide website)
-
 ## The Chat Experience
 
-Start part 3
+- OpenAI API response shapes seems to be a standard. Most providers have OpenAI-compatible API.
+
+- On the frontend, the `useAIChat` and similar hooks are doing a lot of work for you, but you still have to handle various states of tools and `parts`.
+
+  - If you are not careful, you will litter your FE code with multiple ternaries that are hard to read.
+
+## The Eval Discipline
+
+Start part 4
