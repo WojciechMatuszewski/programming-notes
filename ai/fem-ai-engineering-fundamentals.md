@@ -50,4 +50,26 @@ A couple of things related to Agents on Cloudflare:
 
 ## The Eval Discipline
 
-Start part 4
+- The **pass@k** is the **probability that the system produces a correct answer in at least one of k attempts**.
+
+  - Used in "best of k" workflows. Basically you run "the thing" multiple times and see how many of those runs were "successful".
+
+- The **pass^k** is the **probability that all k attempts are correct**.
+
+  - Consider having 20 test cases. How many times in the row can you run all those test cases and have **all of them** succeed?
+
+- In this lesson, we used the 1-5 judging scale. **I'm not a fan**, but at least we have a _scoring rubric_ we can fall back onto.
+
+  - [Read this to learn more about why having Likert scales is not helpful](https://hamel.dev/blog/posts/evals-faq/#q-why-do-you-recommend-binary-passfail-evaluations-instead-of-1-5-ratings-likert-scales).
+
+- **Node.js allows you to programmatically (not via CLI flag) load env vars**.
+
+  - [See this documentation page](https://nodejs.org/api/environment_variables.html#dotenv). You can use the `process.loadEnvFile` or `util.parseEnv` functions!
+
+- Scott recommends using a framework to present evaluation results.
+
+- I'm unsure if jumping to LLM-As-Judge implementation so early is a good idea (will be done in part 5?).
+
+## Automated Scorers
+
+Start Part 5
