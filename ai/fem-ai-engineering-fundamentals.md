@@ -97,3 +97,5 @@ A couple of things related to Agents on Cloudflare:
   - When creating this scorer, **use pre-defined options instead of sliders or similar**. The less choice you give someone, the faster they will be able to grade the output.
 
 ## Context Engineering
+
+Start lesson 6 30:00
