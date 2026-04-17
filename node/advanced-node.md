@@ -60,7 +60,9 @@ Course material from [node university](https://node.university/).
 * the **most important thing to remember** is that **the globals from the CJS wrapper are thing of the past**.
   This means that `__filename` , `__dirname` and others are **gone**
 
-- as an **alternative to CJS wrapper globals** consider using **`import.meta.XX`**
+- as an **alternative to CJS wrapper globals** consider using **`import.meta.XX`**.
+
+  For example `import.meta.dirname`.
 
 ### ESM and CJS compatibility
 

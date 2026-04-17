@@ -62,6 +62,8 @@ A couple of things related to Agents on Cloudflare:
 
   - [Read this to learn more about why having Likert scales is not helpful](https://hamel.dev/blog/posts/evals-faq/#q-why-do-you-recommend-binary-passfail-evaluations-instead-of-1-5-ratings-likert-scales).
 
+    - One thing to note: **using _binary_ scorers make it harder to see "the agent is improving even if it's not perfect yet" signal**.
+
 - **Node.js allows you to programmatically (not via CLI flag) load env vars**.
 
   - [See this documentation page](https://nodejs.org/api/environment_variables.html#dotenv). You can use the `process.loadEnvFile` or `util.parseEnv` functions!
@@ -72,4 +74,26 @@ A couple of things related to Agents on Cloudflare:
 
 ## Automated Scorers
 
-Start Part 5
+- In this lesson, we changed our `golden.json` data structure.
+
+  - To properly accommodate for complex flows, we have to "seed" the conversation with `user` and `assistant` message types.
+
+- Given that we want to re-use the agent we have in Cloudflare worker and the eval suite, I wonder why we did not use the [`Agents` abstraction](https://ai-sdk.dev/docs/agents/overview).
+
+- We first started with **code-base scorers**. That's quite good. I like that Scott kept is as simple as possible.
+
+- A couple of scorers we created:
+
+  - The _schema scorer_ which checks if the agent produced a valid Excalidraw output. TBH, I'm unsure if this scorer is needed at all. We could offload that validation to the tool `outputSchema`.
+
+    - But, if we did that, would we know that it failed? Would we track those failures over time?
+
+- "The goal of the scorer is to surface what we could improve later on". I like this analogy, but I also believe scorers are good for making sure we do not regress in functionality.
+
+- Adding "human review" scorers in Braintrust is quite powerful.
+
+  - It allows you to include SME's (subject matter experts) into the process. **When SME's add comments, they are included in the dataset**. This allows you to create a very nice feedback loop.
+
+  - When creating this scorer, **use pre-defined options instead of sliders or similar**. The less choice you give someone, the faster they will be able to grade the output.
+
+## Context Engineering
