@@ -98,4 +98,60 @@ A couple of things related to Agents on Cloudflare:
 
 ## Context Engineering
 
-Start lesson 6 30:00
+- Do not try to make the agent good at everything. **Make sure it is really good in a given niche**.
+
+- Scott decided to include a brief mention what each tool does in the system prompt. I'm a bit conflicted here.
+
+  - On the one hand, it makes sense. We want the LLM to be fully aware of the tools.
+
+  - On the other, this approach does not scale well. Do you put the same description for a given tool here as in the tool definition? Do we do something different? What about drift in the descriptions? Also, where there are multiple tools, especially those discovered "lazily" (via progressive disclosure), how would that work?
+
+- In the new system prompt, we introduced a concept of a "negative prompts". For example
+
+  ```
+  DO NOT place two elements at the same coordinates
+  ```
+
+  **You can use "negative prompts" to steer the LLM away from it's "general" knowledge**.
+
+  Consider other diagraming tools (relevant to what we are building). Most of them put text _inside_ the shapes by default. That is not the case for Excalidraw API.
+
+  We can use "negative prompts" to help the model "notice" this difference.
+
+  **Scott warns that we should not overdo it**. If you put too many "negative prompts" the LLM will start to ignore it.
+
+  **"Negative prompts" work really well for common failure cases in your niche**.
+
+- In our application, to improve agent quality, we decided to embed the _canvas state_ into the system prompt. **We did that by transforming `json` data into [`TOON`](https://toonformat.dev/guide/getting-started.html) format**.
+
+  - I like how Scott put it: `json` is for machine-to-machine communication, `yaml` is for configuration and `TOON` (or any other similar format) is for LLM data injection.
+
+  - **We want to transform `json` into any other more token-efficient format** that is also somewhat readable.
+
+- There are at least two ways of sending data back to the agent:
+
+  - via the `body` property you can define on the `useAIChatAgent` hook options.
+
+    - You only get the latest snapshot.
+
+    - Clear separation between additional data and LLM messages.
+
+    - Send with every request. Might not work well for "situational data".
+
+  - via a custom `data-x` message part. This requires wrapping the `sendMessage` function or (I have not tested it), defining a custom `transport`.
+
+    - By default, does not propagate to the parts LLM sees (the `data-x` prefix is dropped by AI-SDK before it reaches the LLM).
+
+    - Good for "situational data". Think sending a piece of additional data upon a certain user interaction.
+
+    - You can transform this part to text so LLM sees this.
+
+    - Gives you the ability to see a "history" of data. Each message captures a snapshot of how this data looked when we send that message.
+
+  **Regardless of the approach you choose** consider how sending data from FE to BE works in the context of _tool continuation_.
+
+  By _tool continuation_, I mean LLM stopping so you can execute a client tool (perhaps HITL workflow). If, before sending "continue" message to the LLM, the canvas state changed, the LLM might "see" a stale state.
+
+  This boils down to how you send that "continue" message. In our case, we would use `addToolOutput` which does not trigger the callback you set in the `body`.
+
+Start part 7
