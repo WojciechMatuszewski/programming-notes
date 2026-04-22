@@ -154,4 +154,18 @@ A couple of things related to Agents on Cloudflare:
 
   This boils down to how you send that "continue" message. In our case, we would use `addToolOutput` which does not trigger the callback you set in the `body`.
 
-Start part 7
+  We can fix this issue by adding explicit `queryCanvas` tool which would allow the LLM to "see" the canvas state whenever it wants to.
+
+## Advanced Tool Use
+
+- When providing tools to the LLM, see if the provider you are using supports _strict tool calling_.
+
+  - [Documentation for Anthropic](https://platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use)
+
+  - [Documentation for OpenAI](https://developers.openai.com/api/docs/guides/function-calling)
+
+  From what I understand, setting `strict: true` will ensure that the LLM can't produce invalid input schema, which might happen from time to time when you do not have this property (OpenAI describes this mode as "best effort").
+
+  **When using the `strict: true` on the tools, make sure your schema uses `nullable` as opposed to `optional`**. This should produce a schema with the `nullable` properties listed in `required` array, which is not the case for `optional`.
+
+Start part 8
