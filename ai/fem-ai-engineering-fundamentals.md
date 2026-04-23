@@ -168,4 +168,14 @@ A couple of things related to Agents on Cloudflare:
 
   **When using the `strict: true` on the tools, make sure your schema uses `nullable` as opposed to `optional`**. This should produce a schema with the `nullable` properties listed in `required` array, which is not the case for `optional`.
 
-Start part 8
+- We've split our two tools into multiple ones. Instead of `generateDiagram` and `modifyDiagram` we now have `addElements`, `removeElements`, `updateElements`, `searchWeb` and `queryCanvas`.
+
+  - There is a fine line between adding too few and too many tools. If there are too many tools, you risk "overloading" the agent. They might have issues with picking the right one. If you have too few tools, you constrain the functionality of the agent OR risk creating "uber tools" that do too many things at the same time making it hard for the agent to use that tool in the right way.
+
+    - IMO, at some point, it is worth splitting into multiple agents that are only concerned about the subset of tools.
+
+- When working on the `searchWeb` tool, one of the participants touched on something that is quite important, but often overlooked: the data we return from tools when tool call fails.
+
+  - In our case, we were returning a raw `response.text` when network request fails. **One should be mindful what we return from tools, because LLM will "see" that data**.
+
+Continue lesson 8 55:01
