@@ -196,4 +196,22 @@ A couple of things related to Agents on Cloudflare:
 
   - Ideally we could match the performance of a "big" and expensive model with a smaller, more affordable one.
 
-Start lesson 10 44:00
+- One of our issues was the fact that the way we handle excalidraw operations on the server (so while running evals) was not really a match for the reality we had on production within the browser.
+
+  - Scott acknowledged that this is not ideal. Writing a "simulator" for excalidraw is not something we should be doing.
+
+  - One of the workshop participants asked about evaluating against the output we produce via the _real_ excalidraw API in the browser. This _could_ work but mostly for simple operations. Consider operations that inject multiple elements into a canvas. We have the data from the browser, but if the agent can't reliably call "see canvas state" tool, what's the point?
+
+## RAG
+
+Remember about the basics
+
+1. An _embedding_ is a single vector representing a piece of text in a high-dimensional space.
+
+2. A _vector_ is an ordered collection of numbers. The vector as a whole encodes semantic meaning relative to other vectors.
+
+3. An embedding can hold multiple "semantic meanings", for example topic, sentiment, formality and so on.
+
+4. You can use an _embedding model_ to transform text into an _embedding_. If you have two _embeddings_, you can compare them. By comparing them, you learn how related or unrelated, semantically, they are.
+
+Start part 11 33:02
