@@ -178,4 +178,22 @@ A couple of things related to Agents on Cloudflare:
 
   - In our case, we were returning a raw `response.text` when network request fails. **One should be mindful what we return from tools, because LLM will "see" that data**.
 
-Continue lesson 8 55:01
+- **While making our tools a `client tools` helped us when it comes to development, it made running evaluations much harder**.
+
+  - Our state lives on the client, including the excalidraw state. Our evals are running in Node.js.
+
+    - We have to bridge this gap somehow. One way would be to **mock our tools, but that would mean that we do one thing in production and another for evaluations**. This is not good!
+
+      - In some cases, **doing this, and running evals might hide real issues from you**. We faced a situation where our evals were pretty good, but then, in reality, the LLM was pretty useless at drawing diagrams.
+
+## The Improvement Loop
+
+- The "general" improvement loop. Things that you know will make your agent better regardless of the domain. **When working here, you can do multiple changes as you already know they will improve the system** (until they do not :p).
+
+- The "specific" improvement loop. Things that _might_ make your agent better in your particular niche. **When working here, you need to slow down and make focused changes**.
+
+- A good insight from Scott: **when running evals, try to use the "biggest" model for the first run. This gives you metrics for the "best" case**.
+
+  - Ideally we could match the performance of a "big" and expensive model with a smaller, more affordable one.
+
+Start lesson 10 44:00
