@@ -73,3 +73,17 @@ clients**. As I mentioned before, this might or might not be what you want.
 The **main benefit** is **speed as you do not have to send headers with each request**.
 In addition, you most likely do not need a library to handle all the complexity SSE transport. Unlike WebSockets,
 the setup to make this work is not that involved.
+
+## Mutex
+
+Mutex is a construct that makes sure **only a single "consumer" can access a given piece of state/data/resource (or even a combination of operations)**.
+
+The caller must acquire a so-called "lock". **Only one caller can hold the lock at a given time**. All other callers have to wait for the caller to "free" the lock to act upon the data (again, only one of them will acquire the lock in the end).
+
+## RWLock vs. Mutex
+
+Mutex is quite restrictive in how it works. If one caller acquires the lock, all others have to wait, no matter what operation they want to perform (read or write).
+
+**RWLock allows for concurrent reads as long as the write lock is not acquired by any caller**.
+
+As soon as one caller acquires the _write lock_, all callers have to wait for that lock to be "freed". **This also includes callers who "just" want to read data**.
