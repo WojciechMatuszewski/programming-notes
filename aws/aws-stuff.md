@@ -472,6 +472,30 @@ Having said that, when you do this, you still introduce this "hidden" coupling t
 
 - the benefit here is the _elasticity_ of the storage. Keep in mind that EFS can grow almost infinitely.
 
+#### S3 Files – Deeper S3 integration
+
+> [Launch blog post](https://aws.amazon.com/blogs/aws/launching-s3-files-making-s3-buckets-accessible-as-file-systems/?utm_source=chatgpt.com)
+
+So consider you want to modify lots of small files that reside on S3. Without "S3 Files", you would need to:
+
+1. Downloads all those files.
+
+2. Make the changes.
+
+3. Save the changes to S3.
+
+That's a lot of work. **With "S3 Files" you can skip no.1 and no.2**.
+
+- Files from the bucket will be mounted as part of the AWS Lambda filesystem.
+
+- You can perform regular file-system operation on those files.
+
+- After some time, those changes will be automatically synced to S3.
+
+**As you can see, this does not give you read-after-write consistency across multiple AWS Lambdas, as the underlying "source of truth" across AWS Lambdas is still S3**. But, there is a read-after-write guarantee at the file-system level.
+
+**Another case this feature solves: downloading large file (the same one) across multiple AWS Lambda functions**. Now you can "just" mount it as part of the AWS Lambda filesystem. **No more `/tmp`!**.
+
 #### Layers
 
 - External code that you can pull into your AWS Lambda environment.
