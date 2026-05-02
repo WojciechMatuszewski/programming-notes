@@ -59,7 +59,7 @@ Think of all the multiplayer games or software that enables collaboration!
 that additional exchange of data does not involve sending any request-specific metadata. This means that **the requests
 are pretty fast, faster than sending them through HTTP**.
 
-### Server Side Events
+### Server Side Events (SSE)
 
 This approach **will establish a persistent, uni-directional connection between the server and the client**. The client
 will not be able to send any data to the server.
@@ -87,3 +87,143 @@ Mutex is quite restrictive in how it works. If one caller acquires the lock, all
 **RWLock allows for concurrent reads as long as the write lock is not acquired by any caller**.
 
 As soon as one caller acquires the _write lock_, all callers have to wait for that lock to be "freed". **This also includes callers who "just" want to read data**.
+
+## R.A.D.I.O.S framework
+
+- Requirements
+
+- High-Level Architecture
+
+- Data Model
+
+- Interfaces and API Design
+
+- Optimizations, Observability
+
+- Security and A11Y
+
+**Whatever you are doing, make sure you think about the "sad paths" as well!**
+
+### Requirements
+
+Functional and non-functional
+
+- **Functional** describe what the system **must do**. For example displaying a list of items.
+
+- **Non-functional** describe how well the system must fulfil functional requirements or under what constraints. For example, the list should appear under 200ms for the user.
+
+### High-Level Architecture and Data Model
+
+Here is where you can lay-out components and how they communicate with each other.
+
+Is component A communicating with component B? Or perhaps they should communicate via some kind of "shared" bridge?
+
+Things like that.
+
+### Data Model
+
+This is where you design _how_ the data would look like.
+
+Is the data normalized? Perhaps you use a tree-like structure?
+
+### Interfaces and API Design
+
+Frontend applications communicate with backends. What kind of API should we use?
+
+Should we use GraphQL? Why?
+
+Should we use REST? Why?
+
+How should we structure endpoints?
+
+Perhaps a BFF pattern?
+
+Long-pooling? WebSockets? SSEs?
+
+For example, we could choose a Polling / Long Polling approach.
+
+- Easy to set-up. Most changes on the frontend, you only need an endpoint on the backend.
+
+- Might be wasteful since the data might not change when you request it.
+
+- It will definitely take longer for changes to appear in the UI (depending on the polling interval).
+
+WebSockets are hard to scale properly, but allow for bi-directional communication with FE. Do you need it? Perhaps SSE would be easier, since it's "less stateful" and uses HTTP instead of TCP?
+
+SSE also require state since you need to have a "handle" for the connected client, but since you can't receive messages from the client, the code is usually less involved.
+
+### Performance
+
+There is a lot to it. You have a lot of knobs to turn.
+
+- Using `Accept-Encoding` headers from FE. This will help if the server supports compression and responds with compressed data. If that's the case, the browser will automatically de-compress responses for you!
+
+- CND's. Some CDNs compress the data on the edge, so you do not even have to worry about that on the server side. Having said that, you will most likely incur a storage cost here.
+
+- Batching requests.
+
+- Client-side cache.
+
+- Using HTTP2 for multiplexing or different protocols like WebSockets.
+
+- Bundling.
+
+- Lazy loading resources.
+
+- Virtualization.
+
+- Deferring non-critical resources.
+
+- Talking about metrics like _time-to-interactive_ or _first-contentful-paint_.
+
+- Tree shaking.
+
+- Rendering techniques, like SSR, Server Components.
+
+- Using different formats for images (usually taken care of by the CDN).
+
+Things like that...
+
+### Observability
+
+You need to know if you application is working or not.
+
+- Error Monitoring tools like Sentry or Datadog.
+
+- User tracking tools.
+
+- Performance Monitoring tools like Sentry or Datadog.
+
+- Tools that allow you to see application logs.
+
+Things like that...
+
+### Security
+
+- Proper CORS (Cross-Origin Resource Sharing) headers.
+
+  - CORS is all about telling the browser which cross-origin resources it can "expose" to the client JavaScript.
+
+    - **Backend responds with CORS headers, the browser enforces them**.
+
+- Rate limiting in place.
+
+- **Content-Security-Policy** headers which **tell the browser which sources of content are allowed and which kind of actions are permitted**.
+
+  - For example, you can allow loading scripts only from certain domains.
+
+    **This is a good protective measure against cross-side-scripting (XSS)**.
+
+- DDOS prevention. Usually handled by Cloudflare or other vendors.
+
+### A11Y
+
+Browser renders HTML, so the HTML must be semantically sound.
+
+It's hard to read websites that use tiny fonts, so those muse be adjusted accordingly.
+
+It is much faster to use a website using keyboard, so we need to make sure that's possible.
+
+Some users might be color blind, so using specific contrasts between colors might be required.
+
+Things like that...
