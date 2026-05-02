@@ -58,4 +58,24 @@ The article suggest following mitigations:
 
 This is quite critical to nail down right. I would argue that you need a very extensive test coverage here.
 
-Continue on "Context Window Management".
+### Context Window Management
+
+Here, the article touches on various ways you can "trim" the context, but still provide enough information to the LLM
+
+- The **simplest** way is to **remove old messages in the conversation**. The "message trimming technique" is quite basic, but if the old messages are no longer relevant, there is no point in keeping them in the context window. The question, of course, becomes _how_ do you decide whether the message is relevant or not.
+
+- You can **summarize existing messages**. The "compaction technique" **has a latency cost since you have to call another LLM to do the summarization**. Also, keep in mind that compacting messages will always be a lossy process – some nuance might not be preserved.
+
+- Another solution is **RAG**, or the "selective reference loading" as the article calls it. Basically retrieve only the relevant parts of the thing LLM is asking for from the _reference memory_.
+
+- Finally, and I believe this is often overlooked, **you can trim-down the tool call results**. Depending on the situation, this might be quite tricky – how do you ensure only relevant data is returned to the LLM or quite easy – does the LLM need to know all the metadata that's pulled from the database?
+
+---
+
+Such a great article. Even though there is clearly an incentive on this blog to route users to their "taskade" products, they mostly avoided it.
+
+For me, the most critical takeaways are:
+
+1. **Context engineering is, most likely, more important than the model itself**. The article claims that a "powerful" model with lackluster context will perform worse than a "less powerful" model with very good context.
+
+2. **Scoping and guardrails are not optional**. I'm a huge believer in the fact that LLMs will get better and better. This belief makes me put a lot of faith into the LLMs and skip some of the "scoping" the article mentioned – only allowing the LLM to do specific things, instead of making it more of a "general" agent. I still believe that, in the future, LLMs will be able to handle "general" workflows, but as it is today, we need to make sure we build one agent that does one thing and does it really well.
