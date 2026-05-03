@@ -45,3 +45,13 @@ The Python script executes in an environment managed by Anthropic. This means th
 That tool that creates that Python script is managed by Anthropic. If you want, you can omit it, and implement your own "execute code" tool.
 
 You can read more about alternative runtimes [here](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling#alternative-implementations).
+
+## Using `/rewind`
+
+While reading tips [from this repository](https://github.com/shanraisshan/claude-code-best-practice/tree/main), I stumbled upon [this guide](https://github.com/shanraisshan/claude-code-best-practice/blob/main/tips/claude-thariq-tips-16-apr-26.md) that mentioned the usage of `/rewind`.
+
+Multiple times I've been in a situation where Claude failed to perform a task, and I had to re-prompt it to do something differently. This means that the context now contains "data" from that failed attempt. **Depending on the situation, this may or may not be what you want**.
+
+The "failed attempt" contains nuance that Claude could use when retrying. On the other hand, the "failed attempt" might pollute context.
+
+**If the failed attempt does not contain useful information, consider using `/rewind` to go back to the point before that attempt and re-prompt from there**. The later messages get dropped and you can start fresh with all the knowledge you gained from the "failed attempt"
