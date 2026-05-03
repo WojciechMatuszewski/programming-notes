@@ -106,11 +106,13 @@ As soon as one caller acquires the _write lock_, all callers have to wait for th
 
 ### Requirements
 
-Functional and non-functional
+Functional and non-functional.
 
 - **Functional** describe what the system **must do**. For example displaying a list of items.
 
 - **Non-functional** describe how well the system must fulfil functional requirements or under what constraints. For example, the list should appear under 200ms for the user.
+
+**This is the most critical phase. ASK QUESTIONS. DO NOT ASSUME. SCOPE THE PROBLEM BEFORE WORKING ON REQUIREMENTS**.
 
 ### High-Level Architecture and Data Model
 
