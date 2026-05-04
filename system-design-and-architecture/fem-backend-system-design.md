@@ -62,4 +62,23 @@ Consider
 
 ---
 
-Start https://frontendmasters.com/courses/backend-system-design/system-quality/
+- Non-functional requirements should target _system quality_. Think like scalability, security, performance and things like that.
+
+  - **How many users do we expect?**
+  - **How consistency does the system need to be?**
+  - **What metrics are important?**
+  - **What data needs to be protected?**
+
+## High-Level Design
+
+When you have your functional / non-functional requirements in place, you can **start modeling application entities. FOCUS ON THE MOST IMPORTANT ENTITY FIRST**. This _most important entity_ should already be known based on the requirements.
+
+When designing the API, you have to make a decision about the _protocol_ you are going to use:
+
+- HTTP (most likely 2+).
+- gRCP for service-to-service communication.
+- WebSockets for bi-directional communication.
+- Server-Sent Events for uni-directional communication.
+- GraphQL for precise data retrieval.
+
+Start https://frontendmasters.com/courses/backend-system-design/vertical-vs-horizontal-scaling/
