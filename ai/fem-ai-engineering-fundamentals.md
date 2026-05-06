@@ -206,12 +206,20 @@ A couple of things related to Agents on Cloudflare:
 
 Remember about the basics
 
-1. An _embedding_ is a single vector representing a piece of text in a high-dimensional space.
+1. A _vector_ is an ordered collection of numbers (a point in some n-dimensional space). It's a mathematical concept, unrelated to LLMs.
 
-2. A _vector_ is an ordered collection of numbers. The vector as a whole encodes semantic meaning relative to other vectors.
+2. An _embedding_ is a **single** vector produced by the model where the position in that space encodes semantic meaning(s).
 
 3. An embedding can hold multiple "semantic meanings", for example topic, sentiment, formality and so on.
 
 4. You can use an _embedding model_ to transform text into an _embedding_. If you have two _embeddings_, you can compare them. By comparing them, you learn how related or unrelated, semantically, they are.
 
-Start part 11 33:02
+- When configuring Upstash Vector database, I've came across two, foreign to me, concepts all related to the indexes on the database
+
+  - **Dense index**: Used for holding _dense vectors_. _Dense vectors_ are the vectors you are familiar with: a collection of non-zero numbers. **_Dense vectors_ are great for encoding approximate semantic meaning**.
+
+  - **Sparse index**: Used for holding _sparse vectors_. _Sparse vectors_ are the **vectors where most of the numbers within the vector are zeros**. **_Sparse vectors_ are really good at exact matching of tokens/words**.
+
+- Upstash can both store your embeddings and also create embeddings for you!
+
+Start "Rag with Upstash" -4:13
