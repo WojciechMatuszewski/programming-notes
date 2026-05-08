@@ -222,4 +222,20 @@ Remember about the basics
 
 - Upstash can both store your embeddings and also create embeddings for you!
 
-Start "Rag with Upstash" -4:13
+- When embedding data, you first have to **think about how to chunk the data**.
+
+  - Consider why we are embedding the data in the first place: so we can search against it. If we do not chunk the data, upon matching a search query, we will pull the whole document, which might contain information which are completely unrelated to the query.
+
+    - **How to chunk is an engineering decision that will greatly impact the performance of RAG**. If your chunks are too "sparse", search accuracy will suffer. If they are too "dense", you will be pulling to much data.
+
+    - Scott mentions that **one might consider writing a RAG-specific service since things can get pretty complicated**.
+
+  - With RAG, you might even want to have a separate LLM _refine_ the original provided query.
+
+## Summary
+
+- **Your goal is to see deterministic patterns emerge and turn those into deterministic workflows**.
+
+  - When you do, your eval scores will sky-rocket. **Always attempt to turn non-deterministic to deterministic when possible**.
+
+- The data flywheel effect is real. When you have a real traces, you can use them to create a fast feedback loop of your system.
