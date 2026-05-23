@@ -55,3 +55,11 @@ Multiple times I've been in a situation where Claude failed to perform a task, a
 The "failed attempt" contains nuance that Claude could use when retrying. On the other hand, the "failed attempt" might pollute context.
 
 **If the failed attempt does not contain useful information, consider using `/rewind` to go back to the point before that attempt and re-prompt from there**. The later messages get dropped and you can start fresh with all the knowledge you gained from the "failed attempt"
+
+## Asking for QA plan
+
+> [Based on this video](https://www.aihero.dev/real-world-feature-build-with-claude-code)
+
+Again, something that you might not think about, but you can **ask Claude to generate a QA plan for you for the code that it implemented**.
+
+This might be useful to ensure you understand what the code does. If your mental model diverges from what Claude proposed, this indicates that you do not grasp how the system works.
