@@ -20,7 +20,7 @@
 
     - **The more FLOPs the bigger the need for hardware and "power" to train and run the model**.
 
-- **The "power-law"** you might hear about tells us that **the model capabilities grow linearly with the amount of compute we throw at the model durning training**.
+- **The "power-law"** you might hear about tells us that **the model capabilities grow linearly with the amount of compute we throw at the model during training**.
 
   - This is what gives people hope that we can effectively "buy" our way into very advanced LLMs with AGI-like capabilities.
 

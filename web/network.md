@@ -172,6 +172,25 @@ The workflow you presumably look as follows
 3. You purge existing entries in CDN which correspond to the pages you have changed
 4. You deploy your changes
 
+### What about query parameters?
+
+> [Read more about this here](https://csswizardry.com/2026/05/better-browser-caching-with-no-vary-search/?utm_source=stefanjudis&utm_medium=email&utm_campaign=u1f9e2-web-weekly-191-html-in-canvas-and-a-new)
+
+Let us say you have a query parameter that is purely related to the page metadata, like the `utm_source`.
+
+```txt
+?utm_source=google
+?utm_source=chatgpt
+```
+
+In both cases, **you most likely render the same page content, thus you would benefit from browser cache**.
+
+The problem is that, by default, query parameters influence the cache behavior. In our example, different values for the query parameter means different cache entry.
+
+**You can "fix" that by using `No-Vary-Search` header. Sadly, at the time of writing, it's only available on Chrome**.
+
+There is more! Consider how the _order_ of the query parameters influence the cache. Overall, the `No-Vary-Search` allows you to control all those variables so you can benefit from caching even with multiple query parameters!
+
 ### `ETag` header
 
 `ETag` header is there as a **mechanism to tell the browser that the content is still the same**. I think this image tells the whole story:

@@ -2363,3 +2363,28 @@ For example, to check if the element is already scrolled to the bottom
 ```
 
 If you inverse the condition, you can create so-called "scroll shadows" that indicate that there is more content below.
+
+## The `env` function and "safe areas"
+
+> [Read more here](https://polypane.app/blog/using-safe-area-inset-to-build-mobile-safe-layouts/).
+
+Have you ever landed on a page where elements seem to be hidden below browser UI elements? Oftentimes it's the bottom part of the Safari browser that covers some element.
+
+**Some browsers will, by default, limit the available viewport your page has to ensure this never happens, but then you might have an awkward empty space between some elements and edge of the screen**.
+
+Two things you should consider doing.
+
+1. Making sure your page can span the whole viewport. This is done by adding the `viewport` meta attribute.
+
+```html
+<meta name="viewport" content="width=device-width, viewport-fit=cover" />
+```
+
+2. Using the `env` CSS function to create appropriate padding.
+
+```css
+padding-inline-start: env(safe-area-inset-left):
+padding-inline-end: env(safe-area-inset-right);
+```
+
+**Note**: I could not confirm the existence of `safe-area-inset-start` and `safe-area-inset-end` values. The same for `x-inset-bottom` and `x-inset-top`.
