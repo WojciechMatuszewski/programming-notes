@@ -63,3 +63,23 @@ The "failed attempt" contains nuance that Claude could use when retrying. On the
 Again, something that you might not think about, but you can **ask Claude to generate a QA plan for you for the code that it implemented**.
 
 This might be useful to ensure you understand what the code does. If your mental model diverges from what Claude proposed, this indicates that you do not grasp how the system works.
+
+## Using `.html` as opposed to `.md` files
+
+> [Based on this video](https://www.lennysnewsletter.com/p/how-i-ai-html-is-the-new-markdown)
+
+I see this trend where some people are pushing for using `.html` files for plans and other "static" artifacts that LLMs can output.
+
+The arguments are, in my opinion, sound:
+
+1. Markdown is hard to read. It lacks "visual flair" (though perhaps the _need_ for "visual flair" indicates an issue with the reader rather than the format).
+
+2. HTML allows you to create interactive elements, enabling LLMs to express themselves more effectively.
+
+However, there are also some counter-arguments:
+
+1. Generating HTML requires significantly more tokens than writing a `.md` file.
+
+2. HTML diffs are usually harder to read than markdown diffs.
+
+3. This technique was first mentioned by Anthropic engineers, who may or may not have an agenda of increasing token usage.
