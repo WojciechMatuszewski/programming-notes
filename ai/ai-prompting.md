@@ -71,7 +71,7 @@ For example, suppose you add a `cache_control` checkpoint at the level of the sy
 
 **Since you can define multiple `cache_control` checkpoints**, suppose you now also add one to the last `tool`. Now, if the `system` changes, Anthropic is able to _reuse_ the cache for `tools`.
 
-### "Lessons from building Claude Code – Prompt Caching
+### "Lessons from building Claude Code" – Prompt Caching
 
 > Making notes based on [this blog post](https://claude.com/blog/lessons-from-building-claude-code-prompt-caching-is-everything)
 
@@ -94,6 +94,18 @@ For example, suppose you add a `cache_control` checkpoint at the level of the sy
 - After reading this blog post, now I understand why they have a "compaction buffer" reserved in the context.
 
   - This buffer allows them to add _yet another_ message to the context stating that the model should summarize the conversation and the summary itself. All the prior messages and tool calls are send with that message. **This means that we can re-use prompt cache**.
+
+### "Getting More Out of the Claude Platform" – caching & context
+
+> [Based on this video](https://www.youtube.com/watch?v=7oO37GRhwGk)
+
+For optimizing context, you can do the following (list is not exhaustive):
+
+1. **Implementing a "tool search" functionality (think the filesystem-like structure)**. This allows any LLM to naturally discover the tools rather than loading all of their definitions up-front. [See the official `tool-search` tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool).
+
+2. **Implementing PTC (programmatic tool calling)**. This is effective in skipping large tool results and allows Claude to include a prompt-tailored result to it's context. In essence, Claude will write a python script. Your job is to replace placeholders with tool results. Then, **only the result of that script is persisted into the Claude context**.
+
+3. **Implementing compaction** so the LLM can continue the conversation, however long. **Note**: compaction is always lossy. You will loose nuance. It's not a silver bullet, but it's better than nothing.
 
 ## Context Placement
 
