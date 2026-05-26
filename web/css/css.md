@@ -2,17 +2,176 @@
 
 ## Centering the element
 
-For the longest time, it was the case that, to center the element you had to change the `display` or `position` property of the element to center it.
+> [Based on this article](https://css-tip.com/explore/alignment/).
 
-- You would use the `position: absolute` with `translate` and `inset` (top/bottom)
+How many times have you tried to center an element inside another element only to find yourself either:
 
-- You would use `display: grid` with `place-items: center`.
+1. "Inventing" new syntax for `align-items` or `justify-items`.
 
-- You would use `display: flex` with `place-items: center`.
+2. Using random properties until something works.
 
-At the time of writing this, **we can now center any block element using `align-items` and `justify-items`**.
+The core problem is not having a good mental model of how all those properties relate to a given _layout_ we use.
 
-This is great **because setting the `display` has implications for how margins collapse and other properties**. As such, while viable way of centering things, it always produces "side-effects" we might not want.
+Let's change that!
+
+### Content and Items
+
+If you look at the properties we can use, it's either `-content` or `-items`.
+
+```css
+align-items: center;
+align-content: center;
+
+justify-content: center;
+justify-items: center;
+```
+
+Or you can use shorthands, like so:
+
+```css
+/* align-content + justify-content */
+place-content: center;
+
+/* align-items + justify-items */
+place-items: center;
+```
+
+**So, the key is to understand what "items" and "content" mean in a given layout and to which axis they correspond**.
+
+### Grid Container
+
+1. The `-content` controls the **grid cells (within the container), NOT the items inside the grid cells**.
+
+2. The `-items` controls the **items inside the grid cells**.
+
+Depending on how you size things, the grid cell might be the same size of the grid item!
+
+---
+
+So, **if you want to center grid cells within the container**:
+
+```css
+.centered {
+  display: grid;
+
+  align-content: center;
+  justify-content: center;
+
+  /* Or you could use the shorthand */
+  place-content: center;
+}
+```
+
+This only works because, by default, the size of the column and row, will be the same as the size of the item.
+
+If you happen to have `grid-template-columns` and `grid-template-rows` set, you will need to align the items as well!
+
+```css
+.centered {
+  display: grid;
+
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+
+  /* Align the grid cells within the grid container */
+  place-content: center;
+  /* Align the grid items within the grid cells */
+  place-items: center;
+}
+```
+
+### Flexbox Container
+
+Flexbox, to me, is much trickier to wrap my head around than CSS Grid. For me, the main point of confusion is what the "content" means.
+
+**In Flexbox, the "content" corresponds to the "flex line"**.
+
+Consider the following:
+
+```css
+.parent {
+  display: flex;
+
+  /* Has no effect! */
+  align-content: center;
+}
+```
+
+By default, using `align-content: center` has no effect. **In this configuration, we only have a single "flex line" which spans all vertical space. This means that we can't align it vertically as there is nothing to align**.
+
+To "activate" the "content level" alignment, we have to use `flex-wrap: <anything but nowrap>`.
+
+```css
+.parent {
+  display: flex;
+  flex-wrap: wrap;
+
+  /* Now this works. We "activated" the "content level" alignment */
+  align-content: center;
+}
+```
+
+This is **very counter-intuitive, since we still have only one "flex line" (assuming the items do not overflow)**.
+
+So, to align everything in a flexbox container, you can use the following:
+
+```css
+.parent {
+  display: flex;
+  flex-wrap: wrap;
+
+  /* Now this works. We "activated" the "content level" alignment */
+  align-content: center;
+  justify-content: center;
+
+  /* Or, use a shorthand */
+  place-content: center;
+}
+```
+
+Again, this is very confusing. What if you want to keep the default `flex-wrap: nowrap` but still align the content?
+
+Well, we can still `justify-content` as it would align the "flex line" horizontally, **but we can't use the `align-content` since the "flex line" spans the whole size of the element**.
+
+```css
+.parent {
+  display: flex;
+
+  /* Align the "flex line" horizontally */
+  justify-content: center;
+
+  /* Align the items within the flex line vertically */
+  align-items: center;
+}
+```
+
+The `justify-content` works because the "flex line" takes as much width as the items.
+
+**The vertical/horizontal direction is flipped depending on the `flex-direction` property**.
+
+Again, flexbox is quite challenging to work with 😅.
+
+### Block Container
+
+Key point to keep in mind: in block-level alignment, elements are stacked on top of each other.
+
+This means that **we can align them on the vertical axis using `align-content` (aligning the content within the container)**.
+
+TBH, I'm unsure why, but the `justify-content` has no effect in block-level alignment. **For aligning horizontally, use the `justify-items`**.
+
+```css
+.parent {
+  display: block;
+
+  /* Align the content inside the container vertically */
+  align-content: center;
+
+  /* Align the items inside the container horizontally */
+  justify-items: center;
+}
+```
+
+**This means that there is no single shorthand to align items in block-level alignment**. Similar to `flex-level` alignment without `flex-wrap`.
 
 ## The `height: 100%` does not work!
 
