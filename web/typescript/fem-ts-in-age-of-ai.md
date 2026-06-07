@@ -170,4 +170,116 @@ type LoadingPacket<TArgs extends Array<unknown>> = {
 };
 ```
 
-TODO: Describe the fact that _where_ you put the generic arg, it matters! (end of the part 2)
+- **Where you put the generic parameter matters!**
+
+Let's say you want to write a function that takes a selector and returns a result.
+
+```ts
+function useStateSlice(selector: (state: State) => ??) {}
+```
+
+So what should we do here? What should we write in place of `??`
+
+We can start by using `unknown`. It's not optimal since TypeScript won't be able to infer the result.
+
+```ts
+function useStateSlice(selector: (state: State) => unknown) {}
+
+// Unknown.
+const { bar } = useStateSelector((state) => {
+  return {
+    bar: "123",
+  };
+});
+```
+
+Next, you can attempt to add the generic parameter at the level of the selector.
+
+```ts
+function useStateSlice(selector: <TReturn>(state: State) => TReturn) {}
+
+const { isOpen } = useStateSelector((state) => {
+  // Type '{ isOpen: boolean; }' is not assignable to type 'TReturn'.
+  // 'TReturn' could be instantiated with an arbitrary type which could be unrelated to '{ isOpen: boolean; }'
+  return { isOpen: state.isOpen };
+});
+```
+
+The problem with this approach is that **the caller does not control the type**.
+
+Think about it, the _real_ return value could be changed _within_ the caller of the `selector` – that is why TypeScript is complaining here.
+
+If you declare the generic at the level of the caller though, all will work as expected.
+
+```ts
+function useStateSlice<TReturn>(selector: (state: State) => TReturn) {}
+
+// {isOpen: boolean }
+const { isOpen } = useStateSelector((state) => {
+  return { isOpen: state.isOpen };
+});
+```
+
+- You can narrow unions down to a single type via
+
+  - The `in` keyword, checking for a property. `if ('meow' in cat)`
+
+  - The `typeof` keyword.
+
+  - The `instanceof` keyword.
+
+  You **can also use a discriminant property if you are dealing with objects which might be the best way to go about it**.
+
+  ```ts
+  type cat = {
+    kind: "CAT";
+  };
+
+  type dog = {
+    kind: "DOG";
+  };
+
+  type animal = cat | dog;
+
+  // Now you can check the `kind` property. TypeScript will narrow automatically.
+  ```
+
+  - Also, there are serval "helper" functions that you might find useful, like `Array.isArray` and `Number.isNaN`
+
+- You can ensure that you exhausted all possible cases of value by assigning to `never` at the end. This is useful for `switch` statements as well as `if` statements
+
+  ```ts
+  switch (foo) {
+    case "bar": {
+    }
+    default: {
+      const exhaustiveCheck: never = foo;
+    }
+  }
+  ```
+
+- The `satisfies` keyword is pretty neat. Use it to **verify that a given object _satisfies_ a given type, but do NOT allow any additional extra properties**.
+
+  The satisfies will do the narrowing for you, especially useful for `string`-based properties that have a literal type equivalent in the type.
+
+- Conditional types and unions are pretty interesting.
+
+  Consider the following code:
+
+  ```ts
+  type IsArray<T> = T extends Array<infer I> ? I : never;
+  // The `Weird` return `number`
+  type Weird = IsArray<Array<number> | string>;
+  ```
+
+  The **conditional type will "run" with all the members of the union separately and then "union" the result type at the end**
+
+  Since the `number | never` is `number`, that is what you see returned.
+
+- Conditional types are pretty useful for writing _tests for types_.
+
+  The idea is to create a conditional type that returns either `true` or `false` and then assign the result of the "type test" to a variable.
+
+  If the result type is different, you will get a TypeScript error.
+
+Start Part 5
