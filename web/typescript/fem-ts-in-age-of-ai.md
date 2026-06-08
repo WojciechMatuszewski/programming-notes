@@ -282,4 +282,40 @@ const { isOpen } = useStateSelector((state) => {
 
   If the result type is different, you will get a TypeScript error.
 
-Start Part 5
+- You can _overload_ functions in TypeScript. Keep in mind that **function overloading is a "type-land" feature, not a _runtime_ feature**.
+
+  No matter how many overloads you have, you have to have a single implementation that handles those overloads.
+
+  There is no runtime feature that would "pick" the matching implementation for you!
+
+- **Function overloads are useful in preventing "impossible parameters"**.
+
+  Consider the following function:
+
+  ```ts
+  function useSearch<T extends string | number>(arg: T): T extends string ? Array<User> : User {}
+
+  const stringOrNumber: string | number = Math.random() < 0.5 ? "foo" : 1;
+
+  // ??
+  useSearch(stringOrNumber);
+  ```
+
+  Notice that the `stringOrNumber` is an "impossible" parameter from the types perspective.
+
+  What if we used function overloads here?
+
+  ```ts
+  function useSearch(arg: string): Array<User>;
+  function useSearch(arg: number): User;
+  function useSearch(arg: string | number): Array<User> | User {}
+
+  const stringOrNumber: string | number = Math.random() < 0.5 ? "foo" : 1;
+
+  // TypeScript throws an error!
+  useSearch(stringOrNumber);
+  ```
+
+  TypeScript will throw an error. That's much better!
+
+Start Part 5 19:32
