@@ -356,4 +356,4 @@ const { isOpen } = useStateSelector((state) => {
 
   Now the `AllPaths` is a "naked type parameter". In such case, the "iteration" mechanism will kick in and the `Test` will be typed correctly.
 
-Start Part 5 40:54
+Start Part 6
