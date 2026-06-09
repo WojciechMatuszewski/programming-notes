@@ -318,4 +318,42 @@ const { isOpen } = useStateSelector((state) => {
 
   TypeScript will throw an error. That's much better!
 
-Start Part 5 19:32
+- When talking about conditional types, we learned that TypeScript will "iterate" over the union members in the context of that conditional type.
+
+  Have your tried providing that union type as "external" type (not included as the generic parameter)?
+
+  ```ts
+  const paths = {
+    users: "/users",
+    userContacts: "/users/contacts",
+    user: "/users/:id",
+    settings: "/admin/settings",
+    billing: "/admin/billing",
+    account: "/admin/account",
+  } as const;
+
+  type Paths = typeof paths;
+
+  type AllPaths = Paths[keyof Paths];
+
+  type PluckPathsFor<Filter extends string> = AllPaths extends `/${Filter}/${string}` ? AllPaths : never;
+
+  // never type
+  type Test = PluckPathsFor<"admin">;
+  ```
+
+  Why is the `Test` typed as `never`?
+
+  **It turns out, TypeScript will only iterate over the union type if we provide is as a "naked" type parameter**.
+
+  Notice that I use the `AllPaths` as if it was a "global" type.
+
+  Now consider this definition:
+
+  ```ts
+  type PluckPathsFor<AllPaths, Filter extends string> = AllPaths extends `/${Filter}/${string}` ? AllPaths : never;
+  ```
+
+  Now the `AllPaths` is a "naked type parameter". In such case, the "iteration" mechanism will kick in and the `Test` will be typed correctly.
+
+Start Part 5 40:54
