@@ -492,3 +492,11 @@ Interestingly, [this article](https://blog.langchain.com/the-anatomy-of-an-agent
 2. [Switching the harness (or improving upon it)](https://x.com/Vtrivedy10/status/2023805578561060992?s=20&ref=blog.langchain.com) can drastically increase the benchmark score for a coding agent.
 
 Since there are only a handful of companies that really matter in the "AI model market," harness engineering gives everyone a lot of leverage!
+
+## Mixture of Experts architecture – MoE
+
+MoE lets a model have many more _total parameters_ while keeping the active compute per token much lower than a dense model of the same total size. This often improves quality per unit of compute, but introduces complexity related to _routing_ to a different experts and _load balancing_ between them (we want to make sure router is not biased).
+
+You have the "router" component that "learns" how and if to route each token representation to a given expert.
+
+While it is possible to retrofit this architecture to an existing model, it is much easier to start training the model with this architecture in mind at the very start.
