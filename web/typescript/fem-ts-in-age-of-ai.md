@@ -356,4 +356,24 @@ const { isOpen } = useStateSelector((state) => {
 
   Now the `AllPaths` is a "naked type parameter". In such case, the "iteration" mechanism will kick in and the `Test` will be typed correctly.
 
-Start Part 6
+- I initially though that using `never` as _value_, filter they key of the value as well. That is not the case.
+
+  ```ts
+  type Account = {
+    id: number;
+    name: string;
+    accountId: string;
+    gamerId: string;
+    myIdentification: string;
+  };
+
+  type IdFieldsInvalid = {
+    [K in keyof Account]: K extends `${string}${"id" | "Id"}` ? Account[K] : never;
+  };
+
+  type IdFields = {
+    [K in keyof Account as K extends `${string}${"id" | "Id"}` ? K : never]: Account[K];
+  };
+  ```
+
+  The `IdFieldsInvalid` would still contain `name: never`. To filter the keys, you need to provide the `never` type at the level of the key.
