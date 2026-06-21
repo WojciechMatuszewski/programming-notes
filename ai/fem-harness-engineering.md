@@ -12,4 +12,38 @@ You can find the [GitHub repository here](https://github.com/Hendrixer/harness-e
 
 - At the most basic level, the "agent" is "just" a `while` loop.
 
-Finished Part 2 -31:00
+At this part of the workshop, we coded a very basic agent and looked at the ways it failed:
+
+1. No recollection of memories. You kill the server and all previous memories are gone.
+
+2. Using certain tools without approval.
+
+3. One agent doing pretty much everything. There is no "routing" to other agents.
+
+## Durable Execution
+
+So how do we handle the case where the agent is interrupted mid-message? Mid-tool-call?
+
+We can leverage a notion of "durable workflow step" within our agent.
+
+At it's core, we are going to take note of the inputs and outputs of each step our agent takes. Then, we can reply those steps if needed.
+
+So, if we are interrupted mid tool-call, we can reply that step with the inputs we saved.
+
+This sounds nice on paper, but in reality we would also have to consider that this inputs/outputs data is potentially PII and sensitive. It might be problematic when it comes to GDPR.
+
+- We used the `jsonb` column type to store the event data in our "event ledger".
+
+  The `b` suffix is for _binary_, but it does not mean that you store the data itself as binary, but rather than _binary_ is an internal representation of the data.
+
+  **You would use the `jsonb` column for fast retrieval/searches on json data**. The `jsonb` column will "normalize" the JSON data – strip the whitespace, collapse duplicate keys and so on.
+
+  **With `jsonb` you pay a "write penalty" since PostreSQL has to parse the data to it's internal representation form**. That's not the case for `json` where the data is stored as plain text.
+
+  Overall, in most cases, the `jsonb` would be the better type to use for JSON data, but keep in mind that **you will loose the original "structure" of the data**, so use-cases where you need to validate the signature or have the data verbatim, are cases where you would want to use `json` type instead.
+
+- One interesting side-effect of using _durable execution_ is that **you have to ensure that your code, when re-run evaluates to the same value and is free of side-effects (or the side-effects are idempotent)**.
+
+  I assume that, in some cases, this might be very hard to achieve.
+
+Finished Part 3 -25:42
