@@ -11,8 +11,11 @@ How you can reduce latency and optimize the context usage while working with too
 In a traditional approach, each tool call results in back-and-forth between you and the model.
 
 1. You send the message to Claude.
+
 2. Claude decides to use a tool.
+
 3. You send the tool results.
+
 4. Claude reasons about the results and _might_ return with an answer OR another request for a tool call.
 
 As you can see, the more tool calls, the bigger the context. The model has to know the output of the previous tool call to proceed.
@@ -28,10 +31,15 @@ Unless...
 PTC is quite fascinating. **PTC does NOT append the intermediary tool call results in the model context, saving you tokens and reducing latency**.
 
 1. You send a message to Claude.
+
 2. Claude writes a Python script. This script contains calls to functions that look as your tools. The script is asynchronous, so Claude can ask for multiple results at the same time.
+
 3. You run the tools and provide the results back. **Those results does NOT land in Claude context yet**.
+
 4. Claude continues executing the Python script.
+
 5. Python script finished. **Now Claude "sees" only the output of the Python script, and not tool results you provided**.
+
 6. Claude responds back.
 
 You can think of this as having a Python script, that contains I/O stubs that have signature of your tools. As soon as we `await` on them, Claude will ask you for result, and replace the call-site with that result.
@@ -45,6 +53,18 @@ The Python script executes in an environment managed by Anthropic. This means th
 That tool that creates that Python script is managed by Anthropic. If you want, you can omit it, and implement your own "execute code" tool.
 
 You can read more about alternative runtimes [here](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling#alternative-implementations).
+
+### PTC vs Code Mode
+
+You can learn more about the ["Code Mode" here](https://blog.cloudflare.com/code-mode/).
+
+The idea is very similar. Instead of calling multiple tools exposed via MCP servers and stringing together results, let the agent write a program that uses the MCP tools as TypeScript API and return you the output.
+
+The main difference is packaging. Anthropic's approach works by allowing the LLM to write _Python code_ that runs in _their_ managed environment.
+
+Cloudflare Code Mode is about letting LLM write TypeScript code that runs within a v8 isolate.
+
+Both approaches reduce the amount of context "pushed" to the LLM!
 
 ## Using `/rewind`
 
