@@ -82,4 +82,34 @@ Before we invoke the inference, we check if the number of tokens we would push t
 
 The key thing to keep in mind is that **you want to produce a summary on complete "turn", rather than individual messages**. Each turn ends in a state that would trigger an LLM response!
 
-Start Part 5.
+## Routing & Handoffs
+
+**You most likely do not need multiple-agent handoffs**. In most cases, a single agent with a good harness will do just fine.
+
+**Where multi-agent handoffs shine** is where you need:
+
+1. Least privilege: you can scope tools, permissions, to that one particular agent.
+
+2. Different guardrails, policy or model: sometimes, you want to use different models for different tasks. Perhaps you have a cheaper model doing less complex things, and more expensive model doing more involved things.
+
+3. Separate ownership: similar to how "federation" might work in Web world, you have multiple agents owned by multiple teams. Without routing and handoffs, separating ownership might be hard.
+
+## Supervision
+
+**Similar to routing & handoffs, you might not need to use this pattern**. A single agent _might_ be just fine.
+
+**But, if you decide to use this pattern, you will get**:
+
+1. Context isolation: the supervisor's context is not polluted with steps from sub-agents.
+
+2. Parallelism: you can have multiple sub-agents working while supervisor is left to orchestrate them.
+
+**At some point, you will need to merge the results you receive form sub-agents**. This step is critical and can be hard to do right.
+
+Think about it like compaction. You might miss subtle details!
+
+### Supervision vs. Routing & Handoffs
+
+When you use supervision, you _keep_ control. When you use handoffs, you let go of the control to another agent.
+
+Start part 5 -45:39
