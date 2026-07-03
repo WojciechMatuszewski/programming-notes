@@ -127,3 +127,5 @@ So the workflow looks nice, but I foresee a couple of problems:
 1. Agents does not share context, so they might do the same work twice. That's a tradeoff between speed and saving on context.
 
 2. The synthesis happens in another LLM call that has little context on the task. During researching, any given sub-agent might have learned something that might be critical to the compaction. We do not surface those facts to the LLM doing the synthesis.
+
+Finish dispatching agents
