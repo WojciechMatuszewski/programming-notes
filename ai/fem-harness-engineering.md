@@ -112,4 +112,18 @@ Think about it like compaction. You might miss subtle details!
 
 When you use supervision, you _keep_ control. When you use handoffs, you let go of the control to another agent.
 
-Start part 5 -45:39
+Things that we did:
+
+1. Multiple read-only agents.
+
+2. Each agent run over a given task in parallel.
+
+3. Each agent has it's own context, and does not share it with any other agent.
+
+4. Then we synthesize all the results at the end with another LLM call.
+
+So the workflow looks nice, but I foresee a couple of problems:
+
+1. Agents does not share context, so they might do the same work twice. That's a tradeoff between speed and saving on context.
+
+2. The synthesis happens in another LLM call that has little context on the task. During researching, any given sub-agent might have learned something that might be critical to the compaction. We do not surface those facts to the LLM doing the synthesis.
