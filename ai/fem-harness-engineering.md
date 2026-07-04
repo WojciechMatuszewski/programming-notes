@@ -128,4 +128,12 @@ So the workflow looks nice, but I foresee a couple of problems:
 
 2. The synthesis happens in another LLM call that has little context on the task. During researching, any given sub-agent might have learned something that might be critical to the compaction. We do not surface those facts to the LLM doing the synthesis.
 
-Finish dispatching agents
+## Human-in-the-Loop
+
+Here, we used the DBOS to create a HITL workflow.
+
+I have to say, that library made everything pretty nice.
+
+All I had to do was to call `DBOS.reciv` and wait for the response via `DBOS.send` (sadly the contract is based on the "name" of the signal, but I guess we can co-locate this code so it's not that bad).
+
+I have to do some research on how it's implemented under the hood.
