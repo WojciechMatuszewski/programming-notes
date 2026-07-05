@@ -42,6 +42,18 @@
 
 - up to 10GB of ephemeral storage (starting at 512 MB)
 
+#### MicroVMs
+
+> Learn more about this [here](https://theburningmonk.com/2026/06/what-you-need-to-know-about-lambda-microvms/)
+
+If you require isolation for your agents to run arbitrary code, or perhaps you "just" need isolation guarantees in a long-lived environment, look no further than to AWS Lambda MicroVMS.
+
+You can spin a micro-vm that's scoped to a given tenant (session, user). Then, you can interact with that micro-vm via HTTPs endpoint.
+
+**The killer feature here is that any on-the-disk data is persistent up-to 8 hours and that the micro-vm will suspense when idle**.
+
+This means tha you are paying way less than if you were paying to an EC2, but you can still run a long-running workloads there!
+
 #### Billing
 
 - executions are **billed by the millisecond**
