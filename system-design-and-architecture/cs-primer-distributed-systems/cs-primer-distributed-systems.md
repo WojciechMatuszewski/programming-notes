@@ -12,12 +12,30 @@
 
   I've also seen people use `SADD` command to append multiple elements to the same set.
 
-### Milestones
+### Notes during implementation
 
-- Server which echos over UDP.
+- I was re-introduced to the _double dispatch_ pattern, which really helps with avoiding any kind of "type switches".
 
-- Server which sets on SET and GET.
+  If you return a generic interface from a function, you either have to narrow it down (by the "type switch") OR make it so that this interface can "self-dispatch".
 
-- Test with two clients.
+  In Golang, this looks like the following:
 
-Finished part 1 37:48
+  ```go
+  // Without double-dispatch
+    switch command := command.(type) {
+      case GetCommand:
+        value, err := handler.HandleGet(command)
+      case SetCommand:
+        err := handler.HandleSet(command)
+    }
+
+  // With double-dispatch
+  command.Execute(handler)
+
+  // Then, inside of each command
+  func (gc GetCommand) Execute(handler) {
+    handler.HandleGet(gc)
+  }
+  ```
+
+Start Part 2
