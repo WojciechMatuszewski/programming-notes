@@ -38,4 +38,46 @@
   }
   ```
 
-Start Part 2
+## Introduction to distributed systems
+
+- We want to build systems that are:
+
+  - Scalable.
+
+  - Reliable.
+
+  - Maintainable.
+
+  If you do not have one of those three, you will be in trouble.
+
+- To build 👆, we have the following tools (non-exhaustive list):
+
+  - **Replication**. This basically means **putting the same thing into multiple places**.
+
+  - **Partitioning**. This basically means **putting something that was in one place, and splitting it**.
+
+- When designing distributed systems, **you will need to make tradeoffs**. The axis on which you case base your tradeoffs on:
+
+  - **Consistency**: if I make a write, and then read, will that read contain the most-up-to-date data?
+
+  - **Availability**: would you rather return with "success" to the client, even when data is not consistent, or would you rather fail the request?
+
+    This is interesting. Consider why you are adding replicas – most likely to _increase_ reliability. So if you choose to fail, if the write failed to propagate, why do you have the replicas in the first place?
+
+    But it's not all-or-nothing. You can have _synchronous_ replicas mixed with _async_ replicas.
+
+  - **Complexity**. The more complex the system is, the harder it is to maintain.
+
+  All of this relates to the CAP theorem.
+
+- During the webinar, Oz mentioned **the pitfall of using auto-incrementing IDs in the context of distributed systems**.
+
+  If you are making writes to multiple locations independently, and both are working out of the same ID, you will be in huge trouble.
+
+  **This means that if your system uses auto-incrementing ids now, you might never be able to partition it**. Quite problematic!
+
+- One thing that I started to pay more attention to is **whether the migration will cause a lock on the table an how that influences the system**.
+
+  Some tables are rarely accessed, so that is not a problem, but some might be critical, and adding a lock on them might be problematic.
+
+Start lesson 8
