@@ -80,4 +80,26 @@
 
   Some tables are rarely accessed, so that is not a problem, but some might be critical, and adding a lock on them might be problematic.
 
-Start lesson 8
+## Wire Formats
+
+- Text-based wire formats. Think `JSON`, `CSV` or `XML`.
+
+  **If we look those through the lens of how easy it is to evolve those formats, the main problem is lack of `schema` integration**.
+
+  Ideally, the wire format would be versioned, or have some kind of well-known schema, so you can "update" or "downgrade" it as you see fit.
+
+  We also have to think about how _efficient_ it is to encode, decode those formats and also how _large_ those can get.
+
+- Sometimes you might be tempted to use `base64` for encoding non-text stuff and sending it via text-based wire formats.
+
+  While this works, it should be a signal to you, that perhaps there is a better wire format to use for this particular data.
+
+- Using `gzip` (or any other compression mechanism) **is a very good way to reduce the size of messages you send over the wire**.
+
+  Remember that browsers will automatically de-code `gzip` for you!
+
+- Binary-based formats. Think `Proto Buffers`, `Avro`.
+
+  Those are usually very efficient at encoding and decoding. Consider how easy it is to "jump" to specific field: you know the offset in bytes!
+
+  They also **have schema integration built-in as first-class concern**. This means it's much easier to evolve the API.
