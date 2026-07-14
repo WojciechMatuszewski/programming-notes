@@ -103,3 +103,25 @@
   Those are usually very efficient at encoding and decoding. Consider how easy it is to "jump" to specific field: you know the offset in bytes!
 
   They also **have schema integration built-in as first-class concern**. This means it's much easier to evolve the API.
+
+## API Patterns – REST, SOAP, RPC, GraphQL
+
+- Conceptually, the "contract" between clients is unrelated to the wire format.
+
+- Interestingly, SOAP was built to operate over _any_ protocol, such as HTTP, SMTP, TCP or UDP.
+
+- These approaches can be compared by the interface they expose, although SOAP is a messaging protocol and can also carry RPC:
+
+  - REST exposes resources through a uniform interface. The "uniform interface" are the HTTP verbs. For example, the `GET` is consistent across all resources.
+
+  - SOAP services expose operations on messages.
+
+  - RPC exposes procedures, or "functions".
+
+  - GraphQL exposes a typed schema whose fields clients select and traverse.
+
+- RPC is _really_ good at creating an _exact_ interface between services. It is not built in flexibility in mind.
+
+  Note: RPC is often associated with ProtoBuffers or other binary format. While you _can_ use RPC with this wire format, nothing stops you from implementing RPC via HTTP (think `tRPC` or _server functions_ in FE world).
+
+Start replication
