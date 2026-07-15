@@ -124,4 +124,38 @@
 
   Note: RPC is often associated with ProtoBuffers or other binary format. While you _can_ use RPC with this wire format, nothing stops you from implementing RPC via HTTP (think `tRPC` or _server functions_ in FE world).
 
-Start replication
+## Replication
+
+- _Replication_ at it's core means copying the same thing into multiple places.
+
+  - To reduce latency: the closer the data is to the client, the faster the response will be. CDNs are great at this.
+
+  - To increase availability.
+
+  - To increase _read_ throughput. You can read from multiple sources. The load is distributed across multiple nodes. Scaling _write_ throughout requires partitioning which is much harder to do than replication.
+
+- Be mindful of _horizontal_ vs. _vertical_ scaling.
+
+  - _Vertical_ is usually easier to achieve, because you most likely do not need to change anything in your application, but it has a hard cap of how large the machine you use can be. You "just" update the configuration for the machine you use.
+
+  - _Horizontal_ is usually harder to achieve, as it might require changes in your application, but it's much more maintainable.
+
+- When deploying _replication_, you need to think about:
+
+  - **Replication lag**: how long does it take for the writes to replicate?
+
+    You can make it so that all writes have to synchronously replicate to _all_ readers before you return with successful write. **This will greatly reduce your write throughput**.
+
+    You can accept that read-after-write might be stale. That all writes will _eventually_ propagate to all nodes.
+
+    Or you can make it so that _some_ replicas need to acknowledge the write before returning to the client upon writing.
+
+  - **How you replicate**. This can go pretty deep into Database mechanics, but one way might be _statement-based replication_.
+
+    But what if the outcome of this statement is non-deterministic? For example IDs that should be the same across multiple replicas, but are created internally? **For some setups, the statement-based replication is the answer, for others, not so much**.
+
+    **You could look at WAL, and replicate based on that**. The problem here is that the structure of entries are fixed, and it might be hard to keep the service running while you upgrade your database.
+
+  - **Replication topology**: Do you have multiple writers trying to replicate to multiple readers?
+
+Start replication.
