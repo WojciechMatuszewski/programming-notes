@@ -76,23 +76,18 @@ For example, suppose you add a `cache_control` checkpoint at the level of the sy
 > Making notes based on [this blog post](https://claude.com/blog/lessons-from-building-claude-code-prompt-caching-is-everything)
 
 - Prompt caching works by "prefix matching". This means you want all your static things to be put at the start.
-
   - **You can break this pretty easily**. For example, forgetting about this "rule" and putting dynamic timestamp somewhere at the beginning.
 
 - The article talks about **using messages instead of updating system prompt if some information in the system prompt is outdated**.
-
   - Very interesting! I guess it's quite situational, because we are talking about Claude Code here. For regular products, a deployment usually means a system prompt change, so the impact is not that big.
 
 - Using the same model through the conversation preserves the current cache. If you switch the model within the same session you would need to re-build the session cache.
-
   - I wonder how this works with [_forked sub-agents_](https://code.claude.com/docs/en/sub-agents#fork-the-current-conversation). If we use a _different_ model as the _forked agent_, would we not have to pay the penalty of the cache miss?
-
     - Update: Ah! the documentation mentions that the _forked agents_ must use the same model as the "main" agent, so there is nothing to worry about here.
 
     - In terms of using subagents, the "main" model provides a "handoff" prompt and only that, so it is as if we were starting a new conversation with fresh context.
 
 - After reading this blog post, now I understand why they have a "compaction buffer" reserved in the context.
-
   - This buffer allows them to add _yet another_ message to the context stating that the model should summarize the conversation and the summary itself. All the prior messages and tool calls are send with that message. **This means that we can re-use prompt cache**.
 
 ### "Getting More Out of the Claude Platform" – caching & context

@@ -183,13 +183,11 @@ After adding virtualization to your website, you might notice, that the "search"
 - This concept is **used in the context of custom web components**.
 
 - It is **separate from the "main" DOM**.
-
   - This means you can have multiple IDs that repeat, and you do not have to worry about specificity rules.
 
 - The main benefit is the **style isolation. Your CSS will NOT clash with any other CSS on the page**.
 
 - Apart from the regular selectors, you get access to the `:host` and `:host-context` pseudo-classes.
-
   - These only exist in the context of the Shadow DOM.
 
 ## The `contain` property
@@ -399,7 +397,7 @@ Luckily, there [is a way to prevent scrolling without relying on JavaScript](htt
 Instead of having an explicit `form` with a `button` inside the dialog to close it, consider using the `closedBy="any"`
 
 ```html
-<dialog closedBy="any">
+<dialog closedby="any">
   <p>Hi there</p>
 </dialog>
 ```
@@ -413,11 +411,9 @@ Tapping or clicking outside the dialog will close it.
 To show the dialog, you can use the `showModal` or `show` APIs. What is the difference?
 
 - The `showModal` **traps the focus** and **displays the backdrop**. It behaves as a regular "modal" you are used to. **Renders in the _top layer_**.
-
   - Good for modals.
 
 - The `show` does not trap the focus and there is no backdrop. **Renders _inline_, and not in the _top layer_**.
-
   - Good for notifications and other popups. You could also implement tooltips via this API.
 
 ## The `popover` attribute
@@ -523,19 +519,14 @@ If you specify the `id` attribute on the element, you can access that element by
 > Based on [this](https://www.stefanjudis.com/today-i-learned/section-accessible-name/) and [this](https://www.smashingmagazine.com/2020/01/html5-article-section/) blog post
 
 - The `section` tag was invented for browsers to implement _HTML5 outlining_.
-
   - This feature would allow you to use `h1`s everywhere, and depending on how "deep" they are in `section` elements, they would become the "right" levels of headings like `h2` and `h3`.
-
     - **At the moment of writing this, no browser implements this spec**.
 
 - There are no free lunches – you **have to make sure that you have proper hierarchy of headings on your website**.
-
   - Frameworks can help with that. I've seen component libraries implement generic "heading" component that renders the correct tag based on the parents of the tag.
 
 - **To "label" the `section` tag, consider using `aria-label` or `aria-labelledby`**.
-
   - Nesting a heading tag inside a section does NOT associate the text of that heading with the "label" of the section.
-
     - **In fact, the "default" role of the `section` element is "generic". The `section` tag gains the "region" role only when you use `aria-label` or `aria-labelledby` attribute on the section**.
 
 To sum up:
@@ -627,6 +618,7 @@ When you add _anchor positioning_, you basically have a full implementation of a
         position: fixed;
         position-anchor: --popover-trigger;
         position-area: end center;
+        position-try-fallbacks: flip-block;
       }
     </style>
   </head>
