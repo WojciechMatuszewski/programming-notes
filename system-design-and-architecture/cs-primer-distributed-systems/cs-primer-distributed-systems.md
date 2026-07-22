@@ -158,4 +158,34 @@
 
   - **Replication topology**: Do you have multiple writers trying to replicate to multiple readers?
 
-Start replication.
+  - **Replicating the indexes**: This is usually handled by the database itself.
+
+## Partitioning
+
+- **Partitioning comes in handy when you can't scale your _writes_ any longer**.
+
+  Using _replication_ will allow you to scale _reads_ and that usually suffices for smaller applications.
+
+  But _replication_ won't help you with scaling _writes_.
+
+- Example workflow?
+
+  - IOT. Usually, in that setup, you have lot's of devices that _write_ on some interval.
+
+  - Logs. Timeseries data.
+
+- **Partition is much harder than replication**.
+
+  _Replication_ should not require you to make changes to your application, unless you use sequential IDs or something. That's usually is not the case with _partitioning_.
+
+  For _partitioning_ to work, you need to have a heuristic for "where should this data land" (which shard). This might be derived from some kind of ID or other pieces of data.
+
+  **As soon as you start _partitioning_ you have to think about how to preserve "balance" across your shards**. You want your data to be evenly distributed across the shards.
+
+  In addition, **you might need to change your application code to _join_ on different databases / tables**.
+
+  All in all, you **should consider using a system that has partitioning built-in, like DynamoDB or Spanner**.
+
+- Consider indexes while working on multiple nodes. **How do you update the indexes across multiple machines when write occurs? Can you do that in a transaction?**
+
+Start Partitioning 33:53
