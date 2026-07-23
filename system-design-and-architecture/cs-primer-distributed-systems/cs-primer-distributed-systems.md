@@ -188,4 +188,18 @@
 
 - Consider indexes while working on multiple nodes. **How do you update the indexes across multiple machines when write occurs? Can you do that in a transaction?**
 
-Start Partitioning 33:53
+- _How_ do you partition your data? What's the heuristic?
+
+  - **Lexicographic range partitioning** can produce uneven partitions. For example, partitioning email addresses by their first character into `a-k` and `l-z`.
+
+    BUT with range partitioning writing range queries is pretty easy.
+
+  - **Using hashing functions is usually a good idea**. The purpose of a hashing function is to evenly distribute data.
+
+    **Beware** of assigning keys using `hash(key) % nodeCount`. Changing the node count remaps most existing keys. Prefer a fixed set of logical partitions or consistent hashing, then map those partitions to nodes.
+
+    **Node** holds multiple partitions. **Partition** is a logical subset of data.
+
+    **As soon as you introduce hashing, range queries become problematic**. In such cases, it's a scatter-gather approach where you deploy range queries on multiple nodes and gather the results.
+
+  - What you want is **to have many more logical partitions than nodes**. If that's the case, you can re-allocate some of the partitions to different nodes when you add / remove them.
