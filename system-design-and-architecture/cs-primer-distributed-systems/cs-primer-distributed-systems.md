@@ -242,4 +242,4 @@ The area between _eventual consistency_ and _full linearizability_ is quite vast
 
 - _Read your own writes_, where **a client can read their own write immediately after issuing it**. Note on the wording here. It's about the _same_ client that made the write, not about two _different_ clients.
 
-Start models of consistency 50:01
+Start consensus
