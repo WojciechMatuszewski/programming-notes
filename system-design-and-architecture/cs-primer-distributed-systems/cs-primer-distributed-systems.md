@@ -6,11 +6,11 @@
 
 - Did you know you can [create _indexes_](https://redis.io/docs/latest/develop/clients/patterns/indexes/) in Redis?
 
-  Consider a scenario where you save user payments. You _might_ need a query for "give me a payment by ID", but you might also need a query for "give me all payment for a given user".
+  Consider a scenario where you save user payments. You _might_ need a query for "give me a payment by ID", but you might also need a query for "give me all payments for a given user".
 
-  If we step back a bit, and ignore the fact that this pattern might be better served by a relational database, to make those two access pattern work, you might need to add a secondary index to Redis!
+  If we step back a bit, and ignore the fact that this pattern might be better served by a relational database, to make those two access patterns work, you might need to add a secondary index to Redis!
 
-  I've also seen people use `SADD` command to append multiple elements to the same set.
+  I've also seen people use the `SADD` command to append multiple elements to the same set.
 
 ### Notes during implementation
 
@@ -56,9 +56,9 @@
 
   - **Partitioning**. This basically means **putting something that was in one place, and splitting it**.
 
-- When designing distributed systems, **you will need to make tradeoffs**. The axis on which you case base your tradeoffs on:
+- When designing distributed systems, **you will need to make tradeoffs**. The axes you can base your tradeoffs on:
 
-  - **Consistency**: if I make a write, and then read, will that read contain the most-up-to-date data?
+  - **Consistency**: if I make a write, and then read, will that read contain the most up-to-date data?
 
   - **Availability**: would you rather return with "success" to the client, even when data is not consistent, or would you rather fail the request?
 
@@ -74,9 +74,9 @@
 
   If you are making writes to multiple locations independently, and both are working out of the same ID, you will be in huge trouble.
 
-  **This means that if your system uses auto-incrementing ids now, you might never be able to partition it**. Quite problematic!
+  **This means that if your system uses auto-incrementing IDs now, you might never be able to partition it**. Quite problematic!
 
-- One thing that I started to pay more attention to is **whether the migration will cause a lock on the table an how that influences the system**.
+- One thing that I started to pay more attention to is **whether the migration will cause a lock on the table and how that influences the system**.
 
   Some tables are rarely accessed, so that is not a problem, but some might be critical, and adding a lock on them might be problematic.
 
@@ -84,25 +84,25 @@
 
 - Text-based wire formats. Think `JSON`, `CSV` or `XML`.
 
-  **If we look those through the lens of how easy it is to evolve those formats, the main problem is lack of `schema` integration**.
+  **If we look at those through the lens of how easy it is to evolve those formats, the main problem is lack of `schema` integration**.
 
   Ideally, the wire format would be versioned, or have some kind of well-known schema, so you can "update" or "downgrade" it as you see fit.
 
-  We also have to think about how _efficient_ it is to encode, decode those formats and also how _large_ those can get.
+  We also have to think about how _efficient_ it is to encode and decode those formats and also how _large_ those can get.
 
 - Sometimes you might be tempted to use `base64` for encoding non-text stuff and sending it via text-based wire formats.
 
-  While this works, it should be a signal to you, that perhaps there is a better wire format to use for this particular data.
+  While this works, it should be a signal to you that perhaps there is a better wire format to use for this particular data.
 
 - Using `gzip` (or any other compression mechanism) **is a very good way to reduce the size of messages you send over the wire**.
 
-  Remember that browsers will automatically de-code `gzip` for you!
+  Remember that browsers will automatically decode `gzip` for you!
 
 - Binary-based formats. Think `Proto Buffers`, `Avro`.
 
-  Those are usually very efficient at encoding and decoding. Consider how easy it is to "jump" to specific field: you know the offset in bytes!
+  Those are usually very efficient at encoding and decoding. Consider how easy it is to "jump" to a specific field: you know the offset in bytes!
 
-  They also **have schema integration built-in as first-class concern**. This means it's much easier to evolve the API.
+  They also **have schema integration built-in as a first-class concern**. This means it's much easier to evolve the API.
 
 ## API Patterns – REST, SOAP, RPC, GraphQL
 
@@ -112,7 +112,7 @@
 
 - These approaches can be compared by the interface they expose, although SOAP is a messaging protocol and can also carry RPC:
 
-  - REST exposes resources through a uniform interface. The "uniform interface" are the HTTP verbs. For example, the `GET` is consistent across all resources.
+  - REST exposes resources through a uniform interface. The "uniform interface" is the HTTP verbs. For example, `GET` is consistent across all resources.
 
   - SOAP services expose operations on messages.
 
@@ -120,23 +120,23 @@
 
   - GraphQL exposes a typed schema whose fields clients select and traverse.
 
-- RPC is _really_ good at creating an _exact_ interface between services. It is not built in flexibility in mind.
+- RPC is _really_ good at creating an _exact_ interface between services. It is not built with flexibility in mind.
 
-  Note: RPC is often associated with ProtoBuffers or other binary format. While you _can_ use RPC with this wire format, nothing stops you from implementing RPC via HTTP (think `tRPC` or _server functions_ in FE world).
+  Note: RPC is often associated with ProtoBuffers or other binary formats. While you _can_ use RPC with this wire format, nothing stops you from implementing RPC via HTTP (think `tRPC` or _server functions_ in the FE world).
 
 ## Replication
 
-- _Replication_ at it's core means copying the same thing into multiple places.
+- _Replication_ at its core means copying the same thing into multiple places.
 
   - To reduce latency: the closer the data is to the client, the faster the response will be. CDNs are great at this.
 
   - To increase availability.
 
-  - To increase _read_ throughput. You can read from multiple sources. The load is distributed across multiple nodes. Scaling _write_ throughout requires partitioning which is much harder to do than replication.
+  - To increase _read_ throughput. You can read from multiple sources. The load is distributed across multiple nodes. Scaling _write_ throughput requires partitioning which is much harder to do than replication.
 
 - Be mindful of _horizontal_ vs. _vertical_ scaling.
 
-  - _Vertical_ is usually easier to achieve, because you most likely do not need to change anything in your application, but it has a hard cap of how large the machine you use can be. You "just" update the configuration for the machine you use.
+  - _Vertical_ is usually easier to achieve, because you most likely do not need to change anything in your application, but it has a hard cap on how large the machine you use can be. You "just" update the configuration for the machine you use.
 
   - _Horizontal_ is usually harder to achieve, as it might require changes in your application, but it's much more maintainable.
 
@@ -144,17 +144,17 @@
 
   - **Replication lag**: how long does it take for the writes to replicate?
 
-    You can make it so that all writes have to synchronously replicate to _all_ readers before you return with successful write. **This will greatly reduce your write throughput**.
+    You can make it so that all writes have to synchronously replicate to _all_ readers before you return a successful write. **This will greatly reduce your write throughput**.
 
     You can accept that read-after-write might be stale. That all writes will _eventually_ propagate to all nodes.
 
     Or you can make it so that _some_ replicas need to acknowledge the write before returning to the client upon writing.
 
-  - **How you replicate**. This can go pretty deep into Database mechanics, but one way might be _statement-based replication_.
+  - **How you replicate**. This can go pretty deep into database mechanics, but one way might be _statement-based replication_.
 
     But what if the outcome of this statement is non-deterministic? For example IDs that should be the same across multiple replicas, but are created internally? **For some setups, the statement-based replication is the answer, for others, not so much**.
 
-    **You could look at WAL, and replicate based on that**. The problem here is that the structure of entries are fixed, and it might be hard to keep the service running while you upgrade your database.
+    **You could look at WAL, and replicate based on that**. The problem here is that the structure of entries is fixed, and it might be hard to keep the service running while you upgrade your database.
 
   - **Replication topology**: Do you have multiple writers trying to replicate to multiple readers?
 
@@ -170,13 +170,13 @@
 
 - Example workflow?
 
-  - IOT. Usually, in that setup, you have lot's of devices that _write_ on some interval.
+  - IoT. Usually, in that setup, you have lots of devices that _write_ on some interval.
 
   - Logs. Timeseries data.
 
-- **Partition is much harder than replication**.
+- **Partitioning is much harder than replication**.
 
-  _Replication_ should not require you to make changes to your application, unless you use sequential IDs or something. That's usually is not the case with _partitioning_.
+  _Replication_ should not require you to make changes to your application, unless you use sequential IDs or something. That usually is not the case with _partitioning_.
 
   For _partitioning_ to work, you need to have a heuristic for "where should this data land" (which shard). This might be derived from some kind of ID or other pieces of data.
 
@@ -186,7 +186,7 @@
 
   All in all, you **should consider using a system that has partitioning built-in, like DynamoDB or Spanner**.
 
-- Consider indexes while working on multiple nodes. **How do you update the indexes across multiple machines when write occurs? Can you do that in a transaction?**
+- Consider indexes while working on multiple nodes. **How do you update the indexes across multiple machines when a write occurs? Can you do that in a transaction?**
 
 - _How_ do you partition your data? What's the heuristic?
 
@@ -203,3 +203,43 @@
     **As soon as you introduce hashing, range queries become problematic**. In such cases, it's a scatter-gather approach where you deploy range queries on multiple nodes and gather the results.
 
   - What you want is **to have many more logical partitions than nodes**. If that's the case, you can re-allocate some of the partitions to different nodes when you add / remove them.
+
+## Models of consistency
+
+I always thought about consistency in terms of _strong_ and _eventual_ consistency where:
+
+- _Strong consistency_ means that no read is stale. If you write the data, and later read the same piece of data, you will get the most up-to-date state.
+
+- _Eventual consistency_ means that your reads _might_ return stale data. The "read-after-write" scenario might return data from _before_ the write happened, but replicas will _eventually_ converge onto the latest value.
+
+  - **Note**: The _eventual consistency_ model **has a very loose guarantee on the "eventual" part. It's mostly on a "best effort" basis**.
+
+Apparently _strong_ and _eventual_ are quite _informal_. Prefer precise models:
+
+- **Linearizability** ("the system is linear") is the usual precise version of "strong consistency" for a single object. Every operation appears to take effect at one instant between its start and finish, and that order respects **real time**: if write `A` finishes before read `B` starts, `B` must see `A`'s effect. Overlapping ops are the exception — a read that overlaps a write may still see the old or new value.
+
+- **Sequential consistency** is weaker: there is some global order that matches each client's own order, but it need not match wall-clock time. So a completed write on one replica can still be invisible to a later read on another.
+
+Rough ladder: linearizable ⊂ sequentially consistent ⊂ informal "strong" talk ⊂ eventual.
+
+If _linearizability_ seems so nice, why don't we make all the systems behave that way? **The main problem is latency and availability**.
+
+- You do **not** need every replica to ack. Systems like Raft commit after a **majority / quorum**. Latency is still higher than a single local write because you wait for that quorum round-trip — and the slowest member of the quorum dominates.
+
+- Availability still takes a hit, but narrower than "any node down": you lose linearizable writes (and often linearizable reads) when you **cannot form a quorum** — network partition or too many failures. One dead minority replica is fine.
+
+Where linearizability shows up in product terms: **after a change finishes, later observers already see it** (not just "there is one truth eventually").
+
+- Last seat / last hotel room. Alice's purchase of seat 12A completes; Bob's later request must see "sold." Many booking apps still cheat with weaker consistency + overbooking / cancellation — so "not always" in the wild.
+
+- Claiming a unique name (username, domain, vanity URL). After "alice" is taken, the next claim must fail.
+
+- Balance right after a payment (pay at terminal, open the app a second later). **Inside one bank's ledger**, that is usually strongly consistent (often serializable transactions). **Between banks**, settlement / end-of-day reconciliation is common — so interbank money movement is often not linearizable end-to-end.
+
+The area between _eventual consistency_ and _full linearizability_ is quite vast. Consider:
+
+- _Bounded staleness_, which works similarly to _eventual consistency_ but with a guarantee (the "bounded" part) on how long it will take for the system to settle into a consistent state.
+
+- _Read your own writes_, where **a client can read their own write immediately after issuing it**. Note on the wording here. It's about the _same_ client that made the write, not about two _different_ clients.
+
+Start models of consistency 50:01
