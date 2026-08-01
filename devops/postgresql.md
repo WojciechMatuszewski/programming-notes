@@ -35,6 +35,36 @@
 
     Note that the **index on such tables is usually a _composite index_**. An index consisting of two or more columns.
 
+## How the `UPDATE` statement works (MVCC)
+
+`UPDATE` does **not** overwrite a row in place. PostgreSQL leaves the old row on disk and appends a **new row version**. The old one sticks around until nothing needs it, then `VACUUM` (usually autovacuum) reclaims that space.
+
+### MVCC in one line
+
+**MVCC** (Multiversion Concurrency Control) is a _design approach_, not a single formal spec: keep versions + let readers use a snapshot so reads and writes do not always lock each other out. PostgreSQL's implementation of that approach is "multiple heap row versions + later vacuum."
+
+Other databases can also call themselves MVCC but store history differently (e.g. undo logs). Same family of idea; not identical machinery or identical isolation details.
+
+### What a statement actually does
+
+Every SQL statement already runs in a transaction. No `BEGIN` means: one statement = one short transaction (implicit commit when it succeeds). Explicit `BEGIN` … `COMMIT` is only when you need **several** statements to be one atomic unit.
+
+- **Read (`SELECT`)** — you see a _snapshot_: a version of each row that was committed as of that snapshot. It might not be the absolute newest version another session just wrote. You **do** see your own uncommitted writes in the same transaction.
+
+- **Write (`UPDATE`)** — lock the row, keep the old version, create a new version. Other sessions keep reading the old one until you commit. After commit, new snapshots can see the new version.
+
+- **Write (`DELETE`)** — mark the current version deleted (no replacement row). Others still see it until you commit.
+
+- **Two writers on the same row** — the second waits for the first to commit or roll back, then applies on top of the result. Readers do not wait for writers, and writers do not wait for readers; writers **do** wait for other writers on that row.
+
+### Why this exists
+
+So Session A can keep reading a consistent picture while Session B updates the same rows — without A blocking B or B blocking A. Tradeoff: old versions pile up until vacuum. Also: if you `SELECT`, decide in the app, then `UPDATE` without checking the current value (or locking with `FOR UPDATE`), you can still get a lost update.
+
+### One important implication
+
+A concurrent read can see the last **committed** version while another transaction has already updated the row but not yet committed. That is isolation (snapshot reads), not "eventual consistency" or linearizability.
+
 ### Computed columns
 
 - Instead of doing the work inside your application, you can derive one column from another. This ensures that the values between two columns are always in-sync.
@@ -289,3 +319,25 @@
       - Since you have to unpack the cursor and parse it on the backend, this pagination is _stateful_. Usually not a problem, but something to mention nevertheless.
 
       - One also has to **consider the complexity of the `where` query when using the _cursor-based_ pagination**. The more columns you are sorting against, the tricker the `WHERE` condition will be.
+
+## Row Level Security (RLS)
+
+> Based on [this talk](https://www.youtube.com/watch?v=vZT1Qx2xUCo)
+
+- **Authnz for Postgres**
+
+  - Authentication: _Is this user/role allowed to access the database?_
+
+  - Authorization: _Now that they are in, what specifically are they allowed to access?_
+
+- **You can think of the RLS policies as "implicit" `where` clauses**.
+
+  - Instead of writing `select * from profiles`, Postgres would automatically wire this statement through the relevant policy which might apply some constraints, like `select * from profiles where user_id = 123`.
+
+- **With RLS comes a risk of introducing performance issues**.
+
+  - Keep in mind that those policies will run when you perform a query. **If you are not mindful how you write them, you might slow your database down**.
+
+    - [See this part of the video](https://youtu.be/vZT1Qx2xUCo?t=793) for relevant tips.
+
+My personal take is that, this approach, is like putting logic inside your SQL statements. I'm unsure if I'm a fan. We all know that, in theory, _stored procedures_ are a great idea, but in reality they bring a world of pain. I'm yet to use RLS in any kind of application, so my opinion is not formed on facts, but rather a gut instinct.
