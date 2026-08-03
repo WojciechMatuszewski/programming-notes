@@ -242,4 +242,54 @@ The area between _eventual consistency_ and _full linearizability_ is quite vast
 
 - _Read your own writes_, where **a client can read their own write immediately after issuing it**. Note on the wording here. It's about the _same_ client that made the write, not about two _different_ clients.
 
-Start consensus
+## Consensus
+
+Transactions. Sometimes they are needed. But how do you do transactions across multiple nodes? For example, you might be writing user-data and payment data in the same transaction. They _might_ reside on the same node, but it usually is not the case.
+
+### Two-phase commit (2PC)
+
+Participants:
+
+1. Coordinator.
+
+2. Nodes that would be involved in the transaction.
+
+Flow:
+
+Before 2PC even starts, each node has _already_ executed its part of the transaction and is holding the relevant locks. 2PC only decides whether that work becomes visible.
+
+1. The coordinator "proposes" the transaction to the nodes. The **"voting phase"** starts.
+
+   That work is not durable yet. If a node crashes here, the work is simply lost – which is safe, because the node has not promised anything yet.
+
+2. Each node sends either the "ok" or the "abort" signal to the coordinator.
+
+   1. **Before replying "ok", the node writes a "prepared" record to disk (and waits for that write to land)**. This is what makes the "ok" a _promise_ – after a crash and restart, the node can still commit.
+
+   2. A node that replies "abort" never made that promise, so it can roll back and release its locks straight away.
+
+   3. If one node sends the "abort" signal, the whole transaction is cancelled.
+
+   4. If all nodes send the "ok" signal, we can proceed to the next phase.
+
+   After this phase, each node's transaction is either **prepared** or aborted. In PostgreSQL, "prepared" means `PREPARE TRANSACTION '<id>'` returned successfully, and you can see it sitting in `pg_prepared_xacts`.
+
+3. For every node that replied "ok", the **"uncertainty period"** begins. It keeps holding its locks and **can't change its mind and send the "abort" signal**.
+
+4. The coordinator writes its decision to its own log and waits for that write to land. **This is the "commit point"** – the transaction is decided _here_, not when the nodes hear about it. It is also what lets a restarted coordinator finish the job.
+
+5. The **"decision phase"** starts. The coordinator sends the "commit" signal.
+
+6. Each node makes its (already-written) work visible and releases the locks.
+
+7. Each node sends the "ack" signal to the coordinator.
+
+So, some of the issues include:
+
+1. Latency since we are doing multiple round-trips between the nodes and the coordinator.
+
+2. Contention, since we are holding long-term locks.
+
+3. **Coordinator is a single point of failure**. If the coordinator crashes, the nodes participating in 2PC are stuck!
+
+Start 23:50
