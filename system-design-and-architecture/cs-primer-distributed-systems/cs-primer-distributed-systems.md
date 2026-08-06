@@ -292,4 +292,16 @@ So, some of the issues include:
 
 3. **Coordinator is a single point of failure**. If the coordinator crashes, the nodes participating in 2PC are stuck!
 
-Start 23:50
+### Raft Consensus
+
+- Raft keeps a _replicated_ service available as long as a majority of servers are up and can communicate (a sane thing to consider).
+
+- We have a _leader_, _follower_ and a _candidate_.
+
+- The _leader_ is chosen by the majority vote **of the full cluster**, not a majority of whoever replied.
+
+- Not every node can win. A voter refuses a candidate whose log is less up-to-date than its own. Since winning needs a majority, and any two majorities overlap, the new leader is guaranteed to already hold every committed entry — nothing has to be shipped to it after the election.
+
+- Leader crash costs, at least one _election cycle_. This does not mean the _leader_ will be chosen during one election cycle as there might be multiple cycles.
+
+See the cursor chat and finish
