@@ -304,4 +304,44 @@ So, some of the issues include:
 
 - Leader crash costs, at least one _election cycle_. This does not mean the _leader_ will be chosen during one election cycle as there might be multiple cycles.
 
-See the cursor chat and finish
+## Dynamo paper
+
+A bunch of interesting things in here.
+
+### Quorums
+
+#### Quorum reads and writes
+
+Let's assume that we have N nodes in a cluster. How do you ensure that you can always read after you write?
+
+Well, if you write to W nodes and read from R nodes, where W + R > N, then you will always read from at least one node that has the most up-to-date data.
+
+**But does that give us "strong consistency"? Not really!**
+
+The inequality guarantees one thing: you R responses contain at least one copy of the latest _completed_ write. It does not tell you which of the R responses that is. You need some kind of versioning scheme on top of all of it.
+
+Consider parallel writes. Two clients writing at the same time can have their writes land on different nodes in different orders. `W + R > N` constraints _read_ vs. _write_ overlap. It says nothing about _write_ vs. _write_ overlap.
+
+So two people reading from different R subsets can get different answers.
+
+You might expect the two read sets to at least overlap in one node – but that needs `2R > N` which `W + R > N` does not imply. With N=5, W=4, R=2 the two reads sets can be completely disjoint while both are still valid quorum reads.
+
+And even when they do overlap, the shared node proves nothing: its value can change between two reads. The reads are not _monotonic_, since the later read can return a previous value!
+
+So it seems like the quorums are pretty useless? It's not all doom-and-gloom: **quorums give you tunable availability and durability, NOT consistency**.
+
+1. You can tune _availability_ by changing `R`.
+
+The bigger the `R` the less available the system is, because you need more reads to succeed.
+
+2. You can tune _durability_ by changing `N`.
+
+To be more concrete:
+
+- `(N=3, R=2, W=2)` might be a good default.
+
+- `(N=3, R=1, W=3)` for read-heavy system. The writes will take more time, due to `W=3`, but reads will be quite fast. This could be good for a product catalog. You most likely do not change it that often, but customers _read_ it very often.
+
+- `(N=3, R=3, W=1)` for systems that really need writes to succeed. For example shopping cart, where your priority is for the customer to be able to modify it (add, remove, update it).
+
+Start 1:00:00
