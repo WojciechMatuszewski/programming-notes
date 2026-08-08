@@ -310,6 +310,10 @@ A bunch of interesting things in here.
 
 ### Quorums
 
+Quorums are good at minimizing tail latency and increasing system availability (all depends on the `R` and `W` parameters).
+
+If you have an SLA on P99, quorums could be very useful because they allow you to skip waiting for all nodes to acknowledge the write before returning to the client. The data might be stale!
+
 #### Quorum reads and writes
 
 Let's assume that we have N nodes in a cluster. How do you ensure that you can always read after you write?
@@ -344,4 +348,16 @@ To be more concrete:
 
 - `(N=3, R=3, W=1)` for systems that really need writes to succeed. For example shopping cart, where your priority is for the customer to be able to modify it (add, remove, update it).
 
-Start 1:00:00
+#### Sloppy Quorum
+
+Okay, so we know about _quorum writes_ and _quorum reads_, but what if one of the N nodes for a key is down when the write arrives?
+
+We could reject the write — that is what a strict quorum does. Instead, the write goes to the next healthy node on the ring, tagged with a **hint** in its metadata saying which node it was really meant for.
+
+That node keeps hinted replicas in a separate local store and scans it periodically. Once the intended node comes back, it pushes the replica over and drops its own copy.
+
+Think of it as your coworker taking a package for you while you are at lunch. **The package has your name on it** — that is the hint — and they hand it over when you get back. Without the coworker you would miss the delivery entirely.
+
+**This is what makes the quorum "sloppy".** Writes go to the first N _healthy_ nodes, not the first N nodes. So the set that took the write may not be the set a later read draws from, which is exactly why `W + R > N` stops guaranteeing an intersection.
+
+Hinted handoff only covers _temporary_ failures. The coworker can go on holiday too — if the node holding the hint dies before handing off, the write is stranded. For that, Dynamo runs a slower background repair that compares replicas using Merkle trees (_anti-entropy_).
