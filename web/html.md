@@ -183,6 +183,7 @@ After adding virtualization to your website, you might notice, that the "search"
 - This concept is **used in the context of custom web components**.
 
 - It is **separate from the "main" DOM**.
+
   - This means you can have multiple IDs that repeat, and you do not have to worry about specificity rules.
 
 - The main benefit is the **style isolation. Your CSS will NOT clash with any other CSS on the page**.
@@ -411,6 +412,7 @@ Tapping or clicking outside the dialog will close it.
 To show the dialog, you can use the `showModal` or `show` APIs. What is the difference?
 
 - The `showModal` **traps the focus** and **displays the backdrop**. It behaves as a regular "modal" you are used to. **Renders in the _top layer_**.
+
   - Good for modals.
 
 - The `show` does not trap the focus and there is no backdrop. **Renders _inline_, and not in the _top layer_**.
@@ -519,10 +521,12 @@ If you specify the `id` attribute on the element, you can access that element by
 > Based on [this](https://www.stefanjudis.com/today-i-learned/section-accessible-name/) and [this](https://www.smashingmagazine.com/2020/01/html5-article-section/) blog post
 
 - The `section` tag was invented for browsers to implement _HTML5 outlining_.
+
   - This feature would allow you to use `h1`s everywhere, and depending on how "deep" they are in `section` elements, they would become the "right" levels of headings like `h2` and `h3`.
     - **At the moment of writing this, no browser implements this spec**.
 
 - There are no free lunches – you **have to make sure that you have proper hierarchy of headings on your website**.
+
   - Frameworks can help with that. I've seen component libraries implement generic "heading" component that renders the correct tag based on the parents of the tag.
 
 - **To "label" the `section` tag, consider using `aria-label` or `aria-labelledby`**.

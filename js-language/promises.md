@@ -212,3 +212,41 @@ async function safe({ promise, signal }) {
 ```
 
 I personally prefer the `signal` approach for removing the event mainly due to the lack of the "dangling" variable which we mutate. Note that we have to mutate it, since the reference for the listener has to be the same in both `addEventListener` and `removeEventListener` cases.
+
+## Many different ways of handling multiple promises
+
+You are probably familiar with `Promise.all`:
+
+1. Runs all promises concurrently. The main thread is still single-threaded so there is no way we could run those in parallel.
+
+2. Rejects if one of the promises rejects. **Rejection does not mean that other promises stop.**
+
+The second point, especially about the rejection is often overlooked. You have to take into consideration the promises that _keep running_ even after the whole `Promise.all` rejects.
+
+---
+
+There is also the `Promise.allSettled`:
+
+1. Runs all promises concurrently. The main thread is still single-threaded so there is no way we could run those in parallel.
+
+2. **Does NOT reject when promises reject**. Instead, you get an array of results which allows you to tell which promise failed.
+
+So for this one, regardless of how many promises rejected, all other promises will run into completion. Quite useful!
+
+---
+
+And the newest addition seem to be `Promise.allKeyed` (still not released). [See the proposal here](https://github.com/tc39/proposal-await-dictionary).
+
+The main problem with `Promise.all` / `Promise.allSettled` is that the result you get back is an array. This means that the _order_ matters – you have to be careful to have the same order of inputs as you read from the output.
+
+We could fix this issue by using an object, like so
+
+```ts
+const { shape, color, mass } = await Promise.allKeyed({
+  shape: getShape(),
+  color: getColor(),
+  mass: getMass(),
+});
+```
+
+I _really_ hope this lands in the language soon as it will be awesome addition!
