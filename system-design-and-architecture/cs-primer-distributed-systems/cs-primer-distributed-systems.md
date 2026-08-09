@@ -306,7 +306,7 @@ So, some of the issues include:
 
 ## Dynamo paper
 
-A bunch of interesting things in here.
+A bunch of interesting things in here. **This paper is NOT about DynamoDB**.
 
 ### Quorums
 
