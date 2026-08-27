@@ -1895,6 +1895,38 @@ know I have.
 With [the `user-select: all`](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) the browser would select the
 whole string if you clicked on it! Pretty neat.
 
+## Styling "borders" of the CSS Grid "lines"
+
+I wish I learned about this sooner: **you can style the "borders" of the CSS grid lines!** using the [`column-rule`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/column-rule) and `row-rule` properties.
+
+```html
+<style>
+  .container {
+    display: grid;
+    grid-template-columns: 100px 100px;
+    grid-template-rows: 300px 300px;
+    height: 300px;
+    gap: 20px;
+
+    column-rule: solid;
+    row-rule: solid;
+  }
+
+  .box {
+    background: red;
+  }
+</style>
+
+<div class="container">
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+```
+
+This is _super_ useful for when creating tables with sub-grid as well!
+
 ## The `appearance: none` and styling inputs
 
 If you wish to re-style the default user-agent input styles (like checkboxes and other inputs), you might want to
