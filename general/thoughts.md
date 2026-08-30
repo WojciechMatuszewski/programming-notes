@@ -754,7 +754,6 @@ I'm not bashing against deadlines, as they are an important to leadership and pr
 - Before providing context, you are, most likely, going to question the deadline – "do we really need to implement X by Y? What are the implications of missing the deadline?". This could result in dropping the deadline altogether. A net win!
 
 - Providing the context means making the deadline a tangible thing.
-
   - Perhaps we have TV ads lined up for X date?
 
   - Perhaps this very big customer of us has something planned for X date and needs Y to accomplish that? If we do not we will loose a lot of revenue.
@@ -800,7 +799,6 @@ In each conversation and interaction you have, there is a power dynamic at play.
 - Learn to identify how you are feeling. If you do not know what you feel, you can't "work on it".
 
 - **Have a plan for situations where you are feeling overwhelmed**.
-
   - Sadly, feeling overwhelmed will most likely happen from time to time. If you are in this state, you should back off, until you worked on your emotions.
 
   - **Rescheduling meetings is totally fine**. It is much better to talk later than to talk while you are pulled right and left by internal turmoil.
@@ -828,9 +826,7 @@ In the end, **cruft slows you down, and you have to write more and more code to 
 ### Failing strategies
 
 - **Cleaning Iteration** will not help you. You will fallback to your old habits.
-
   - In addition, **you just put a lot of pressure on the product to "catch up"** with the feature demands.
-
     - This pressure will inadvertently cause to to write messy code to release new features.
 
 ### Winning strategies
@@ -838,9 +834,7 @@ In the end, **cruft slows you down, and you have to write more and more code to 
 - **Constantly clean the code**. Every time you have a chance, refactor some parts of it. Make it just a tiny bit better.
 
 - **NEVER** ask to do your job correctly.
-
   - Stop with the "can I take some time do write tests / refactor code" bullshit.
-
     - **It is literally your job to do it**.
 
 ## The Best Programmer I Know
@@ -854,13 +848,11 @@ In the end, **cruft slows you down, and you have to write more and more code to 
 - Integrate – try, fail, learn, repeat.
 
 - **Code as means of getting things done**.
-
   - You **should not have any emotional attachment to the code**, but write it to the best of your abilities.
 
   - **Study the domain** and understand what kind of product you create.
 
 - **Solve for now (and the actual problem you are solving)** but **understand your time horizon**.
-
   - If you are writing programming languages, mistakes might be very costly.
 
   - If you are creating a product, the time horizon might be the next release.
@@ -872,17 +864,14 @@ In the end, **cruft slows you down, and you have to write more and more code to 
   > I love this approach. This stops people from identifying with particular programming languages.
 
 - **Do the simplest thing, not the easiest thing**.
-
   - Easy is the "closest to your mind".
 
   - The "right" solution, usually, requires some thought.
 
 - **Tools can change. Make changing the tools easy**.
-
   - Minimize blast radius of the change.
 
   - **Be kind to the future your or other programmers**.
-
     - Make the code easy to decompose.
 
     - Make the code easy to restructure.
@@ -896,11 +885,9 @@ In the end, **cruft slows you down, and you have to write more and more code to 
 - **Find joy in helping others learn**. Share what you know.
 
 - Make sure the team understands that it is okay to "only" work the usual work hours.
-
   - You should make it an example to stop working when it is time to stop working.
 
 - **Assume that everyone is doing their best work**.
-
   - It is your job to make sure the "soil" upon which you "plant" people is fertile for the people to grow!
 
 - **No one will remember that you worked late when you are old and dying**.
@@ -1098,13 +1085,11 @@ I find this concept congruent to the "good enough" mentality when writing softwa
 Each change to the code will require _some_ amount of effort. Since effort, in most cases, equals time, the effort also equals money.
 
 - External dependencies. Is anyone blocked by this bug? Perhaps another team is having a hard time?
-
   - **Remember that bugs can have downstream effects, and I'm not talking about users here**. Perhaps the issue makes it hard for another team to reach its revenue goals?
 
 - Engineering estimate. **Remember that some engineers will be more suited to fix a bug than others**. Person A might have more context in that area of the code than person B.
 
 - Blast radius. Major changes are risky. Minor changes, even if complex, have smaller potential for failure since they operate on the smaller surface of code.
-
   - The smaller the "code surface", the easier it is to catch any issues in code reviews!
 
   - If you see a pull request with 60+ files changed, you are much less likely to even want to review it compared to only a single file change.
@@ -1118,7 +1103,6 @@ Use your judgment here, but it **would be wise to ensure everyone is aligned on 
 - Get help from your manager/stakeholders to better understand what will happen if we _do not_ fix the issue.
 
 - **Some bugs will help you to "sell" other initiatives, like prioritizing technical debt in parts of the codebase**.
-
   - You can justify migrations and migrating to better tools this way!
 
 ### Future Implications
@@ -1330,3 +1314,39 @@ If your answer is, "Well, the LLM, of course!", I will need to push back. Do you
 **The name of the game is not just writing good code – there is always a need for that. Now, you also have to make sure you actually, deeply, understand it**. Verification (not only tests, but perhaps even manual verification) is critical.
 
 I suppose using well-established software patterns could help here as well. If you are familiar with those, you can instruct the LLM to implement the _adapter_ here and _strategy_ there. Perhaps leaning more on mental models, instead of sheer "understanding," is the answer here?
+
+## AI Coding will Prevent Expertise
+
+> [Based on this blog post](https://larsfaye.com/articles/ai-coding-will-prevent-expertise)
+
+Have you ever been in a situation where, after completing a piece of working, you reflect back and say "there is no way I could have done this without AI"?
+
+I certainly do, sometimes, and the frequency of this occurring is increasing.
+
+How do you feel when that happens? Do you feel _happiness_ (that you did so much work), or do you feel anxiety?
+
+For me, I feel the latter. The anxiety that slowly creeps into my mind. But why? Why is that?
+
+I think it's because I'm responsible for that work end-to-end. If something goes wrong, I will be on the hook to fix it. Can I fix it?
+
+If AI wrote most, if not all the code, and I only hold the big-picture view of the design in my head, how quick I will be to diagnose and fix the problem if LLM providers are not available?
+
+If AI wrote most, if not all the code, how much have I _learned_ from the experience? Did I discover any new ways of using certain APIs? Did I re-consider the implementation after seeing how the _code feels_ (I wager that's a pretty common occurrence)?
+
+**If the thing that I'm working on is important (and I mostly should work on things that are important), by offloading to AI, I missed the opportunity to get better as developer**.
+
+That sucks. But there is catch-22 here. If I do not use AI, I will work much slower than everyone else (but still at the speed that was deemed "normal" a yew years back), so I have to use AI, but using AI also makes me loose expertise.
+
+The blog post mentions _cognitive debt_ and _cognitive offloading_ and distinguishes between the two.
+
+- Cognitive debt: you let the AI do all your work, and you end up with something functioning, but with a very vague idea how it is working.
+
+- Cognitive offloading: you _delegate_ the mechanical or tedious to AI (like refactorings). You still have a handle on how things work in the codebase.
+
+I guess it's a matter of having enough discipline to lean more on _cognitive offloading_, but letting AI do most of my work is _very_ tempting, given that
+
+1. It makes me feel more productive as I can be doing multiple things at once (shown to be false, but still, the brain will play tricks on you).
+
+2. It makes me feel like I'm working on the same "level" as my peers, assuming they are also very heavy AI users.
+
+To me, this is a very hard problem to solve.
