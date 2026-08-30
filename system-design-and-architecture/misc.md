@@ -59,7 +59,7 @@ Think of all the multiplayer games or software that enables collaboration!
 that additional exchange of data does not involve sending any request-specific metadata. This means that **the requests
 are pretty fast, faster than sending them through HTTP**.
 
-### Server Side Events (SSE)
+### Server-Sent Events (SSE)
 
 This approach **will establish a persistent, uni-directional connection between the server and the client**. The client
 will not be able to send any data to the server.
@@ -71,8 +71,19 @@ of resources**. If the connection is not used frequently, we should not keep it.
 clients**. As I mentioned before, this might or might not be what you want.
 
 The **main benefit** is **speed as you do not have to send headers with each request**.
+
 In addition, you most likely do not need a library to handle all the complexity SSE transport. Unlike WebSockets,
 the setup to make this work is not that involved.
+
+#### Potential ordering issues
+
+[Based on this article](https://dashbit.co/blog/websockets-vs-sse)
+
+Regardless if you use SSE or WebSockets, having two streams of data update the same thing (perhaps UI) will be prone to issues where the UI might not reflect the same state of things.
+
+Imagine writing tags to the database. Regardless of the implementation, if you treat the data returned from that network call as the source of truth, two concurrent requests might cause the UI state to be inconsistent.
+
+Whenever you use SSE or WebSockets, consider using those protocols as _delivery mechanism_ as well!
 
 ## Mutex
 
@@ -203,15 +214,12 @@ Things like that...
 ### Security
 
 - Proper CORS (Cross-Origin Resource Sharing) headers.
-
   - CORS is all about telling the browser which cross-origin resources it can "expose" to the client JavaScript.
-
     - **Backend responds with CORS headers, the browser enforces them**.
 
 - Rate limiting in place.
 
 - **Content-Security-Policy** headers which **tell the browser which sources of content are allowed and which kind of actions are permitted**.
-
   - For example, you can allow loading scripts only from certain domains.
 
     **This is a good protective measure against cross-side-scripting (XSS)**.
