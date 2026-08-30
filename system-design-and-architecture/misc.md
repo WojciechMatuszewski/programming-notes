@@ -81,7 +81,7 @@ the setup to make this work is not that involved.
 
 Regardless if you use SSE or WebSockets, having two streams of data update the same thing (perhaps UI) will be prone to issues where the UI might not reflect the same state of things.
 
-Imagine writing tags to the database. Regardless of the implementation, if you treat the data returned from that network call as the source of truth, two concurrent requests might cause the UI state to be inconsistent.
+Imagine writing tags to the database. Regardless of the implementation, if you treat the data returned from that network call as the source of truth, two concurrent requests (from different clients) might cause the UI state to be inconsistent.
 
 Whenever you use SSE or WebSockets, consider using those protocols as _delivery mechanism_ as well!
 
