@@ -1350,3 +1350,19 @@ I guess it's a matter of having enough discipline to lean more on _cognitive off
 2. It makes me feel like I'm working on the same "level" as my peers, assuming they are also very heavy AI users.
 
 To me, this is a very hard problem to solve.
+
+## Building without predicting
+
+> Based on [this blog post](https://sive.rs/fit)
+
+The whole premise of the article is: defer the decisions – start using what's there and discover actual needs.
+
+Make sense, right? But notice the constraints the author found themselves in. They are building something on a "blank canvas" with lots of space.
+
+Can we apply the same principle to software? Can we afford deferring decisions until we really need to make them?
+
+I _mostly_ think that's the case. **It all depends on the environment you operate in**. 
+
+In some cases, you could defer the storage solution, because the in-memory suffices for now, but that only holds if you have a good _abstraction_ around the storage. Otherwise you will make a mess in the codebase.
+
+So, the answer is "yes, but...". Like always :)
