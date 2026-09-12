@@ -424,14 +424,24 @@ To show the dialog, you can use the `showModal` or `show` APIs. What is the diff
 
 Another great addition to the web. Just like the `dialog` element, it will display in the _top layer_.
 
+
 ```html
+<!--Actually, this is the "old way" of declaring a popover-->
 <button popovertarget="popover">Toggle the popover</button>
+<div id="popover" popover>Content</div>
+```
+
+```html
+<!--The new way using "commands and invokers"-->
+<button commandfor = "popover" command = "toggle-popover">Toggle the popover</button>
 <div id="popover" popover>Content</div>
 ```
 
 **The `popover` attribute has a feature of "soft dismiss"** which means _clicking outside_ will close the popover.
 
 **The `popover` attribute and the `showPopover` will render the element in the _top layer_**.
+
+Note: You can have custom commands as well! See [this blog post](https://blog.master.dev/new-things-you-should-know-about-html-here-in-mid-2026/#commands-invokers).
 
 ### The `popover` `dialog`
 
