@@ -59,7 +59,9 @@ Every SQL statement already runs in a transaction. No `BEGIN` means: one stateme
 
 ### Why this exists
 
-So Session A can keep reading a consistent picture while Session B updates the same rows — without A blocking B or B blocking A. Tradeoff: old versions pile up until vacuum. Also: if you `SELECT`, decide in the app, then `UPDATE` without checking the current value (or locking with `FOR UPDATE`), you can still get a lost update.
+So Session A can keep reading a consistent picture while Session B updates the same rows — without A blocking B or B blocking A. Trade-off: old versions pile up until vacuum. 
+
+Also: if you `SELECT`, decide in the app, then `UPDATE` without checking the current value (or locking with `FOR UPDATE`), you can still get a lost update.
 
 ### One important implication
 
