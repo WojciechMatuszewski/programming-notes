@@ -1366,3 +1366,27 @@ I _mostly_ think that's the case. **It all depends on the environment you operat
 In some cases, you could defer the storage solution, because the in-memory suffices for now, but that only holds if you have a good _abstraction_ around the storage. Otherwise you will make a mess in the codebase.
 
 So, the answer is "yes, but...". Like always :)
+
+## Religion of speed
+
+> Based on [this article](https://graybeard.ing/the-religion-of-speed/)
+
+Everything happens so fast nowadays. I often feel like we are supposed to be working 24/7. If not us, then our agents. I'm unsure if that's sustainable.
+
+**When you go "fast", you might feel productive, but be wary of going "fast" just for sake of it**.
+
+In my experience, the faster we go, the less time we have to _think_. Is not _thinking_ the most important part of our work? 
+
+I believe that I'm getting paid for _thinking_, not necessarily doing. I see _doing_ as outcome of my _thinking_, not the other way around.
+
+In the era of LLMs, we can offload the _doing_ part. We can't offload the _thinking_ part just yet!
+
+This sentence from the article resonates with me a lot:
+
+> Haste is what happens when people want the emotional relief of action without the burden of clarity.
+
+In my experience, **this is very accurate**.
+
+You can afford to go fast, but only if the road in front of you is clear, well paved, and straightforward. **That is usually NOT the case**.
+
+So, next time you are presented with the opportunity to _go fast_, please make sure that the road ahead is clear, otherwise you will crash.
