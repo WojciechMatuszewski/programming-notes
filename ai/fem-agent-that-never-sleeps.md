@@ -49,3 +49,28 @@ We have to be mindful of how _long_ we want to wait, and of the race condition w
 Scott makes a **great** observation that making your agent aware of the fact that certain tools require human approval _might_ influence which tools it calls. For example, it might decide against calling such tools.
 
 **That is why you want to make sure the agent is NOT aware of the HITL implementation**. No tool should be exposed as "requires human approval". All that logic should live in the harness and should be transparent to the agent.
+
+In the app, you have an "inbox" where all the proposals go to. You are supposed to either approve or reject the proposal. That got me thinking: "How do I ensure I always have enough context to make the change?"
+
+See, I often find myself flooded with questions from the LLM, especially when it works on a plan. That's okay – I would rather answer those questions now than be surprised after implementation.
+
+BUT, given that I'm working on multiple things at the same time, I often feel like I do not have enough context to _answer_ those questions. The trend I see here is to produce more _visual_ artifacts than written text – HTML pages, videos, etc.
+
+Of course, visuals cost much more tokens to produce than text, so there is a trade-off here.
+
+## Retries & Handoff
+
+Retries are an interesting topic. Whenever we retry, we have to consider _idempotency_. You can say that the service / function / whatever is idempotent if, given the same input, it returns the same results. For backend services, this also means we do not want to change the "state of the world" in the second or nth request – we "just" want to return the result as it was returned the first time.
+
+The problem arises when we are dealing with a service that is NOT _idempotent_. When a request returns 503 (Service Unavailable), what do you do?
+
+1. You might choose to retry the request, but then you might re-create some entity, or re-send the notification.
+2. You might choose to _skip_ making another request, but then you risk not performing the side-effect that the request is supposed to cause.
+
+I would err on the side of retrying the request and ensuring the downstream can handle potential duplicates. IMO, it's better to send two notifications than not send any.
+
+## Wrapping up
+
+This is yet another course led by Scott where we use some kind of "durable execution" engine. I find it interesting that the technology choice seems to be constant, at least from Scott's perspective.
+
+If durable workflows are so awesome, I wonder _why_ I never felt the need to use them? I guess it's probably because I was not aware that I needed them when I _could_ have used them, and went with an alternative that might not have been such a good choice.
