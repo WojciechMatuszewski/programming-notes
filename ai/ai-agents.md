@@ -50,7 +50,7 @@ Three patterns:
 
 I've experienced this myself first-hand. The agent was executing the same set of tools over and over again unaware of what is going on.
 
-The article suggest following mitigations:
+The article suggest following mitigation:
 
 - Injecting a corrective instruction into the conversation. This works well, but you have to have the ability to do so in the first place. Depending on how you design the system, you might need to interrupt your agent programmatically to do it.
 
@@ -79,3 +79,41 @@ For me, the most critical takeaways are:
 1. **Context engineering is, most likely, more important than the model itself**. The article claims that a "powerful" model with lackluster context will perform worse than a "less powerful" model with very good context.
 
 2. **Scoping and guardrails are not optional**. I'm a huge believer in the fact that LLMs will get better and better. This belief makes me put a lot of faith into the LLMs and skip some of the "scoping" the article mentioned – only allowing the LLM to do specific things, instead of making it more of a "general" agent. I still believe that, in the future, LLMs will be able to handle "general" workflows, but as it is today, we need to make sure we build one agent that does one thing and does it really well.
+
+## Using many agents does not necessarily mean getting better results
+
+> Based on [this article](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop)
+
+This is something I've noticed personally as well.
+
+It goes like this:
+
+1. You notice that performing some chunk of work with a single agent is "slow".
+
+2. You attempt to parallelize that chunk of work by introducing multiple sub-agents.
+
+3. You _feel_ like the work is done faster and better.
+
+4. BUT when you actually look at the _metrics_ (which you should have, even for your own harness), you notice that **the coordination overhead is costing you lots of tokens and time**.
+
+Using multiple agents is _very_ good practice for SOME tasks, but I found most of my projects end up overly complex. In such cases, you might want to _fold_ sub-agents back into a single agent.
+
+### The goldmine of context
+
+Let's say you have a video to edit. You decide to split the video into logical chunks and hand off editing to multiple sub-agents. You _think_ that the work will be done faster and with better quality.
+
+What ends up happening is quite the opposite (in most cases at least). Instead of a nice, cohesive video, you are presented with disjointed parts that kind of work, but not really.
+
+What happened here is that **each sub-agent is missing the context of the other sub-agents**. If you notice this happening, **the work you are trying to parallelize might not be a good candidate for parallelization**.
+
+Sub-agents shine where each piece of work is completely isolated and perhaps independent of the others. Otherwise, you might be better off using a single agent. While the work might take a bit longer, you will NOT waste time trying to "merge" all those results.
+
+### Split by context, not "slice of work"
+
+Have you ever attempted to split a piece of work based on the "stack"? For example, you might be tempted to split a feature between a _backend_ and a _frontend_ agent.
+
+During implementation, agents will most likely encounter something that is not explicitly within the specification. That might be true for both the _backend_ and the _frontend_ agents.
+
+Since they are completely separate, and there is no sharing of context between them, the decision each agent makes is _isolated_ to that one agent. **This makes it really easy for them to create misalignment between _frontend_ and _backend_**.
+
+**Instead, make it so a single agent handles a _single context_ of the work**. Different contexts are much more likely to be completely separate. This means that they are much more likely to not depend on each other that much.
