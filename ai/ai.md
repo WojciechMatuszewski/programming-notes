@@ -49,10 +49,12 @@ Nowadays, **most of AI model providers have their _embedding_ endpoint**. This e
 ## RAG
 
 - **R**etrieval **A**ugmented **G**eneration means **adding additional set of data into the LLM "knowledge base"**. [Here is a great video about this topic](https://www.youtube.com/watch?v=T-D1OfcDW1M).
+
   - A good example would be asking the LLM about the planet with the highest amount of moons. **The data LLM has could be outdated** as such it might give you wrong answer. Now, if you **augment** the data LLM has with sources from, let us say NASA, the LLM would be able to give a correct answer.
     - **The LLM would first ask the "content store" for the answer**. If the answer is there, the LLM would use that as a data source. Otherwise it uses the knowledge it already has.
 
 - In the context of AI, the **word embeddings** are representation of words as array of numbers called **vectors**.
+
   - You might think of embeddings as "classifications". The modal will classify some word to a given number.
 
   - The numbers in the vector represent how similar each word is to another word. For example, the vector for _"I took my cat for a walk_" would be similar in terms of numbers to the _"I took my dog for a walk"_.
@@ -80,6 +82,7 @@ The solution is not to avoid RAG, but rather to use more sophisticated ways of r
 ## AI Agents
 
 - Agents _create a chain of thought_ and **interact with tools, and the LLM, on our behalf**.
+
   - This makes the Agent a bit of a black box making observability a bit of a pain.
 
   - This also means that **the context window might get pretty large** – you do not control what kind of questions, and in what format, the agent sends to the LLM.
@@ -95,6 +98,7 @@ The solution is not to avoid RAG, but rather to use more sophisticated ways of r
 - "Evals" as a series of input/expected output pairs. We do not check the _exact_ match, but rather if the output _contains_ a given string.
 
 - Involving non-engineers into the process is quite important.
+
   - You can have the PM to write those pairs, engineer to provide results, and then PM to "grade" them.
 
 - **You can use an LLM to "grade" the output of the another LLM**.
@@ -106,30 +110,37 @@ The solution is not to avoid RAG, but rather to use more sophisticated ways of r
 > [Another resource from the same source](https://github.com/guidance-ai/guidance/blob/main/notebooks/testing_lms.ipynb).
 
 - **Exact matching** is cheap, but has a lot of problems.
+
   - The main reason is non-determinism. **Even the slight change in the prompt could cause the LLM to have different answer**.
 
   - The operations GPU make are also non-deterministic in nature. This means, that even if you set the _`temperature`_ to `0`, the choice between "top token" might be different.
 
 - **Similarity approach** _could_ look at **how much generated text** is in the **reference text**.
+
   - One such method is called "BLEU" which stands for "Bilingual Evaluation Understudy".
 
   - This method **is not that great when you want to consider the meaning or sentence structure**.
     - There _might_ be a lot of overlap, but does the sentence make sense?
 
 - **Functional correctness** is where you **check for properties of the output**. The checking is done either manually or via LLM.
+
   - Given "make the output concise", is it concise?
 
   - Given "make it sound polite", is it polite?
 
 - **Model based approach** is where you craft a prompt to another LLM to grade the output.
+
   - LLMs are really good at detecting sentiment or judging whether the answer is X.
 
   - **There are special models trained to be the "judge"** for such testing.
     - You should consider **using different model for evaluation and testing since models tend to favour their own answer**. I do not fully understand how is that even a thing, but apparently it is.
 
 - In a word where AI is often used for RAG, **evaluating the accuracy of RAG is critical**.
+
   - Split RAG into two parts - the _retrieval_ and the _augmentation_.
+
     - For _retrieval_, see if, for a given query, the "retriever" returned the most relevant documents.
+
       - This is deterministic, as the vector values does not change, unless you re-calculate them with a different model.
 
       - In this case, **exact matching seem to be a good approach**.
@@ -141,6 +152,7 @@ The solution is not to avoid RAG, but rather to use more sophisticated ways of r
 > Notes from [this blog post](https://hamel.dev/blog/posts/field-guide/)
 
 - **Consider having a binary yes/no grade for evaluations**.
+
   - The "scale" approach (1 through 5) introduces bias and uncertainty – what would be the difference between 3/5 and 4/5?
 
 - If you want to use _LLM as a judge_ approach, **consider making periodic "alignment" runs that involve humans**.
@@ -207,9 +219,11 @@ This is a huge win for serverless environments. This transport _could_ be made s
 ### Tokenization
 
 - Compress the raw text gathered from the internet into _tokens_.
+
   - Tokens DO NOT necessarily represent a single word. One word might contain two or more tokens.
 
 - Think of this as assigning IDs to groups of symbols (groups of letters).
+
   - Those IDs make up a _vocabulary_ of the LLM.
 
   - The **IDs are arbitrary for each token**.
@@ -217,15 +231,18 @@ This is a huge win for serverless environments. This transport _could_ be made s
 ### Training the Neural Network
 
 - Pick a sequence of tokens (arbitrary and variable length) from the vocabulary and attempt to predict what token comes next.
+
   - This sequence of tokens that we picked is called _context_. **This is an input to the neural network**.
 
 - Neural network's job is to _predict_ what token comes next. Each token in our vocabulary has assigned a probability.
+
   - When you start, those probabilities are random.
 
   - Since you _know_ what token should come next, you have a way to "tune" the neural network by updating those probabilities given the answer.
     - **You "nudge" the probabilities, rather than increasing the probability of the correct token to be 100%**. This is done by applying some math on those probabilities.
 
 - The process of training the neural network is adjusting those probabilities (weights) so that the output is consistent with what we expect.
+
   - As you can imagine, given the size of the input and how many variations of inputs there might be, this is a very compute-expensive process.
 
 - As you train the neural network, you **should be paying attention to something called "loss"**. It's derived from the output vs. what is the "correct" answer in the text.
@@ -238,6 +255,7 @@ This is a huge win for serverless environments. This transport _could_ be made s
 #### Inference
 
 - Happens **after training**.
+
   - Process of "flipping a coin" for the next token. **This is what chat-based models like ChatGPT do**.
 
 - This is where _fine-tuning_ comes in – the model you are using has "reasonable defaults", but you want to tweak it to your needs.
@@ -250,6 +268,7 @@ This is a huge win for serverless environments. This transport _could_ be made s
 #### Base models
 
 - When you are done training, you get a _base model_.
+
   - **A _base model_ is an "internet token autocomplete"**. It is not yet that useful in itself.
     - It CAN predict the next token in the sentence, but it lacks "direction".
       - For example, if you were to "ask" the base model: "What is 2+2" it will go on a random ramble and most likely not give you any answers.
@@ -267,6 +286,7 @@ This is a huge win for serverless environments. This transport _could_ be made s
 - First, you generate a vast amount of questions (still very much smaller than the original dataset used to train the _base model_).
 
 - Next, you have people answer them as they would want the LLM to answer them.
+
   - It is sad that people receive very low compensation for this work. All in the name of pursuit of profit. OpenAI makes billions, people can't make a living...
 
 - Next, you train the model on those questions and answers **using the same method as in the _pre-training_ phase**.
@@ -274,6 +294,7 @@ This is a huge win for serverless environments. This transport _could_ be made s
 ##### Representing conversations as tokens
 
 - So far, the data we input to the model did not follow a strict "convention". It was free-flowing text from the internet. How do we represent the "meaning" of the q&a format using tokens?
+
   - There is no standardized way to do this. **Each LLM provider seems to have their own format**.
 
   - It boils down to **"wrapping" different parts of the q&a with special tokens that the LLM has never seen**. This allows us to customize the "meaning" of those tokens!
@@ -281,9 +302,11 @@ This is a huge win for serverless environments. This transport _could_ be made s
 #### Post-training inference
 
 - The base model will "autocomplete" the next token based on "internet data". The _post-training_ model will "autocomplete" the next token based on the "conversational data" (of course, it has access to the vocabulary from the _pre-training_ phase).
+
   - Remember: **_inference_ is an act of predicting the next token in a sequence**.
 
 - Think about it: when you ask a ChatGPT a question, it does not magically come up with an answer on its own.
+
   - It mimics how a human would answer, because that is the data the model was trained on. **This is why the answer feels so human-like**.
 
   - **If the question (or variation of it) is not in the dataset**, the LLM will derive the answer from its pre-training data. Still, the answer would feel human-like given all the conversations the model "saw".
@@ -291,9 +314,11 @@ This is a huge win for serverless environments. This transport _could_ be made s
 ### LLM physiology
 
 - You can **think of the _parameters_ as "vague recollection"**.
+
   - Answers based on the neural network parameters (and the data they contain) have a much higher risk of hallucinations.
 
 - You can **think of the _context window_ as "working memory"**.
+
   - Answers based on the _context_ have a much better chance to be of high quality. The LLM does not have to rely on "recollection".
 
 - **Models can't "see" like you do**.
@@ -311,6 +336,7 @@ This is a huge win for serverless environments. This transport _could_ be made s
 ##### Dealing with hallucinations
 
 - **One way** to deal with hallucinations is to **add "I do not know" answers to questions the LLM is unsure of to the _post-training_ dataset**.
+
   - How do you know what the LLM is unsure of? You test its "knowledge boundary".
     - Generate a set of questions and answers based on some context, and then probe the LLM multiple times for answers and check whether the answers are correct.
 
@@ -321,6 +347,7 @@ This is a huge win for serverless environments. This transport _could_ be made s
 #### Knowledge of "self"
 
 - The knowledge of "self" is "programmed in", just like the "personality" of the LLM.
+
   - The Q&A dataset contains questions like "Who built you?" and so on. This allows the LLM to "learn" the answers to those questions.
 
 - If you were to ask a _base model_ such a question, it would "hallucinate" the most probable tokens.
@@ -331,6 +358,7 @@ This is a huge win for serverless environments. This transport _could_ be made s
 Remember: all the model does, is to pick the next token from a list of tokens given their probabilities.
 
 - Let us say you are a human labeller and was given a task to "judge" the answer of LLM to a math question. How do you decide the "best" answer?
+
   - Focus on how "evenly" the LLM "spreads" the reasoning. How much computation, or reasoning is allocated for each token.
 
   ```text
@@ -342,6 +370,7 @@ Remember: all the model does, is to pick the next token from a list of tokens gi
 - Consider the `A1`. **All the computation is "crammed" into a single token of `3`**.
 
 - Now consider the `A2`. **Notice how "evenly" the LLM spreads the computation**.
+
   - The answer **creates intermediate computations that the LLM can reference since they are in the LLMs _context window_**.
     - **This matters. The `A1` trains the LLM to guess. The `A2` trains the LLM to "think"**. The **`A2` applies step-by-step reasoning which is very effective way to "probe" the LLM to give you correct answer**.
 
@@ -353,13 +382,16 @@ Remember: all the model does, is to pick the next token from a list of tokens gi
 **Why do we do this step?** We do it **because we do not know what solution (combination of tokens) works best of the LLM**. LLM has to "discover" that on their own.
 
 - Given a prompt, run the LLM to generate the solution. If the solution is correct, "encourage" the model to favour that way of thinking.
+
   - The solution comes from the model itself. It DOES NOT come from human labellers.
 
 - This process helps the _model_ to discover what way of thinking works for a given problem.
+
   - We can't know that. We _do not know_ what happens inside the model. We are only aware of the various mathematical operations.
     - Side note: there is a whole field of science to "peek under the cover" and attempt to understand what is going on inside the model. See ["Mechanistic Interpretability" for more details](https://www.transformer-circuits.pub/2022/mech-interp-essay).
 
 - **The so-called "thinking" is an emergent property of this stage of training**.
+
   - As the R1 paper showed, LLMs will consume more tokens per answer as the training progresses. This is because the model develops the "wait, let me check the solution step-by-step" intuition.
     - This "step-by-step" thinking greatly increases the correctness of the answer.
 
@@ -370,10 +402,13 @@ Remember: all the model does, is to pick the next token from a list of tokens gi
 ### RLHF - Reinforcement Learning from Human Feedback
 
 - So far, we've been looking at the _concrete_. You give an LLM a task, like adding two numbers, and assert that the answer contains what you would expect.
+
   - But how would you judge things that are "un-verifiable", like telling a good joke? **Here is where _RLHF_ comes in**.
 
 - The "naive" approach would be to have a human look at _every_ output of the LLM and judge that. This is a "naive" approach because it does not scale well.
+
   - Instead, we will use another LLM that was trained on human-preference data for that particular "thing" that we are trying to get scores on.
+
     - Given X scores from humans, that LLM will "learn" the preference, and then judge the model we are training.
 
     - **This way of RLHF could be considered _lossy_, because the judge is an approximation to a human**.
@@ -461,6 +496,7 @@ If you have a vector for "dog", is that before or after "bites"?
 - The **attention** mechanism is about allowing the model to "see", through Q, K, V, other tokens.
 
   "The cat that I saw yesterday was sleeping"
+
   1. Model sees "was". It needs to figure out what's doing the sleeping.
 
   2. The "Q" (`query`) vector for `was` (learned during training) scores high `K` for `cat`. Other `K` scores are low.

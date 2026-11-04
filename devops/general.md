@@ -298,10 +298,10 @@ That's a lot of time spend waiting, and incurring latency cost if the request fa
 
 I was reading about B-trees and B+ trees and learned that **the data you use for your `id` field (or any index) matters**.
 
-Usually, the indexes are stored in B+ trees. You can think of B+ tree data structure as a tree, where each _inner node_ contains only the _keys_, and the leaf nodes contain _keys_ and pointers to the full database row. **B trees or B+ trees have nothing to do with Binary Tree**.
+Usually, indexes are stored in B+ trees. You can think of a B+ tree as a tree where each _inner node_ contains only the _keys_, and the leaf nodes contain the _keys_ and pointers to the full database rows. **B-trees and B+ trees have nothing to do with binary trees**.
 
-When you insert `id` that is not in any way sortable, the insert might land on a node that's not in the memory.
+When you insert an `id` that is not sortable in any way, the insert might land on a node that is not in memory.
 
-When you insert `id` that _is_ sortable, you will always insert on the right-most leaf, which is most likely already in memory.
+When you insert an `id` that _is_ sortable, you will always insert on the right-most leaf, which is most likely already in memory.
 
 This makes all the operations much faster!
