@@ -754,6 +754,7 @@ I'm not bashing against deadlines, as they are an important to leadership and pr
 - Before providing context, you are, most likely, going to question the deadline – "do we really need to implement X by Y? What are the implications of missing the deadline?". This could result in dropping the deadline altogether. A net win!
 
 - Providing the context means making the deadline a tangible thing.
+
   - Perhaps we have TV ads lined up for X date?
 
   - Perhaps this very big customer of us has something planned for X date and needs Y to accomplish that? If we do not we will loose a lot of revenue.
@@ -799,6 +800,7 @@ In each conversation and interaction you have, there is a power dynamic at play.
 - Learn to identify how you are feeling. If you do not know what you feel, you can't "work on it".
 
 - **Have a plan for situations where you are feeling overwhelmed**.
+
   - Sadly, feeling overwhelmed will most likely happen from time to time. If you are in this state, you should back off, until you worked on your emotions.
 
   - **Rescheduling meetings is totally fine**. It is much better to talk later than to talk while you are pulled right and left by internal turmoil.
@@ -848,11 +850,13 @@ In the end, **cruft slows you down, and you have to write more and more code to 
 - Integrate – try, fail, learn, repeat.
 
 - **Code as means of getting things done**.
+
   - You **should not have any emotional attachment to the code**, but write it to the best of your abilities.
 
   - **Study the domain** and understand what kind of product you create.
 
 - **Solve for now (and the actual problem you are solving)** but **understand your time horizon**.
+
   - If you are writing programming languages, mistakes might be very costly.
 
   - If you are creating a product, the time horizon might be the next release.
@@ -864,14 +868,17 @@ In the end, **cruft slows you down, and you have to write more and more code to 
   > I love this approach. This stops people from identifying with particular programming languages.
 
 - **Do the simplest thing, not the easiest thing**.
+
   - Easy is the "closest to your mind".
 
   - The "right" solution, usually, requires some thought.
 
 - **Tools can change. Make changing the tools easy**.
+
   - Minimize blast radius of the change.
 
   - **Be kind to the future your or other programmers**.
+
     - Make the code easy to decompose.
 
     - Make the code easy to restructure.
@@ -885,9 +892,11 @@ In the end, **cruft slows you down, and you have to write more and more code to 
 - **Find joy in helping others learn**. Share what you know.
 
 - Make sure the team understands that it is okay to "only" work the usual work hours.
+
   - You should make it an example to stop working when it is time to stop working.
 
 - **Assume that everyone is doing their best work**.
+
   - It is your job to make sure the "soil" upon which you "plant" people is fertile for the people to grow!
 
 - **No one will remember that you worked late when you are old and dying**.
@@ -1085,11 +1094,13 @@ I find this concept congruent to the "good enough" mentality when writing softwa
 Each change to the code will require _some_ amount of effort. Since effort, in most cases, equals time, the effort also equals money.
 
 - External dependencies. Is anyone blocked by this bug? Perhaps another team is having a hard time?
+
   - **Remember that bugs can have downstream effects, and I'm not talking about users here**. Perhaps the issue makes it hard for another team to reach its revenue goals?
 
 - Engineering estimate. **Remember that some engineers will be more suited to fix a bug than others**. Person A might have more context in that area of the code than person B.
 
 - Blast radius. Major changes are risky. Minor changes, even if complex, have smaller potential for failure since they operate on the smaller surface of code.
+
   - The smaller the "code surface", the easier it is to catch any issues in code reviews!
 
   - If you see a pull request with 60+ files changed, you are much less likely to even want to review it compared to only a single file change.
@@ -1361,7 +1372,7 @@ Make sense, right? But notice the constraints the author found themselves in. Th
 
 Can we apply the same principle to software? Can we afford deferring decisions until we really need to make them?
 
-I _mostly_ think that's the case. **It all depends on the environment you operate in**. 
+I _mostly_ think that's the case. **It all depends on the environment you operate in**.
 
 In some cases, you could defer the storage solution, because the in-memory suffices for now, but that only holds if you have a good _abstraction_ around the storage. Otherwise you will make a mess in the codebase.
 
@@ -1375,7 +1386,7 @@ Everything happens so fast nowadays. I often feel like we are supposed to be wor
 
 **When you go "fast", you might feel productive, but be wary of going "fast" just for sake of it**.
 
-In my experience, the faster we go, the less time we have to _think_. Is not _thinking_ the most important part of our work? 
+In my experience, the faster we go, the less time we have to _think_. Is not _thinking_ the most important part of our work?
 
 I believe that I'm getting paid for _thinking_, not necessarily doing. I see _doing_ as outcome of my _thinking_, not the other way around.
 
@@ -1390,3 +1401,21 @@ In my experience, **this is very accurate**.
 You can afford to go fast, but only if the road in front of you is clear, well paved, and straightforward. **That is usually NOT the case**.
 
 So, next time you are presented with the opportunity to _go fast_, please make sure that the road ahead is clear, otherwise you will crash.
+
+## Forest vs. Desert and AI
+
+> Based on [this great talk](https://www.youtube.com/watch?v=NVkw-RFx2cc)
+
+The _forest_ is a place of abundance. It's still dangerous, as there are predators around that could kill you, but you do not have to worry about getting enough food to survive.
+
+The _desert_ is a place of scarcity. There are not that many predators in the desert, so you are relatively safe, but survival is not guaranteed. You have to _fight_ to survive.
+
+Take a step back and reflect on how those two places relate to the company you are working in and your life (let's scope this down to our professional life).
+
+There are the _desert_ companies. Each day is a struggle. Each day you feel like you are about to be let go. People stab each other in the back just to get promoted. You do only what you need to do, and nothing more, because you always have the "next thing" to work on and it's always a P0 priority.
+
+There are also the _forest_ companies. You have competitors. You have to worry about the market, the customers, all of it. But there is time to make the product great, not just "working". There is time to add polish. There is time to refactor. There is time to improve the code so other people have a much easier time working on it.
+
+**AI makes both the _desert_ and the _forest_ larger**. LLMs give you the ability to churn out more code that "works" (the _desert_). But they also allow you to do massive refactors that will make everyone else's life easier.
+
+**You have a lot of agency here**. You are the person _behind_ the tool (the "genie" as Kent calls it). You can turn the ship around, but it requires bold action and courage, which is, understandably, quite lacking in today's world.
