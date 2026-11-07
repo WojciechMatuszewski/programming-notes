@@ -218,15 +218,25 @@ This is a huge win for serverless environments. This transport _could_ be made s
 
 ### Tokenization
 
-- Compress the raw text gathered from the internet into _tokens_.
+Inputs are first split into pieces: text into tokens (tokenization), images into patches. Other formats might use different data structures.
 
-  - Tokens DO NOT necessarily represent a single word. One word might contain two or more tokens.
+To turn the pieces into vectors, there are two options:
 
-- Think of this as assigning IDs to groups of symbols (groups of letters).
+1. Lookup table inside the LLM, with one learned vector per ID. Note that there always be a match, but that match might be a very poor fit.
 
-  - Those IDs make up a _vocabulary_ of the LLM.
+2. Separate trained model that computes a new vector for each input.
 
-  - The **IDs are arbitrary for each token**.
+Either way, after this step, the LLM only sees a list of vectors, and it cannot tell which method produced them.
+
+Having the model to _output_ a given modality boils down to:
+
+1. Pick IDs from a vocabulary (the lookup table we mentioned) and run a decoder model on them. The decoder model turns those IDs back to the original format of the modality, for example an image.
+
+2. Produce vectors that a generator, such as diffusion, turns into output, or write text and pass it to a separate model.
+
+**You might also see a terms called "discrete tokens". Those are the tokens that you could find in that lookup table we mentioned earlier**.
+
+There are also "continuous tokens" which has no ID and is not looked up in the "vocabulary". Token -> vector transformation is done by a separate model instead.
 
 ### Training the Neural Network
 
