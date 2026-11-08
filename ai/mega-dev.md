@@ -49,3 +49,27 @@
   The point here is that agents have a hard time noticing that the pattern is _not_ optimal (or that the code is repeated) than you.
 
 - **Make it explicit that agents can "ask dumb questions"**. While reading the "thinking blocks" of LLMs, I've noticed that they can _imply_ a lot of things. Things that they should really ask about. Make it easy for them to _ask_!
+
+## Working with AI Harnesses
+
+- Harness is not the UI, not the MCPs, it's the agentic loop that it's capabilities.
+
+  - You _should_ extend it with the things that are important to your workflows, like various MCPs and skills.
+
+- Harness lock-in is a thing, especially when we talk about big AI labs. Try moving from Claude Code to Codex when you have a robust setup in each. Good luck!
+
+- The harness you use should allow some degree of customization.
+
+  - Customizing things very extensively is a double-edged sword. Your harness might be great, but then what if you need to switch? I personally do not buy this argument but I can see it being valid for some.
+
+## Building Workflows, Not Tool Stacks
+
+In this lesson Theo talked about the markdown files pretty much being "the code" at this point.
+
+By "workflows" they mean skills that you can compose with each other.
+
+Some good points
+
+1. Audit and see how agents are using the skills you already have. Perhaps there is something to fix?
+
+2. Doing something with the agent (talking back-and-forth) and then writing a skill file as the artifact from that back-and-forth is a good way to create a high-quality skill.
