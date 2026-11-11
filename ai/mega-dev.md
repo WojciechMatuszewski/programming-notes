@@ -46,13 +46,13 @@
 
   - If you have a good file structure established, your agent will follow that structure.
 
-  The point here is that agents have a hard time noticing that the pattern is _not_ optimal (or that the code is repeated) than you.
+  The point here is that agents have a harder time noticing that a pattern is _not_ optimal (or that code is repeated) than you do.
 
 - **Make it explicit that agents can "ask dumb questions"**. While reading the "thinking blocks" of LLMs, I've noticed that they can _imply_ a lot of things. Things that they should really ask about. Make it easy for them to _ask_!
 
 ## Working with AI Harnesses
 
-- Harness is not the UI, not the MCPs, it's the agentic loop that it's capabilities.
+- The harness is not the UI or the MCPs; it's the agentic loop and its capabilities.
 
   - You _should_ extend it with the things that are important to your workflows, like various MCPs and skills.
 
@@ -60,16 +60,46 @@
 
 - The harness you use should allow some degree of customization.
 
-  - Customizing things very extensively is a double-edged sword. Your harness might be great, but then what if you need to switch? I personally do not buy this argument but I can see it being valid for some.
+  - Customizing things very extensively is a double-edged sword. Your harness might be great, but what if you need to switch? I personally do not buy this argument, but I can see it being valid for some.
 
 ## Building Workflows, Not Tool Stacks
 
-In this lesson Theo talked about the markdown files pretty much being "the code" at this point.
+In this lesson, Theo talked about the markdown files being pretty much "the code" at this point.
 
-By "workflows" they mean skills that you can compose with each other.
+By "workflows," they mean skills that you can compose with each other.
 
-Some good points
+Some good points:
 
 1. Audit and see how agents are using the skills you already have. Perhaps there is something to fix?
 
 2. Doing something with the agent (talking back-and-forth) and then writing a skill file as the artifact from that back-and-forth is a good way to create a high-quality skill.
+
+---
+
+So far, we talked about the basics. That's good, as those are always needed, and it's nice to remind ourselves about how things work on the most basic level. Theo's content focused on the _why_ and not the _how_. Interesting, and I would say a valid choice, given that nowadays the _how_ could be offloaded.
+
+The most important things we talked about:
+
+1. The "agentic loop" is nothing but a glorified model invocation call in a loop.
+
+2. Tools give the model lots of useful capabilities that greatly increase its usefulness. Remember that MCP servers also expose tools.
+
+3. The _harness_ is the layer around the model **and something that gets pretty much all the attention nowadays**.
+
+4. **The better your codebase, the better the agent output**. Engineering principles still apply.
+
+---
+
+## Agentic Primitives
+
+- You have the _agent loop_, the _instructions_ you give to the agent, the _context and the memory_ the agent has, and the _tools_ available to the agent.
+
+- **Do not treat the agent as a black box**. Instrumentation is critical. Without traces, it will be very hard for you to understand what happened and why it happened.
+
+- In recent months, a new concept has emerged: the so-called _context engineering_.
+
+  - It's nothing more than a proper acknowledgement that **what data you push into your agent's context, and how much of it, is very important and greatly influences how the agent works**. This is not only about the system prompt. Keep in mind that all the tool calls, and their output, also land in the context.
+
+  The more stuff in the context, the bigger the payload, and thus the more expensive and slower the response is (that is why we have [message threads](https://platform.claude.com/docs/en/build-with-claude/message-threads) in some APIs).
+
+- Context is not infinite. The size of the context has gotten bigger, but that does not mean you can cram literally everything in there. That is why you might want to give the agent a "memory" functionality. Doing so opens a whole can of worms related to extracting only the relevant data from the memory, and so on, so be careful here!
