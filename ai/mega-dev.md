@@ -103,3 +103,13 @@ The most important things we talked about:
   The more stuff in the context, the bigger the payload, and thus the more expensive and slower the response is (that is why we have [message threads](https://platform.claude.com/docs/en/build-with-claude/message-threads) in some APIs).
 
 - Context is not infinite. The size of the context has gotten bigger, but that does not mean you can cram literally everything in there. That is why you might want to give the agent a "memory" functionality. Doing so opens a whole can of worms related to extracting only the relevant data from the memory, and so on, so be careful here!
+
+## Building an Agent
+
+- Anything you _can_ do in code, you _should_.
+
+  - For example, the agent should not decide whether the user _can_ or _can't_ access some data, all of this should be handled in code!
+
+Overall, I'm unsure if this section of the workshop is valuable at all. It's a big code walkthrough, which does not provide enough substance to be useful.
+
+## Q&A
