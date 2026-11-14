@@ -1419,3 +1419,25 @@ There are also the _forest_ companies. You have competitors. You have to worry a
 **AI makes both the _desert_ and the _forest_ larger**. LLMs give you the ability to churn out more code that "works" (the _desert_). But they also allow you to do massive refactors that will make everyone else's life easier.
 
 **You have a lot of agency here**. You are the person _behind_ the tool (the "genie" as Kent calls it). You can turn the ship around, but it requires bold action and courage, which is, understandably, quite lacking in today's world.
+
+## Critical thinking an AI
+
+> Based on [this great article](https://x.com/addyosmani/status/2117512471930167377)
+
+I really like how Addy put, what I believe most of us are experiencing or noticing, into words.
+
+When working with AI, you can _offload_ your work to it, _defer_ the work to it, or _surrender_ your work to it.
+
+The main issue is when you _surrender_ your most critical work to it. You are no longer able to describe what the system does, even with the help of the AI. The "doom loop" of trying to fix AI with AI starts, and you are screwed.
+
+Surprisingly (perhaps not) the solution here is quite simple: **make sure you understand what you are building by being intentional about it**.
+
+1. Ask the agent to interview you.
+
+2. Ask the agent to quiz you.
+
+3. Ask the agent what you might have missed.
+
+4. Relay what you believe is going on, and ask the agent about the drift in understanding.
+
+Those techniques are not rocket science. I would argue that most of us did that already when working within a team on something that spans more than 1 person. Instead of AI we would consult our colleagues.
