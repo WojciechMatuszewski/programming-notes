@@ -113,3 +113,13 @@ The most important things we talked about:
 Overall, I'm unsure if this section of the workshop is valuable at all. It's a big code walkthrough, which does not provide enough substance to be useful.
 
 ## Q&A
+
+- Side note: Angie mentioned something interesting that I usually forget: _building_ and _testing_ the code are two different mindsets.
+
+  - If you build, and then immediately attempt to test the code, you might be influenced by what you _know_ about the code. This might mean missing some "obvious" cases that might or might not work! It is always good to take a deep breath before testing anything that you worked on and attempt to "switch the mindset" a bit.
+
+- Related to testing, but also to the product-engineering as a whole: _your next customer might be an agent_.
+
+  - To me, that's quite depressing, but it is the reality. I struggle with this myself where I'm unsure if investing a lot into visual aspect of what I'm building makes sense given agents do not really pay attention to the UX.
+
+- Not everything needs to be _agentic_. That is something I learned as well. **Deterministic code is still much cheaper and much more reliable than any agent can be**.
