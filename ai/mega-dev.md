@@ -123,3 +123,43 @@ Overall, I'm unsure if this section of the workshop is valuable at all. It's a b
   - To me, that's quite depressing, but it is the reality. I struggle with this myself where I'm unsure if investing a lot into visual aspect of what I'm building makes sense given agents do not really pay attention to the UX.
 
 - Not everything needs to be _agentic_. That is something I learned as well. **Deterministic code is still much cheaper and much more reliable than any agent can be**.
+
+## Multi-Agent Collaboration
+
+- It turns out, there is **[a specification](https://github.com/Agent-Card/ai-catalog) for discovering external agents called "AI Catalog"**. The spec is driven by _Linux Foundation_ so it seems legit.
+
+  - The communication between two agents is done via [A2A protocol developed by Google](https://a2a-protocol.org/latest/specification/).
+
+- Using durable-execution layer for running the agents might make creating evaluations easier.
+
+  - I believe you could then "reply" the message at any given state of the agent workflow quite easily.
+
+--
+
+## Mechanics Behind Product Engineering
+
+- Kent started with a few examples of _product decisions_
+
+  - Gmail: give everyone all the space. The storage size used to be very small back in the day. They made it so you do not have to worry about removing your old emails (adding a great search functionality on top also helped).
+
+  - Instagram: after talking to users, they focused only on the "sharing a photo" aspect of their app. This worked great for them.
+
+  - WhatsApp: instead of adding games, and other features the competitors added, they focused on messages and only on that.
+
+  **We now can have agents write most of our code, letting us focus on making _product_ decisions**.
+
+- If you tend to get lost in technical details, now it's the time to take a step back. **It's no longer about the output (it never fully was). Now it's all about _outcome_**.
+
+  - It does not matter how many tickets you close. It does not matter how many lines of code you (your agent) output. All that matters is the _result_ – the tangible _outcome_ of your work!
+
+- No matter how good the agents are, **you own and are accountable for the thing that agents build**.
+
+- To some extend, your job now is to "move up the abstraction layer". You should be on the hunt for making your agents do more of your work, so you can focus on what's important and essential.
+
+- Agents can go beyond code, we just need to stop and consider their capabilities. One neat trick is to ask the agent about "what am I missing" or "what are the unknown unknowns?" or "what you do not know?".
+
+  - It might sound a bit silly, but consider how many times you reflect on what you do not know. Probably not that often, right? But those questions are _really_ valuable. They help us discover potential traps and one-way-doors that, in the future, will make it really hard to change the system.
+
+- **To some extend, your job is to now decide what DOES NOT matter and focus only on things that do**.
+
+  - Previously, you might have gotten help on this from the product manager. Now it's on you. That's fine, and exciting! You have more ownership and leverage now.
