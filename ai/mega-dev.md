@@ -163,3 +163,17 @@ Overall, I'm unsure if this section of the workshop is valuable at all. It's a b
 - **To some extend, your job is to now decide what DOES NOT matter and focus only on things that do**.
 
   - Previously, you might have gotten help on this from the product manager. Now it's on you. That's fine, and exciting! You have more ownership and leverage now.
+
+## Translating Intent into Agent Work
+
+- Every time you have an architecture discussion with the agent, **consider the output of this discussion to be an ADR**.
+
+  - You most likely made a lot of decisions during this session. Those decisions carry weigh and are important context. By writing them down, you give the future you (and the agent) more information about the _why_ something was done.
+
+- Kent also showed us the "primitives file" – a `.yaml` file where each primitive they have in the codebase is listed. **The idea is to nudge the agent into re-using what the codebase already have instead of creating a new thing**.
+
+  - That file contains entries for the "files" the primitive is defined in and the documentation for that primitive.
+
+  - The idea is for the agent to read this file and then know what files it needs to load when using a given primitive.
+
+- Giving the agents a way to test their changes is critical. **Tests are often not enough**. Testing changes end-to-end is the most valuable thing you can enable for agents.
