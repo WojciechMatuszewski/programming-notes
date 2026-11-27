@@ -117,3 +117,13 @@ During implementation, agents will most likely encounter something that is not e
 Since they are completely separate, and there is no sharing of context between them, the decision each agent makes is _isolated_ to that one agent. **This makes it really easy for them to create misalignment between _frontend_ and _backend_**.
 
 **Instead, make it so a single agent handles a _single context_ of the work**. Different contexts are much more likely to be completely separate. This means that they are much more likely to not depend on each other that much.
+
+## Factories, Delegation and Slop
+
+First, everyone seem to want to use _more_ agents to do _more_ work. That's understandable, but the results are not always that great. Why is that?
+
+I've noticed that the more granular your agents are, the more communication overhead there is. With pretty much everyone now building "software factories", we can slice and dice the problem of delegating the work in multiple ways.
+
+Usually, you will have "the lead" and bunch of agents that "the lead" steers and spawns. Inside such agent, you might have another set of agents that do certain job. As you can imagine, you can push this pretty far, and, in most cases, too far.
+
+**Having one lead and set of workers that can spawn a "implementer" and "verifier" seems like a good middle ground**. There is a [bunch of videos](https://www.youtube.com/watch?v=CmmrdJwji-Y) on this topic, but pretty much all of them gravitate towards that approach.
